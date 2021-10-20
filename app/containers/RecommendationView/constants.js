@@ -1,0 +1,15 @@
+export const DEPENDENCIES = [
+  'user_roles',
+  'recommendations',
+  'users',
+  'taxonomies',
+  'framework_taxonomies',
+  'categories',
+  'measures',
+  'recommendation_measures',
+  'recommendation_categories',
+  'recommendation_indicators',
+  'measure_categories',
+  'measure_indicators',
+  'indicators',
+];
