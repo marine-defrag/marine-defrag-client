@@ -10,7 +10,7 @@ import {
   selectSortByQuery,
   selectSortOrderQuery,
 } from 'containers/App/selectors';
-import { USER_ROLES } from 'themes/config';
+import { USER_ROLES, DB } from 'themes/config';
 
 import {
   filterEntitiesByConnection,
@@ -24,12 +24,12 @@ import { CONFIG } from './constants';
 
 const selectUsersNested = createSelector(
   (state, locationQuery) => selectEntitiesSearchQuery(state, {
-    path: 'users',
+    path: DB.USERS,
     searchAttributes: CONFIG.search || ['name'],
     locationQuery,
   }),
-  (state) => selectEntities(state, 'user_categories'),
-  (state) => selectEntities(state, 'user_roles'),
+  (state) => selectEntities(state, DB.USER_CATEGORIES),
+  (state) => selectEntities(state, DB.USER_ROLES),
   (entities, entityCategories, entityRoles) => entities.map(
     (entity) => {
       const entityRoleIds = entityRoles.filter(
@@ -65,7 +65,7 @@ const selectUsersNested = createSelector(
 );
 const selectUsersWithout = createSelector(
   selectUsersNested,
-  (state) => selectEntities(state, 'categories'),
+  (state) => selectEntities(state, DB.CATEGORIES),
   selectWithoutQuery,
   (entities, categories, query) => query
     ? filterEntitiesWithoutAssociation(entities, categories, query)

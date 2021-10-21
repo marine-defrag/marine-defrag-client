@@ -2,6 +2,7 @@ import {
   take, put, cancel, takeEvery,
 } from 'redux-saga/effects';
 import { LOCATION_CHANGE } from 'react-router-redux';
+import { DB } from 'themes/config';
 
 import { newEntity } from 'containers/App/actions';
 
@@ -9,7 +10,7 @@ import { SAVE } from './constants';
 
 export function* save({ data }) {
   yield put(newEntity({
-    path: 'measures',
+    path: DB.ACTIONS,
     entity: data,
     redirect: false,
     saveRef: data.saveRef,

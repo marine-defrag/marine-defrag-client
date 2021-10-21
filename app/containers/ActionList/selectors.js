@@ -1,25 +1,23 @@
 import { createSelector } from 'reselect';
-import { Map, List } from 'immutable';
+import { Map } from 'immutable';
+import { DB } from 'themes/config';
 
 import {
   selectEntities,
-  selectMeasuresSearchQuery,
+  selectActionsSearchQuery,
   selectWithoutQuery,
   selectConnectionQuery,
   selectCategoryQuery,
   selectConnectedCategoryQuery,
   selectSortByQuery,
   selectSortOrderQuery,
-  selectExpandQuery,
-  selectFWTaxonomiesSorted,
-  selectFWRecommendations,
-  selectFWIndicators,
-  selectFrameworks,
+  selectActortypeTaxonomiesSorted,
+  selectActortypeActors,
+  selectActortypes,
   selectReady,
-  selectRecommendationCategoriesByRecommendation,
-  selectMeasureCategoriesByMeasure,
-  selectMeasureIndicatorsByMeasure,
-  selectRecommendationMeasuresByMeasure,
+  selectActorCategoriesByActor,
+  selectActionCategoriesByAction,
+  selectActorActionsByAction,
 } from 'containers/App/selectors';
 
 import {
@@ -27,9 +25,7 @@ import {
   filterEntitiesByCategories,
   filterEntitiesByConnectedCategories,
   filterEntitiesWithoutAssociation,
-  testEntityEntityAssociation,
   entitiesSetCategoryIds,
-  entitiesSetSingle,
   filterTaxonomies,
   getTaxonomyCategories,
 } from 'utils/entities';
@@ -38,59 +34,52 @@ import { sortEntities, getSortOption } from 'utils/sort';
 
 import { CONFIG, DEPENDENCIES } from './constants';
 
-const selectConnectionsIndicators = createSelector(
-  (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectFWIndicators,
-  (ready, indicators) => !ready ? Map() : Map().set('indicators', indicators)
-);
-
 export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectConnectionsIndicators,
-  selectFWRecommendations,
-  selectRecommendationCategoriesByRecommendation,
-  (state) => selectEntities(state, 'categories'),
-  (ready, connections, recommendations, associationsGrouped, categories) => {
+  selectActortypeActors,
+  selectActorCategoriesByActor,
+  (state) => selectEntities(state, DB.CATEGORIES),
+  (ready, actors, associationsGrouped, categories) => {
     if (ready) {
-      return connections.set(
-        'recommendations',
+      return new Map().set(
+        'actors',
         entitiesSetCategoryIds(
-          recommendations,
+          actors,
           associationsGrouped,
           categories,
         )
       );
     }
-    return connections;
+    return new Map();
   }
 );
 
 export const selectConnectedTaxonomies = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   (state) => selectConnections(state),
-  (state) => selectFWTaxonomiesSorted(state),
-  (state) => selectEntities(state, 'categories'),
-  (state) => selectEntities(state, 'recommendation_categories'),
-  (state) => selectFrameworks(state),
-  (state) => selectEntities(state, 'framework_taxonomies'),
+  (state) => selectActortypeTaxonomiesSorted(state),
+  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, DB.ACTOR_CATEGORIES),
+  (state) => selectActortypes(state),
+  (state) => selectEntities(state, DB.ACTORTYPE_TAXONOMIES),
   (
     ready,
     connections,
     taxonomies,
     categories,
-    categoryRecommendations,
-    frameworks,
-    fwTaxonomies,
+    categoryActors,
+    actortypes,
+    actortypeTaxonomies,
   ) => {
     if (!ready) return Map();
     const relationship = {
-      tags: 'tags_recommendations',
-      path: 'recommendations',
-      key: 'recommendation_id',
-      associations: categoryRecommendations,
+      tags: 'tags_actors',
+      path: DB.ACTORS,
+      key: 'actor_id',
+      associations: categoryActors,
     };
-    const measureFrameworks = frameworks.filter(
-      (fw) => fw.getIn(['attributes', 'has_measures'])
+    const actionActortypes = actortypes.filter(
+      (actortype) => actortype.getIn(['attributes', 'has_actions'])
     );
     // for all connections
     const connectedTaxonomies = filterTaxonomies(
@@ -98,15 +87,15 @@ export const selectConnectedTaxonomies = createSelector(
       relationship.tags,
       true,
     ).filter(
-      (taxonomy) => fwTaxonomies.some(
-        (fwt) => measureFrameworks.some(
-          (fw) => qe(
-            fw.get('id'),
-            fwt.getIn(['attributes', 'framework_id']),
+      (taxonomy) => actortypeTaxonomies.some(
+        (actortypet) => actionActortypes.some(
+          (actortype) => qe(
+            actortype.get('id'),
+            actortypet.getIn(['attributes', 'actortype_id']),
           ),
         ) && qe(
           taxonomy.get('id'),
-          fwt.getIn(['attributes', 'taxonomy_id']),
+          actortypet.getIn(['attributes', 'taxonomy_id']),
         )
       )
     );
@@ -136,8 +125,8 @@ export const selectConnectedTaxonomies = createSelector(
   }
 );
 
-const selectMeasuresNestedQ = createSelector(
-  (state, locationQuery) => selectMeasuresSearchQuery(state, {
+const selectActionsNestedQ = createSelector(
+  (state, locationQuery) => selectActionsSearchQuery(state, {
     searchAttributes: CONFIG.search || ['title'],
     locationQuery,
   }),
@@ -145,11 +134,11 @@ const selectMeasuresNestedQ = createSelector(
 );
 
 // nest category ids
-const selectMeasuresNestedWithCategories = createSelector(
+const selectActionsNestedWithCategories = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectMeasuresNestedQ,
-  selectMeasureCategoriesByMeasure,
-  (state) => selectEntities(state, 'categories'),
+  selectActionsNestedQ,
+  selectActionCategoriesByAction,
+  (state) => selectEntities(state, DB.CATEGORIES),
   (ready, entities, associationsGrouped, categories) => {
     if (ready) {
       return entitiesSetCategoryIds(
@@ -162,39 +151,39 @@ const selectMeasuresNestedWithCategories = createSelector(
   }
 );
 
-// nest connected recommendation ids
-// nest connected recommendation ids byfw
-const selectMeasuresNestedWithRecs = createSelector(
+// nest connected actor ids
+// nest connected actor ids byactortype
+const selectActionsNestedWithActors = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectMeasuresNestedWithCategories,
+  selectActionsNestedWithCategories,
   (state) => selectConnections(state),
-  selectRecommendationMeasuresByMeasure,
+  selectActorActionsByAction,
   (ready, entities, connections, associationsGrouped) => {
-    if (ready && connections.get('recommendations')) {
+    if (ready && connections.get('actors')) {
       return entities.map(
         (entity) => {
-          const entityRecs = associationsGrouped.get(parseInt(entity.get('id'), 10));
-          const entityRecsByFw = entityRecs && entityRecs.filter(
-            (recId) => connections.getIn([
-              'recommendations',
-              recId.toString(),
+          const entityActors = associationsGrouped.get(parseInt(entity.get('id'), 10));
+          const entityActorsByActortype = entityActors && entityActors.filter(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
             ])
           ).groupBy(
-            (recId) => connections.getIn([
-              'recommendations',
-              recId.toString(),
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
               'attributes',
-              'framework_id',
+              'actortype_id',
             ])
           );
-          // console.log(entityRecsByFw && entityRecsByFw.toJS());
+          // console.log(entityActorsByActortype && entityActorsByActortype.toJS());
           // currently requires both for filtering & display
           return entity.set(
-            'recommendations',
-            entityRecs,
+            'actors',
+            entityActors,
           ).set(
-            'recommendationsByFw',
-            entityRecsByFw,
+            'actorsByActortype',
+            entityActorsByActortype,
           );
         }
       );
@@ -203,49 +192,30 @@ const selectMeasuresNestedWithRecs = createSelector(
   }
 );
 
-// nest connected indicator ids
-const selectMeasuresNested = createSelector(
-  (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectMeasuresNestedWithRecs,
-  (state) => selectConnections(state),
-  selectMeasureIndicatorsByMeasure,
-  (ready, entities, connections, associationsGrouped) => {
-    if (ready && connections.get('indicators')) {
-      return entities.map(
-        (entity) => entity.set(
-          'indicators',
-          associationsGrouped.get(parseInt(entity.get('id'), 10)),
-        )
-      );
-    }
-    return entities;
-  }
-);
-
-const selectMeasuresWithout = createSelector(
-  selectMeasuresNested,
-  (state) => selectEntities(state, 'categories'),
+const selectActionsWithout = createSelector(
+  selectActionsNestedWithActors,
+  (state) => selectEntities(state, DB.CATEGORIES),
   selectWithoutQuery,
   (entities, categories, query) => query
     ? filterEntitiesWithoutAssociation(entities, categories, query)
     : entities
 );
-const selectMeasuresByConnections = createSelector(
-  selectMeasuresWithout,
+const selectActionsByConnections = createSelector(
+  selectActionsWithout,
   selectConnectionQuery,
   (entities, query) => query
     ? filterEntitiesByConnection(entities, query)
     : entities
 );
-const selectMeasuresByCategories = createSelector(
-  selectMeasuresByConnections,
+const selectActionsByCategories = createSelector(
+  selectActionsByConnections,
   selectCategoryQuery,
   (entities, query) => query
     ? filterEntitiesByCategories(entities, query)
     : entities
 );
-const selectMeasuresByConnectedCategories = createSelector(
-  selectMeasuresByCategories,
+const selectActionsByConnectedCategories = createSelector(
+  selectActionsByCategories,
   selectConnections,
   selectConnectedCategoryQuery,
   (entities, connections, query) => query
@@ -253,140 +223,16 @@ const selectMeasuresByConnectedCategories = createSelector(
     : entities
 );
 
-const countDueDates = (dates, attr) => dates.filter(
-  (date) => date.getIn(['attributes', attr])
-).size;
-
-const selectMeasuresExpandables = createSelector(
-  (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectMeasuresByConnectedCategories,
-  selectFWIndicators,
-  (state) => selectEntities(state, 'progress_reports'),
-  (state) => selectEntities(state, 'due_dates'),
-  selectExpandQuery,
-  (ready, entities, indicators, reports, dueDates, expandNo) => !ready
-    ? entities
-    : entities.map(
-      (entity) => {
-        // if not expanded
-        if (expandNo <= 0) {
-          // insert expandables:
-          // - indicators
-          // - reports (incl due_dates)
-          const dueDatesAnyIndicator = dueDates.filter(
-            (date) => testEntityEntityAssociation(
-              entity,
-              'indicators',
-              date.getIn(['attributes', 'indicator_id'])
-            )
-          );
-          return entity.set(
-            'expandable',
-            List(['indicators', 'reports']),
-          ).set(
-            'reports',
-            reports.filter(
-              (report) => testEntityEntityAssociation(
-                entity,
-                'indicators',
-                report.getIn(['attributes', 'indicator_id']),
-              )
-            ),
-          ).set(
-            'dates',
-            Map().set(
-              'overdue', countDueDates(dueDatesAnyIndicator, 'overdue'),
-            ).set(
-              'due', countDueDates(dueDatesAnyIndicator, 'due'),
-            )
-          );
-        }
-        const filteredIndicators = indicators.filter(
-          (indicator) => testEntityEntityAssociation(
-            entity,
-            'indicators',
-            indicator.get('id'),
-          )
-        );
-        // insert expanded indicators with expandable reports (incl due_dates)
-        return entity.set(
-          'expanded',
-          'indicatorsExpanded',
-        ).set(
-          'indicatorsExpanded',
-          filteredIndicators.map(
-            (indicator) => {
-              // due dates for indicator
-              const dueDatesForIndicator = dueDates.filter(
-                (date) => qe(
-                  date.getIn(['attributes', 'indicator_id']),
-                  indicator.get('id')
-                )
-              );
-              const reportsForIndicator = reports.filter(
-                (report) => qe(
-                  report.getIn(['attributes', 'indicator_id']),
-                  indicator.get('id')
-                )
-              );
-              if (expandNo === 1) {
-                return indicator.set(
-                  'expandable',
-                  'reports',
-                ).set(
-                  'reports',
-                  reportsForIndicator,
-                ).set(
-                  'dates',
-                  // store counts
-                  Map().set(
-                    'overdue', countDueDates(dueDatesForIndicator, 'overdue'),
-                  ).set(
-                    'due', countDueDates(dueDatesForIndicator, 'due'),
-                  )
-                );
-              }
-              const dueDatesScheduled = dueDatesForIndicator && dueDatesForIndicator.filter(
-                (date) => !date.getIn(['attributes', 'has_progress_report'])
-              );
-              return indicator.set(
-                'expanded',
-                'reports',
-              ).set(
-                'reports',
-                entitiesSetSingle(
-                  reportsForIndicator,
-                  dueDates,
-                  'date',
-                  'due_date_id',
-                )
-              ).set(
-                'dates',
-                // store upcoming scheduled indicator
-                Map().set('scheduled', dueDatesScheduled && sortEntities(
-                  dueDatesScheduled,
-                  'asc',
-                  'due_date',
-                  'date'
-                ).first()),
-              );
-            }
-          )
-        );
-      }
-    )
-);
-
 // kicks off series of cascading selectors
 // 1. selectEntitiesWhere filters by attribute
 // 2. selectEntitiesSearchQuery filters by keyword
-// 3. selectMeasuresNested will nest related entities
-// 4. selectMeasuresWithout will filter by absence of taxonomy or connection
-// 5. selectMeasuresByConnections will filter by specific connection
-// 6. selectMeasuresByCategories will filter by specific categories
-// 7. selectMeasuresByCOnnectedCategories will filter by specific categories connected via connection
-export const selectMeasures = createSelector(
-  selectMeasuresExpandables,
+// 3. selectActionsNested will nest related entities
+// 4. selectActionsWithout will filter by absence of taxonomy or connection
+// 5. selectActionsByConnections will filter by specific connection
+// 6. selectActionsByCategories will filter by specific categories
+// 7. selectActionsByCOnnectedCategories will filter by specific categories connected via connection
+export const selectActions = createSelector(
+  selectActionsByConnectedCategories,
   selectSortByQuery,
   selectSortOrderQuery,
   (entities, sort, order) => {

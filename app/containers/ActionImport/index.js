@@ -12,8 +12,8 @@ import { actions as formActions } from 'react-redux-form/immutable';
 
 import { fromJS } from 'immutable';
 
-import { PATHS, CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES } from 'themes/config';
+import { CONTENT_SINGLE } from 'containers/App/constants';
+import { ROUTES, USER_ROLES, DB } from 'themes/config';
 import { getImportFields, getColumnAttribute } from 'utils/import';
 
 import {
@@ -46,7 +46,7 @@ import { FORM_INITIAL } from './constants';
 export class ActionImport extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   UNSAFE_componentWillMount() {
     if (this.props.dataReady) {
-      this.props.initialiseForm('measureImport.form.data', FORM_INITIAL);
+      this.props.initialiseForm('actionImport.form.data', FORM_INITIAL);
     }
   }
 
@@ -56,7 +56,7 @@ export class ActionImport extends React.PureComponent { // eslint-disable-line r
       this.props.loadEntitiesIfNeeded();
     }
     if (nextProps.dataReady && !this.props.dataReady) {
-      this.props.initialiseForm('measureImport.form.data', FORM_INITIAL);
+      this.props.initialiseForm('actionImport.form.data', FORM_INITIAL);
     }
     if (nextProps.authReady && !this.props.authReady) {
       this.props.redirectIfNotPermitted();
@@ -80,14 +80,14 @@ export class ActionImport extends React.PureComponent { // eslint-disable-line r
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle)}
             type={CONTENT_SINGLE}
-            icon="measures"
+            icon="actions"
             buttons={[{
               type: 'cancel',
               onClick: this.props.handleCancel,
             }]}
           />
           <ImportEntitiesForm
-            model="measureImport.form.data"
+            model="actionImport.form.data"
             fieldModel="import"
             formData={this.props.formData}
             handleSubmit={(formData) => this.props.handleSubmit(formData)}
@@ -115,12 +115,6 @@ export class ActionImport extends React.PureComponent { // eslint-disable-line r
                   {
                     disabled: true,
                     attribute: 'outcome',
-                    type: 'markdown',
-                    import: true,
-                  },
-                  {
-                    disabled: true,
-                    attribute: 'indicator_summary',
                     type: 'markdown',
                     import: true,
                   },
@@ -171,7 +165,7 @@ const mapStateToProps = (state) => ({
   success: selectSuccess(state),
   dataReady: selectReady(state, {
     path: [
-      'user_roles',
+      DB.USER_ROLES,
     ],
   }),
   authReady: selectReadyForAuthCheck(state),
@@ -180,7 +174,7 @@ const mapStateToProps = (state) => ({
 function mapDispatchToProps(dispatch) {
   return {
     loadEntitiesIfNeeded: () => {
-      dispatch(loadEntitiesIfNeeded('user_roles'));
+      dispatch(loadEntitiesIfNeeded(DB.USER_ROLES));
     },
     resetProgress: () => {
       dispatch(resetProgress());
@@ -206,7 +200,7 @@ function mapDispatchToProps(dispatch) {
       }
     },
     handleCancel: () => {
-      dispatch(updatePath(PATHS.MEASURES));
+      dispatch(updatePath(ROUTES.ACTIONS));
     },
     handleReset: () => {
       dispatch(resetProgress());

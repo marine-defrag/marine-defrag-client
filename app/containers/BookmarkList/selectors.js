@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { DB } from 'themes/config';
 
 import {
   selectEntitiesSearchQuery,
@@ -22,7 +23,7 @@ export const selectTypeQuery = createSelector(
 // 3. selectUsers
 export const selectBookmarks = createSelector(
   (state, locationQuery) => selectEntitiesSearchQuery(state, {
-    path: 'bookmarks',
+    path: DB.BOOKMARKS,
     searchAttributes: ['title'],
     locationQuery,
   }),

@@ -78,7 +78,7 @@ export const TEXT_TRUNCATE = {
   ENTITY_TAG: 7,
   CONNECTION_POPUP: 80,
   LINK_FIELD: 30,
-  FW_SELECT: 32,
+  ACTORTYPE_SELECT: 32,
   GRACE: 2,
   META_TITLE: 20,
 };
@@ -102,8 +102,8 @@ export const CYCLE_TAXONOMY_ID = 2;
 export const ENDPOINTS = {
   API: (
     NODE_ENV === 'production'
-      ? 'https://sadata-production.herokuapp.com'
-      : 'https://sadata-production.herokuapp.com'
+      ? 'https://'
+      : 'https://'
   ), // server API endpoint
   SIGNING_URL: '/s3/sign', // server AWS S3 signing url endpoint
   SIGN_IN: 'auth/sign_in',
@@ -119,7 +119,7 @@ export const KEYS = {
   CLIENT: 'client',
   EXPIRY: 'expiry',
   UID: 'uid',
-  RESET_PASSWORD: 'reset_password',
+  // RESET_PASSWORD: 'reset_password',
 };
 
 // database date format
@@ -145,7 +145,7 @@ export const SERVER_ERRORS = {
 export const USER_ROLES = {
   ADMIN: { value: 1, message: 'ui.userRoles.admin' },
   MANAGER: { value: 2, message: 'ui.userRoles.manager' },
-  CONTRIBUTOR: { value: 3, message: 'ui.userRoles.contributor' },
+  ANALYST: { value: 3, message: 'ui.userRoles.analyst' },
   DEFAULT: { value: 9999, message: 'ui.userRoles.default' }, // note: client side only - no role assigned on server
 };
 // Entity publish statuses
@@ -153,49 +153,57 @@ export const PUBLISH_STATUSES = [
   { value: true, message: 'ui.publishStatuses.draft' },
   { value: false, message: 'ui.publishStatuses.public' },
 ];
-// Document publish statuses
-export const DOC_PUBLISH_STATUSES = [
-  { value: true, message: 'ui.docPublishStatuses.public' },
-  { value: false, message: 'ui.docPublishStatuses.private' },
-];
-// Recommendation statuses
+// Actor statuses
 export const ACCEPTED_STATUSES = [
-  { value: true, icon: 'recommendationAccepted', message: 'ui.acceptedStatuses.accepted' },
-  { value: false, icon: 'recommendationNoted', message: 'ui.acceptedStatuses.noted' },
-];
-// Report frequencies
-export const REPORT_FREQUENCIES = [
-  { value: 1, message: 'ui.reportFrequencies.monthly' },
-  { value: 3, message: 'ui.reportFrequencies.quarterly' },
-  { value: 6, message: 'ui.reportFrequencies.semiannual' },
-  { value: 12, message: 'ui.reportFrequencies.annual' },
+  { value: true, icon: 'actorAccepted', message: 'ui.acceptedStatuses.accepted' },
+  { value: false, icon: 'actorNoted', message: 'ui.acceptedStatuses.noted' },
 ];
 
-export const DEFAULT_FRAMEWORK = 1;
+export const DEFAULT_ACTIONTYPE = 1;
+
+export const ROUTES = {
+  ID: '/:id',
+  NEW: '/new',
+  EDIT: '/edit',
+  IMPORT: '/import',
+  PASSWORD: '/password', // change password
+  OVERVIEW: '/overview',
+  LOGIN: '/login',
+  BOOKMARKS: '/bookmarks',
+  LOGOUT: '/logout',
+  REGISTER: '/register',
+  UNAUTHORISED: '/unauthorised',
+  USERS: '/users',
+  ACTIONS: '/actions',
+  ACTORS: '/actors',
+  TAXONOMIES: '/categories',
+  CATEGORIES: '/category',
+  PAGES: '/pages',
+  SEARCH: '/search',
+};
 
 // Map server database tables **************************
-export const DB_TABLES = [
-  'users',
-  'user_roles',
-  'roles',
-  'pages',
-  'bookmarks',
-  'taxonomies',
-  'categories',
-  'indicators',
-  'measure_categories',
-  'measure_indicators',
-  'measures',
-  'recommendation_categories',
-  'recommendation_measures',
-  'recommendations',
-  'user_categories',
-  'progress_reports',
-  'due_dates',
-  'frameworks',
-  'framework_taxonomies',
-  'recommendation_indicators',
-];
+export const DB = {
+  ACTIONS: 'measures', // actions/ACTIONS
+  ACTION_CATEGORIES: 'measure_categories', // measure_categories
+  ACTION_ACTORS: 'measure_actors', // action_actors
+  ACTIONTYPES: 'measuretypes', // action types
+  ACTIONTYPE_TAXONOMIES: 'measuretype_taxonomies', // action taxonomies
+  ACTORS: 'actors',
+  ACTOR_CATEGORIES: 'actor_categories',
+  ACTOR_ACTIONS: 'actor_measures',
+  ACTORTYPES: 'actortypes', // action types
+  ACTORTYPE_TAXONOMIES: 'actortype_taxonomies', // action taxonomies
+  MEMBERSHIPS: 'memberships', // quasi: actor_actors
+  TAXONOMIES: 'taxonomies',
+  CATEGORIES: 'categories',
+  USERS: 'users',
+  USER_CATEGORIES: 'user_categories',
+  USER_ROLES: 'user_roles',
+  ROLES: 'roles',
+  PAGES: 'pages',
+  BOOKMARKS: 'bookmarks',
+};
 
 export const COLUMN_WIDTHS = {
   FULL: 1,

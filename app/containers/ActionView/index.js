@@ -15,8 +15,7 @@ import {
   getStatusField,
   getMetaField,
   getMarkdownField,
-  getRecommendationConnectionField,
-  getIndicatorConnectionField,
+  getActorConnectionField,
   getTaxonomyFields,
   hasTaxonomyCategories,
   getDateField,
@@ -29,8 +28,8 @@ import { getEntityTitleTruncated, getEntityReference } from 'utils/entities';
 
 import { loadEntitiesIfNeeded, updatePath, closeEntity } from 'containers/App/actions';
 
-import { PATHS, CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES } from 'themes/config';
+import { CONTENT_SINGLE } from 'containers/App/constants';
+import { USER_ROLES, ROUTES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -40,10 +39,9 @@ import EntityView from 'components/EntityView';
 import {
   selectReady,
   selectHasUserRole,
-  selectRecommendationTaxonomies,
-  selectRecommendationConnections,
-  selectIndicatorConnections,
-  selectActiveFrameworks,
+  selectActorTaxonomies,
+  selectActorConnections,
+  selectActiveActortypes,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
@@ -52,8 +50,7 @@ import messages from './messages';
 import {
   selectViewEntity,
   selectTaxonomies,
-  selectRecommendations,
-  selectIndicators,
+  selectActors,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
@@ -91,12 +88,10 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
 
   getBodyMainFields = (
     entity,
-    indicators,
-    indicatorConnections,
-    recommendationsByFw,
-    recommendationTaxonomies,
-    recommendationConnections,
-    frameworks,
+    actorsByActortype,
+    actorTaxonomies,
+    actorConnections,
+    actortypes,
     onEntityClick,
   ) => {
     const fields = [];
@@ -105,40 +100,30 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       fields: [
         getMarkdownField(entity, 'description', true),
         // getMarkdownField(entity, 'outcome', true),
-        // getMarkdownField(entity, 'indicator_summary', true),
       ],
     });
-    // indicators
-    if (indicators) {
-      fields.push({
-        label: appMessages.nav.indicatorsSuper,
-        icon: 'indicators',
-        fields: [
-          getIndicatorConnectionField(indicators, indicatorConnections, onEntityClick),
-        ],
-      });
-    }
-    // recs
-    if (recommendationsByFw) {
-      const recConnections = [];
-      recommendationsByFw.forEach((recs, fwid) => {
-        const framework = frameworks.find((fw) => qe(fw.get('id'), fwid));
-        const hasResponse = framework && framework.getIn(['attributes', 'has_response']);
-        recConnections.push(
-          getRecommendationConnectionField(
-            recs,
-            recommendationTaxonomies,
-            recommendationConnections,
+
+    // actors
+    if (actorsByActortype) {
+      const actorConnections = [];
+      actorsByActortype.forEach((actors, actortypeid) => {
+        const actortype = actortypes.find((at) => qe(at.get('id'), actortypeid));
+        const hasResponse = actortype && actortype.getIn(['attributes', 'has_response']);
+        actorConnections.push(
+          getActorConnectionField(
+            actors,
+            actorTaxonomies,
+            actorConnections,
             onEntityClick,
-            fwid,
+            actortypeid,
             hasResponse,
           ),
         );
       });
       fields.push({
-        label: appMessages.nav.recommendationsSuper,
-        icon: 'recommendations',
-        fields: recConnections,
+        label: appMessages.nav.actorsSuper,
+        icon: 'actors',
+        fields: actorConnections,
       });
     }
     return fields;
@@ -169,14 +154,12 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       viewEntity,
       dataReady,
       hasUserRole,
-      recommendationsByFw,
-      indicators,
+      actorsByActortype,
       taxonomies,
-      recTaxonomies,
+      actorTaxonomies,
       onEntityClick,
-      recConnections,
-      indicatorConnections,
-      frameworks,
+      actorConnections,
+      actortypes,
     } = this.props;
     const isManager = hasUserRole[USER_ROLES.MANAGER.value];
     let buttons = [];
@@ -220,7 +203,7 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
           <ContentHeader
             title={pageTitle}
             type={CONTENT_SINGLE}
-            icon="measures"
+            icon="actions"
             buttons={buttons}
           />
           { !dataReady
@@ -244,12 +227,10 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
                   body: {
                     main: this.getBodyMainFields(
                       viewEntity,
-                      indicators,
-                      indicatorConnections,
-                      recommendationsByFw,
-                      recTaxonomies,
-                      recConnections,
-                      frameworks,
+                      actorsByActortype,
+                      actorTaxonomies,
+                      actorConnections,
+                      actortypes,
                       onEntityClick,
                     ),
                     aside: this.getBodyAsideFields(
@@ -276,13 +257,11 @@ ActionView.propTypes = {
   dataReady: PropTypes.bool,
   hasUserRole: PropTypes.object,
   taxonomies: PropTypes.object,
-  recTaxonomies: PropTypes.object,
-  recommendationsByFw: PropTypes.object,
-  indicators: PropTypes.object,
-  recConnections: PropTypes.object,
-  indicatorConnections: PropTypes.object,
+  actorTaxonomies: PropTypes.object,
+  actorsByActortype: PropTypes.object,
+  actorConnections: PropTypes.object,
   params: PropTypes.object,
-  frameworks: PropTypes.object,
+  actortypes: PropTypes.object,
 };
 
 ActionView.contextTypes = {
@@ -295,12 +274,10 @@ const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   viewEntity: selectViewEntity(state, props.params.id),
   taxonomies: selectTaxonomies(state, props.params.id),
-  indicators: selectIndicators(state, props.params.id),
-  recommendationsByFw: selectRecommendations(state, props.params.id),
-  recTaxonomies: selectRecommendationTaxonomies(state),
-  recConnections: selectRecommendationConnections(state),
-  indicatorConnections: selectIndicatorConnections(state),
-  frameworks: selectActiveFrameworks(state),
+  actorsByActortype: selectActors(state, props.params.id),
+  actorTaxonomies: selectActorTaxonomies(state),
+  actorConnections: selectActorConnections(state),
+  actortypes: selectActiveActortypes(state),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -311,11 +288,11 @@ function mapDispatchToProps(dispatch) {
     onEntityClick: (id, path) => {
       dispatch(updatePath(`/${path}/${id}`));
     },
-    handleEdit: (measureId) => {
-      dispatch(updatePath(`${PATHS.MEASURES}${PATHS.EDIT}/${measureId}`, { replace: true }));
+    handleEdit: (actionId) => {
+      dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.EDIT}/${actionId}`, { replace: true }));
     },
     handleClose: () => {
-      dispatch(closeEntity(PATHS.MEASURES));
+      dispatch(closeEntity(ROUTES.ACTIONS));
     },
   };
 }

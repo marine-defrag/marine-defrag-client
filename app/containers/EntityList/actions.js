@@ -19,7 +19,6 @@ import {
   UPDATE_QUERY,
   UPDATE_GROUP,
   PAGE_CHANGE,
-  EXPAND_CHANGE,
   PAGE_ITEM_CHANGE,
   SORTBY_CHANGE,
   SORTORDER_CHANGE,
@@ -141,13 +140,6 @@ export function updatePageItems(no) {
   return {
     type: PAGE_ITEM_CHANGE,
     no,
-  };
-}
-
-export function updateExpand(expand) {
-  return {
-    type: EXPAND_CHANGE,
-    expand,
   };
 }
 

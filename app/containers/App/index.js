@@ -17,17 +17,18 @@ import Header from 'components/Header';
 import EntityNew from 'containers/EntityNew';
 
 import { sortEntities } from 'utils/sort';
+import { ROUTES, DB } from 'themes/config';
 
 import {
   selectIsSignedIn,
   selectIsUserManager,
   selectSessionUserAttributes,
   selectReady,
-  selectFrameworks,
+  selectActortypes,
   selectEntitiesWhere,
   selectNewEntityModal,
-  selectFrameworkQuery,
-  selectViewRecommendationFrameworkId,
+  selectActortypeQuery,
+  selectViewActorActortypeId,
 } from './selectors';
 
 import {
@@ -38,7 +39,7 @@ import {
   openNewEntityModal,
 } from './actions';
 
-import { PATHS, DEPENDENCIES } from './constants';
+import { DEPENDENCIES } from './constants';
 
 import messages from './messages';
 
@@ -87,22 +88,22 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
     'number'
   )
     .map((page) => ({
-      path: `${PATHS.PAGES}/${page.get('id')}`,
+      path: `${ROUTES.PAGES}/${page.get('id')}`,
       title: page.getIn(['attributes', 'menu_title']) || page.getIn(['attributes', 'title']),
     }))
     .toArray();
 
-  prepareFrameworkOptions = (frameworks, activeId) => {
+  prepareActortypeOptions = (actortypes, activeId) => {
     const { intl } = this.context;
-    const options = Object.values(frameworks.toJS()).map((fw) => ({
-      value: fw.id,
-      label: intl.formatMessage(messages.frameworks[fw.id]),
-      active: activeId === fw.id,
+    const options = Object.values(actortypes.toJS()).map((actortype) => ({
+      value: actortype.id,
+      label: intl.formatMessage(messages.actortypes[actortype.id]),
+      active: activeId === actortype.id,
     }));
     return options.concat({
       value: 'all',
-      label: intl.formatMessage(messages.frameworks.all),
-      active: (activeId === 'all') || frameworks.size === 0,
+      label: intl.formatMessage(messages.actortypes.all),
+      active: (activeId === 'all') || actortypes.size === 0,
     });
   }
 
@@ -110,68 +111,60 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
     isManager,
     isUserSignedIn,
     currentPath,
-    currentFrameworkId,
-    viewRecommendationFramework,
+    currentActortypeId,
+    viewActorActortype,
   ) => {
     const { intl } = this.context;
     let navItems = [
       {
-        path: PATHS.OVERVIEW,
+        path: ROUTES.OVERVIEW,
         titleSuper: intl.formatMessage(messages.nav.overviewSuper),
         title: intl.formatMessage(messages.nav.overview),
         active:
-          currentPath.startsWith(PATHS.OVERVIEW)
-          || currentPath.startsWith(PATHS.TAXONOMIES)
-          || currentPath.startsWith(PATHS.CATEGORIES),
+          currentPath.startsWith(ROUTES.OVERVIEW)
+          || currentPath.startsWith(ROUTES.TAXONOMIES)
+          || currentPath.startsWith(ROUTES.CATEGORIES),
       },
       {
-        path: PATHS.RECOMMENDATIONS,
-        titleSuper: intl.formatMessage(messages.nav.recommendationsSuper),
-        title: intl.formatMessage(messages.frameworkObjectivesShort[currentFrameworkId]),
-        active: currentPath.startsWith(PATHS.RECOMMENDATIONS) && (
-          !viewRecommendationFramework
-          || currentFrameworkId === 'all'
-          || currentFrameworkId === viewRecommendationFramework
+        path: ROUTES.ACTORS,
+        titleSuper: intl.formatMessage(messages.nav.actorsSuper),
+        title: intl.formatMessage(messages.actortypeObjectivesShort[currentActortypeId]),
+        active: currentPath.startsWith(ROUTES.ACTORS) && (
+          !viewActorActortype
+          || currentActortypeId === 'all'
+          || currentActortypeId === viewActorActortype
         ),
       },
       {
-        path: PATHS.MEASURES,
-        titleSuper: intl.formatMessage(messages.nav.measuresSuper),
-        title: intl.formatMessage(messages.nav.measures),
-        active: currentPath.startsWith(PATHS.MEASURES),
+        path: ROUTES.ACTIONS,
+        titleSuper: intl.formatMessage(messages.nav.actionsSuper),
+        title: intl.formatMessage(messages.nav.actions),
+        active: currentPath.startsWith(ROUTES.ACTIONS),
       },
     ];
-    navItems = navItems.concat([{
-      path: PATHS.INDICATORS,
-      titleSuper: intl.formatMessage(messages.nav.indicatorsSuper),
-      title: intl.formatMessage(messages.nav.indicators),
-      active:
-        currentPath.startsWith(PATHS.INDICATORS)
-        || currentPath.startsWith(PATHS.PROGRESS_REPORTS),
-    }]);
     if (isManager) {
       navItems = navItems.concat([
         {
-          path: PATHS.PAGES,
+          path: ROUTES.PAGES,
           title: intl.formatMessage(messages.nav.pages),
           isAdmin: true,
-          active: currentPath === PATHS.PAGES,
+          active: currentPath === ROUTES.PAGES,
         },
         {
-          path: PATHS.USERS,
+          path: ROUTES.USERS,
           title: intl.formatMessage(messages.nav.users),
           isAdmin: true,
-          active: currentPath === PATHS.USERS,
+          active: currentPath === ROUTES.USERS,
         },
       ]);
     }
     if (isUserSignedIn) {
       navItems = navItems.concat([
         {
-          path: PATHS.BOOKMARKS,
+          path: ROUTES.BOOKMARKS,
           title: intl.formatMessage(messages.nav.bookmarks),
           isAdmin: true,
-          active: currentPath === PATHS.BOOKMARKS,
+          active: currentPath === ROUTES.BOOKMARKS,
         },
       ]);
     }
@@ -186,10 +179,10 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       isManager,
       location,
       newEntityModal,
-      currentFrameworkId,
-      frameworks,
-      onSelectFramework,
-      viewRecommendationFramework,
+      currentActortypeId,
+      actortypes,
+      onSelectActortype,
+      viewActorActortype,
       user,
       children,
     } = this.props;
@@ -206,21 +199,21 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             isUserSignedIn && isManager,
             isUserSignedIn,
             location.pathname,
-            currentFrameworkId,
-            viewRecommendationFramework,
+            currentActortypeId,
+            viewActorActortype,
           )}
           search={{
-            path: PATHS.SEARCH,
+            path: ROUTES.SEARCH,
             title: intl.formatMessage(messages.nav.search),
-            active: location.pathname.startsWith(PATHS.SEARCH),
+            active: location.pathname.startsWith(ROUTES.SEARCH),
             icon: 'search',
           }}
           onPageLink={onPageLink}
           isHome={location.pathname === '/'}
-          onSelectFramework={onSelectFramework}
-          frameworkOptions={this.prepareFrameworkOptions(
-            frameworks,
-            currentFrameworkId,
+          onSelectActortype={onSelectActortype}
+          actortypeOptions={this.prepareActortypeOptions(
+            actortypes,
+            currentActortypeId,
           )}
         />
         <Main isHome={location.pathname === '/'}>
@@ -266,10 +259,10 @@ App.propTypes = {
   location: PropTypes.object.isRequired,
   newEntityModal: PropTypes.object,
   onCloseModal: PropTypes.func,
-  onSelectFramework: PropTypes.func,
-  currentFrameworkId: PropTypes.string,
-  viewRecommendationFramework: PropTypes.string,
-  frameworks: PropTypes.object,
+  onSelectActortype: PropTypes.func,
+  currentActortypeId: PropTypes.string,
+  viewActorActortype: PropTypes.string,
+  actortypes: PropTypes.object,
 };
 App.contextTypes = {
   intl: PropTypes.object.isRequired,
@@ -281,13 +274,13 @@ const mapStateToProps = (state, props) => ({
   isUserSignedIn: selectIsSignedIn(state),
   user: selectSessionUserAttributes(state),
   pages: selectEntitiesWhere(state, {
-    path: 'pages',
+    path: DB.PAGES,
     where: { draft: false },
   }),
   newEntityModal: selectNewEntityModal(state),
-  currentFrameworkId: selectFrameworkQuery(state),
-  frameworks: selectFrameworks(state),
-  viewRecommendationFramework: selectViewRecommendationFrameworkId(state, props.params.id),
+  currentActortypeId: selectActortypeQuery(state),
+  actortypes: selectActortypes(state),
+  viewActorActortype: selectViewActorActortypeId(state, props.params.id),
 });
 
 export function mapDispatchToProps(dispatch) {
@@ -304,11 +297,11 @@ export function mapDispatchToProps(dispatch) {
     onCloseModal: () => {
       dispatch(openNewEntityModal(null));
     },
-    onSelectFramework: (framework) => {
+    onSelectActortype: (actortype) => {
       dispatch(updateRouteQuery(
         {
-          arg: 'fw',
-          value: framework,
+          arg: 'actortype',
+          value: actortype,
           replace: true,
         }
       ));

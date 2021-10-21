@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 /**
  * Direct selector to the actionImport state domain
  */
-export const selectViewDomain = (state) => state.get('measureImport');
+export const selectViewDomain = (state) => state.get('actionImport');
 
 export const selectFormData = createSelector(
   selectViewDomain,

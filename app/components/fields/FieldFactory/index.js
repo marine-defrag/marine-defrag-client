@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Field from 'components/fields/Field';
 
 import ConnectionsField from 'components/fields/ConnectionsField';
-import ConnectionGroupsField from 'components/fields/ConnectionGroupsField';
 import DateField from 'components/fields/DateField';
 import MarkdownField from 'components/fields/MarkdownField';
 import DownloadField from 'components/fields/DownloadField';
@@ -13,15 +12,12 @@ import TaxonomyField from 'components/fields/TaxonomyField';
 import ManagerField from 'components/fields/ManagerField';
 import MetaField from 'components/fields/MetaField';
 import ReferenceField from 'components/fields/ReferenceField';
-import ReportsField from 'components/fields/ReportsField';
 import RoleField from 'components/fields/RoleField';
-import ScheduleField from 'components/fields/ScheduleField';
 import StatusField from 'components/fields/StatusField';
 import TextField from 'components/fields/TextField';
 import TitleField from 'components/fields/TitleField';
 import TitleTextField from 'components/fields/TitleTextField';
 import TitleShortField from 'components/fields/TitleShortField';
-import SmartTaxonomyField from 'components/fields/SmartTaxonomyField';
 
 class FieldFactory extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   renderField = (field) => {
@@ -50,8 +46,6 @@ class FieldFactory extends React.PureComponent { // eslint-disable-line react/pr
         return (<ManagerField field={field} />);
       case 'taxonomy':
         return (<TaxonomyField field={field} />);
-      case 'schedule':
-        return (<ScheduleField field={field} />);
       case 'download':
         return (<DownloadField field={field} />);
       case 'description':
@@ -60,11 +54,6 @@ class FieldFactory extends React.PureComponent { // eslint-disable-line react/pr
       case 'connections':
         return (<ConnectionsField field={field} />);
       case 'connectionGroups':
-        return (<ConnectionGroupsField field={field} />);
-      case 'reports':
-        return (<ReportsField field={field} />);
-      case 'smartTaxonomy':
-        return (<SmartTaxonomyField field={field} />);
       case 'text':
       default:
         return (<TextField field={field} />);

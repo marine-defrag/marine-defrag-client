@@ -17,12 +17,11 @@ import validateEmailFormat from 'components/forms/validators/validate-email-form
 import validateLength from 'components/forms/validators/validate-length';
 
 import {
-  REPORT_FREQUENCIES,
   PUBLISH_STATUSES,
   USER_ROLES,
   DATE_FORMAT,
-  DOC_PUBLISH_STATUSES,
   ACCEPTED_STATUSES,
+  DB,
 } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
@@ -64,6 +63,7 @@ export const parentCategoryOptions = (entities, activeParentId) => entities
 
 export const dateOption = (entity, activeDateId) => Map({
   value: entity.get('id'),
+  // TODO replace due_date
   label: entity.getIn(['attributes', 'due_date']),
   checked: activeDateId ? entity.get('id') === activeDateId.toString() : false,
 });
@@ -93,59 +93,59 @@ export const makeTagFilterGroups = (taxonomies, contextIntl) => taxonomies && so
   })).valueSeq().toArray(),
 })).toArray();
 
-export const renderMeasureControl = (entities, taxonomies, onCreateOption, contextIntl) => entities
+export const renderActionControl = (entities, taxonomies, onCreateOption, contextIntl) => entities
   ? {
     id: 'actions',
-    model: '.associatedMeasures',
-    dataPath: ['associatedMeasures'],
-    label: contextIntl.formatMessage(appMessages.entities.measures.plural),
+    model: '.associatedActions',
+    dataPath: ['associatedActions'],
+    label: contextIntl.formatMessage(appMessages.entities.actions.plural),
     controlType: 'multiselect',
     options: entityOptions(entities, true),
     advanced: true,
     selectAll: true,
     tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
     onCreate: onCreateOption
-      ? () => onCreateOption({ path: 'measures' })
+      ? () => onCreateOption({ path: DB.ACTIONS })
       : null,
   }
   : null;
 
-export const renderRecommendationControl = (
-  fwId,
+export const renderActorControl = (
+  actortypeId,
   entities,
   taxonomies,
   onCreateOption,
   contextIntl,
 ) => entities
   ? {
-    id: `recommendations.${fwId}`,
-    model: `.associatedRecommendationsByFw.${fwId}`,
-    dataPath: ['associatedRecommendationsByFw', fwId],
-    label: contextIntl.formatMessage(appMessages.entities[`recommendations_${fwId}`].plural),
+    id: `actors.${actortypeId}`,
+    model: `.associatedActorsByActortype.${actortypeId}`,
+    dataPath: ['associatedActorsByActortype', actortypeId],
+    label: contextIntl.formatMessage(appMessages.entities[`actors_${actortypeId}`].plural),
     controlType: 'multiselect',
     options: entityOptions(entities),
     advanced: true,
     selectAll: true,
     tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
     onCreate: onCreateOption
-      ? () => onCreateOption({ path: 'recommendations' })
+      ? () => onCreateOption({ path: DB.ACTORS })
       : null,
   }
   : null;
 
-// recommendations grouped by framework
-export const renderRecommendationsByFwControl = (
-  entitiesByFw,
+// actors grouped by actortype
+export const renderActorsByActortypeControl = (
+  entitiesByActortype,
   taxonomies,
   onCreateOption,
   contextIntl,
-) => entitiesByFw
-  ? entitiesByFw.reduce(
-    (controls, entities, fwid) => controls.concat({
-      id: `recommendations.${fwid}`,
-      model: `.associatedRecommendationsByFw.${fwid}`,
-      dataPath: ['associatedRecommendationsByFw', fwid],
-      label: contextIntl.formatMessage(appMessages.entities[`recommendations_${fwid}`].plural),
+) => entitiesByActortype
+  ? entitiesByActortype.reduce(
+    (controls, entities, actortypeid) => controls.concat({
+      id: `actors.${actortypeid}`,
+      model: `.associatedActorsByActortype.${actortypeid}`,
+      dataPath: ['associatedActorsByActortype', actortypeid],
+      label: contextIntl.formatMessage(appMessages.entities[`actors_${actortypeid}`].plural),
       controlType: 'multiselect',
       options: entityOptions(entities),
       advanced: true,
@@ -153,8 +153,8 @@ export const renderRecommendationsByFwControl = (
       tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
       onCreate: onCreateOption
         ? () => onCreateOption({
-          path: 'recommendations',
-          attributes: { framework_id: fwid },
+          path: DB.ACTORS,
+          attributes: { actortype_id: actortypeid },
         })
         : null,
     }),
@@ -179,7 +179,7 @@ export const renderTaxonomyControl = (
       options: entityOptions(taxonomy.get('categories'), false),
       onCreate: onCreateOption
         ? () => onCreateOption({
-          path: 'categories',
+          path: DB.CATEGORIES,
           attributes: { taxonomy_id: taxonomy.get('id') },
         })
         : null,
@@ -187,22 +187,6 @@ export const renderTaxonomyControl = (
     [],
   )
   : [];
-
-export const renderIndicatorControl = (entities, onCreateOption, contextIntl) => entities
-  ? {
-    id: 'indicators',
-    model: '.associatedIndicators',
-    dataPath: ['associatedIndicators'],
-    label: contextIntl.formatMessage(appMessages.entities.indicators.plural),
-    controlType: 'multiselect',
-    options: entityOptions(entities, true),
-    advanced: true,
-    selectAll: true,
-    onCreate: onCreateOption
-      ? () => onCreateOption({ path: 'indicators' })
-      : null,
-  }
-  : null;
 
 export const renderUserControl = (entities, label, activeUserId) => entities
   ? {
@@ -333,22 +317,6 @@ export const getAcceptedField = (formatMessage) => ({
   options: ACCEPTED_STATUSES,
 });
 
-export const getFrequencyField = (formatMessage) => ({
-  id: 'frequency_months',
-  controlType: 'select',
-  model: '.attributes.frequency_months',
-  label: formatMessage(appMessages.attributes.frequency_months),
-  options: REPORT_FREQUENCIES,
-});
-
-export const getDocumentStatusField = (formatMessage) => ({
-  id: 'document_public',
-  controlType: 'select',
-  model: '.attributes.document_public',
-  label: formatMessage(appMessages.attributes.document_public),
-  options: DOC_PUBLISH_STATUSES,
-});
-
 export const getStatusField = (formatMessage) => ({
   id: 'status',
   controlType: 'select',
@@ -356,69 +324,15 @@ export const getStatusField = (formatMessage) => ({
   label: formatMessage(appMessages.attributes.draft),
   options: PUBLISH_STATUSES,
 });
-export const getFrameworkFormField = (formatMessage, fwOptions) => ({
-  id: 'framework',
+export const getActortypeFormField = (formatMessage, actortypeOptions) => ({
+  id: 'actortype',
   controlType: 'select',
-  model: '.attributes.framework_id',
-  label: formatMessage(appMessages.attributes.framework_id),
-  options: Object.values(fwOptions.toJS()).map((fw) => ({
-    value: fw.id,
-    message: `frameworks.${fw.id}`,
+  model: '.attributes.actortype_id',
+  label: formatMessage(appMessages.attributes.actortype_id),
+  options: Object.values(actortypeOptions.toJS()).map((actortype) => ({
+    value: actortype.id,
+    message: `actortypes.${actortype.id}`,
   })),
-});
-
-const getDueDateStatus = (date, formatMessage) => {
-  if (date.getIn(['attributes', 'overdue'])) {
-    return ` ${formatMessage(appMessages.entities.due_dates.overdue)}`;
-  }
-  if (date.getIn(['attributes', 'due'])) {
-    return ` ${formatMessage(appMessages.entities.due_dates.due)}`;
-  }
-  return '';
-};
-
-export const getDueDateDateOptions = (dates, formatMessage, formatDate, activeDateId = 'null') => {
-  const NO_OF_REPORT_OPTIONS = 1;
-  let excludeCount = 0;
-  const dateOptions = dates
-    ? dates.reduce((memo, date, i) => {
-      const dateActive = date.get('id') === activeDateId.toString();
-      const optionNoNotExceeded = i - excludeCount < NO_OF_REPORT_OPTIONS;
-      const withoutReport = !date.getIn(['attributes', 'has_progress_report']);
-      // only allow upcoming and those that are not associated
-      if ((optionNoNotExceeded && withoutReport) || dateActive) {
-        if (date.getIn(['attributes', 'overdue']) || dateActive) {
-          excludeCount += 1;
-        }
-        // exclude overdue and already assigned date from max no of date options
-        const label = formatDate
-          && `${formatDate(new Date(date.getIn(['attributes', 'due_date'])))}${getDueDateStatus(date, formatMessage)}`;
-        return memo.concat([
-          {
-            value: date.get('id'),
-            label,
-            highlight: date.getIn(['attributes', 'overdue']),
-          },
-        ]);
-      }
-      excludeCount += 1;
-      return memo;
-    }, [])
-    : [];
-  return dateOptions.concat({
-    value: '0',
-    label: formatMessage && formatMessage(appMessages.entities.progress_reports.unscheduled_short),
-  });
-};
-
-export const getDueDateOptionsField = (formatMessage, dateOptions) => ({
-  id: 'due_date_id',
-  controlType: 'radio',
-  model: '.attributes.due_date_id',
-  options: dateOptions,
-  hints: {
-    1: formatMessage(appMessages.entities.due_dates.empty),
-  },
 });
 
 export const getTitleFormField = (formatMessage, controlType = 'title', attribute = 'title') => getFormField({
@@ -668,32 +582,11 @@ const getCategoryFields = (args, formatMessage) => ({
   },
 });
 
-const getIndicatorFields = (formatMessage) => ({
+const getActorFields = ({ actortypes, hasResponse }, formatMessage) => ({
   header: {
     main: [{ // fieldGroup
       fields: [
-        getReferenceFormField(formatMessage, false, true),
-        getTitleFormField(formatMessage, 'titleText'),
-      ],
-    }],
-    aside: [{ // fieldGroup
-      fields: [
-        getStatusField(formatMessage),
-      ],
-    }],
-  },
-  body: {
-    main: [{
-      fields: [getMarkdownField(formatMessage)],
-    }],
-  },
-});
-
-const getRecommendationFields = ({ frameworks, hasResponse }, formatMessage) => ({
-  header: {
-    main: [{ // fieldGroup
-      fields: [
-        frameworks && getFrameworkFormField(formatMessage, frameworks),
+        actortypes && getActortypeFormField(formatMessage, actortypes),
         getReferenceFormField(formatMessage, true), // required
         getTitleFormField(formatMessage),
       ],
@@ -707,7 +600,7 @@ const getRecommendationFields = ({ frameworks, hasResponse }, formatMessage) => 
   body: {
     main: [{
       fields: [
-        getMarkdownField(formatMessage, 'description', 'fullRecommendation', 'fullRecommendation', 'fullRecommendation'),
+        getMarkdownField(formatMessage, 'description', 'fullActor', 'fullActor', 'fullActor'),
         hasResponse && getAcceptedField(formatMessage),
         hasResponse && getMarkdownField(formatMessage, 'response'),
       ],
@@ -715,7 +608,7 @@ const getRecommendationFields = ({ frameworks, hasResponse }, formatMessage) => 
   },
 });
 
-const getMeasureFields = (formatMessage) => ({
+const getActionFields = (formatMessage) => ({
   header: {
     main: [{ // fieldGroup
       fields: [
@@ -747,12 +640,10 @@ export const getEntityAttributeFields = (path, args, contextIntl) => {
   switch (path) {
     case 'categories':
       return getCategoryFields(args.categories, contextIntl.formatMessage);
-    case 'measures':
-      return getMeasureFields(contextIntl.formatMessage);
-    case 'indicators':
-      return getIndicatorFields(contextIntl.formatMessage);
-    case 'recommendations':
-      return getRecommendationFields(args.recommendations, contextIntl.formatMessage);
+    case 'actions':
+      return getActionFields(contextIntl.formatMessage);
+    case 'actors':
+      return getActorFields(args.actors, contextIntl.formatMessage);
     default:
       return {};
   }

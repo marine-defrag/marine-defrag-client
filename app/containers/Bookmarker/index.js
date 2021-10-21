@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { DB } from 'themes/config';
 
 import { getBookmarkForSaving, generateBookmarkTitle } from 'utils/bookmark';
 
@@ -134,7 +135,7 @@ Bookmarker.propTypes = {
 const mapStateToProps = (state) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   bookmark: selectBookmarkForLocation(state),
-  bookmarks: selectEntities(state, 'bookmarks'),
+  bookmarks: selectEntities(state, DB.BOOKMARKS),
   location: selectLocation(state),
 });
 function mapDispatchToProps(dispatch) {
@@ -144,14 +145,14 @@ function mapDispatchToProps(dispatch) {
     },
     handleDelete: (id) => {
       dispatch(deleteEntity({
-        path: 'bookmarks',
+        path: DB.BOOKMARKS,
         id,
         redirect: false,
       }));
     },
     handleNew: (location, title, type) => {
       dispatch(newEntity({
-        path: 'bookmarks',
+        path: DB.BOOKMARKS,
         entity: {
           attributes: {
             title,
@@ -162,7 +163,7 @@ function mapDispatchToProps(dispatch) {
     },
     handleUpdateTitle: (bookmark, title) => {
       dispatch(saveEntity({
-        path: 'bookmarks',
+        path: DB.BOOKMARKS,
         entity: {
           id: bookmark.get('id'),
           attributes: {

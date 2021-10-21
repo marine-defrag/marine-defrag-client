@@ -14,7 +14,7 @@ import { fromJS } from 'immutable';
 
 import { checkResponseError } from 'utils/request';
 import { isSignedIn } from 'utils/api-request';
-import { DB_TABLES } from 'themes/config';
+import { DB } from 'themes/config';
 
 import {
   AUTHENTICATE_SENDING,
@@ -31,7 +31,6 @@ import {
   REMOVE_ENTITY,
   ENTITIES_REQUESTED,
   INVALIDATE_ENTITIES,
-  DUEDATE_ASSIGNED,
   OPEN_NEW_ENTITY_MODAL,
 } from './constants';
 
@@ -47,10 +46,10 @@ const initialState = fromJS({
   },
   /* eslint-disable no-param-reassign */
   // Record the time that entities where requested from the server
-  requested: DB_TABLES.reduce((memo, table) => { memo[table] = null; return memo; }, {}),
+  requested: Object.values(DB).reduce((memo, table) => { memo[table] = null; return memo; }, {}),
   // Record the time that entities where returned from the server
-  ready: DB_TABLES.reduce((memo, table) => { memo[table] = null; return memo; }, {}),
-  entities: DB_TABLES.reduce((memo, table) => { memo[table] = {}; return memo; }, {}),
+  ready: Object.values(DB).reduce((memo, table) => { memo[table] = null; return memo; }, {}),
+  entities: Object.values(DB).reduce((memo, table) => { memo[table] = {}; return memo; }, {}),
   /* eslint-enable no-param-reassign */
   user: {
     attributes: null,
@@ -139,19 +138,6 @@ function appReducer(state = initialState, payload) {
         .set('ready', fromJS(initialState.toJS().ready)) // should trigger new entity load
         .set('requested', fromJS(initialState.toJS().requested)) // should trigger new entity load
         .set('entities', fromJS(initialState.toJS().entities));
-    case DUEDATE_ASSIGNED:
-      if (payload.id) {
-        const date = state.getIn(['entities', 'due_dates', payload.id.toString()]);
-        if (date) {
-          // check
-          return state
-            .setIn(['entities', 'due_dates', payload.id.toString(), 'attributes', 'due'], false)
-            .setIn(['entities', 'due_dates', payload.id.toString(), 'attributes', 'overdue'], false)
-            .setIn(['entities', 'due_dates', payload.id.toString(), 'attributes', 'has_progress_report'], true);
-        }
-        return state;
-      }
-      return state;
     case OPEN_NEW_ENTITY_MODAL:
       return state.set('newEntityModal', fromJS(payload.args));
     default:

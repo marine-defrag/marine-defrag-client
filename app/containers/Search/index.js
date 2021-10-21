@@ -42,7 +42,7 @@ import EntityListHeader from 'components/EntityListMain/EntityListGroups/EntityL
 import EntityListItemWrapper from 'components/EntityListMain/EntityListGroups/EntityListItems/EntityListItemWrapper';
 
 import appMessages from 'containers/App/messages';
-// import { PATHS } from 'containers/App/constants';
+// import { ROUTES } from 'themes/config';
 
 import { DEPENDENCIES } from './constants';
 import { selectEntitiesByQuery } from './selectors';
@@ -52,7 +52,7 @@ import {
   updateSortBy,
   updateSortOrder,
 } from './actions';
-// import { selectConnections, selectMeasures, selectConnectedTaxonomies } from './selectors';
+// import { selectConnections, selectActions, selectConnectedTaxonomies } from './selectors';
 
 import messages from './messages';
 

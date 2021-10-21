@@ -6,14 +6,6 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
-  due: {
-    id: 'app.components.EntityListItem.due',
-    defaultMessage: '{total} due',
-  },
-  overdue: {
-    id: 'app.components.EntityListItem.overdue',
-    defaultMessage: '{total} overdue',
-  },
   associationNotExistent: {
     id: 'app.components.EntityListItem.associationNotExistent',
     defaultMessage: 'Association no longer present.',

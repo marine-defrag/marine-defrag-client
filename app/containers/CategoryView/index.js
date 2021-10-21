@@ -18,10 +18,10 @@ import {
   getMetaField,
   getMarkdownField,
   getLinkField,
-  getMeasureConnectionField,
-  getMeasureConnectionGroupsField,
-  getRecommendationConnectionField,
-  getRecommendationConnectionGroupsField,
+  getActionConnectionField,
+  getActionConnectionGroupsField,
+  getActorConnectionField,
+  getActorConnectionGroupsField,
   getManagerField,
   getEntityLinkField,
   getTaxonomyFields,
@@ -38,7 +38,8 @@ import { qe } from 'utils/quasi-equals';
 
 import { loadEntitiesIfNeeded, updatePath, closeEntity } from 'containers/App/actions';
 
-import { PATHS, CONTENT_SINGLE } from 'containers/App/constants';
+import { CONTENT_SINGLE } from 'containers/App/constants';
+import { ROUTES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -48,9 +49,9 @@ import EntityView from 'components/EntityView';
 import {
   selectReady,
   selectIsUserManager,
-  selectMeasureConnections,
-  selectRecommendationConnections,
-  selectActiveFrameworks,
+  selectActionConnections,
+  selectActorConnections,
+  selectActiveActortypes,
 } from 'containers/App/selectors';
 
 
@@ -59,13 +60,13 @@ import messages from './messages';
 
 import {
   selectViewEntity,
-  selectRecommendations,
-  selectMeasures,
+  selectActors,
+  selectActions,
   selectTaxonomiesWithCategories,
   selectParentTaxonomy,
   selectChildTaxonomies,
-  selectChildRecommendations,
-  selectChildMeasures,
+  selectChildActors,
+  selectChildActions,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
@@ -133,15 +134,15 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
 
   getBodyMainFields = (
     entity,
-    recommendationsByFw,
-    childRecommendationsByFw,
-    measures,
-    childMeasures,
+    actorsByActortype,
+    childActorsByActortype,
+    actions,
+    childActions,
     taxonomies,
     onEntityClick,
-    measureConnections,
-    recommendationConnections,
-    frameworks,
+    actionConnections,
+    actorConnections,
+    actortypes,
   ) => {
     const fields = [];
     // own attributes
@@ -150,78 +151,78 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
     });
     // connections
     if (!entity.getIn(['attributes', 'user_only'])) {
-      // measures
-      // child categories related measures
-      const measuresConnections = [];
-      if (childMeasures) {
-        childMeasures.forEach((tax) => measuresConnections.push(
-          getMeasureConnectionGroupsField(
+      // actions
+      // child categories related actions
+      const actionsConnections = [];
+      if (childActions) {
+        childActions.forEach((tax) => actionsConnections.push(
+          getActionConnectionGroupsField(
             tax.get('categories'),
             appMessages.entities.taxonomies[tax.get('id')].single,
             taxonomies,
-            measureConnections,
+            actionConnections,
             onEntityClick,
           )
         ));
-      } else if (entity.getIn(['taxonomy', 'attributes', 'tags_measures']) && measures) {
+      } else if (entity.getIn(['taxonomy', 'attributes', 'tags_actions']) && actions) {
         // related actions
-        measuresConnections.push(
-          getMeasureConnectionField(
-            measures,
+        actionsConnections.push(
+          getActionConnectionField(
+            actions,
             taxonomies,
-            measureConnections,
+            actionConnections,
             onEntityClick,
           ),
         );
       }
       fields.push({
-        label: appMessages.nav.measuresSuper,
-        icon: 'measures',
-        fields: measuresConnections,
+        label: appMessages.nav.actionsSuper,
+        icon: 'actions',
+        fields: actionsConnections,
       });
 
-      // child taxonomies tag recs
-      // child categories related recommendations
-      const recConnections = [];
-      if (childRecommendationsByFw) {
-        childRecommendationsByFw.forEach((recs, fwid) => {
-          const framework = frameworks.find((fw) => qe(fw.get('id'), fwid));
-          const hasResponse = framework && framework.getIn(['attributes', 'has_response']);
-          recs.forEach((tax) => {
-            recConnections.push(
-              getRecommendationConnectionGroupsField(
+      // child taxonomies tag actors
+      // child categories related actors
+      const actorConnections = [];
+      if (childActorsByActortype) {
+        childActorsByActortype.forEach((actors, actortypeid) => {
+          const actortype = actortypes.find((actortype) => qe(actortype.get('id'), actortypeid));
+          const hasResponse = actortype && actortype.getIn(['attributes', 'has_response']);
+          actors.forEach((tax) => {
+            actorConnections.push(
+              getActorConnectionGroupsField(
                 tax.get('categories'),
                 appMessages.entities.taxonomies[tax.get('id')].single,
                 taxonomies,
-                recommendationConnections,
+                actorConnections,
                 onEntityClick,
-                fwid,
+                actortypeid,
                 hasResponse,
               )
             );
           });
         });
-        // related recommendations
-      } else if (entity.getIn(['taxonomy', 'attributes', 'tags_recommendations']) && recommendationsByFw) {
-        recommendationsByFw.forEach((recs, fwid) => {
-          const framework = frameworks.find((fw) => qe(fw.get('id'), fwid));
-          const hasResponse = framework && framework.getIn(['attributes', 'has_response']);
-          recConnections.push(
-            getRecommendationConnectionField(
-              recs,
+        // related actors
+      } else if (entity.getIn(['taxonomy', 'attributes', 'tags_actors']) && actorsByActortype) {
+        actorsByActortype.forEach((actors, actortypeid) => {
+          const actortype = actortypes.find((actortype) => qe(actortype.get('id'), actortypeid));
+          const hasResponse = actortype && actortype.getIn(['attributes', 'has_response']);
+          actorConnections.push(
+            getActorConnectionField(
+              actors,
               taxonomies,
-              recommendationConnections,
+              actorConnections,
               onEntityClick,
-              fwid,
+              actortypeid,
               hasResponse,
             ),
           );
         });
       }
       fields.push({
-        label: appMessages.nav.recommendationsSuper,
-        icon: 'recommendations',
-        fields: recConnections,
+        label: appMessages.nav.actorsSuper,
+        icon: 'actors',
+        fields: actorConnections,
       });
     }
     return fields;
@@ -274,17 +275,17 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
       viewEntity,
       dataReady,
       isManager,
-      recommendationsByFw,
-      childRecommendationsByFw,
-      measures,
-      childMeasures,
+      actorsByActortype,
+      childActorsByActortype,
+      actions,
+      childActions,
       taxonomies,
       onEntityClick,
-      measureConnections,
-      recommendationConnections,
+      actionConnections,
+      actorConnections,
       parentTaxonomy,
       childTaxonomies,
-      frameworks,
+      actortypes,
     } = this.props;
     let buttons = [];
     if (dataReady) {
@@ -360,15 +361,15 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
                   body: {
                     main: this.getBodyMainFields(
                       viewEntity,
-                      recommendationsByFw,
-                      childRecommendationsByFw,
-                      measures,
-                      childMeasures,
+                      actorsByActortype,
+                      childActorsByActortype,
+                      actions,
+                      childActions,
                       taxonomies,
                       onEntityClick,
-                      measureConnections,
-                      recommendationConnections,
-                      frameworks,
+                      actionConnections,
+                      actorConnections,
+                      actortypes,
                     ),
                     aside: this.getBodyAsideFields(
                       viewEntity,
@@ -396,15 +397,15 @@ CategoryView.propTypes = {
   params: PropTypes.object,
   isManager: PropTypes.bool,
   parentTaxonomy: PropTypes.object,
-  recommendationsByFw: PropTypes.object,
-  childRecommendationsByFw: PropTypes.object,
+  actorsByActortype: PropTypes.object,
+  childActorsByActortype: PropTypes.object,
   taxonomies: PropTypes.object,
   childTaxonomies: PropTypes.object,
-  measures: PropTypes.object,
-  childMeasures: PropTypes.object,
-  measureConnections: PropTypes.object,
-  recommendationConnections: PropTypes.object,
-  frameworks: PropTypes.object,
+  actions: PropTypes.object,
+  childActions: PropTypes.object,
+  actionConnections: PropTypes.object,
+  actorConnections: PropTypes.object,
+  actortypes: PropTypes.object,
 };
 
 CategoryView.contextTypes = {
@@ -415,16 +416,16 @@ const mapStateToProps = (state, props) => ({
   isManager: selectIsUserManager(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   viewEntity: selectViewEntity(state, props.params.id),
-  recommendationsByFw: selectRecommendations(state, props.params.id),
-  childRecommendationsByFw: selectChildRecommendations(state, props.params.id),
-  childMeasures: selectChildMeasures(state, props.params.id),
-  measures: selectMeasures(state, props.params.id),
+  actorsByActortype: selectActors(state, props.params.id),
+  childActorsByActortype: selectChildActors(state, props.params.id),
+  childActions: selectChildActions(state, props.params.id),
+  actions: selectActions(state, props.params.id),
   taxonomies: selectTaxonomiesWithCategories(state),
   parentTaxonomy: selectParentTaxonomy(state, props.params.id),
   childTaxonomies: selectChildTaxonomies(state, props.params.id),
-  measureConnections: selectMeasureConnections(state),
-  recommendationConnections: selectRecommendationConnections(state),
-  frameworks: selectActiveFrameworks(state),
+  actionConnections: selectActionConnections(state),
+  actorConnections: selectActorConnections(state),
+  actortypes: selectActiveActortypes(state),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -436,10 +437,10 @@ function mapDispatchToProps(dispatch) {
       dispatch(updatePath(`/${path}/${id}`));
     },
     handleEdit: (categoryId) => {
-      dispatch(updatePath(`${PATHS.CATEGORIES}${PATHS.EDIT}/${categoryId}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.CATEGORIES}${ROUTES.EDIT}/${categoryId}`, { replace: true }));
     },
     handleClose: (taxonomyId) => {
-      dispatch(closeEntity(taxonomyId ? `${PATHS.TAXONOMIES}/${taxonomyId}` : PATHS.OVERVIEW));
+      dispatch(closeEntity(taxonomyId ? `${ROUTES.TAXONOMIES}/${taxonomyId}` : ROUTES.OVERVIEW));
     },
   };
 }

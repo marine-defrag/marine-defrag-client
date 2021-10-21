@@ -8,6 +8,7 @@
  * Follow this format:
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
+import { DB } from 'themes/config';
 
 export const REDIRECT_IF_NOT_PERMITTED = 'impactoss/App/REDIRECT_IF_NOT_PERMITTED';
 export const LOAD_ENTITIES_IF_NEEDED = 'impactoss/App/LOAD_ENTITIES_IF_NEEDED';
@@ -45,8 +46,6 @@ export const NEW_MULTIPLE_ENTITIES = 'impactoss/App/NEW_MULTIPLE_ENTITIES';
 export const DELETE_ENTITY = 'impactoss/App/DELETE_ENTITY';
 export const DELETE_MULTIPLE_ENTITIES = 'impactoss/App/DELETE_MULTIPLE_ENTITIES';
 export const SAVE_CONNECTIONS = 'impactoss/App/SAVE_CONNECTIONS';
-export const DUEDATE_ASSIGNED = 'impactoss/App/DUEDATE_ASSIGNED';
-export const DUEDATE_UNASSIGNED = 'impactoss/App/DUEDATE_UNASSIGNED';
 
 export const ENTITIES_READY = 'impactoss/App/ENTITIES_READY';
 
@@ -75,7 +74,7 @@ export const OPEN_NEW_ENTITY_MODAL = 'impactoss/App/OPEN_NEW_ENTITY_MODAL';
 export const SUBMIT_INVALID = 'impactoss/App/SUBMIT_INVALID';
 
 export const DISMISS_QUERY_MESSAGES = 'impactoss/App/DISMISS_QUERY_MESSAGES';
-export const SET_FRAMEWORK = 'impactoss/App/SET_FRAMEWORK';
+export const SET_ACTIONTYPE = 'impactoss/App/SET_ACTIONTYPE';
 
 export const FILTERS_PANEL = 'filters';
 export const EDIT_PANEL = 'edit';
@@ -86,10 +85,11 @@ export const CONTENT_PAGE = 'page';
 export const CONTENT_MODAL = 'modal';
 
 export const DEPENDENCIES = [
-  'user_roles',
-  'pages',
-  'frameworks',
+  DB.USER_ROLES,
+  DB.PAGES,
+  DB.ACTORTYPES,
 ];
+
 export const SORT_ORDER_OPTIONS = [
   {
     value: 'asc',
@@ -117,29 +117,4 @@ export const VIEWPORTS = {
   SMALL: 2,
   MEDIUM: 3,
   LARGE: 4,
-};
-
-export const PATHS = {
-  ID: '/:id',
-  NEW: '/new',
-  EDIT: '/edit',
-  IMPORT: '/import',
-  PASSWORD: '/password',
-  OVERVIEW: '/overview',
-  LOGIN: '/login',
-  BOOKMARKS: '/bookmarks',
-  LOGOUT: '/logout',
-  REGISTER: '/register',
-  RESET_PASSWORD: '/resetpassword',
-  RECOVER_PASSWORD: '/recoverpassword',
-  UNAUTHORISED: '/unauthorised',
-  USERS: '/users',
-  MEASURES: '/actions',
-  INDICATORS: '/indicators',
-  RECOMMENDATIONS: '/recommendations',
-  PROGRESS_REPORTS: '/reports',
-  TAXONOMIES: '/categories',
-  CATEGORIES: '/category',
-  PAGES: '/pages',
-  SEARCH: '/search',
 };

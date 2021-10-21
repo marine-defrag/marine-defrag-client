@@ -23,5 +23,5 @@ export default combineReducers({
   page: entityFormReducer,
   form: combineForms({
     data: formReducer,
-  }, 'measureNew.form'),
+  }, 'actionNew.form'),
 });

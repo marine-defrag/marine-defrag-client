@@ -1,3 +1,5 @@
+import { DB } from 'themes/config';
+
 export const DEPENDENCIES = [
-  'frameworks',
+  DB.ACTORTYPES,
 ];

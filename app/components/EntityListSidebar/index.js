@@ -92,7 +92,7 @@ const SidebarWrapper = styled.div`
 const STATE_INITIAL = {
   activeOption: null,
   expandedGroups: {
-    frameworks: true,
+    actortypes: true,
     taxonomies: true,
     taxonomies_1: true,
     taxonomies_2: true,
@@ -142,7 +142,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
     // console.log('entityIdsSelected',this.props.entityIdsSelected !== nextProps.entityIdsSelected)
     // console.log('activePanel',this.props.activePanel !== nextProps.activePanel)
     // console.log('state',!isEqual(this.state, nextState));
-    // TODO consider targeting specific query params, eg where, without, cat, catx but also recommendations, etc
+    // TODO consider targeting specific query params, eg where, without, cat, catx but also actors, etc
     if (nextProps.listUpdating && isEqual(this.state, nextState)) {
       return false;
     }
@@ -266,7 +266,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
       connectedTaxonomies,
       connections,
       entityIdsSelected,
-      frameworks,
+      actortypes,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -292,20 +292,20 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
         {
           attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.filterGroupLabel.taxonomies),
-          taxonomyGroupByFw:
-            (fw) => this.context.intl.formatMessage(
-              messages.filterGroupLabel.taxonomiesByFw,
+          taxonomyGroupByActortype:
+            (actortype) => this.context.intl.formatMessage(
+              messages.filterGroupLabel.taxonomiesByActortype,
               {
-                fw: intl.formatMessage(appMessages.frameworks_short[fw]),
+                actortype: intl.formatMessage(appMessages.actortypes_short[actortype]),
               },
             ),
-          frameworksGroup: intl.formatMessage(messages.filterGroupLabel.frameworks),
+          actortypesGroup: intl.formatMessage(messages.filterGroupLabel.actortypes),
           connections: intl.formatMessage(messages.filterGroupLabel.connections),
           connectedTaxonomies: intl.formatMessage(messages.filterGroupLabel.connectedTaxonomies),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
-          frameworks: intl.formatMessage(appMessages.frameworks.plural),
+          actortypes: intl.formatMessage(appMessages.actortypes.plural),
         },
-        frameworks,
+        actortypes,
       );
     } else if (activePanel === EDIT_PANEL && canEdit && hasSelected) {
       panelGroups = makeEditGroups(
@@ -319,9 +319,9 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
           connections: intl.formatMessage(messages.editGroupLabel.connections),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
         },
-        frameworks,
-        // selectedFrameworkIds
-        entitiesSelected.groupBy((e) => e.getIn(['attributes', 'framework_id'])).keySeq(),
+        actortypes,
+        // selectedActortypeIds
+        entitiesSelected.groupBy((e) => e.getIn(['attributes', 'actortype_id'])).keySeq(),
       );
     }
     let formOptions = null;
@@ -340,7 +340,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
             without: intl.formatMessage(messages.filterFormWithoutPrefix),
           },
           intl,
-          frameworks,
+          actortypes,
         );
       } else if (activePanel === EDIT_PANEL && canEdit && hasSelected) {
         formOptions = makeActiveEditOptions(
@@ -466,7 +466,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
 EntityListSidebar.propTypes = {
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
-  frameworks: PropTypes.instanceOf(Map),
+  actortypes: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   entityIdsSelected: PropTypes.instanceOf(List),

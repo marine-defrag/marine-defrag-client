@@ -13,8 +13,8 @@ import asList from 'utils/as-list';
 
 export const currentFilterArgs = (config, locationQuery) => {
   let args = [];
-  if (config.frameworks && locationQuery.get(config.frameworks.query)) {
-    args = args.concat(config.frameworks.query);
+  if (config.actortypes && locationQuery.get(config.actortypes.query)) {
+    args = args.concat(config.actortypes.query);
   }
   if (config.taxonomies && locationQuery.get(config.taxonomies.query)) {
     args = args.concat(config.taxonomies.query);
@@ -47,7 +47,7 @@ export const currentFilters = (
     locationQuery,
     onTagClick,
     errors,
-    frameworks,
+    actortypes,
   },
   withoutLabel,
   errorLabel,
@@ -56,10 +56,10 @@ export const currentFilters = (
   if (errors && errors.size > 0) {
     filterTags.push(getErrorTag(errorLabel));
   }
-  if (config.frameworks && frameworks && frameworks.size > 1) {
-    filterTags = filterTags.concat(getCurrentFrameworkFilter(
-      config.frameworks,
-      frameworks,
+  if (config.actortypes && actortypes && actortypes.size > 1) {
+    filterTags = filterTags.concat(getCurrentActortypeFilter(
+      config.actortypes,
+      actortypes,
       locationQuery,
       onTagClick
     ));
@@ -178,23 +178,23 @@ const getCurrentTaxonomyFilters = (
   return tags;
 };
 
-const getCurrentFrameworkFilter = (
+const getCurrentActortypeFilter = (
   config,
-  frameworks,
+  actortypes,
   locationQuery,
   onClick,
 ) => {
   const tags = [];
   if (locationQuery.get(config.query)) {
     const locationQueryValue = locationQuery.get(config.query);
-    const framework = frameworks.find((fw) => qe(fw.get('id'), locationQueryValue));
-    if (framework) {
+    const actortype = actortypes.find((actortype) => qe(actortype.get('id'), locationQueryValue));
+    if (actortype) {
       tags.push({
-        message: `frameworks_short.${framework.get('id')}`,
-        type: 'recommendations',
+        message: `actortypes_short.${actortype.get('id')}`,
+        type: 'actors',
         id: 0,
         onClick: () => onClick({
-          value: framework.get('id'),
+          value: actortype.get('id'),
           query: config.query,
           checked: false,
         }),
@@ -278,21 +278,21 @@ const getCurrentConnectionFilters = (
     const locationQueryValue = locationQuery.get('without');
     forEach(connectionFilters.options, (option) => {
       asList(locationQueryValue).forEach((queryValue) => {
-        const valueFw = queryValue.split('_');
-        const fwid = valueFw.length > 1 && valueFw[1];
+        const valueActortype = queryValue.split('_');
+        const actortypeid = valueActortype.length > 1 && valueActortype[1];
         // numeric means taxonomy
-        if (option.path === valueFw[0]) {
+        if (option.path === valueActortype[0]) {
           tags.push({
             labels: [
               { label: withoutLabel },
               {
                 appMessage: true,
                 label: (
-                  option.groupByFramework
+                  option.groupByActortype
                   && option.message
-                  && option.message.indexOf('{fwid}') > -1
+                  && option.message.indexOf('{actortypeid}') > -1
                 )
-                  ? option.message.replace('{fwid}', fwid)
+                  ? option.message.replace('{actortypeid}', actortypeid)
                   : option.message,
                 lowerCase: true,
               },

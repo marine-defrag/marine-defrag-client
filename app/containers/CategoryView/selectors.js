@@ -1,25 +1,24 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
+import { DB } from 'themes/config';
 
 import {
   selectReady,
   selectEntity,
   selectEntities,
-  selectRecommendationConnections,
-  selectMeasureConnections,
+  selectActorConnections,
+  selectActionConnections,
   selectTaxonomiesSorted,
   selectTaxonomies,
-  selectFWRecommendations,
-  selectFWMeasures,
-  selectRecommendationCategoriesByCategory,
-  selectMeasureCategoriesByCategory,
-  selectRecommendationMeasuresByMeasure,
-  selectMeasureCategoriesByMeasure,
-  selectMeasureIndicatorsByMeasure,
-  selectRecommendationMeasuresByRecommendation,
-  selectRecommendationCategoriesByRecommendation,
-  selectRecommendationIndicatorsByRecommendation,
-  selectFrameworks,
+  selectActortypeActors,
+  selectActortypeActions,
+  selectActorCategoriesByCategory,
+  selectActionCategoriesByCategory,
+  selectActorActionsByAction,
+  selectActionCategoriesByAction,
+  selectActorActionsByActor,
+  selectActorCategoriesByActor,
+  selectActortypes,
 } from 'containers/App/selectors';
 
 import {
@@ -33,7 +32,7 @@ import { sortEntities, sortCategories } from 'utils/sort';
 import { DEPENDENCIES } from './constants';
 
 export const selectCategory = createSelector(
-  (state, id) => selectEntity(state, { path: 'categories', id }),
+  (state, id) => selectEntity(state, { path: DB.CATEGORIES, id }),
   (category) => category
 );
 export const selectTaxonomy = createSelector(
@@ -46,9 +45,9 @@ export const selectTaxonomy = createSelector(
 
 export const selectViewEntity = createSelector(
   selectCategory,
-  (state) => selectEntities(state, 'users'),
+  (state) => selectEntities(state, DB.USERS),
   selectTaxonomiesSorted,
-  (state) => selectEntities(state, 'categories'),
+  (state) => selectEntities(state, DB.CATEGORIES),
   (entity, users, taxonomies, categories) => entity
     && entitySetSingles(
       entity, [
@@ -100,7 +99,7 @@ export const selectParentTaxonomy = createSelector(
 export const selectChildTaxonomies = createSelector(
   selectCategory,
   selectTaxonomiesSorted,
-  (state) => selectEntities(state, 'categories'),
+  (state) => selectEntities(state, DB.CATEGORIES),
   (entity, taxonomies, categories) => {
     if (entity && taxonomies) {
       const taxonomy = taxonomies.find(
@@ -136,26 +135,26 @@ export const selectChildTaxonomies = createSelector(
   }
 );
 
-const selectTagsRecommendations = createSelector(
+const selectTagsActors = createSelector(
   selectTaxonomy,
-  (taxonomy) => taxonomy && taxonomy.getIn(['attributes', 'tags_recommendations'])
+  (taxonomy) => taxonomy && taxonomy.getIn(['attributes', 'tags_actors'])
 );
 
-const selectRecommendationAssociations = createSelector(
+const selectActorAssociations = createSelector(
   (state, id) => id,
-  selectRecommendationCategoriesByCategory,
+  selectActorCategoriesByCategory,
   (catId, associations) => associations.get(
     parseInt(catId, 10)
   )
 );
-const selectRecommendationsAssociated = createSelector(
-  selectTagsRecommendations,
-  selectRecommendationAssociations,
-  selectFWRecommendations,
-  (tags, associations, recommendations) => tags
+const selectActorsAssociated = createSelector(
+  selectTagsActors,
+  selectActorAssociations,
+  selectActortypeActors,
+  (tags, associations, actors) => tags
     ? associations && associations.reduce(
       (memo, id) => {
-        const entity = recommendations.get(id.toString());
+        const entity = actors.get(id.toString());
         return entity
           ? memo.set(id, entity)
           : memo;
@@ -165,85 +164,79 @@ const selectRecommendationsAssociated = createSelector(
     : null,
 );
 
-export const selectRecommendations = createSelector(
+export const selectActors = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectRecommendationsAssociated,
-  selectRecommendationConnections,
-  selectRecommendationMeasuresByRecommendation,
-  selectRecommendationCategoriesByRecommendation,
-  selectRecommendationIndicatorsByRecommendation,
-  (state) => selectEntities(state, 'categories'),
-  (state) => selectFrameworks(state),
+  selectActorsAssociated,
+  selectActorConnections,
+  selectActorActionsByActor,
+  selectActorCategoriesByActor,
+  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectActortypes(state),
   (
     ready,
-    recommendations,
+    actors,
     connections,
-    recommendationMeasures,
-    recommendationCategories,
-    recommendationIndicators,
+    actorActions,
+    actorCategories,
     categories,
-    frameworks,
+    actortypes,
   ) => {
     if (!ready) return Map();
-    return recommendations
-      && recommendationIndicators
-      && frameworks
-      && recommendations.filter(
-        (rec) => {
-          const currentFramework = frameworks.find(
-            (fw) => qe(fw.get('id'), rec && rec.getIn(['attributes', 'framework_id']))
+    return actors
+      && actortypes
+      && actors.filter(
+        (actor) => {
+          const currentActortype = actortypes.find(
+            (actortype) => qe(actortype.get('id'), actor && actor.getIn(['attributes', 'actortype_id']))
           );
-          return currentFramework && currentFramework.getIn(['attributes', 'has_measures']);
+          return currentActortype && currentActortype.getIn(['attributes', 'has_actions']);
         }
       ).map(
-        (rec) => rec && rec.set(
+        (actor) => actor && actor.set(
           'categories',
           getEntityCategories(
-            rec.get('id'),
-            recommendationCategories,
+            actor.get('id'),
+            actorCategories,
             categories,
           )
         ).set(
-          'measures',
-          recommendationMeasures.get(parseInt(rec.get('id'), 10))
-        ).set(
-          'indicators',
-          recommendationIndicators.get(parseInt(rec.get('id'), 10))
+          'actions',
+          actorActions.get(parseInt(actor.get('id'), 10))
         )
       ).groupBy(
-        (r) => r.getIn(['attributes', 'framework_id'])
+        (r) => r.getIn(['attributes', 'actortype_id'])
       );
   }
 );
 
-const selectChildrenTagRecommendations = createSelector(
+const selectChildrenTagActors = createSelector(
   selectChildTaxonomies,
   (taxonomies) => taxonomies
     && taxonomies.some(
-      (tax) => tax.getIn(['attributes', 'tags_recommendations']),
+      (tax) => tax.getIn(['attributes', 'tags_actors']),
     )
 );
 
-const selectChildRecommendationsAssociated = createSelector(
-  selectChildrenTagRecommendations,
+const selectChildActorsAssociated = createSelector(
+  selectChildrenTagActors,
   selectChildTaxonomies,
-  selectFWRecommendations,
-  selectRecommendationCategoriesByCategory,
-  (tag, childTaxonomies, recommendations, associations) => tag && childTaxonomies
+  selectActortypeActors,
+  selectActorCategoriesByCategory,
+  (tag, childTaxonomies, actors, associations) => tag && childTaxonomies
     ? childTaxonomies.map(
       (tax) => tax.set(
         'categories',
         tax.get('categories').map(
           (cat) => {
-            const recIds = associations.get(
+            const actorIds = associations.get(
               parseInt(cat.get('id'), 10)
             );
             return cat.set(
-              'recommendations',
-              recIds
+              'actors',
+              actorIds
                 ? sortEntities(
-                  recIds.map(
-                    (id) => recommendations.get(id.toString())
+                  actorIds.map(
+                    (id) => actors.get(id.toString())
                   ),
                   'asc',
                   'reference',
@@ -257,157 +250,152 @@ const selectChildRecommendationsAssociated = createSelector(
     : null
 );
 
-// all connected recommendations
-export const selectChildRecommendations = createSelector(
-  selectChildRecommendationsAssociated,
-  selectRecommendationConnections,
-  selectRecommendationMeasuresByRecommendation,
-  selectRecommendationCategoriesByRecommendation,
-  (state) => selectEntities(state, 'categories'),
+// all connected actors
+export const selectChildActors = createSelector(
+  selectChildActorsAssociated,
+  selectActorConnections,
+  selectActorActionsByActor,
+  selectActorCategoriesByActor,
+  (state) => selectEntities(state, DB.CATEGORIES),
   (
-    recommendationsByTaxCat,
+    actorsByTaxCat,
     connections,
-    recMeasures,
-    recCategories,
+    actorActions,
+    actorCategories,
     categories,
-  ) => recommendationsByTaxCat && recommendationsByTaxCat.map(
+  ) => actorsByTaxCat && actorsByTaxCat.map(
     (tax) => tax.set(
       'categories',
       tax.get('categories').map(
         (cat) => cat.set(
-          'recommendations',
-          cat.get('recommendations').map(
-            (rec) => rec.set(
+          'actors',
+          cat.get('actors').map(
+            (actor) => actor.set(
               'categories',
               getEntityCategories(
-                rec.get('id'),
-                recCategories,
+                actor.get('id'),
+                actorCategories,
                 categories,
               )
             ).set(
-              'measures',
-              recMeasures.get(parseInt(rec.get('id'), 10))
+              'actions',
+              actorActions.get(parseInt(actor.get('id'), 10))
             )
           )
         )
       )
     )
   ).groupBy(
-    (r) => r.getIn(['attributes', 'framework_id'])
+    (r) => r.getIn(['attributes', 'actortype_id'])
   )
 );
 
-const selectTagsMeasures = createSelector(
+const selectTagsActions = createSelector(
   selectTaxonomy,
-  (taxonomy) => taxonomy && taxonomy.getIn(['attributes', 'tags_measures'])
+  (taxonomy) => taxonomy && taxonomy.getIn(['attributes', 'tags_actions'])
 );
 
-const selectMeasureAssociations = createSelector(
+const selectActionAssociations = createSelector(
   (state, id) => id,
-  selectMeasureCategoriesByCategory,
+  selectActionCategoriesByCategory,
   (catId, associations) => associations.get(
     parseInt(catId, 10)
   )
 );
-const selectMeasuresAssociated = createSelector(
-  selectTagsMeasures,
-  selectMeasureAssociations,
-  selectFWMeasures,
-  (tags, associations, measures) => tags
+const selectActionsAssociated = createSelector(
+  selectTagsActions,
+  selectActionAssociations,
+  selectActortypeActions,
+  (tags, associations, actions) => tags
     ? associations && associations.map(
-      (id) => measures.get(id.toString())
+      (id) => actions.get(id.toString())
     )
     : null
 );
 
-// all connected measures
-export const selectMeasures = createSelector(
+// all connected actions
+export const selectActions = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectMeasuresAssociated,
-  selectMeasureConnections,
-  selectRecommendationMeasuresByMeasure,
-  selectMeasureCategoriesByMeasure,
-  selectMeasureIndicatorsByMeasure,
-  (state) => selectEntities(state, 'categories'),
+  selectActionsAssociated,
+  selectActionConnections,
+  selectActorActionsByAction,
+  selectActionCategoriesByAction,
+  (state) => selectEntities(state, DB.CATEGORIES),
   (
     ready,
-    measures,
+    actions,
     connections,
-    measureRecommendations,
-    measureCategories,
-    measureIndicators,
+    actionActors,
+    actionCategories,
     categories,
   ) => {
     if (!ready) return Map();
-    return measures && measures.map(
-      (measure) => {
-        const entityRecs = measureRecommendations.get(parseInt(measure.get('id'), 10));
-        const entityRecsByFw = entityRecs
-          && connections.get('recommendations')
-          && entityRecs.filter(
-            (recId) => connections.getIn([
-              'recommendations',
-              recId.toString(),
+    return actions && actions.map(
+      (action) => {
+        const entityActors = actionActors.get(parseInt(action.get('id'), 10));
+        const entityActorsByActortype = entityActors
+          && connections.get('actors')
+          && entityActors.filter(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
             ])
           ).groupBy(
-            (recId) => connections.getIn([
-              'recommendations',
-              recId.toString(),
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
               'attributes',
-              'framework_id',
+              'actortype_id',
             ]).toString()
           );
-        return measure.set(
+        return action.set(
           'categories',
           getEntityCategories(
-            measure.get('id'),
-            measureCategories,
+            action.get('id'),
+            actionCategories,
             categories,
           )
-        ).set(
-          'indicators',
-          measureIndicators.get(parseInt(measure.get('id'), 10))
         // currently needs both
         ).set(
-          'recommendations',
-          entityRecs
-        // nest connected recommendation ids byfw
+          'actors',
+          entityActors
+        // nest connected actor ids byactortype
         ).set(
-          'recommendationsByFw',
-          entityRecsByFw,
+          'actorsByActortype',
+          entityActorsByActortype,
         );
       }
     );
   }
 );
 
-const selectChildrenTagMeasures = createSelector(
+const selectChildrenTagActions = createSelector(
   selectChildTaxonomies,
   (taxonomies) => taxonomies && taxonomies.some(
-    (tax) => tax.getIn(['attributes', 'tags_measures'])
+    (tax) => tax.getIn(['attributes', 'tags_actions'])
   )
 );
 
-const selectChildMeasuresAssociated = createSelector(
-  selectChildrenTagMeasures,
+const selectChildActionsAssociated = createSelector(
+  selectChildrenTagActions,
   selectChildTaxonomies,
-  selectFWMeasures,
-  selectMeasureCategoriesByCategory,
-  (tag, childTaxonomies, measures, associations) => tag
+  selectActortypeActions,
+  selectActionCategoriesByCategory,
+  (tag, childTaxonomies, actions, associations) => tag
     ? childTaxonomies.map(
       (tax) => tax.set(
         'categories',
         tax.get('categories').map(
           (cat) => {
-            const measureIds = associations.get(
+            const actionIds = associations.get(
               parseInt(cat.get('id'), 10)
             );
             return cat.set(
-              'measures',
-              measureIds
+              'actions',
+              actionIds
                 ? sortEntities(
-                  measureIds.map(
-                    (id) => measures.get(id.toString())
+                  actionIds.map(
+                    (id) => actions.get(id.toString())
                   ),
                   'asc',
                   'reference',
@@ -421,41 +409,36 @@ const selectChildMeasuresAssociated = createSelector(
     : null
 );
 
-// all connected recommendations
-export const selectChildMeasures = createSelector(
-  selectChildMeasuresAssociated,
-  selectMeasureConnections,
-  selectRecommendationMeasuresByMeasure,
-  selectMeasureCategoriesByMeasure,
-  selectMeasureIndicatorsByMeasure,
-  (state) => selectEntities(state, 'categories'),
+// all connected actors
+export const selectChildActions = createSelector(
+  selectChildActionsAssociated,
+  selectActionConnections,
+  selectActorActionsByAction,
+  selectActionCategoriesByAction,
+  (state) => selectEntities(state, DB.CATEGORIES),
   (
-    measuresByTaxCat,
+    actionsByTaxCat,
     connections,
-    measureRecommendations,
-    measureCategories,
-    measureIndicators,
+    actionActors,
+    actionCategories,
     categories,
-  ) => measuresByTaxCat && measuresByTaxCat.map(
+  ) => actionsByTaxCat && actionsByTaxCat.map(
     (tax) => tax.set(
       'categories',
       tax.get('categories').map(
         (cat) => cat.set(
-          'measures',
-          cat.get('measures').map(
-            (measure) => measure.set(
+          'actions',
+          cat.get('actions').map(
+            (action) => action.set(
               'categories',
               getEntityCategories(
-                measure.get('id'),
-                measureCategories,
+                action.get('id'),
+                actionCategories,
                 categories,
               )
             ).set(
-              'recommendations',
-              measureRecommendations.get(parseInt(measure.get('id'), 10)),
-            ).set(
-              'indicators',
-              measureIndicators.get(parseInt(measure.get('id'), 10)),
+              'actors',
+              actionActors.get(parseInt(action.get('id'), 10)),
             )
           )
         )
@@ -466,7 +449,7 @@ export const selectChildMeasures = createSelector(
 
 export const selectTaxonomiesWithCategories = createSelector(
   selectTaxonomiesSorted,
-  (state) => selectEntities(state, 'categories'),
+  (state) => selectEntities(state, DB.CATEGORIES),
   (taxonomies, categories) => taxonomies.map((tax) => tax.set(
     'categories',
     categories.filter(

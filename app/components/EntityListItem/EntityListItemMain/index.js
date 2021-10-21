@@ -60,23 +60,21 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     return reduce(connectionOptions, (memo, option) => {
       // console.log(memo, option, entity.toJS())
       let memoX = memo;
-      if (
-        !option.expandable
-        && (option.popover !== false)
+      if ((option.popover !== false)
         && entity.get(option.path)
         && connections.get(option.path)
         && entity.get(option.path).size > 0
       ) {
-        if (option.groupByFramework) {
-          const entitiesByFramework = entity.get(`${option.path}ByFw`);
+        if (option.groupByActortype) {
+          const entitiesByActortype = entity.get(`${option.path}ByActortype`);
           // console.log(entity, entity.toJS())
-          if (entitiesByFramework) {
-            entitiesByFramework.forEach((fwentities, fwid) => {
-              if (fwentities.size > 0) {
-                const connectedEntities = fwentities.map(
+          if (entitiesByActortype) {
+            entitiesByActortype.forEach((actortypeentities, actortypeid) => {
+              if (actortypeentities.size > 0) {
+                const connectedEntities = actortypeentities.map(
                   (connectionId) => connections.getIn([option.path, connectionId.toString()])
                 );
-                const path = `${option.path}_${fwid}`;
+                const path = `${option.path}_${actortypeid}`;
                 memoX = memoX.concat([{
                   option: {
                     label: (size) => intl
@@ -126,8 +124,8 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     const { intl } = this.context;
     const reference = entity.getIn(['attributes', 'reference']) || entity.get('id');
     let type = entity.get('type');
-    if (entity.getIn(['attributes', 'framework_id'])) {
-      type = `${type}_${entity.getIn(['attributes', 'framework_id'])}`;
+    if (entity.getIn(['attributes', 'actortype_id'])) {
+      type = `${type}_${entity.getIn(['attributes', 'actortype_id'])}`;
     }
     if (intl
       && appMessages.entities[type]
@@ -180,7 +178,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
       reference: this.getReference(entity, config),
       draft: entity.getIn(['attributes', 'draft']),
       role: entity.get('roles') && connections.get('roles') && this.getRole(entity.get('roles'), connections.get('roles')),
-      path: entityPath || (nestLevel > 0 ? config.expandableColumns[nestLevel - 1].clientPath : config.clientPath),
+      path: entityPath || config.clientPath,
       entityIcon: entityIcon && entityIcon(entity),
       categories: taxonomies && this.getWithoutProgressCategories(taxonomies, entity.get('categories')),
       connectedCounts: config && config.connections

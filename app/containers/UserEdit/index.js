@@ -44,8 +44,8 @@ import {
   selectSessionUserHighestRoleId,
 } from 'containers/App/selectors';
 
-import { PATHS, CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES } from 'themes/config';
+import { CONTENT_SINGLE } from 'containers/App/constants';
+import { ROUTES, USER_ROLES } from 'themes/config';
 
 import Messages from 'components/Messages';
 import Loading from 'components/Loading';
@@ -351,7 +351,7 @@ function mapDispatchToProps(dispatch) {
       dispatch(save(saveData.toJS()));
     },
     handleCancel: (reference) => {
-      dispatch(updatePath(`${PATHS.USERS}/${reference}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.USERS}/${reference}`, { replace: true }));
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));

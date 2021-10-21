@@ -20,7 +20,6 @@ import {
   UPDATE_QUERY,
   UPDATE_GROUP,
   PAGE_CHANGE,
-  EXPAND_CHANGE,
   PAGE_ITEM_CHANGE,
   SORTBY_CHANGE,
   SORTORDER_CHANGE,
@@ -92,13 +91,6 @@ export function* updatePageItems({ no }) {
     },
   ]));
 }
-export function* updateExpand({ expand }) {
-  yield put(updateRouteQuery({
-    arg: 'expand',
-    value: expand,
-    replace: true,
-  }));
-}
 export function* updateSortBy({ sort }) {
   yield put(updateRouteQuery({
     arg: 'sort',
@@ -155,7 +147,6 @@ export default function* entityList() {
   yield takeLatest(UPDATE_GROUP, updateGroup);
   yield takeLatest(PAGE_CHANGE, updatePage);
   yield takeLatest(PAGE_ITEM_CHANGE, updatePageItems);
-  yield takeLatest(EXPAND_CHANGE, updateExpand);
   yield takeLatest(SORTBY_CHANGE, updateSortBy);
   yield takeLatest(SORTORDER_CHANGE, updateSortOrder);
   yield takeLatest(RESET_SEARCH_QUERY, resetSearchQuery);

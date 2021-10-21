@@ -13,7 +13,7 @@ const Hint = styled.div`
     font-size: ${(props) => props.theme.sizes.print.smaller};
   }
 `;
-// see also ScheduleItem
+
 const Label = styled.label`
   font-weight: bold;
   color:  ${(props) => props.highlight ? palette('primary', 1) : palette('text', 0)};

@@ -2,13 +2,13 @@ export const DEPENDENCIES = [
   'user_roles',
   'categories',
   'taxonomies',
-  'frameworks',
-  'framework_taxonomies',
-  'recommendation_categories',
-  'recommendations',
+  'actortypes',
+  'actortype_taxonomies',
+  'actor_categories',
+  'actors',
   'measure_categories',
-  'recommendation_measures',
-  'measures',
+  'actor_measures',
+  'actions',
 ];
 
 export const TAXONOMY_DEFAULT = 1;
@@ -22,14 +22,14 @@ export const SORT_OPTIONS = [
     default: 'true',
   },
   {
-    query: 'measures',
-    field: 'measures',
+    query: 'actions',
+    field: 'actions',
     type: 'number',
     order: 'desc',
   },
   {
-    query: 'recommendations',
-    field: 'recommendations',
+    query: 'actors',
+    field: 'actors',
     type: 'number',
     order: 'desc',
   },

@@ -22,8 +22,8 @@ import { getEntityTitle } from 'utils/entities';
 
 import { loadEntitiesIfNeeded, updatePath, closeEntity } from 'containers/App/actions';
 
-import { PATHS, CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES } from 'themes/config';
+import { CONTENT_SINGLE } from 'containers/App/constants';
+import { USER_ROLES, ROUTES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -217,13 +217,13 @@ function mapDispatchToProps(dispatch) {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
     handleEdit: (userId) => {
-      dispatch(updatePath(`${PATHS.USERS}${PATHS.EDIT}/${userId}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.USERS}${ROUTES.EDIT}/${userId}`, { replace: true }));
     },
     handleEditPassword: (userId) => {
-      dispatch(updatePath(`${PATHS.USERS}${PATHS.PASSWORD}/${userId}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.USERS}${ROUTES.PASSWORD}/${userId}`, { replace: true }));
     },
     handleClose: () => {
-      dispatch(closeEntity(PATHS.USERS));
+      dispatch(closeEntity(ROUTES.USERS));
     },
   };
 }

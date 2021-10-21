@@ -139,10 +139,8 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
       entityIcon,
       onEntityClick,
       isManager,
-      isContributor,
+      isAnalyst,
       onEntitySelect,
-      onExpand,
-      expandNo,
       entityTitle,
       onEntitySelectAll,
       locationQuery,
@@ -219,9 +217,6 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
           entitiesTotal={entities.size}
           allSelected={entityIdsSelected.toSet().size === entities.size}
           allSelectedOnPage={entityIdsSelected.toSet().size === entityIdsOnPage.toSet().size}
-          expandNo={expandNo}
-          expandableColumns={config.expandableColumns}
-          onExpand={onExpand}
           isManager={isManager}
           entityTitle={entityTitle}
           sortOptions={config.sorting}
@@ -306,10 +301,8 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
                             entityIcon={entityIcon}
                             onEntityClick={onEntityClick}
                             isManager={isManager}
-                            isContributor={isContributor}
+                            isAnalyst={isAnalyst}
                             onEntitySelect={onEntitySelect}
-                            expandNo={expandNo}
-                            onExpand={onExpand}
                             onDismissError={this.props.onDismissError}
                           />
                         </ListEntitiesSubGroup>
@@ -327,10 +320,8 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
                           entityIcon={entityIcon}
                           onEntityClick={onEntityClick}
                           isManager={isManager}
-                          isContributor={isContributor}
+                          isAnalyst={isAnalyst}
                           onEntitySelect={onEntitySelect}
-                          expandNo={expandNo}
-                          onExpand={onExpand}
                           onDismissError={this.props.onDismissError}
                         />
                       )
@@ -369,9 +360,7 @@ EntityListGroups.propTypes = {
   config: PropTypes.object,
   entityIcon: PropTypes.func,
   isManager: PropTypes.bool,
-  isContributor: PropTypes.bool,
-  expandNo: PropTypes.number,
-  onExpand: PropTypes.func.isRequired,
+  isAnalyst: PropTypes.bool,
   onPageSelect: PropTypes.func.isRequired,
   onPageItemsSelect: PropTypes.func.isRequired,
   onEntityClick: PropTypes.func.isRequired,

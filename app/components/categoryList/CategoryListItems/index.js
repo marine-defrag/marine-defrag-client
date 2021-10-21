@@ -57,25 +57,25 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
       )
     );
 
-  getColumnKeys = (taxonomy, frameworks) => {
+  getColumnKeys = (taxonomy, actortypes) => {
     const { intl } = this.context;
     // figure out if tagged directly or via child category
-    const tagsRecs = this.getTagsTax(taxonomy, 'tags_recommendations');
-    return tagsRecs && frameworks && taxonomy.get('frameworkIds').toArray().reduce(
-      (memo, fwid) => {
-        const framework = frameworks.find((fw) => qe(fw.get('id'), fwid));
-        // TODO figure out multiple framework with responses
-        if (framework && framework.getIn(['attributes', 'has_response'])) {
+    const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
+    return tagsActors && actortypes && taxonomy.get('actortypeIds').toArray().reduce(
+      (memo, actortypeid) => {
+        const actortype = actortypes.find((actortype) => qe(actortype.get('id'), actortypeid));
+        // TODO figure out multiple actortype with responses
+        if (actortype && actortype.getIn(['attributes', 'has_response'])) {
           return [{
             items: [
               {
                 label: intl.formatMessage(appMessages.ui.acceptedStatuses.accepted),
-                palette: 'recommendations',
+                palette: 'actors',
                 pIndex: 0,
               },
               {
                 label: intl.formatMessage(appMessages.ui.acceptedStatuses.noted),
-                palette: 'recommendations',
+                palette: 'actors',
                 pIndex: 1,
               },
             ],
@@ -87,49 +87,49 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
     );
   };
 
-  getHeaderAttributes = (taxonomy, frameworkId, frameworks) => {
+  getHeaderAttributes = (taxonomy, actortypeId, actortypes) => {
     const { intl } = this.context;
     // figure out if tagged directly or via child category
-    const tagsRecs = this.getTagsTax(taxonomy, 'tags_recommendations');
-    const tagsMeasures = this.getTagsTax(taxonomy, 'tags_measures');
-    const isList = taxonomy.get('frameworkIds')
-      && taxonomy.get('frameworkIds').size > 1;
-    const fwSet = frameworkId && frameworkId !== 'all';
+    const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
+    const tagsActions = this.getTagsTax(taxonomy, 'tags_actions');
+    const isList = taxonomy.get('actortypeIds')
+      && taxonomy.get('actortypeIds').size > 1;
+    const actortypeSet = actortypeId && actortypeId !== 'all';
     const attributes = [];
-    // directly associated objectives/recommendations
-    if (tagsRecs) {
-      let recLabel;
-      if (isList && !fwSet) {
-        recLabel = `${intl.formatMessage(
-          appMessages.entities.recommendations.plural
+    // directly associated objectives/actors
+    if (tagsActors) {
+      let actorLabel;
+      if (isList && !actortypeSet) {
+        actorLabel = `${intl.formatMessage(
+          appMessages.entities.actors.plural
         )} (${intl.formatMessage(
-          appMessages.frameworks.all
+          appMessages.actortypes.all
         )})`;
-      } else if (fwSet) {
-        recLabel = intl.formatMessage(appMessages.entities[`recommendations_${frameworkId}`].plural);
+      } else if (actortypeSet) {
+        actorLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeId}`].plural);
       } else {
-        const fwId = taxonomy.get('frameworkIds').first();
-        recLabel = intl.formatMessage(appMessages.entities[`recommendations_${fwId}`].plural);
+        const actortypeId = taxonomy.get('actortypeIds').first();
+        actorLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeId}`].plural);
       }
       attributes.push({
-        query: 'recommendations',
-        label: recLabel,
-        keys: this.getColumnKeys(taxonomy, frameworks),
+        query: 'actors',
+        label: actorLabel,
+        keys: this.getColumnKeys(taxonomy, actortypes),
       });
       // indirectly associated/inferred actions
-      if (!tagsMeasures) {
+      if (!tagsActions) {
         attributes.push({
           via: intl.formatMessage(appMessages.entities.connected),
-          query: 'measures',
-          label: intl.formatMessage(appMessages.entities.measures.plural),
+          query: 'actions',
+          label: intl.formatMessage(appMessages.entities.actions.plural),
         });
       }
     }
-    // directly associated measures
-    if (tagsMeasures) {
+    // directly associated actions
+    if (tagsActions) {
       attributes.push({
-        query: 'measures',
-        label: intl.formatMessage(appMessages.entities.measures.plural),
+        query: 'actions',
+        label: intl.formatMessage(appMessages.entities.actions.plural),
       });
     }
     return attributes;
@@ -137,21 +137,21 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
 
   getListHeaderColumns = ({
     taxonomy,
-    frameworkId,
+    actortypeId,
     sortOptions,
     sortBy,
     sortOrder,
     onSort,
     userOnly,
     isGrouped,
-    frameworks,
+    actortypes,
   }) => {
     const { intl } = this.context;
     const sortOptionActive = getSortOption(sortOptions, sortBy, 'query');
     const titleColumnSortOption = sortOptions.find((option) => option.query === 'title');
     const titleColumnActive = titleColumnSortOption.query === sortOptionActive.query;
     const titleColumnSortOrderOption = SORT_ORDER_OPTIONS.find((option) => (sortOrder || titleColumnSortOption.order) === option.value);
-    const headerAttributes = this.getHeaderAttributes(taxonomy, frameworkId, frameworks);
+    const headerAttributes = this.getHeaderAttributes(taxonomy, actortypeId, actortypes);
     // category title column
     const columns = [
       {
@@ -180,7 +180,7 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
         },
       },
     ];
-    // add columns for associated recs and measures
+    // add columns for associated actors and actions
     return userOnly
       ? columns
       : columns.concat(headerAttributes.map((attribute) => {
@@ -209,14 +209,14 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
   };
 
   getCategoryMaxCount = (categoryGroups, attribute) => {
-    const isList = !!attribute.frameworkIds;
+    const isList = !!attribute.actortypeIds;
     const allCategories = categoryGroups.reduce((memo, group) => memo.concat(group.get('categories')),
       List(),);
     return allCategories.reduce(
       (countsMemo, cat) => {
         if (isList) {
-          const maxAttribute = cat.get(attribute.totalByFw)
-            && cat.get(attribute.totalByFw).reduce(
+          const maxAttribute = cat.get(attribute.totalByActortype)
+            && cat.get(attribute.totalByActortype).reduce(
               (memo, attr) => Math.max(attr, memo),
               0,
             );
@@ -230,37 +230,37 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
 
   getCountAttributes = (taxonomy) => {
     // figure out if tagged directly or via child category
-    const tagsRecs = this.getTagsTax(taxonomy, 'tags_recommendations');
-    const tagsMeasures = this.getTagsTax(taxonomy, 'tags_measures');
+    const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
+    const tagsActions = this.getTagsTax(taxonomy, 'tags_actions');
 
     const attributes = [];
-    if (tagsRecs) {
+    if (tagsActors) {
       attributes.push({
-        total: 'recommendationsPublicCount',
-        totalByFw: 'recommendationsPublicCountByFW',
-        accepted: 'recommendationsAcceptedCount',
-        acceptedByFw: 'recommendationsAcceptedCountByFW',
-        entity: 'recommendations',
-        frameworkIds:
-          taxonomy.get('frameworkIds')
-          && taxonomy.get('frameworkIds').toArray(),
+        total: 'actorsPublicCount',
+        totalByActortype: 'actorsPublicCountByActortype',
+        accepted: 'actorsAcceptedCount',
+        acceptedByActortype: 'actorsAcceptedCountByActortype',
+        entity: 'actors',
+        actortypeIds:
+          taxonomy.get('actortypeIds')
+          && taxonomy.get('actortypeIds').toArray(),
       });
-      if (!tagsMeasures) {
+      if (!tagsActions) {
         attributes.push({
-          total: 'measuresPublicCount',
-          totalByFw: 'measuresPublicCountByFw',
-          entity: 'measures',
-          frameworkIds:
-            taxonomy.get('frameworkIds')
-            && taxonomy.get('frameworkIds').toArray(),
+          total: 'actionsPublicCount',
+          totalByActortype: 'actionsPublicCountByActortype',
+          entity: 'actions',
+          actortypeIds:
+            taxonomy.get('actortypeIds')
+            && taxonomy.get('actortypeIds').toArray(),
         });
       }
     }
-    if (tagsMeasures) {
+    if (tagsActions) {
       attributes.push({
-        total: 'measuresPublicCount',
-        totalByFw: 'measuresPublicCountByFw',
-        entity: 'measures',
+        total: 'actionsPublicCount',
+        totalByActortype: 'actionsPublicCountByActortype',
+        entity: 'actions',
       });
     }
     return attributes;
@@ -279,7 +279,7 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
         width: (userOnly || !taxonomy || countAttributes.length === 0) ? 100 : TITLE_COL_RATIO * 100,
       },
     ];
-    // add columns for associated recs and measures
+    // add columns for associated actors and actions
     return (userOnly || !taxonomy)
       ? columns
       : columns.concat(
@@ -302,20 +302,20 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
       sortOrder,
       onSort,
       userOnly,
-      frameworks,
-      frameworkId,
+      actortypes,
+      actortypeId,
     } = this.props;
 
     const headerColumns = this.getListHeaderColumns({
       taxonomy,
-      frameworkId,
+      actortypeId,
       sortOptions,
       sortBy,
       sortOrder,
       onSort,
       userOnly,
       isGrouped: categoryGroups.size > 0 && !!taxonomy.get('parent'),
-      frameworks,
+      actortypes,
     });
 
     const columns = this.getListColumns({
@@ -347,8 +347,8 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
                       category={cat}
                       columns={columns}
                       onPageLink={onPageLink}
-                      frameworks={frameworks}
-                      frameworkId={frameworkId}
+                      actortypes={actortypes}
+                      actortypeId={actortypeId}
                     />
                   ))}
                 </span>
@@ -365,14 +365,14 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
 CategoryListItems.propTypes = {
   categoryGroups: PropTypes.object,
   taxonomy: PropTypes.object,
-  frameworks: PropTypes.object,
+  actortypes: PropTypes.object,
   onPageLink: PropTypes.func,
   onSort: PropTypes.func,
   sortOptions: PropTypes.array,
   sortBy: PropTypes.string,
   sortOrder: PropTypes.string,
   userOnly: PropTypes.bool,
-  frameworkId: PropTypes.string,
+  actortypeId: PropTypes.string,
 };
 
 CategoryListItems.contextTypes = {

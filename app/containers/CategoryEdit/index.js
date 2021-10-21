@@ -17,8 +17,8 @@ import {
   userOptions,
   entityOptions,
   renderUserControl,
-  renderMeasureControl,
-  renderRecommendationsByFwControl,
+  renderActionControl,
+  renderActorsByActortypeControl,
   renderParentCategoryControl,
   getTitleFormField,
   getReferenceFormField,
@@ -41,8 +41,8 @@ import { hasNewError } from 'utils/entity-form';
 
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
 
-import { PATHS, CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES } from 'themes/config';
+import { CONTENT_SINGLE } from 'containers/App/constants';
+import { ROUTES, USER_ROLES, DB } from 'themes/config';
 import appMessages from 'containers/App/messages';
 
 import {
@@ -74,8 +74,8 @@ import {
   selectDomain,
   selectViewEntity,
   selectUsers,
-  selectMeasures,
-  selectRecommendationsByFw,
+  selectActions,
+  selectActorsByActortype,
   selectConnectedTaxonomies,
   selectParentOptions,
   selectParentTaxonomy,
@@ -118,7 +118,7 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
   getInitialFormData = (nextProps) => {
     const props = nextProps || this.props;
     const {
-      viewEntity, users, measures, recommendationsByFw, parentOptions,
+      viewEntity, users, actions, actorsByActortype, parentOptions,
     } = props;
     return viewEntity
       ? Map({
@@ -127,9 +127,9 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
           (oldVal, newVal) => oldVal === null ? newVal : oldVal,
           FORM_INITIAL.get('attributes')
         ),
-        associatedMeasures: measures && entityOptions(measures, true),
-        associatedRecommendationsByFw: recommendationsByFw
-          ? recommendationsByFw.map((recs) => entityOptions(recs, true))
+        associatedActions: actions && entityOptions(actions, true),
+        associatedActorsByActortype: actorsByActortype
+          ? actorsByActortype.map((actors) => entityOptions(actors, true))
           : Map(),
         associatedUser: userOptions(users, viewEntity.getIn(['attributes', 'manager_id'])),
         associatedCategory: parentCategoryOptions(parentOptions, viewEntity.getIn(['attributes', 'parent_id'])),
@@ -188,8 +188,8 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
   getBodyMainFields = (
     entity,
     connectedTaxonomies,
-    recommendationsByFw,
-    measures,
+    actorsByActortype,
+    actions,
     onCreateOption,
     userOnly,
   ) => {
@@ -199,33 +199,33 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
       fields: [getMarkdownField(intl.formatMessage)],
     });
     if (!userOnly) {
-      if (entity.getIn(['taxonomy', 'attributes', 'tags_measures']) && measures) {
+      if (entity.getIn(['taxonomy', 'attributes', 'tags_actions']) && actions) {
         fields.push(
           {
-            label: intl.formatMessage(appMessages.nav.measuresSuper),
-            icon: 'measures',
+            label: intl.formatMessage(appMessages.nav.actionsSuper),
+            icon: 'actions',
             fields: [
-              renderMeasureControl(measures, connectedTaxonomies, onCreateOption, intl),
+              renderActionControl(actions, connectedTaxonomies, onCreateOption, intl),
             ],
           },
         );
       }
       if (
-        entity.getIn(['taxonomy', 'attributes', 'tags_recommendations'])
-        && recommendationsByFw
+        entity.getIn(['taxonomy', 'attributes', 'tags_actors'])
+        && actorsByActortype
       ) {
-        const recConnections = renderRecommendationsByFwControl(
-          recommendationsByFw,
+        const actorConnections = renderActorsByActortypeControl(
+          actorsByActortype,
           connectedTaxonomies,
           onCreateOption,
           intl,
         );
-        if (recConnections) {
+        if (actorConnections) {
           fields.push(
             {
-              label: intl.formatMessage(appMessages.nav.recommendationsSuper),
-              icon: 'recommendations',
-              fields: recConnections,
+              label: intl.formatMessage(appMessages.nav.actorsSuper),
+              icon: 'actors',
+              fields: actorConnections,
             },
           );
         }
@@ -276,8 +276,8 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
       viewDomain,
       users,
       connectedTaxonomies,
-      recommendationsByFw,
-      measures,
+      actorsByActortype,
+      actions,
       onCreateOption,
       parentOptions,
       parentTaxonomy,
@@ -362,8 +362,8 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
                 saving={saveSending}
                 handleSubmit={(formData) => this.props.handleSubmit(
                   formData,
-                  measures,
-                  recommendationsByFw,
+                  actions,
+                  actorsByActortype,
                   viewEntity.get('taxonomy'),
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
@@ -386,8 +386,8 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
                     main: this.getBodyMainFields(
                       viewEntity,
                       connectedTaxonomies,
-                      recommendationsByFw,
-                      measures,
+                      actorsByActortype,
+                      actions,
                       onCreateOption,
                       viewDomain.getIn(['form', 'data', 'attributes', 'user_only']),
                     ),
@@ -425,8 +425,8 @@ CategoryEdit.propTypes = {
   params: PropTypes.object,
   parentOptions: PropTypes.object,
   parentTaxonomy: PropTypes.object,
-  measures: PropTypes.object,
-  recommendationsByFw: PropTypes.object,
+  actions: PropTypes.object,
+  actorsByActortype: PropTypes.object,
   connectedTaxonomies: PropTypes.object,
   users: PropTypes.object,
   onErrorDismiss: PropTypes.func.isRequired,
@@ -447,8 +447,8 @@ const mapStateToProps = (state, props) => ({
   parentOptions: selectParentOptions(state, props.params.id),
   parentTaxonomy: selectParentTaxonomy(state, props.params.id),
   users: selectUsers(state),
-  measures: selectMeasures(state, props.params.id),
-  recommendationsByFw: selectRecommendationsByFw(state, props.params.id),
+  actions: selectActions(state, props.params.id),
+  actorsByActortype: selectActorsByActortype(state, props.params.id),
   connectedTaxonomies: selectConnectedTaxonomies(state),
 });
 
@@ -476,29 +476,29 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, measures, recommendationsByFw, taxonomy) => {
+    handleSubmit: (formData, actions, actorsByActortype, taxonomy) => {
       let saveData = formData;
-      if (taxonomy.getIn(['attributes', 'tags_measures'])) {
+      if (taxonomy.getIn(['attributes', 'tags_actions'])) {
         saveData = saveData.set(
-          'measureCategories',
+          'actionCategories',
           getConnectionUpdatesFromFormData({
             formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
-            connections: measures,
-            connectionAttribute: 'associatedMeasures',
-            createConnectionKey: 'measure_id',
+            connections: actions,
+            connectionAttribute: 'associatedActions',
+            createConnectionKey: 'action_id',
             createKey: 'category_id',
           })
         );
       }
-      if (recommendationsByFw && taxonomy.getIn(['attributes', 'tags_recommendations'])) {
+      if (actorsByActortype && taxonomy.getIn(['attributes', 'tags_actors'])) {
         saveData = saveData.set(
-          'recommendationCategories',
-          recommendationsByFw
-            .map((recs, fwid) => getConnectionUpdatesFromFormData({
+          'actorCategories',
+          actorsByActortype
+            .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
               formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
-              connections: recs,
-              connectionAttribute: ['associatedRecommendationsByFw', fwid.toString()],
-              createConnectionKey: 'recommendation_id',
+              connections: actors,
+              connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
+              createConnectionKey: 'actor_id',
               createKey: 'category_id',
             }))
             .reduce(
@@ -534,16 +534,16 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(save(saveData.toJS()));
     },
     handleCancel: (reference) => {
-      dispatch(updatePath(`${PATHS.CATEGORIES}/${reference}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.CATEGORIES}/${reference}`, { replace: true }));
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));
     },
     handleDelete: (taxonomyId) => {
       dispatch(deleteEntity({
-        path: 'categories',
+        path: DB.CATEGORIES,
         id: props.params.id,
-        redirect: `categories/${taxonomyId}`,
+        redirect: `${ROUTES.TAXONOMIES}/${taxonomyId}`,
       }));
     },
     onCreateOption: (args) => {

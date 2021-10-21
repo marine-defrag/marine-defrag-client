@@ -14,8 +14,8 @@ import { List, fromJS } from 'immutable';
 
 import {
   renderUserControl,
-  renderMeasureControl,
-  renderRecommendationsByFwControl,
+  renderActionControl,
+  renderActorsByActortypeControl,
   renderParentCategoryControl,
   getTitleFormField,
   getReferenceFormField,
@@ -33,8 +33,8 @@ import { hasNewError } from 'utils/entity-form';
 
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
 
-import { PATHS, CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES } from 'themes/config';
+import { CONTENT_SINGLE } from 'containers/App/constants';
+import { ROUTES, USER_ROLES } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
 
@@ -69,8 +69,8 @@ import {
   selectConnectedTaxonomies,
   selectParentOptions,
   selectParentTaxonomy,
-  selectRecommendationsByFw,
-  selectMeasures,
+  selectActorsByActortype,
+  selectActions,
 } from './selectors';
 
 import messages from './messages';
@@ -149,8 +149,8 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
   getBodyMainFields = (
     taxonomy,
     connectedTaxonomies,
-    recommendationsByFw,
-    measures,
+    actorsByActortype,
+    actions,
     onCreateOption,
     userOnly,
   ) => {
@@ -160,31 +160,31 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
       fields: [getMarkdownField(intl.formatMessage)],
     });
     if (!userOnly) {
-      if (taxonomy.getIn(['attributes', 'tags_measures']) && measures) {
+      if (taxonomy.getIn(['attributes', 'tags_actions']) && actions) {
         groups.push({
-          label: intl.formatMessage(appMessages.nav.measuresSuper),
-          icon: 'measures',
+          label: intl.formatMessage(appMessages.nav.actionsSuper),
+          icon: 'actions',
           fields: [
-            renderMeasureControl(measures, connectedTaxonomies, onCreateOption, intl),
+            renderActionControl(actions, connectedTaxonomies, onCreateOption, intl),
           ],
         });
       }
       if (
-        taxonomy.getIn(['attributes', 'tags_recommendations'])
-        && recommendationsByFw
+        taxonomy.getIn(['attributes', 'tags_actors'])
+        && actorsByActortype
       ) {
-        const recConnections = renderRecommendationsByFwControl(
-          recommendationsByFw,
+        const actorConnections = renderActorsByActortypeControl(
+          actorsByActortype,
           connectedTaxonomies,
           onCreateOption,
           intl,
         );
-        if (recConnections) {
+        if (actorConnections) {
           groups.push(
             {
-              label: intl.formatMessage(appMessages.nav.recommendationsSuper),
-              icon: 'recommendations',
-              fields: recConnections,
+              label: intl.formatMessage(appMessages.nav.actorsSuper),
+              icon: 'actors',
+              fields: actorConnections,
             },
           );
         }
@@ -236,8 +236,8 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
       viewDomain,
       users,
       connectedTaxonomies,
-      recommendationsByFw,
-      measures,
+      actorsByActortype,
+      actions,
       onCreateOption,
       parentOptions,
       parentTaxonomy,
@@ -309,8 +309,8 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
                 saving={saveSending}
                 handleSubmit={(formData) => this.props.handleSubmit(
                   formData,
-                  measures,
-                  recommendationsByFw,
+                  actions,
+                  actorsByActortype,
                   taxonomy
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
@@ -325,8 +325,8 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
                     main: this.getBodyMainFields(
                       taxonomy,
                       connectedTaxonomies,
-                      recommendationsByFw,
-                      measures,
+                      actorsByActortype,
+                      actions,
                       onCreateOption,
                       viewDomain.getIn(['form', 'data', 'attributes', 'user_only'])
                     ),
@@ -360,8 +360,8 @@ CategoryNew.propTypes = {
   parentOptions: PropTypes.object,
   parentTaxonomy: PropTypes.object,
   users: PropTypes.object,
-  measures: PropTypes.object,
-  recommendationsByFw: PropTypes.object,
+  actions: PropTypes.object,
+  actorsByActortype: PropTypes.object,
   connectedTaxonomies: PropTypes.object,
   initialiseForm: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
@@ -382,8 +382,8 @@ const mapStateToProps = (state, props) => ({
   parentOptions: selectParentOptions(state, props.params.id),
   parentTaxonomy: selectParentTaxonomy(state, props.params.id),
   users: selectUsers(state),
-  measures: selectMeasures(state),
-  recommendationsByFw: selectRecommendationsByFw(state, props.params.id),
+  actions: selectActions(state),
+  actorsByActortype: selectActorsByActortype(state, props.params.id),
   connectedTaxonomies: selectConnectedTaxonomies(state),
 });
 
@@ -411,30 +411,30 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, measures, recommendationsByFw, taxonomy) => {
+    handleSubmit: (formData, actions, actorsByActortype, taxonomy) => {
       let saveData = formData.setIn(['attributes', 'taxonomy_id'], taxonomy.get('id'));
       if (!formData.getIn(['attributes', 'user_only'])) {
-        if (taxonomy.getIn(['attributes', 'tags_measures'])) {
+        if (taxonomy.getIn(['attributes', 'tags_actions'])) {
           saveData = saveData.set(
-            'measureCategories',
+            'actionCategories',
             getConnectionUpdatesFromFormData({
               formData,
-              connections: measures,
-              connectionAttribute: 'associatedMeasures',
-              createConnectionKey: 'measure_id',
+              connections: actions,
+              connectionAttribute: 'associatedActions',
+              createConnectionKey: 'action_id',
               createKey: 'category_id',
             })
           );
         }
-        if (recommendationsByFw && taxonomy.getIn(['attributes', 'tags_recommendations'])) {
+        if (actorsByActortype && taxonomy.getIn(['attributes', 'tags_actors'])) {
           saveData = saveData.set(
-            'recommendationCategories',
-            recommendationsByFw
-              .map((recs, fwid) => getConnectionUpdatesFromFormData({
+            'actorCategories',
+            actorsByActortype
+              .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
                 formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
-                connections: recs,
-                connectionAttribute: ['associatedRecommendationsByFw', fwid.toString()],
-                createConnectionKey: 'recommendation_id',
+                connections: actors,
+                connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
+                createConnectionKey: 'actor_id',
                 createKey: 'category_id',
               }))
               .reduce(
@@ -469,7 +469,7 @@ function mapDispatchToProps(dispatch) {
       dispatch(save(saveData.toJS()));
     },
     handleCancel: (taxonomyReference) => {
-      dispatch(updatePath(`${PATHS.TAXONOMIES}/${taxonomyReference}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.TAXONOMIES}/${taxonomyReference}`, { replace: true }));
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));

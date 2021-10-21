@@ -18,6 +18,8 @@ import { qe } from 'utils/quasi-equals';
 import { loadEntitiesIfNeeded, openBookmark } from 'containers/App/actions';
 import { selectReady, selectEntities } from 'containers/App/selectors';
 import { CONTENT_LIST, VIEWPORTS } from 'containers/App/constants';
+import { DB } from 'themes/config';
+
 import appMessages from 'containers/App/messages';
 
 import Button from 'components/buttons/Button';
@@ -131,14 +133,14 @@ const STATE_INITIAL = {
 };
 
 const getTypeLabel = (type, formatMessage, short = true) => {
-  const [path, framework] = type.indexOf('_') > -1
+  const [path, actortype] = type.indexOf('_') > -1
     ? type.split('_')
     : [type, null];
   let label = formatMessage(appMessages.entities[path].plural);
-  if (framework) {
-    label = `${label} | ${formatMessage(appMessages[short ? 'frameworks_short' : 'frameworks'][framework])}`;
-  } else if (path === 'recommendations') {
-    label = `${label} | ${formatMessage(appMessages.frameworks.all)}`;
+  if (actortype) {
+    label = `${label} | ${formatMessage(appMessages[short ? 'actortypes_short' : 'actortypes'][actortype])}`;
+  } else if (path === DB.ACTORS) {
+    label = `${label} | ${formatMessage(appMessages.actortypes.all)}`;
   }
   return label;
 };
@@ -380,7 +382,7 @@ const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   bookmarksForSearch: selectBookmarks(state, fromJS(props.location.query)),
   activeType: selectTypeQuery(state),
-  allBookmarks: selectEntities(state, 'bookmarks'),
+  allBookmarks: selectEntities(state, DB.BOOKMARKS),
 });
 function mapDispatchToProps(dispatch) {
   return {

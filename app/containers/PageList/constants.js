@@ -1,13 +1,15 @@
-import { USER_ROLES, PUBLISH_STATUSES } from 'themes/config';
+import {
+  DB, ROUTES, USER_ROLES, PUBLISH_STATUSES,
+} from 'themes/config';
 // specify the filter and query  options
 export const DEPENDENCIES = [
-  'user_roles',
-  'pages',
+  DB.PAGES,
+  DB.USER_ROLES,
 ];
 
 export const CONFIG = {
-  serverPath: 'pages',
-  clientPath: 'pages',
+  serverPath: DB.PAGES,
+  clientPath: ROUTES.PAGES,
   search: ['title'],
   sorting: [
     {
@@ -39,7 +41,7 @@ export const CONFIG = {
         message: 'attributes.draft',
         attribute: 'draft',
         options: PUBLISH_STATUSES,
-        role: USER_ROLES.CONTRIBUTOR.value,
+        role: USER_ROLES.ANALYST.value,
       },
     ],
   },

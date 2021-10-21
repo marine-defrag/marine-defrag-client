@@ -12,6 +12,7 @@ import {
   SHOW_HEADER_PATTERN,
   SHOW_BRAND_ON_HOME,
   TEXT_TRUNCATE,
+  ROUTES,
 } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
@@ -147,7 +148,7 @@ const LinkTitle = styled.div`
     font-size: ${(props) => props.theme.sizes.print.default};
   }
 `;
-const SelectFrameworks = styled(LinkMain)`
+const SelectActortypes = styled(LinkMain)`
   display: none;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     display: inline-block;
@@ -178,7 +179,7 @@ const Search = styled(LinkMain)`
   }
 `;
 
-const FrameworkOptions = styled(PrintHide)`
+const ActortypeOptions = styled(PrintHide)`
   display: none;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     position: absolute;
@@ -195,7 +196,7 @@ const FrameworkOptions = styled(PrintHide)`
   margin-top: 3px;
   padding: 5px 0;
 `;
-const FrameworkOption = styled(Button)`
+const ActortypeOption = styled(Button)`
   display: block;
   width: 100%;
   text-align: left;
@@ -207,15 +208,15 @@ const FrameworkOption = styled(Button)`
 
 const STATE_INITIAL = {
   showSecondary: false,
-  showFrameworks: false,
+  showActortypes: false,
 };
 
 class Header extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   constructor() {
     super();
     this.state = STATE_INITIAL;
-    this.fwWrapperRef = React.createRef();
-    this.fwButtonRef = React.createRef();
+    this.actortypeWrapperRef = React.createRef();
+    this.actortypeButtonRef = React.createRef();
     this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
@@ -238,14 +239,14 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
    * after https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
    */
   handleClickOutside = (evt) => {
-    const wrapperContains = this.fwWrapperRef
-      && this.fwWrapperRef.current
-      && this.fwWrapperRef.current.contains(evt.target);
-    const buttonContains = this.fwButtonRef
-      && this.fwButtonRef.current
-      && this.fwButtonRef.current.contains(evt.target);
+    const wrapperContains = this.actortypeWrapperRef
+      && this.actortypeWrapperRef.current
+      && this.actortypeWrapperRef.current.contains(evt.target);
+    const buttonContains = this.actortypeButtonRef
+      && this.actortypeButtonRef.current
+      && this.actortypeButtonRef.current.contains(evt.target);
     if (!wrapperContains && !buttonContains) {
-      this.setState({ showFrameworks: false });
+      this.setState({ showActortypes: false });
     }
   }
 
@@ -259,20 +260,20 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
     this.setState({ showSecondary: false });
   };
 
-  onShowFrameworks = (evt) => {
+  onShowActortypes = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.setState({ showFrameworks: true });
+    this.setState({ showActortypes: true });
   };
 
-  onHideFrameworks = (evt) => {
+  onHideActortypes = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.setState({ showFrameworks: false });
+    this.setState({ showActortypes: false });
   };
 
   onClick = (evt, path, currentPath) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     if (currentPath) {
-      if (currentPath === '/login' || currentPath === '/register') {
+      if (currentPath === ROUTES.LOGIN || currentPath === ROUTES.REGISTER) {
         this.props.onPageLink(path, { keepQuery: true });
       } else {
         this.props.onPageLink(path, { query: { arg: 'redirectOnAuthSuccess', value: currentPath } });
@@ -365,8 +366,8 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
   render() {
     const {
       isHome,
-      frameworkOptions,
-      onSelectFramework,
+      actortypeOptions,
+      onSelectActortype,
       search,
     } = this.props;
     const { intl } = this.context;
@@ -375,8 +376,8 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
 
     const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
 
-    const currentFrameworkOption = frameworkOptions
-      && frameworkOptions.find((option) => option.active);
+    const currentActortypeOption = actortypeOptions
+      && actortypeOptions.find((option) => option.active);
     return (
       <Styled
         isHome={isHome}
@@ -387,21 +388,21 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
         hasNav={!isHome}
         hasBrand={SHOW_BRAND_ON_HOME || !isHome}
       >
-        {this.state.showFrameworks && (
-          <FrameworkOptions ref={this.fwWrapperRef}>
-            {frameworkOptions && frameworkOptions.map((option) => (
-              <FrameworkOption
+        {this.state.showActortypes && (
+          <ActortypeOptions ref={this.actortypeWrapperRef}>
+            {actortypeOptions && actortypeOptions.map((option) => (
+              <ActortypeOption
                 key={option.value}
                 active={option.active}
                 onClick={() => {
-                  onSelectFramework(option.value);
-                  this.onHideFrameworks();
+                  onSelectActortype(option.value);
+                  this.onHideActortypes();
                 }}
               >
                 {option.label}
-              </FrameworkOption>
+              </ActortypeOption>
             ))}
-          </FrameworkOptions>
+          </ActortypeOptions>
         )}
         { !SHOW_BRAND_ON_HOME && isHome
           && (
@@ -436,33 +437,33 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
         )}
         {!isHome && (
           <NavMain hasBorder>
-            <SelectFrameworks
+            <SelectActortypes
               as="button"
-              ref={this.fwButtonRef}
-              onClick={(evt) => this.state.showFrameworks
-                ? this.onHideFrameworks(evt)
-                : this.onShowFrameworks(evt)
+              ref={this.actortypeButtonRef}
+              onClick={(evt) => this.state.showActortypes
+                ? this.onHideActortypes(evt)
+                : this.onShowActortypes(evt)
               }
             >
               <LinkSuperTitle>
-                {intl.formatMessage(appMessages.frameworks.single)}
+                {intl.formatMessage(appMessages.actortypes.single)}
               </LinkSuperTitle>
-              {currentFrameworkOption && (
+              {currentActortypeOption && (
                 <LinkTitle active>
                   {truncateText(
-                    currentFrameworkOption.label,
-                    TEXT_TRUNCATE.FW_SELECT,
+                    currentActortypeOption.label,
+                    TEXT_TRUNCATE.ACTORTYPE_SELECT,
                     false,
                   )}
-                  {!this.state.showFrameworks && (
+                  {!this.state.showActortypes && (
                     <Icon name="dropdownOpen" text textRight size="1em" />
                   )}
-                  {this.state.showFrameworks && (
+                  {this.state.showActortypes && (
                     <Icon name="dropdownClose" text textRight size="1em" />
                   )}
                 </LinkTitle>
               )}
-            </SelectFrameworks>
+            </SelectActortypes>
             {navItems && navItems.map((item, i) => (
               <LinkMain
                 key={i}
@@ -509,11 +510,11 @@ Header.propTypes = {
   pages: PropTypes.array,
   navItems: PropTypes.array,
   onPageLink: PropTypes.func.isRequired,
-  onSelectFramework: PropTypes.func.isRequired,
+  onSelectActortype: PropTypes.func.isRequired,
   isHome: PropTypes.bool, // not shown on home page
   theme: PropTypes.object.isRequired,
   search: PropTypes.object,
-  frameworkOptions: PropTypes.array,
+  actortypeOptions: PropTypes.array,
 };
 
 Header.defaultProps = {

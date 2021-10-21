@@ -111,15 +111,15 @@ class TaxonomySidebar extends React.PureComponent { // eslint-disable-line react
       taxonomies,
       active,
       onTaxonomyLink,
-      frameworkId,
-      frameworks,
+      actortypeId,
+      actortypes,
     } = this.props;
-    const taxonomyGroups = frameworks && taxonomies && prepareTaxonomyGroups(
+    const taxonomyGroups = actortypes && taxonomies && prepareTaxonomyGroups(
       taxonomies,
       active,
       onTaxonomyLink,
-      frameworkId,
-      frameworks,
+      actortypeId,
+      actortypes,
     );
     const { intl } = this.context;
     return (
@@ -149,17 +149,17 @@ class TaxonomySidebar extends React.PureComponent { // eslint-disable-line react
                   {taxonomyGroups && map(taxonomyGroups, (group) => (
                     <div key={group.id}>
                       <SidebarGroupLabel>
-                        {group.frameworkId && (
+                        {group.actortypeId && (
                           <FormattedMessage
                             {... appMessages.taxonomyGroups.objectives}
                             values={{
                               type: intl.formatMessage(
-                                appMessages.entities[`recommendations_${group.frameworkId}`].pluralLong
+                                appMessages.entities[`actors_${group.actortypeId}`].pluralLong
                               ),
                             }}
                           />
                         )}
-                        {!group.frameworkId && (
+                        {!group.actortypeId && (
                           <FormattedMessage {... appMessages.taxonomyGroups[group.id]} />
                         )}
                       </SidebarGroupLabel>
@@ -187,8 +187,8 @@ class TaxonomySidebar extends React.PureComponent { // eslint-disable-line react
 
 TaxonomySidebar.propTypes = {
   taxonomies: PropTypes.object,
-  frameworks: PropTypes.object,
-  frameworkId: PropTypes.string,
+  actortypes: PropTypes.object,
+  actortypeId: PropTypes.string,
   onTaxonomyLink: PropTypes.func,
   active: PropTypes.string,
   theme: PropTypes.object,

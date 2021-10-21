@@ -2,50 +2,50 @@ import { createSelector } from 'reselect';
 
 import {
   selectEntities,
-  selectFWTaxonomiesSorted,
-  selectRecommendationsCategorised,
-  selectFrameworks,
+  selectActortypeTaxonomiesSorted,
+  selectActorsCategorised,
+  selectActortypes,
 } from 'containers/App/selectors';
 
 import { prepareTaxonomiesMultiple } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
 export const selectDomain = createSelector(
-  (state) => state.get('measureNew'),
+  (state) => state.get('actionNew'),
   (substate) => substate
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  (state) => selectFWTaxonomiesSorted(state),
-  (state) => selectEntities(state, 'categories'),
+  (state) => selectActortypeTaxonomiesSorted(state),
+  (state) => selectEntities(state, DB.CATEGORIES),
   (taxonomies, categories) => prepareTaxonomiesMultiple(
     taxonomies,
     categories,
-    ['tags_recommendations'],
+    ['tags_actors'],
     false,
   )
 );
 
-export const selectRecommendationsByFw = createSelector(
+export const selectActorsByActortype = createSelector(
   (state, id) => id, // taxonomy id
-  (state) => selectEntities(state, 'framework_taxonomies'),
-  (state) => selectRecommendationsCategorised(state),
-  (state) => selectFrameworks(state),
-  (id, fwTaxonomies, entities, frameworks) => {
-    if (!fwTaxonomies || !entities) {
+  (state) => selectEntities(state, DB.ACTORTYPE_TAXONOMIES),
+  (state) => selectActorsCategorised(state),
+  (state) => selectActortypes(state),
+  (id, actortypeTaxonomies, entities, actortypes) => {
+    if (!actortypeTaxonomies || !entities) {
       return null;
     }
     return entities.filter(
       (r) => {
-        const framework = frameworks.find(
-          (fw) => qe(
-            fw.get('id'),
-            r.getIn(['attributes', 'framework_id']),
+        const actortype = actortypes.find(
+          (actortype) => qe(
+            actortype.get('id'),
+            r.getIn(['attributes', 'actortype_id']),
           )
         );
-        return framework.getIn(['attributes', 'has_measures']);
+        return actortype.getIn(['attributes', 'has_actions']);
       }
     ).groupBy(
-      (r) => r.getIn(['attributes', 'framework_id']).toString()
+      (r) => r.getIn(['attributes', 'actortype_id']).toString()
     );
   }
 );

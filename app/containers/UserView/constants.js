@@ -1,8 +1,10 @@
+import { DB } from 'themes/config';
+
 export const DEPENDENCIES = [
-  'user_roles',
-  'users',
-  'roles',
-  'categories',
-  'taxonomies',
-  'user_categories',
+  DB.USERS,
+  DB.ROLES,
+  DB.USER_ROLES,
+  DB.CATEGORIES,
+  DB.TAXONOMIES,
+  DB.USER_CATEGORIES,
 ];

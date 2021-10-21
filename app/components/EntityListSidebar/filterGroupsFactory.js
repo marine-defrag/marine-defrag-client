@@ -2,7 +2,7 @@ import { reduce } from 'lodash/collection';
 import { sortEntities } from 'utils/sort';
 import { qe } from 'utils/quasi-equals';
 
-const checkFramework = (frameworks, attribute) => frameworks.some((fw) => fw.getIn(['attributes', attribute]));
+const checkActortype = (actortypes, attribute) => actortypes.some((actortype) => actortype.getIn(['attributes', attribute]));
 
 // figure out filter groups for filter panel
 export const makeFilterGroups = (
@@ -12,44 +12,44 @@ export const makeFilterGroups = (
   activeFilterOption,
   hasUserRole,
   messages,
-  frameworks,
+  actortypes,
 ) => {
   const filterGroups = {};
 
   // taxonomy option group
-  if (config.frameworks && frameworks && frameworks.size > 1) {
-    filterGroups.frameworks = {
-      id: 'frameworks', // filterGroupId
-      label: messages.frameworksGroup,
+  if (config.actortypes && actortypes && actortypes.size > 1) {
+    filterGroups.actortypes = {
+      id: 'actortypes', // filterGroupId
+      label: messages.actortypesGroup,
       show: true,
-      icon: 'recommendations',
+      icon: 'actors',
       options: [{
-        id: 'frameworks', // filterOptionId
-        label: messages.frameworks,
-        color: 'recommendations',
-        active: !!activeFilterOption && activeFilterOption.optionId === 'frameworks',
+        id: 'actortypes', // filterOptionId
+        label: messages.actortypes,
+        color: 'actors',
+        active: !!activeFilterOption && activeFilterOption.optionId === 'actortypes',
       }],
     };
   }
   // taxonomy option group
   if (config.taxonomies && taxonomies) {
-    // multi framework mode
-    if (config.frameworks && frameworks && frameworks.size > 1) {
-      // single framework taxonomy
-      frameworks.forEach((fw) => {
-        const fwTaxonomies = taxonomies.filter((tax) => {
-          const taxFwIds = tax.get('frameworkIds');
-          return taxFwIds.size === 1
-              && taxFwIds.find((fwid) => qe(fwid, fw.get('id')));
+    // multi actortype mode
+    if (config.actortypes && actortypes && actortypes.size > 1) {
+      // single actortype taxonomy
+      actortypes.forEach((actortype) => {
+        const actortypeTaxonomies = taxonomies.filter((tax) => {
+          const taxActortypeIds = tax.get('actortypeIds');
+          return taxActortypeIds.size === 1
+              && taxActortypeIds.find((actortypeid) => qe(actortypeid, actortype.get('id')));
         });
-        filterGroups[`taxonomies_${fw.get('id')}`] = {
-          id: `taxonomies_${fw.get('id')}`, // filterGroupId
+        filterGroups[`taxonomies_${actortype.get('id')}`] = {
+          id: `taxonomies_${actortype.get('id')}`, // filterGroupId
           type: 'taxonomies',
-          label: messages.taxonomyGroupByFw(fw.get('id')),
+          label: messages.taxonomyGroupByActortype(actortype.get('id')),
           show: true,
           icon: 'categories',
           options:
-            sortEntities(fwTaxonomies, 'asc', 'priority')
+            sortEntities(actortypeTaxonomies, 'asc', 'priority')
               .reduce(
                 (memo, taxonomy) => memo.concat([
                   {
@@ -63,11 +63,11 @@ export const makeFilterGroups = (
               ),
         };
       });
-      const commonTaxonomies = taxonomies.filter((tax) => tax.get('frameworkIds')
-          && tax.get('frameworkIds').size > 1);
+      const commonTaxonomies = taxonomies.filter((tax) => tax.get('actortypeIds')
+          && tax.get('actortypeIds').size > 1);
       filterGroups.taxonomies = {
         id: 'taxonomies', // filterGroupId
-        label: messages.taxonomyGroupByFw('common'),
+        label: messages.taxonomyGroupByActortype('common'),
         show: true,
         icon: 'categories',
         options:
@@ -145,17 +145,17 @@ export const makeFilterGroups = (
       options: reduce(
         config.connections.options,
         (optionsMemo, option) => {
-          if (option.groupByFramework && frameworks) {
-            return frameworks
-              .filter((fw) => !option.frameworkFilter || fw.getIn(['attributes', option.frameworkFilter]))
+          if (option.groupByActortype && actortypes) {
+            return actortypes
+              .filter((actortype) => !option.actortypeFilter || actortype.getIn(['attributes', option.actortypeFilter]))
               .reduce(
-                (memo, fw) => {
-                  const id = `${option.path}_${fw.get('id')}`;
+                (memo, actortype) => {
+                  const id = `${option.path}_${actortype.get('id')}`;
                   return memo.concat({
                     id, // filterOptionId
                     label: option.label,
-                    message: (option.message && option.message.indexOf('{fwid}') > -1)
-                      ? option.message.replace('{fwid}', fw.get('id'))
+                    message: (option.message && option.message.indexOf('{actortypeid}') > -1)
+                      ? option.message.replace('{actortypeid}', actortype.get('id'))
                       : option.message,
                     icon: id,
                     color: option.path,
@@ -193,8 +193,8 @@ export const makeFilterGroups = (
             || (hasUserRole && hasUserRole[option.role])
           )
           && (
-            typeof option.frameworkFilter === 'undefined'
-            || checkFramework(frameworks, option.frameworkFilter)
+            typeof option.actortypeFilter === 'undefined'
+            || checkActortype(actortypes, option.actortypeFilter)
           )
         )
           ? options.concat([{

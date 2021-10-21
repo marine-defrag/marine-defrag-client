@@ -1,15 +1,13 @@
+import { DB, ROUTES } from 'themes/config';
+
 export const DEPENDENCIES = [
-  'pages',
-  'taxonomies',
-  'framework_taxonomies',
-  'categories',
-  'indicators',
-  'measures',
-  'recommendations',
-  'progress_reports',
-  'recommendation_measures',
-  'recommendation_indicators',
-  'measure_indicators',
+  DB.PAGES,
+  DB.CATEGORIES,
+  DB.TAXONOMIES,
+  DB.ACTIONS,
+  DB.ACTORS,
+  DB.ACTORTYPE_TAXONOMIES,
+  DB.ACTOR_ACTIONS,
 ];
 
 export const UPDATE_QUERY = 'impactoss/Search/UPDATE_QUERY';
@@ -23,9 +21,9 @@ export const CONFIG = {
       group: 'entities',
       targets: [
         {
-          path: 'measures',
-          clientPath: 'actions',
-          search: ['title', 'description', 'outcome', 'indicator_summary'],
+          path: DB.ACTIONS,
+          clientPath: ROUTES.ACTIONS,
+          search: ['title', 'description', 'outcome'],
           sorting: [
             {
               attribute: 'id', // proxy for created at
@@ -46,36 +44,10 @@ export const CONFIG = {
           ],
         },
         {
-          path: 'indicators',
-          search: ['title', 'description', 'reference'],
-          sorting: [
-            {
-              attribute: 'id', // proxy for created at
-              type: 'number',
-              order: 'desc',
-              default: true,
-            },
-            {
-              attribute: 'reference',
-              type: 'string',
-              order: 'asc',
-            },
-            {
-              attribute: 'title',
-              type: 'string',
-              order: 'asc',
-            },
-            {
-              attribute: 'updated_at',
-              type: 'date',
-              order: 'desc',
-            },
-          ],
-        },
-        {
-          path: 'recommendations',
+          path: DB.ACTORS,
+          clientPath: ROUTES.ACTORS,
           search: ['title', 'description', 'response', 'reference'],
-          groupByFramework: true,
+          groupByActortype: true,
           sorting: [
             {
               attribute: 'id', // proxy for created at
@@ -87,29 +59,6 @@ export const CONFIG = {
               attribute: 'reference',
               type: 'string',
               order: 'asc',
-            },
-            {
-              attribute: 'title',
-              type: 'string',
-              order: 'asc',
-            },
-            {
-              attribute: 'updated_at',
-              type: 'date',
-              order: 'desc',
-            },
-          ],
-        },
-        {
-          path: 'progress_reports',
-          clientPath: 'reports',
-          search: ['title', 'description', 'document_url'],
-          sorting: [
-            {
-              attribute: 'id', // proxy for created at
-              type: 'number',
-              order: 'desc',
-              default: true,
             },
             {
               attribute: 'title',
@@ -155,7 +104,8 @@ export const CONFIG = {
       group: 'content',
       targets: [
         {
-          path: 'pages',
+          path: DB.PAGES,
+          clientPath: ROUTES.PAGES,
           search: ['title', 'content', 'menu_title'],
           sorting: [
             {

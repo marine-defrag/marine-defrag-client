@@ -1,19 +1,19 @@
-import { PATHS } from 'containers/App/constants';
+import { ROUTES } from 'themes/config';
 import { qe } from 'utils/quasi-equals';
 import { fromJS } from 'immutable';
 
 export const getTaxonomyTagList = (taxonomy) => {
   const tags = [];
-  if (taxonomy.getIn(['attributes', 'tags_measures'])) {
+  if (taxonomy.getIn(['attributes', 'tags_actions'])) {
     tags.push({
-      type: 'measures',
+      type: 'actions',
       icon: 'actions',
     });
   }
-  if (taxonomy.getIn(['attributes', 'tags_recommendations'])) {
+  if (taxonomy.getIn(['attributes', 'tags_actors'])) {
     tags.push({
-      type: 'recommendations',
-      icon: 'recommendations',
+      type: 'actors',
+      icon: 'actors',
     });
   }
   return tags;
@@ -27,13 +27,13 @@ const mapTaxonomy = (tax, childTaxonomies, activeId, onLink) => {
   return fromJS({
     id: tax.get('id'),
     count: tax.count,
-    onLink: (isActive = false) => onLink(isActive ? PATHS.OVERVIEW : `${PATHS.TAXONOMIES}/${tax.get('id')}`),
+    onLink: (isActive = false) => onLink(isActive ? ROUTES.OVERVIEW : `${ROUTES.TAXONOMIES}/${tax.get('id')}`),
     active: parseInt(activeId, 10) === parseInt(tax.get('id'), 10),
     children: children && children.map((child) => ({
       id: child.id,
       child: true,
       count: child.count,
-      onLink: (isActive = false) => onLink(isActive ? PATHS.OVERVIEW : `${PATHS.TAXONOMIES}/${child.id}`),
+      onLink: (isActive = false) => onLink(isActive ? ROUTES.OVERVIEW : `${ROUTES.TAXONOMIES}/${child.id}`),
       active: parseInt(activeId, 10) === parseInt(child.id, 10),
     })),
   });
@@ -43,66 +43,66 @@ export const prepareTaxonomyGroups = (
   taxonomies, // OrderedMap
   activeId,
   onLink,
-  frameworkId,
-  frameworks,
+  actortypeId,
+  actortypes,
 ) => {
   const parentTaxonomies = taxonomies.filter((tax) => tax.getIn(['attributes', 'parent_id']) === ''
     || tax.getIn(['attributes', 'parent_id']) === null);
   const childTaxonomies = taxonomies.filter((tax) => !!tax.getIn(['attributes', 'parent_id']));
   const groups = [];
-  if (frameworkId && frameworkId !== 'all') {
-    // single framework mode
+  if (actortypeId && actortypeId !== 'all') {
+    // single actortype mode
     groups.push({
-      id: frameworkId,
-      frameworkId,
+      id: actortypeId,
+      actortypeId,
       taxonomies: parentTaxonomies
-        .filter((tax) => tax.get('frameworkIds').find((fw) => qe(fw, frameworkId)))
+        .filter((tax) => tax.get('actortypeIds').find((actortype) => qe(actortype, actortypeId)))
         .map((tax) => mapTaxonomy(tax, childTaxonomies, activeId, onLink))
         .toList()
         .toJS(),
     });
   } else {
-    // multi-framework mode
-    // exclusive taxonomies (one framework only)
-    frameworks.forEach((fw) => {
-      const fwTaxonomies = parentTaxonomies
+    // multi-actortype mode
+    // exclusive taxonomies (one actortype only)
+    actortypes.forEach((actortype) => {
+      const actortypeTaxonomies = parentTaxonomies
         .filter((tax) => {
-          const taxFwIds = tax.get('frameworkIds');
-          return tax.getIn(['attributes', 'tags_recommendations'])
-            && taxFwIds.size === 1
-            && taxFwIds.find((fwid) => qe(fwid, fw.get('id')));
+          const taxActortypeIds = tax.get('actortypeIds');
+          return tax.getIn(['attributes', 'tags_actors'])
+            && taxActortypeIds.size === 1
+            && taxActortypeIds.find((actortypeid) => qe(actortypeid, actortype.get('id')));
         })
         .map((tax) => mapTaxonomy(tax, childTaxonomies, activeId, onLink))
         .toList()
         .toJS();
 
-      if (fwTaxonomies && fwTaxonomies.length > 0) {
+      if (actortypeTaxonomies && actortypeTaxonomies.length > 0) {
         groups.push({
-          id: fw.get('id'),
-          frameworkId: fw.get('id'),
-          taxonomies: fwTaxonomies,
+          id: actortype.get('id'),
+          actortypeId: actortype.get('id'),
+          taxonomies: actortypeTaxonomies,
         });
       }
     });
-    // common frameworks
+    // common actortypes
     groups.push({
       id: 'common',
       taxonomies: parentTaxonomies
-        .filter((tax) => tax.getIn(['attributes', 'tags_recommendations'])
-          && tax.get('frameworkIds').size > 1)
+        .filter((tax) => tax.getIn(['attributes', 'tags_actors'])
+          && tax.get('actortypeIds').size > 1)
         .map((tax) => mapTaxonomy(tax, childTaxonomies, activeId, onLink))
         .toList()
         .toJS(),
     });
   }
 
-  const measureOnlyTaxonomies = parentTaxonomies
-    .filter((tax) => tax.getIn(['attributes', 'tags_measures'])
-      && !tax.getIn(['attributes', 'tags_recommendations']));
-  if (measureOnlyTaxonomies && measureOnlyTaxonomies.size > 0) {
+  const actionOnlyTaxonomies = parentTaxonomies
+    .filter((tax) => tax.getIn(['attributes', 'tags_actions'])
+      && !tax.getIn(['attributes', 'tags_actors']));
+  if (actionOnlyTaxonomies && actionOnlyTaxonomies.size > 0) {
     groups.push({
-      id: 'measures',
-      taxonomies: measureOnlyTaxonomies
+      id: 'actions',
+      taxonomies: actionOnlyTaxonomies
         .map((tax) => mapTaxonomy(tax, taxonomies, activeId, onLink))
         .toList()
         .toJS(),
@@ -111,8 +111,8 @@ export const prepareTaxonomyGroups = (
   return groups;
 };
 
-export const getDefaultTaxonomy = (taxonomies, frameworkId) => taxonomies
-  .filter((tax) => qe(tax.getIn(['attributes', 'framework_id']), frameworkId))
+export const getDefaultTaxonomy = (taxonomies, actortypeId) => taxonomies
+  .filter((tax) => qe(tax.getIn(['attributes', 'actortype_id']), actortypeId))
   .reduce((memo, tax) => {
     if (memo) {
       const priority = tax.getIn(['attributes', 'priority']);

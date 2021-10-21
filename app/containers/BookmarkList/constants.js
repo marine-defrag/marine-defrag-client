@@ -1,5 +1,7 @@
 // specify the filter and query  options
-export const DEPENDENCIES = ['bookmarks'];
+import { DB } from 'themes/config';
+
+export const DEPENDENCIES = [DB.BOOKMARKS];
 
 export const UPDATE_QUERY = 'impactoss/BookmarkList/UPDATE_QUERY';
 export const RESET_SEARCH_QUERY = 'impactoss/BookmarkList/RESET_SEARCH_QUERY';

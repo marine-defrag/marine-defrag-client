@@ -4,13 +4,13 @@ import { List } from 'immutable';
 import {
   selectEntity,
   selectEntities,
-  selectMeasuresCategorised,
-  selectRecommendationsCategorised,
-  selectFWTaxonomiesSorted,
+  selectActionsCategorised,
+  selectActorsCategorised,
+  selectActortypeTaxonomiesSorted,
   selectTaxonomies,
 } from 'containers/App/selectors';
 
-import { USER_ROLES } from 'themes/config';
+import { USER_ROLES, DB } from 'themes/config';
 
 import {
   prepareCategory,
@@ -25,15 +25,15 @@ export const selectDomain = createSelector(
 );
 
 export const selectViewEntity = createSelector(
-  (state, id) => selectEntity(state, { path: 'categories', id }),
-  (state) => selectEntities(state, 'users'),
-  (state) => selectFWTaxonomiesSorted(state),
+  (state, id) => selectEntity(state, { path: DB.CATEGORIES, id }),
+  (state) => selectEntities(state, DB.USERS),
+  (state) => selectActortypeTaxonomiesSorted(state),
   (entity, users, taxonomies) => prepareCategory(entity, users, taxonomies)
 );
 
 export const selectParentOptions = createSelector(
-  (state, id) => selectEntity(state, { path: 'categories', id }),
-  (state) => selectEntities(state, 'categories'),
+  (state, id) => selectEntity(state, { path: DB.CATEGORIES, id }),
+  (state) => selectEntities(state, DB.CATEGORIES),
   selectTaxonomies,
   (entity, categories, taxonomies) => {
     if (entity && taxonomies && categories) {
@@ -66,7 +66,7 @@ export const selectParentOptions = createSelector(
 );
 
 export const selectParentTaxonomy = createSelector(
-  (state, id) => selectEntity(state, { path: 'categories', id }),
+  (state, id) => selectEntity(state, { path: DB.CATEGORIES, id }),
   selectTaxonomies,
   (entity, taxonomies) => {
     if (entity && taxonomies) {
@@ -89,7 +89,7 @@ export const selectParentTaxonomy = createSelector(
   }
 );
 const selectIsParentTaxonomy = createSelector(
-  (state, id) => selectEntity(state, { path: 'categories', id }),
+  (state, id) => selectEntity(state, { path: DB.CATEGORIES, id }),
   selectTaxonomies,
   (entity, taxonomies) => {
     if (entity && taxonomies) {
@@ -114,8 +114,8 @@ const selectIsParentTaxonomy = createSelector(
 
 
 export const selectUsers = createSelector(
-  (state) => selectEntities(state, 'users'),
-  (state) => selectEntities(state, 'user_roles'),
+  (state) => selectEntities(state, DB.USERS),
+  (state) => selectEntities(state, DB.USER_ROLES),
   (entities, associations) => usersByRole(
     entities,
     associations,
@@ -123,9 +123,9 @@ export const selectUsers = createSelector(
   )
 );
 
-export const selectMeasures = createSelector(
+export const selectActions = createSelector(
   (state, id) => id,
-  selectMeasuresCategorised,
+  selectActionsCategorised,
   selectIsParentTaxonomy,
   (id, entities, isParent) => {
     if (isParent) return null;
@@ -136,46 +136,46 @@ export const selectMeasures = createSelector(
   }
 );
 
-export const selectRecommendationsByFw = createSelector(
+export const selectActorsByActortype = createSelector(
   (state, id) => id,
-  (state, id) => selectEntity(state, { path: 'categories', id }),
-  (state) => selectEntities(state, 'framework_taxonomies'),
-  selectRecommendationsCategorised,
+  (state, id) => selectEntity(state, { path: DB.CATEGORIES, id }),
+  (state) => selectEntities(state, DB.ACTORTYPE_TAXONOMIES),
+  selectActorsCategorised,
   selectIsParentTaxonomy,
-  (id, category, fwTaxonomies, entities, isParent) => {
-    if (isParent || !category || !fwTaxonomies || !entities) {
+  (id, category, actortypeTaxonomies, entities, isParent) => {
+    if (isParent || !category || !actortypeTaxonomies || !entities) {
       return null;
     }
-    // framework id for category
-    const frameworkIds = fwTaxonomies.reduce(
-      (memo, fwt) => qe(
-        fwt.getIn(['attributes', 'taxonomy_id']),
+    // actortype id for category
+    const actortypeIds = actortypeTaxonomies.reduce(
+      (memo, actortypet) => qe(
+        actortypet.getIn(['attributes', 'taxonomy_id']),
         category.getIn(['attributes', 'taxonomy_id']),
       )
-        ? memo.push(fwt.getIn(['attributes', 'framework_id']))
+        ? memo.push(actortypet.getIn(['attributes', 'actortype_id']))
         : memo,
       List(),
     );
     const filtered = entities.filter(
-      (r) => frameworkIds.find(
-        (fwid) => qe(fwid, r.getIn(['attributes', 'framework_id']))
+      (r) => actortypeIds.find(
+        (actortypeid) => qe(actortypeid, r.getIn(['attributes', 'actortype_id']))
       )
     );
     return entitiesSetAssociatedCategory(
       filtered,
       id,
     ).groupBy(
-      (r) => r.getIn(['attributes', 'framework_id']).toString()
+      (r) => r.getIn(['attributes', 'actortype_id']).toString()
     );
   }
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  (state) => selectFWTaxonomiesSorted(state),
-  (state) => selectEntities(state, 'categories'),
+  (state) => selectActortypeTaxonomiesSorted(state),
+  (state) => selectEntities(state, DB.CATEGORIES),
   (taxonomies, categories) => prepareTaxonomiesMultiple(
     taxonomies,
     categories,
-    ['tags_measures', 'tags_recommendations']
+    ['tags_actions', 'tags_actors']
   )
 );

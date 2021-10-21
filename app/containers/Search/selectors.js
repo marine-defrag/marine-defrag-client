@@ -3,12 +3,12 @@ import { Map, List, fromJS } from 'immutable';
 // import { reduce } from 'lodash/collection';
 
 import {
-  selectFWEntitiesAll,
+  selectActortypeEntitiesAll,
   selectSearchQuery,
   selectSortByQuery,
   selectSortOrderQuery,
-  selectFWTaxonomiesSorted,
-  selectActiveFrameworks,
+  selectActortypeTaxonomiesSorted,
+  selectActiveActortypes,
 } from 'containers/App/selectors';
 
 import { filterEntitiesByKeywords } from 'utils/entities';
@@ -27,13 +27,13 @@ const selectPathQuery = createSelector(
 // kicks off series of cascading selectors
 export const selectEntitiesByQuery = createSelector(
   (state, locationQuery) => selectSearchQuery(state, locationQuery),
-  selectFWEntitiesAll,
-  selectFWTaxonomiesSorted,
-  selectActiveFrameworks,
+  selectActortypeEntitiesAll,
+  selectActortypeTaxonomiesSorted,
+  selectActiveActortypes,
   selectPathQuery,
   selectSortByQuery,
   selectSortOrderQuery,
-  (searchQuery, allEntities, taxonomies, frameworks, path, sort, order) => {
+  (searchQuery, allEntities, taxonomies, actortypes, path, sort, order) => {
     let active = false;// || CONFIG.search[0].targets[0].path;
     return fromJS(CONFIG.search).map((group) => {
       if (group.get('group') === 'taxonomies') {
@@ -80,31 +80,31 @@ export const selectEntitiesByQuery = createSelector(
           .reduce(
             (memo, target) => {
               const targetEntties = allEntities.get(target.get('path'));
-              // target by fw
-              if (frameworks && target.get('groupByFramework')) {
-                return frameworks.reduce((innerMemo, fw) => {
-                  const fwEntities = targetEntties
+              // target by actortype
+              if (actortypes && target.get('groupByActortype')) {
+                return actortypes.reduce((innerMemo, actortype) => {
+                  const actortypeEntities = targetEntties
                     .filter(
                       (entity) => qe(
-                        entity.getIn(['attributes', 'framework_id']),
-                        fw.get('id'),
+                        entity.getIn(['attributes', 'actortype_id']),
+                        actortype.get('id'),
                       )
                     );
                   const filteredEntities = searchQuery
                     ? filterEntitiesByKeywords(
-                      fwEntities,
+                      actortypeEntities,
                       searchQuery,
                       target.get('search').valueSeq().toArray()
                     )
-                    : fwEntities;
-                  const fwTargetPath = `${target.get('path')}_${fw.get('id')}`;
-                  const fwTarget = target
+                    : actortypeEntities;
+                  const actortypeTargetPath = `${target.get('path')}_${actortype.get('id')}`;
+                  const actortypeTarget = target
                     .set('clientPath', target.get('path'))
-                    .set('path', fwTargetPath);
+                    .set('path', actortypeTargetPath);
 
                   // if filtered by path
                   if (
-                    path === fwTargetPath
+                    path === actortypeTargetPath
                   || (
                     !path
                     && !active
@@ -113,9 +113,9 @@ export const selectEntitiesByQuery = createSelector(
                   ) {
                     active = true;
                     // only sort the active entities that will be displayed
-                    const sortOption = getSortOption(fwTarget.get('sorting') && fwTarget.get('sorting').toJS(), sort);
+                    const sortOption = getSortOption(actortypeTarget.get('sorting') && actortypeTarget.get('sorting').toJS(), sort);
                     return innerMemo.push(
-                      fwTarget
+                      actortypeTarget
                         .set('active', searchQuery && true)
                         .set('results', sortEntities(
                           filteredEntities,
@@ -125,7 +125,7 @@ export const selectEntitiesByQuery = createSelector(
                         ))
                     );
                   }
-                  return innerMemo.push(fwTarget.set('results', filteredEntities));
+                  return innerMemo.push(actortypeTarget.set('results', filteredEntities));
                 }, memo);
               }
               // regular target

@@ -34,16 +34,6 @@ export default defineMessages({
     id: 'app.components.EntityListGroups.entityNoLongerPresent',
     defaultMessage: 'Item with database id \'{entityId}\' no longer exists.',
   },
-  nestedListEmpty: {
-    reports: {
-      id: 'app.components.EntityListGroups.nestedListEmpty.reports',
-      defaultMessage: 'No report yet',
-    },
-    indicatorsExpanded: {
-      id: 'app.components.EntityListGroups.nestedListEmpty.indicatorsExpanded',
-      defaultMessage: 'No indicator yet',
-    },
-  },
   entityListHeader: {
     allSelected: {
       id: 'app.components.EntityListGroups.entityListHeader.allSelected',

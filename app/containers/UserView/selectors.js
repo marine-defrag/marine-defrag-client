@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { DB } from 'themes/config';
 
 import {
   selectEntity,
@@ -13,10 +14,10 @@ import {
 import { qe } from 'utils/quasi-equals';
 
 export const selectViewEntity = createSelector(
-  (state, id) => selectEntity(state, { path: 'users', id }),
-  (state) => selectEntities(state, 'users'),
-  (state) => selectEntities(state, 'user_roles'),
-  (state) => selectEntities(state, 'roles'),
+  (state, id) => selectEntity(state, { path: DB.USERS, id }),
+  (state) => selectEntities(state, DB.USERS),
+  (state) => selectEntities(state, DB.USER_ROLES),
+  (state) => selectEntities(state, DB.ROLES),
   (entity, users, userRoles, roles) => entity && users && userRoles && roles && entitySetUser(entity, users).set(
     'roles',
     userRoles
@@ -28,7 +29,7 @@ export const selectViewEntity = createSelector(
 export const selectTaxonomies = createSelector(
   (state, id) => id,
   (state) => selectTaxonomiesSorted(state),
-  (state) => selectEntities(state, 'categories'),
-  (state) => selectEntities(state, 'user_categories'),
+  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, DB.USER_CATEGORIES),
   (id, taxonomies, categories, associations) => prepareTaxonomiesIsAssociated(taxonomies, categories, associations, 'tags_users', 'user_id', id)
 );

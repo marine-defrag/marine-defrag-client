@@ -16,12 +16,13 @@ import styled, { withTheme } from 'styled-components';
 // containers
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import {
-  selectFWTaxonomiesSorted,
+  selectActortypeTaxonomiesSorted,
   selectReady,
-  selectActiveFrameworks,
-  selectFrameworkQuery,
+  selectActiveActortypes,
+  selectActortypeQuery,
 } from 'containers/App/selectors';
-import { PATHS, CONTENT_LIST } from 'containers/App/constants';
+import { CONTENT_LIST } from 'containers/App/constants';
+import { ROUTES } from 'themes/config';
 
 // components
 import Button from 'components/buttons/Button';
@@ -42,12 +43,10 @@ import appMessages from 'containers/App/messages';
 import messages from './messages';
 import { DEPENDENCIES } from './constants';
 import {
-  selectRecommendationCount,
-  selectIndicatorCount,
-  selectMeasureCount,
-  selectRecommendationDraftCount,
-  selectIndicatorDraftCount,
-  selectMeasureDraftCount,
+  selectActorCount,
+  selectActionCount,
+  selectActorDraftCount,
+  selectActionDraftCount,
 } from './selectors';
 
 const Content = styled.div`
@@ -203,13 +202,12 @@ const SectionLabel = styled.div`
 
 const STATE_INITIAL = {
   diagram: null,
-  buttonRecs_1: null,
-  buttonRecs_2: null,
-  buttonRecs_3: null,
-  buttonRecs_4: null,
-  buttonRecs_5: null,
-  buttonMeasures: null,
-  buttonIndicators: null,
+  buttonActors_1: null,
+  buttonActors_2: null,
+  buttonActors_3: null,
+  buttonActors_4: null,
+  buttonActors_5: null,
+  buttonActions: null,
 };
 
 export class Overview extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
@@ -309,31 +307,11 @@ export class Overview extends React.PureComponent { // eslint-disable-line react
     ];
   }
 
-  connectRecommendationsMeasures = (fwId) => this.getCurvedConnectionPath(
+  connectActorsActions = (actortypeId) => this.getCurvedConnectionPath(
     'vertical',
-    this.getConnectionPoint(this.state[`buttonRecs_${fwId}`], this.state.diagram, 'bottom'),
-    this.getConnectionPoint(this.state.buttonMeasures, this.state.diagram, 'top'),
+    this.getConnectionPoint(this.state[`buttonActors_${actortypeId}`], this.state.diagram, 'bottom'),
+    this.getConnectionPoint(this.state.buttonActions, this.state.diagram, 'top'),
     0.25,
-  );
-
-  connectRecommendationsIndicators = (direction = 'vertical', fwId) => this.getCurvedConnectionPath(
-    direction,
-    this.getConnectionPoint(
-      this.state[`buttonRecs_${fwId}`],
-      this.state.diagram,
-      direction === 'vertical' ? 'bottom' : direction,
-    ),
-    this.getConnectionPoint(
-      this.state.buttonIndicators,
-      this.state.diagram,
-      direction === 'vertical' ? 'top' : direction,
-    ),
-    0.9, // curve
-  );
-
-  connectMeasuresIndicators = () => this.getConnectionPath(
-    this.getConnectionPoint(this.state.buttonMeasures, this.state.diagram, 'bottom'),
-    this.getConnectionPoint(this.state.buttonIndicators, this.state.diagram, 'top'),
   );
 
   resize = () => {
@@ -342,7 +320,7 @@ export class Overview extends React.PureComponent { // eslint-disable-line react
     this.forceUpdate();
   };
 
-  renderPathsSVG = (frameworks) => {
+  renderPathsSVG = (actortypes) => {
     const radius = 15;
     return (
       <DiagramSvgWrapper>
@@ -351,90 +329,35 @@ export class Overview extends React.PureComponent { // eslint-disable-line react
             width={this.state.diagram.getBoundingClientRect().width}
             height={this.state.diagram.getBoundingClientRect().height}
           >
-            {frameworks && frameworks.valueSeq().map((fw) => {
-              const fwId = fw.get('id');
-              return fw.getIn(['attributes', 'has_indicators'])
-                && this.state[`buttonRecs_${fwId}`]
-                && this.state.buttonIndicators
+            {actortypes && actortypes.valueSeq().map((actortype) => {
+              const actortypeId = actortype.get('id');
+              return this.state[`buttonActors_${actortypeId}`]
+                && this.state.buttonActions
                 && (
                   <PathLineCustom
-                    key={fwId}
-                    r={radius}
-                    strokeDasharray="5,5"
-                    points={this.connectRecommendationsIndicators(
-                      frameworks.size === 1 ? 'right' : 'vertical',
-                      fwId,
-                    )}
+                    key={actortypeId}
+                    r={actortypes.size > 1 ? radius : 0}
+                    points={this.connectActorsActions(actortypeId)}
                   />
                 );
             })}
-            {frameworks && frameworks.valueSeq().map((fw) => {
-              const fwId = fw.get('id');
-              return fw.getIn(['attributes', 'has_indicators'])
-                && this.state[`buttonRecs_${fwId}`]
-                && this.state.buttonIndicators
-                && frameworks.size === 1
+            {actortypes && actortypes.valueSeq().map((actortype) => {
+              const actortypeId = actortype.get('id');
+              return actortype.getIn(['attributes', 'has_actions'])
+                && this.state[`buttonActors_${actortypeId}`]
+                && this.state.buttonActions
                 && (
                   <PathLineArrow
-                    key={fwId}
+                    key={actortypeId}
                     r={0}
                     points={
                       this.getConnectionPathArrow(
-                        this.connectRecommendationsIndicators(
-                          'right',
-                          fwId,
-                        ),
-                        'left'
+                        this.connectActorsActions(actortypeId)
                       )
                     }
                   />
                 );
             })}
-            {frameworks && frameworks.valueSeq().map((fw) => {
-              const fwId = fw.get('id');
-              return this.state[`buttonRecs_${fwId}`]
-                && this.state.buttonMeasures
-                && (
-                  <PathLineCustom
-                    key={fwId}
-                    r={frameworks.size > 1 ? radius : 0}
-                    points={this.connectRecommendationsMeasures(fwId)}
-                  />
-                );
-            })}
-            {frameworks && frameworks.valueSeq().map((fw) => {
-              const fwId = fw.get('id');
-              return fw.getIn(['attributes', 'has_measures'])
-                && this.state[`buttonRecs_${fwId}`]
-                && this.state.buttonMeasures
-                && (
-                  <PathLineArrow
-                    key={fwId}
-                    r={0}
-                    points={
-                      this.getConnectionPathArrow(
-                        this.connectRecommendationsMeasures(fwId)
-                      )
-                    }
-                  />
-                );
-            })}
-            { this.state.buttonIndicators && this.state.buttonMeasures && (
-              <PathLineCustom
-                r={0}
-                points={this.connectMeasuresIndicators()}
-              />
-            )}
-            { this.state.buttonIndicators && this.state.buttonMeasures && (
-              <PathLineArrow
-                r={0}
-                points={
-                  this.getConnectionPathArrow(
-                    this.connectMeasuresIndicators()
-                  )
-                }
-              />
-            )}
           </DiagramSvg>
         )}
       </DiagramSvgWrapper>
@@ -498,8 +421,8 @@ export class Overview extends React.PureComponent { // eslint-disable-line react
       dataReady,
       onTaxonomyLink,
       taxonomies,
-      frameworks,
-      frameworkId,
+      actortypes,
+      actortypeId,
     } = this.props;
 
     return (
@@ -514,8 +437,8 @@ export class Overview extends React.PureComponent { // eslint-disable-line react
         {dataReady && (
           <TaxonomySidebar
             taxonomies={taxonomies}
-            frameworkId={frameworkId}
-            frameworks={frameworks}
+            actortypeId={actortypeId}
+            actortypes={actortypes}
             onTaxonomyLink={onTaxonomyLink}
           />
         )}
@@ -539,33 +462,33 @@ export class Overview extends React.PureComponent { // eslint-disable-line react
                     }
                   }}
                 >
-                  { this.renderPathsSVG(frameworks) }
+                  { this.renderPathsSVG(actortypes) }
                   <div>
                     <DiagramSectionVertical>
                       <SectionLabel>
-                        <FormattedMessage {...appMessages.nav.recommendationsSuper} />
+                        <FormattedMessage {...appMessages.nav.actorsSuper} />
                       </SectionLabel>
                       <DiagramSectionVerticalCenter>
-                        {frameworks && frameworks.valueSeq().map(
-                          (fw) => {
-                            const fwId = isNumber(fw.get('id')) ? parseInt(fw.get('id'), 10) : fw.get('id');
+                        {actortypes && actortypes.valueSeq().map(
+                          (actortype) => {
+                            const actortypeId = isNumber(actortype.get('id')) ? parseInt(actortype.get('id'), 10) : actortype.get('id');
                             return (
-                              <DiagramButtonWrap key={fwId} multiple={frameworks.size > 1}>
+                              <DiagramButtonWrap key={actortypeId} multiple={actortypes.size > 1}>
                                 {this.renderButton({
-                                  path: PATHS.RECOMMENDATIONS,
-                                  query: frameworks.size > 1 && {
-                                    arg: 'fwx',
-                                    value: fwId,
+                                  path: ROUTES.ACTORS,
+                                  query: actortypes.size > 1 && {
+                                    arg: 'actortypex',
+                                    value: actortypeId,
                                     replace: true,
                                   },
-                                  paletteDefault: 'recommendations',
-                                  paletteHover: 'recommendationsHover',
-                                  stateButton: `buttonRecs_${fwId}`,
-                                  icon: `recommendations_${fwId}`,
-                                  type: `recommendations_${fwId}`,
-                                  count: this.props.recommendationCountByFw.get(fwId),
-                                  draftCount: this.props.recommendationDraftCountByFw.get(fwId),
-                                  multiple: frameworks.size > 1,
+                                  paletteDefault: 'actors',
+                                  paletteHover: 'actorsHover',
+                                  stateButton: `buttonActors_${actortypeId}`,
+                                  icon: `actors_${actortypeId}`,
+                                  type: `actors_${actortypeId}`,
+                                  count: this.props.actorCountByActortype.get(actortypeId),
+                                  draftCount: this.props.actorDraftCountByActortype.get(actortypeId),
+                                  multiple: actortypes.size > 1,
                                 })}
                               </DiagramButtonWrap>
                             );
@@ -575,38 +498,19 @@ export class Overview extends React.PureComponent { // eslint-disable-line react
                     </DiagramSectionVertical>
                     <DiagramSectionVertical>
                       <SectionLabel>
-                        <FormattedMessage {...appMessages.nav.measuresSuper} />
+                        <FormattedMessage {...appMessages.nav.actionsSuper} />
                       </SectionLabel>
                       <DiagramSectionVerticalCenter>
                         <DiagramButtonWrap>
                           {this.renderButton({
-                            path: PATHS.MEASURES,
-                            paletteDefault: 'measures',
-                            paletteHover: 'measuresHover',
-                            stateButton: 'buttonMeasures',
-                            icon: 'measures',
-                            type: 'measures',
-                            count: this.props.measureCount,
-                            draftCount: this.props.measureDraftCount,
-                          })}
-                        </DiagramButtonWrap>
-                      </DiagramSectionVerticalCenter>
-                    </DiagramSectionVertical>
-                    <DiagramSectionVertical>
-                      <SectionLabel>
-                        <FormattedMessage {...appMessages.nav.indicatorsSuper} />
-                      </SectionLabel>
-                      <DiagramSectionVerticalCenter>
-                        <DiagramButtonWrap>
-                          {this.renderButton({
-                            path: PATHS.INDICATORS,
-                            paletteDefault: 'indicators',
-                            paletteHover: 'indicatorsHover',
-                            stateButton: 'buttonIndicators',
-                            icon: 'indicators',
-                            type: 'indicators',
-                            count: this.props.indicatorCount,
-                            draftCount: this.props.indicatorDraftCount,
+                            path: ROUTES.ACTIONS,
+                            paletteDefault: 'actions',
+                            paletteHover: 'actionsHover',
+                            stateButton: 'buttonActions',
+                            icon: 'actions',
+                            type: 'actions',
+                            count: this.props.actionCount,
+                            draftCount: this.props.actionDraftCount,
                           })}
                         </DiagramButtonWrap>
                       </DiagramSectionVerticalCenter>
@@ -622,10 +526,10 @@ export class Overview extends React.PureComponent { // eslint-disable-line react
   }
 }
 // <AnnotationVertical>
-//   {`${recommendationAddressedCount} ${intl.formatMessage(messages.diagram.addressed)}`}
+//   {`${actorAddressedCount} ${intl.formatMessage(messages.diagram.addressed)}`}
 // </AnnotationVertical>
 // <AnnotationVertical>
-//   <FormattedMessage {...messages.diagram.measured} />
+//   <FormattedMessage {...messages.diagram.actiond} />
 // </AnnotationVertical>
 
 Overview.propTypes = {
@@ -634,15 +538,13 @@ Overview.propTypes = {
   onTaxonomyLink: PropTypes.func,
   taxonomies: PropTypes.object,
   dataReady: PropTypes.bool,
-  recommendationCountByFw: PropTypes.object,
-  measureCount: PropTypes.number,
-  indicatorCount: PropTypes.number,
-  recommendationDraftCountByFw: PropTypes.object,
-  measureDraftCount: PropTypes.number,
-  indicatorDraftCount: PropTypes.number,
+  actorCountByActortype: PropTypes.object,
+  actionCount: PropTypes.number,
+  actorDraftCountByActortype: PropTypes.object,
+  actionDraftCount: PropTypes.number,
   theme: PropTypes.object,
-  frameworks: PropTypes.object,
-  frameworkId: PropTypes.string,
+  actortypes: PropTypes.object,
+  actortypeId: PropTypes.string,
 };
 
 Overview.contextTypes = {
@@ -651,15 +553,13 @@ Overview.contextTypes = {
 
 const mapStateToProps = (state) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  taxonomies: selectFWTaxonomiesSorted(state),
-  frameworks: selectActiveFrameworks(state),
-  frameworkId: selectFrameworkQuery(state),
-  recommendationCountByFw: selectRecommendationCount(state),
-  measureCount: selectMeasureCount(state),
-  indicatorCount: selectIndicatorCount(state),
-  recommendationDraftCountByFw: selectRecommendationDraftCount(state),
-  measureDraftCount: selectMeasureDraftCount(state),
-  indicatorDraftCount: selectIndicatorDraftCount(state),
+  taxonomies: selectActortypeTaxonomiesSorted(state),
+  actortypes: selectActiveActortypes(state),
+  actortypeId: selectActortypeQuery(state),
+  actorCountByActortype: selectActorCount(state),
+  actionCount: selectActionCount(state),
+  actorDraftCountByActortype: selectActorDraftCount(state),
+  actionDraftCount: selectActionDraftCount(state),
 });
 
 function mapDispatchToProps(dispatch) {

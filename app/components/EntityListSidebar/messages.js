@@ -58,17 +58,17 @@ export default defineMessages({
       id: 'app.components.EntityListSidebar.filterGroupLabel.attributes',
       defaultMessage: 'By attribute',
     },
-    frameworks: {
-      id: 'app.components.EntityListSidebar.filterGroupLabel.frameworks',
-      defaultMessage: 'By framework',
+    actortypes: {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.actortypes',
+      defaultMessage: 'By actortype',
     },
     taxonomies: {
       id: 'app.components.EntityListSidebar.filterGroupLabel.taxonomies',
       defaultMessage: 'By category',
     },
-    taxonomiesByFw: {
-      id: 'app.components.EntityListSidebar.filterGroupLabel.taxonomiesByFw',
-      defaultMessage: 'By category ({fw})',
+    taxonomiesByActortype: {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.taxonomiesByActortype',
+      defaultMessage: 'By category ({actortype})',
     },
     connections: {
       id: 'app.components.EntityListSidebar.filterGroupLabel.connections',

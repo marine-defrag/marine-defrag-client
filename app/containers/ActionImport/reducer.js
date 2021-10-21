@@ -27,5 +27,5 @@ export default combineReducers({
   page: entityImportReducer, // TODO: reset_form should also reset page?
   form: combineForms({
     data: formReducer,
-  }, 'measureImport.form'),
+  }, 'actionImport.form'),
 });

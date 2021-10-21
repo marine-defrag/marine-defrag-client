@@ -23,13 +23,13 @@ import {
 
 import {
   selectEntity,
-  selectFrameworkQuery,
-  selectActiveFrameworks,
+  selectActortypeQuery,
+  selectActiveActortypes,
 } from 'containers/App/selectors';
 import { selectParentOptions, selectParentTaxonomy } from 'containers/CategoryNew/selectors';
 
 
-import { DEFAULT_FRAMEWORK } from 'themes/config';
+import { DB, DEFAULT_ACTIONTYPE } from 'themes/config';
 import { CONTENT_MODAL } from 'containers/App/constants';
 import appMessages from 'containers/App/messages';
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
@@ -59,19 +59,19 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
     if (hasNewError(nextProps, this.props) && this.scrollContainer) {
       scrollToTop(this.scrollContainer.current);
     }
-    if (!this.props.frameworkId && nextProps.frameworkId) {
-      this.props.initialiseForm('recommendationNew.form.data', this.getInitialFormData(nextProps));
+    if (!this.props.actortypeId && nextProps.actortypeId) {
+      this.props.initialiseForm('actorNew.form.data', this.getInitialFormData(nextProps));
     }
   }
 
   getInitialFormData = (nextProps) => {
     const props = nextProps || this.props;
-    const { frameworkId } = props;
+    const { actortypeId } = props;
     return Map(FORM_INITIAL.setIn(
-      ['attributes', 'framework_id'],
-      (frameworkId && frameworkId !== 'all')
-        ? frameworkId
-        : DEFAULT_FRAMEWORK,
+      ['attributes', 'actortype_id'],
+      (actortypeId && actortypeId !== 'all')
+        ? actortypeId
+        : DEFAULT_ACTIONTYPE,
     ));
   }
 
@@ -89,47 +89,47 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
       taxonomy,
       categoryParentOptions,
       parentTaxonomy,
-      frameworks,
-      framework,
-      frameworkId,
+      actortypes,
+      actortype,
+      actortypeId,
     } = this.props;
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
 
     let pageTitle;
     let hasResponse;
-    let fwSpecified;
+    let actortypeSpecified;
     let icon = path;
-    if (path === 'categories' && taxonomy && taxonomy.get('attributes')) {
+    if (path === DB.CATEGORIES && taxonomy && taxonomy.get('attributes')) {
       pageTitle = intl.formatMessage(messages[path].pageTitleTaxonomy, {
         taxonomy: this.getTaxTitle(taxonomy.get('id')),
       });
-    } else if (path === 'recommendations') {
-      // figure out framework id from form if not set
-      const currentFrameworkId = (framework && framework.get('id'))
-        || frameworkId
-        || viewDomain.getIn(['form', 'data', 'attributes', 'framework_id'])
-        || DEFAULT_FRAMEWORK;
-      // check if single framework set
-      fwSpecified = (currentFrameworkId && currentFrameworkId !== 'all');
-      // get current framework
-      const currentFramework = framework
+    } else if (path === DB.ACTORS) {
+      // figure out actortype id from form if not set
+      const currentActortypeId = (actortype && actortype.get('id'))
+        || actortypeId
+        || viewDomain.getIn(['form', 'data', 'attributes', 'actortype_id'])
+        || DEFAULT_ACTIONTYPE;
+      // check if single actortype set
+      actortypeSpecified = (currentActortypeId && currentActortypeId !== 'all');
+      // get current actortype
+      const currentActortype = actortype
         || (
-          fwSpecified
-          && frameworks
-          && frameworks.find((fw) => qe(fw.get('id'), currentFrameworkId))
+          actortypeSpecified
+          && actortypes
+          && actortypes.find((at) => qe(at.get('id'), currentActortypeId))
         );
       // check if response is required
-      hasResponse = currentFramework && currentFramework.getIn(['attributes', 'has_response']);
+      hasResponse = currentActortype && currentActortype.getIn(['attributes', 'has_response']);
       // figure out title and icon
       pageTitle = intl.formatMessage(
         messages[path].pageTitle,
         {
           type: intl.formatMessage(
-            appMessages.entities[fwSpecified ? `${path}_${currentFrameworkId}` : path].single
+            appMessages.entities[actortypeSpecified ? `${path}_${currentActortypeId}` : path].single
           ),
         }
       );
-      icon = fwSpecified ? `${path}_${currentFrameworkId}` : path;
+      icon = actortypeSpecified ? `${path}_${currentActortypeId}` : path;
     } else {
       pageTitle = intl.formatMessage(messages[path].pageTitle);
     }
@@ -195,8 +195,8 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
                   categoryParentOptions,
                   parentTaxonomy,
                 },
-                recommendations: {
-                  frameworks: !fwSpecified ? frameworks : null,
+                actors: {
+                  actortypes: !actortypeSpecified ? actortypes : null,
                   hasResponse,
                 },
               },
@@ -228,9 +228,9 @@ EntityNew.propTypes = {
   initialiseForm: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
-  framework: PropTypes.object,
-  frameworks: PropTypes.object,
-  frameworkId: PropTypes.string,
+  actortype: PropTypes.object,
+  actortypes: PropTypes.object,
+  actortypeId: PropTypes.string,
 };
 
 EntityNew.contextTypes = {
@@ -239,23 +239,23 @@ EntityNew.contextTypes = {
 
 const mapStateToProps = (state, { path, attributes }) => ({
   viewDomain: selectDomain(state),
-  taxonomy: path === 'categories' && attributes && attributes.get('taxonomy_id')
-    ? selectEntity(state, { path: 'taxonomies', id: attributes.get('taxonomy_id') })
+  taxonomy: path === DB.CATEGORIES && attributes && attributes.get('taxonomy_id')
+    ? selectEntity(state, { path: DB.TAXONOMIES, id: attributes.get('taxonomy_id') })
     : null,
-  categoryParentOptions: path === 'categories' && attributes && attributes.get('taxonomy_id')
+  categoryParentOptions: path === DB.CATEGORIES && attributes && attributes.get('taxonomy_id')
     ? selectParentOptions(state, attributes.get('taxonomy_id'))
     : null,
-  parentTaxonomy: path === 'categories' && attributes && attributes.get('taxonomy_id')
+  parentTaxonomy: path === DB.CATEGORIES && attributes && attributes.get('taxonomy_id')
     ? selectParentTaxonomy(state, attributes.get('taxonomy_id'))
     : null,
-  frameworkId: path === 'recommendations'
-    ? selectFrameworkQuery(state)
+  actortypeId: path === DB.ACTORS
+    ? selectActortypeQuery(state)
     : null,
-  frameworks: path === 'recommendations'
-    ? selectActiveFrameworks(state)
+  actortypes: path === DB.ACTORS
+    ? selectActiveActortypes(state)
     : null,
-  framework: path === 'recommendations' && attributes && attributes.get('framework_id')
-    ? selectEntity(state, { path: 'frameworks', id: attributes.get('framework_id') })
+  actortype: path === DB.ACTORS && attributes && attributes.get('actortype_id')
+    ? selectEntity(state, { path: DB.ACTORTYPES, id: attributes.get('actortype_id') })
     : null,
 });
 
@@ -284,7 +284,7 @@ function mapDispatchToProps(dispatch, props) {
 
       // saveData = saveData.setIn(['attributes', 'taxonomy_id'], taxonomy.get('id'));
 
-      if (props.path === 'categories') {
+      if (props.path === DB.CATEGORIES) {
         const formCategoryIds = formData.get('associatedCategory')
           && getCheckedValuesFromOptions(formData.get('associatedCategory'));
         if (List.isList(formCategoryIds) && formCategoryIds.size) {

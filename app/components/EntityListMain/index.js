@@ -85,10 +85,9 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       entityTitle,
       dataReady,
       isManager,
-      isContributor,
+      isAnalyst,
       onGroupSelect,
       onSubgroupSelect,
-      onExpand,
       onSearch,
       onResetFilters,
       onTagClick,
@@ -100,23 +99,20 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       entityIcon,
       entities,
       errors,
-      frameworks,
+      actortypes,
       onDismissAllErrors,
     } = this.props;
     const { intl } = this.context;
-    const expandNo = config.expandableColumns && locationQuery.get('expand')
-      ? parseInt(locationQuery.get('expand'), 10)
-      : 0;
 
     let groupSelectValue = locationQuery.get('group');
-    const groupforFramework = config.taxonomies
-      && config.taxonomies.defaultGroupsByFramework
-      && frameworks
-      && frameworks.size === 1;
+    const groupforActortype = config.taxonomies
+      && config.taxonomies.defaultGroupsByActortype
+      && actortypes
+      && actortypes.size === 1;
     if (config.taxonomies && !groupSelectValue) {
-      if (groupforFramework) {
+      if (groupforActortype) {
         /* eslint-disable prefer-destructuring */
-        groupSelectValue = config.taxonomies.defaultGroupsByFramework[frameworks.first().get('id')][1];
+        groupSelectValue = config.taxonomies.defaultGroupsByActortype[actortypes.first().get('id')][1];
         /* eslint-enable prefer-destructuring */
       } else {
         groupSelectValue = getGroupValue(
@@ -133,14 +129,14 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       if (
         config.taxonomies
         && !subgroupSelectValue
-        && groupforFramework
+        && groupforActortype
         && qe(
           groupSelectValue,
-          config.taxonomies.defaultGroupsByFramework[frameworks.first().get('id')][1],
+          config.taxonomies.defaultGroupsByActortype[actortypes.first().get('id')][1],
         )
       ) {
         /* eslint-disable prefer-destructuring */
-        subgroupSelectValue = config.taxonomies.defaultGroupsByFramework[frameworks.first().get('id')][2];
+        subgroupSelectValue = config.taxonomies.defaultGroupsByActortype[actortypes.first().get('id')][2];
         /* eslint-enable prefer-destructuring */
       }
     }
@@ -162,7 +158,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
         groupSelectValue,
         subgroupSelectValue !== PARAMS.GROUP_RESET && subgroupSelectValue,
         intl || null,
-        frameworks,
+        actortypes,
       )
       : null;
 
@@ -217,7 +213,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
                         locationQuery,
                         onTagClick,
                         errors,
-                        frameworks,
+                        actortypes,
                       },
                       intl.formatMessage(messages.filterFormWithoutPrefix),
                       intl.formatMessage(messages.filterFormError),
@@ -237,9 +233,6 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
                   subgroupSelectValue={(taxonomies && taxonomies.get(subgroupSelectValue)) ? subgroupSelectValue : ''}
                   onGroupSelect={onGroupSelect}
                   onSubgroupSelect={onSubgroupSelect}
-                  onExpand={() => onExpand(expandNo < config.expandableColumns.length ? config.expandableColumns.length : 0)}
-                  expanded={config.expandableColumns && expandNo === config.expandableColumns.length}
-                  expandable={config.expandableColumns && config.expandableColumns.length > 0}
                 />
                 <ListWrapper ref={this.ScrollTarget}>
                   <EntityListGroups
@@ -258,9 +251,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
                     config={config}
                     entityIcon={entityIcon}
                     isManager={isManager}
-                    isContributor={isContributor}
-                    onExpand={onExpand}
-                    expandNo={expandNo}
+                    isAnalyst={isAnalyst}
                     onPageItemsSelect={(no) => {
                       this.scrollToTop();
                       this.props.onPageItemsSelect(no);
@@ -288,7 +279,7 @@ EntityListMain.propTypes = {
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
   allTaxonomies: PropTypes.instanceOf(Map),
-  frameworks: PropTypes.instanceOf(Map),
+  actortypes: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   entityIdsSelected: PropTypes.instanceOf(List),
@@ -301,14 +292,13 @@ EntityListMain.propTypes = {
   // primitive
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
-  isContributor: PropTypes.bool,
+  isAnalyst: PropTypes.bool,
   entityIcon: PropTypes.func,
   // functions
   onEntityClick: PropTypes.func.isRequired,
   onEntitySelect: PropTypes.func.isRequired,
   onEntitySelectAll: PropTypes.func.isRequired,
   onTagClick: PropTypes.func.isRequired,
-  onExpand: PropTypes.func.isRequired,
   onGroupSelect: PropTypes.func.isRequired,
   onSubgroupSelect: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,

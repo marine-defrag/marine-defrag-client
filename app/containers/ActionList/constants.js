@@ -1,25 +1,24 @@
-import { USER_ROLES, PUBLISH_STATUSES } from 'themes/config';
+import {
+  DB, ROUTES, USER_ROLES, PUBLISH_STATUSES,
+} from 'themes/config';
 
 export const DEPENDENCIES = [
-  'user_roles',
-  'measures',
-  'measure_categories',
-  'users',
-  'taxonomies',
-  'framework_taxonomies',
-  'categories',
-  'recommendations',
-  'recommendation_measures',
-  'recommendation_categories',
-  'indicators',
-  'measure_indicators',
-  'due_dates',
-  'progress_reports',
+  DB.USERS,
+  DB.USER_ROLES,
+  DB.CATEGORIES,
+  DB.TAXONOMIES,
+  // DB.ACTIONS,
+  DB.ACTORS,
+  // DB.ACTORTYPES,
+  DB.ACTORTYPE_TAXONOMIES,
+  // DB.ACTOR_ACTIONS,
+  DB.ACTOR_CATEGORIES,
+  DB.ACTION_CATEGORIES,
 ];
 
 export const CONFIG = {
-  serverPath: 'measures',
-  clientPath: 'actions',
+  serverPath: DB.ACTIONS,
+  clientPath: ROUTES.ACTIONS,
   search: ['title'],
   sorting: [
     {
@@ -47,20 +46,20 @@ export const CONFIG = {
   taxonomies: { // filter by each category
     query: 'cat',
     search: true,
-    connectPath: 'measure_categories',
+    connectPath: DB.ACTION_CATEGORIES,
     key: 'category_id',
-    ownKey: 'measure_id',
-    defaultGroupAttribute: 'groups_measures_default',
+    ownKey: 'action_id',
+    defaultGroupAttribute: 'groups_actions_default',
   },
   connectedTaxonomies: { // filter by each category
     query: 'catx',
     search: true,
-    exclude: 'tags_measures',
+    exclude: 'tags_actions',
     connections: [
       {
-        path: 'recommendations', // filter by recommendation connection
-        message: 'entities.recommendations.plural',
-        key: 'recommendation_id',
+        path: DB.ACTORS, // filter by actor connection
+        message: 'entities.actors.plural',
+        key: 'actor_id',
       },
     ],
   },
@@ -69,22 +68,13 @@ export const CONFIG = {
     options: [
       {
         search: true,
-        message: 'entities.indicators.plural',
-        path: 'indicators', // filter by recommendation connection
-        key: 'indicator_id',
-        expandable: true, // used for omitting from connected counts
-        connectPath: 'measure_indicators', // filter by recommendation connection
-        ownKey: 'measure_id',
-      },
-      {
-        search: true,
-        message: 'entities.recommendations_{fwid}.plural',
-        path: 'recommendations', // filter by recommendation connection
-        key: 'recommendation_id',
-        connectPath: 'recommendation_measures', // filter by recommendation connection
-        ownKey: 'measure_id',
-        groupByFramework: true,
-        frameworkFilter: 'has_measures',
+        message: 'entities.actors_{actortypeid}.plural',
+        path: DB.ACTORS, // filter by actor connection
+        key: 'actor_id',
+        connectPath: DB.ACTOR_ACTIONS, // filter by actor connection
+        ownKey: 'action_id',
+        groupByActortype: true,
+        actortypeFilter: 'has_actions',
       },
     ],
   },
@@ -95,22 +85,8 @@ export const CONFIG = {
         message: 'attributes.draft',
         attribute: 'draft',
         options: PUBLISH_STATUSES,
-        role: USER_ROLES.CONTRIBUTOR.value,
+        role: USER_ROLES.ANALYST.value,
       },
     ],
   },
-  expandableColumns: [
-    {
-      message: 'entities.indicators.plural',
-      type: 'indicators',
-      clientPath: 'indicators',
-      icon: 'indicators',
-    },
-    {
-      message: 'entities.progress_reports.plural',
-      type: 'reports',
-      clientPath: 'reports',
-      icon: 'report',
-    },
-  ],
 };

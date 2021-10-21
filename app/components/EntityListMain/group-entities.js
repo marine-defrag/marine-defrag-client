@@ -19,7 +19,7 @@ export const groupEntities = (
   groupSelectValue,
   subgroupSelectValue,
   contextIntl,
-  frameworks,
+  actortypes,
 ) => subgroupSelectValue
   ? makeEntityGroups(
     entities,
@@ -28,7 +28,7 @@ export const groupEntities = (
     config,
     groupSelectValue,
     contextIntl,
-    frameworks,
+    actortypes,
   )
     .map((group) => group
       .set(
@@ -40,7 +40,7 @@ export const groupEntities = (
           config,
           subgroupSelectValue,
           contextIntl,
-          frameworks,
+          actortypes,
         )
       )
       .delete('entities'))
@@ -51,7 +51,7 @@ export const groupEntities = (
     config,
     groupSelectValue,
     contextIntl,
-    frameworks,
+    actortypes,
   );
 
 const makeEntityGroups = (
@@ -61,11 +61,11 @@ const makeEntityGroups = (
   config,
   groupSelectValue,
   contextIntl,
-  frameworks,
+  actortypes,
 ) => {
   if (groupSelectValue && isNumber(groupSelectValue)) {
     const taxonomy = taxonomies.get(groupSelectValue);
-    return makeTaxonomyGroups(entities, taxonomy, contextIntl, frameworks);
+    return makeTaxonomyGroups(entities, taxonomy, contextIntl, actortypes);
   }
   return List().push(Map({ entities }));
 };
@@ -75,19 +75,19 @@ const getCategoryLabel = (cat) => cat.getIn(['attributes', 'reference'])
 
 const getTaxTitle = (id, contextIntl) => contextIntl ? contextIntl.formatMessage(appMessages.entities.taxonomies[id].single) : '';
 
-export const makeTaxonomyGroups = (entities, taxonomy, contextIntl, frameworks) => {
+export const makeTaxonomyGroups = (entities, taxonomy, contextIntl, actortypes) => {
   let groups = Map();
   entities.forEach((entity) => {
     let hasTaxCategory = false;
     // if entity has taxonomies
-    const checkFrameworks = (
-      frameworks
-      && taxonomy.get('frameworkIds')
-      && !!entity.getIn(['attributes', 'framework_id'])
+    const checkActortypes = (
+      actortypes
+      && taxonomy.get('actortypeIds')
+      && !!entity.getIn(['attributes', 'actortype_id'])
     );
-    const taxNotApplicable = checkFrameworks
-      && !taxonomy.get('frameworkIds').find(
-        (id) => qe(id, entity.getIn(['attributes', 'framework_id'])),
+    const taxNotApplicable = checkActortypes
+      && !taxonomy.get('actortypeIds').find(
+        (id) => qe(id, entity.getIn(['attributes', 'actortype_id'])),
       );
     if (
       !taxNotApplicable

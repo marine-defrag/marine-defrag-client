@@ -121,7 +121,7 @@ export const makeConnectionEditOptions = (
   // get the active option
   const option = find(
     config.connections.options,
-    (o) => o.groupByFramework
+    (o) => o.groupByActortype
       ? startsWith(activeEditOption.optionId, o.path)
       : o.path === activeEditOption.optionId,
   );
@@ -138,13 +138,13 @@ export const makeConnectionEditOptions = (
   };
 
   if (option) {
-    const fwid = option.groupByFramework && activeEditOption.optionId.split('_')[1];
+    const actortypeid = option.groupByActortype && activeEditOption.optionId.split('_')[1];
     editOptions.title = messages.title;
     editOptions.path = option.connectPath;
     editOptions.search = option.search;
     connections
       .get(option.path)
-      .filter((c) => !option.groupByFramework || qe(fwid, c.getIn(['attributes', 'framework_id'])))
+      .filter((c) => !option.groupByActortype || qe(actortypeid, c.getIn(['attributes', 'actortype_id'])))
       .forEach((connection) => {
         const count = entities.reduce((counter, entity) => testEntityEntityAssociation(entity, option.path, connection.get('id')) ? counter + 1 : counter,
           0);

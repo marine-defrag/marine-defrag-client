@@ -1,6 +1,7 @@
 import { reduce } from 'lodash/collection';
 import { sortEntities } from 'utils/sort';
 import { qe } from 'utils/quasi-equals';
+import { DB } from 'themes/config';
 
 export const makeEditGroups = (
   config,
@@ -8,12 +9,12 @@ export const makeEditGroups = (
   activeEditOption,
   hasUserRole,
   messages,
-  frameworks,
-  selectedFrameworkIds,
+  actortypes,
+  selectedActortypeIds,
 ) => {
   const editGroups = {};
-  const selectedFrameworks = frameworks && frameworks.filter(
-    (fw) => selectedFrameworkIds.find((id) => qe(id, fw.get('id'))),
+  const selectedActortypes = actortypes && actortypes.filter(
+    (actortype) => selectedActortypeIds.find((id) => qe(id, actortype.get('id'))),
   );
   // taxonomy option group
   if (config.taxonomies && taxonomies) {
@@ -24,12 +25,12 @@ export const makeEditGroups = (
       show: true,
       icon: 'categories',
       options:
-        // all selectedFrameworkIds must be included in tax.frameworkIds
+        // all selectedActortypeIds must be included in tax.actortypeIds
         sortEntities(taxonomies, 'asc', 'priority')
           .filter(
             (tax) => (
-              !config.taxonomies.editForFrameworks
-              || selectedFrameworkIds.isSubset(tax.get('frameworkIds'))
+              !config.taxonomies.editForActortypes
+              || selectedActortypeIds.isSubset(tax.get('actortypeIds'))
             )
             // not a parent
             && !taxonomies.some(
@@ -50,7 +51,7 @@ export const makeEditGroups = (
                   ownKey: config.taxonomies.ownKey,
                   active: !!activeEditOption && activeEditOption.optionId === taxonomy.get('id'),
                   create: {
-                    path: 'categories',
+                    path: DB.CATEGORIES,
                     attributes: { taxonomy_id: taxonomy.get('id') },
                   },
                 },
@@ -71,26 +72,26 @@ export const makeEditGroups = (
       options: reduce(
         config.connections.options,
         (optionsMemo, option) => {
-          // exclude connections not applicabel for all frameworks
+          // exclude connections not applicabel for all actortypes
           if (
-            option.frameworkFilter
-            && option.editForFrameworks
-            && frameworks
-            && !selectedFrameworks.every((fw) => fw.getIn(['attributes', option.frameworkFilter]))
+            option.actortypeFilter
+            && option.editForActortypes
+            && actortypes
+            && !selectedActortypes.every((actortype) => actortype.getIn(['attributes', option.actortypeFilter]))
           ) {
             return optionsMemo;
           }
-          if (option.groupByFramework && frameworks) {
-            return frameworks
-              .filter((fw) => !option.frameworkFilter || fw.getIn(['attributes', option.frameworkFilter]))
+          if (option.groupByActortype && actortypes) {
+            return actortypes
+              .filter((actortype) => !option.actortypeFilter || actortype.getIn(['attributes', option.actortypeFilter]))
               .reduce(
-                (memo, fw) => {
-                  const id = `${option.path}_${fw.get('id')}`;
+                (memo, actortype) => {
+                  const id = `${option.path}_${actortype.get('id')}`;
                   return memo.concat({
                     id, // filterOptionId
                     label: option.label,
-                    message: (option.message && option.message.indexOf('{fwid}') > -1)
-                      ? option.message.replace('{fwid}', fw.get('id'))
+                    message: (option.message && option.message.indexOf('{actortypeid}') > -1)
+                      ? option.message.replace('{actortypeid}', actortype.get('id'))
                       : option.message,
                     path: option.connectPath,
                     connection: option.path,
@@ -136,10 +137,10 @@ export const makeEditGroups = (
         config.attributes.options,
         (optionsMemo, option) => {
           if (
-            option.frameworkFilter
-            && option.editForFrameworks
-            && frameworks
-            && !selectedFrameworks.every((fw) => fw.getIn(['attributes', option.frameworkFilter]))
+            option.actortypeFilter
+            && option.editForActortypes
+            && actortypes
+            && !selectedActortypes.every((actortype) => actortype.getIn(['attributes', option.actortypeFilter]))
           ) {
             return optionsMemo;
           }

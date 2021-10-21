@@ -57,7 +57,7 @@ export const getBookmarkForSaving = (location, type) => {
   const query = filterQueryForSaving(location.get('query'));
   const typeOrPath = type || getPathFromLocation(location);
   return {
-    type: typeOrPath === 'actions' ? 'measures' : typeOrPath,
+    type: typeOrPath === 'actions' ? 'actions' : typeOrPath,
     path: getPathFromLocation(location),
     query: query.toJS(),
   };

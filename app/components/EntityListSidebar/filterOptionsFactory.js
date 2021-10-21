@@ -33,7 +33,7 @@ export const makeActiveFilterOptions = (
   connectedTaxonomies,
   messages,
   contextIntl,
-  frameworks,
+  actortypes,
 ) => {
   // create filterOptions
   switch (activeFilterOption.group) {
@@ -47,11 +47,11 @@ export const makeActiveFilterOptions = (
         messages,
         contextIntl,
       );
-    case 'frameworks':
-      return makeFrameworkFilterOptions(
+    case 'actortypes':
+      return makeActortypeFilterOptions(
         entities,
-        config.frameworks,
-        frameworks,
+        config.actortypes,
+        actortypes,
         activeFilterOption.optionId,
         locationQuery,
       );
@@ -189,15 +189,15 @@ export const makeAttributeFilterOptions = (entities, config, activeOptionId, loc
 //
 const getTaxTitle = (id, contextIntl) => contextIntl.formatMessage(appMessages.entities.taxonomies[id].single);
 
-export const makeFrameworkFilterOptions = (
+export const makeActortypeFilterOptions = (
   entities,
   config,
-  frameworks,
+  actortypes,
   activeTaxId,
   locationQuery,
 ) => {
   const filterOptions = {
-    groupId: 'frameworks',
+    groupId: 'actortypes',
     search: false,
     options: {},
     multiple: false,
@@ -205,16 +205,16 @@ export const makeFrameworkFilterOptions = (
     selectAll: false,
     groups: null,
   };
-  if (frameworks) {
+  if (actortypes) {
     if (entities.size === 0) {
       if (locationQuery.get(config.query)) {
         const locationQueryValue = locationQuery.get(config.query);
         forEach(asArray(locationQueryValue), (queryValue) => {
           const value = parseInt(queryValue, 10);
-          const framework = frameworks.get(value);
-          if (framework) {
+          const actortype = actortypes.get(value);
+          if (actortype) {
             filterOptions.options[value] = {
-              label: getEntityTitle(framework),
+              label: getEntityTitle(actortype),
               showCount: true,
               value,
               count: 0,
@@ -226,25 +226,25 @@ export const makeFrameworkFilterOptions = (
       }
     } else {
       entities.forEach((entity) => {
-        const fwIds = [];
+        const actortypeIds = [];
         // if entity has categories
-        if (entity.getIn(['attributes', 'framework_id'])) {
+        if (entity.getIn(['attributes', 'actortype_id'])) {
           // add categories from entities if not present otherwise increase count
-          frameworks.forEach((framework, fwId) => {
+          actortypes.forEach((actortype, actortypeId) => {
             // if entity has category of active taxonomy
-            if (qe(entity.getIn(['attributes', 'framework_id']), fwId)) {
-              fwIds.push(fwId);
+            if (qe(entity.getIn(['attributes', 'actortype_id']), actortypeId)) {
+              actortypeIds.push(actortypeId);
               // if category already added
-              if (filterOptions.options[fwId]) {
-                filterOptions.options[fwId].count += 1;
+              if (filterOptions.options[actortypeId]) {
+                filterOptions.options[actortypeId].count += 1;
               } else {
-                filterOptions.options[fwId] = {
-                  label: getEntityTitle(framework),
+                filterOptions.options[actortypeId] = {
+                  label: getEntityTitle(actortype),
                   showCount: true,
-                  value: fwId,
+                  value: actortypeId,
                   count: 1,
                   query: config.query,
-                  checked: optionChecked(locationQuery.get(config.query), fwId),
+                  checked: optionChecked(locationQuery.get(config.query), actortypeId),
                 };
               }
             }
@@ -399,20 +399,20 @@ export const makeConnectionFilterOptions = (
   // get the active option
   const option = find(
     config.options,
-    (o) => o.groupByFramework
+    (o) => o.groupByActortype
       ? startsWith(activeOptionId, o.path)
       : o.path === activeOptionId,
   );
   // if option active
   if (option) {
-    const fwid = option.groupByFramework
+    const actortypeid = option.groupByActortype
       && activeOptionId.indexOf('_') > -1
       && parseInt(activeOptionId.split('_')[1], 10);
     // the option path
     const path = activeOptionId;
     filterOptions.messagePrefix = messages.titlePrefix;
-    filterOptions.message = (fwid && option.message && option.message.indexOf('{fwid}') > -1)
-      ? option.message.replace('{fwid}', fwid)
+    filterOptions.message = (actortypeid && option.message && option.message.indexOf('{actortypeid}') > -1)
+      ? option.message.replace('{actortypeid}', actortypeid)
       : option.message;
     filterOptions.search = option.search;
     const { query } = config;
@@ -463,8 +463,8 @@ export const makeConnectionFilterOptions = (
     } else {
       entities.forEach((entity) => {
         let optionConnections = List();
-        const entityConnections = option.groupByFramework
-          ? entity.getIn([`${option.path}ByFw`, fwid])
+        const entityConnections = option.groupByActortype
+          ? entity.getIn([`${option.path}ByActortype`, actortypeid])
           : entity.get(option.path);
         // if entity has connected entities
         if (entityConnections) {
@@ -506,11 +506,11 @@ export const makeConnectionFilterOptions = (
               messagePrefix: messages.without,
               label: option.label,
               message: (
-                option.groupByFramework
+                option.groupByActortype
                 && option.message
-                && option.message.indexOf('{fwid}') > -1
+                && option.message.indexOf('{actortypeid}') > -1
               )
-                ? option.message.replace('{fwid}', fwid)
+                ? option.message.replace('{actortypeid}', actortypeid)
                 : option.message,
               showCount: true,
               labelBold: true,
@@ -589,9 +589,9 @@ export const makeConnectedTaxonomyFilterOptions = (
     } else {
       entities.forEach((entity) => {
         forEach(config.connectedTaxonomies.connections, (connection) => {
-          // connection eg recommendations
+          // connection eg actors
           // if entity has taxonomies
-          if (entity.get(connection.path)) { // action.recommendations stores recommendation_measures
+          if (entity.get(connection.path)) { // action.actors stores actor_actions
             // add categories from entities for taxonomy
             const categories = getConnectedCategories(
               entity.get(connection.path),

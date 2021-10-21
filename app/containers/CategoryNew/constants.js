@@ -5,20 +5,21 @@
  */
 
 import { fromJS } from 'immutable';
+import { DB } from 'themes/config';
 
 export const SAVE = 'impactoss/CategoryNew/SAVE';
 
 export const DEPENDENCIES = [
-  'measures',
-  'recommendations',
-  'users',
-  'user_roles',
-  'categories',
-  'taxonomies',
-  'frameworks',
-  'framework_taxonomies',
-  'measure_categories',
-  'recommendation_categories',
+  DB.USERS,
+  DB.USER_ROLES,
+  DB.CATEGORIES,
+  DB.TAXONOMIES,
+  DB.ACTIONS,
+  DB.ACTORS,
+  DB.ACTORTYPES,
+  DB.ACTORTYPE_TAXONOMIES,
+  DB.ACTOR_CATEGORIES,
+  DB.ACTION_CATEGORIES,
 ];
 
 export const FORM_INITIAL = fromJS({
@@ -35,8 +36,8 @@ export const FORM_INITIAL = fromJS({
     draft: true,
     date: '',
   },
-  associatedMeasures: [],
-  associatedRecommendationsByFw: {},
+  associatedActions: [],
+  associatedActorsByActortype: {},
   associatedUser: [],
   associatedCategory: [],
 });

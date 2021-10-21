@@ -4,18 +4,17 @@
  *
  */
 import { fromJS } from 'immutable';
-
+import { DB } from 'themes/config';
 export const SAVE = 'impactoss/ActionNew/SAVE';
 
 export const DEPENDENCIES = [
-  'user_roles',
-  'categories',
-  'taxonomies',
-  'frameworks',
-  'framework_taxonomies',
-  'recommendations',
-  'indicators',
-  'recommendation_categories',
+  DB.USER_ROLES,
+  DB.CATEGORIES,
+  DB.TAXONOMIES,
+  DB.ACTORS,
+  DB.ACTORTYPES,
+  DB.ACTORTYPE_TAXONOMIES,
+  DB.ACTOR_CATEGORIES,
 ];
 
 export const FORM_INITIAL = fromJS({
@@ -25,11 +24,9 @@ export const FORM_INITIAL = fromJS({
     description: '',
     draft: true,
     outcome: '',
-    indicator_summary: '',
     target_date: '',
     target_date_comment: '',
   },
   associatedTaxonomies: {},
-  associatedRecommendationsByFw: {},
-  associatedIndicators: [],
+  associatedActorsByActortype: {},
 });

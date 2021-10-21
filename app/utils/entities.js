@@ -54,10 +54,10 @@ export const testEntityTaxonomyAssociation = (
 
 // check if entity has any nested connection by type
 export const testEntityAssociation = (entity, associatedPath) => {
-  // check for fw
+  // check for actortype
   if (associatedPath.indexOf('_') > -1) {
     const path = associatedPath.split('_');
-    const associations = entity.getIn([`${path[0]}ByFw`, parseInt(path[1], 10)]);
+    const associations = entity.getIn([`${path[0]}ByActortype`, parseInt(path[1], 10)]);
     return associations && associations.size > 0;
   }
   return entity.get(associatedPath) && entity.get(associatedPath).size > 0;

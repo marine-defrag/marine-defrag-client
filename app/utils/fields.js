@@ -1,10 +1,11 @@
 import { truncateText } from 'utils/string';
 import { sortEntities, sortCategories } from 'utils/sort';
 import { filterTaxonomies, getAcceptanceStatus } from 'utils/entities';
-import { USER_ROLES, TEXT_TRUNCATE } from 'themes/config';
+import {
+  USER_ROLES, TEXT_TRUNCATE, ROUTES, DB,
+} from 'themes/config';
 
 import appMessages from 'containers/App/messages';
-import { PATHS } from 'containers/App/constants';
 
 export const getIdField = (entity, isManager) => ({
   controlType: 'info',
@@ -149,7 +150,7 @@ const mapCategoryOptions = (categories, taxId) => categories
       label: cat.getIn(['attributes', 'title']),
       reference: cat.getIn(['attributes', 'reference']) || null,
       draft: cat.getIn(['attributes', 'draft']) || null,
-      linkTo: `${PATHS.CATEGORIES}/${cat.get('id')}`,
+      linkTo: `${ROUTES.CATEGORIES}/${cat.get('id')}`,
     }))
     .valueSeq().toArray()
   : [];
@@ -165,42 +166,10 @@ const mapSmartCategoryOptions = (categories) => categories
       isSmart: cat.get('associated') && cat.get('associated').size > 0,
       reference: cat.getIn(['attributes', 'reference']) || null,
       draft: cat.getIn(['attributes', 'draft']) || null,
-      linkTo: `${PATHS.CATEGORIES}/${cat.get('id')}`,
+      linkTo: `${ROUTES.CATEGORIES}/${cat.get('id')}`,
     }))
     .valueSeq().toArray()
   : [];
-
-const mapReports = (reports) => reports
-  ? reports.map((report) => ({
-    label: report.getIn(['attributes', 'title']),
-    dueDate: report.get('due_date') ? report.getIn(['due_date', 'attributes', 'due_date']) : null,
-    updatedAt: report.getIn(['attributes', 'updated_at']),
-    createdAt: report.getIn(['attributes', 'created_at']),
-    draft: report.getIn(['attributes', 'draft']),
-    linkTo: `${PATHS.PROGRESS_REPORTS}/${report.get('id')}`,
-    updatedBy: report.get('user') && report.getIn(['user', 'attributes']).toJS(),
-  })).valueSeq().toArray()
-  : [];
-
-export const getReportsField = (reports, button) => ({
-  type: 'reports',
-  values: reports && mapReports(reports),
-  button: button || null,
-  showEmpty: true,
-});
-
-const mapDates = (dates) => dates
-  ? dates.map((date) => ({
-    date: date.getIn(['attributes', 'due_date']),
-    due: date.getIn(['attributes', 'due']),
-    overdue: date.getIn(['attributes', 'overdue']),
-  })).valueSeq().toArray()
-  : [];
-
-export const getScheduleField = (dates) => ({
-  type: 'schedule',
-  values: mapDates(dates),
-});
 
 export const getTaxonomyFields = (taxonomies) => taxonomies
   && sortEntities(
@@ -266,35 +235,27 @@ const getConnectionField = ({
   showEmpty: appMessages.entities[entityType].empty,
   connectionOptions: connectionOptions.map((option) => ({
     label: appMessages.entities[option].plural,
-    groupByFramework: option === 'recommendations',
+    groupByActortype: option === 'actors',
     path: option,
-    clientPath: option === 'measures' ? 'actions' : option,
+    // TODO check path
+    clientPath: option === 'actions' ? 'actions' : option,
   })),
 });
 
-export const getIndicatorConnectionField = (entities, connections, onEntityClick) => getConnectionField({
-  entities: sortEntities(entities, 'asc', 'reference'),
-  taxonomies: null,
-  connections,
-  connectionOptions: ['measures', 'recommendations'],
-  entityType: 'indicators',
-  onEntityClick,
-});
-
-export const getRecommendationConnectionField = (
+export const getActorConnectionField = (
   entities,
   taxonomies,
   connections,
   onEntityClick,
-  fwid, // framework id
+  actortypeid, // actortype id
   hasResponse,
 ) => getConnectionField({
   entities: sortEntities(entities, 'asc', 'reference'),
-  taxonomies: filterTaxonomies(taxonomies, 'tags_recommendations'),
+  taxonomies: filterTaxonomies(taxonomies, 'tags_actors'),
   connections,
-  connectionOptions: ['measures', 'indicators'],
-  entityType: fwid ? `recommendations_${fwid}` : 'recommendations',
-  entityPath: 'recommendations',
+  connectionOptions: ['actions'],
+  entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
+  entityPath: DB.ACTORS,
   onEntityClick,
   entityIcon: (entity) => {
     if (!hasResponse) return null;
@@ -302,13 +263,13 @@ export const getRecommendationConnectionField = (
     return status ? status.icon : null;
   },
 });
-export const getMeasureConnectionField = (entities, taxonomies, connections, onEntityClick) => getConnectionField({
+export const getActionConnectionField = (entities, taxonomies, connections, onEntityClick) => getConnectionField({
   entities: sortEntities(entities, 'asc', 'id'),
-  taxonomies: filterTaxonomies(taxonomies, 'tags_measures'),
+  taxonomies: filterTaxonomies(taxonomies, 'tags_actions'),
   connections,
-  connectionOptions: ['indicators', 'recommendations'],
-  entityType: 'measures',
-  entityPath: 'actions',
+  connectionOptions: ['actors'],
+  entityType: 'actions',
+  entityPath: DB.ACTIONS,
   onEntityClick,
 });
 
@@ -336,25 +297,26 @@ const getConnectionGroupsField = ({
   connectionOptions: connectionOptions.map((option) => ({
     label: appMessages.entities[option].plural,
     path: option,
-    clientPath: option === 'measures' ? 'actions' : option,
+    // TODO check path
+    clientPath: option === 'actions' ? 'actions' : option,
   })),
 });
-export const getRecommendationConnectionGroupsField = (
+export const getActorConnectionGroupsField = (
   entityGroups,
   groupedBy,
   taxonomies,
   connections,
   onEntityClick,
-  fwid, // framework id
+  actortypeid, // actortype id
   hasResponse,
 ) => getConnectionGroupsField({
   entityGroups,
   groupedBy,
-  taxonomies: filterTaxonomies(taxonomies, 'tags_recommendations'),
+  taxonomies: filterTaxonomies(taxonomies, 'tags_actors'),
   connections,
-  connectionOptions: ['measures'],
-  entityType: fwid ? `recommendations_${fwid}` : 'recommendations',
-  entityPath: 'recommendations',
+  connectionOptions: ['actions'],
+  entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
+  entityPath: DB.ACTORS,
   onEntityClick,
   entityIcon: (entity) => {
     if (!hasResponse) return null;
@@ -362,14 +324,14 @@ export const getRecommendationConnectionGroupsField = (
     return status ? status.icon : null;
   },
 });
-export const getMeasureConnectionGroupsField = (entityGroups, groupedBy, taxonomies, connections, onEntityClick) => getConnectionGroupsField({
+export const getActionConnectionGroupsField = (entityGroups, groupedBy, taxonomies, connections, onEntityClick) => getConnectionGroupsField({
   entityGroups,
   groupedBy,
-  taxonomies: filterTaxonomies(taxonomies, 'tags_measures'),
+  taxonomies: filterTaxonomies(taxonomies, 'tags_actions'),
   connections,
-  connectionOptions: ['indicators', 'recommendations'],
-  entityType: 'measures',
-  entityPath: 'actions',
+  connectionOptions: ['actors'],
+  entityType: 'actions',
+  entityPath: DB.ACTIONS,
   onEntityClick,
 });
 

@@ -5,9 +5,6 @@ import { palette } from 'styled-theme';
 import { Map, List } from 'immutable';
 
 import EntityListItem from 'components/EntityListItem';
-import EntityListNestedList from 'components/EntityListNestedList';
-import EntityListNestedReportList from 'components/EntityListNestedList/EntityListNestedReportList';
-import EntityListNestedNoItem from 'components/EntityListNestedList/EntityListNestedItem/EntityListNestedNoItem';
 
 const ItemWrapper = styled.div`
   padding: ${({ separated }) => separated ? '5px 0 10px' : '0'};
@@ -27,8 +24,7 @@ export class EntityListItemWrapper extends React.Component { // eslint-disable-l
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.props.expandNo !== nextProps.expandNo
-    || this.props.entity !== nextProps.entity
+    return this.props.entity !== nextProps.entity
     || this.props.errors !== nextProps.errors
     || this.props.entityIdsSelected !== nextProps.entityIdsSelected
     || this.state.wrapper !== nextState.wrapper;
@@ -37,10 +33,7 @@ export class EntityListItemWrapper extends React.Component { // eslint-disable-l
   render() {
     const {
       isManager,
-      isContributor,
       onEntitySelect,
-      expandNo,
-      onExpand,
       entityIcon,
       entityIdsSelected,
       taxonomies,
@@ -53,7 +46,6 @@ export class EntityListItemWrapper extends React.Component { // eslint-disable-l
     } = this.props;
     return (
       <ItemWrapper
-        separated={expandNo}
         ref={(node) => {
           if (!this.state.wrapper) {
             this.setState({ wrapper: node });
@@ -71,8 +63,6 @@ export class EntityListItemWrapper extends React.Component { // eslint-disable-l
                 isConnection={isConnection}
                 isSelected={isManager && entityIdsSelected.includes(entity.get('id'))}
                 onSelect={(checked) => onEntitySelect(entity.get('id'), checked)}
-                onExpand={onExpand}
-                expandNo={expandNo}
                 entityIcon={entityIcon}
                 taxonomies={taxonomies}
                 connections={connections}
@@ -81,47 +71,6 @@ export class EntityListItemWrapper extends React.Component { // eslint-disable-l
                 entityPath={entityPath}
                 wrapper={this.state.wrapper}
               />
-              {config && config.expandableColumns
-              && expandNo > 0
-              && entity.get('expanded')
-              && entity.get('expanded') !== 'reports'
-              && (!entity.get(entity.get('expanded')) || entity.get(entity.get('expanded')).size === 0)
-              && <EntityListNestedNoItem type={entity.get('expanded')} nestLevel={1} />
-              }
-              {config && config.expandableColumns
-              && expandNo > 0
-              && entity.get('expanded')
-              && entity.get('expanded') !== 'reports'
-              && (
-                <EntityListNestedList
-                  entities={
-                    entity.get(entity.get('expanded'))
-                      ? entity.get(entity.get('expanded')).toList()
-                      : List()
-                  }
-                  config={config}
-                  nestLevel={1}
-                  expandNo={expandNo}
-                  onExpand={onExpand}
-                  onEntityClick={onEntityClick}
-                  isContributor={isContributor}
-                />
-              )
-              }
-              {expandNo > 0
-              && entity.get('expanded')
-              && entity.get('expanded') === 'reports'
-              && entity.get('reports')
-              && (
-                <EntityListNestedReportList
-                  reports={entity.get('reports').toList()}
-                  dates={entity.get('dates')}
-                  onEntityClick={onEntityClick}
-                  isContributor={isContributor}
-                  nestLevel={1}
-                />
-              )
-              }
             </div>
           )
         }
@@ -138,12 +87,9 @@ EntityListItemWrapper.propTypes = {
   entityIdsSelected: PropTypes.instanceOf(List),
   config: PropTypes.object,
   isManager: PropTypes.bool,
-  isContributor: PropTypes.bool,
   onEntityClick: PropTypes.func,
   onEntitySelect: PropTypes.func,
-  onExpand: PropTypes.func,
   onDismissError: PropTypes.func,
-  expandNo: PropTypes.number,
   entityPath: PropTypes.string,
   entityIcon: PropTypes.func,
   isConnection: PropTypes.bool,

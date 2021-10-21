@@ -17,8 +17,7 @@ import {
   getTitleFormField,
   getStatusField,
   getMarkdownField,
-  renderIndicatorControl,
-  renderRecommendationsByFwControl,
+  renderActorsByActortypeControl,
   getDateField,
   getTextareaField,
   renderTaxonomyControl,
@@ -29,8 +28,8 @@ import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl
 import { scrollToTop } from 'utils/scroll-to-component';
 import { hasNewError } from 'utils/entity-form';
 
-import { PATHS, CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES } from 'themes/config';
+import { CONTENT_SINGLE } from 'containers/App/constants';
+import { USER_ROLES, ROUTES } from 'themes/config';
 
 import {
   loadEntitiesIfNeeded,
@@ -46,7 +45,7 @@ import {
   selectEntities,
   selectReady,
   selectReadyForAuthCheck,
-  selectMeasureTaxonomies,
+  selectActionTaxonomies,
 } from 'containers/App/selectors';
 
 import Messages from 'components/Messages';
@@ -60,7 +59,7 @@ import appMessages from 'containers/App/messages';
 import {
   selectDomain,
   selectConnectedTaxonomies,
-  selectRecommendationsByFw,
+  selectActorsByActortype,
 } from './selectors';
 
 import messages from './messages';
@@ -75,7 +74,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
 
   UNSAFE_componentWillMount() {
     this.props.loadEntitiesIfNeeded();
-    this.props.initialiseForm('measureNew.form.data', FORM_INITIAL);
+    this.props.initialiseForm('actionNew.form.data', FORM_INITIAL);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -115,8 +114,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
 
   getBodyMainFields = (
     connectedTaxonomies,
-    indicators,
-    recommendationsByFw,
+    actorsByActortype,
     onCreateOption,
   ) => {
     const { intl } = this.context;
@@ -126,34 +124,22 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
         fields: [
           getMarkdownField(intl.formatMessage),
           // getMarkdownField(intl.formatMessage, 'outcome'),
-          // getMarkdownField(intl.formatMessage, 'indicator_summary'),
         ],
       },
     );
-    if (indicators) {
-      groups.push(
-        {
-          label: intl.formatMessage(appMessages.nav.indicatorsSuper),
-          icon: 'indicators',
-          fields: [
-            renderIndicatorControl(indicators, onCreateOption, intl),
-          ],
-        },
-      );
-    }
-    if (recommendationsByFw) {
-      const recConnections = renderRecommendationsByFwControl(
-        recommendationsByFw,
+    if (actorsByActortype) {
+      const actorConnections = renderActorsByActortypeControl(
+        actorsByActortype,
         connectedTaxonomies,
         onCreateOption,
         intl,
       );
-      if (recConnections) {
+      if (actorConnections) {
         groups.push(
           {
-            label: intl.formatMessage(appMessages.nav.recommendationsSuper),
-            icon: 'recommendations',
-            fields: recConnections,
+            label: intl.formatMessage(appMessages.nav.actorsSuper),
+            icon: 'actors',
+            fields: actorConnections,
           },
         );
       }
@@ -181,7 +167,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
   render() {
     const { intl } = this.context;
     const {
-      dataReady, viewDomain, connectedTaxonomies, recommendationsByFw, indicators, taxonomies, onCreateOption,
+      dataReady, viewDomain, connectedTaxonomies, actorsByActortype, taxonomies, onCreateOption,
     } = this.props;
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
     return (
@@ -199,7 +185,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle)}
             type={CONTENT_SINGLE}
-            icon="measures"
+            icon="actions"
             buttons={
               dataReady ? [{
                 type: 'cancel',
@@ -208,7 +194,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
               {
                 type: 'save',
                 disabled: saveSending,
-                onClick: () => this.props.handleSubmitRemote('measureNew.form.data'),
+                onClick: () => this.props.handleSubmitRemote('actionNew.form.data'),
               }] : null
             }
           />
@@ -236,10 +222,10 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
           {dataReady
             && (
               <EntityForm
-                model="measureNew.form.data"
+                model="actionNew.form.data"
                 formData={viewDomain.getIn(['form', 'data'])}
                 saving={saveSending}
-                handleSubmit={(formData) => this.props.handleSubmit(formData, recommendationsByFw)}
+                handleSubmit={(formData) => this.props.handleSubmit(formData, actorsByActortype)}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={this.props.handleCancel}
                 handleUpdate={this.props.handleUpdate}
@@ -251,8 +237,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                   body: {
                     main: this.getBodyMainFields(
                       connectedTaxonomies,
-                      indicators,
-                      recommendationsByFw,
+                      actorsByActortype,
                       onCreateOption,
                     ),
                     aside: this.getBodyAsideFields(
@@ -286,8 +271,7 @@ ActionNew.propTypes = {
   dataReady: PropTypes.bool,
   authReady: PropTypes.bool,
   taxonomies: PropTypes.object,
-  recommendationsByFw: PropTypes.object,
-  indicators: PropTypes.object,
+  actorsByActortype: PropTypes.object,
   onCreateOption: PropTypes.func,
   initialiseForm: PropTypes.func,
   connectedTaxonomies: PropTypes.object,
@@ -303,9 +287,8 @@ const mapStateToProps = (state) => ({
   viewDomain: selectDomain(state),
   authReady: selectReadyForAuthCheck(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  taxonomies: selectMeasureTaxonomies(state, { includeParents: false }),
-  indicators: selectEntities(state, 'indicators'),
-  recommendationsByFw: selectRecommendationsByFw(state),
+  taxonomies: selectActionTaxonomies(state, { includeParents: false }),
+  actorsByActortype: selectActorsByActortype(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
 });
 
@@ -333,13 +316,13 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, recommendationsByFw) => {
+    handleSubmit: (formData, actorsByActortype) => {
       let saveData = formData;
 
-      // measureCategories
+      // actionCategories
       if (formData.get('associatedTaxonomies')) {
         saveData = saveData.set(
-          'measureCategories',
+          'actionCategories',
           formData.get('associatedTaxonomies')
             .map(getCheckedValuesFromOptions)
             .reduce((updates, formCategoryIds) => Map({
@@ -351,17 +334,17 @@ function mapDispatchToProps(dispatch) {
         );
       }
 
-      // recommendations
-      if (formData.get('associatedRecommendationsByFw') && recommendationsByFw) {
+      // actors
+      if (formData.get('associatedActorsByActortype') && actorsByActortype) {
         saveData = saveData.set(
-          'recommendationMeasures',
-          recommendationsByFw
-            .map((recs, fwid) => getConnectionUpdatesFromFormData({
+          'actorActions',
+          actorsByActortype
+            .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
               formData,
-              connections: recs,
-              connectionAttribute: ['associatedRecommendationsByFw', fwid.toString()],
-              createConnectionKey: 'recommendation_id',
-              createKey: 'measure_id',
+              connections: actors,
+              connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
+              createConnectionKey: 'actor_id',
+              createKey: 'action_id',
             }))
             .reduce(
               (memo, deleteCreateLists) => {
@@ -376,21 +359,10 @@ function mapDispatchToProps(dispatch) {
         );
       }
 
-      // indicators
-      if (formData.get('associatedIndicators')) {
-        saveData = saveData.set('measureIndicators', Map({
-          delete: List(),
-          create: getCheckedValuesFromOptions(formData.get('associatedIndicators'))
-            .map((id) => Map({
-              indicator_id: id,
-            })),
-        }));
-      }
-
       dispatch(save(saveData.toJS()));
     },
     handleCancel: () => {
-      dispatch(updatePath(PATHS.MEASURES), { replace: true });
+      dispatch(updatePath(ROUTES.ACTIONS), { replace: true });
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));

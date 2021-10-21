@@ -20,8 +20,7 @@ import {
   getTitleFormField,
   getStatusField,
   getMarkdownField,
-  renderIndicatorControl,
-  renderRecommendationsByFwControl,
+  renderActorsByActortypeControl,
   getDateField,
   getTextareaField,
   renderTaxonomyControl,
@@ -35,7 +34,7 @@ import { scrollToTop } from 'utils/scroll-to-component';
 import { hasNewError } from 'utils/entity-form';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES } from 'themes/config';
+import { USER_ROLES, DB, ROUTES } from 'themes/config';
 
 import {
   loadEntitiesIfNeeded,
@@ -66,8 +65,7 @@ import {
   selectDomain,
   selectViewEntity,
   selectTaxonomies,
-  selectRecommendationsByFw,
-  selectIndicators,
+  selectActorsByActortype,
   selectConnectedTaxonomies,
 } from './selectors';
 
@@ -84,7 +82,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
   UNSAFE_componentWillMount() {
     this.props.loadEntitiesIfNeeded();
     if (this.props.dataReady && this.props.viewEntity) {
-      this.props.initialiseForm('measureEdit.form.data', this.getInitialFormData());
+      this.props.initialiseForm('actionEdit.form.data', this.getInitialFormData());
     }
   }
 
@@ -95,7 +93,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     }
     // repopulate if new data becomes ready
     if (nextProps.dataReady && !this.props.dataReady && nextProps.viewEntity) {
-      this.props.initialiseForm('measureEdit.form.data', this.getInitialFormData(nextProps));
+      this.props.initialiseForm('actionEdit.form.data', this.getInitialFormData(nextProps));
     }
     //
     if (nextProps.authReady && !this.props.authReady) {
@@ -109,7 +107,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
   getInitialFormData = (nextProps) => {
     const props = nextProps || this.props;
     const {
-      viewEntity, taxonomies, recommendationsByFw, indicators,
+      viewEntity, taxonomies, actorsByActortype,
     } = props;
 
     return viewEntity
@@ -120,10 +118,9 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
           FORM_INITIAL.get('attributes')
         ),
         associatedTaxonomies: taxonomyOptions(taxonomies),
-        associatedRecommendationsByFw: recommendationsByFw
-          ? recommendationsByFw.map((recs) => entityOptions(recs, true))
+        associatedActorsByActortype: actorsByActortype
+          ? actorsByActortype.map((actors) => entityOptions(actors, true))
           : Map(),
-        associatedIndicators: entityOptions(indicators, true),
       })
       : Map();
   }
@@ -155,8 +152,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
 
   getBodyMainFields = (
     connectedTaxonomies,
-    indicators,
-    recommendationsByFw,
+    actorsByActortype,
     onCreateOption,
   ) => {
     const { intl } = this.context;
@@ -166,34 +162,22 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
         fields: [
           getMarkdownField(intl.formatMessage),
           // getMarkdownField(intl.formatMessage, 'outcome'),
-          // getMarkdownField(intl.formatMessage, 'indicator_summary'),
         ],
       },
     );
-    if (indicators) {
-      groups.push(
-        {
-          label: intl.formatMessage(appMessages.nav.indicatorsSuper),
-          icon: 'indicators',
-          fields: [
-            renderIndicatorControl(indicators, onCreateOption, intl),
-          ],
-        },
-      );
-    }
-    if (recommendationsByFw) {
-      const recConnections = renderRecommendationsByFwControl(
-        recommendationsByFw,
+    if (actorsByActortype) {
+      const actorConnections = renderActorsByActortypeControl(
+        actorsByActortype,
         connectedTaxonomies,
         onCreateOption,
         intl,
       );
-      if (recConnections) {
+      if (actorConnections) {
         groups.push(
           {
-            label: intl.formatMessage(appMessages.nav.recommendationsSuper),
-            icon: 'recommendations',
-            fields: recConnections,
+            label: intl.formatMessage(appMessages.nav.actorsSuper),
+            icon: 'actors',
+            fields: actorConnections,
           },
         );
       }
@@ -231,8 +215,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       viewDomain,
       taxonomies,
       connectedTaxonomies,
-      recommendationsByFw,
-      indicators,
+      actorsByActortype,
       onCreateOption,
     } = this.props;
     const { intl } = this.context;
@@ -253,7 +236,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle)}
             type={CONTENT_SINGLE}
-            icon="measures"
+            icon="actions"
             buttons={
               viewEntity && dataReady
                 ? [{
@@ -263,7 +246,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
                 {
                   type: 'save',
                   disabled: saveSending,
-                  onClick: () => this.props.handleSubmitRemote('measureEdit.form.data'),
+                  onClick: () => this.props.handleSubmitRemote('actionEdit.form.data'),
                 }]
                 : null
             }
@@ -302,14 +285,13 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
           {viewEntity && dataReady && !deleteSending
             && (
               <EntityForm
-                model="measureEdit.form.data"
+                model="actionEdit.form.data"
                 formData={viewDomain.getIn(['form', 'data'])}
                 saving={saveSending}
                 handleSubmit={(formData) => this.props.handleSubmit(
                   formData,
                   taxonomies,
-                  recommendationsByFw,
-                  indicators,
+                  actorsByActortype
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={this.props.handleCancel}
@@ -323,8 +305,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
                   body: {
                     main: this.getBodyMainFields(
                       connectedTaxonomies,
-                      indicators,
-                      recommendationsByFw,
+                      actorsByActortype,
                       onCreateOption,
                     ),
                     aside: this.getBodyAsideFields(
@@ -364,8 +345,7 @@ ActionEdit.propTypes = {
   params: PropTypes.object,
   taxonomies: PropTypes.object,
   connectedTaxonomies: PropTypes.object,
-  recommendationsByFw: PropTypes.object,
-  indicators: PropTypes.object,
+  actorsByActortype: PropTypes.object,
   onCreateOption: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
@@ -383,8 +363,7 @@ const mapStateToProps = (state, props) => ({
   viewEntity: selectViewEntity(state, props.params.id),
   taxonomies: selectTaxonomies(state, props.params.id),
   connectedTaxonomies: selectConnectedTaxonomies(state),
-  indicators: selectIndicators(state, props.params.id),
-  recommendationsByFw: selectRecommendationsByFw(state, props.params.id),
+  actorsByActortype: selectActorsByActortype(state, props.params.id),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -411,35 +390,25 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, taxonomies, recommendationsByFw, indicators) => {
+    handleSubmit: (formData, taxonomies, actorsByActortype) => {
       let saveData = formData
         .set(
-          'measureCategories',
+          'actionCategories',
           getCategoryUpdatesFromFormData({
             formData,
             taxonomies,
-            createKey: 'measure_id',
-          })
-        )
-        .set(
-          'measureIndicators',
-          getConnectionUpdatesFromFormData({
-            formData,
-            connections: indicators,
-            connectionAttribute: 'associatedIndicators',
-            createConnectionKey: 'indicator_id',
-            createKey: 'measure_id',
+            createKey: 'action_id',
           })
         );
       saveData = saveData.set(
-        'recommendationMeasures',
-        recommendationsByFw
-          .map((recs, fwid) => getConnectionUpdatesFromFormData({
+        'actorActions',
+        actorsByActortype
+          .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
             formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
-            connections: recs,
-            connectionAttribute: ['associatedRecommendationsByFw', fwid.toString()],
-            createConnectionKey: 'recommendation_id',
-            createKey: 'measure_id',
+            connections: actors,
+            connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
+            createConnectionKey: 'actor_id',
+            createKey: 'action_id',
           }))
           .reduce(
             (memo, deleteCreateLists) => {
@@ -459,16 +428,16 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(save(saveData.toJS()));
     },
     handleCancel: () => {
-      dispatch(updatePath(`/actions/${props.params.id}`, { replace: true }));
+      dispatch(updatePath(`/${DB.ACTIONS}/${props.params.id}`, { replace: true }));
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));
     },
     handleDelete: () => {
       dispatch(deleteEntity({
-        path: 'measures',
+        path: DB.ACTIONS,
         id: props.params.id,
-        redirect: 'actions',
+        redirect: ROUTES.ACTIONS,
       }));
     },
     onCreateOption: (args) => {

@@ -13,18 +13,18 @@ import { List, Map, fromJS } from 'immutable';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import {
   selectReady,
-  selectMeasureTaxonomies,
-  selectActiveFrameworks,
+  selectActionTaxonomies,
+  selectActiveActortypes,
   selectIsUserManager,
   selectIsSignedIn,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
-import { PATHS } from 'containers/App/constants';
+import { ROUTES } from 'themes/config';
 
 import EntityList from 'containers/EntityList';
 import { CONFIG, DEPENDENCIES } from './constants';
-import { selectConnections, selectMeasures, selectConnectedTaxonomies } from './selectors';
+import { selectConnections, selectActions, selectConnectedTaxonomies } from './selectors';
 
 import messages from './messages';
 
@@ -45,7 +45,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
       dataReady,
       entities,
       taxonomies,
-      frameworks,
+      actortypes,
       connections,
       connectedTaxonomies,
       location,
@@ -55,7 +55,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
     const { intl } = this.context;
     const headerOptions = {
       supTitle: intl.formatMessage(messages.pageTitle),
-      icon: 'measures',
+      icon: 'actions',
       actions: [],
     };
     if (isUserSignedIn) {
@@ -83,7 +83,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
         title: [
           intl.formatMessage(appMessages.buttons.add),
           {
-            title: intl.formatMessage(appMessages.entities.measures.single),
+            title: intl.formatMessage(appMessages.entities.actions.single),
             hiddenSmall: true,
           },
         ],
@@ -101,15 +101,15 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
         <EntityList
           entities={entities}
           taxonomies={taxonomies}
-          frameworks={frameworks}
+          actortypes={actortypes}
           connections={connections}
           connectedTaxonomies={connectedTaxonomies}
           config={CONFIG}
           header={headerOptions}
           dataReady={dataReady}
           entityTitle={{
-            single: intl.formatMessage(appMessages.entities.measures.single),
-            plural: intl.formatMessage(appMessages.entities.measures.plural),
+            single: intl.formatMessage(appMessages.entities.actions.single),
+            plural: intl.formatMessage(appMessages.entities.actions.plural),
           }}
           locationQuery={fromJS(location.query)}
         />
@@ -127,7 +127,7 @@ ActionList.propTypes = {
   location: PropTypes.object,
   entities: PropTypes.instanceOf(List).isRequired,
   taxonomies: PropTypes.instanceOf(Map),
-  frameworks: PropTypes.instanceOf(Map),
+  actortypes: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   isUserSignedIn: PropTypes.bool,
@@ -139,11 +139,11 @@ ActionList.contextTypes = {
 
 const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  entities: selectMeasures(state, fromJS(props.location.query)),
-  taxonomies: selectMeasureTaxonomies(state),
+  entities: selectActions(state, fromJS(props.location.query)),
+  taxonomies: selectActionTaxonomies(state),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
-  frameworks: selectActiveFrameworks(state),
+  actortypes: selectActiveActortypes(state),
   isManager: selectIsUserManager(state),
   isUserSignedIn: selectIsSignedIn(state),
 });
@@ -153,10 +153,10 @@ function mapDispatchToProps(dispatch) {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
     handleNew: () => {
-      dispatch(updatePath(`${PATHS.MEASURES}${PATHS.NEW}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.NEW}`, { replace: true }));
     },
     handleImport: () => {
-      dispatch(updatePath(`${PATHS.MEASURES}${PATHS.IMPORT}`));
+      dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.IMPORT}`));
     },
   };
 }

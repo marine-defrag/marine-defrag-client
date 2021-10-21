@@ -5,13 +5,13 @@ import {
   selectEntities,
   selectSortByQuery,
   selectSortOrderQuery,
-  selectFWTaxonomiesSorted,
-  selectFWRecommendations,
-  selectFWMeasures,
-  selectActiveFrameworks,
-  selectRecommendationMeasuresByMeasure,
-  selectMeasureCategoriesByMeasure,
-  selectRecommendationCategoriesByRecommendation,
+  selectActortypeTaxonomiesSorted,
+  selectActortypeActors,
+  selectActortypeActions,
+  selectActiveActortypes,
+  selectActorActionsByAction,
+  selectActionCategoriesByAction,
+  selectActorCategoriesByActor,
 } from 'containers/App/selectors';
 
 import { qe } from 'utils/quasi-equals';
@@ -21,7 +21,7 @@ import { TAXONOMY_DEFAULT, SORT_OPTIONS } from './constants';
 
 export const selectTaxonomy = createSelector(
   (state, { id }) => id,
-  (state) => selectFWTaxonomiesSorted(state),
+  (state) => selectActortypeTaxonomiesSorted(state),
   (taxonomyId, taxonomies) => {
     if (!taxonomies || taxonomies.size === 0) return null;
     const id = typeof taxonomyId !== 'undefined' ? taxonomyId : TAXONOMY_DEFAULT;
@@ -46,31 +46,31 @@ export const selectTaxonomy = createSelector(
   }
 );
 
-const selectMeasures = createSelector(
-  selectFWMeasures,
-  selectMeasureCategoriesByMeasure,
-  selectRecommendationMeasuresByMeasure,
-  (entities, measureCategories, measureRecommendations) => entities
-    && measureCategories
-    && measureRecommendations
+const selectActions = createSelector(
+  selectActortypeActions,
+  selectActionCategoriesByAction,
+  selectActorActionsByAction,
+  (entities, actionCategories, actionActors) => entities
+    && actionCategories
+    && actionActors
     && entities.map(
       (entity, id) => entity.set(
         'category_ids',
-        measureCategories.get(parseInt(id, 10)) || Map(),
+        actionCategories.get(parseInt(id, 10)) || Map(),
       ).set(
-        'recommendation_ids',
-        measureRecommendations.get(parseInt(id, 10)) || Map(),
+        'actor_ids',
+        actionActors.get(parseInt(id, 10)) || Map(),
       )
     )
 );
 
-const selectRecommendations = createSelector(
-  selectFWRecommendations,
-  selectRecommendationCategoriesByRecommendation,
-  (entities, recCategories) => entities && recCategories && entities.map(
+const selectActors = createSelector(
+  selectActortypeActors,
+  selectActorCategoriesByActor,
+  (entities, actorCategories) => entities && actorCategories && entities.map(
     (entity, id) => entity.set(
       'category_ids',
-      recCategories.get(parseInt(id, 10)) || Map(),
+      actorCategories.get(parseInt(id, 10)) || Map(),
     )
   )
 );
@@ -104,114 +104,114 @@ const filterChildConnections = (
 const getCategoryCounts = (
   taxonomyCategories,
   taxonomy,
-  measures,
-  recommendations,
+  actions,
+  actors,
   categories,
-  frameworks,
+  actortypes,
 ) => taxonomyCategories.map(
   (cat, categoryId) => {
     let category = cat;
-    // measures
-    const tagsMeasures = taxonomy.getIn(['attributes', 'tags_measures']);
-    const childCatsTagMeasures = taxonomy.get('children')
+    // actions
+    const tagsActions = taxonomy.getIn(['attributes', 'tags_actions']);
+    const childCatsTagActions = taxonomy.get('children')
       && taxonomy.get('children').some(
-        (childTax) => childTax.getIn(['attributes', 'tags_measures'])
+        (childTax) => childTax.getIn(['attributes', 'tags_actions'])
       );
-    if (tagsMeasures || childCatsTagMeasures) {
-      let associatedMeasures;
-      // recommendations tagged by child categories
-      if (childCatsTagMeasures) {
-        associatedMeasures = filterChildConnections(
-          measures,
+    if (tagsActions || childCatsTagActions) {
+      let associatedActions;
+      // actors tagged by child categories
+      if (childCatsTagActions) {
+        associatedActions = filterChildConnections(
+          actions,
           categories,
           categoryId
         );
-      } else if (tagsMeasures) {
-        associatedMeasures = measures.filter(
+      } else if (tagsActions) {
+        associatedActions = actions.filter(
           (entity) => entity.get('category_ids').includes(parseInt(categoryId, 10))
         );
       }
-      category = category.set('measuresCount', associatedMeasures.size);
-      // get all public associated measures
-      const associatedMeasuresPublic = associatedMeasures.filter(
-        (measure) => !measure.getIn(['attributes', 'draft'])
+      category = category.set('actionsCount', associatedActions.size);
+      // get all public associated actions
+      const associatedActionsPublic = associatedActions.filter(
+        (action) => !action.getIn(['attributes', 'draft'])
       );
       category = category.set(
-        'measuresPublicCount',
-        associatedMeasuresPublic ? associatedMeasuresPublic.size : 0,
+        'actionsPublicCount',
+        associatedActionsPublic ? associatedActionsPublic.size : 0,
       );
       // for sorting
       category = category.set(
-        'measures',
-        associatedMeasuresPublic ? associatedMeasuresPublic.size : 0,
+        'actions',
+        associatedActionsPublic ? associatedActionsPublic.size : 0,
       );
     }
 
-    // recommendations
-    const tagsRecs = taxonomy.getIn(['attributes', 'tags_recommendations']);
-    const childCatsTagRecs = taxonomy.get('children')
+    // actors
+    const tagsActors = taxonomy.getIn(['attributes', 'tags_actors']);
+    const childCatsTagActors = taxonomy.get('children')
       && taxonomy.get('children').some(
-        (childTax) => childTax.getIn(['attributes', 'tags_recommendations'])
+        (childTax) => childTax.getIn(['attributes', 'tags_actors'])
       );
-    if (tagsRecs || childCatsTagRecs) {
-      let associatedRecs;
-      // recommendations tagged by child categories
-      if (childCatsTagRecs) {
-        associatedRecs = filterChildConnections(
-          recommendations,
+    if (tagsActors || childCatsTagActors) {
+      let associatedActors;
+      // actors tagged by child categories
+      if (childCatsTagActors) {
+        associatedActors = filterChildConnections(
+          actors,
           categories,
           categoryId,
         );
-        // directly tagged recommendations
-      } else if (tagsRecs) {
-        associatedRecs = recommendations.filter(
+        // directly tagged actors
+      } else if (tagsActors) {
+        associatedActors = actors.filter(
           (entity) => entity.get('category_ids').includes(parseInt(categoryId, 10))
         );
       }
-      const associatedRecsPublic = associatedRecs.filter(
-        (rec) => !rec.getIn(['attributes', 'draft'])
+      const associatedActorsPublic = associatedActors.filter(
+        (actor) => !actor.getIn(['attributes', 'draft'])
       );
-      // get all public accepted associated recs
-      const publicAccepted = associatedRecsPublic.filter(
-        (rec) => !!rec.getIn(['attributes', 'accepted'])
+      // get all public accepted associated actors
+      const publicAccepted = associatedActorsPublic.filter(
+        (actor) => !!actor.getIn(['attributes', 'accepted'])
       );
 
-      // all frameworks
-      category = category.set('recommendationsCount', associatedRecs.size);
+      // all actortypes
+      category = category.set('actorsCount', associatedActors.size);
       category = category.set(
-        'recommendationsPublicCount',
-        associatedRecsPublic ? associatedRecsPublic.size : 0
+        'actorsPublicCount',
+        associatedActorsPublic ? associatedActorsPublic.size : 0
       );
-      // const framework = frameworks.find((fw) => qe(fw.get('id'), taxonomy.get('frameworkIds').first()));
+      // const actortype = actortypes.find((actortype) => qe(actortype.get('id'), taxonomy.get('actortypeIds').first()));
       category = category.set(
-        'recommendationsAcceptedCount',
+        'actorsAcceptedCount',
         publicAccepted ? publicAccepted.size : 0
       );
-      // by framework
+      // by actortype
       category = category.set(
-        'recommendationsCountByFW',
-        associatedRecs.groupBy(
-          (rec) => rec.getIn(['attributes', 'framework_id'])
+        'actorsCountByActortype',
+        associatedActors.groupBy(
+          (actor) => actor.getIn(['attributes', 'actortype_id'])
         ).map((group) => group.size),
       );
       category = category.set(
-        'recommendationsPublicCountByFW',
-        associatedRecsPublic
-          ? associatedRecsPublic.groupBy(
-            (rec) => rec.getIn(['attributes', 'framework_id'])
+        'actorsPublicCountByActortype',
+        associatedActorsPublic
+          ? associatedActorsPublic.groupBy(
+            (actor) => actor.getIn(['attributes', 'actortype_id'])
           ).map((group) => group.size)
           : 0,
       );
       category = category.set(
-        'recommendationsAcceptedCountByFW',
+        'actorsAcceptedCountByActortype',
         publicAccepted
           ? publicAccepted.groupBy(
-            (rec) => rec.getIn(['attributes', 'framework_id'])
+            (actor) => actor.getIn(['attributes', 'actortype_id'])
           ).map((group, key) => {
-            const framework = frameworks.find(
-              (fw) => qe(fw.get('id'), key)
+            const actortype = actortypes.find(
+              (at) => qe(at.get('id'), key)
             );
-            return (framework && framework.getIn(['attributes', 'has_response']))
+            return (actortype && actortype.getIn(['attributes', 'has_response']))
               ? group.size
               : -1;
           })
@@ -219,50 +219,50 @@ const getCategoryCounts = (
       );
       // for sorting
       category = category.set(
-        'recommendations',
-        associatedRecsPublic ? associatedRecsPublic.size : 0
+        'actors',
+        associatedActorsPublic ? associatedActorsPublic.size : 0
       );
 
-      // measures connected via recommendation
-      if (!tagsMeasures && !childCatsTagMeasures) {
-        const connectedMeasures = filterAssociatedEntities(
-          measures,
-          'recommendation_ids',
-          associatedRecsPublic,
+      // actions connected via actor
+      if (!tagsActions && !childCatsTagActions) {
+        const connectedActions = filterAssociatedEntities(
+          actions,
+          'actor_ids',
+          associatedActorsPublic,
         );
         category = category.set(
-          'measuresCount',
-          connectedMeasures ? connectedMeasures.size : 0
+          'actionsCount',
+          connectedActions ? connectedActions.size : 0
         );
-        const connectedMeasuresPublic = connectedMeasures.filter(
-          (measure) => !measure.getIn(['attributes', 'draft'])
+        const connectedActionsPublic = connectedActions.filter(
+          (action) => !action.getIn(['attributes', 'draft'])
         );
         category = category.set(
-          'measuresPublicCount',
-          connectedMeasuresPublic ? connectedMeasuresPublic.size : 0
+          'actionsPublicCount',
+          connectedActionsPublic ? connectedActionsPublic.size : 0
         );
         // for sorting
         category = category.set(
-          'measures',
-          connectedMeasuresPublic ? connectedMeasuresPublic.size : 0
+          'actions',
+          connectedActionsPublic ? connectedActionsPublic.size : 0
         );
-        // by framework
+        // by actortype
         category = category.set(
-          'measuresPublicCountByFw',
-          associatedRecsPublic
-            ? associatedRecsPublic.groupBy(
-              (rec) => rec.getIn(['attributes', 'framework_id'])
+          'actionsPublicCountByActortype',
+          associatedActorsPublic
+            ? associatedActorsPublic.groupBy(
+              (actor) => actor.getIn(['attributes', 'actortype_id'])
             ).map((group) => {
-              const connectedMeasuresForGroup = filterAssociatedEntities(
-                measures,
-                'recommendation_ids',
+              const connectedActionsForGroup = filterAssociatedEntities(
+                actions,
+                'actor_ids',
                 group,
               );
-              const connectedMeasuresPublicForGroup = connectedMeasuresForGroup.filter(
-                (measure) => !measure.getIn(['attributes', 'draft'])
+              const connectedActionsPublicForGroup = connectedActionsForGroup.filter(
+                (action) => !action.getIn(['attributes', 'draft'])
               );
-              return connectedMeasuresPublicForGroup
-                ? connectedMeasuresPublicForGroup.size
+              return connectedActionsPublicForGroup
+                ? connectedActionsPublicForGroup.size
                 : 0;
             })
             : 0,
@@ -275,12 +275,12 @@ const getCategoryCounts = (
 
 const selectCategoryCountGroups = createSelector(
   selectTaxonomy,
-  selectRecommendations,
-  selectMeasures,
-  (state) => selectEntities(state, 'categories'),
-  selectActiveFrameworks,
-  (taxonomy, recommendations, measures, categories, frameworks) => {
-    if (taxonomy && recommendations && measures && categories && frameworks) {
+  selectActors,
+  selectActions,
+  (state) => selectEntities(state, DB.CATEGORIES),
+  selectActiveActortypes,
+  (taxonomy, actors, actions, categories, actortypes) => {
+    if (taxonomy && actors && actions && categories && actortypes) {
       const taxonomyCategories = taxonomy && categories && categories.filter(
         (cat) => qe(
           cat.getIn(['attributes', 'taxonomy_id']),
@@ -292,10 +292,10 @@ const selectCategoryCountGroups = createSelector(
           const catCounts = getCategoryCounts(
             taxonomyCategories,
             taxonomy,
-            measures,
-            recommendations,
+            actions,
+            actors,
             categories,
-            frameworks,
+            actortypes,
           );
           return catCounts
             ? Map().set(
@@ -322,10 +322,10 @@ const selectCategoryCountGroups = createSelector(
               const catCounts = getCategoryCounts(
                 taxChildCategories,
                 taxonomy,
-                measures,
-                recommendations,
+                actions,
+                actors,
                 categories,
-                frameworks,
+                actortypes,
               );
               return parentCat.set('categories', catCounts);
             }
@@ -353,15 +353,15 @@ const mapCategoryGroups = (
           : !cat.getIn(['attributes', 'user_only'])
       );
       return group.set(
-        'measures',
+        'actions',
         filtered.reduce(
-          (sum, cat) => sum + cat.get('measuresPublicCount'),
+          (sum, cat) => sum + cat.get('actionsPublicCount'),
           0,
         ),
       ).set(
-        'recommendations',
+        'actors',
         filtered.reduce(
-          (sum, cat) => sum + cat.get('recommendationsPublicCount'),
+          (sum, cat) => sum + cat.get('actorsPublicCount'),
           0,
         ),
       ).set(

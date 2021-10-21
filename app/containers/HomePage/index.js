@@ -16,7 +16,7 @@ import Row from 'components/styled/Row';
 import Container from 'components/styled/Container';
 
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
-import { selectFrameworks, selectIsSigningIn, selectReady } from 'containers/App/selectors';
+import { selectActortypes, selectIsSigningIn, selectReady } from 'containers/App/selectors';
 
 import ButtonHero from 'components/buttons/ButtonHero';
 import ButtonFlat from 'components/buttons/ButtonFlat';
@@ -25,7 +25,7 @@ import Loading from 'components/Loading';
 import Footer from 'containers/Footer';
 
 import appMessages from 'containers/App/messages';
-import { PATHS } from 'containers/App/constants';
+import { ROUTES } from 'themes/config';
 
 import {
   SHOW_HOME_TITLE,
@@ -150,7 +150,7 @@ const GridSpace = styled(Grid)`
     display: inline-block;
   }
 `;
-const FrameworkButtonGrid = styled(Grid)`
+const ActortypeButtonGrid = styled(Grid)`
   display: inline-block !important;
   width: auto !important;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
@@ -160,7 +160,7 @@ const FrameworkButtonGrid = styled(Grid)`
   }
 `;
 
-const FrameworkButton = styled(ButtonHero)`
+const ActortypeButton = styled(ButtonHero)`
   max-width: ${({ single }) => single ? 'auto' : '250px'};
   width: 100%;
   display: block;
@@ -191,7 +191,7 @@ const StyledButtonFlat = styled(ButtonFlat)`
     text-decoration: underline;
   }
 `;
-const FrameworkHint = styled.div`
+const ActortypeHint = styled.div`
   font-size: ${({ theme }) => theme.sizes.text.small};
 `;
 
@@ -203,7 +203,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
   render() {
     const { intl } = this.context;
     const {
-      theme, frameworks, onSelectFramework, onPageLink, signingIn, dataReady,
+      theme, actortypes, onSelectActortype, onPageLink, signingIn, dataReady,
     } = this.props;
     const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
     return (
@@ -269,51 +269,51 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
                     </Grid>
                   </Row>
                 )}
-                {dataReady && !signingIn && frameworks.size > 1 && (
+                {dataReady && !signingIn && actortypes.size > 1 && (
                   <span>
                     <Row>
                       <GridSpace lg={1 / 6} sm={1 / 8} />
                       <Grid lg={2 / 3} sm={3 / 4} xs={1}>
-                        <FrameworkHint>
-                          <FormattedMessage {...messages.selectFramework} />
-                        </FrameworkHint>
+                        <ActortypeHint>
+                          <FormattedMessage {...messages.selectActortype} />
+                        </ActortypeHint>
                       </Grid>
                     </Row>
                     <Row>
-                      <FrameworkButtonGrid lg={1} sm={1} xs={1}>
-                        {frameworks.entrySeq().map(([key, fw]) => (
-                          <FrameworkButton
+                      <ActortypeButtonGrid lg={1} sm={1} xs={1}>
+                        {actortypes.entrySeq().map(([key, actortype]) => (
+                          <ActortypeButton
                             space
                             key={key}
-                            onClick={() => onSelectFramework(fw.get('id'))}
-                            count={frameworks.size}
+                            onClick={() => onSelectActortype(actortype.get('id'))}
+                            count={actortypes.size}
                           >
-                            <FormattedMessage {...appMessages.frameworks[fw.get('id')]} />
-                          </FrameworkButton>
+                            <FormattedMessage {...appMessages.actortypes[actortype.get('id')]} />
+                          </ActortypeButton>
                         ))}
-                      </FrameworkButtonGrid>
+                      </ActortypeButtonGrid>
                     </Row>
                     <Row>
                       <GridSpace lg={1 / 6} sm={1 / 8} />
                       <Grid lg={2 / 3} sm={3 / 4} xs={1}>
-                        <StyledButtonFlat onClick={() => onSelectFramework('all')}>
-                          <FormattedMessage {...messages.exploreAllFrameworks} />
+                        <StyledButtonFlat onClick={() => onSelectActortype('all')}>
+                          <FormattedMessage {...messages.exploreAllActortypes} />
                         </StyledButtonFlat>
                       </Grid>
                     </Row>
                   </span>
                 )}
-                {dataReady && !signingIn && frameworks.size === 1 && (
+                {dataReady && !signingIn && actortypes.size === 1 && (
                   <Row>
                     <GridSpace lg={1 / 6} sm={1 / 8} />
                     <Grid lg={2 / 3} sm={3 / 4} xs={1}>
-                      <FrameworkButton
+                      <ActortypeButton
                         single
-                        onClick={() => onPageLink(PATHS.OVERVIEW)}
+                        onClick={() => onPageLink(ROUTES.OVERVIEW)}
                         count={1}
                       >
                         <FormattedMessage {...messages.explore} />
-                      </FrameworkButton>
+                      </ActortypeButton>
                     </Grid>
                   </Row>
                 )}
@@ -329,10 +329,10 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 
 HomePage.propTypes = {
   loadEntitiesIfNeeded: PropTypes.func.isRequired,
-  onSelectFramework: PropTypes.func.isRequired,
+  onSelectActortype: PropTypes.func.isRequired,
   onPageLink: PropTypes.func.isRequired,
   theme: PropTypes.object.isRequired,
-  frameworks: PropTypes.object,
+  actortypes: PropTypes.object,
   signingIn: PropTypes.bool,
   dataReady: PropTypes.bool,
 };
@@ -342,7 +342,7 @@ HomePage.contextTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  frameworks: selectFrameworks(state),
+  actortypes: selectActortypes(state),
   signingIn: selectIsSigningIn(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
 });
@@ -355,13 +355,13 @@ function mapDispatchToProps(dispatch) {
     onPageLink: (path) => {
       dispatch(updatePath(path));
     },
-    onSelectFramework: (framework) => {
+    onSelectActortype: (actortype) => {
       dispatch(updatePath(
-        PATHS.OVERVIEW,
+        ROUTES.OVERVIEW,
         {
           query: {
-            arg: 'fw',
-            value: framework,
+            arg: 'actortype',
+            value: actortype,
             replace: true,
           },
           extend: true,

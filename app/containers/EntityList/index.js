@@ -58,7 +58,6 @@ import {
   updateQuery,
   updateGroup,
   updatePage,
-  updateExpand,
   updatePageItems,
   updateSortBy,
   updateSortOrder,
@@ -162,7 +161,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             listUpdating={progress !== null && progress >= 0 && progress < 100}
             entities={entities}
             taxonomies={this.props.taxonomies}
-            frameworks={this.props.frameworks}
+            actortypes={this.props.actortypes}
             connections={this.props.connections}
             connectedTaxonomies={this.props.connectedTaxonomies}
             entityIdsSelected={
@@ -192,7 +191,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           errors={errors}
           taxonomies={this.props.taxonomies}
           allTaxonomies={allTaxonomies}
-          frameworks={this.props.frameworks}
+          actortypes={this.props.actortypes}
           connections={this.props.connections}
           connectedTaxonomies={this.props.connectedTaxonomies}
           entityIdsSelected={
@@ -208,13 +207,12 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 
           dataReady={this.props.dataReady}
           isManager={canEdit && this.props.hasUserRole[USER_ROLES.MANAGER.value]}
-          isContributor={this.props.hasUserRole[USER_ROLES.CONTRIBUTOR.value]}
+          isAnalyst={this.props.hasUserRole[USER_ROLES.ANALYST.value]}
 
           entityIcon={this.props.entityIcon}
           onEntitySelect={this.props.onEntitySelect}
           onEntitySelectAll={this.props.onEntitySelectAll}
           onTagClick={this.props.onTagClick}
-          onExpand={this.props.onExpand}
           onGroupSelect={this.props.onGroupSelect}
           onSubgroupSelect={this.props.onSubgroupSelect}
           onSearch={this.props.onSearch}
@@ -321,7 +319,7 @@ EntityList.propTypes = {
   entities: PropTypes.instanceOf(List).isRequired,
   taxonomies: PropTypes.instanceOf(Map),
   allTaxonomies: PropTypes.instanceOf(Map),
-  frameworks: PropTypes.instanceOf(Map),
+  actortypes: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   config: PropTypes.object,
@@ -332,7 +330,7 @@ EntityList.propTypes = {
   entityIcon: PropTypes.func,
   // selector props
   activePanel: PropTypes.string,
-  hasUserRole: PropTypes.object, // { 1: isAdmin, 2: isManager, 3: isContributor}
+  hasUserRole: PropTypes.object, // { 1: isAdmin, 2: isManager, 3: isAnalyst}
   entityIdsSelected: PropTypes.object,
   viewDomain: PropTypes.object,
   progress: PropTypes.number,
@@ -343,7 +341,6 @@ EntityList.propTypes = {
   onEntitySelect: PropTypes.func.isRequired,
   onEntitySelectAll: PropTypes.func.isRequired,
   onTagClick: PropTypes.func.isRequired,
-  onExpand: PropTypes.func.isRequired,
   onGroupSelect: PropTypes.func.isRequired,
   onSubgroupSelect: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
@@ -415,12 +412,6 @@ function mapDispatchToProps(dispatch, props) {
     },
     onTagClick: (value) => {
       dispatch(updateQuery(fromJS([value])));
-    },
-    onExpand: (expandNoNew) => {
-      // default expand by 1
-      dispatch(updateExpand(typeof expandNoNew !== 'undefined'
-        ? expandNoNew
-        : props.expandNo + 1));
     },
     onSearch: (value) => {
       dispatch(updateQuery(fromJS([

@@ -16,116 +16,116 @@ export default defineMessages({
       defaultMessage: 'Samoa\'s home of human rights implementation',
     },
   },
-  frameworks: {
+  actortypes: {
     single: {
-      id: 'app.containers.App.frameworks.single',
-      defaultMessage: 'Framework',
+      id: 'app.containers.App.actortypes.single',
+      defaultMessage: 'Actortype',
     },
     plural: {
-      id: 'app.containers.App.frameworks.plural',
-      defaultMessage: 'Frameworks',
+      id: 'app.containers.App.actortypes.plural',
+      defaultMessage: 'Actortypes',
     },
     all: {
-      id: 'app.containers.App.frameworks.all',
-      defaultMessage: 'All Frameworks',
+      id: 'app.containers.App.actortypes.all',
+      defaultMessage: 'All Actortypes',
     },
     1: {
-      id: 'app.containers.App.frameworks.1',
-      defaultMessage: 'Human Rights Recommendations',
+      id: 'app.containers.App.actortypes.1',
+      defaultMessage: 'Human Rights Actors',
     },
     2: {
-      id: 'app.containers.App.frameworks.2',
+      id: 'app.containers.App.actortypes.2',
       defaultMessage: 'Sustainable Development Goals',
     },
     3: {
-      id: 'app.containers.App.frameworks.3',
-      defaultMessage: 'Framework 3',
+      id: 'app.containers.App.actortypes.3',
+      defaultMessage: 'Actortype 3',
     },
     4: {
-      id: 'app.containers.App.frameworks.4',
-      defaultMessage: 'Framework 4',
+      id: 'app.containers.App.actortypes.4',
+      defaultMessage: 'Actortype 4',
     },
     5: {
-      id: 'app.containers.App.frameworks.5',
-      defaultMessage: 'Framework 5',
+      id: 'app.containers.App.actortypes.5',
+      defaultMessage: 'Actortype 5',
     },
   },
-  frameworkObjectives: {
+  actortypeObjectives: {
     all: {
-      id: 'app.containers.App.frameworkObjectives.all',
-      defaultMessage: 'All frameworks',
+      id: 'app.containers.App.actortypeObjectives.all',
+      defaultMessage: 'All actortypes',
     },
     1: {
-      id: 'app.containers.App.frameworkObjectives.1',
-      defaultMessage: 'Human Rights Recommendations',
+      id: 'app.containers.App.actortypeObjectives.1',
+      defaultMessage: 'Human Rights Actors',
     },
     2: {
-      id: 'app.containers.App.frameworkObjectives.2',
+      id: 'app.containers.App.actortypeObjectives.2',
       defaultMessage: 'SDG Targets',
     },
     3: {
-      id: 'app.containers.App.frameworkObjectives.3',
-      defaultMessage: 'Framework 3',
+      id: 'app.containers.App.actortypeObjectives.3',
+      defaultMessage: 'Actortype 3',
     },
     4: {
-      id: 'app.containers.App.frameworkObjectives.4',
-      defaultMessage: 'Framework 4',
+      id: 'app.containers.App.actortypeObjectives.4',
+      defaultMessage: 'Actortype 4',
     },
     5: {
-      id: 'app.containers.App.frameworkObjectives.5',
-      defaultMessage: 'Framework 5',
+      id: 'app.containers.App.actortypeObjectives.5',
+      defaultMessage: 'Actortype 5',
     },
   },
-  frameworkObjectivesShort: {
+  actortypeObjectivesShort: {
     all: {
-      id: 'app.containers.App.frameworkObjectivesShort.all',
-      defaultMessage: 'All Frameworks',
+      id: 'app.containers.App.actortypeObjectivesShort.all',
+      defaultMessage: 'All Actortypes',
     },
     1: {
-      id: 'app.containers.App.frameworkObjectivesShort.1',
-      defaultMessage: 'HR Recommendations',
+      id: 'app.containers.App.actortypeObjectivesShort.1',
+      defaultMessage: 'HR Actors',
     },
     2: {
-      id: 'app.containers.App.frameworkObjectivesShort.2',
+      id: 'app.containers.App.actortypeObjectivesShort.2',
       defaultMessage: 'SDG Targets',
     },
     3: {
-      id: 'app.containers.App.frameworkObjectivesShort.3',
-      defaultMessage: 'Framework 3',
+      id: 'app.containers.App.actortypeObjectivesShort.3',
+      defaultMessage: 'Actortype 3',
     },
     4: {
-      id: 'app.containers.App.frameworkObjectivesShort.4',
-      defaultMessage: 'Framework 4',
+      id: 'app.containers.App.actortypeObjectivesShort.4',
+      defaultMessage: 'Actortype 4',
     },
     5: {
-      id: 'app.containers.App.frameworkObjectivesShort.5',
-      defaultMessage: 'Framework 5',
+      id: 'app.containers.App.actortypeObjectivesShort.5',
+      defaultMessage: 'Actortype 5',
     },
   },
-  frameworks_short: {
+  actortypes_short: {
     common: {
-      id: 'app.containers.App.frameworks_short.common',
+      id: 'app.containers.App.actortypes_short.common',
       defaultMessage: 'multiple',
     },
     1: {
-      id: 'app.containers.App.frameworks_short.1',
+      id: 'app.containers.App.actortypes_short.1',
       defaultMessage: 'HR',
     },
     2: {
-      id: 'app.containers.App.frameworks_short.2',
+      id: 'app.containers.App.actortypes_short.2',
       defaultMessage: 'SDGs',
     },
     3: {
-      id: 'app.containers.App.frameworks_short.3',
-      defaultMessage: 'Framework 3',
+      id: 'app.containers.App.actortypes_short.3',
+      defaultMessage: 'Actortype 3',
     },
     4: {
-      id: 'app.containers.App.frameworks_short.4',
-      defaultMessage: 'Framework 4',
+      id: 'app.containers.App.actortypes_short.4',
+      defaultMessage: 'Actortype 4',
     },
     5: {
-      id: 'app.containers.App.frameworks_short.5',
-      defaultMessage: 'Framework 5',
+      id: 'app.containers.App.actortypes_short.5',
+      defaultMessage: 'Actortype 5',
     },
   },
   taxonomyGroups: {
@@ -133,9 +133,9 @@ export default defineMessages({
       id: 'app.containers.App.taxonomyGroups.common',
       defaultMessage: 'common',
     },
-    measures: {
-      id: 'app.containers.App.taxonomyGroups.measures',
-      defaultMessage: 'measures',
+    actions: {
+      id: 'app.containers.App.taxonomyGroups.actions',
+      defaultMessage: 'actions',
     },
     objectives: {
       id: 'app.containers.App.taxonomyGroups.objectives',
@@ -281,8 +281,8 @@ export default defineMessages({
       id: 'app.containers.App.hints.content',
       defaultMessage: 'Note: first paragraph styled as lead paragraph',
     },
-    fullRecommendation: {
-      id: 'app.containers.App.hints.fullRecommendation',
+    fullActor: {
+      id: 'app.containers.App.hints.fullActor',
       defaultMessage: 'Note: use only if title field does not already contain full text',
     },
     printListMore: {
@@ -347,9 +347,9 @@ export default defineMessages({
       id: 'app.containers.App.importFields.description',
       defaultMessage: 'Description',
     },
-    fullRecommendation: {
-      id: 'app.containers.App.importFields.fullRecommendation',
-      defaultMessage: 'Full recommendation text',
+    fullActor: {
+      id: 'app.containers.App.importFields.fullActor',
+      defaultMessage: 'Full actor text',
     },
     accepted: {
       id: 'app.containers.App.importFields.accepted',
@@ -363,10 +363,6 @@ export default defineMessages({
       id: 'app.containers.App.importFields.outcome',
       defaultMessage: 'Desired outcome',
     },
-    indicator_summary: {
-      id: 'app.containers.App.importFields.indicator_summary',
-      defaultMessage: 'Indicator summary',
-    },
     target_date: {
       id: 'app.containers.App.importFields.target_date',
       defaultMessage: 'Target Date',
@@ -375,9 +371,9 @@ export default defineMessages({
       id: 'app.containers.App.importFields.target_date_comment',
       defaultMessage: 'Target date comment',
     },
-    framework_id: {
-      id: 'app.containers.App.importFields.framework_id',
-      defaultMessage: 'Framework id',
+    actortype_id: {
+      id: 'app.containers.App.importFields.actortype_id',
+      defaultMessage: 'Actortype id',
     },
   },
   placeholders: {
@@ -429,9 +425,9 @@ export default defineMessages({
       id: 'app.containers.App.placeholders.description',
       defaultMessage: 'Enter description',
     },
-    fullRecommendation: {
-      id: 'app.containers.App.placeholders.fullRecommendation',
-      defaultMessage: 'Enter full recommendation text',
+    fullActor: {
+      id: 'app.containers.App.placeholders.fullActor',
+      defaultMessage: 'Enter full actor text',
     },
     content: {
       id: 'app.containers.App.placeholders.content',
@@ -444,10 +440,6 @@ export default defineMessages({
     outcome: {
       id: 'app.containers.App.placeholders.outcome',
       defaultMessage: 'Enter desired outcome',
-    },
-    indicator_summary: {
-      id: 'app.containers.App.placeholders.indicator_summary',
-      defaultMessage: 'Enter indicator summary',
     },
     target_date_comment: {
       id: 'app.containers.App.placeholders.target_date_comment',
@@ -475,9 +467,9 @@ export default defineMessages({
       id: 'app.containers.App.attributes.description',
       defaultMessage: 'Description',
     },
-    fullRecommendation: {
-      id: 'app.containers.App.attributes.fullRecommendation',
-      defaultMessage: 'Full recommendation text',
+    fullActor: {
+      id: 'app.containers.App.attributes.fullActor',
+      defaultMessage: 'Full actor text',
     },
     content: {
       id: 'app.containers.App.attributes.content',
@@ -494,10 +486,6 @@ export default defineMessages({
     outcome: {
       id: 'app.containers.App.attributes.outcome',
       defaultMessage: 'Desired outcome',
-    },
-    indicator_summary: {
-      id: 'app.containers.App.attributes.indicator_summary',
-      defaultMessage: 'Indicator summary',
     },
     target_date_comment: {
       id: 'app.containers.App.attributes.target_date_comment',
@@ -559,26 +547,6 @@ export default defineMessages({
       id: 'app.containers.App.attributes.target_date',
       defaultMessage: 'Target date',
     },
-    start_date: {
-      id: 'app.containers.App.attributes.start_date',
-      defaultMessage: 'Start date',
-    },
-    start_date_only: {
-      id: 'app.containers.App.attributes.start_date_only',
-      defaultMessage: 'Due date',
-    },
-    end_date: {
-      id: 'app.containers.App.attributes.end_date',
-      defaultMessage: 'End date',
-    },
-    frequency_months: {
-      id: 'app.containers.App.attributes.frequency_months',
-      defaultMessage: 'Reporting frequency',
-    },
-    repeat: {
-      id: 'app.containers.App.attributes.repeat',
-      defaultMessage: 'Repeat?',
-    },
     date_empty: {
       id: 'app.containers.App.attributes.date_empty',
       defaultMessage: 'No date set',
@@ -607,19 +575,11 @@ export default defineMessages({
       id: 'app.containers.App.attributes.documentEmpty',
       defaultMessage: 'No document attached yet',
     },
-    due_date_id: {
-      id: 'app.containers.App.attributes.due_date_id',
-      defaultMessage: 'Due date',
-    },
     user_only: {
       id: 'app.containers.App.attributes.user_only',
       defaultMessage: 'Users only',
     },
     manager_id: {
-      indicators: {
-        id: 'app.containers.App.attributes.manager_id.indicators',
-        defaultMessage: 'Assigned user',
-      },
       categories: {
         id: 'app.containers.App.attributes.manager_id.categories',
         defaultMessage: 'Category manager',
@@ -627,10 +587,6 @@ export default defineMessages({
       categoriesEmpty: {
         id: 'app.containers.App.attributes.manager_id.categoriesEmpty',
         defaultMessage: 'No category manager assigned',
-      },
-      indicatorsEmpty: {
-        id: 'app.containers.App.attributes.manager_id.indicatorsEmpty',
-        defaultMessage: 'No indicator reporter assigned',
       },
     },
     meta: {
@@ -651,9 +607,9 @@ export default defineMessages({
         defaultMessage: 'Created',
       },
     },
-    framework_id: {
-      id: 'app.containers.App.attributes.framework_id',
-      defaultMessage: 'Framework',
+    actortype_id: {
+      id: 'app.containers.App.attributes.actortype_id',
+      defaultMessage: 'Actortype',
     },
   },
   nav: {
@@ -669,24 +625,16 @@ export default defineMessages({
       id: 'app.containers.App.nav.taxonomies',
       defaultMessage: 'Categories',
     },
-    measures: {
-      id: 'app.containers.App.nav.measures',
+    actions: {
+      id: 'app.containers.App.nav.actions',
       defaultMessage: 'Actions',
     },
-    measuresSuper: {
-      id: 'app.containers.App.nav.measuresSuper',
+    actionsSuper: {
+      id: 'app.containers.App.nav.actionsSuper',
       defaultMessage: 'Implementation',
     },
-    indicators: {
-      id: 'app.containers.App.nav.indicators',
-      defaultMessage: 'Indicators',
-    },
-    indicatorsSuper: {
-      id: 'app.containers.App.nav.indicatorsSuper',
-      defaultMessage: 'Outcomes',
-    },
-    recommendationsSuper: {
-      id: 'app.containers.App.nav.recommendationsSuper',
+    actorsSuper: {
+      id: 'app.containers.App.nav.actorsSuper',
       defaultMessage: 'Objectives',
     },
     pages: {
@@ -719,244 +667,214 @@ export default defineMessages({
       id: 'app.containers.App.entities.connected',
       defaultMessage: '(inferred)',
     },
-    recommendations: {
+    actors: {
       single: {
-        id: 'app.containers.App.entities.recommendations.single',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors.single',
+        defaultMessage: 'Actor',
       },
       plural: {
-        id: 'app.containers.App.entities.recommendations.plural',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors.plural',
+        defaultMessage: 'Actors',
       },
       singleLong: {
-        id: 'app.containers.App.entities.recommendations.singleLong',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors.singleLong',
+        defaultMessage: 'Actor',
       },
       pluralLong: {
-        id: 'app.containers.App.entities.recommendations.pluralLong',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors.pluralLong',
+        defaultMessage: 'Actors',
       },
       singleShort: {
-        id: 'app.containers.App.entities.recommendations.singleShort',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors.singleShort',
+        defaultMessage: 'Actor',
       },
       pluralShort: {
-        id: 'app.containers.App.entities.recommendations.pluralShort',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors.pluralShort',
+        defaultMessage: 'Actors',
       },
       empty: {
-        id: 'app.containers.App.entities.recommendations.empty',
-        defaultMessage: 'No recommendations yet',
+        id: 'app.containers.App.entities.actors.empty',
+        defaultMessage: 'No actors yet',
       },
     },
-    recommendations_1: {
+    actors_1: {
       single: {
-        id: 'app.containers.App.entities.recommendations_1.single',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_1.single',
+        defaultMessage: 'Actor',
       },
       plural: {
-        id: 'app.containers.App.entities.recommendations_1.plural',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_1.plural',
+        defaultMessage: 'Actors',
       },
       singleLong: {
-        id: 'app.containers.App.entities.recommendations_1.singleLong',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_1.singleLong',
+        defaultMessage: 'Actor',
       },
       pluralLong: {
-        id: 'app.containers.App.entities.recommendations_1.pluralLong',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_1.pluralLong',
+        defaultMessage: 'Actors',
       },
       singleShort: {
-        id: 'app.containers.App.entities.recommendations_1.singleShort',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_1.singleShort',
+        defaultMessage: 'Actor',
       },
       pluralShort: {
-        id: 'app.containers.App.entities.recommendations_1.pluralShort',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_1.pluralShort',
+        defaultMessage: 'Actors',
       },
       empty: {
-        id: 'app.containers.App.entities.recommendations_1.empty',
-        defaultMessage: 'No recommendations yet',
+        id: 'app.containers.App.entities.actors_1.empty',
+        defaultMessage: 'No actors yet',
       },
     },
-    recommendations_2: {
+    actors_2: {
       single: {
-        id: 'app.containers.App.entities.recommendations_2.single',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_2.single',
+        defaultMessage: 'Actor',
       },
       plural: {
-        id: 'app.containers.App.entities.recommendations_2.plural',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_2.plural',
+        defaultMessage: 'Actors',
       },
       singleLong: {
-        id: 'app.containers.App.entities.recommendations_2.singleLong',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_2.singleLong',
+        defaultMessage: 'Actor',
       },
       pluralLong: {
-        id: 'app.containers.App.entities.recommendations_2.pluralLong',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_2.pluralLong',
+        defaultMessage: 'Actors',
       },
       singleShort: {
-        id: 'app.containers.App.entities.recommendations_2.singleShort',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_2.singleShort',
+        defaultMessage: 'Actor',
       },
       pluralShort: {
-        id: 'app.containers.App.entities.recommendations_2.pluralShort',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_2.pluralShort',
+        defaultMessage: 'Actors',
       },
       empty: {
-        id: 'app.containers.App.entities.recommendations_2.empty',
-        defaultMessage: 'No recommendations yet',
+        id: 'app.containers.App.entities.actors_2.empty',
+        defaultMessage: 'No actors yet',
       },
     },
-    recommendations_3: {
+    actors_3: {
       single: {
-        id: 'app.containers.App.entities.recommendations_3.single',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_3.single',
+        defaultMessage: 'Actor',
       },
       plural: {
-        id: 'app.containers.App.entities.recommendations_3.plural',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_3.plural',
+        defaultMessage: 'Actors',
       },
       singleLong: {
-        id: 'app.containers.App.entities.recommendations_3.singleLong',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_3.singleLong',
+        defaultMessage: 'Actor',
       },
       pluralLong: {
-        id: 'app.containers.App.entities.recommendations_3.pluralLong',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_3.pluralLong',
+        defaultMessage: 'Actors',
       },
       singleShort: {
-        id: 'app.containers.App.entities.recommendations_3.singleShort',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_3.singleShort',
+        defaultMessage: 'Actor',
       },
       pluralShort: {
-        id: 'app.containers.App.entities.recommendations_3.pluralShort',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_3.pluralShort',
+        defaultMessage: 'Actors',
       },
       empty: {
-        id: 'app.containers.App.entities.recommendations_3.empty',
-        defaultMessage: 'No recommendations yet',
+        id: 'app.containers.App.entities.actors_3.empty',
+        defaultMessage: 'No actors yet',
       },
     },
-    recommendations_4: {
+    actors_4: {
       single: {
-        id: 'app.containers.App.entities.recommendations_4.single',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_4.single',
+        defaultMessage: 'Actor',
       },
       plural: {
-        id: 'app.containers.App.entities.recommendations_4.plural',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_4.plural',
+        defaultMessage: 'Actors',
       },
       singleLong: {
-        id: 'app.containers.App.entities.recommendations_4.singleLong',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_4.singleLong',
+        defaultMessage: 'Actor',
       },
       pluralLong: {
-        id: 'app.containers.App.entities.recommendations_4.pluralLong',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_4.pluralLong',
+        defaultMessage: 'Actors',
       },
       singleShort: {
-        id: 'app.containers.App.entities.recommendations_4.singleShort',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_4.singleShort',
+        defaultMessage: 'Actor',
       },
       pluralShort: {
-        id: 'app.containers.App.entities.recommendations_4.pluralShort',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_4.pluralShort',
+        defaultMessage: 'Actors',
       },
       empty: {
-        id: 'app.containers.App.entities.recommendations_4.empty',
-        defaultMessage: 'No recommendations yet',
+        id: 'app.containers.App.entities.actors_4.empty',
+        defaultMessage: 'No actors yet',
       },
     },
-    recommendations_5: {
+    actors_5: {
       single: {
-        id: 'app.containers.App.entities.recommendations_5.single',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_5.single',
+        defaultMessage: 'Actor',
       },
       plural: {
-        id: 'app.containers.App.entities.recommendations_5.plural',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_5.plural',
+        defaultMessage: 'Actors',
       },
       singleLong: {
-        id: 'app.containers.App.entities.recommendations_5.singleLong',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_5.singleLong',
+        defaultMessage: 'Actor',
       },
       pluralLong: {
-        id: 'app.containers.App.entities.recommendations_5.pluralLong',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_5.pluralLong',
+        defaultMessage: 'Actors',
       },
       singleShort: {
-        id: 'app.containers.App.entities.recommendations_5.singleShort',
-        defaultMessage: 'Recommendation',
+        id: 'app.containers.App.entities.actors_5.singleShort',
+        defaultMessage: 'Actor',
       },
       pluralShort: {
-        id: 'app.containers.App.entities.recommendations_5.pluralShort',
-        defaultMessage: 'Recommendations',
+        id: 'app.containers.App.entities.actors_5.pluralShort',
+        defaultMessage: 'Actors',
       },
       empty: {
-        id: 'app.containers.App.entities.recommendations_5.empty',
-        defaultMessage: 'No recommendations yet',
+        id: 'app.containers.App.entities.actors_5.empty',
+        defaultMessage: 'No actors yet',
       },
     },
-    measures: {
+    actions: {
       single: {
-        id: 'app.containers.App.entities.measures.single',
+        id: 'app.containers.App.entities.actions.single',
         defaultMessage: 'Action',
       },
       plural: {
-        id: 'app.containers.App.entities.measures.plural',
+        id: 'app.containers.App.entities.actions.plural',
         defaultMessage: 'Actions',
       },
       singleLong: {
-        id: 'app.containers.App.entities.measures.singleLong',
+        id: 'app.containers.App.entities.actions.singleLong',
         defaultMessage: 'Government action',
       },
       pluralLong: {
-        id: 'app.containers.App.entities.measures.pluralLong',
+        id: 'app.containers.App.entities.actions.pluralLong',
         defaultMessage: 'Government actions',
       },
       singleShort: {
-        id: 'app.containers.App.entities.measures.singleShort',
+        id: 'app.containers.App.entities.actions.singleShort',
         defaultMessage: 'Action',
       },
       pluralShort: {
-        id: 'app.containers.App.entities.measures.pluralShort',
+        id: 'app.containers.App.entities.actions.pluralShort',
         defaultMessage: 'Actions',
       },
       empty: {
-        id: 'app.containers.App.entities.measures.empty',
+        id: 'app.containers.App.entities.actions.empty',
         defaultMessage: 'No actions yet',
-      },
-    },
-    indicators: {
-      single: {
-        id: 'app.containers.App.entities.indicators.single',
-        defaultMessage: 'Indicator',
-      },
-      plural: {
-        id: 'app.containers.App.entities.indicators.plural',
-        defaultMessage: 'Indicators',
-      },
-      singleLong: {
-        id: 'app.containers.App.entities.indicators.singleLong',
-        defaultMessage: 'Indicator',
-      },
-      pluralLong: {
-        id: 'app.containers.App.entities.indicators.pluralLong',
-        defaultMessage: 'Indicators',
-      },
-      singleShort: {
-        id: 'app.containers.App.entities.indicators.singleShort',
-        defaultMessage: 'Indicator',
-      },
-      pluralShort: {
-        id: 'app.containers.App.entities.indicators.pluralShort',
-        defaultMessage: 'Indicators',
-      },
-      empty: {
-        id: 'app.containers.App.entities.indicators.empty',
-        defaultMessage: 'No indicators yet',
       },
     },
     pages: {
@@ -987,52 +905,6 @@ export default defineMessages({
       plural: {
         id: 'app.containers.App.entities.bookmarks.plural',
         defaultMessage: 'Bookmarks',
-      },
-    },
-    progress_reports: {
-      single: {
-        id: 'app.containers.App.entities.progress_reports.single',
-        defaultMessage: 'Progress report',
-      },
-      plural: {
-        id: 'app.containers.App.entities.progress_reports.plural',
-        defaultMessage: 'Progress reports',
-      },
-      singleLong: {
-        id: 'app.containers.App.entities.progress_reports.singleLong',
-        defaultMessage: 'Progress report',
-      },
-      pluralLong: {
-        id: 'app.containers.App.entities.progress_reports.pluralLong',
-        defaultMessage: 'Progress reports',
-      },
-      singleShort: {
-        id: 'app.containers.App.entities.progress_reports.singleShort',
-        defaultMessage: 'Report',
-      },
-      pluralShort: {
-        id: 'app.containers.App.entities.progress_reports.pluralShort',
-        defaultMessage: 'Reports',
-      },
-      empty: {
-        id: 'app.containers.App.entities.progress_reports.empty',
-        defaultMessage: 'No reports yet',
-      },
-      unscheduled: {
-        id: 'app.containers.App.entities.progress_reports.unscheduled',
-        defaultMessage: 'Extraordinary (no due date assigned)',
-      },
-      unscheduled_short: {
-        id: 'app.containers.App.entities.progress_reports.unscheduled_short',
-        defaultMessage: 'Extraordinary',
-      },
-      showAll: {
-        id: 'app.containers.App.entities.progress_reports.showAll',
-        defaultMessage: 'Show all reports',
-      },
-      showLess: {
-        id: 'app.containers.App.entities.progress_reports.showLess',
-        defaultMessage: 'Show less reports',
       },
     },
     connections: {
@@ -1349,56 +1221,6 @@ export default defineMessages({
         },
       },
     },
-    due_dates: {
-      single: {
-        id: 'app.containers.App.entities.due_dates.single',
-        defaultMessage: 'Due date',
-      },
-      plural: {
-        id: 'app.containers.App.entities.due_dates.plural',
-        defaultMessage: 'Due dates',
-      },
-      empty: {
-        id: 'app.containers.App.entities.due_dates.empty',
-        defaultMessage: 'No report scheduled',
-      },
-      overdue: {
-        id: 'app.containers.App.entities.due_dates.overdue',
-        defaultMessage: 'Report overdue',
-      },
-      due: {
-        id: 'app.containers.App.entities.due_dates.due',
-        defaultMessage: 'Report due',
-      },
-      scheduled: {
-        id: 'app.containers.App.entities.due_dates.scheduled',
-        defaultMessage: 'Report scheduled',
-      },
-      overdueNext: {
-        id: 'app.containers.App.entities.due_dates.overdueNext',
-        defaultMessage: 'Next report overdue',
-      },
-      dueNext: {
-        id: 'app.containers.App.entities.due_dates.dueNext',
-        defaultMessage: 'Next report due',
-      },
-      scheduledNext: {
-        id: 'app.containers.App.entities.due_dates.scheduledNext',
-        defaultMessage: 'Next report scheduled',
-      },
-      showAll: {
-        id: 'app.containers.App.entities.due_dates.showAll',
-        defaultMessage: 'Show all dates',
-      },
-      showLess: {
-        id: 'app.containers.App.entities.due_dates.showLess',
-        defaultMessage: 'Show less dates',
-      },
-      schedule: {
-        id: 'app.containers.App.entities.due_dates.schedule',
-        defaultMessage: 'Progress report schedule',
-      },
-    },
     categories: {
       single: {
         id: 'app.containers.App.entities.categories.single',
@@ -1429,10 +1251,6 @@ export default defineMessages({
       id: 'app.containers.App.messages.alreadySignedIn',
       defaultMessage: 'Welcome back!',
     },
-    signInGuestReport: {
-      id: 'app.containers.App.messages.signInGuestReport',
-      defaultMessage: 'Please sign in or register first to submit a progress report',
-    },
     submitInvalid: {
       id: 'app.containers.App.messages.submitInvalid',
       defaultMessage: 'One or more fields have errors.',
@@ -1456,9 +1274,9 @@ export default defineMessages({
         id: 'app.containers.App.ui.userRoles.manager',
         defaultMessage: 'Manager',
       },
-      contributor: {
-        id: 'app.containers.App.ui.userRoles.contributor',
-        defaultMessage: 'Contributor',
+      analyst: {
+        id: 'app.containers.App.ui.userRoles.analyst',
+        defaultMessage: 'Analyst',
       },
       default: {
         id: 'app.containers.App.ui.userRoles.default',
@@ -1493,24 +1311,6 @@ export default defineMessages({
       noted: {
         id: 'app.containers.App.ui.acceptedStatuses.noted',
         defaultMessage: 'Not accepted',
-      },
-    },
-    reportFrequencies: {
-      monthly: {
-        id: 'app.containers.App.ui.reportFrequencies.monthly',
-        defaultMessage: 'Monthly',
-      },
-      quarterly: {
-        id: 'app.containers.App.ui.reportFrequencies.quarterly',
-        defaultMessage: 'Quarterly',
-      },
-      semiannual: {
-        id: 'app.containers.App.ui.reportFrequencies.semiannual',
-        defaultMessage: 'Semiannual',
-      },
-      annual: {
-        id: 'app.containers.App.ui.reportFrequencies.annual',
-        defaultMessage: 'Annual',
       },
     },
     sortOrderOptions: {

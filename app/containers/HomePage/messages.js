@@ -28,7 +28,7 @@ export default defineMessages({
   },
   exploreCategoriesLead: {
     id: 'app.containers.HomePage.exploreCategoriesLead',
-    defaultMessage: 'Explore UN recommendations and government actions by category',
+    defaultMessage: 'Explore UN actors and government actions by category',
   },
   exploreActions: {
     id: 'app.containers.HomePage.exploreActions',
@@ -36,7 +36,7 @@ export default defineMessages({
   },
   exploreActionsLead: {
     id: 'app.containers.HomePage.exploreActionsLead',
-    defaultMessage: 'Complete list of all government actions addressing the UN recommendations',
+    defaultMessage: 'Complete list of all government actions addressing the UN actors',
   },
   exploreActionsLink: {
     id: 'app.containers.HomePage.exploreActionsLink',
@@ -48,11 +48,11 @@ export default defineMessages({
   },
   exploreMoreLead: {
     id: 'app.containers.HomePage.exploreMoreLead',
-    defaultMessage: 'Complete lists of UN recommendations and progress indicators that track the outcome of government actions',
+    defaultMessage: 'Complete lists of UN actors and progress indicators that track the outcome of government actions',
   },
-  exploreAllFrameworks: {
-    id: 'app.containers.HomePage.exploreAllFrameworks',
-    defaultMessage: 'Explore all frameworks',
+  exploreAllActortypes: {
+    id: 'app.containers.HomePage.exploreAllActortypes',
+    defaultMessage: 'Explore all actortypes',
   },
   signingIn: {
     id: 'app.containers.HomePage.signingIn',
@@ -62,8 +62,8 @@ export default defineMessages({
     id: 'app.containers.HomePage.loading',
     defaultMessage: 'Loading initial data...',
   },
-  selectFramework: {
-    id: 'app.containers.HomePage.selectFramework',
-    defaultMessage: 'Select an implementation framework to start exploring',
+  selectActortype: {
+    id: 'app.containers.HomePage.selectActortype',
+    defaultMessage: 'Select an implementation actortype to start exploring',
   },
 });

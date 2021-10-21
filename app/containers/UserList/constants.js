@@ -1,17 +1,17 @@
-import { USER_ROLES } from 'themes/config';
+import { DB, USER_ROLES, ROUTES } from 'themes/config';
 
 export const DEPENDENCIES = [
-  'user_roles',
-  'users',
-  'roles',
-  'user_categories',
-  'categories',
-  'taxonomies',
+  DB.USERS,
+  DB.ROLES,
+  DB.USER_ROLES,
+  DB.CATEGORIES,
+  DB.TAXONOMIES,
+  DB.USER_CATEGORIES,
 ];
 
 export const CONFIG = {
-  clientPath: 'users',
-  serverPath: 'users',
+  clientPath: ROUTES.USERS,
+  serverPath: DB.USERS,
   search: ['name'],
   sorting: [
     {
@@ -34,7 +34,7 @@ export const CONFIG = {
   taxonomies: { // filter by each category
     query: 'cat',
     search: true,
-    connectPath: 'user_categories',
+    connectPath: DB.USER_CATEGORIES,
     key: 'category_id',
     ownKey: 'user_id',
   },
@@ -46,7 +46,7 @@ export const CONFIG = {
         search: true,
         popover: false,
         message: 'entities.roles.single',
-        path: 'roles', // filter by recommendation connection
+        path: DB.ROLES, // filter by actor connection
         key: 'role_id',
         labels: Object.values(USER_ROLES),
       },

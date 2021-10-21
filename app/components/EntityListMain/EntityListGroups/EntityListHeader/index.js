@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { getSortOption } from 'utils/sort';
-import appMessage from 'utils/app-message';
 
 import { STATES as CHECKBOX_STATES } from 'components/forms/IndeterminateCheckbox';
 import { SORT_ORDER_OPTIONS } from 'containers/App/constants';
@@ -12,7 +11,6 @@ import { COLUMN_WIDTHS } from 'themes/config';
 import messages from 'components/EntityListMain/EntityListGroups/messages';
 
 import ColumnSelect from './ColumnSelect';
-import ColumnExpand from './ColumnExpand';
 
 const Styled = styled.div`
   width:100%;
@@ -68,43 +66,9 @@ class EntityListHeader extends React.PureComponent { // eslint-disable-line reac
     return CHECKBOX_STATES.INDETERMINATE;
   }
 
-  getFirstColumnWidth = (expandableColumns, expandNo) => {
-    // TODO figure out a betterway to determine column widths.
-    const hasNested = expandableColumns && expandableColumns.length > 0;
-    const isNestedExpand = expandNo > 0;
-
-    if (!hasNested && !isNestedExpand) {
-      return COLUMN_WIDTHS.FULL;
-    }
-    if (hasNested && !isNestedExpand) {
-      return COLUMN_WIDTHS.MAIN;
-    }
-    return COLUMN_WIDTHS.HALF;
-  }
-
-  // TODO figure out a betterway to determine column widths
-  getExpandableColumnWidth = (i, total, expandNo) => {
-    const onlyItem = total === 1;
-    const isParentExpand = expandNo === i;
-    const isExpand = expandNo > i;
-    const isNestedExpand = expandNo > (i + 1);
-    const hasNested = total > (i + 1);
-
-    // if only item
-    if (onlyItem) {
-      return COLUMN_WIDTHS.FULL;
-    }
-    if (isExpand && hasNested && !isNestedExpand) {
-      return COLUMN_WIDTHS.MAIN;
-    }
-    if (!isExpand && !hasNested && isParentExpand) {
-      return COLUMN_WIDTHS.OTHER;
-    }
-    return COLUMN_WIDTHS.HALF;
-  };
+  getFirstColumnWidth = () => COLUMN_WIDTHS.FULL;
 
   render() {
-    const { intl } = this.context;
     const {
       selectedTotal,
       pageTotal,
@@ -113,15 +77,12 @@ class EntityListHeader extends React.PureComponent { // eslint-disable-line reac
       allSelectedOnPage,
       entityTitle,
       isManager,
-      expandNo,
-      expandableColumns,
-      onExpand,
       onSelect,
       onSelectAll,
       sortOptions,
     } = this.props;
 
-    const firstColumnWidth = this.getFirstColumnWidth(expandableColumns, expandNo);
+    const firstColumnWidth = this.getFirstColumnWidth();
 
     const sortOption = getSortOption(sortOptions, this.props.sortBy);
 
@@ -143,21 +104,6 @@ class EntityListHeader extends React.PureComponent { // eslint-disable-line reac
           onSortBy={this.props.onSortBy}
           onSortOrder={this.props.onSortOrder}
         />
-        { expandableColumns && expandableColumns.length > 0
-          && expandableColumns.map((col, i, list) => (
-            <ColumnExpand
-              hiddenMobile
-              key={i}
-              isExpand={expandNo > i}
-              onExpand={() => onExpand(expandNo > i ? i : i + 1)}
-              label={col.message
-                ? appMessage(intl, col.message)
-                : col.label
-              }
-              width={(1 - firstColumnWidth) * this.getExpandableColumnWidth(i, list.length, expandNo)}
-            />
-          ))
-        }
       </Styled>
     );
   }
@@ -168,22 +114,16 @@ EntityListHeader.propTypes = {
   entitiesTotal: PropTypes.number,
   allSelected: PropTypes.bool,
   allSelectedOnPage: PropTypes.bool,
-  expandNo: PropTypes.number,
   isManager: PropTypes.bool,
-  expandableColumns: PropTypes.array,
   entityTitle: PropTypes.object,
   sortOptions: PropTypes.array,
   sortOrder: PropTypes.string,
   sortBy: PropTypes.string,
-  onExpand: PropTypes.func,
   onSelect: PropTypes.func,
   onSelectAll: PropTypes.func,
   onSortBy: PropTypes.func,
   onSortOrder: PropTypes.func,
 };
 
-EntityListHeader.contextTypes = {
-  intl: PropTypes.object.isRequired,
-};
 
 export default EntityListHeader;

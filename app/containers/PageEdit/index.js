@@ -28,8 +28,8 @@ import {
 import { scrollToTop } from 'utils/scroll-to-component';
 import { hasNewError } from 'utils/entity-form';
 
-import { PATHS, CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES } from 'themes/config';
+import { CONTENT_SINGLE } from 'containers/App/constants';
+import { ROUTES, USER_ROLES, DB } from 'themes/config';
 
 import {
   loadEntitiesIfNeeded,
@@ -294,14 +294,14 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(save(formData.toJS()));
     },
     handleCancel: () => {
-      dispatch(updatePath(`${PATHS.PAGES}/${props.params.id}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.PAGES}/${props.params.id}`, { replace: true }));
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));
     },
     handleDelete: () => {
       dispatch(deleteEntity({
-        path: 'pages',
+        path: DB.PAGES,
         id: props.params.id,
       }));
     },

@@ -1,11 +1,10 @@
+import { DB } from 'themes/config';
+
 export const DEPENDENCIES = [
-  'frameworks',
-  'framework_taxonomies',
-  'taxonomies',
-  'recommendations',
-  'measures',
-  'indicators',
-  'recommendation_measures',
-  'recommendation_indicators',
-  'measure_indicators',
+  DB.TAXONOMIES,
+  DB.ACTIONS,
+  DB.ACTORS,
+  DB.ACTORTYPES,
+  DB.ACTORTYPE_TAXONOMIES,
+  DB.ACTOR_ACTIONS,
 ];

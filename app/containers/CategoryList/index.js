@@ -15,13 +15,14 @@ import { getDefaultTaxonomy } from 'utils/taxonomies';
 // containers
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import {
-  selectFWTaxonomiesSorted,
+  selectActortypeTaxonomiesSorted,
   selectReady,
   selectIsUserManager,
-  selectFrameworkQuery,
-  selectActiveFrameworks,
+  selectActortypeQuery,
+  selectActiveActortypes,
 } from 'containers/App/selectors';
-import { PATHS, CONTENT_LIST } from 'containers/App/constants';
+import { CONTENT_LIST } from 'containers/App/constants';
+import { ROUTES } from 'themes/config';
 import appMessages from 'containers/App/messages';
 
 // components
@@ -64,7 +65,7 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
       this.props.redirectToDefaultTaxonomy(
         getDefaultTaxonomy(
           this.props.taxonomies,
-          this.props.frameworkId,
+          this.props.actortypeId,
         ).get('id')
       );
     }
@@ -80,7 +81,7 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
       this.props.redirectToDefaultTaxonomy(
         getDefaultTaxonomy(
           nextProps.taxonomies,
-          nextProps.frameworkId,
+          nextProps.actortypeId,
         ).get('id')
       );
     }
@@ -107,8 +108,8 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
       isManager,
       onPageLink,
       onTaxonomyLink,
-      frameworks,
-      frameworkId,
+      actortypes,
+      actortypeId,
     } = this.props;
     const reference = taxonomy && taxonomy.get('id');
     const contentTitle = (taxonomy && typeof reference !== 'undefined') ? this.getTaxTitle(reference) : '';
@@ -152,13 +153,13 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
         { !dataReady
           && <EntityListSidebarLoading responsiveSmall />
         }
-        { taxonomies && frameworks && typeof reference !== 'undefined'
+        { taxonomies && actortypes && typeof reference !== 'undefined'
           && (
             <TaxonomySidebar
               taxonomies={taxonomies}
               active={reference}
-              frameworkId={frameworkId}
-              frameworks={frameworks}
+              actortypeId={actortypeId}
+              actortypes={actortypes}
               onTaxonomyLink={onTaxonomyLink}
             />
           )
@@ -183,8 +184,8 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
                 && (
                   <CategoryListItems
                     taxonomy={taxonomy}
-                    frameworks={frameworks}
-                    frameworkId={frameworkId}
+                    actortypes={actortypes}
+                    actortypeId={actortypeId}
                     categoryGroups={categoryGroups}
                     onPageLink={onPageLink}
                     onSort={this.props.onSort}
@@ -205,8 +206,8 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
                 && (
                   <CategoryListItems
                     taxonomy={taxonomy}
-                    frameworks={frameworks}
-                    frameworkId={frameworkId}
+                    actortypes={actortypes}
+                    actortypeId={actortypeId}
                     categoryGroups={userOnlyCategoryGroups}
                     onPageLink={onPageLink}
                     onSort={this.props.onSort}
@@ -238,8 +239,8 @@ CategoryList.propTypes = {
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   location: PropTypes.object,
-  frameworks: PropTypes.object,
-  frameworkId: PropTypes.string,
+  actortypes: PropTypes.object,
+  actortypeId: PropTypes.string,
 };
 
 CategoryList.contextTypes = {
@@ -247,11 +248,11 @@ CategoryList.contextTypes = {
 };
 
 const mapStateToProps = (state, props) => ({
-  frameworks: selectActiveFrameworks(state),
-  frameworkId: selectFrameworkQuery(state),
+  actortypes: selectActiveActortypes(state),
+  actortypeId: selectActortypeQuery(state),
   isManager: selectIsUserManager(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  taxonomies: selectFWTaxonomiesSorted(state),
+  taxonomies: selectActortypeTaxonomiesSorted(state),
   taxonomy: selectTaxonomy(state, { id: props.params.id }),
   categoryGroups: selectCategoryGroups(
     state,
@@ -275,10 +276,10 @@ function mapDispatchToProps(dispatch) {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
     redirectToDefaultTaxonomy: (taxonomyId) => {
-      dispatch(updatePath(`${PATHS.TAXONOMIES}/${taxonomyId}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.TAXONOMIES}/${taxonomyId}`, { replace: true }));
     },
     handleNew: (taxonomyId) => {
-      dispatch(updatePath(`${PATHS.TAXONOMIES}/${taxonomyId}${PATHS.NEW}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.TAXONOMIES}/${taxonomyId}${ROUTES.NEW}`, { replace: true }));
     },
     onPageLink: (path) => {
       dispatch(updatePath(path));

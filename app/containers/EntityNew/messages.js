@@ -16,21 +16,15 @@ export default defineMessages({
       defaultMessage: 'New {taxonomy}',
     },
   },
-  measures: {
+  actions: {
     pageTitle: {
-      id: 'app.containers.EntityNew.measures.pageTitle',
+      id: 'app.containers.EntityNew.actions.pageTitle',
       defaultMessage: 'New Action',
     },
   },
-  indicators: {
+  actors: {
     pageTitle: {
-      id: 'app.containers.EntityNew.indicators.pageTitle',
-      defaultMessage: 'New Indicator',
-    },
-  },
-  recommendations: {
-    pageTitle: {
-      id: 'app.containers.EntityNew.recommendations.pageTitle',
+      id: 'app.containers.EntityNew.actors.pageTitle',
       defaultMessage: 'New { type }',
     },
   },

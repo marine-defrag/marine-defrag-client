@@ -23,17 +23,13 @@ export default defineMessages({
       id: 'app.containers.Overview.buttons.draft',
       defaultMessage: '({count} draft)',
     },
-    recommendations: {
-      id: 'app.containers.Overview.buttons.recommendations',
+    actors: {
+      id: 'app.containers.Overview.buttons.actors',
       defaultMessage: '{count} {type}',
     },
-    measures: {
-      id: 'app.containers.Overview.buttons.measures',
+    actions: {
+      id: 'app.containers.Overview.buttons.actions',
       defaultMessage: '{count} Government actions',
-    },
-    indicators: {
-      id: 'app.containers.Overview.buttons.indicators',
-      defaultMessage: '{count} Indicators',
     },
   },
   diagram: {
@@ -45,9 +41,9 @@ export default defineMessages({
       id: 'app.containers.Overview.diagram.addressed',
       defaultMessage: 'addressed by',
     },
-    measured: {
-      id: 'app.containers.Overview.diagram.measured',
-      defaultMessage: 'measured by',
+    actiond: {
+      id: 'app.containers.Overview.diagram.actiond',
+      defaultMessage: 'actiond by',
     },
   },
   metaDescription: {

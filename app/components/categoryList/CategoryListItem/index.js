@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import ItemStatus from 'components/ItemStatus';
 import Clear from 'components/styled/Clear';
-import { PATHS } from 'containers/App/constants';
+import { ROUTES } from 'themes/config';
 
 import { qe } from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
@@ -143,7 +143,7 @@ const Title = styled.div`
     padding: 0;
   }
 `;
-const FrameworkLabel = styled.div`
+const ActortypeLabel = styled.div`
   display: none;
   font-size: ${(props) => props.theme.sizes.text.smaller};
   color: ${palette('text', 1)};
@@ -219,56 +219,56 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
     );
   };
 
-  renderCountColumn = (col, category, frameworks, frameworkId) => {
+  renderCountColumn = (col, category, actortypes, actortypeId) => {
     if (!col.attribute) {
       return null;
     }
-    const fwSet = frameworkId && frameworkId !== 'all';
-    const countsByFramework = col.attribute.frameworkIds;
-    const connected = col.attribute.entity === 'measures';
-    if (countsByFramework) {
-      const total = category[col.attribute.totalByFw];
-      const accepted = category[col.attribute.acceptedByFw];
-      if (!fwSet) {
+    const actortypeSet = actortypeId && actortypeId !== 'all';
+    const countsByActortype = col.attribute.actortypeIds;
+    const connected = col.attribute.entity === 'actions';
+    if (countsByActortype) {
+      const total = category[col.attribute.totalByActortype];
+      const accepted = category[col.attribute.acceptedByActortype];
+      if (!actortypeSet) {
         return (
           <div>
-            {col.attribute.frameworkIds.map((id) => {
-              const framework = frameworks.find((fw) => qe(fw.get('id'), id));
-              if (!framework) {
+            {col.attribute.actortypeIds.map((id) => {
+              const actortype = actortypes.find((actortype) => qe(actortype.get('id'), id));
+              if (!actortype) {
                 return null;
               }
-              const hasResponse = !connected && framework.getIn(['attributes', 'has_response']);
-              const multipleFWs = col.attribute.frameworkIds.length > 1;
+              const hasResponse = !connected && actortype.getIn(['attributes', 'has_response']);
+              const multipleActortypes = col.attribute.actortypeIds.length > 1;
               const totalCount = (total && total[id]) || 0;
               if (totalCount === 0) {
                 return null;
               }
               return (
                 <div key={id}>
-                  {multipleFWs && (
-                    <FrameworkLabel>
+                  {multipleActortypes && (
+                    <ActortypeLabel>
                       {connected && (<span>&nbsp;</span>)}
-                      {!connected && appMessages.entities[`recommendations_${id}`] && (
-                        <FormattedMessage {...appMessages.entities[`recommendations_${id}`].plural} />
+                      {!connected && appMessages.entities[`actors_${id}`] && (
+                        <FormattedMessage {...appMessages.entities[`actors_${id}`].plural} />
                       )}
-                    </FrameworkLabel>
+                    </ActortypeLabel>
                   )}
                   {hasResponse && (
-                    <BarWrap secondary multiple={multipleFWs}>
+                    <BarWrap secondary multiple={multipleActortypes}>
                       {this.renderAcceptedBar(
                         col,
                         totalCount,
                         (accepted && accepted[id]) || 0,
-                        multipleFWs, // multiple,
+                        multipleActortypes, // multiple,
                       )}
                     </BarWrap>
                   )}
                   {!hasResponse && (
-                    <BarWrap multiple={multipleFWs}>
+                    <BarWrap multiple={multipleActortypes}>
                       {this.renderSimpleBar(
                         col,
                         totalCount,
-                        multipleFWs, // multiple,
+                        multipleActortypes, // multiple,
                       )}
                     </BarWrap>
                   )}
@@ -277,13 +277,13 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
             })}
           </div>
         );
-      } if (fwSet) {
-        const id = frameworkId;
-        const framework = frameworks.find((fw) => qe(fw.get('id'), id));
-        if (!framework || !total[id]) {
+      } if (actortypeSet) {
+        const id = actortypeId;
+        const actortype = actortypes.find((actortype) => qe(actortype.get('id'), id));
+        if (!actortype || !total[id]) {
           return null;
         }
-        const hasResponse = !connected && framework.getIn(['attributes', 'has_response']);
+        const hasResponse = !connected && actortype.getIn(['attributes', 'has_response']);
         const totalCount = (total && total[id]) || 0;
         if (totalCount === 0) {
           return null;
@@ -322,7 +322,7 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
 
   render() {
     const {
-      category, columns, onPageLink, frameworks, frameworkId,
+      category, columns, onPageLink, actortypes, actortypeId,
     } = this.props;
     const reference = category.getIn(['attributes', 'reference'])
       && category.getIn(['attributes', 'reference']).trim() !== ''
@@ -338,7 +338,7 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
 
     return (
       <Styled
-        onClick={() => onPageLink(`${PATHS.CATEGORIES}/${catItem.id}`)}
+        onClick={() => onPageLink(`${ROUTES.CATEGORIES}/${catItem.id}`)}
       >
         <TableWrap>
           {
@@ -348,8 +348,8 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
                 colWidth={col.width}
                 multiple={
                   col.attribute
-                  && col.attribute.frameworkIds
-                  && col.attribute.frameworkIds.length > 1
+                  && col.attribute.actortypeIds
+                  && col.attribute.actortypeIds.length > 1
                 }
               >
                 {col.type === 'title' && catItem.draft && (
@@ -367,7 +367,7 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
                   </Title>
                 )}
                 {col.type === 'count'
-                  && this.renderCountColumn(col, category.toJS(), frameworks, frameworkId)
+                  && this.renderCountColumn(col, category.toJS(), actortypes, actortypeId)
                 }
               </Column>
             ))
@@ -381,10 +381,10 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
 
 CategoryListItem.propTypes = {
   category: PropTypes.object,
-  frameworks: PropTypes.object,
+  actortypes: PropTypes.object,
   columns: PropTypes.array,
   onPageLink: PropTypes.func,
-  frameworkId: PropTypes.string,
+  actortypeId: PropTypes.string,
 };
 
 CategoryListItem.contextTypes = {

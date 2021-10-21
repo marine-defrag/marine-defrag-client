@@ -6,18 +6,18 @@ import { connect } from 'react-redux';
 import { startsWith } from 'utils/string';
 import { updatePath } from 'containers/App/actions';
 import { getNextQueryString } from 'containers/App/sagas';
-import { selectFrameworkQuery } from 'containers/App/selectors';
+import { selectActortypeQuery } from 'containers/App/selectors';
 
 // const A = styled.a``;
 
 const Link = ({
-  to, children, onClick, frameworkId, args, ...p
+  to, children, onClick, actortypeId, args, ...p
 }) => {
   const external = !startsWith(to, '/');
-  // make sure to set the fw query for href default link (i.e. open in new tab)
+  // make sure to set the actortype query for href default link (i.e. open in new tab)
   const query = (args && args.query) || {};
-  if (!query.fw) {
-    query.fw = frameworkId;
+  if (!query.actortype) {
+    query.actortype = actortypeId;
   }
   const href = `${to}?${getNextQueryString(query)}`;
   return (
@@ -40,7 +40,7 @@ const Link = ({
 Link.propTypes = {
   to: PropTypes.string,
   args: PropTypes.object,
-  frameworkId: PropTypes.string,
+  actortypeId: PropTypes.string,
   children: PropTypes.oneOfType([
     PropTypes.node,
     PropTypes.string,
@@ -50,7 +50,7 @@ Link.propTypes = {
 
 
 const mapStateToProps = (state) => ({
-  frameworkId: selectFrameworkQuery(state),
+  actortypeId: selectActortypeQuery(state),
 });
 
 function mapDispatchToProps(dispatch) {

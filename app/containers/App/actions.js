@@ -55,8 +55,6 @@ import {
   UPDATE_PATH,
   AUTHENTICATE_FORWARD,
   UPDATE_ENTITY_FORM,
-  DUEDATE_ASSIGNED,
-  DUEDATE_UNASSIGNED,
   RESET_PASSWORD,
   RECOVER_PASSWORD,
   RECOVER_SENDING,
@@ -67,7 +65,7 @@ import {
   RESET_PROGRESS,
   SUBMIT_INVALID,
   DISMISS_QUERY_MESSAGES,
-  SET_FRAMEWORK,
+  SET_ACTIONTYPE,
   OPEN_BOOKMARK,
 } from './constants';
 
@@ -463,20 +461,6 @@ export function updateEntityForm(data) {
   };
 }
 
-export function dueDateAssigned(id) {
-  return {
-    type: DUEDATE_ASSIGNED,
-    id,
-  };
-}
-
-export function dueDateUnassigned(id) {
-  return {
-    type: DUEDATE_UNASSIGNED,
-    id,
-  };
-}
-
 export function closeEntity(path) {
   return {
     type: CLOSE_ENTITY,
@@ -497,10 +481,10 @@ export function dismissQueryMessages() {
   };
 }
 
-export function setFramework(framework) {
+export function setActortype(actortype) {
   return {
-    type: SET_FRAMEWORK,
-    framework,
+    type: SET_ACTIONTYPE,
+    actortype,
   };
 }
 export function openBookmark(bookmark) {
