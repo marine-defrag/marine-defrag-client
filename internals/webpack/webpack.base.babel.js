@@ -5,7 +5,7 @@
 const path = require('path');
 const webpack = require('webpack');
 
-module.exports = options => ({
+module.exports = (options) => ({
   mode: options.mode,
   entry: options.entry,
   output: Object.assign(
@@ -119,12 +119,12 @@ module.exports = options => ({
     modules: ['node_modules', 'app'],
     extensions: ['.js', '.jsx', '.react.js'],
     mainFields: ['browser', 'jsnext:main', 'main'],
+    fallback: {
+      fs: false,
+      path: false,
+    },
   },
   devtool: options.devtool,
   target: 'web', // Make web variables accessible to webpack, e.g. window
   performance: options.performance || {},
-  node: {
-    fs: 'empty',
-    child_process: 'empty',
-  },
 });

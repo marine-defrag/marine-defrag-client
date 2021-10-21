@@ -13,6 +13,7 @@ const GlobalStyle = createGlobalStyle`
     font-size: 16px;
     line-height: 1.428571429;
     color: #344547;
+    margin: 0;
   }
   button, input, select, textarea {
     font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
