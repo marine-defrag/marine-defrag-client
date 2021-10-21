@@ -471,23 +471,23 @@ export class Overview extends React.PureComponent { // eslint-disable-line react
                       <DiagramSectionVerticalCenter>
                         {actortypes && actortypes.valueSeq().map(
                           (actortype) => {
-                            const actortypeId = isNumber(actortype.get('id')) ? parseInt(actortype.get('id'), 10) : actortype.get('id');
+                            const actortypeIdLocal = isNumber(actortype.get('id')) ? parseInt(actortype.get('id'), 10) : actortype.get('id');
                             return (
                               <DiagramButtonWrap key={actortypeId} multiple={actortypes.size > 1}>
                                 {this.renderButton({
                                   path: ROUTES.ACTORS,
                                   query: actortypes.size > 1 && {
                                     arg: 'actortypex',
-                                    value: actortypeId,
+                                    value: actortypeIdLocal,
                                     replace: true,
                                   },
                                   paletteDefault: 'actors',
                                   paletteHover: 'actorsHover',
-                                  stateButton: `buttonActors_${actortypeId}`,
-                                  icon: `actors_${actortypeId}`,
-                                  type: `actors_${actortypeId}`,
-                                  count: this.props.actorCountByActortype.get(actortypeId),
-                                  draftCount: this.props.actorDraftCountByActortype.get(actortypeId),
+                                  stateButton: `buttonActors_${actortypeIdLocal}`,
+                                  icon: `actors_${actortypeIdLocal}`,
+                                  type: `actors_${actortypeIdLocal}`,
+                                  count: this.props.actorCountByActortype.get(actortypeIdLocal),
+                                  draftCount: this.props.actorDraftCountByActortype.get(actortypeIdLocal),
                                   multiple: actortypes.size > 1,
                                 })}
                               </DiagramButtonWrap>

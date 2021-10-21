@@ -183,13 +183,13 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
 
       // child taxonomies tag actors
       // child categories related actors
-      const actorConnections = [];
+      const actorConnectionsLocal = [];
       if (childActorsByActortype) {
         childActorsByActortype.forEach((actors, actortypeid) => {
-          const actortype = actortypes.find((actortype) => qe(actortype.get('id'), actortypeid));
+          const actortype = actortypes.find((type) => qe(type.get('id'), actortypeid));
           const hasResponse = actortype && actortype.getIn(['attributes', 'has_response']);
           actors.forEach((tax) => {
-            actorConnections.push(
+            actorConnectionsLocal.push(
               getActorConnectionGroupsField(
                 tax.get('categories'),
                 appMessages.entities.taxonomies[tax.get('id')].single,
@@ -205,9 +205,9 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
         // related actors
       } else if (entity.getIn(['taxonomy', 'attributes', 'tags_actors']) && actorsByActortype) {
         actorsByActortype.forEach((actors, actortypeid) => {
-          const actortype = actortypes.find((actortype) => qe(actortype.get('id'), actortypeid));
+          const actortype = actortypes.find((type) => qe(type.get('id'), actortypeid));
           const hasResponse = actortype && actortype.getIn(['attributes', 'has_response']);
-          actorConnections.push(
+          actorConnectionsLocal.push(
             getActorConnectionField(
               actors,
               taxonomies,
@@ -222,7 +222,7 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
       fields.push({
         label: appMessages.nav.actorsSuper,
         icon: 'actors',
-        fields: actorConnections,
+        fields: actorConnectionsLocal,
       });
     }
     return fields;

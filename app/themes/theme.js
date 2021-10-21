@@ -286,7 +286,6 @@ theme.sizes = {
     aaLargeBold: '19px',
     aaLarge: '24px',
     mainListItem: '20px',
-    nestedListItem: '16px',
     listItemTop: '13px',
     listItemBottom: '12px',
     markdown: '18px',
@@ -298,7 +297,6 @@ theme.sizes = {
   },
   print: {
     mainListItem: '10pt',
-    nestedListItem: '8pt',
     listItemTop: '7pt',
     listItemBottom: '7pt',
     markdown: '10pt',

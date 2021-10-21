@@ -5,8 +5,7 @@
 import { getAsyncInjectors } from 'utils/asyncInjectors';
 import { getRedirects } from 'utils/redirects';
 
-import { ROUTES } from 'themes/config';
-import { USER_ROLES } from 'themes/config';
+import { ROUTES, USER_ROLES } from 'themes/config';
 
 const errorLoading = (err) => {
   console.error('Dynamic page loading failed', err); // eslint-disable-line no-console

@@ -165,7 +165,6 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
   mapToEntityListItem = ({
     config,
     entity,
-    nestLevel,
     entityPath,
     connections,
     entityIcon,
@@ -193,7 +192,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
   }
 
   render() {
-    const { nestLevel, onEntityClick, taxonomies } = this.props;
+    const { onEntityClick, taxonomies } = this.props;
     const entity = this.mapToEntityListItem(this.props);
 
     const bottomTaxonomies = taxonomies && taxonomies.filter((tax) => !qe(tax.get('id'), PROGRESS_TAXONOMY_ID));
@@ -209,7 +208,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
           }}
           href={`/${entity.path}/${entity.id}`}
         >
-          <EntityListItemMainTitle nested={nestLevel && nestLevel > 0}>
+          <EntityListItemMainTitle>
             {entity.title}
           </EntityListItemMainTitle>
         </EntityListItemMainTitleWrap>
@@ -238,7 +237,6 @@ EntityListItemMain.propTypes = {
   entityPath: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
   isManager: PropTypes.bool,
   wrapper: PropTypes.object,
-  nestLevel: PropTypes.number,
   onEntityClick: PropTypes.func,
   isConnection: PropTypes.bool,
 };

@@ -33,7 +33,6 @@ import ViewPanel from 'components/EntityView/ViewPanel';
 
 import FieldLabel from 'components/forms/Label';
 import ErrorWrapper from 'components/forms/ErrorWrapper';
-import UploadControl from 'components/forms/UploadControl';
 import FormFooter from 'components/forms/FormFooter';
 import FormFooterButtons from 'components/forms/FormFooterButtons';
 import FormBody from 'components/forms/FormBody';
@@ -113,8 +112,6 @@ const controls = {
   radio: RadioControl,
   checkbox: ControlCheckbox,
   button: Control.button,
-  file: UploadControl,
-  uploader: UploadControl,
 };
 
 // These props will be omitted before being passed to the Control component

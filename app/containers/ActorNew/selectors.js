@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { DB } from 'themes/config';
 
 import {
   selectEntities,

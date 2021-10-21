@@ -5,7 +5,6 @@ import Field from 'components/fields/Field';
 import ConnectionsField from 'components/fields/ConnectionsField';
 import DateField from 'components/fields/DateField';
 import MarkdownField from 'components/fields/MarkdownField';
-import DownloadField from 'components/fields/DownloadField';
 import EmailField from 'components/fields/EmailField';
 import LinkField from 'components/fields/LinkField';
 import TaxonomyField from 'components/fields/TaxonomyField';
@@ -46,8 +45,6 @@ class FieldFactory extends React.PureComponent { // eslint-disable-line react/pr
         return (<ManagerField field={field} />);
       case 'taxonomy':
         return (<TaxonomyField field={field} />);
-      case 'download':
-        return (<DownloadField field={field} />);
       case 'description':
       case 'markdown':
         return (<MarkdownField field={field} />);

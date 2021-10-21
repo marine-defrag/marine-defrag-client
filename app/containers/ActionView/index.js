@@ -105,11 +105,11 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
 
     // actors
     if (actorsByActortype) {
-      const actorConnections = [];
+      const actorConnectionsLocal = [];
       actorsByActortype.forEach((actors, actortypeid) => {
         const actortype = actortypes.find((at) => qe(at.get('id'), actortypeid));
         const hasResponse = actortype && actortype.getIn(['attributes', 'has_response']);
-        actorConnections.push(
+        actorConnectionsLocal.push(
           getActorConnectionField(
             actors,
             actorTaxonomies,
@@ -123,7 +123,7 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       fields.push({
         label: appMessages.nav.actorsSuper,
         icon: 'actors',
-        fields: actorConnections,
+        fields: actorConnectionsLocal,
       });
     }
     return fields;

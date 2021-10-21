@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
+import { DB } from 'themes/config';
 
 import {
   selectEntities,

@@ -42,7 +42,6 @@ import {
 } from 'containers/App/actions';
 
 import {
-  selectEntities,
   selectReady,
   selectReadyForAuthCheck,
   selectActionTaxonomies,

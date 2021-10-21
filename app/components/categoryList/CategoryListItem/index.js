@@ -233,7 +233,7 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
         return (
           <div>
             {col.attribute.actortypeIds.map((id) => {
-              const actortype = actortypes.find((actortype) => qe(actortype.get('id'), id));
+              const actortype = actortypes.find((type) => qe(type.get('id'), id));
               if (!actortype) {
                 return null;
               }
@@ -279,7 +279,7 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
         );
       } if (actortypeSet) {
         const id = actortypeId;
-        const actortype = actortypes.find((actortype) => qe(actortype.get('id'), id));
+        const actortype = actortypes.find((at) => qe(at.get('id'), id));
         if (!actortype || !total[id]) {
           return null;
         }

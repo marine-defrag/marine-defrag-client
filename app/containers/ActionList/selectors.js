@@ -125,18 +125,13 @@ export const selectConnectedTaxonomies = createSelector(
   }
 );
 
-const selectActionsNestedQ = createSelector(
+// nest category ids
+const selectActionsWithCategories = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
   (state, locationQuery) => selectActionsSearchQuery(state, {
     searchAttributes: CONFIG.search || ['title'],
     locationQuery,
   }),
-  (entities) => entities
-);
-
-// nest category ids
-const selectActionsNestedWithCategories = createSelector(
-  (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectActionsNestedQ,
   selectActionCategoriesByAction,
   (state) => selectEntities(state, DB.CATEGORIES),
   (ready, entities, associationsGrouped, categories) => {
@@ -153,9 +148,9 @@ const selectActionsNestedWithCategories = createSelector(
 
 // nest connected actor ids
 // nest connected actor ids byactortype
-const selectActionsNestedWithActors = createSelector(
+const selectActionsWithActors = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectActionsNestedWithCategories,
+  selectActionsWithCategories,
   (state) => selectConnections(state),
   selectActorActionsByAction,
   (ready, entities, connections, associationsGrouped) => {
@@ -193,7 +188,7 @@ const selectActionsNestedWithActors = createSelector(
 );
 
 const selectActionsWithout = createSelector(
-  selectActionsNestedWithActors,
+  selectActionsWithActors,
   (state) => selectEntities(state, DB.CATEGORIES),
   selectWithoutQuery,
   (entities, categories, query) => query
@@ -226,7 +221,6 @@ const selectActionsByConnectedCategories = createSelector(
 // kicks off series of cascading selectors
 // 1. selectEntitiesWhere filters by attribute
 // 2. selectEntitiesSearchQuery filters by keyword
-// 3. selectActionsNested will nest related entities
 // 4. selectActionsWithout will filter by absence of taxonomy or connection
 // 5. selectActionsByConnections will filter by specific connection
 // 6. selectActionsByCategories will filter by specific categories

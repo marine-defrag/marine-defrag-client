@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-
+import { DB } from 'themes/config';
 import {
   selectEntities,
   selectActorsSearchQuery,
@@ -112,7 +112,6 @@ const selectActorsByCategories = createSelector(
 // kicks off series of cascading selectors
 // 1. selectEntitiesWhere filters by attribute
 // 2. selectEntitiesSearchQuery filters by keyword
-// 3. selectActorsNested will nest related entities
 // 4. selectActorsWithout will filter by absence of taxonomy or connection
 // 5. selectActorsByConnections will filter by specific connection
 // 6. selectActorsByCategories will filter by specific categories

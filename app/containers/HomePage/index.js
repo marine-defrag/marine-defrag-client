@@ -25,9 +25,9 @@ import Loading from 'components/Loading';
 import Footer from 'containers/Footer';
 
 import appMessages from 'containers/App/messages';
-import { ROUTES } from 'themes/config';
 
 import {
+  ROUTES,
   SHOW_HOME_TITLE,
   SHOW_BRAND_ON_HOME,
   HEADER_PATTERN_HEIGHT,

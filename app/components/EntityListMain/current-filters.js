@@ -187,7 +187,7 @@ const getCurrentActortypeFilter = (
   const tags = [];
   if (locationQuery.get(config.query)) {
     const locationQueryValue = locationQuery.get(config.query);
-    const actortype = actortypes.find((actortype) => qe(actortype.get('id'), locationQueryValue));
+    const actortype = actortypes.find((type) => qe(type.get('id'), locationQueryValue));
     if (actortype) {
       tags.push({
         message: `actortypes_short.${actortype.get('id')}`,

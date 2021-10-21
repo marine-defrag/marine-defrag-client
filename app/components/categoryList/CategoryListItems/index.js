@@ -63,7 +63,7 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
     const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
     return tagsActors && actortypes && taxonomy.get('actortypeIds').toArray().reduce(
       (memo, actortypeid) => {
-        const actortype = actortypes.find((actortype) => qe(actortype.get('id'), actortypeid));
+        const actortype = actortypes.find((type) => qe(type.get('id'), actortypeid));
         // TODO figure out multiple actortype with responses
         if (actortype && actortype.getIn(['attributes', 'has_response'])) {
           return [{
@@ -108,8 +108,8 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
       } else if (actortypeSet) {
         actorLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeId}`].plural);
       } else {
-        const actortypeId = taxonomy.get('actortypeIds').first();
-        actorLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeId}`].plural);
+        const actortypeIdLocal = taxonomy.get('actortypeIds').first();
+        actorLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeIdLocal}`].plural);
       }
       attributes.push({
         query: 'actors',

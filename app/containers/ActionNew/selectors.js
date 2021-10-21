@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { DB } from 'themes/config';
 
 import {
   selectEntities,
@@ -37,8 +38,8 @@ export const selectActorsByActortype = createSelector(
     return entities.filter(
       (r) => {
         const actortype = actortypes.find(
-          (actortype) => qe(
-            actortype.get('id'),
+          (at) => qe(
+            at.get('id'),
             r.getIn(['attributes', 'actortype_id']),
           )
         );

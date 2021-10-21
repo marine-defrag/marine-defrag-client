@@ -48,7 +48,6 @@ import {
   selectReadyForAuthCheck,
   selectActionsCategorised,
   selectActorTaxonomies,
-  selectEntities,
   selectActortypeQuery,
   selectActiveActortypes,
 } from 'containers/App/selectors';

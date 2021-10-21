@@ -89,7 +89,6 @@ const selectUsersByCategories = createSelector(
 // kicks off series of cascading selectors
 // 1. selectEntitiesWhere filters by attribute
 // 2. selectEntitiesSearchQuery filters by keyword
-// 3. selectUsersNested will nest related entities
 // 4. selectUsersWithout will filter by absence of taxonomy or connection
 // 5. selectUsersByConnections will filter by specific connection
 // 6. selectUsersByCategories will filter by specific categories
