@@ -2,11 +2,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
-// const OfflinePlugin = require('offline-plugin');
-const webpack = require('webpack');
+const OfflinePlugin = require('offline-plugin');
+const { HashedModuleIdsPlugin } = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-// const WebpackGitHash = require('webpack-git-hash');
+const WebpackGitHash = require('webpack-git-hash');
 
 module.exports = require('./webpack.base.babel')({
   mode: 'production',
@@ -40,6 +40,8 @@ module.exports = require('./webpack.base.babel')({
           },
         },
         parallel: true,
+        cache: true,
+        sourceMap: true,
       }),
     ],
     nodeEnv: 'production',
@@ -65,7 +67,7 @@ module.exports = require('./webpack.base.babel')({
   },
 
   plugins: [
-    // new WebpackGitHash(),
+    new WebpackGitHash(),
 
     // Minify and optimize the index.html
     new HtmlWebpackPlugin({
@@ -87,32 +89,32 @@ module.exports = require('./webpack.base.babel')({
 
     // Put it in the end to capture all the HtmlWebpackPlugin's
     // assets manipulations and do leak its manipulations to HtmlWebpackPlugin
-    // new OfflinePlugin({
-    //   relativePaths: false,
-    //   publicPath: '/',
-    //   appShell: '/',
-    //
-    //   // No need to cache .htaccess. See http://mxs.is/googmp,
-    //   // this is applied before any match in `caches` section
-    //   excludes: ['.htaccess'],
-    //
-    //   caches: {
-    //     main: [':rest:'],
-    //
-    //     // All chunks marked as `additional`, loaded after main section
-    //     // and do not prevent SW to install. Change to `optional` if
-    //     // do not want them to be preloaded at all (cached only when first loaded)
-    //     additional: ['*.chunk.js'],
-    //   },
-    //
-    //   // Removes warning for about `additional` section usage
-    //   safeToUseOptionalCaches: true,
-    //   // changing config according to https://github.com/react-boilerplate/react-boilerplate/issues/2750#issuecomment-536215256
-    //   ServiceWorker: {
-    //     events: true,
-    //   },
-    //   responseStrategy: 'network-first',
-    // }),
+    new OfflinePlugin({
+      relativePaths: false,
+      publicPath: '/',
+      appShell: '/',
+
+      // No need to cache .htaccess. See http://mxs.is/googmp,
+      // this is applied before any match in `caches` section
+      excludes: ['.htaccess'],
+
+      caches: {
+        main: [':rest:'],
+
+        // All chunks marked as `additional`, loaded after main section
+        // and do not prevent SW to install. Change to `optional` if
+        // do not want them to be preloaded at all (cached only when first loaded)
+        additional: ['*.chunk.js'],
+      },
+
+      // Removes warning for about `additional` section usage
+      safeToUseOptionalCaches: true,
+      // changing config according to https://github.com/react-boilerplate/react-boilerplate/issues/2750#issuecomment-536215256
+      ServiceWorker: {
+        events: true,
+      },
+      responseStrategy: 'network-first',
+    }),
 
     new CompressionPlugin({
       algorithm: 'gzip',
@@ -142,7 +144,7 @@ module.exports = require('./webpack.base.babel')({
       // ],
     }),
 
-    new webpack.ids.HashedModuleIdsPlugin({
+    new HashedModuleIdsPlugin({
       hashFunction: 'sha256',
       hashDigest: 'hex',
       hashDigestLength: 20,
