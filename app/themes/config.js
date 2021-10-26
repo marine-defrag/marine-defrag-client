@@ -198,10 +198,12 @@ export const DB = {
   ACTORTYPES: 'actortypes', // action types
   ACTORTYPE_TAXONOMIES: 'actortype_taxonomies', // action taxonomies
   MEMBERSHIPS: 'memberships', // quasi: actor_actors
+  RESOURCES: 'resources',
+  ACTION_RESOURCES: 'measure_resources',
+  RESOURCETYPES: 'resourcetypes', // resource types
   TAXONOMIES: 'taxonomies',
   CATEGORIES: 'categories',
   USERS: 'users',
-  USER_CATEGORIES: 'user_categories',
   USER_ROLES: 'user_roles',
   ROLES: 'roles',
   PAGES: 'pages',
