@@ -163,6 +163,7 @@ export const DEFAULT_ACTIONTYPE = 1;
 
 export const ROUTES = {
   ID: '/:id',
+  VIEW: '/:view',
   NEW: '/new',
   EDIT: '/edit',
   IMPORT: '/import',
@@ -176,6 +177,8 @@ export const ROUTES = {
   USERS: '/users',
   ACTIONS: '/actions',
   ACTORS: '/actors',
+  ACTION: '/action',
+  ACTOR: '/actor',
   TAXONOMIES: '/categories',
   CATEGORIES: '/category',
   PAGES: '/pages',

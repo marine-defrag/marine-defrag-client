@@ -211,7 +211,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: ROUTES.ACTIONS,
+      path: `${ROUTES.ACTIONS}${ROUTES.ID}${ROUTES.VIEW}`,
       name: 'actionList',
       getComponent(nextState, cb) {
         const importModules = Promise.all([
@@ -227,7 +227,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: `${ROUTES.ACTIONS}${ROUTES.NEW}`,
+      path: `${ROUTES.ACTIONS}${ROUTES.ID}${ROUTES.NEW}`, // the type id
       name: 'actionNew',
       onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
       getComponent(nextState, cb) {
@@ -269,7 +269,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: `${ROUTES.ACTIONS}${ROUTES.ID}`,
+      path: `${ROUTES.ACTION}${ROUTES.ID}`,
       name: 'actionView',
       getComponent(nextState, cb) {
         const importModules = Promise.all([
@@ -285,7 +285,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: `${ROUTES.ACTIONS}${ROUTES.EDIT}${ROUTES.ID}`,
+      path: `${ROUTES.ACTION}${ROUTES.EDIT}${ROUTES.ID}`,
       name: 'actionEdit',
       onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
       getComponent(nextState, cb) {
@@ -306,7 +306,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: ROUTES.ACTORS,
+      path: `${ROUTES.ACTORS}${ROUTES.ID}${ROUTES.VIEW}`,
       name: 'actorList',
       getComponent(nextState, cb) {
         const importModules = Promise.all([
@@ -322,7 +322,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: `${ROUTES.ACTORS}${ROUTES.NEW}`,
+      path: `${ROUTES.ACTORS}${ROUTES.ID}${ROUTES.NEW}`, // the type id
       name: 'actorNew',
       getComponent(nextState, cb) {
         const importModules = Promise.all([
@@ -363,7 +363,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: `${ROUTES.ACTORS}${ROUTES.ID}`,
+      path: `${ROUTES.ACTOR}${ROUTES.ID}`,
       name: 'actorView',
       getComponent(nextState, cb) {
         const importModules = Promise.all([
@@ -379,7 +379,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: `${ROUTES.ACTORS}${ROUTES.EDIT}${ROUTES.ID}`,
+      path: `${ROUTES.ACTOR}${ROUTES.EDIT}${ROUTES.ID}`,
       name: 'actorEdit',
       onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
       getComponent(nextState, cb) {
