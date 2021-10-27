@@ -105,7 +105,6 @@ export const ENDPOINTS = {
       ? 'localhost:3001/'
       : 'localhost:3001/'
   ), // server API endpoint
-  SIGNING_URL: '/s3/sign', // server AWS S3 signing url endpoint
   SIGN_IN: 'auth/sign_in',
   SIGN_OUT: 'auth/sign_out',
   PASSWORD: 'auth/password',
@@ -161,6 +160,7 @@ export const ACCEPTED_STATUSES = [
 
 export const DEFAULT_ACTIONTYPE = 1;
 
+// client app routes **************************
 export const ROUTES = {
   ID: '/:id',
   VIEW: '/:view',
@@ -185,16 +185,16 @@ export const ROUTES = {
   SEARCH: '/search',
 };
 
-// Map server database tables **************************
+// Server endpoints for database tables **************************
 export const DB = {
   ACTIONS: 'measures', // actions/ACTIONS
   ACTION_CATEGORIES: 'measure_categories', // measure_categories
-  ACTION_ACTORS: 'measure_actors', // action_actors
+  ACTION_ACTORS: 'measure_actors', // linking actions with their targets
   ACTIONTYPES: 'measuretypes', // action types
   ACTIONTYPE_TAXONOMIES: 'measuretype_taxonomies', // action taxonomies
   ACTORS: 'actors',
   ACTOR_CATEGORIES: 'actor_categories',
-  ACTOR_ACTIONS: 'actor_measures',
+  ACTOR_ACTIONS: 'actor_measures', // linking actors with their actions
   ACTORTYPES: 'actortypes', // action types
   ACTORTYPE_TAXONOMIES: 'actortype_taxonomies', // action taxonomies
   MEMBERSHIPS: 'memberships', // quasi: actor_actors
