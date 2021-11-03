@@ -1,6 +1,6 @@
 import { filter, reduce } from 'lodash/collection';
 import appMessages from 'containers/App/messages';
-import { DB_DATE_FORMAT } from 'themes/config';
+import { API_DATE_FORMAT } from 'themes/config';
 
 const getColumnTitle = (field, formatMessage) => `${formatMessage(appMessages.importFields[field.label || field.attribute])} [database:${field.attribute}]`;
 
@@ -9,7 +9,7 @@ export const getImportFields = (shape, formatMessage) => {
   const values = reduce(fields, (memo, field) => {
     const value = `${field.required
       ? formatMessage(appMessages.import.required)
-      : formatMessage(appMessages.import.optional)}: ${formatMessage(appMessages.import[field.type], { format: DB_DATE_FORMAT })}`;
+      : formatMessage(appMessages.import.optional)}: ${formatMessage(appMessages.import[field.type], { format: API_DATE_FORMAT })}`;
     return Object.assign(memo, { [getColumnTitle(field, formatMessage)]: value });
   }, {});
   return Object.assign(values, { '': formatMessage(appMessages.import.hint) });

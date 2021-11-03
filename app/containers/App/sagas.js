@@ -44,7 +44,7 @@ import {
   ROUTES,
   ENDPOINTS,
   KEYS,
-  DB,
+  API,
 } from 'themes/config';
 
 import {
@@ -93,7 +93,7 @@ import apiRequest, { getAuthValues, clearAuthValues } from 'utils/api-request';
  * Check if entities already present
  */
 export function* checkEntitiesSaga(payload) {
-  if (Object.values(DB).indexOf(payload.path) > -1) {
+  if (Object.values(API).indexOf(payload.path) > -1) {
     // requestedSelector returns the times that entities where fetched from the API
     const requestedAt = yield select(selectRequestedAt, { path: payload.path });
 
@@ -106,7 +106,7 @@ export function* checkEntitiesSaga(payload) {
         yield put(entitiesRequested(payload.path, Date.now()));
         // check role to prevent requesting endpoints not authorised
         // TODO check could be refactored
-        if (!signedIn && (payload.path === DB.USER_ROLES || payload.path === DB.USERS)) {
+        if (!signedIn && (payload.path === API.USER_ROLES || payload.path === API.USERS)) {
           // store empty response so the app wont wait for the results
           yield put(entitiesLoaded({}, payload.path, Date.now()));
         } else {
@@ -259,7 +259,7 @@ export function* saveEntitySaga({ data }, updateClient = true, multiple = false)
       if (data.entity.userRoles) {
         yield call(saveConnectionsSaga, {
           data: {
-            path: DB.USER_ROLES,
+            path: API.USER_ROLES,
             updates: data.entity.userRoles,
           },
         });
@@ -269,7 +269,7 @@ export function* saveEntitySaga({ data }, updateClient = true, multiple = false)
       if (data.entity.userCategories) {
         yield call(saveConnectionsSaga, {
           data: {
-            path: DB.USER_CATEGORIES,
+            path: API.USER_CATEGORIES,
             updates: data.entity.userCategories,
           },
         });
@@ -279,7 +279,7 @@ export function* saveEntitySaga({ data }, updateClient = true, multiple = false)
       if (data.entity.actorActions) {
         yield call(saveConnectionsSaga, {
           data: {
-            path: DB.ACTOR_ACTIONS,
+            path: API.ACTOR_ACTIONS,
             updates: data.entity.actorActions,
           },
         });
@@ -289,7 +289,7 @@ export function* saveEntitySaga({ data }, updateClient = true, multiple = false)
       if (data.entity.actionCategories) {
         yield call(saveConnectionsSaga, {
           data: {
-            path: DB.ACTION_CATEGORIES,
+            path: API.ACTION_CATEGORIES,
             updates: data.entity.actionCategories,
           },
         });
@@ -299,7 +299,7 @@ export function* saveEntitySaga({ data }, updateClient = true, multiple = false)
       if (data.entity.actorCategories) {
         yield call(saveConnectionsSaga, {
           data: {
-            path: DB.ACTOR_CATEGORIES,
+            path: API.ACTOR_CATEGORIES,
             updates: data.entity.actorCategories,
           },
         });
@@ -393,7 +393,7 @@ export function* newEntitySaga({ data }, updateClient = true, multiple = false) 
         if (data.entity.actorActions) {
           yield call(createConnectionsSaga, {
             entityId: entityCreated.data.id,
-            path: DB.ACTOR_ACTIONS,
+            path: API.ACTOR_ACTIONS,
             updates: data.entity.actorActions,
             keyPair: ['actor_id', 'action_id'],
           });
@@ -402,7 +402,7 @@ export function* newEntitySaga({ data }, updateClient = true, multiple = false) 
         if (data.entity.actionCategories) {
           yield call(createConnectionsSaga, {
             entityId: entityCreated.data.id,
-            path: DB.ACTION_CATEGORIES,
+            path: API.ACTION_CATEGORIES,
             updates: data.entity.actionCategories,
             keyPair: ['category_id', 'action_id'],
           });
@@ -412,7 +412,7 @@ export function* newEntitySaga({ data }, updateClient = true, multiple = false) 
         if (data.entity.actorCategories) {
           yield call(createConnectionsSaga, {
             entityId: entityCreated.data.id,
-            path: DB.ACTOR_CATEGORIES,
+            path: API.ACTOR_CATEGORIES,
             updates: data.entity.actorCategories,
             keyPair: ['category_id', 'actor_id'],
           });

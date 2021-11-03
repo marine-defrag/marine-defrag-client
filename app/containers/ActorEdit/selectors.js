@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 import {
   selectEntity,
@@ -23,15 +23,15 @@ export const selectDomain = createSelector(
 );
 
 export const selectViewEntity = createSelector(
-  (state, id) => selectEntity(state, { path: DB.ACTORS, id }),
-  (state) => selectEntities(state, DB.USERS),
+  (state, id) => selectEntity(state, { path: API.ACTORS, id }),
+  (state) => selectEntities(state, API.USERS),
   (entity, users) => entitySetUser(entity, users)
 );
 
 export const selectTaxonomies = createSelector(
   (state, id) => id,
   selectTaxonomiesSorted,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   selectActorCategoriesByActor,
   (
     id,
@@ -50,7 +50,7 @@ export const selectTaxonomies = createSelector(
 
 export const selectConnectedTaxonomies = createSelector(
   (state) => selectTaxonomiesSorted(state),
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (taxonomies, categories) => prepareTaxonomiesMultiple(
     taxonomies,
     categories,

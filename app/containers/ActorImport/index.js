@@ -13,7 +13,7 @@ import { actions as formActions } from 'react-redux-form/immutable';
 import { fromJS } from 'immutable';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, USER_ROLES, DB } from 'themes/config';
+import { ROUTES, USER_ROLES, API } from 'themes/config';
 import { getImportFields, getColumnAttribute } from 'utils/import';
 
 import {
@@ -173,7 +173,7 @@ const mapStateToProps = (state) => ({
   success: selectSuccess(state),
   dataReady: selectReady(state, {
     path: [
-      DB.USER_ROLES,
+      API.USER_ROLES,
     ],
   }),
   authReady: selectReadyForAuthCheck(state),
@@ -182,7 +182,7 @@ const mapStateToProps = (state) => ({
 function mapDispatchToProps(dispatch) {
   return {
     loadEntitiesIfNeeded: () => {
-      dispatch(loadEntitiesIfNeeded(DB.USER_ROLES));
+      dispatch(loadEntitiesIfNeeded(API.USER_ROLES));
     },
     resetProgress: () => {
       dispatch(resetProgress());

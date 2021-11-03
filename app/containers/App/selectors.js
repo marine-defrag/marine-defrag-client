@@ -16,7 +16,7 @@ import asArray from 'utils/as-array';
 import asList from 'utils/as-list';
 import { sortEntities } from 'utils/sort';
 
-import { USER_ROLES, DB, ROUTES } from 'themes/config';
+import { USER_ROLES, API, ROUTES } from 'themes/config';
 
 import {
   filterEntitiesByAttributes,
@@ -83,7 +83,7 @@ export const selectSessionUserRoles = createSelector(
   selectSessionUserId,
   (state, isSignedIn, sessionUserId) => isSignedIn && sessionUserId
     ? selectEntitiesWhere(state, {
-      path: DB.USER_ROLES,
+      path: API.USER_ROLES,
       where: { user_id: sessionUserId },
     })
       .map((role) => role.getIn(['attributes', 'role_id']))
@@ -218,7 +218,7 @@ export const selectRequestedAt = createSelector(
 export const selectReady = (state, { path }) => reduce(asArray(path),
   (areReady, readyPath) => areReady && (
     !!state.getIn(['global', 'ready', readyPath])
-      || Object.values(DB).indexOf(readyPath) === -1
+      || Object.values(API).indexOf(readyPath) === -1
   ),
   true);
 
@@ -312,11 +312,11 @@ export const selectEntities = createSelector(
 );
 
 export const selectActortypes = createSelector(
-  (state) => selectEntities(state, DB.ACTORTYPES),
+  (state) => selectEntities(state, API.ACTORTYPES),
   (entities) => entities
 );
 export const selectActiontypes = createSelector(
-  (state) => selectEntities(state, DB.ACTIONTYPES),
+  (state) => selectEntities(state, API.ACTIONTYPES),
   (entities) => entities
 );
 // use for testing single actortype configuration
@@ -354,7 +354,7 @@ export const selectActiveActiontypes = createSelector(
 );
 
 export const selectActortypeActors = createSelector(
-  (state) => selectEntities(state, DB.ACTORS),
+  (state) => selectEntities(state, API.ACTORS),
   selectActortypeQuery,
   (entities, actortype) => {
     if (entities && actortype && actortype !== 'all') {
@@ -369,7 +369,7 @@ export const selectActortypeActors = createSelector(
   }
 );
 export const selectActiontypeActions = createSelector(
-  (state) => selectEntities(state, DB.ACTIONS),
+  (state) => selectEntities(state, API.ACTIONS),
   selectActiontypeQuery,
   (entities, type) => {
     if (entities && type && type !== 'all') {
@@ -385,10 +385,10 @@ export const selectActiontypeActions = createSelector(
 );
 // returns actions not associated or associated with current actortype
 export const selectActortypeActions = createSelector(
-  (state) => selectEntities(state, DB.ACTIONS),
+  (state) => selectEntities(state, API.ACTIONS),
   selectActortypeQuery,
   selectActortypeActors,
-  (state) => selectEntities(state, DB.ACTOR_ACTIONS), // active
+  (state) => selectEntities(state, API.ACTOR_ACTIONS), // active
   selectIsUserManager,
   (entities, actortype, actors, actorActions, isManager) => {
     if (entities && actors && actorActions) {
@@ -417,10 +417,10 @@ export const selectActortypeActions = createSelector(
   }
 );
 export const selectActiontypeActors = createSelector(
-  (state) => selectEntities(state, DB.ACTORS),
+  (state) => selectEntities(state, API.ACTORS),
   selectActiontypeQuery,
   selectActiontypeActions,
-  (state) => selectEntities(state, DB.ACTOR_ACTIONS), // active
+  (state) => selectEntities(state, API.ACTOR_ACTIONS), // active
   selectIsUserManager,
   (entities, actiontype, actions, actorActions, isManager) => {
     if (entities && actions && actorActions) {
@@ -468,9 +468,9 @@ export const selectActiontypeEntitiesAll = createSelector(
 );
 
 export const selectTaxonomies = createSelector(
-  (state) => selectEntities(state, DB.TAXONOMIES),
-  (state) => selectEntities(state, DB.ACTORTYPE_TAXONOMIES),
-  (state) => selectEntities(state, DB.ACTIONTYPE_TAXONOMIES),
+  (state) => selectEntities(state, API.TAXONOMIES),
+  (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
+  (state) => selectEntities(state, API.ACTIONTYPE_TAXONOMIES),
   (taxonomies, actortypeTaxonomies, actiontypeTaxonomies) => taxonomies
     && actortypeTaxonomies
     && actiontypeTaxonomies
@@ -542,8 +542,8 @@ export const selectTaxonomies = createSelector(
 );
 
 export const selectActortypeTaxonomies = createSelector(
-  (state) => selectEntities(state, DB.TAXONOMIES),
-  (state) => selectEntities(state, DB.ACTORTYPE_TAXONOMIES),
+  (state) => selectEntities(state, API.TAXONOMIES),
+  (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
   selectActortypeQuery,
   (taxonomies, actortypeTaxonomies, actortype) => taxonomies
     && actortypeTaxonomies
@@ -590,8 +590,8 @@ export const selectActortypeTaxonomies = createSelector(
     )
 );
 export const selectActiontypeTaxonomies = createSelector(
-  (state) => selectEntities(state, DB.TAXONOMIES),
-  (state) => selectEntities(state, DB.ACTIONTYPE_TAXONOMIES),
+  (state) => selectEntities(state, API.TAXONOMIES),
+  (state) => selectEntities(state, API.ACTIONTYPE_TAXONOMIES),
   selectActiontypeQuery,
   (taxonomies, actiontypeTaxonomies, actiontype) => taxonomies
     && actiontypeTaxonomies
@@ -742,7 +742,7 @@ export const selectActionsSearchQuery = createSelector(
 );
 
 export const selectUserConnections = createSelector(
-  (state) => selectEntities(state, DB.ROLES),
+  (state) => selectEntities(state, API.ROLES),
   (roles) => Map().set('roles', roles)
 );
 
@@ -761,7 +761,7 @@ export const selectActionConnections = createSelector(
 export const selectActionTaxonomies = createSelector(
   (state, args) => args ? args.includeParents : true,
   (state) => selectActiontypeTaxonomiesSorted(state),
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (includeParents, taxonomies, categories) => prepareTaxonomies(
     taxonomies,
     categories,
@@ -773,7 +773,7 @@ export const selectActionTaxonomies = createSelector(
 export const selectActorTaxonomies = createSelector(
   (state, args) => args ? args.includeParents : true,
   (state) => selectActiontypeTaxonomiesSorted(state),
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (includeParents, taxonomies, categories) => prepareTaxonomies(
     taxonomies,
     categories,
@@ -782,8 +782,8 @@ export const selectActorTaxonomies = createSelector(
   )
 );
 export const selectAllTaxonomiesWithCategories = createSelector(
-  (state) => selectEntities(state, DB.TAXONOMIES),
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.TAXONOMIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (taxonomies, categories) => sortEntities(
     taxonomies,
     'asc',
@@ -805,7 +805,7 @@ export const selectAllTaxonomiesWithCategories = createSelector(
 
 export const selectUserTaxonomies = createSelector(
   (state) => selectTaxonomiesSorted(state),
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (taxonomies, categories) => prepareTaxonomies(
     taxonomies,
     categories,
@@ -814,7 +814,7 @@ export const selectUserTaxonomies = createSelector(
 );
 
 export const selectActorCategoriesByActor = createSelector(
-  (state) => selectEntities(state, DB.ACTOR_CATEGORIES),
+  (state) => selectEntities(state, API.ACTOR_CATEGORIES),
   (entities) => entities
     && entities.groupBy(
       (entity) => entity.getIn(['attributes', 'actor_id'])
@@ -825,7 +825,7 @@ export const selectActorCategoriesByActor = createSelector(
     ),
 );
 export const selectActorCategoriesByCategory = createSelector(
-  (state) => selectEntities(state, DB.ACTOR_CATEGORIES),
+  (state) => selectEntities(state, API.ACTOR_CATEGORIES),
   (entities) => entities
     && entities.groupBy(
       (entity) => entity.getIn(['attributes', 'category_id'])
@@ -836,7 +836,7 @@ export const selectActorCategoriesByCategory = createSelector(
     ),
 );
 export const selectActorActionsByActor = createSelector(
-  (state) => selectEntities(state, DB.ACTOR_ACTIONS),
+  (state) => selectEntities(state, API.ACTOR_ACTIONS),
   (entities) => entities
     && entities.groupBy(
       (entity) => entity.getIn(['attributes', 'actor_id'])
@@ -847,7 +847,7 @@ export const selectActorActionsByActor = createSelector(
     ),
 );
 export const selectActorActionsByAction = createSelector(
-  (state) => selectEntities(state, DB.ACTOR_ACTIONS),
+  (state) => selectEntities(state, API.ACTOR_ACTIONS),
   (entities) => entities
     && entities.groupBy(
       (entity) => entity.getIn(['attributes', 'action_id'])
@@ -859,7 +859,7 @@ export const selectActorActionsByAction = createSelector(
 );
 
 export const selectActionCategoriesByAction = createSelector(
-  (state) => selectEntities(state, DB.ACTION_CATEGORIES),
+  (state) => selectEntities(state, API.ACTION_CATEGORIES),
   (entities) => entities
     && entities.groupBy(
       (entity) => entity.getIn(['attributes', 'action_id'])
@@ -870,7 +870,7 @@ export const selectActionCategoriesByAction = createSelector(
     ),
 );
 export const selectActionCategoriesByCategory = createSelector(
-  (state) => selectEntities(state, DB.ACTION_CATEGORIES),
+  (state) => selectEntities(state, API.ACTION_CATEGORIES),
   (entities) => entities
     && entities.groupBy(
       (entity) => entity.getIn(['attributes', 'category_id'])
@@ -881,7 +881,7 @@ export const selectActionCategoriesByCategory = createSelector(
     ),
 );
 export const selectUserCategoriesByUser = createSelector(
-  (state) => selectEntities(state, DB.USER_CATEGORIES),
+  (state) => selectEntities(state, API.USER_CATEGORIES),
   (entities) => entities
     && entities.groupBy(
       (entity) => entity.getIn(['attributes', 'user_id'])
@@ -892,7 +892,7 @@ export const selectUserCategoriesByUser = createSelector(
     ),
 );
 export const selectUserCategoriesByCategory = createSelector(
-  (state) => selectEntities(state, DB.USER_CATEGORIES),
+  (state) => selectEntities(state, API.USER_CATEGORIES),
   (entities) => entities
     && entities.groupBy(
       (entity) => entity.getIn(['attributes', 'category_id'])
@@ -924,7 +924,7 @@ export const selectActionsCategorised = createSelector(
 
 // TODO: likely obsolete
 export const selectViewActorActortypeId = createSelector(
-  (state, id) => selectEntity(state, { path: DB.ACTORS, id }),
+  (state, id) => selectEntity(state, { path: API.ACTORS, id }),
   selectCurrentPathname,
   (entity, pathname) => {
     if (

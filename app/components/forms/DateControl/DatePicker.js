@@ -5,7 +5,7 @@ import { format, parse } from 'date-fns';
 
 import validateDateFormat from 'components/forms/validators/validate-date-format';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
-import { DATE_FORMAT, DB_DATE_FORMAT } from 'themes/config';
+import { DATE_FORMAT, API_DATE_FORMAT } from 'themes/config';
 
 import InputComponent from './InputComponent';
 
@@ -18,9 +18,9 @@ class DatePicker extends React.PureComponent { // eslint-disable-line react/pref
 
     // format from db format to input format if valid
     const formattedDay = this.props.value
-      && validateDateFormat(this.props.value, DB_DATE_FORMAT)
+      && validateDateFormat(this.props.value, API_DATE_FORMAT)
       ? format(
-        parse(this.props.value, DB_DATE_FORMAT, new Date()),
+        parse(this.props.value, API_DATE_FORMAT, new Date()),
         DATE_FORMAT,
       )
       : this.props.value;
@@ -39,10 +39,10 @@ class DatePicker extends React.PureComponent { // eslint-disable-line react/pref
           }}
           value={formattedDay}
           onDayChange={(valueDate) => {
-            // format to DB format
+            // format to API format
             if (valueDate) {
-              const formattedDB = valueDate && format(valueDate, DB_DATE_FORMAT);
-              return formattedDB && this.props.onChange(formattedDB);
+              const formattedAPI = valueDate && format(valueDate, API_DATE_FORMAT);
+              return formattedAPI && this.props.onChange(formattedAPI);
             }
             return null;
           }}
@@ -55,11 +55,11 @@ class DatePicker extends React.PureComponent { // eslint-disable-line react/pref
                 && validateDateFormat(value, DATE_FORMAT)
               ) {
                 // parse from input format to db format
-                const formattedDB = format(
+                const formattedAPI = format(
                   parse(value, DATE_FORMAT, new Date()),
-                  DB_DATE_FORMAT,
+                  API_DATE_FORMAT,
                 );
-                this.props.onChange(formattedDB);
+                this.props.onChange(formattedAPI);
               } else {
                 this.props.onChange(value);
               }

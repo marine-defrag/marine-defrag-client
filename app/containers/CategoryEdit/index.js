@@ -42,7 +42,7 @@ import { hasNewError } from 'utils/entity-form';
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, USER_ROLES, DB } from 'themes/config';
+import { ROUTES, USER_ROLES, API } from 'themes/config';
 import appMessages from 'containers/App/messages';
 
 import {
@@ -541,7 +541,7 @@ function mapDispatchToProps(dispatch, props) {
     },
     handleDelete: (taxonomyId) => {
       dispatch(deleteEntity({
-        path: DB.CATEGORIES,
+        path: API.CATEGORIES,
         id: props.params.id,
         redirect: `${ROUTES.TAXONOMIES}/${taxonomyId}`,
       }));

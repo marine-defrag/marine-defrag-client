@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 import {
   selectEntitiesSearchQuery,
@@ -17,7 +17,7 @@ import { CONFIG } from './constants';
 // 3. selectUsers
 export const selectPages = createSelector(
   (state, locationQuery) => selectEntitiesSearchQuery(state, {
-    path: DB.PAGES,
+    path: API.PAGES,
     searchAttributes: CONFIG.search || ['title'],
     locationQuery,
   }),

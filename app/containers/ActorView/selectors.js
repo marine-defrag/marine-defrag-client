@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 import {
   selectReady,
@@ -23,8 +23,8 @@ import {
 import { DEPENDENCIES } from './constants';
 
 export const selectViewEntity = createSelector(
-  (state, id) => selectEntity(state, { path: DB.ACTORS, id }),
-  (state) => selectEntities(state, DB.USERS),
+  (state, id) => selectEntity(state, { path: API.ACTORS, id }),
+  (state) => selectEntities(state, API.USERS),
   (entity, users) => entitySetUser(entity, users)
 );
 
@@ -32,8 +32,8 @@ export const selectViewEntity = createSelector(
 export const selectTaxonomies = createSelector(
   (state, id) => id,
   (state) => selectTaxonomiesSorted(state),
-  (state) => selectEntities(state, DB.CATEGORIES),
-  (state) => selectEntities(state, DB.ACTOR_CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
+  (state) => selectEntities(state, API.ACTOR_CATEGORIES),
   (id, taxonomies, categories, associations) => prepareTaxonomiesIsAssociated(
     taxonomies,
     categories,
@@ -72,7 +72,7 @@ export const selectActions = createSelector(
   (state) => selectActionConnections(state),
   selectActorActionsByAction,
   selectActionCategoriesByAction,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (
     ready,
     actions,

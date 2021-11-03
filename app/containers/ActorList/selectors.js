@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 import {
   selectEntities,
   selectActorsSearchQuery,
@@ -44,7 +44,7 @@ const selectActorsWithCategories = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActorsQ,
   (state) => selectActorCategoriesByActor(state),
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (ready, entities, associationsGrouped, categories) => {
     if (ready) {
       return entitiesSetCategoryIds(
@@ -89,7 +89,7 @@ const selectActorsByActortype = createSelector(
 );
 const selectActorsWithout = createSelector(
   selectActorsByActortype,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   selectWithoutQuery,
   (entities, categories, query) => query
     ? filterEntitiesWithoutAssociation(entities, categories, query)
@@ -132,7 +132,7 @@ export const selectActors = createSelector(
 
 export const selectConnectedTaxonomies = createSelector(
   (state) => selectActortypeTaxonomiesSorted(state),
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (taxonomies, categories) => prepareTaxonomiesMultiple(
     taxonomies,
     categories,

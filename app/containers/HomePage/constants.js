@@ -1,5 +1,5 @@
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 export const DEPENDENCIES = [
-  DB.ACTORTYPES,
+  API.ACTORTYPES,
 ];

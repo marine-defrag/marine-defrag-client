@@ -1,23 +1,23 @@
 import {
-  DB, USER_ROLES, PUBLISH_STATUSES, ACCEPTED_STATUSES, ROUTES,
+  API, USER_ROLES, PUBLISH_STATUSES, ACCEPTED_STATUSES, ROUTES,
 } from 'themes/config';
 
 export const DEPENDENCIES = [
-  DB.USERS,
-  DB.USER_ROLES,
-  DB.CATEGORIES,
-  DB.TAXONOMIES,
-  DB.ACTIONS,
-  DB.ACTORS,
-  DB.ACTORTYPES,
-  DB.ACTORTYPE_TAXONOMIES,
-  DB.ACTOR_ACTIONS,
-  DB.ACTOR_CATEGORIES,
-  DB.ACTION_CATEGORIES,
+  API.USERS,
+  API.USER_ROLES,
+  API.CATEGORIES,
+  API.TAXONOMIES,
+  API.ACTIONS,
+  API.ACTORS,
+  API.ACTORTYPES,
+  API.ACTORTYPE_TAXONOMIES,
+  API.ACTOR_ACTIONS,
+  API.ACTOR_CATEGORIES,
+  API.ACTION_CATEGORIES,
 ];
 
 export const CONFIG = {
-  serverPath: DB.ACTORS,
+  serverPath: API.ACTORS,
   clientPath: ROUTES.ACTORS,
   search: ['reference', 'title', 'description', 'response'],
   sorting: [
@@ -50,7 +50,7 @@ export const CONFIG = {
   taxonomies: { // filter by each category
     query: 'cat',
     search: true,
-    connectPath: DB.ACTOR_CATEGORIES,
+    connectPath: API.ACTOR_CATEGORIES,
     key: 'category_id',
     ownKey: 'actor_id',
     defaultGroupAttribute: 'groups_actors_default', // used when no actortype is set
@@ -69,10 +69,10 @@ export const CONFIG = {
       {
         search: true,
         message: 'entities.actions.plural',
-        path: DB.ACTIONS, // filter by actor connection
+        path: API.ACTIONS, // filter by actor connection
         clientPath: ROUTES.ACTIONS, // filter by actor connection
         key: 'action_id',
-        connectPath: DB.ACTOR_ACTIONS, // filter by actor connection
+        connectPath: API.ACTOR_ACTIONS, // filter by actor connection
         ownKey: 'actor_id',
         editForActortypes: true,
         actortypeFilter: 'has_actions',

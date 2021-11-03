@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 import {
   selectEntity,
@@ -20,10 +20,10 @@ export const selectDomain = createSelector(
 );
 
 export const selectViewEntity = createSelector(
-  (state, id) => selectEntity(state, { path: DB.USERS, id }),
-  (state) => selectEntities(state, DB.USERS),
-  (state) => selectEntities(state, DB.USER_ROLES),
-  (state) => selectEntities(state, DB.ROLES),
+  (state, id) => selectEntity(state, { path: API.USERS, id }),
+  (state) => selectEntities(state, API.USERS),
+  (state) => selectEntities(state, API.USER_ROLES),
+  (state) => selectEntities(state, API.ROLES),
   (entity, users, userRoles, roles) => entity && users && userRoles && roles && entitySetUser(entity, users).set(
     'roles',
     userRoles.filter(
@@ -45,7 +45,7 @@ export const selectViewEntity = createSelector(
 export const selectTaxonomies = createSelector(
   (state, id) => id,
   selectTaxonomiesSorted,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   selectUserCategoriesByUser,
   (id, taxonomies, categories, associations) => prepareTaxonomiesAssociated(
     taxonomies,
@@ -58,8 +58,8 @@ export const selectTaxonomies = createSelector(
 
 export const selectRoles = createSelector(
   (state, id) => id,
-  (state) => selectEntities(state, DB.ROLES),
-  (state) => selectEntities(state, DB.USER_ROLES),
+  (state) => selectEntities(state, API.ROLES),
+  (state) => selectEntities(state, API.USER_ROLES),
   (id, roles, userRoles) => roles && roles.map(
     (role) => {
       const filteredAssociations = userRoles.filter(

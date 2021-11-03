@@ -1,14 +1,14 @@
 import {
-  DB, ROUTES, USER_ROLES, PUBLISH_STATUSES,
+  API, ROUTES, USER_ROLES, PUBLISH_STATUSES,
 } from 'themes/config';
 // specify the filter and query  options
 export const DEPENDENCIES = [
-  DB.PAGES,
-  DB.USER_ROLES,
+  API.PAGES,
+  API.USER_ROLES,
 ];
 
 export const CONFIG = {
-  serverPath: DB.PAGES,
+  serverPath: API.PAGES,
   clientPath: ROUTES.PAGES,
   search: ['title'],
   sorting: [

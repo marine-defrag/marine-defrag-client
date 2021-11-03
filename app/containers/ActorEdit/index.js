@@ -34,7 +34,7 @@ import { getMetaField } from 'utils/fields';
 import { qe } from 'utils/quasi-equals';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES, ROUTES, DB } from 'themes/config';
+import { USER_ROLES, ROUTES, API } from 'themes/config';
 import appMessages from 'containers/App/messages';
 
 import {
@@ -419,7 +419,7 @@ function mapDispatchToProps(dispatch, props) {
     },
     handleDelete: () => {
       dispatch(deleteEntity({
-        path: DB.ACTORS,
+        path: API.ACTORS,
         id: props.params.id,
       }));
     },

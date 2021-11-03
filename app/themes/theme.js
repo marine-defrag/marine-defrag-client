@@ -126,7 +126,7 @@ theme.palette = {
     '#182635', // 11: Provenance
   ],
   taxonomiesHover: [
-    '#DBDCDD', // 0: default/fallback
+    '#APIDCDD', // 0: default/fallback
     '#622E79', // 1: Human Rights Body
     '#622E79', // 2: UN cycle
     '#65C99B', // 3: Human right
@@ -142,7 +142,7 @@ theme.palette = {
 
   // bg inactive, bg hover, icon
   smartInactive: [
-    '#DBE1E1', // SMART inactive - NOT ACCESSIBLE
+    '#APIE1E1', // SMART inactive - NOT ACCESSIBLE
     '#656F75', // SMART inactive hover
     '#9BABAB', // SMART icon
   ],

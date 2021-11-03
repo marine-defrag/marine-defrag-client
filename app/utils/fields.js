@@ -2,7 +2,7 @@ import { truncateText } from 'utils/string';
 import { sortEntities, sortCategories } from 'utils/sort';
 import { filterTaxonomies, getAcceptanceStatus } from 'utils/entities';
 import {
-  USER_ROLES, TEXT_TRUNCATE, ROUTES, DB,
+  USER_ROLES, TEXT_TRUNCATE, ROUTES, API,
 } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
@@ -255,7 +255,7 @@ export const getActorConnectionField = (
   connections,
   connectionOptions: ['actions'],
   entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
-  entityPath: DB.ACTORS,
+  entityPath: API.ACTORS,
   onEntityClick,
   entityIcon: (entity) => {
     if (!hasResponse) return null;
@@ -269,7 +269,7 @@ export const getActionConnectionField = (entities, taxonomies, connections, onEn
   connections,
   connectionOptions: ['actors'],
   entityType: 'actions',
-  entityPath: DB.ACTIONS,
+  entityPath: API.ACTIONS,
   onEntityClick,
 });
 
@@ -316,7 +316,7 @@ export const getActorConnectionGroupsField = (
   connections,
   connectionOptions: ['actions'],
   entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
-  entityPath: DB.ACTORS,
+  entityPath: API.ACTORS,
   onEntityClick,
   entityIcon: (entity) => {
     if (!hasResponse) return null;
@@ -331,7 +331,7 @@ export const getActionConnectionGroupsField = (entityGroups, groupedBy, taxonomi
   connections,
   connectionOptions: ['actors'],
   entityType: 'actions',
-  entityPath: DB.ACTIONS,
+  entityPath: API.ACTIONS,
   onEntityClick,
 });
 

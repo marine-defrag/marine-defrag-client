@@ -4,14 +4,14 @@ import {
 import { LOCATION_CHANGE } from 'react-router-redux';
 
 import { saveEntity } from 'containers/App/actions';
-import { ROUTES, DB } from 'themes/config';
+import { ROUTES, API } from 'themes/config';
 
 import { SAVE } from './constants';
 
 
 export function* save({ data }) {
   yield put(saveEntity({
-    path: DB.USERS,
+    path: API.USERS,
     entity: data,
     redirect: `${ROUTES.USERS}/${data.id}`,
   }));

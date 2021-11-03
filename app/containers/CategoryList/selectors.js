@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 import {
   selectEntities,
@@ -278,7 +278,7 @@ const selectCategoryCountGroups = createSelector(
   selectTaxonomy,
   selectActors,
   selectActions,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   selectActiveActortypes,
   (taxonomy, actors, actions, categories, actortypes) => {
     if (taxonomy && actors && actions && categories && actortypes) {

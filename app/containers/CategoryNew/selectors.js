@@ -10,7 +10,7 @@ import {
   selectActionsCategorised,
 } from 'containers/App/selectors';
 
-import { USER_ROLES, DB } from 'themes/config';
+import { USER_ROLES, API } from 'themes/config';
 
 import {
   usersByRole,
@@ -25,8 +25,8 @@ export const selectDomain = createSelector(
 
 
 export const selectParentOptions = createSelector(
-  (state, id) => selectEntity(state, { path: DB.TAXONOMIES, id }),
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state, id) => selectEntity(state, { path: API.TAXONOMIES, id }),
+  (state) => selectEntities(state, API.CATEGORIES),
   selectTaxonomies,
   (taxonomy, categories, taxonomies) => {
     if (taxonomy && taxonomies && categories) {
@@ -52,7 +52,7 @@ export const selectParentOptions = createSelector(
 );
 
 export const selectParentTaxonomy = createSelector(
-  (state, id) => selectEntity(state, { path: DB.TAXONOMIES, id }),
+  (state, id) => selectEntity(state, { path: API.TAXONOMIES, id }),
   selectTaxonomies,
   (taxonomy, taxonomies) => {
     if (taxonomy && taxonomies) {
@@ -70,8 +70,8 @@ export const selectParentTaxonomy = createSelector(
 
 // all users of role manager
 export const selectUsers = createSelector(
-  (state) => selectEntities(state, DB.USERS),
-  (state) => selectEntities(state, DB.USER_ROLES),
+  (state) => selectEntities(state, API.USERS),
+  (state) => selectEntities(state, API.USER_ROLES),
   (entities, associations) => usersByRole(
     entities,
     associations,
@@ -81,7 +81,7 @@ export const selectUsers = createSelector(
 
 export const selectConnectedTaxonomies = createSelector(
   (state) => selectActortypeTaxonomiesSorted(state),
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (taxonomies, categories) => prepareTaxonomiesMultiple(
     taxonomies,
     categories,
@@ -89,7 +89,7 @@ export const selectConnectedTaxonomies = createSelector(
   )
 );
 const selectIsParentTaxonomy = createSelector(
-  (state, id) => selectEntity(state, { path: DB.TAXONOMIES, id }),
+  (state, id) => selectEntity(state, { path: API.TAXONOMIES, id }),
   selectTaxonomies,
   (taxonomy, taxonomies) => {
     if (taxonomy && taxonomies) {
@@ -107,7 +107,7 @@ const selectIsParentTaxonomy = createSelector(
 
 export const selectActorsByActortype = createSelector(
   (state, id) => id, // taxonomy id
-  (state) => selectEntities(state, DB.ACTORTYPE_TAXONOMIES),
+  (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
   (state) => selectActorsCategorised(state),
   selectIsParentTaxonomy,
   (id, actortypeTaxonomies, entities, isParent) => {

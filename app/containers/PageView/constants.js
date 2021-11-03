@@ -1,7 +1,7 @@
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 export const DEPENDENCIES = [
-  DB.PAGES,
-  DB.USERS,
-  DB.USER_ROLES,
+  API.PAGES,
+  API.USERS,
+  API.USER_ROLES,
 ];

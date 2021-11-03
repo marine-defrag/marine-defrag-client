@@ -21,7 +21,7 @@ import {
   USER_ROLES,
   DATE_FORMAT,
   ACCEPTED_STATUSES,
-  DB,
+  API,
 } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
@@ -105,7 +105,7 @@ export const renderActionControl = (entities, taxonomies, onCreateOption, contex
     selectAll: true,
     tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
     onCreate: onCreateOption
-      ? () => onCreateOption({ path: DB.ACTIONS })
+      ? () => onCreateOption({ path: API.ACTIONS })
       : null,
   }
   : null;
@@ -128,7 +128,7 @@ export const renderActorControl = (
     selectAll: true,
     tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
     onCreate: onCreateOption
-      ? () => onCreateOption({ path: DB.ACTORS })
+      ? () => onCreateOption({ path: API.ACTORS })
       : null,
   }
   : null;
@@ -153,7 +153,7 @@ export const renderActorsByActortypeControl = (
       tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
       onCreate: onCreateOption
         ? () => onCreateOption({
-          path: DB.ACTORS,
+          path: API.ACTORS,
           attributes: { actortype_id: actortypeid },
         })
         : null,
@@ -179,7 +179,7 @@ export const renderTaxonomyControl = (
       options: entityOptions(taxonomy.get('categories'), false),
       onCreate: onCreateOption
         ? () => onCreateOption({
-          path: DB.CATEGORIES,
+          path: API.CATEGORIES,
           attributes: { taxonomy_id: taxonomy.get('id') },
         })
         : null,

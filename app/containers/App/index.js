@@ -17,7 +17,7 @@ import Header from 'components/Header';
 import EntityNew from 'containers/EntityNew';
 
 import { sortEntities } from 'utils/sort';
-import { ROUTES, DB } from 'themes/config';
+import { ROUTES, API } from 'themes/config';
 
 import {
   selectIsSignedIn,
@@ -274,7 +274,7 @@ const mapStateToProps = (state, props) => ({
   isUserSignedIn: selectIsSignedIn(state),
   user: selectSessionUserAttributes(state),
   pages: selectEntitiesWhere(state, {
-    path: DB.PAGES,
+    path: API.PAGES,
     where: { draft: false },
   }),
   newEntityModal: selectNewEntityModal(state),

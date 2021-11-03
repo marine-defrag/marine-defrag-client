@@ -8,7 +8,7 @@
  * Follow this format:
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 export const REDIRECT_IF_NOT_PERMITTED = 'impactoss/App/REDIRECT_IF_NOT_PERMITTED';
 export const LOAD_ENTITIES_IF_NEEDED = 'impactoss/App/LOAD_ENTITIES_IF_NEEDED';
@@ -79,9 +79,9 @@ export const CONTENT_PAGE = 'page';
 export const CONTENT_MODAL = 'modal';
 
 export const DEPENDENCIES = [
-  DB.USER_ROLES,
-  DB.PAGES,
-  DB.ACTORTYPES,
+  API.USER_ROLES,
+  API.PAGES,
+  API.ACTORTYPES,
 ];
 
 export const SORT_ORDER_OPTIONS = [

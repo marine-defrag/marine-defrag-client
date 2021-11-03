@@ -4,17 +4,17 @@
  *
  */
 import { fromJS } from 'immutable';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 export const SAVE = 'impactoss/ActionNew/SAVE';
 
 export const DEPENDENCIES = [
-  DB.USER_ROLES,
-  DB.CATEGORIES,
-  DB.TAXONOMIES,
-  DB.ACTORS,
-  DB.ACTORTYPES,
-  DB.ACTORTYPE_TAXONOMIES,
-  DB.ACTOR_CATEGORIES,
+  API.USER_ROLES,
+  API.CATEGORIES,
+  API.TAXONOMIES,
+  API.ACTORS,
+  API.ACTORTYPES,
+  API.ACTORTYPE_TAXONOMIES,
+  API.ACTOR_CATEGORIES,
 ];
 
 export const FORM_INITIAL = fromJS({

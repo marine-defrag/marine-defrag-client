@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 import {
   selectReady,
@@ -32,7 +32,7 @@ import { sortEntities, sortCategories } from 'utils/sort';
 import { DEPENDENCIES } from './constants';
 
 export const selectCategory = createSelector(
-  (state, id) => selectEntity(state, { path: DB.CATEGORIES, id }),
+  (state, id) => selectEntity(state, { path: API.CATEGORIES, id }),
   (category) => category
 );
 export const selectTaxonomy = createSelector(
@@ -45,9 +45,9 @@ export const selectTaxonomy = createSelector(
 
 export const selectViewEntity = createSelector(
   selectCategory,
-  (state) => selectEntities(state, DB.USERS),
+  (state) => selectEntities(state, API.USERS),
   selectTaxonomiesSorted,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (entity, users, taxonomies, categories) => entity
     && entitySetSingles(
       entity, [
@@ -99,7 +99,7 @@ export const selectParentTaxonomy = createSelector(
 export const selectChildTaxonomies = createSelector(
   selectCategory,
   selectTaxonomiesSorted,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (entity, taxonomies, categories) => {
     if (entity && taxonomies) {
       const taxonomy = taxonomies.find(
@@ -170,7 +170,7 @@ export const selectActors = createSelector(
   selectActorConnections,
   selectActorActionsByActor,
   selectActorCategoriesByActor,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (state) => selectActortypes(state),
   (
     ready,
@@ -256,7 +256,7 @@ export const selectChildActors = createSelector(
   selectActorConnections,
   selectActorActionsByActor,
   selectActorCategoriesByActor,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (
     actorsByTaxCat,
     connections,
@@ -320,7 +320,7 @@ export const selectActions = createSelector(
   selectActionConnections,
   selectActorActionsByAction,
   selectActionCategoriesByAction,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (
     ready,
     actions,
@@ -415,7 +415,7 @@ export const selectChildActions = createSelector(
   selectActionConnections,
   selectActorActionsByAction,
   selectActionCategoriesByAction,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (
     actionsByTaxCat,
     connections,
@@ -449,7 +449,7 @@ export const selectChildActions = createSelector(
 
 export const selectTaxonomiesWithCategories = createSelector(
   selectTaxonomiesSorted,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (taxonomies, categories) => taxonomies.map((tax) => tax.set(
     'categories',
     categories.filter(

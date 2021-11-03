@@ -4,13 +4,13 @@
  *
  */
 import { fromJS } from 'immutable';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 export const SAVE = 'impactoss/PageEdit/SAVE';
 
 export const DEPENDENCIES = [
-  DB.PAGES,
-  DB.USERS,
-  DB.USER_ROLES,
+  API.PAGES,
+  API.USERS,
+  API.USER_ROLES,
 ];
 
 export const FORM_INITIAL = fromJS({

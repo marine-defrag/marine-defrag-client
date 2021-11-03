@@ -1,13 +1,13 @@
-import { DB, ROUTES } from 'themes/config';
+import { API, ROUTES } from 'themes/config';
 
 export const DEPENDENCIES = [
-  DB.PAGES,
-  DB.CATEGORIES,
-  DB.TAXONOMIES,
-  DB.ACTIONS,
-  DB.ACTORS,
-  DB.ACTORTYPE_TAXONOMIES,
-  DB.ACTOR_ACTIONS,
+  API.PAGES,
+  API.CATEGORIES,
+  API.TAXONOMIES,
+  API.ACTIONS,
+  API.ACTORS,
+  API.ACTORTYPE_TAXONOMIES,
+  API.ACTOR_ACTIONS,
 ];
 
 export const UPDATE_QUERY = 'impactoss/Search/UPDATE_QUERY';
@@ -21,7 +21,7 @@ export const CONFIG = {
       group: 'entities',
       targets: [
         {
-          path: DB.ACTIONS,
+          path: API.ACTIONS,
           clientPath: ROUTES.ACTIONS,
           search: ['title', 'description', 'outcome'],
           sorting: [
@@ -44,7 +44,7 @@ export const CONFIG = {
           ],
         },
         {
-          path: DB.ACTORS,
+          path: API.ACTORS,
           clientPath: ROUTES.ACTORS,
           search: ['title', 'description', 'response', 'reference'],
           groupByActortype: true,
@@ -104,7 +104,7 @@ export const CONFIG = {
       group: 'content',
       targets: [
         {
-          path: DB.PAGES,
+          path: API.PAGES,
           clientPath: ROUTES.PAGES,
           search: ['title', 'content', 'menu_title'],
           sorting: [

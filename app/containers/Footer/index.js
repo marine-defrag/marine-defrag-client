@@ -11,7 +11,7 @@ import NormalImg from 'components/Img';
 import Container from 'components/styled/Container';
 import A from 'components/styled/A';
 
-import { ROUTES, FOOTER, DB } from 'themes/config';
+import { ROUTES, FOOTER, API } from 'themes/config';
 
 import messages from './messages';
 
@@ -277,7 +277,7 @@ Footer.contextTypes = {
 function mapDispatchToProps(dispatch) {
   return {
     loadEntitiesIfNeeded: () => {
-      loadEntitiesIfNeeded(DB.PAGES);
+      loadEntitiesIfNeeded(API.PAGES);
       // kick off loading
     },
     onPageLink: (path) => {

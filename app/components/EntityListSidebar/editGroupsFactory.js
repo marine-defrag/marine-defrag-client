@@ -1,7 +1,7 @@
 import { reduce } from 'lodash/collection';
 import { sortEntities } from 'utils/sort';
 import { qe } from 'utils/quasi-equals';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 export const makeEditGroups = (
   config,
@@ -51,7 +51,7 @@ export const makeEditGroups = (
                   ownKey: config.taxonomies.ownKey,
                   active: !!activeEditOption && activeEditOption.optionId === taxonomy.get('id'),
                   create: {
-                    path: DB.CATEGORIES,
+                    path: API.CATEGORIES,
                     attributes: { taxonomy_id: taxonomy.get('id') },
                   },
                 },

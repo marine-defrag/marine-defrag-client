@@ -1,10 +1,10 @@
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 export const DEPENDENCIES = [
-  DB.TAXONOMIES,
-  DB.ACTIONS,
-  DB.ACTORS,
-  DB.ACTORTYPES,
-  DB.ACTORTYPE_TAXONOMIES,
-  DB.ACTOR_ACTIONS,
+  API.TAXONOMIES,
+  API.ACTIONS,
+  API.ACTORS,
+  API.ACTORTYPES,
+  API.ACTORTYPE_TAXONOMIES,
+  API.ACTOR_ACTIONS,
 ];

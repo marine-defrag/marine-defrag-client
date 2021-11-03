@@ -29,7 +29,7 @@ import { scrollToTop } from 'utils/scroll-to-component';
 import { hasNewError } from 'utils/entity-form';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, USER_ROLES, DB } from 'themes/config';
+import { ROUTES, USER_ROLES, API } from 'themes/config';
 
 import {
   loadEntitiesIfNeeded,
@@ -301,7 +301,7 @@ function mapDispatchToProps(dispatch, props) {
     },
     handleDelete: () => {
       dispatch(deleteEntity({
-        path: DB.PAGES,
+        path: API.PAGES,
         id: props.params.id,
       }));
     },

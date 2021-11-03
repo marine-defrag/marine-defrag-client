@@ -29,7 +29,7 @@ import {
 import { selectParentOptions, selectParentTaxonomy } from 'containers/CategoryNew/selectors';
 
 
-import { DB, DEFAULT_ACTIONTYPE } from 'themes/config';
+import { API, DEFAULT_ACTIONTYPE } from 'themes/config';
 import { CONTENT_MODAL } from 'containers/App/constants';
 import appMessages from 'containers/App/messages';
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
@@ -99,11 +99,11 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
     let hasResponse;
     let actortypeSpecified;
     let icon = path;
-    if (path === DB.CATEGORIES && taxonomy && taxonomy.get('attributes')) {
+    if (path === API.CATEGORIES && taxonomy && taxonomy.get('attributes')) {
       pageTitle = intl.formatMessage(messages[path].pageTitleTaxonomy, {
         taxonomy: this.getTaxTitle(taxonomy.get('id')),
       });
-    } else if (path === DB.ACTORS) {
+    } else if (path === API.ACTORS) {
       // figure out actortype id from form if not set
       const currentActortypeId = (actortype && actortype.get('id'))
         || actortypeId
@@ -239,23 +239,23 @@ EntityNew.contextTypes = {
 
 const mapStateToProps = (state, { path, attributes }) => ({
   viewDomain: selectDomain(state),
-  taxonomy: path === DB.CATEGORIES && attributes && attributes.get('taxonomy_id')
-    ? selectEntity(state, { path: DB.TAXONOMIES, id: attributes.get('taxonomy_id') })
+  taxonomy: path === API.CATEGORIES && attributes && attributes.get('taxonomy_id')
+    ? selectEntity(state, { path: API.TAXONOMIES, id: attributes.get('taxonomy_id') })
     : null,
-  categoryParentOptions: path === DB.CATEGORIES && attributes && attributes.get('taxonomy_id')
+  categoryParentOptions: path === API.CATEGORIES && attributes && attributes.get('taxonomy_id')
     ? selectParentOptions(state, attributes.get('taxonomy_id'))
     : null,
-  parentTaxonomy: path === DB.CATEGORIES && attributes && attributes.get('taxonomy_id')
+  parentTaxonomy: path === API.CATEGORIES && attributes && attributes.get('taxonomy_id')
     ? selectParentTaxonomy(state, attributes.get('taxonomy_id'))
     : null,
-  actortypeId: path === DB.ACTORS
+  actortypeId: path === API.ACTORS
     ? selectActortypeQuery(state)
     : null,
-  actortypes: path === DB.ACTORS
+  actortypes: path === API.ACTORS
     ? selectActiveActortypes(state)
     : null,
-  actortype: path === DB.ACTORS && attributes && attributes.get('actortype_id')
-    ? selectEntity(state, { path: DB.ACTORTYPES, id: attributes.get('actortype_id') })
+  actortype: path === API.ACTORS && attributes && attributes.get('actortype_id')
+    ? selectEntity(state, { path: API.ACTORTYPES, id: attributes.get('actortype_id') })
     : null,
 });
 
@@ -284,7 +284,7 @@ function mapDispatchToProps(dispatch, props) {
 
       // saveData = saveData.setIn(['attributes', 'taxonomy_id'], taxonomy.get('id'));
 
-      if (props.path === DB.CATEGORIES) {
+      if (props.path === API.CATEGORIES) {
         const formCategoryIds = formData.get('associatedCategory')
           && getCheckedValuesFromOptions(formData.get('associatedCategory'));
         if (List.isList(formCategoryIds) && formCategoryIds.size) {

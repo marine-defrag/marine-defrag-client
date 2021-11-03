@@ -18,7 +18,7 @@ import { qe } from 'utils/quasi-equals';
 import { loadEntitiesIfNeeded, openBookmark } from 'containers/App/actions';
 import { selectReady, selectEntities } from 'containers/App/selectors';
 import { CONTENT_LIST, VIEWPORTS } from 'containers/App/constants';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
 
@@ -139,7 +139,7 @@ const getTypeLabel = (type, formatMessage, short = true) => {
   let label = formatMessage(appMessages.entities[path].plural);
   if (actortype) {
     label = `${label} | ${formatMessage(appMessages[short ? 'actortypes_short' : 'actortypes'][actortype])}`;
-  } else if (path === DB.ACTORS) {
+  } else if (path === API.ACTORS) {
     label = `${label} | ${formatMessage(appMessages.actortypes.all)}`;
   }
   return label;
@@ -382,7 +382,7 @@ const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   bookmarksForSearch: selectBookmarks(state, fromJS(props.location.query)),
   activeType: selectTypeQuery(state),
-  allBookmarks: selectEntities(state, DB.BOOKMARKS),
+  allBookmarks: selectEntities(state, API.BOOKMARKS),
 });
 function mapDispatchToProps(dispatch) {
   return {

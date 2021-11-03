@@ -14,7 +14,7 @@ import { fromJS } from 'immutable';
 
 import { checkResponseError } from 'utils/request';
 import { isSignedIn } from 'utils/api-request';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 import {
   AUTHENTICATE_SENDING,
@@ -46,10 +46,10 @@ const initialState = fromJS({
   },
   /* eslint-disable no-param-reassign */
   // Record the time that entities where requested from the server
-  requested: Object.values(DB).reduce((memo, table) => { memo[table] = null; return memo; }, {}),
+  requested: Object.values(API).reduce((memo, table) => { memo[table] = null; return memo; }, {}),
   // Record the time that entities where returned from the server
-  ready: Object.values(DB).reduce((memo, table) => { memo[table] = null; return memo; }, {}),
-  entities: Object.values(DB).reduce((memo, table) => { memo[table] = {}; return memo; }, {}),
+  ready: Object.values(API).reduce((memo, table) => { memo[table] = null; return memo; }, {}),
+  entities: Object.values(API).reduce((memo, table) => { memo[table] = {}; return memo; }, {}),
   /* eslint-enable no-param-reassign */
   user: {
     attributes: null,

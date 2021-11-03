@@ -1,3 +1,3 @@
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
-export const DEPENDENCIES = [DB.BOOKMARKS];
+export const DEPENDENCIES = [API.BOOKMARKS];

@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 import {
   selectEntities,
@@ -38,7 +38,7 @@ export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActortypeActors,
   selectActorCategoriesByActor,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (ready, actors, associationsGrouped, categories) => {
     if (ready) {
       return new Map().set(
@@ -58,10 +58,10 @@ export const selectConnectedTaxonomies = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   (state) => selectConnections(state),
   (state) => selectActortypeTaxonomiesSorted(state),
-  (state) => selectEntities(state, DB.CATEGORIES),
-  (state) => selectEntities(state, DB.ACTOR_CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
+  (state) => selectEntities(state, API.ACTOR_CATEGORIES),
   (state) => selectActortypes(state),
-  (state) => selectEntities(state, DB.ACTORTYPE_TAXONOMIES),
+  (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
   (
     ready,
     connections,
@@ -74,7 +74,7 @@ export const selectConnectedTaxonomies = createSelector(
     if (!ready) return Map();
     const relationship = {
       tags: 'tags_actors',
-      path: DB.ACTORS,
+      path: API.ACTORS,
       key: 'actor_id',
       associations: categoryActors,
     };
@@ -133,7 +133,7 @@ const selectActionsWithCategories = createSelector(
     locationQuery,
   }),
   selectActionCategoriesByAction,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   (ready, entities, associationsGrouped, categories) => {
     if (ready) {
       return entitiesSetCategoryIds(
@@ -189,7 +189,7 @@ const selectActionsWithActors = createSelector(
 
 const selectActionsWithout = createSelector(
   selectActionsWithActors,
-  (state) => selectEntities(state, DB.CATEGORIES),
+  (state) => selectEntities(state, API.CATEGORIES),
   selectWithoutQuery,
   (entities, categories, query) => query
     ? filterEntitiesWithoutAssociation(entities, categories, query)

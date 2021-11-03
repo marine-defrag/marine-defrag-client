@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { DB } from 'themes/config';
+import { API } from 'themes/config';
 
 import {
   selectEntity,
@@ -11,7 +11,7 @@ import {
 } from 'utils/entities';
 
 export const selectViewEntity = createSelector(
-  (state, id) => selectEntity(state, { path: DB.PAGES, id }),
-  (state) => selectEntities(state, DB.USERS),
+  (state, id) => selectEntity(state, { path: API.PAGES, id }),
+  (state) => selectEntities(state, API.USERS),
   (entity, users) => entitySetUser(entity, users)
 );

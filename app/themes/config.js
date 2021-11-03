@@ -122,7 +122,7 @@ export const KEYS = {
 };
 
 // database date format
-export const DB_DATE_FORMAT = 'yyyy-MM-dd';
+export const API_DATE_FORMAT = 'yyyy-MM-dd';
 
 
 // Map server messages *********************************
@@ -186,7 +186,7 @@ export const ROUTES = {
 };
 
 // Server endpoints for database tables **************************
-export const DB = {
+export const API = {
   ACTIONS: 'measures', // actions/ACTIONS
   ACTION_CATEGORIES: 'measure_categories', // measure_categories
   ACTION_ACTORS: 'measure_actors', // linking actions with their targets
