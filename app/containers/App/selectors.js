@@ -469,76 +469,7 @@ export const selectActiontypeEntitiesAll = createSelector(
 
 export const selectTaxonomies = createSelector(
   (state) => selectEntities(state, API.TAXONOMIES),
-  (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
-  (state) => selectEntities(state, API.ACTIONTYPE_TAXONOMIES),
-  (taxonomies, actortypeTaxonomies, actiontypeTaxonomies) => taxonomies
-    && actortypeTaxonomies
-    && actiontypeTaxonomies
-    && taxonomies.map(
-      (tax) => {
-        // const hasActortype = !!tax.getIn(['attributes', 'actortype_id']);
-        // connected to current actortype
-        const connectedToActortype = actortypeTaxonomies.some(
-          (type) => qe(
-            type.getIn(['attributes', 'taxonomy_id']),
-            tax.get('id'),
-          )
-        );
-        const connectedToActiontype = actiontypeTaxonomies.some(
-          (type) => qe(
-            type.getIn(['attributes', 'taxonomy_id']),
-            tax.get('id'),
-          )
-        );
-        // connectedActortypes
-        const actortypeIds = actortypeTaxonomies.reduce(
-          (memo, type) => {
-            if (
-              qe(
-                type.getIn(['attributes', 'taxonomy_id']),
-                tax.get('id')
-              )
-            ) {
-              return memo.push(type.getIn(['attributes', 'actortype_id']));
-            }
-            return memo;
-          },
-          List(),
-        );
-        // connectedActiontypes
-        const actiontypeIds = actortypeTaxonomies.reduce(
-          (memo, type) => {
-            if (
-              qe(
-                type.getIn(['attributes', 'taxonomy_id']),
-                tax.get('id')
-              )
-            ) {
-              return memo.push(type.getIn(['attributes', 'actiontype_id']));
-            }
-            return memo;
-          },
-          List(),
-        );
-        return tax.setIn(
-          ['attributes', 'tags_actors'],
-          connectedToActortype,
-        ).set(
-          'actortypeIds',
-          actortypeIds,
-        ).setIn(
-          ['attributes', 'tags_actions'],
-          connectedToActiontype,
-        ).set(
-          'actiontypeIds',
-          actiontypeIds,
-        );
-      }
-    ).filter(
-      (tax) => tax.getIn(['attributes', 'tags_actors'])
-        || tax.getIn(['attributes', 'tags_actions'])
-        // || tax.getIn(['attributes', 'tags_users'])
-    )
+  (taxonomies) => taxonomies
 );
 
 export const selectActortypeTaxonomies = createSelector(

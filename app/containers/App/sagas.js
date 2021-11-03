@@ -89,44 +89,87 @@ import {
 } from 'utils/entities-update';
 import apiRequest, { getAuthValues, clearAuthValues } from 'utils/api-request';
 
+const MAX_LOAD_ATTEMPTS = 3;
+
+/**
+ * Generator function. Function for restarting sagas multiple times before giving up and calling the error handler.
+ * - following https://codeburst.io/try-again-more-redux-saga-patterns-bfbc3ffcdc
+ *
+ * @param {function} generator the saga generator to be restarted
+ * @param {function} handleError the error handler after X unsuccessful tries
+ * @param {integer} maxTries the maximum number of tries
+ */
+const autoRestart = (generator, handleError, maxTries = MAX_LOAD_ATTEMPTS) => function* autoRestarting(...args) {
+  let n = 0;
+  while (n < maxTries) {
+    n += 1;
+    try {
+      // console.log('call', n, args)
+      yield call(generator, ...args);
+      break;
+    } catch (err) {
+      // console.log('err', n)
+      if (n >= maxTries) {
+        // console.log('handleError', n)
+        yield handleError(err, ...args);
+      }
+    }
+  }
+};
+  /**
+   * Generator function. Load data error handler:
+   * - Record load error
+   *
+   * @param {object} payload {key: data set key}
+   */
+function* loadEntitiesErrorHandler(err, { path }) {
+  // console.log('handle loading error', path)
+  yield put(entitiesLoadingError(err, path));
+}
 /**
  * Check if entities already present
  */
-export function* checkEntitiesSaga(payload) {
-  if (Object.values(API).indexOf(payload.path) > -1) {
+export function* loadEntitiesSaga({ path }) {
+  if (Object.values(API).indexOf(path) > -1) {
     // requestedSelector returns the times that entities where fetched from the API
-    const requestedAt = yield select(selectRequestedAt, { path: payload.path });
+    const requestedAt = yield select(selectRequestedAt, { path });
 
     // If haven't requested yet, do so now.
     if (!requestedAt) {
       const signedIn = yield select(selectIsSignedIn);
-
-      try {
-        // First record that we are requesting
-        yield put(entitiesRequested(payload.path, Date.now()));
-        // check role to prevent requesting endpoints not authorised
-        // TODO check could be refactored
-        if (!signedIn && (payload.path === API.USER_ROLES || payload.path === API.USERS)) {
-          // store empty response so the app wont wait for the results
-          yield put(entitiesLoaded({}, payload.path, Date.now()));
-        } else {
+      if (signedIn) {
+        try {
+          // First record that we are requesting
+          yield put(entitiesRequested(path, Date.now()));
+          // check role to prevent requesting endpoints not authorised
+          // TODO check could be refactored
           // Call the API, cancel on invalidate
+          // console.log('call', path)
           const { response } = yield race({
-            response: call(apiRequest, 'get', payload.path),
+            response: call(apiRequest, 'get', path),
             cancel: take(INVALIDATE_ENTITIES), // will also reset entities requested
           });
-          if (response) {
+          // console.log('response', response)
+          if (response && response.data) {
             // Save response
-            yield put(entitiesLoaded(keyBy(response.data, 'id'), payload.path, Date.now()));
+            yield put(entitiesLoaded(keyBy(response.data, 'id'), path, Date.now()));
           } else {
-            yield call(checkEntitiesSaga, payload);
+            // console.log('no response data', response)
+            yield put(entitiesRequested(path, false));
+            throw new Error(response.statusText || 'error');
           }
+        } catch (err) {
+          // console.log('error', err)
+          // Whoops Save error
+          // Clear the request time on error, This will cause us to try again next time, which we probably want to do?
+          yield put(entitiesRequested(path, false));
+          // throw error
+          throw new Error(err);
         }
-      } catch (err) {
-        // Whoops Save error
-        yield put(entitiesLoadingError(err, payload.path));
-        // Clear the request time on error, This will cause us to try again next time, which we probably want to do?
-        yield put(entitiesRequested(payload.path, null));
+      } else {
+        // console.log('error: not signedin', )
+        yield put(entitiesRequested(path, false));
+        throw new Error('not signed in');
       }
     }
   }
@@ -637,6 +680,11 @@ export function* closeEntitySaga({ path }) {
  */
 export default function* rootSaga() {
   // console.log('calling rootSaga');
+
+  yield takeEvery(
+    LOAD_ENTITIES_IF_NEEDED,
+    autoRestart(loadEntitiesSaga, loadEntitiesErrorHandler, MAX_LOAD_ATTEMPTS),
+  );
   yield takeLatest(VALIDATE_TOKEN, validateTokenSaga);
 
   yield takeLatest(AUTHENTICATE, authenticateSaga);
@@ -651,7 +699,6 @@ export default function* rootSaga() {
   yield takeEvery(DELETE_MULTIPLE_ENTITIES, deleteMultipleEntitiesSaga);
   yield takeEvery(SAVE_CONNECTIONS, saveConnectionsSaga);
 
-  yield takeEvery(LOAD_ENTITIES_IF_NEEDED, checkEntitiesSaga);
   yield takeLatest(REDIRECT_IF_NOT_PERMITTED, checkRoleSaga);
   yield takeEvery(UPDATE_ROUTE_QUERY, updateRouteQuerySaga);
   yield takeEvery(UPDATE_PATH, updatePathSaga);
