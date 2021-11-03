@@ -230,6 +230,23 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
+      path: `${ROUTES.ACTIONS}`,
+      name: 'actiontypes',
+      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/ActionList'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([component]) => {
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
       path: `${ROUTES.ACTIONS}${ROUTES.ID}${ROUTES.NEW}`, // the type id
       name: 'actionNew',
       onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
@@ -316,6 +333,23 @@ export default function createRoutes(store) {
       getComponent(nextState, cb) {
         const importModules = Promise.all([
           import('containers/ActorList'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([component]) => {
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
+      path: `${ROUTES.ACTORS}`,
+      name: 'actortypes',
+      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/ActorsOverview'),
         ]);
 
         const renderRoute = loadModule(cb);

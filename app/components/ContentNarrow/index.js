@@ -33,7 +33,7 @@ const GridMain = styled(Grid)`
 class ContentNarrow extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
     return (
-      <Content>
+      <Content withoutHeaderNav={this.props.withoutHeaderNav}>
         <RowStyled>
           <GridSpace lg={1 / 3} md={3 / 10} sm={1 / 4} />
           <GridMain lg={1 / 3} md={2 / 5} sm={1 / 2} xs={1}>
@@ -47,6 +47,7 @@ class ContentNarrow extends React.PureComponent { // eslint-disable-line react/p
 
 ContentNarrow.propTypes = {
   children: PropTypes.node,
+  withoutHeaderNav: PropTypes.bool,
 };
 
 export default ContentNarrow;
