@@ -195,7 +195,7 @@ export const API = {
   ACTORS: 'actors',
   // ACTOR_CATEGORIES: 'actor_categories',
   // ACTOR_ACTIONS: 'actor_measures', // linking actors with their actions
-  // ACTORTYPES: 'actortypes', // action types
+  ACTORTYPES: 'actortypes', // action types
   // ACTORTYPE_TAXONOMIES: 'actortype_taxonomies', // action taxonomies
   // MEMBERSHIPS: 'memberships', // quasi: actor_actors
   // RESOURCES: 'resources',

@@ -349,7 +349,7 @@ export default function createRoutes(store) {
       onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
       getComponent(nextState, cb) {
         const importModules = Promise.all([
-          import('containers/ActorsOverview'),
+          import('containers/ActorList'),
         ]);
 
         const renderRoute = loadModule(cb);

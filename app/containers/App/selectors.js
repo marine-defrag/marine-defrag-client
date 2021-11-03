@@ -386,69 +386,77 @@ export const selectActiontypeActions = createSelector(
 // returns actions not associated or associated with current actortype
 export const selectActortypeActions = createSelector(
   (state) => selectEntities(state, API.ACTIONS),
-  selectActortypeQuery,
-  selectActortypeActors,
-  (state) => selectEntities(state, API.ACTOR_ACTIONS), // active
-  selectIsUserManager,
-  (entities, actortype, actors, actorActions, isManager) => {
-    if (entities && actors && actorActions) {
-      if (actortype && actortype !== 'all') {
-        return entities.filter(
-          (action) => {
-            const actorIds = actorActions.filter(
-              (rm) => qe(
-                rm.getIn(['attributes', 'action_id']),
-                action.get('id'),
-              )
-            ).map(
-              (rm) => rm.getIn(['attributes', 'actor_id'])
-            );
-            return (isManager && actorIds.size === 0) || actorIds.some(
-              (id) => !!actors.find(
-                (actor) => qe(actor.get('id'), id)
-              )
-            );
-          }
-        );
-      }
-      return entities;
-    }
-    return null;
-  }
+  (entities) => entities
 );
+// export const selectActortypeActions = createSelector(
+//   (state) => selectEntities(state, API.ACTIONS),
+//   selectActortypeQuery,
+//   selectActortypeActors,
+//   (state) => selectEntities(state, API.ACTOR_ACTIONS), // active
+//   selectIsUserManager,
+//   (entities, actortype, actors, actorActions, isManager) => {
+//     if (entities && actors && actorActions) {
+//       if (actortype && actortype !== 'all') {
+//         return entities.filter(
+//           (action) => {
+//             const actorIds = actorActions.filter(
+//               (rm) => qe(
+//                 rm.getIn(['attributes', 'action_id']),
+//                 action.get('id'),
+//               )
+//             ).map(
+//               (rm) => rm.getIn(['attributes', 'actor_id'])
+//             );
+//             return (isManager && actorIds.size === 0) || actorIds.some(
+//               (id) => !!actors.find(
+//                 (actor) => qe(actor.get('id'), id)
+//               )
+//             );
+//           }
+//         );
+//       }
+//       return entities;
+//     }
+//     return null;
+//   }
+// );
 export const selectActiontypeActors = createSelector(
   (state) => selectEntities(state, API.ACTORS),
-  selectActiontypeQuery,
-  selectActiontypeActions,
-  (state) => selectEntities(state, API.ACTOR_ACTIONS), // active
-  selectIsUserManager,
-  (entities, actiontype, actions, actorActions, isManager) => {
-    if (entities && actions && actorActions) {
-      if (actiontype && actiontype !== 'all') {
-        return entities.filter(
-          (actor) => {
-            const actionIds = actorActions.filter(
-              (rm) => qe(
-                rm.getIn(['attributes', 'actor_id']),
-                actor.get('id'),
-              )
-            ).map(
-              (rm) => rm.getIn(['attributes', 'action_id'])
-            );
-            // TODO check manager check here
-            return (isManager && actionIds.size === 0) || actionIds.some(
-              (id) => !!actions.find(
-                (action) => qe(action.get('id'), id)
-              )
-            );
-          }
-        );
-      }
-      return entities;
-    }
-    return null;
-  }
+  (entities) => entities
 );
+// export const selectActiontypeActors = createSelector(
+//   (state) => selectEntities(state, API.ACTORS),
+//   selectActiontypeQuery,
+//   selectActiontypeActions,
+//   (state) => selectEntities(state, API.ACTOR_ACTIONS), // active
+//   selectIsUserManager,
+//   (entities, actiontype, actions, actorActions, isManager) => {
+//     if (entities && actions && actorActions) {
+//       if (actiontype && actiontype !== 'all') {
+//         return entities.filter(
+//           (actor) => {
+//             const actionIds = actorActions.filter(
+//               (rm) => qe(
+//                 rm.getIn(['attributes', 'actor_id']),
+//                 actor.get('id'),
+//               )
+//             ).map(
+//               (rm) => rm.getIn(['attributes', 'action_id'])
+//             );
+//             // TODO check manager check here
+//             return (isManager && actionIds.size === 0) || actionIds.some(
+//               (id) => !!actions.find(
+//                 (action) => qe(action.get('id'), id)
+//               )
+//             );
+//           }
+//         );
+//       }
+//       return entities;
+//     }
+//     return null;
+//   }
+// );
 
 export const selectActortypeEntitiesAll = createSelector(
   selectEntitiesAll,

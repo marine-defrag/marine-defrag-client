@@ -50,55 +50,55 @@ export default defineMessages({
       defaultMessage: 'Actortype 5',
     },
   },
-  actortypeObjectives: {
+  actortypeActors: {
     all: {
-      id: 'app.containers.App.actortypeObjectives.all',
+      id: 'app.containers.App.actortypeActors.all',
       defaultMessage: 'All actortypes',
     },
     1: {
-      id: 'app.containers.App.actortypeObjectives.1',
+      id: 'app.containers.App.actortypeActors.1',
       defaultMessage: 'Human Rights Actors',
     },
     2: {
-      id: 'app.containers.App.actortypeObjectives.2',
+      id: 'app.containers.App.actortypeActors.2',
       defaultMessage: 'SDG Targets',
     },
     3: {
-      id: 'app.containers.App.actortypeObjectives.3',
+      id: 'app.containers.App.actortypeActors.3',
       defaultMessage: 'Actortype 3',
     },
     4: {
-      id: 'app.containers.App.actortypeObjectives.4',
+      id: 'app.containers.App.actortypeActors.4',
       defaultMessage: 'Actortype 4',
     },
     5: {
-      id: 'app.containers.App.actortypeObjectives.5',
+      id: 'app.containers.App.actortypeActors.5',
       defaultMessage: 'Actortype 5',
     },
   },
-  actortypeObjectivesShort: {
+  actortypeActorsShort: {
     all: {
-      id: 'app.containers.App.actortypeObjectivesShort.all',
+      id: 'app.containers.App.actortypeActorsShort.all',
       defaultMessage: 'All Actortypes',
     },
     1: {
-      id: 'app.containers.App.actortypeObjectivesShort.1',
+      id: 'app.containers.App.actortypeActorsShort.1',
       defaultMessage: 'HR Actors',
     },
     2: {
-      id: 'app.containers.App.actortypeObjectivesShort.2',
+      id: 'app.containers.App.actortypeActorsShort.2',
       defaultMessage: 'SDG Targets',
     },
     3: {
-      id: 'app.containers.App.actortypeObjectivesShort.3',
+      id: 'app.containers.App.actortypeActorsShort.3',
       defaultMessage: 'Actortype 3',
     },
     4: {
-      id: 'app.containers.App.actortypeObjectivesShort.4',
+      id: 'app.containers.App.actortypeActorsShort.4',
       defaultMessage: 'Actortype 4',
     },
     5: {
-      id: 'app.containers.App.actortypeObjectivesShort.5',
+      id: 'app.containers.App.actortypeActorsShort.5',
       defaultMessage: 'Actortype 5',
     },
   },
@@ -128,6 +128,134 @@ export default defineMessages({
       defaultMessage: 'Actortype 5',
     },
   },
+  actiontypes: {
+    single: {
+      id: 'app.containers.App.actiontypes.single',
+      defaultMessage: 'Actortype',
+    },
+    plural: {
+      id: 'app.containers.App.actiontypes.plural',
+      defaultMessage: 'Actortypes',
+    },
+    all: {
+      id: 'app.containers.App.actiontypes.all',
+      defaultMessage: 'All Actortypes',
+    },
+    1: {
+      id: 'app.containers.App.actiontypes.1',
+      defaultMessage: 'Human Rights Actors',
+    },
+    2: {
+      id: 'app.containers.App.actiontypes.2',
+      defaultMessage: 'Sustainable Development Goals',
+    },
+    3: {
+      id: 'app.containers.App.actiontypes.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actiontypes.4',
+      defaultMessage: 'Actortype 4',
+    },
+    5: {
+      id: 'app.containers.App.actiontypes.5',
+      defaultMessage: 'Actortype 5',
+    },
+    6: {
+      id: 'app.containers.App.actiontypes.6',
+      defaultMessage: 'Actortype 6',
+    },
+  },
+  actiontypeActors: {
+    all: {
+      id: 'app.containers.App.actiontypeActors.all',
+      defaultMessage: 'All actortypes',
+    },
+    1: {
+      id: 'app.containers.App.actiontypeActors.1',
+      defaultMessage: 'Human Rights Actors',
+    },
+    2: {
+      id: 'app.containers.App.actiontypeActors.2',
+      defaultMessage: 'SDG Targets',
+    },
+    3: {
+      id: 'app.containers.App.actiontypeActors.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actortypeActors.4',
+      defaultMessage: 'Actortype 4',
+    },
+    5: {
+      id: 'app.containers.App.actiontypeActors.5',
+      defaultMessage: 'Actortype 5',
+    },
+    6: {
+      id: 'app.containers.App.actiontypeActors.6',
+      defaultMessage: 'Actortype 6',
+    },
+  },
+  actiontypeActorsShort: {
+    all: {
+      id: 'app.containers.App.actiontypeActorsShort.all',
+      defaultMessage: 'All Actortypes',
+    },
+    1: {
+      id: 'app.containers.App.actiontypeActorsShort.1',
+      defaultMessage: 'HR Actors',
+    },
+    2: {
+      id: 'app.containers.App.actiontypeActorsShort.2',
+      defaultMessage: 'SDG Targets',
+    },
+    3: {
+      id: 'app.containers.App.actiontypeActorsShort.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actiontypeActorsShort.4',
+      defaultMessage: 'Actortype 4',
+    },
+    5: {
+      id: 'app.containers.App.actiontypeActorsShort.5',
+      defaultMessage: 'Actortype 5',
+    },
+    6: {
+      id: 'app.containers.App.actiontypeActorsShort.6',
+      defaultMessage: 'Actortype 6',
+    },
+  },
+  actiontypes_short: {
+    common: {
+      id: 'app.containers.App.actiontypes_short.common',
+      defaultMessage: 'multiple',
+    },
+    1: {
+      id: 'app.containers.App.actiontypes_short.1',
+      defaultMessage: 'HR',
+    },
+    2: {
+      id: 'app.containers.App.actiontypes_short.2',
+      defaultMessage: 'SDGs',
+    },
+    3: {
+      id: 'app.containers.App.actiontypes_short.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actiontypes_short.4',
+      defaultMessage: 'Actortype 4',
+    },
+    5: {
+      id: 'app.containers.App.actiontypes_short.5',
+      defaultMessage: 'Actortype 5',
+    },
+    6: {
+      id: 'app.containers.App.actiontypes_short.6',
+      defaultMessage: 'Actortype 6',
+    },
+  },
   taxonomyGroups: {
     common: {
       id: 'app.containers.App.taxonomyGroups.common',
@@ -137,8 +265,8 @@ export default defineMessages({
       id: 'app.containers.App.taxonomyGroups.actions',
       defaultMessage: 'actions',
     },
-    objectives: {
-      id: 'app.containers.App.taxonomyGroups.objectives',
+    actors: {
+      id: 'app.containers.App.taxonomyGroups.actors',
       defaultMessage: '{type}',
     },
     users: {
@@ -373,6 +501,10 @@ export default defineMessages({
     },
     actortype_id: {
       id: 'app.containers.App.importFields.actortype_id',
+      defaultMessage: 'Actortype id',
+    },
+    measuretype_id: {
+      id: 'app.containers.App.importFields.measuretype_id',
       defaultMessage: 'Actortype id',
     },
   },

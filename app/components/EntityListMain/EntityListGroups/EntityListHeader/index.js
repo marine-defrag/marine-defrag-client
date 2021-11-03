@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { injectIntl, intlShape } from 'react-intl';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { getSortOption } from 'utils/sort';
@@ -19,8 +20,7 @@ const Styled = styled.div`
 `;
 
 class EntityListHeader extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  getListHeaderLabel = (entityTitle, selectedTotal, pageTotal, entitiesTotal, allSelected, allSelectedOnPage) => {
-    const { intl } = this.context;
+  getListHeaderLabel = (intl, entityTitle, selectedTotal, pageTotal, entitiesTotal, allSelected, allSelectedOnPage) => {
     if (selectedTotal > 0) {
       if (allSelected) {
         // return `All ${selectedTotal} ${selectedTotal === 1 ? entityTitle.single : entityTitle.plural} selected. `;
@@ -49,7 +49,6 @@ class EntityListHeader extends React.PureComponent { // eslint-disable-line reac
         type: entityTitle.plural,
       });
     }
-    // console.log((entitiesTotal === 1) ? entityTitle.single : entityTitle.plural)
     return intl && intl.formatMessage(messages.entityListHeader.notPaged, {
       entitiesTotal,
       type: (entitiesTotal === 1) ? entityTitle.single : entityTitle.plural,
@@ -80,19 +79,21 @@ class EntityListHeader extends React.PureComponent { // eslint-disable-line reac
       onSelect,
       onSelectAll,
       sortOptions,
+      intl,
     } = this.props;
 
     const firstColumnWidth = this.getFirstColumnWidth();
 
     const sortOption = getSortOption(sortOptions, this.props.sortBy);
-
+    // const { intl } = this.context;
+    console.log(intl);
     return (
       <Styled>
         <ColumnSelect
           width={firstColumnWidth}
           isSelect={isManager}
           isSelected={this.getSelectedState(selectedTotal, allSelected || allSelectedOnPage)}
-          label={this.getListHeaderLabel(entityTitle, selectedTotal, pageTotal, entitiesTotal, allSelected, allSelectedOnPage)}
+          label={this.getListHeaderLabel(intl, entityTitle, selectedTotal, pageTotal, entitiesTotal, allSelected, allSelectedOnPage)}
           onSelect={onSelect}
           hasSelectAll={allSelectedOnPage && !allSelected}
           onSelectAll={onSelectAll}
@@ -123,7 +124,8 @@ EntityListHeader.propTypes = {
   onSelectAll: PropTypes.func,
   onSortBy: PropTypes.func,
   onSortOrder: PropTypes.func,
+  intl: intlShape.isRequired,
 };
 
 
-export default EntityListHeader;
+export default injectIntl(EntityListHeader);

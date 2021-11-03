@@ -11,9 +11,9 @@ import {
   selectConnectedCategoryQuery,
   selectSortByQuery,
   selectSortOrderQuery,
-  selectActortypeTaxonomiesSorted,
   selectActortypeActors,
-  selectActortypes,
+  // selectActortypeTaxonomiesSorted,
+  // selectActortypes,
   selectReady,
   selectActorCategoriesByActor,
   selectActionCategoriesByAction,
@@ -26,10 +26,10 @@ import {
   filterEntitiesByConnectedCategories,
   filterEntitiesWithoutAssociation,
   entitiesSetCategoryIds,
-  filterTaxonomies,
-  getTaxonomyCategories,
+  // filterTaxonomies,
+  // getTaxonomyCategories,
 } from 'utils/entities';
-import { qe } from 'utils/quasi-equals';
+// import { qe } from 'utils/quasi-equals';
 import { sortEntities, getSortOption } from 'utils/sort';
 
 import { CONFIG, DEPENDENCIES } from './constants';
@@ -55,75 +55,78 @@ export const selectConnections = createSelector(
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  (state) => selectReady(state, { path: DEPENDENCIES }),
-  (state) => selectConnections(state),
-  (state) => selectActortypeTaxonomiesSorted(state),
-  (state) => selectEntities(state, API.CATEGORIES),
-  (state) => selectEntities(state, API.ACTOR_CATEGORIES),
-  (state) => selectActortypes(state),
-  (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
-  (
-    ready,
-    connections,
-    taxonomies,
-    categories,
-    categoryActors,
-    actortypes,
-    actortypeTaxonomies,
-  ) => {
-    if (!ready) return Map();
-    const relationship = {
-      tags: 'tags_actors',
-      path: API.ACTORS,
-      key: 'actor_id',
-      associations: categoryActors,
-    };
-    const actionActortypes = actortypes.filter(
-      (actortype) => actortype.getIn(['attributes', 'has_actions'])
-    );
-    // for all connections
-    const connectedTaxonomies = filterTaxonomies(
-      taxonomies,
-      relationship.tags,
-      true,
-    ).filter(
-      (taxonomy) => actortypeTaxonomies.some(
-        (actortypet) => actionActortypes.some(
-          (actortype) => qe(
-            actortype.get('id'),
-            actortypet.getIn(['attributes', 'actortype_id']),
-          ),
-        ) && qe(
-          taxonomy.get('id'),
-          actortypet.getIn(['attributes', 'taxonomy_id']),
-        )
-      )
-    );
-    if (!connections.get(relationship.path)) {
-      return connectedTaxonomies;
-    }
-    const groupedAssociations = relationship.associations.filter(
-      (association) => association.getIn(['attributes', relationship.key])
-        && connections.getIn([
-          relationship.path,
-          association.getIn(['attributes', relationship.key]).toString(),
-        ])
-    ).groupBy(
-      (association) => association.getIn(['attributes', 'category_id'])
-    );
-    return connectedTaxonomies.map(
-      (taxonomy) => taxonomy.set(
-        'categories',
-        getTaxonomyCategories(
-          taxonomy,
-          categories,
-          relationship,
-          groupedAssociations,
-        )
-      )
-    );
-  }
+  () => Map()
 );
+// export const selectConnectedTaxonomies = createSelector(
+//   (state) => selectReady(state, { path: DEPENDENCIES }),
+//   (state) => selectConnections(state),
+//   (state) => selectActortypeTaxonomiesSorted(state),
+//   (state) => selectEntities(state, API.CATEGORIES),
+//   (state) => selectEntities(state, API.ACTOR_CATEGORIES),
+//   (state) => selectActortypes(state),
+//   (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
+//   (
+//     ready,
+//     connections,
+//     taxonomies,
+//     categories,
+//     categoryActors,
+//     actortypes,
+//     actortypeTaxonomies,
+//   ) => {
+//     if (!ready) return Map();
+//     const relationship = {
+//       tags: 'tags_actors',
+//       path: API.ACTORS,
+//       key: 'actor_id',
+//       associations: categoryActors,
+//     };
+//     const actionActortypes = actortypes.filter(
+//       (actortype) => actortype.getIn(['attributes', 'has_actions'])
+//     );
+//     // for all connections
+//     const connectedTaxonomies = filterTaxonomies(
+//       taxonomies,
+//       relationship.tags,
+//       true,
+//     ).filter(
+//       (taxonomy) => actortypeTaxonomies.some(
+//         (actortypet) => actionActortypes.some(
+//           (actortype) => qe(
+//             actortype.get('id'),
+//             actortypet.getIn(['attributes', 'actortype_id']),
+//           ),
+//         ) && qe(
+//           taxonomy.get('id'),
+//           actortypet.getIn(['attributes', 'taxonomy_id']),
+//         )
+//       )
+//     );
+//     if (!connections.get(relationship.path)) {
+//       return connectedTaxonomies;
+//     }
+//     const groupedAssociations = relationship.associations.filter(
+//       (association) => association.getIn(['attributes', relationship.key])
+//         && connections.getIn([
+//           relationship.path,
+//           association.getIn(['attributes', relationship.key]).toString(),
+//         ])
+//     ).groupBy(
+//       (association) => association.getIn(['attributes', 'category_id'])
+//     );
+//     return connectedTaxonomies.map(
+//       (taxonomy) => taxonomy.set(
+//         'categories',
+//         getTaxonomyCategories(
+//           taxonomy,
+//           categories,
+//           relationship,
+//           groupedAssociations,
+//         )
+//       )
+//     );
+//   }
+// );
 
 // nest category ids
 const selectActionsWithCategories = createSelector(
