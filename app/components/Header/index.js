@@ -5,13 +5,10 @@ import styled, { withTheme } from 'styled-components';
 import { palette } from 'styled-theme';
 import { filter } from 'lodash/collection';
 
-import { truncateText } from 'utils/string';
-
 import {
   SHOW_HEADER_TITLE,
   SHOW_HEADER_PATTERN,
   SHOW_BRAND_ON_HOME,
-  TEXT_TRUNCATE,
   ROUTES,
 } from 'themes/config';
 
@@ -21,7 +18,6 @@ import Button from 'components/buttons/Button';
 import ScreenReaderOnly from 'components/styled/ScreenReaderOnly';
 import PrintHide from 'components/styled/PrintHide';
 
-import Logo from './Logo';
 import Banner from './Banner';
 import Brand from './Brand';
 import BrandText from './BrandText';
@@ -128,15 +124,6 @@ const HideSecondaryWrap = styled.div`
 `;
 const HideSecondary = styled(Button)``;
 
-const LinkSuperTitle = styled.div`
-  font-size: ${(props) => props.theme.sizes.text.smallMobile};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    font-size: ${(props) => props.theme.sizes.text.smaller};
-  }
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.smaller};
-  }
-`;
 const LinkTitle = styled.div`
   font-size: ${(props) => props.theme.sizes.text.small};
   font-weight: bold;
@@ -146,16 +133,6 @@ const LinkTitle = styled.div`
   }
   @media print {
     font-size: ${(props) => props.theme.sizes.print.default};
-  }
-`;
-const SelectActortypes = styled(LinkMain)`
-  display: none;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    display: inline-block;
-    min-width: ${({ theme }) => theme.sizes.aside.width.small}px;
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    min-width: ${({ theme }) => theme.sizes.aside.width.large}px;
   }
 `;
 const Search = styled(LinkMain)`
@@ -179,45 +156,14 @@ const Search = styled(LinkMain)`
   }
 `;
 
-const ActortypeOptions = styled(PrintHide)`
-  display: none;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    display: block;
-    min-width: ${({ theme }) => theme.sizes.aside.width.small}px;
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    min-width: ${({ theme }) => theme.sizes.aside.width.large}px;
-  }
-  background: white;
-  box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.2);
-  margin-top: 3px;
-  padding: 5px 0;
-`;
-const ActortypeOption = styled(Button)`
-  display: block;
-  width: 100%;
-  text-align: left;
-  &:hover {
-    color:${palette('headerNavMainItemHover', 0)};
-  }
-  color: ${(props) => props.active ? palette('headerNavMainItem', 1) : 'inherit'};
-`;
-
 const STATE_INITIAL = {
   showSecondary: false,
-  showActortypes: false,
 };
 
 class Header extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   constructor() {
     super();
     this.state = STATE_INITIAL;
-    this.actortypeWrapperRef = React.createRef();
-    this.actortypeButtonRef = React.createRef();
-    this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
   UNSAFE_componentWillMount() {
@@ -234,22 +180,6 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
     window.removeEventListener('mousedown', this.handleClickOutside);
   }
 
-  /**
-   * Alert if clicked on outside of element
-   * after https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
-   */
-  handleClickOutside = (evt) => {
-    const wrapperContains = this.actortypeWrapperRef
-      && this.actortypeWrapperRef.current
-      && this.actortypeWrapperRef.current.contains(evt.target);
-    const buttonContains = this.actortypeButtonRef
-      && this.actortypeButtonRef.current
-      && this.actortypeButtonRef.current.contains(evt.target);
-    if (!wrapperContains && !buttonContains) {
-      this.setState({ showActortypes: false });
-    }
-  }
-
   onShowSecondary = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     this.setState({ showSecondary: true });
@@ -258,16 +188,6 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
   onHideSecondary = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     this.setState({ showSecondary: false });
-  };
-
-  onShowActortypes = (evt) => {
-    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.setState({ showActortypes: true });
-  };
-
-  onHideActortypes = (evt) => {
-    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.setState({ showActortypes: false });
   };
 
   onClick = (evt, path, currentPath) => {
@@ -366,8 +286,6 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
   render() {
     const {
       isHome,
-      actortypeOptions,
-      onSelectActortype,
       search,
     } = this.props;
     const { intl } = this.context;
@@ -376,8 +294,6 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
 
     const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
 
-    const currentActortypeOption = actortypeOptions
-      && actortypeOptions.find((option) => option.active);
     return (
       <Styled
         isHome={isHome}
@@ -388,22 +304,6 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
         hasNav={!isHome}
         hasBrand={SHOW_BRAND_ON_HOME || !isHome}
       >
-        {this.state.showActortypes && (
-          <ActortypeOptions ref={this.actortypeWrapperRef}>
-            {actortypeOptions && actortypeOptions.map((option) => (
-              <ActortypeOption
-                key={option.value}
-                active={option.active}
-                onClick={() => {
-                  onSelectActortype(option.value);
-                  this.onHideActortypes();
-                }}
-              >
-                {option.label}
-              </ActortypeOption>
-            ))}
-          </ActortypeOptions>
-        )}
         { !SHOW_BRAND_ON_HOME && isHome
           && (
             <HomeNavWrap>
@@ -420,7 +320,6 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
               onClick={(evt) => this.onClick(evt, '/')}
               title={appTitle}
             >
-              <Logo src={this.props.theme.media.headerLogo} alt={appTitle} />
               {SHOW_HEADER_TITLE && (
                 <BrandText>
                   <BrandTitle>
@@ -437,33 +336,6 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
         )}
         {!isHome && (
           <NavMain hasBorder>
-            <SelectActortypes
-              as="button"
-              ref={this.actortypeButtonRef}
-              onClick={(evt) => this.state.showActortypes
-                ? this.onHideActortypes(evt)
-                : this.onShowActortypes(evt)
-              }
-            >
-              <LinkSuperTitle>
-                {intl.formatMessage(appMessages.actortypes.single)}
-              </LinkSuperTitle>
-              {currentActortypeOption && (
-                <LinkTitle active>
-                  {truncateText(
-                    currentActortypeOption.label,
-                    TEXT_TRUNCATE.ACTORTYPE_SELECT,
-                    false,
-                  )}
-                  {!this.state.showActortypes && (
-                    <Icon name="dropdownOpen" text textRight size="1em" />
-                  )}
-                  {this.state.showActortypes && (
-                    <Icon name="dropdownClose" text textRight size="1em" />
-                  )}
-                </LinkTitle>
-              )}
-            </SelectActortypes>
             {navItems && navItems.map((item, i) => (
               <LinkMain
                 key={i}
@@ -471,9 +343,6 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                 active={item.active}
                 onClick={(evt) => this.onClick(evt, item.path)}
               >
-                <LinkSuperTitle>
-                  {item.titleSuper}
-                </LinkSuperTitle>
                 <LinkTitle active={item.active}>
                   {item.title}
                 </LinkTitle>
@@ -510,11 +379,9 @@ Header.propTypes = {
   pages: PropTypes.array,
   navItems: PropTypes.array,
   onPageLink: PropTypes.func.isRequired,
-  onSelectActortype: PropTypes.func.isRequired,
   isHome: PropTypes.bool, // not shown on home page
   theme: PropTypes.object.isRequired,
   search: PropTypes.object,
-  actortypeOptions: PropTypes.array,
 };
 
 Header.defaultProps = {

@@ -1,5 +1,3 @@
-import { API } from 'themes/config';
+// import { API } from 'themes/config';
 
-export const DEPENDENCIES = [
-  API.ACTORTYPES,
-];
+export const DEPENDENCIES = [];

@@ -16,10 +16,10 @@ import Row from 'components/styled/Row';
 import Container from 'components/styled/Container';
 
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
-import { selectActortypes, selectIsSigningIn, selectReady } from 'containers/App/selectors';
+import { selectIsSigningIn, selectReady } from 'containers/App/selectors';
 
 import ButtonHero from 'components/buttons/ButtonHero';
-import ButtonFlat from 'components/buttons/ButtonFlat';
+// import ButtonFlat from 'components/buttons/ButtonFlat';
 import NormalImg from 'components/Img';
 import Loading from 'components/Loading';
 import Footer from 'containers/Footer';
@@ -30,33 +30,11 @@ import {
   ROUTES,
   SHOW_HOME_TITLE,
   SHOW_BRAND_ON_HOME,
-  HEADER_PATTERN_HEIGHT,
-  SHOW_HEADER_PATTERN_HOME_GRAPHIC,
 } from 'themes/config';
 
 import { DEPENDENCIES } from './constants';
 
 import messages from './messages';
-
-const GraphicHomeWrapper = styled.div`
-  width: 100%;
-  padding-top: ${(props) => props.hasBrand
-    ? props.theme.sizes.header.banner.heightMobile
-    : 0
-}px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding-top: ${(props) => props.hasBrand
-    ? props.theme.sizes.header.banner.height
-    : 0
-}px;
-  }
-  background-image: ${(props) => (props.showPattern && props.theme.backgroundImages.header)
-    ? props.theme.backgroundImages.header
-    : 'none'
-};
-  background-repeat: repeat;
-  background-size: ${HEADER_PATTERN_HEIGHT}px auto;
-`;
 
 const GraphicHome = styled(NormalImg)`
   width: 100%;
@@ -150,15 +128,6 @@ const GridSpace = styled(Grid)`
     display: inline-block;
   }
 `;
-const ActortypeButtonGrid = styled(Grid)`
-  display: inline-block !important;
-  width: auto !important;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    display: flex !important;
-    width: 100% !important;
-    justify-content: center;
-  }
-`;
 
 const ActortypeButton = styled(ButtonHero)`
   max-width: ${({ single }) => single ? 'auto' : '250px'};
@@ -184,16 +153,13 @@ const ActortypeButton = styled(ButtonHero)`
   }
 `;
 
-const StyledButtonFlat = styled(ButtonFlat)`
-  color: ${palette('homeIntro', 0)};
-  @media print {
-    color: ${palette('text', 1)};
-    text-decoration: underline;
-  }
-`;
-const ActortypeHint = styled.div`
-  font-size: ${({ theme }) => theme.sizes.text.small};
-`;
+// const StyledButtonFlat = styled(ButtonFlat)`
+//   color: ${palette('homeIntro', 0)};
+//   @media print {
+//     color: ${palette('text', 1)};
+//     text-decoration: underline;
+//   }
+// `;
 
 export class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   UNSAFE_componentWillMount() {
@@ -203,7 +169,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
   render() {
     const { intl } = this.context;
     const {
-      theme, actortypes, onSelectActortype, onPageLink, signingIn, dataReady,
+      theme, onPageLink, signingIn, dataReady,
     } = this.props;
     const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
     return (
@@ -216,12 +182,6 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
         />
         <SectionTop hasBrand={SHOW_BRAND_ON_HOME}>
           <SectionWrapper hasBrand={SHOW_BRAND_ON_HOME}>
-            <GraphicHomeWrapper
-              hasBrand={SHOW_BRAND_ON_HOME}
-              showPattern={SHOW_HEADER_PATTERN_HOME_GRAPHIC}
-            >
-              <GraphicHome src={theme.media.graphicHome} alt={intl.formatMessage(appMessages.app.title)} />
-            </GraphicHomeWrapper>
             { !SHOW_HOME_TITLE
               && <GraphicHome src={theme.media.titleHome} alt={appTitle} />
             }
@@ -256,67 +216,18 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
                     </Grid>
                   </Row>
                 )}
-                {(signingIn || !dataReady) && (
-                  <Row>
-                    <GridSpace lg={1 / 6} sm={1 / 8} />
-                    <Grid lg={2 / 3} sm={3 / 4} xs={1}>
-                      {signingIn && (
-                        <FormattedMessage {...messages.signingIn} />
-                      )}
-                      {!signingIn && (
-                        <FormattedMessage {...messages.loading} />
-                      )}
-                    </Grid>
-                  </Row>
-                )}
-                {dataReady && !signingIn && actortypes.size > 1 && (
-                  <span>
-                    <Row>
-                      <GridSpace lg={1 / 6} sm={1 / 8} />
-                      <Grid lg={2 / 3} sm={3 / 4} xs={1}>
-                        <ActortypeHint>
-                          <FormattedMessage {...messages.selectActortype} />
-                        </ActortypeHint>
-                      </Grid>
-                    </Row>
-                    <Row>
-                      <ActortypeButtonGrid lg={1} sm={1} xs={1}>
-                        {actortypes.entrySeq().map(([key, actortype]) => (
-                          <ActortypeButton
-                            space
-                            key={key}
-                            onClick={() => onSelectActortype(actortype.get('id'))}
-                            count={actortypes.size}
-                          >
-                            <FormattedMessage {...appMessages.actortypes[actortype.get('id')]} />
-                          </ActortypeButton>
-                        ))}
-                      </ActortypeButtonGrid>
-                    </Row>
-                    <Row>
-                      <GridSpace lg={1 / 6} sm={1 / 8} />
-                      <Grid lg={2 / 3} sm={3 / 4} xs={1}>
-                        <StyledButtonFlat onClick={() => onSelectActortype('all')}>
-                          <FormattedMessage {...messages.exploreAllActortypes} />
-                        </StyledButtonFlat>
-                      </Grid>
-                    </Row>
-                  </span>
-                )}
-                {dataReady && !signingIn && actortypes.size === 1 && (
-                  <Row>
-                    <GridSpace lg={1 / 6} sm={1 / 8} />
-                    <Grid lg={2 / 3} sm={3 / 4} xs={1}>
-                      <ActortypeButton
-                        single
-                        onClick={() => onPageLink(ROUTES.OVERVIEW)}
-                        count={1}
-                      >
-                        <FormattedMessage {...messages.explore} />
-                      </ActortypeButton>
-                    </Grid>
-                  </Row>
-                )}
+                <Row>
+                  <GridSpace lg={1 / 6} sm={1 / 8} />
+                  <Grid lg={2 / 3} sm={3 / 4} xs={1}>
+                    <ActortypeButton
+                      single
+                      onClick={() => onPageLink(ROUTES.OVERVIEW)}
+                      count={1}
+                    >
+                      <FormattedMessage {...messages.explore} />
+                    </ActortypeButton>
+                  </Grid>
+                </Row>
               </HomeActions>
             </Container>
           </SectionWrapper>
@@ -329,10 +240,8 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 
 HomePage.propTypes = {
   loadEntitiesIfNeeded: PropTypes.func.isRequired,
-  onSelectActortype: PropTypes.func.isRequired,
   onPageLink: PropTypes.func.isRequired,
   theme: PropTypes.object.isRequired,
-  actortypes: PropTypes.object,
   signingIn: PropTypes.bool,
   dataReady: PropTypes.bool,
 };
@@ -342,7 +251,6 @@ HomePage.contextTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  actortypes: selectActortypes(state),
   signingIn: selectIsSigningIn(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
 });
@@ -355,19 +263,19 @@ function mapDispatchToProps(dispatch) {
     onPageLink: (path) => {
       dispatch(updatePath(path));
     },
-    onSelectActortype: (actortype) => {
-      dispatch(updatePath(
-        ROUTES.OVERVIEW,
-        {
-          query: {
-            arg: 'actortype',
-            value: actortype,
-            replace: true,
-          },
-          extend: true,
-        },
-      ));
-    },
+    // onSelectActortype: (actortype) => {
+    //   dispatch(updatePath(
+    //     ROUTES.OVERVIEW,
+    //     {
+    //       query: {
+    //         arg: 'actortype',
+    //         value: actortype,
+    //         replace: true,
+    //       },
+    //       extend: true,
+    //     },
+    //   ));
+    // },
   };
 }
 

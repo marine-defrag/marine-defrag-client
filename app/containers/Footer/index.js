@@ -9,16 +9,10 @@ import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 
 import NormalImg from 'components/Img';
 import Container from 'components/styled/Container';
-import A from 'components/styled/A';
 
 import { ROUTES, FOOTER, API } from 'themes/config';
 
 import messages from './messages';
-
-const FooterLogos = styled.div`
-  padding: 0.8em 0;
-  background-color: ${palette('footer', 2)};
-`;
 
 const FooterMain = styled.div`
   background-color: ${palette('footer', 1)};
@@ -50,31 +44,6 @@ const ImpactLink = styled.a`
   }
 `;
 
-const LogoList = styled.div`
-  text-align: center;
-`;
-const LogoItem = styled.div`
-  display: inline-block;
-`;
-const LogoItemLink = styled(A)`
-  padding: 0 0.5em;
-  display: block;
-  &:hover {
-    opacity: 0.8;
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding: 0 1.5em;
-  }
-`;
-const PartnerLogo = styled(NormalImg)`
-  height: 55px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    height: 90px;
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    height: 100px;
-  }
-`;
 const ImpactLogo = styled(NormalImg)`
   height: 90px;
 `;
@@ -133,19 +102,6 @@ const TableCellSmall = styled(TableCell)`
     width: 25%;
   }
 `;
-const PartnerNote = styled.div`
-  text-align: center;
-  color: ${palette('text', 1)};
-  line-height: 1;
-  padding-bottom: 0.4em;
-  font-size: ${(props) => props.theme.sizes.text.smallMobile};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    font-size: ${(props) => props.theme.sizes.text.small};
-  }
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.small};
-  }
-`;
 
 class Footer extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   UNSAFE_componentWillMount() {
@@ -157,36 +113,6 @@ class Footer extends React.PureComponent { // eslint-disable-line react/prefer-s
     const { theme } = this.props;
     return (
       <div>
-        { FOOTER.PARTNERS > 0
-          && (
-            <FooterLogos>
-              <Container noPaddingBottom>
-                { messages.partners.note && messages.partners.note !== ''
-                && (
-                  <PartnerNote>
-                    <FormattedMessage {...messages.partners.note} />
-                  </PartnerNote>
-                )
-                }
-                <LogoList>
-                  {
-                    theme.media.partnerLogos.map((src, i) => (
-                      <LogoItem key={i}>
-                        <LogoItemLink
-                          href={intl.formatMessage(messages.partners[`url${i + 1}`])}
-                          title={intl.formatMessage(messages.partners[`title${i + 1}`])}
-                          target="_blank"
-                        >
-                          <PartnerLogo src={src} alt={intl.formatMessage(messages.partners.title1)} />
-                        </LogoItemLink>
-                      </LogoItem>
-                    ))
-                  }
-                </LogoList>
-              </Container>
-            </FooterLogos>
-          )
-        }
         <FooterMain>
           <Container noPaddingBottom>
             <TableWrapper>

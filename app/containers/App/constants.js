@@ -81,7 +81,7 @@ export const CONTENT_MODAL = 'modal';
 export const DEPENDENCIES = [
   API.USER_ROLES,
   API.PAGES,
-  API.ACTORTYPES,
+  // API.ACTORTYPES,
 ];
 
 export const SORT_ORDER_OPTIONS = [

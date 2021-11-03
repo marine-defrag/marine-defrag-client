@@ -629,13 +629,9 @@ export default defineMessages({
       id: 'app.containers.App.nav.actions',
       defaultMessage: 'Actions',
     },
-    actionsSuper: {
-      id: 'app.containers.App.nav.actionsSuper',
-      defaultMessage: 'Implementation',
-    },
-    actorsSuper: {
-      id: 'app.containers.App.nav.actorsSuper',
-      defaultMessage: 'Objectives',
+    actors: {
+      id: 'app.containers.App.nav.actors',
+      defaultMessage: 'Actors',
     },
     pages: {
       id: 'app.containers.App.nav.pages',

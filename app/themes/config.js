@@ -41,12 +41,12 @@ export const SHOW_SIDEBAR_HEADER_PATTERN = false;
 // - app.containers.App.app.claim
 export const SHOW_HOME_TITLE = true;
 
-export const SHOW_BRAND_ON_HOME = false;
+export const SHOW_BRAND_ON_HOME = true;
 export const SHOW_HEADER_PATTERN_HOME_GRAPHIC = false;
 
 // show footer logo section
 export const FOOTER = {
-  PARTNERS: true,
+  PARTNERS: false,
   LINK_TARGET_INTERNAL: true,
   LINK_TARGET_INTERNAL_ID: 1,
 };
@@ -195,7 +195,7 @@ export const API = {
   ACTORS: 'actors',
   // ACTOR_CATEGORIES: 'actor_categories',
   ACTOR_ACTIONS: 'actor_measures', // linking actors with their actions
-  ACTORTYPES: 'actortypes', // action types
+  // ACTORTYPES: 'actortypes', // action types
   ACTORTYPE_TAXONOMIES: 'actortype_taxonomies', // action taxonomies
   // MEMBERSHIPS: 'memberships', // quasi: actor_actors
   // RESOURCES: 'resources',

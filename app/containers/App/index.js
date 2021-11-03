@@ -24,18 +24,14 @@ import {
   selectIsUserManager,
   selectSessionUserAttributes,
   selectReady,
-  selectActortypes,
   selectEntitiesWhere,
   selectNewEntityModal,
-  selectActortypeQuery,
-  selectViewActorActortypeId,
 } from './selectors';
 
 import {
   validateToken,
   loadEntitiesIfNeeded,
   updatePath,
-  updateRouteQuery,
   openNewEntityModal,
 } from './actions';
 
@@ -93,53 +89,22 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
     }))
     .toArray();
 
-  prepareActortypeOptions = (actortypes, activeId) => {
-    const { intl } = this.context;
-    const options = Object.values(actortypes.toJS()).map((actortype) => ({
-      value: actortype.id,
-      label: intl.formatMessage(messages.actortypes[actortype.id]),
-      active: activeId === actortype.id,
-    }));
-    return options.concat({
-      value: 'all',
-      label: intl.formatMessage(messages.actortypes.all),
-      active: (activeId === 'all') || actortypes.size === 0,
-    });
-  }
-
   prepareMainMenuItems = (
     isManager,
     isUserSignedIn,
     currentPath,
-    currentActortypeId,
-    viewActorActortype,
   ) => {
     const { intl } = this.context;
     let navItems = [
       {
-        path: ROUTES.OVERVIEW,
-        titleSuper: intl.formatMessage(messages.nav.overviewSuper),
-        title: intl.formatMessage(messages.nav.overview),
-        active:
-          currentPath.startsWith(ROUTES.OVERVIEW)
-          || currentPath.startsWith(ROUTES.TAXONOMIES)
-          || currentPath.startsWith(ROUTES.CATEGORIES),
-      },
-      {
         path: ROUTES.ACTORS,
-        titleSuper: intl.formatMessage(messages.nav.actorsSuper),
-        title: intl.formatMessage(messages.actortypeObjectivesShort[currentActortypeId]),
-        active: currentPath.startsWith(ROUTES.ACTORS) && (
-          !viewActorActortype
-          || currentActortypeId === 'all'
-          || currentActortypeId === viewActorActortype
-        ),
+        title: intl.formatMessage(messages.nav.actors),
+        active: currentPath.startsWith(ROUTES.ACTOR),
       },
       {
         path: ROUTES.ACTIONS,
-        titleSuper: intl.formatMessage(messages.nav.actionsSuper),
         title: intl.formatMessage(messages.nav.actions),
-        active: currentPath.startsWith(ROUTES.ACTIONS),
+        active: currentPath.startsWith(ROUTES.ACTION),
       },
     ];
     if (isManager) {
@@ -179,10 +144,6 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       isManager,
       location,
       newEntityModal,
-      currentActortypeId,
-      actortypes,
-      onSelectActortype,
-      viewActorActortype,
       user,
       children,
     } = this.props;
@@ -199,8 +160,6 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             isUserSignedIn && isManager,
             isUserSignedIn,
             location.pathname,
-            currentActortypeId,
-            viewActorActortype,
           )}
           search={{
             path: ROUTES.SEARCH,
@@ -210,11 +169,6 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           }}
           onPageLink={onPageLink}
           isHome={location.pathname === '/'}
-          onSelectActortype={onSelectActortype}
-          actortypeOptions={this.prepareActortypeOptions(
-            actortypes,
-            currentActortypeId,
-          )}
         />
         <Main isHome={location.pathname === '/'}>
           {React.Children.toArray(children)}
@@ -259,16 +213,12 @@ App.propTypes = {
   location: PropTypes.object.isRequired,
   newEntityModal: PropTypes.object,
   onCloseModal: PropTypes.func,
-  onSelectActortype: PropTypes.func,
-  currentActortypeId: PropTypes.string,
-  viewActorActortype: PropTypes.string,
-  actortypes: PropTypes.object,
 };
 App.contextTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   isManager: selectIsUserManager(state),
   isUserSignedIn: selectIsSignedIn(state),
@@ -278,9 +228,6 @@ const mapStateToProps = (state, props) => ({
     where: { draft: false },
   }),
   newEntityModal: selectNewEntityModal(state),
-  currentActortypeId: selectActortypeQuery(state),
-  actortypes: selectActortypes(state),
-  viewActorActortype: selectViewActorActortypeId(state, props.params.id),
 });
 
 export function mapDispatchToProps(dispatch) {
@@ -296,15 +243,6 @@ export function mapDispatchToProps(dispatch) {
     },
     onCloseModal: () => {
       dispatch(openNewEntityModal(null));
-    },
-    onSelectActortype: (actortype) => {
-      dispatch(updateRouteQuery(
-        {
-          arg: 'actortype',
-          value: actortype,
-          replace: true,
-        }
-      ));
     },
   };
 }
