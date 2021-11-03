@@ -649,6 +649,18 @@ export default defineMessages({
       id: 'app.containers.App.nav.search',
       defaultMessage: 'Search',
     },
+    login: {
+      id: 'app.containers.App.nav.login',
+      defaultMessage: 'Sign in',
+    },
+    logout: {
+      id: 'app.containers.App.nav.logout',
+      defaultMessage: 'Sign out',
+    },
+    register: {
+      id: 'app.containers.App.nav.register',
+      defaultMessage: 'Register',
+    },
   },
   entities: {
     showAll: {

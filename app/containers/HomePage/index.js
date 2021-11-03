@@ -16,7 +16,11 @@ import Row from 'components/styled/Row';
 import Container from 'components/styled/Container';
 
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
-import { selectIsSigningIn, selectReady } from 'containers/App/selectors';
+import {
+  selectIsSigningIn,
+  selectIsUserAnalyst,
+  selectIsSignedIn,
+} from 'containers/App/selectors';
 
 import ButtonHero from 'components/buttons/ButtonHero';
 // import ButtonFlat from 'components/buttons/ButtonFlat';
@@ -129,7 +133,7 @@ const GridSpace = styled(Grid)`
   }
 `;
 
-const ActortypeButton = styled(ButtonHero)`
+const MainButton = styled(ButtonHero)`
   max-width: ${({ single }) => single ? 'auto' : '250px'};
   width: 100%;
   display: block;
@@ -169,7 +173,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
   render() {
     const { intl } = this.context;
     const {
-      theme, onPageLink, signingIn, dataReady,
+      theme, onPageLink, isUserSigningIn, isUserSignedIn, isUserAnalyst,
     } = this.props;
     const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
     return (
@@ -208,26 +212,70 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
                 </Grid>
               </Row>
               <HomeActions>
-                {(signingIn || !dataReady) && (
+                {isUserSigningIn && (
                   <Row>
                     <GridSpace lg={1 / 6} sm={1 / 8} />
+                    <Grid lg={2 / 3} sm={3 / 4} xs={1}>
+                      {isUserSigningIn && (
+                        <FormattedMessage {...messages.signingIn} />
+                      )}
+                    </Grid>
                     <Grid lg={2 / 3} sm={3 / 4} xs={1}>
                       <Loading />
                     </Grid>
                   </Row>
                 )}
-                <Row>
-                  <GridSpace lg={1 / 6} sm={1 / 8} />
-                  <Grid lg={2 / 3} sm={3 / 4} xs={1}>
-                    <ActortypeButton
-                      single
-                      onClick={() => onPageLink(ROUTES.OVERVIEW)}
-                      count={1}
-                    >
-                      <FormattedMessage {...messages.explore} />
-                    </ActortypeButton>
-                  </Grid>
-                </Row>
+                {!isUserSigningIn && isUserSignedIn && isUserAnalyst && (
+                  <Row>
+                    <GridSpace lg={1 / 6} sm={1 / 8} />
+                    <Grid lg={1} sm={1} xs={1}>
+                      <MainButton
+                        space
+                        onClick={() => onPageLink(ROUTES.ACTIONS)}
+                        count={2}
+                      >
+                        <FormattedMessage {...appMessages.nav.actions} />
+                      </MainButton>
+                      <MainButton
+                        space
+                        onClick={() => onPageLink(ROUTES.ACTORS)}
+                        count={2}
+                      >
+                        <FormattedMessage {...appMessages.nav.actors} />
+                      </MainButton>
+                    </Grid>
+                  </Row>
+                )}
+                {!isUserSigningIn && isUserSignedIn && !isUserAnalyst && (
+                  <Row>
+                    <GridSpace lg={1 / 6} sm={1 / 8} />
+                    <Intro source={intl.formatMessage(messages.noRoleAssigned)} />
+                  </Row>
+                )}
+                {!isUserSigningIn && !isUserSignedIn && (
+                  <Row>
+                    <GridSpace lg={1 / 6} sm={1 / 8} />
+                    <Grid lg={2 / 3} sm={3 / 4} xs={1}>
+                      <Intro source={intl.formatMessage(messages.notSignedIn)} />
+                    </Grid>
+                    <Grid lg={1} sm={1} xs={1}>
+                      <MainButton
+                        space
+                        onClick={() => onPageLink(ROUTES.LOGIN)}
+                        count={2}
+                      >
+                        <FormattedMessage {...appMessages.nav.login} />
+                      </MainButton>
+                      <MainButton
+                        space
+                        onClick={() => onPageLink(ROUTES.REGISTER)}
+                        count={2}
+                      >
+                        <FormattedMessage {...appMessages.nav.register} />
+                      </MainButton>
+                    </Grid>
+                  </Row>
+                )}
               </HomeActions>
             </Container>
           </SectionWrapper>
@@ -242,7 +290,9 @@ HomePage.propTypes = {
   loadEntitiesIfNeeded: PropTypes.func.isRequired,
   onPageLink: PropTypes.func.isRequired,
   theme: PropTypes.object.isRequired,
-  signingIn: PropTypes.bool,
+  isUserSigningIn: PropTypes.bool,
+  isUserSignedIn: PropTypes.bool,
+  isUserAnalyst: PropTypes.bool,
   dataReady: PropTypes.bool,
 };
 
@@ -251,8 +301,9 @@ HomePage.contextTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  signingIn: selectIsSigningIn(state),
-  dataReady: selectReady(state, { path: DEPENDENCIES }),
+  isUserSigningIn: selectIsSigningIn(state),
+  isUserSignedIn: selectIsSignedIn(state),
+  isUserAnalyst: selectIsUserAnalyst(state),
 });
 
 function mapDispatchToProps(dispatch) {

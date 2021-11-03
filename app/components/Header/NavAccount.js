@@ -7,6 +7,7 @@ import { palette } from 'styled-theme';
 
 import { ROUTES } from 'themes/config';
 import { PARAMS } from 'containers/App/constants';
+import appMessages from 'containers/App/messages';
 
 import LinkAccount from './LinkAccount';
 import LinkAccountLoading from './LinkAccountLoading';
@@ -72,7 +73,7 @@ class NavAccount extends React.PureComponent { // eslint-disable-line react/pref
               active={currentPath === ROUTES.LOGOUT}
               onClick={(evt) => this.onClick(evt, ROUTES.LOGOUT)}
             >
-              <FormattedMessage {...messages.logout} />
+              <FormattedMessage {...appMessages.nav.logout} />
             </LinkAccount>
           )
         }
@@ -83,7 +84,7 @@ class NavAccount extends React.PureComponent { // eslint-disable-line react/pref
               active={currentPath === ROUTES.REGISTER}
               onClick={(evt) => this.onClick(evt, ROUTES.REGISTER, currentPath)}
             >
-              <FormattedMessage {...messages.register} />
+              <FormattedMessage {...appMessages.nav.register} />
             </LinkAccount>
           )
         }
@@ -94,7 +95,7 @@ class NavAccount extends React.PureComponent { // eslint-disable-line react/pref
               active={currentPath === ROUTES.LOGIN}
               onClick={(evt) => this.onClick(evt, ROUTES.LOGIN, currentPath)}
             >
-              <FormattedMessage {...messages.login} />
+              <FormattedMessage {...appMessages.nav.login} />
             </LinkAccount>
           )
         }
