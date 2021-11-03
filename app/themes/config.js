@@ -102,8 +102,8 @@ export const CYCLE_TAXONOMY_ID = 2;
 export const ENDPOINTS = {
   API: (
     NODE_ENV === 'production'
-      ? 'localhost:3001/'
-      : 'localhost:3001/'
+      ? 'https://marine-defrag-api.herokuapp.com'
+      : 'https://marine-defrag-api.herokuapp.com'
   ), // server API endpoint
   SIGN_IN: 'auth/sign_in',
   SIGN_OUT: 'auth/sign_out',
