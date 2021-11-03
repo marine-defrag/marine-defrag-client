@@ -30,7 +30,7 @@ export class Unauthorised extends React.PureComponent { // eslint-disable-line r
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <ContainerWrapper>
+        <ContainerWrapper isStatic>
           <ViewContainer>
             <ContentHeader
               title={intl.formatMessage(messages.pageTitle)}

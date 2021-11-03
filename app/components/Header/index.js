@@ -287,6 +287,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
     const {
       isHome,
       search,
+      isAuth,
     } = this.props;
     const { intl } = this.context;
     const navItems = filter(this.props.navItems, (item) => !item.isAdmin);
@@ -297,11 +298,11 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
     return (
       <Styled
         isHome={isHome}
-        fixed={isHome}
-        sticky={!isHome}
-        hasBackground={!isHome}
-        hasShadow={!isHome}
-        hasNav={!isHome}
+        fixed={isHome || isAuth}
+        sticky={!isHome && !isAuth}
+        hasBackground={!isHome && !isAuth}
+        hasShadow={!isHome && !isAuth}
+        hasNav={!isHome && !isAuth}
         hasBrand={SHOW_BRAND_ON_HOME || !isHome}
       >
         { !SHOW_BRAND_ON_HOME && isHome
@@ -334,7 +335,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
             {this.renderSecondary(navItemsAdmin)}
           </Banner>
         )}
-        {!isHome && (
+        {!isHome && !isAuth && (
           <NavMain hasBorder>
             {navItems && navItems.map((item, i) => (
               <LinkMain
@@ -380,6 +381,7 @@ Header.propTypes = {
   navItems: PropTypes.array,
   onPageLink: PropTypes.func.isRequired,
   isHome: PropTypes.bool, // not shown on home page
+  isAuth: PropTypes.bool, // not shown on home page
   theme: PropTypes.object.isRequired,
   search: PropTypes.object,
 };

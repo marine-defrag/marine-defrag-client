@@ -149,6 +149,11 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
     } = this.props;
     const { intl } = this.context;
     const title = intl.formatMessage(messages.app.title);
+    const isHomeOrAuth = location.pathname === '/'
+      || location.pathname.startsWith(ROUTES.LOGIN)
+      || location.pathname.startsWith(ROUTES.REGISTER)
+      || location.pathname.startsWith(ROUTES.LOGOUT)
+      || location.pathname.startsWith(ROUTES.UNAUTHORISED);
     return (
       <div>
         <Helmet titleTemplate={`${title} - %s`} defaultTitle={title} />
@@ -169,8 +174,14 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           }}
           onPageLink={onPageLink}
           isHome={location.pathname === '/'}
+          isAuth={
+            location.pathname.startsWith(ROUTES.LOGIN)
+            || location.pathname.startsWith(ROUTES.REGISTER)
+            || location.pathname.startsWith(ROUTES.LOGOUT)
+            || location.pathname.startsWith(ROUTES.UNAUTHORISED)
+          }
         />
-        <Main isHome={location.pathname === '/'}>
+        <Main isHome={isHomeOrAuth}>
           {React.Children.toArray(children)}
         </Main>
         {newEntityModal

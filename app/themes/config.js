@@ -163,14 +163,14 @@ export const DEFAULT_ACTIONTYPE = 1;
 // client app routes **************************
 export const ROUTES = {
   ID: '/:id',
-  VIEW: '/:view',
+  VIEW: '/:view', //  e.g. list or map or stats
   NEW: '/new',
   EDIT: '/edit',
   IMPORT: '/import',
-  PASSWORD: '/password', // change password
   OVERVIEW: '/overview',
-  LOGIN: '/login',
   BOOKMARKS: '/bookmarks',
+  PASSWORD: '/password', // change password
+  LOGIN: '/login',
   LOGOUT: '/logout',
   REGISTER: '/register',
   UNAUTHORISED: '/unauthorised',

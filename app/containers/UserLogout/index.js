@@ -33,7 +33,7 @@ export class UserLogout extends React.PureComponent { // eslint-disable-line rea
             },
           ]}
         />
-        <ContentNarrow>
+        <ContentNarrow withoutHeaderNav>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle)}
           />

@@ -6,7 +6,7 @@ export default styled.div`
   padding: 0px 5px;
   font-family: ${(props) => props.theme.fonts.claim};
   font-size: ${(props) => props.theme.sizes.header.text.claim};
-  background-color: ${palette('header', 0)};
+  background-color: transparent;
   color: ${palette('headerBrand', 1)};
   &:hover {
     color:${palette('headerBrandHover', 1)};
