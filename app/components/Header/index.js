@@ -322,12 +322,12 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
             >
               {SHOW_HEADER_TITLE && (
                 <BrandText>
-                  <BrandTitle>
-                    <FormattedMessage {...appMessages.app.title} />
-                  </BrandTitle>
                   <BrandClaim>
                     <FormattedMessage {...appMessages.app.claim} />
                   </BrandClaim>
+                  <BrandTitle>
+                    <FormattedMessage {...appMessages.app.title} />
+                  </BrandTitle>
                 </BrandText>
               )}
             </Brand>

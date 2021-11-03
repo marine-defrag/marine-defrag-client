@@ -137,7 +137,7 @@
   "app.containers.ActionView.metaDescription": "Action page description",
   "app.containers.ActionView.header": "Action",
   "app.containers.ActionView.notFound": "Sorry no action found",
-  "app.containers.App.app.title": "Activity tracker",
+  "app.containers.App.app.title": "Activity Tracker",
   "app.containers.App.app.claim": "Marine:DeFRAG",
   "app.containers.App.actortypes.single": "Actortype",
   "app.containers.App.actortypes.plural": "Actortypes",

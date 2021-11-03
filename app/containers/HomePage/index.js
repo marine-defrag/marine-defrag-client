@@ -42,7 +42,7 @@ const GraphicHome = styled(NormalImg)`
 `;
 
 const SectionTop = styled.div`
-  min-height: ${(props) => props.hasBrand ? 0 : '100vH'};
+  min-height: 90vH;
   display: ${(props) => props.hasBrand ? 'block' : 'table'};
   width: ${(props) => props.hasBrand ? 'auto' : '100%'};
   background-color: ${palette('home', 0)};
@@ -75,13 +75,12 @@ const Title = styled.h1`
   color:${palette('headerBrand', 0)};
   font-family: ${(props) => props.theme.fonts.title};
   font-size: ${(props) => props.theme.sizes.home.text.titleMobile};
-  text-transform: uppercase;
-  margin-top: 0.5em;
+  /* text-transform: uppercase; */
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     font-size: ${(props) => props.theme.sizes.home.text.title};
   }
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    margin-top: 1em;
+    margin-bottom: 1em;
   }
   @media print {
     font-size: ${(props) => props.theme.sizes.home.print.title};
@@ -96,10 +95,11 @@ const Claim = styled.p`
   font-weight: 100;
   margin-left: auto;
   margin-right: auto;
+  margin-top: 0.5em;
   line-height: 1.3;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     font-size: ${(props) => props.theme.sizes.home.text.claim};
-    margin-bottom: 1.5em;
+    margin-top: 2.5em;
   }
   @media print {
     font-size: ${(props) => props.theme.sizes.home.print.claim};
@@ -191,12 +191,12 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
                   <Row>
                     <GridSpace lg={1 / 8} />
                     <Grid lg={3 / 4} sm={1}>
-                      <Title>
-                        <FormattedMessage {...appMessages.app.title} />
-                      </Title>
                       <Claim>
                         <FormattedMessage {...appMessages.app.claim} />
                       </Claim>
+                      <Title>
+                        <FormattedMessage {...appMessages.app.title} />
+                      </Title>
                     </Grid>
                   </Row>
                 )
