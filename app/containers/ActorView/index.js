@@ -306,7 +306,7 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(closeEntity(ROUTES.ACTORS));
     },
     onEntityClick: (id, path) => {
-      dispatch(updatePath(`/${path}/${id}`));
+      dispatch(updatePath(`${path}/${id}`));
     },
   };
 }

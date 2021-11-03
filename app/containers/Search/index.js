@@ -487,7 +487,7 @@ function mapDispatchToProps(dispatch) {
       ])));
     },
     onEntityClick: (id, path) => {
-      dispatch(updatePath(`/${path}/${id}`));
+      dispatch(updatePath(`${path}/${id}`));
     },
     onSortOrder: (order) => {
       dispatch(updateSortOrder(order));

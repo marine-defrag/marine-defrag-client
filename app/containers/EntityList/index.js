@@ -405,7 +405,7 @@ function mapDispatchToProps(dispatch, props) {
           }
         });
       }
-      dispatch(updatePath(`/${path || props.config.clientPath}/${id}`));
+      dispatch(updatePath(`${path || props.config.clientPath}/${id}`));
     },
     onEntitySelectAll: (ids) => {
       dispatch(selectMultipleEntities(ids));
