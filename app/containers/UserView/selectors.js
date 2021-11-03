@@ -31,5 +31,5 @@ export const selectTaxonomies = createSelector(
   (state) => selectTaxonomiesSorted(state),
   (state) => selectEntities(state, API.CATEGORIES),
   (state) => selectEntities(state, API.USER_CATEGORIES),
-  (id, taxonomies, categories, associations) => prepareTaxonomiesIsAssociated(taxonomies, categories, associations, 'tags_users', 'user_id', id)
+  (id, taxonomies, categories, associations) => taxonomies && prepareTaxonomiesIsAssociated(taxonomies, categories, associations, 'tags_users', 'user_id', id)
 );

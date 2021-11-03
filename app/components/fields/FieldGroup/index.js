@@ -18,7 +18,7 @@ class FieldGroup extends React.PureComponent { // eslint-disable-line react/pref
       aside,
       bottom,
     } = this.props;
-
+    if (group && !group.fields) return null;
     return (
       <FieldGroupWrapper
         groupType={group.type}

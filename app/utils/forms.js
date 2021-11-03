@@ -232,7 +232,7 @@ export const getCategoryUpdatesFromFormData = ({
   formData,
   taxonomies,
   createKey,
-}) => taxonomies.reduce((updates, tax, taxId) => {
+}) => taxonomies && taxonomies.reduce((updates, tax, taxId) => {
   const formCategoryIds = getCheckedValuesFromOptions(formData.getIn(['associatedTaxonomies', taxId]));
 
   // store associated cats as { [cat.id]: [association.id], ... }

@@ -320,7 +320,7 @@ export const prepareTaxonomiesIsAssociated = (
   associationId,
   includeParents = true,
 ) => {
-  const filteredAssociations = associations.filter(
+  const filteredAssociations = associations && associations.filter(
     (association) => qe(
       association.getIn(['attributes', associationKey]),
       associationId
@@ -353,7 +353,7 @@ export const prepareTaxonomiesIsAssociated = (
           )
         ).filter(
           (cat) => {
-            const hasAssociations = filteredAssociations.some(
+            const hasAssociations = filteredAssociations && filteredAssociations.some(
               (association) => qe(
                 association.getIn(['attributes', 'category_id']),
                 cat.get('id')
