@@ -1,10 +1,10 @@
 {
   "app.components.Header.home": "Home",
-  "app.components.Header.login": "Sign in",
-  "app.components.Header.logout": "Sign out",
   "app.components.Header.user": "User profile",
   "app.components.Header.userLoading": "Signing in...",
-  "app.components.Header.register": "Register",
+  "app.containers.App.nav.login": "Sign in",
+  "app.containers.App.nav.logout": "Sign out",
+  "app.containers.App.nav.register": "Register",
   "app.containers.Footer.disclaimer": "Every care has been taken to ensure the accuracy of this data and information. Please send any feedback to ",
   "app.containers.Footer.contact.email": "timo@dumpark.com",
   "app.containers.Footer.contact.anchor": "timo@dumpark.com",

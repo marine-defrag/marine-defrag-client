@@ -97,14 +97,14 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
     const { intl } = this.context;
     let navItems = [
       {
-        path: ROUTES.ACTORS,
-        title: intl.formatMessage(messages.nav.actors),
-        active: currentPath.startsWith(ROUTES.ACTOR),
-      },
-      {
         path: ROUTES.ACTIONS,
         title: intl.formatMessage(messages.nav.actions),
         active: currentPath.startsWith(ROUTES.ACTION),
+      },
+      {
+        path: ROUTES.ACTORS,
+        title: intl.formatMessage(messages.nav.actors),
+        active: currentPath.startsWith(ROUTES.ACTOR),
       },
     ];
     if (isManager) {
