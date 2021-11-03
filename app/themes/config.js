@@ -193,14 +193,14 @@ export const DB = {
   ACTIONTYPES: 'measuretypes', // action types
   ACTIONTYPE_TAXONOMIES: 'measuretype_taxonomies', // action taxonomies
   ACTORS: 'actors',
-  ACTOR_CATEGORIES: 'actor_categories',
+  // ACTOR_CATEGORIES: 'actor_categories',
   ACTOR_ACTIONS: 'actor_measures', // linking actors with their actions
   ACTORTYPES: 'actortypes', // action types
   ACTORTYPE_TAXONOMIES: 'actortype_taxonomies', // action taxonomies
-  MEMBERSHIPS: 'memberships', // quasi: actor_actors
-  RESOURCES: 'resources',
-  ACTION_RESOURCES: 'measure_resources',
-  RESOURCETYPES: 'resourcetypes', // resource types
+  // MEMBERSHIPS: 'memberships', // quasi: actor_actors
+  // RESOURCES: 'resources',
+  // ACTION_RESOURCES: 'measure_resources',
+  // RESOURCETYPES: 'resourcetypes', // resource types
   TAXONOMIES: 'taxonomies',
   CATEGORIES: 'categories',
   USERS: 'users',
