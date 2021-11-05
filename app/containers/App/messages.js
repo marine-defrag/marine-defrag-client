@@ -50,6 +50,16 @@ export default defineMessages({
       defaultMessage: 'Actortype 5',
     },
   },
+  actortypeGroups: {
+    1: {
+      id: 'app.containers.App.actortypeGroups.1',
+      defaultMessage: 'Countries',
+    },
+    2: {
+      id: 'app.containers.App.actortypeGroups.2',
+      defaultMessage: 'Other actors and activity targets',
+    },
+  },
   actortypeActors: {
     all: {
       id: 'app.containers.App.actortypeActors.all',
@@ -164,6 +174,20 @@ export default defineMessages({
     6: {
       id: 'app.containers.App.actiontypes.6',
       defaultMessage: 'Actortype 6',
+    },
+  },
+  actiontypeGroups: {
+    1: {
+      id: 'app.containers.App.actiontypeGroups.1',
+      defaultMessage: 'Donor activities',
+    },
+    2: {
+      id: 'app.containers.App.actiontypeGroups.2',
+      defaultMessage: 'Frameworks, actions and policies',
+    },
+    3: {
+      id: 'app.containers.App.actiontypeGroups.3',
+      defaultMessage: 'Initiatives',
     },
   },
   actiontypeActors: {

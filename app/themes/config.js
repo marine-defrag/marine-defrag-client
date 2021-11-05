@@ -189,14 +189,14 @@ export const ROUTES = {
 export const API = {
   ACTIONS: 'measures', // actions/ACTIONS
   ACTION_CATEGORIES: 'measure_categories', // measure_categories
-  // ACTION_ACTORS: 'measure_actors', // linking actions with their targets
+  ACTION_ACTORS: 'measure_actors', // linking actions with their targets
   ACTIONTYPES: 'measuretypes', // action types
-  // ACTIONTYPE_TAXONOMIES: 'measuretype_taxonomies', // action taxonomies
+  ACTIONTYPE_TAXONOMIES: 'measuretype_taxonomies', // action taxonomies
   ACTORS: 'actors',
   // ACTOR_CATEGORIES: 'actor_categories',
-  // ACTOR_ACTIONS: 'actor_measures', // linking actors with their actions
+  ACTOR_ACTIONS: 'actor_measures', // linking actors with their actions
   ACTORTYPES: 'actortypes', // action types
-  // ACTORTYPE_TAXONOMIES: 'actortype_taxonomies', // action taxonomies
+  ACTORTYPE_TAXONOMIES: 'actortype_taxonomies', // action taxonomies
   // MEMBERSHIPS: 'memberships', // quasi: actor_actors
   // RESOURCES: 'resources',
   // ACTION_RESOURCES: 'measure_resources',
@@ -216,4 +216,40 @@ export const COLUMN_WIDTHS = {
   HALF: 0.5,
   MAIN: 0.72,
   OTHER: 0.28,
+};
+
+export const ACTIONTYPE_GROUPS = {
+  // donor activities
+  1: {
+    types: [5], // donor activities
+    primary: true,
+  },
+  // policies etc
+  2: {
+    types: [
+      4, // national strategies
+      3, // regional strategies
+      2, // regional seas conventions
+      1, // international frameworks
+    ],
+  },
+  // initiatives
+  3: {
+    types: [6], // initiatives
+  },
+};
+export const ACTORTYPE_GROUPS = {
+  // countries
+  1: {
+    types: [1],
+  },
+  // policies etc
+  2: {
+    types: [
+      2, // orgs
+      5, // groups
+      4, // regions
+      3, // classes
+    ],
+  },
 };

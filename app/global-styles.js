@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1.428571429;
-    color: #344547;
+    color: #1c2121;
     margin: 0;
   }
   button, input, select, textarea {
@@ -41,11 +41,11 @@ const GlobalStyle = createGlobalStyle`
     background: transparent;
     border: none;
     text-align: left;
-    color: #eb6e51;
+    color: #0077d8;
     text-decoration: none;
 
     &:hover {
-      color: #d66149;
+      color: #0063b5;
     }
   }
   h1, h2, h3, h4, h5, h6 {

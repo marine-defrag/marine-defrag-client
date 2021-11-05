@@ -383,6 +383,14 @@ export const selectActiontypeActions = createSelector(
     return entities;
   }
 );
+export const selectActions = createSelector(
+  (state) => selectEntities(state, API.ACTIONS),
+  (entities) => entities
+);
+export const selectActors = createSelector(
+  (state) => selectEntities(state, API.ACTORS),
+  (entities) => entities
+);
 // returns actions not associated or associated with current actortype
 export const selectActortypeActions = createSelector(
   (state) => selectEntities(state, API.ACTIONS),

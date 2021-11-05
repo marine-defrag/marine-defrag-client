@@ -213,7 +213,7 @@ export default function createRoutes(store) {
       },
     }, {
       // ROUTES.ID: actiontype, ROUTES.VIEW: map, list or stats
-      path: `${ROUTES.ACTIONS}${ROUTES.ID}${ROUTES.VIEW}`,
+      path: `${ROUTES.ACTIONS}${ROUTES.ID}`,
       name: 'actionListForType',
       onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
       getComponent(nextState, cb) {
@@ -235,7 +235,7 @@ export default function createRoutes(store) {
       onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
       getComponent(nextState, cb) {
         const importModules = Promise.all([
-          import('containers/ActionList'),
+          import('containers/ActionsOverview'),
         ]);
 
         const renderRoute = loadModule(cb);
@@ -327,7 +327,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: `${ROUTES.ACTORS}${ROUTES.ID}${ROUTES.VIEW}`,
+      path: `${ROUTES.ACTORS}${ROUTES.ID}`,
       name: 'actorListForType',
       onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
       getComponent(nextState, cb) {
@@ -349,7 +349,7 @@ export default function createRoutes(store) {
       onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
       getComponent(nextState, cb) {
         const importModules = Promise.all([
-          import('containers/ActorList'),
+          import('containers/ActorsOverview'),
         ]);
 
         const renderRoute = loadModule(cb);
