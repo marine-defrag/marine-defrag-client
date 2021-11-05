@@ -17,6 +17,7 @@ import {
   selectActiveActortypes,
   selectIsUserManager,
   selectIsSignedIn,
+  selectActiontypes,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
@@ -24,7 +25,11 @@ import { ROUTES } from 'themes/config';
 
 import EntityList from 'containers/EntityList';
 import { CONFIG, DEPENDENCIES } from './constants';
-import { selectConnections, selectActions, selectConnectedTaxonomies } from './selectors';
+import {
+  selectConnections,
+  selectActions,
+  selectConnectedTaxonomies,
+} from './selectors';
 
 import messages from './messages';
 
@@ -51,8 +56,11 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
       location,
       isManager,
       isUserSignedIn,
+      params, // { id: the action type }
+      // actiontypes,
     } = this.props;
     const { intl } = this.context;
+    const typeId = params.id;
     const headerOptions = {
       supTitle: intl.formatMessage(messages.pageTitle),
       icon: 'actions',
@@ -87,9 +95,10 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
             hiddenSmall: true,
           },
         ],
-        onClick: () => this.props.handleNew(),
+        onClick: () => this.props.handleNew(typeId),
       });
     }
+    // console.log('actiontypes', actiontypes && actiontypes.toJS())
     return (
       <div>
         <Helmet
@@ -119,6 +128,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
 }
 
 ActionList.propTypes = {
+  params: PropTypes.object,
   loadEntitiesIfNeeded: PropTypes.func,
   handleNew: PropTypes.func,
   handleImport: PropTypes.func,
@@ -127,6 +137,7 @@ ActionList.propTypes = {
   location: PropTypes.object,
   entities: PropTypes.instanceOf(List).isRequired,
   taxonomies: PropTypes.instanceOf(Map),
+  // actiontypes: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
@@ -139,7 +150,14 @@ ActionList.contextTypes = {
 
 const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  entities: selectActions(state, fromJS(props.location.query)),
+  entities: selectActions(
+    state,
+    {
+      type: props.params.id, // type
+      locationQuery: fromJS(props.location.query),
+    },
+  ),
+  actiontypes: selectActiontypes(state, props.params.id),
   taxonomies: selectActionTaxonomies(state),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
@@ -152,8 +170,8 @@ function mapDispatchToProps(dispatch) {
     loadEntitiesIfNeeded: () => {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
-    handleNew: () => {
-      dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.NEW}`, { replace: true }));
+    handleNew: (typeId) => {
+      dispatch(updatePath(`${ROUTES.ACTIONS}/${typeId}${ROUTES.NEW}`, { replace: true }));
     },
     handleImport: () => {
       dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.IMPORT}`));

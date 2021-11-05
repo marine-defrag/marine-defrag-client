@@ -11,15 +11,19 @@ export const DEPENDENCIES = [
   API.USER_ROLES,
   API.CATEGORIES,
   API.TAXONOMIES,
+  API.ACTIONTYPES,
+  API.ACTION_CATEGORIES,
+  API.ACTIONTYPE_TAXONOMIES,
   API.ACTORS,
   API.ACTORTYPES,
-  API.ACTORTYPE_TAXONOMIES,
   API.ACTOR_CATEGORIES,
+  API.ACTORTYPE_TAXONOMIES,
 ];
 
 export const FORM_INITIAL = fromJS({
   id: '',
   attributes: {
+    measuretype_id: '',
     title: '',
     description: '',
     draft: true,

@@ -45,6 +45,7 @@ import {
   selectReady,
   selectReadyForAuthCheck,
   selectActionTaxonomies,
+  selectActiontype,
 } from 'containers/App/selectors';
 
 import Messages from 'components/Messages';
@@ -166,8 +167,15 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
   render() {
     const { intl } = this.context;
     const {
-      dataReady, viewDomain, connectedTaxonomies, actorsByActortype, taxonomies, onCreateOption,
+      dataReady,
+      viewDomain,
+      actorsByActortype,
+      // connectedTaxonomies,
+      // taxonomies,
+      // onCreateOption,
+      // actiontype,
     } = this.props;
+    // console.log(actiontype && actiontype.toJS())
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
     return (
       <div>
@@ -233,17 +241,17 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                     main: this.getHeaderMainFields(),
                     aside: this.getHeaderAsideFields(),
                   },
-                  body: {
-                    main: this.getBodyMainFields(
-                      connectedTaxonomies,
-                      actorsByActortype,
-                      onCreateOption,
-                    ),
-                    aside: this.getBodyAsideFields(
-                      taxonomies,
-                      onCreateOption,
-                    ),
-                  },
+                  // body: {
+                  //   main: this.getBodyMainFields(
+                  //     connectedTaxonomies,
+                  //     actorsByActortype,
+                  //     onCreateOption,
+                  //   ),
+                  //   aside: this.getBodyAsideFields(
+                  //     taxonomies,
+                  //     onCreateOption,
+                  //   ),
+                  // },
                 }}
                 scrollContainer={this.scrollContainer.current}
               />
@@ -269,26 +277,28 @@ ActionNew.propTypes = {
   viewDomain: PropTypes.object,
   dataReady: PropTypes.bool,
   authReady: PropTypes.bool,
-  taxonomies: PropTypes.object,
   actorsByActortype: PropTypes.object,
-  onCreateOption: PropTypes.func,
   initialiseForm: PropTypes.func,
-  connectedTaxonomies: PropTypes.object,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
+  // taxonomies: PropTypes.object,
+  // onCreateOption: PropTypes.func,
+  // connectedTaxonomies: PropTypes.object,
+  // actiontype: PropTypes.instanceOf(Map()),
 };
 
 ActionNew.contextTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, { params }) => ({
   viewDomain: selectDomain(state),
   authReady: selectReadyForAuthCheck(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   taxonomies: selectActionTaxonomies(state, { includeParents: false }),
   actorsByActortype: selectActorsByActortype(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
+  actiontype: selectActiontype(state, params.id),
 });
 
 function mapDispatchToProps(dispatch) {

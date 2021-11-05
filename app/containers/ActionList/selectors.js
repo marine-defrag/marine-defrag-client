@@ -11,7 +11,7 @@ import {
   selectConnectedCategoryQuery,
   selectSortByQuery,
   selectSortOrderQuery,
-  selectActortypeActors,
+  selectActors,
   // selectActortypeTaxonomiesSorted,
   // selectActortypes,
   selectReady,
@@ -36,7 +36,7 @@ import { CONFIG, DEPENDENCIES } from './constants';
 
 export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectActortypeActors,
+  selectActors,
   selectActorCategoriesByActor,
   (state) => selectEntities(state, API.CATEGORIES),
   (ready, actors, associationsGrouped, categories) => {
@@ -131,9 +131,9 @@ export const selectConnectedTaxonomies = createSelector(
 // nest category ids
 const selectActionsWithCategories = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
-  (state, locationQuery) => selectActionsSearchQuery(state, {
+  (state, args) => selectActionsSearchQuery(state, {
     searchAttributes: CONFIG.search || ['title'],
-    locationQuery,
+    ...args,
   }),
   selectActionCategoriesByAction,
   (state) => selectEntities(state, API.CATEGORIES),
@@ -193,21 +193,21 @@ const selectActionsWithActors = createSelector(
 const selectActionsWithout = createSelector(
   selectActionsWithActors,
   (state) => selectEntities(state, API.CATEGORIES),
-  selectWithoutQuery,
+  (state, { locationQuery }) => selectWithoutQuery(state, locationQuery),
   (entities, categories, query) => query
     ? filterEntitiesWithoutAssociation(entities, categories, query)
     : entities
 );
 const selectActionsByConnections = createSelector(
   selectActionsWithout,
-  selectConnectionQuery,
+  (state, { locationQuery }) => selectConnectionQuery(state, locationQuery),
   (entities, query) => query
     ? filterEntitiesByConnection(entities, query)
     : entities
 );
 const selectActionsByCategories = createSelector(
   selectActionsByConnections,
-  selectCategoryQuery,
+  (state, { locationQuery }) => selectCategoryQuery(state, locationQuery),
   (entities, query) => query
     ? filterEntitiesByCategories(entities, query)
     : entities
@@ -215,7 +215,7 @@ const selectActionsByCategories = createSelector(
 const selectActionsByConnectedCategories = createSelector(
   selectActionsByCategories,
   selectConnections,
-  selectConnectedCategoryQuery,
+  (state, { locationQuery }) => selectConnectedCategoryQuery(state, locationQuery),
   (entities, connections, query) => query
     ? filterEntitiesByConnectedCategories(entities, connections, query)
     : entities
@@ -230,8 +230,8 @@ const selectActionsByConnectedCategories = createSelector(
 // 7. selectActionsByCOnnectedCategories will filter by specific categories connected via connection
 export const selectActions = createSelector(
   selectActionsByConnectedCategories,
-  selectSortByQuery,
-  selectSortOrderQuery,
+  (state, { locationQuery }) => selectSortByQuery(state, locationQuery),
+  (state, { locationQuery }) => selectSortOrderQuery(state, locationQuery),
   (entities, sort, order) => {
     const sortOption = getSortOption(CONFIG.sorting, sort);
     return sortEntities(

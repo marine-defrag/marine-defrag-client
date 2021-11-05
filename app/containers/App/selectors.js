@@ -317,7 +317,17 @@ export const selectActortypes = createSelector(
 );
 export const selectActiontypes = createSelector(
   (state) => selectEntities(state, API.ACTIONTYPES),
-  (entities) => entities
+  (state, active) => active,
+  (entities, active) => entities && entities.map(
+    (entity) => active && qe(active, entity.get('id'))
+      ? entity.set('active', true)
+      : entity
+  )
+);
+export const selectActiontype = createSelector(
+  (state) => selectEntities(state, API.ACTIONTYPES),
+  (state, id) => id,
+  (entities, id) => entities && entities.get(id.toString())
 );
 // use for testing single actortype configuration
 // && entities.filter((actortype) => actortype.get('id') === '1')
@@ -370,8 +380,9 @@ export const selectActortypeActors = createSelector(
 );
 export const selectActiontypeActions = createSelector(
   (state) => selectEntities(state, API.ACTIONS),
-  selectActiontypeQuery,
+  (state, { type }) => type,
   (entities, type) => {
+    console.log('selectActiontypeActions', type);
     if (entities && type && type !== 'all') {
       return entities.filter(
         (actor) => qe(
