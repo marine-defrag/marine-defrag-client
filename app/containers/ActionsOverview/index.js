@@ -59,7 +59,7 @@ export function ActionsOverview({ onLoadData, types, onUpdatePath }) {
                     }}
                   >
                     <TypeTitle>
-                      <TypeCount>{types.getIn(['type', 'count']) || '0'}</TypeCount>
+                      <TypeCount>{types.getIn([type, 'count']) || '0'}</TypeCount>
                       <TypeTitleInner>
                         <FormattedMessage {...rootMessages.actiontypes[type]} />
                       </TypeTitleInner>

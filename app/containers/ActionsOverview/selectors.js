@@ -8,7 +8,12 @@ export const selectActiontypesWithActionCount = createSelector(
   selectActions,
   (state) => selectEntities(state, API.ACTIONTYPES),
   (actions, types) => actions && types && types.map((type) => {
-    const typeActions = actions.filter((action) => qe(action.getIn(['attributes', 'measuretype_id']), type.get('id')));
+    const typeActions = actions.filter(
+      (action) => qe(
+        action.getIn(['attributes', 'measuretype_id']),
+        type.get('id'),
+      )
+    );
     return type.set('count', typeActions.size);
   })
 );
