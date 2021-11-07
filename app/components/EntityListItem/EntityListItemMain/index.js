@@ -141,7 +141,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     entityPath,
     connections,
     entityIcon,
-    taxonomies,
+    // taxonomies,
   }) => {
     const { intl } = this.context;
     return ({
@@ -152,7 +152,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
       role: entity.get('roles') && connections.get('roles') && this.getRole(entity.get('roles'), connections.get('roles')),
       path: entityPath || config.clientPath,
       entityIcon: entityIcon && entityIcon(entity),
-      categories: taxonomies && this.getWithoutProgressCategories(taxonomies, entity.get('categories')),
+      categories: entity.get('categories'),
       connectedCounts: config && config.connections
         ? this.getConnections(entity, config.connections.options, connections)
         : [],
@@ -160,7 +160,6 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
       targetDate: entity.getIn(['attributes', 'target_date'])
         && intl
         && intl.formatDate(entity.getIn(['attributes', 'target_date'])),
-      progressCategory: taxonomies && this.getProgressCategory(taxonomies, entity.get('categories')),
     });
   }
 

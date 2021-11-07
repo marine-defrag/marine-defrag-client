@@ -390,7 +390,7 @@ export const selectActiontypeActions = createSelector(
       return entities.filter(
         (actor) => qe(
           type,
-          actor.getIn(['attributes', 'actiontype_id']),
+          actor.getIn(['attributes', 'measuretype_id']),
         )
       );
     }

@@ -398,6 +398,7 @@ export const ACTION_FIELDS = {
       optional: [ACTIONTYPES.REGLSEAS],
       type: 'bool',
       ui: 'checkbox',
+      defaultValue: false,
     },
     amount: {
       optional: [ACTIONTYPES.DONOR],

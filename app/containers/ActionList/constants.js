@@ -21,7 +21,7 @@ export const DEPENDENCIES = [
 
 export const CONFIG = {
   serverPath: API.ACTIONS,
-  clientPath: ROUTES.ACTIONS,
+  clientPath: ROUTES.ACTION,
   search: ['title'],
   sorting: [
     {

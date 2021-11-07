@@ -333,7 +333,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
             buttons={
               dataReady ? [{
                 type: 'cancel',
-                onClick: this.props.handleCancel,
+                onClick: () => this.props.handleCancel(actiontype),
               },
               {
                 type: 'save',
@@ -369,7 +369,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                 model="actionNew.form.data"
                 formData={viewDomain.getIn(['form', 'data'])}
                 saving={saveSending}
-                handleSubmit={(formData) => this.props.handleSubmit(formData, actorsByActortype)}
+                handleSubmit={(formData) => this.props.handleSubmit(formData, actiontype)}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={this.props.handleCancel}
                 handleUpdate={this.props.handleUpdate}
@@ -471,9 +471,8 @@ function mapDispatchToProps(dispatch) {
       dispatch(formActions.submit(model));
     },
     // handleSubmit: (formData, actorsByActortype) => {
-    handleSubmit: (formData) => {
-      let saveData = formData;
-
+    handleSubmit: (formData, actiontype) => {
+      let saveData = formData.setIn(['attributes', 'measuretype_id'], actiontype.get('id'));
       // actionCategories
       if (formData.get('associatedTaxonomies')) {
         saveData = saveData.set(
@@ -513,11 +512,10 @@ function mapDispatchToProps(dispatch) {
       //       )
       //   );
       // }
-
-      dispatch(save(saveData.toJS()));
+      dispatch(save(saveData.toJS(), actiontype.get('id')));
     },
-    handleCancel: () => {
-      dispatch(updatePath(ROUTES.ACTIONS), { replace: true });
+    handleCancel: (type) => {
+      dispatch(updatePath(`${ROUTES.ACTIONS}/${type}`), { replace: true });
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));
