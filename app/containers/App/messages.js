@@ -429,13 +429,9 @@ export default defineMessages({
       id: 'app.containers.App.hints.user_only',
       defaultMessage: 'Check to categorise users only',
     },
-    content: {
-      id: 'app.containers.App.hints.content',
-      defaultMessage: 'Note: first paragraph styled as lead paragraph',
-    },
-    fullActor: {
-      id: 'app.containers.App.hints.fullActor',
-      defaultMessage: 'Note: use only if title field does not already contain full text',
+    amount: {
+      id: 'app.containers.App.hints.amount',
+      defaultMessage: 'Note',
     },
     printListMore: {
       id: 'app.containers.App.hints.printListMore',
@@ -483,6 +479,14 @@ export default defineMessages({
     },
   },
   importFields: {
+    actortype_id: {
+      id: 'app.containers.App.importFields.actortype_id',
+      defaultMessage: 'Actortype id',
+    },
+    measuretype_id: {
+      id: 'app.containers.App.importFields.measuretype_id',
+      defaultMessage: 'Actortype id',
+    },
     title: {
       id: 'app.containers.App.importFields.title',
       defaultMessage: 'Title',
@@ -498,10 +502,6 @@ export default defineMessages({
     description: {
       id: 'app.containers.App.importFields.description',
       defaultMessage: 'Description',
-    },
-    fullActor: {
-      id: 'app.containers.App.importFields.fullActor',
-      defaultMessage: 'Full actor text',
     },
     accepted: {
       id: 'app.containers.App.importFields.accepted',
@@ -522,14 +522,6 @@ export default defineMessages({
     target_date_comment: {
       id: 'app.containers.App.importFields.target_date_comment',
       defaultMessage: 'Target date comment',
-    },
-    actortype_id: {
-      id: 'app.containers.App.importFields.actortype_id',
-      defaultMessage: 'Actortype id',
-    },
-    measuretype_id: {
-      id: 'app.containers.App.importFields.measuretype_id',
-      defaultMessage: 'Actortype id',
     },
   },
   placeholders: {
@@ -577,43 +569,59 @@ export default defineMessages({
       id: 'app.containers.App.placeholders.reference',
       defaultMessage: 'ID',
     },
+    code: {
+      id: 'app.containers.App.placeholders.code',
+      defaultMessage: 'ID',
+    },
     description: {
       id: 'app.containers.App.placeholders.description',
       defaultMessage: 'Enter description',
     },
-    fullActor: {
-      id: 'app.containers.App.placeholders.fullActor',
-      defaultMessage: 'Enter full actor text',
+    comment: {
+      id: 'app.containers.App.placeholders.comment',
+      defaultMessage: 'Enter comment',
     },
-    content: {
-      id: 'app.containers.App.placeholders.content',
-      defaultMessage: 'Enter content',
-    },
-    response: {
-      id: 'app.containers.App.placeholders.response',
-      defaultMessage: 'Enter response comment',
-    },
-    outcome: {
-      id: 'app.containers.App.placeholders.outcome',
-      defaultMessage: 'Enter desired outcome',
-    },
-    target_date_comment: {
+    date_comment: {
       id: 'app.containers.App.placeholders.target_date_comment',
       defaultMessage: 'Additional information',
     },
     url: {
       id: 'app.containers.App.placeholders.url',
-      defaultMessage: 'Enter full URL',
+      defaultMessage: 'Enter full URL ("https://example.org")',
     },
     number: {
       id: 'app.containers.App.placeholders.number',
       defaultMessage: 'ID',
     },
+    amount: {
+      id: 'app.containers.App.placeholders.amount',
+      defaultMessage: 'amount',
+    },
+    amount_comment: {
+      id: 'app.containers.App.placeholders.amount_comment',
+      defaultMessage: 'amount_comment',
+    },
   },
   attributes: {
+    id: {
+      id: 'app.containers.App.attributes.id',
+      defaultMessage: 'ID',
+    },
+    actortype_id: {
+      id: 'app.containers.App.attributes.actortype_id',
+      defaultMessage: 'Actortype id',
+    },
+    measuretype_id: {
+      id: 'app.containers.App.attributes.measuretype_id',
+      defaultMessage: 'Actortype id',
+    },
     draft: {
       id: 'app.containers.App.attributes.draft',
       defaultMessage: 'Status',
+    },
+    code: {
+      id: 'app.containers.App.attributes.code',
+      defaultMessage: 'Code',
     },
     title: {
       id: 'app.containers.App.attributes.title',
@@ -623,61 +631,77 @@ export default defineMessages({
       id: 'app.containers.App.attributes.description',
       defaultMessage: 'Description',
     },
-    fullActor: {
-      id: 'app.containers.App.attributes.fullActor',
-      defaultMessage: 'Full actor text',
+    comment: {
+      id: 'app.containers.App.attributes.comment',
+      defaultMessage: 'Comment',
     },
-    content: {
-      id: 'app.containers.App.attributes.content',
-      defaultMessage: 'Content',
+    url: {
+      id: 'app.containers.App.attributes.url',
+      defaultMessage: 'Website',
     },
-    accepted: {
-      id: 'app.containers.App.attributes.accepted',
-      defaultMessage: 'Government response',
+    date_start: {
+      id: 'app.containers.App.attributes.date_start',
+      defaultMessage: 'Date',
     },
-    response: {
-      id: 'app.containers.App.attributes.response',
-      defaultMessage: 'Government response comment',
+    date_start_empty: {
+      id: 'app.containers.App.attributes.date_start_empty',
+      defaultMessage: 'No start date set',
     },
-    outcome: {
-      id: 'app.containers.App.attributes.outcome',
-      defaultMessage: 'Desired outcome',
+    date_end: {
+      id: 'app.containers.App.attributes.date_end',
+      defaultMessage: 'Date',
     },
-    target_date_comment: {
-      id: 'app.containers.App.attributes.target_date_comment',
-      defaultMessage: 'Target date comment',
+    date_end_empty: {
+      id: 'app.containers.App.attributes.date_end_empty',
+      defaultMessage: 'No end date set',
     },
-    short_title: {
-      id: 'app.containers.App.attributes.short_title',
-      defaultMessage: 'Short title',
+    date_comment: {
+      id: 'app.containers.App.attributes.date_comment',
+      defaultMessage: 'Date comment',
     },
-    menu_title: {
-      id: 'app.containers.App.attributes.menu_title',
-      defaultMessage: 'Menu title',
+    target_comment: {
+      id: 'app.containers.App.attributes.target_comment',
+      defaultMessage: 'Target comment',
     },
-    order: {
-      id: 'app.containers.App.attributes.order',
-      defaultMessage: 'Menu order',
+    status_comment: {
+      id: 'app.containers.App.attributes.status_comment',
+      defaultMessage: 'Status comment',
     },
-    reference: {
-      id: 'app.containers.App.attributes.reference',
-      defaultMessage: 'Reference',
+    reference_ml: {
+      id: 'app.containers.App.attributes.reference_ml',
+      defaultMessage: 'reference_ml',
     },
-    referenceDefault: {
-      id: 'app.containers.App.attributes.referenceDefault',
-      defaultMessage: 'Reference (leave blank to use database id)',
+    status_lbs_protocol: {
+      id: 'app.containers.App.attributes.status_lbs_protocol',
+      defaultMessage: 'status_lbs_protocol',
     },
-    referenceOptional: {
-      id: 'app.containers.App.attributes.referenceOptional',
-      defaultMessage: 'Reference (optional)',
+    reference_landbased_ml: {
+      id: 'app.containers.App.attributes.reference_landbased_ml',
+      defaultMessage: 'reference_landbased_ml',
     },
-    id: {
-      id: 'app.containers.App.attributes.id',
-      defaultMessage: 'No.',
+    has_reference_landbased_ml: {
+      id: 'app.containers.App.attributes.has_reference_landbased_ml',
+      defaultMessage: 'has_reference_landbased_ml',
     },
-    idOrRef: {
-      id: 'app.containers.App.attributes.idOrRef',
-      defaultMessage: 'No./Ref.',
+    amount: {
+      id: 'app.containers.App.attributes.amount',
+      defaultMessage: 'amount',
+    },
+    amount_comment: {
+      id: 'app.containers.App.attributes.amount_comment',
+      defaultMessage: 'amount_comment',
+    },
+    activity_summary: {
+      id: 'app.containers.App.attributes.activity_summary',
+      defaultMessage: 'activity_summary',
+    },
+    gdp: {
+      id: 'app.containers.App.attributes.gdp',
+      defaultMessage: 'gdp',
+    },
+    population: {
+      id: 'app.containers.App.attributes.population',
+      defaultMessage: 'population',
     },
     name: {
       id: 'app.containers.App.attributes.name',
@@ -687,49 +711,13 @@ export default defineMessages({
       id: 'app.containers.App.attributes.email',
       defaultMessage: 'Email address',
     },
-    status: {
-      id: 'app.containers.App.attributes.status',
-      defaultMessage: 'Status',
+    menu_title: {
+      id: 'app.containers.App.attributes.menu_title',
+      defaultMessage: 'Menu title',
     },
-    url: {
-      id: 'app.containers.App.attributes.url',
-      defaultMessage: 'Website',
-    },
-    date: {
-      id: 'app.containers.App.attributes.date',
-      defaultMessage: 'Date',
-    },
-    target_date: {
-      id: 'app.containers.App.attributes.target_date',
-      defaultMessage: 'Target date',
-    },
-    date_empty: {
-      id: 'app.containers.App.attributes.date_empty',
-      defaultMessage: 'No date set',
-    },
-    target_date_empty: {
-      id: 'app.containers.App.attributes.target_date_empty',
-      defaultMessage: 'No target date set',
-    },
-    document_url: {
-      id: 'app.containers.App.attributes.document_url',
-      defaultMessage: 'Attached document',
-    },
-    document_upload: {
-      id: 'app.containers.App.attributes.document_upload',
-      defaultMessage: 'Upload document',
-    },
-    document_uploading: {
-      id: 'app.containers.App.attributes.document_uploading',
-      defaultMessage: 'Uploading document',
-    },
-    document_public: {
-      id: 'app.containers.App.attributes.document_public',
-      defaultMessage: 'Document status',
-    },
-    documentEmpty: {
-      id: 'app.containers.App.attributes.documentEmpty',
-      defaultMessage: 'No document attached yet',
+    order: {
+      id: 'app.containers.App.attributes.order',
+      defaultMessage: 'Menu order',
     },
     user_only: {
       id: 'app.containers.App.attributes.user_only',
@@ -762,10 +750,6 @@ export default defineMessages({
         id: 'app.containers.App.attributes.meta.created_at',
         defaultMessage: 'Created',
       },
-    },
-    actortype_id: {
-      id: 'app.containers.App.attributes.actortype_id',
-      defaultMessage: 'Actortype',
     },
   },
   nav: {

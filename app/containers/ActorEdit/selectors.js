@@ -14,7 +14,7 @@ import {
   entitiesSetAssociated,
   entitySetUser,
   prepareTaxonomiesAssociated,
-  prepareTaxonomiesMultiple,
+  prepareTaxonomiesMultipleTags,
 } from 'utils/entities';
 
 export const selectDomain = createSelector(
@@ -51,7 +51,7 @@ export const selectTaxonomies = createSelector(
 export const selectConnectedTaxonomies = createSelector(
   (state) => selectTaxonomiesSorted(state),
   (state) => selectEntities(state, API.CATEGORIES),
-  (taxonomies, categories) => prepareTaxonomiesMultiple(
+  (taxonomies, categories) => prepareTaxonomiesMultipleTags(
     taxonomies,
     categories,
     ['tags_actions'],

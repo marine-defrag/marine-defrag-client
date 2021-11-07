@@ -295,7 +295,7 @@ export const entitySetSingles = (entity, singles) => entity
   );
 
 // taxonomies or parent taxonomies
-export const filterTaxonomies = (
+export const filterTaxonomiesTags = (
   taxonomies,
   tagsKey,
   includeParents = true,
@@ -308,6 +308,16 @@ export const filterTaxonomies = (
         (other) => other.getIn(['attributes', tagsKey])
           && qe(tax.get('id'), other.getIn(['attributes', 'parent_id']))
       )
+    )
+);
+export const filterTaxonomies = (
+  taxonomies,
+  includeParents = true,
+) => taxonomies && taxonomies.filter(
+  (tax, key, list) => includeParents
+    // only non-parents
+    || !list.some(
+      (other) => qe(tax.get('id'), other.getIn(['attributes', 'parent_id']))
     )
 );
 
@@ -423,7 +433,7 @@ export const prepareTaxonomiesAssociated = (
   );
 
 // TODO deal with conflicts
-export const prepareTaxonomiesMultiple = (
+export const prepareTaxonomiesMultipleTags = (
   taxonomies,
   categories,
   tagsKeys,
@@ -431,7 +441,7 @@ export const prepareTaxonomiesMultiple = (
 ) => reduce(
   tagsKeys,
   (memo, tagsKey) => memo.merge(
-    prepareTaxonomies(
+    prepareTaxonomiesTags(
       taxonomies,
       categories,
       tagsKey,
@@ -440,14 +450,13 @@ export const prepareTaxonomiesMultiple = (
   ),
   Map(),
 );
-
-export const prepareTaxonomies = (
+export const prepareTaxonomiesTags = (
   taxonomies,
   categories,
   tagsKey,
   includeParents = true,
 ) => taxonomies
-  && filterTaxonomies(taxonomies, tagsKey, includeParents).map(
+  && filterTaxonomiesTags(taxonomies, tagsKey, includeParents).map(
     (tax) => {
       const taxCategories = getTaxCategories(categories, tax, tagsKey);
       return tax.set(
@@ -455,6 +464,17 @@ export const prepareTaxonomies = (
         tax.getIn(['attributes', tagsKey])
       ).set('categories', taxCategories);
     }
+  );
+export const prepareTaxonomies = (
+  taxonomies,
+  categories,
+  includeParents = true,
+) => taxonomies
+  && filterTaxonomies(taxonomies, includeParents).map(
+    (tax) => tax.set(
+      'categories',
+      getTaxCategories(categories, tax),
+    )
   );
 
 export const prepareCategory = (

@@ -23,6 +23,7 @@ import {
   filterEntitiesByKeywords,
   entitiesSetCategoryIds,
   prepareTaxonomies,
+  prepareTaxonomiesTags,
 } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
 import { PARAMS } from './constants';
@@ -329,8 +330,11 @@ export const selectActiontype = createSelector(
   (state, id) => id,
   (entities, id) => entities && entities.get(id.toString())
 );
-// use for testing single actortype configuration
-// && entities.filter((actortype) => actortype.get('id') === '1')
+export const selectActortype = createSelector(
+  (state) => selectEntities(state, API.ACTORTYPES),
+  (state, id) => id, // type id
+  (entities, id) => entities && entities.get(id.toString())
+);
 
 export const selectActiveActortypes = createSelector(
   selectActortypes,
@@ -382,7 +386,6 @@ export const selectActiontypeActions = createSelector(
   (state) => selectEntities(state, API.ACTIONS),
   (state, { type }) => type,
   (entities, type) => {
-    console.log('selectActiontypeActions', type);
     if (entities && type && type !== 'all') {
       return entities.filter(
         (actor) => qe(
@@ -493,35 +496,35 @@ export const selectActiontypeEntitiesAll = createSelector(
     .set('actors', actors)
     .set('actions', actions)
 );
-
+// select all taxonomies
 export const selectTaxonomies = createSelector(
   (state) => selectEntities(state, API.TAXONOMIES),
   (taxonomies) => taxonomies
 );
+// select all taxonomies sorted by priority
+export const selectTaxonomiesSorted = createSelector(
+  selectTaxonomies,
+  (taxonomies) => taxonomies
+    && sortEntities(taxonomies, 'asc', 'priority', null, false)
+);
+// get all actor taxonomies for a given type
 
-export const selectActortypeTaxonomies = createSelector(
+// get all taxonomies applicable to actors
+export const selectActorTaxonomies = createSelector(
   (state) => selectEntities(state, API.TAXONOMIES),
   (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
-  selectActortypeQuery,
-  (taxonomies, actortypeTaxonomies, actortype) => taxonomies
+  (taxonomies, actortypeTaxonomies) => taxonomies
     && actortypeTaxonomies
-    && taxonomies.map(
+    && taxonomies.filter(
+      // connected to current actortype
+      (tax) => actortypeTaxonomies.some(
+        (type) => qe(
+          type.getIn(['attributes', 'taxonomy_id']),
+          tax.get('id'),
+        )
+      )
+    ).map(
       (tax) => {
-        const actortypeNotSet = !actortype || actortype === 'all';
-
-        // connected to current actortype
-        const connectedToActortype = actortypeTaxonomies.some(
-          (type) => qe(
-            type.getIn(['attributes', 'taxonomy_id']),
-            tax.get('id'),
-          ) && (
-            actortypeNotSet
-            || qe(
-              type.getIn(['attributes', 'actortype_id']),
-              actortype,
-            )
-          )
-        );
         // connectedActortypes
         const actortypeIds = actortypeTaxonomies.reduce(
           (memo, type) => {
@@ -537,38 +540,31 @@ export const selectActortypeTaxonomies = createSelector(
           },
           List(),
         );
-        return tax
-          .setIn(['attributes', 'tags_actors'], connectedToActortype)
-          .set('actortypeIds', actortypeIds);
+        return tax.set('actortypeIds', actortypeIds);
       }
-    ).filter(
-      (tax) => tax.getIn(['attributes', 'tags_actors'])
-      // || tax.getIn(['attributes', 'tags_actions'])
-      // || tax.getIn(['attributes', 'tags_users'])
     )
 );
-export const selectActiontypeTaxonomies = createSelector(
+export const selectActorTaxonomiesSorted = createSelector(
+  selectActorTaxonomies,
+  (taxonomies) => taxonomies
+    && sortEntities(taxonomies, 'asc', 'priority', null, false)
+);
+// get all taxonomies applicable to actions
+export const selectActionTaxonomies = createSelector(
   (state) => selectEntities(state, API.TAXONOMIES),
   (state) => selectEntities(state, API.ACTIONTYPE_TAXONOMIES),
-  selectActiontypeQuery,
-  (taxonomies, actiontypeTaxonomies, actiontype) => taxonomies
+  (taxonomies, actiontypeTaxonomies) => taxonomies
     && actiontypeTaxonomies
-    && taxonomies.map(
+    && taxonomies.filter(
+      // connected to current actortype
+      (tax) => actiontypeTaxonomies.some(
+        (type) => qe(
+          type.getIn(['attributes', 'taxonomy_id']),
+          tax.get('id'),
+        )
+      )
+    ).map(
       (tax) => {
-        const actortypeNotSet = !actiontype || actiontype === 'all';
-        // connected to current actortype
-        const connectedToActiontype = actiontypeTaxonomies.some(
-          (type) => qe(
-            type.getIn(['attributes', 'taxonomy_id']),
-            tax.get('id'),
-          ) && (
-            actortypeNotSet
-            || qe(
-              type.getIn(['attributes', 'actiontype_id']),
-              type,
-            )
-          )
-        );
         // connectedActortypes
         const actiontypeIds = actiontypeTaxonomies.reduce(
           (memo, type) => {
@@ -578,37 +574,132 @@ export const selectActiontypeTaxonomies = createSelector(
                 tax.get('id')
               )
             ) {
-              return memo.push(type.getIn(['attributes', 'actiontype_id']));
+              return memo.push(type.getIn(['attributes', 'actortype_id']));
             }
             return memo;
           },
           List(),
         );
-        return tax
-          .setIn(['attributes', 'tags_actors'], connectedToActiontype)
-          .set('actortypeIds', actiontypeIds);
+        return tax.set('actiontypeIds', actiontypeIds);
       }
-    ).filter(
-      (tax) => tax.getIn(['attributes', 'tags_actors'])
-      // || tax.getIn(['attributes', 'tags_actions'])
-      // || tax.getIn(['attributes', 'tags_users'])
     )
 );
-export const selectTaxonomiesSorted = createSelector(
-  selectTaxonomies,
+export const selectActionTaxonomiesSorted = createSelector(
+  selectActionTaxonomies,
   (taxonomies) => taxonomies
     && sortEntities(taxonomies, 'asc', 'priority', null, false)
+);
+
+export const selectActortypeTaxonomies = createSelector(
+  (state, args) => args ? args.type : null,
+  (state) => selectEntities(state, API.TAXONOMIES),
+  (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
+  (typeId, taxonomies, actortypeTaxonomies) => typeId
+    && taxonomies
+    && actortypeTaxonomies
+    && taxonomies.filter(
+      // connected to current actortype
+      (tax) => actortypeTaxonomies.some(
+        (type) => qe(
+          type.getIn(['attributes', 'taxonomy_id']),
+          tax.get('id'),
+        ) && qe(
+          type.getIn(['attributes', 'actortype_id']),
+          typeId,
+        )
+      )
+    ).map(
+      (tax) => {
+        // connectedActortypes
+        const actortypeIds = actortypeTaxonomies.reduce(
+          (memo, type) => {
+            if (
+              qe(
+                type.getIn(['attributes', 'taxonomy_id']),
+                tax.get('id')
+              )
+            ) {
+              return memo.push(type.getIn(['attributes', 'actortype_id']));
+            }
+            return memo;
+          },
+          List(),
+        );
+        return tax.set('actortypeIds', actortypeIds);
+      }
+    )
 );
 export const selectActortypeTaxonomiesSorted = createSelector(
   selectActortypeTaxonomies,
   (taxonomies) => taxonomies
     && sortEntities(taxonomies, 'asc', 'priority', null, false)
 );
+export const selectActortypeTaxonomiesWithCats = createSelector(
+  (state, args) => args ? args.includeParents : true,
+  selectActortypeTaxonomiesSorted,
+  (state) => selectEntities(state, API.CATEGORIES),
+  (includeParents, taxonomies, categories) => prepareTaxonomies(
+    taxonomies,
+    categories,
+    includeParents,
+  )
+);
+
+export const selectActiontypeTaxonomies = createSelector(
+  (state, args) => args ? args.type : null,
+  (state) => selectEntities(state, API.TAXONOMIES),
+  (state) => selectEntities(state, API.ACTIONTYPE_TAXONOMIES),
+  (typeId, taxonomies, actiontypeTaxonomies) => typeId
+    && taxonomies
+    && actiontypeTaxonomies
+    && taxonomies.filter(
+      // connected to current actortype
+      (tax) => actiontypeTaxonomies.some(
+        (type) => qe(
+          type.getIn(['attributes', 'taxonomy_id']),
+          tax.get('id'),
+        ) && qe(
+          type.getIn(['attributes', 'measuretype_id']),
+          typeId,
+        )
+      )
+    ).map(
+      (tax) => {
+        // set all actiontypes valid for taxonomy
+        const actiontypeIds = actiontypeTaxonomies.reduce(
+          (memo, type) => {
+            if (
+              qe(
+                type.getIn(['attributes', 'taxonomy_id']),
+                tax.get('id')
+              )
+            ) {
+              return memo.push(type.getIn(['attributes', 'measuretype_id']));
+            }
+            return memo;
+          },
+          List(),
+        );
+        return tax.set('actiontypeIds', actiontypeIds);
+      }
+    )
+);
 export const selectActiontypeTaxonomiesSorted = createSelector(
   selectActiontypeTaxonomies,
   (taxonomies) => taxonomies
     && sortEntities(taxonomies, 'asc', 'priority', null, false)
 );
+export const selectActiontypeTaxonomiesWithCats = createSelector(
+  (state, args) => args ? args.includeParents : true,
+  selectActiontypeTaxonomiesSorted,
+  (state) => selectEntities(state, API.CATEGORIES),
+  (includeParents, taxonomies, categories) => prepareTaxonomies(
+    taxonomies,
+    categories,
+    includeParents,
+  )
+);
+
 
 export const selectEntity = createSelector(
   (state, { path }) => selectEntities(state, path),
@@ -716,29 +807,6 @@ export const selectActionConnections = createSelector(
     .set('actors', actors)
 );
 
-export const selectActionTaxonomies = createSelector(
-  (state, args) => args ? args.includeParents : true,
-  (state) => selectActiontypeTaxonomiesSorted(state),
-  (state) => selectEntities(state, API.CATEGORIES),
-  (includeParents, taxonomies, categories) => prepareTaxonomies(
-    taxonomies,
-    categories,
-    'tags_actions',
-    includeParents,
-  )
-);
-
-export const selectActorTaxonomies = createSelector(
-  (state, args) => args ? args.includeParents : true,
-  (state) => selectActiontypeTaxonomiesSorted(state),
-  (state) => selectEntities(state, API.CATEGORIES),
-  (includeParents, taxonomies, categories) => prepareTaxonomies(
-    taxonomies,
-    categories,
-    'tags_actors',
-    includeParents,
-  )
-);
 export const selectAllTaxonomiesWithCategories = createSelector(
   (state) => selectEntities(state, API.TAXONOMIES),
   (state) => selectEntities(state, API.CATEGORIES),
@@ -764,7 +832,7 @@ export const selectAllTaxonomiesWithCategories = createSelector(
 export const selectUserTaxonomies = createSelector(
   (state) => selectTaxonomiesSorted(state),
   (state) => selectEntities(state, API.CATEGORIES),
-  (taxonomies, categories) => prepareTaxonomies(
+  (taxonomies, categories) => prepareTaxonomiesTags(
     taxonomies,
     categories,
     'tags_users',

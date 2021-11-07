@@ -5,10 +5,9 @@ import { palette } from 'styled-theme';
 // import { isEqual } from 'lodash/lang';
 import { reduce } from 'lodash/collection';
 import { Map } from 'immutable';
-import { qe } from 'utils/quasi-equals';
 import Component from 'components/styled/Component';
 import Clear from 'components/styled/Clear';
-import { USER_ROLES, PROGRESS_TAXONOMY_ID } from 'themes/config';
+import { USER_ROLES } from 'themes/config';
 import appMessages from 'containers/App/messages';
 
 import EntityListItemMainTop from './EntityListItemMainTop';
@@ -136,32 +135,6 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     return reference;
   }
 
-  getProgressTaxonomy = (taxonomies) => taxonomies && taxonomies.find((tax) => qe(tax.get('id'), PROGRESS_TAXONOMY_ID));
-
-  getProgressCategory = (taxonomies, categoryIds) => {
-    const progressTaxonomy = taxonomies && this.getProgressTaxonomy(taxonomies);
-    const progressCategory = progressTaxonomy
-      && categoryIds
-      && progressTaxonomy.get('categories').find(
-        (cat) => categoryIds.includes(parseInt(cat.get('id'), 10))
-      );
-    return progressCategory && progressCategory.toJS();
-  }
-
-  getWithoutProgressCategories = (taxonomies, categoryIds) => {
-    const progressTaxonomy = taxonomies && this.getProgressTaxonomy(taxonomies);
-    return (progressTaxonomy && categoryIds)
-      ? categoryIds.filter(
-        (cat) => {
-          const progressCategoryIds = progressTaxonomy.get('categories').map(
-            (pCat) => parseInt(pCat.get('id'), 10)
-          );
-          return !progressCategoryIds || !progressCategoryIds.includes(parseInt(cat, 10));
-        }
-      )
-      : categoryIds;
-  }
-
   mapToEntityListItem = ({
     config,
     entity,
@@ -195,7 +168,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     const { onEntityClick, taxonomies } = this.props;
     const entity = this.mapToEntityListItem(this.props);
 
-    const bottomTaxonomies = taxonomies && taxonomies.filter((tax) => !qe(tax.get('id'), PROGRESS_TAXONOMY_ID));
+    const bottomTaxonomies = taxonomies;
 
     return (
       <Styled isManager={this.props.isManager} isConnection={this.props.isConnection}>

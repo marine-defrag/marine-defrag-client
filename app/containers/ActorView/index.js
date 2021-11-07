@@ -109,7 +109,7 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
     // own attributes
     fields.push({
       fields: [
-        getMarkdownField(entity, 'description', true, 'fullActor'),
+        getMarkdownField(entity, 'description', true),
         hasResponse && getStatusField(
           entity,
           'accepted',

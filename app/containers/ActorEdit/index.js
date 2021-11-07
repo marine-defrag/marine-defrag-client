@@ -156,7 +156,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
     const groups = [];
     groups.push({
       fields: [
-        getMarkdownField(intl.formatMessage, 'description', 'fullActor', 'fullActor', 'fullActor'),
+        getMarkdownField(intl.formatMessage, 'description'),
         hasResponse && getAcceptedField(intl.formatMessage, entity),
         hasResponse && getMarkdownField(intl.formatMessage, 'response'),
       ],

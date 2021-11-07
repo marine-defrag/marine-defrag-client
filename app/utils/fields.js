@@ -7,6 +7,12 @@ import {
 
 import appMessages from 'containers/App/messages';
 
+export const getInfoField = (att, value, large = false) => ({
+  controlType: 'info',
+  value,
+  large,
+  label: appMessages.attributes[att],
+});
 export const getIdField = (entity, isManager) => ({
   controlType: 'info',
   type: 'reference',

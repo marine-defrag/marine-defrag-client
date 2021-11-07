@@ -4,7 +4,7 @@
  *
  */
 import { fromJS } from 'immutable';
-import { API } from 'themes/config';
+import { API, ACTION_FIELDS } from 'themes/config';
 export const SAVE = 'impactoss/ActionNew/SAVE';
 
 export const DEPENDENCIES = [
@@ -22,15 +22,11 @@ export const DEPENDENCIES = [
 
 export const FORM_INITIAL = fromJS({
   id: '',
-  attributes: {
-    measuretype_id: '',
-    title: '',
-    description: '',
-    draft: true,
-    outcome: '',
-    target_date: '',
-    target_date_comment: '',
-  },
+  attributes: Object.keys(ACTION_FIELDS.ATTRIBUTES).reduce((memo, att) => ({
+    ...memo,
+    [att]: ACTION_FIELDS.ATTRIBUTES[att].defaultValue || '',
+  }), {}),
   associatedTaxonomies: {},
   associatedActorsByActortype: {},
+  associatedTargetsByActortype: {},
 });

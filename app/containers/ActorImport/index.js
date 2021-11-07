@@ -122,7 +122,6 @@ export class ActorImport extends React.PureComponent { // eslint-disable-line re
                   },
                   {
                     attribute: 'description',
-                    label: 'fullActor',
                     type: 'markdown',
                     import: true,
                   },

@@ -14,7 +14,7 @@ import { USER_ROLES, API } from 'themes/config';
 
 import {
   usersByRole,
-  prepareTaxonomiesMultiple,
+  prepareTaxonomiesMultipleTags,
 } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
 
@@ -82,7 +82,7 @@ export const selectUsers = createSelector(
 export const selectConnectedTaxonomies = createSelector(
   (state) => selectActortypeTaxonomiesSorted(state),
   (state) => selectEntities(state, API.CATEGORIES),
-  (taxonomies, categories) => prepareTaxonomiesMultiple(
+  (taxonomies, categories) => prepareTaxonomiesMultipleTags(
     taxonomies,
     categories,
     ['tags_actions', 'tags_actors'],

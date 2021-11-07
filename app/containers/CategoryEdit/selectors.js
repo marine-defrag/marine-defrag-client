@@ -16,7 +16,7 @@ import {
   prepareCategory,
   usersByRole,
   entitiesSetAssociatedCategory,
-  prepareTaxonomiesMultiple,
+  prepareTaxonomiesMultipleTags,
 } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
 export const selectDomain = createSelector(
@@ -173,7 +173,7 @@ export const selectActorsByActortype = createSelector(
 export const selectConnectedTaxonomies = createSelector(
   (state) => selectActortypeTaxonomiesSorted(state),
   (state) => selectEntities(state, API.CATEGORIES),
-  (taxonomies, categories) => prepareTaxonomiesMultiple(
+  (taxonomies, categories) => prepareTaxonomiesMultipleTags(
     taxonomies,
     categories,
     ['tags_actions', 'tags_actors']

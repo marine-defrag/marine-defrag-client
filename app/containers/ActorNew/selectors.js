@@ -5,7 +5,7 @@ import {
   selectEntities,
   selectActortypeTaxonomiesSorted,
 } from 'containers/App/selectors';
-import { prepareTaxonomiesMultiple } from 'utils/entities';
+import { prepareTaxonomiesMultipleTags } from 'utils/entities';
 
 export const selectDomain = createSelector(
   (state) => state.get('actorNew'),
@@ -15,7 +15,7 @@ export const selectDomain = createSelector(
 export const selectConnectedTaxonomies = createSelector(
   (state) => selectActortypeTaxonomiesSorted(state),
   (state) => selectEntities(state, API.CATEGORIES),
-  (taxonomies, categories) => prepareTaxonomiesMultiple(
+  (taxonomies, categories) => prepareTaxonomiesMultipleTags(
     taxonomies,
     categories,
     ['tags_actions'],

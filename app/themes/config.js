@@ -83,15 +83,12 @@ export const TEXT_TRUNCATE = {
   META_TITLE: 20,
 };
 
-export const PROGRESS_TAXONOMY_ID = 8;
-
-// WARNING: references as assigned by user
-export const PROGRESS_CATEGORY_REFERENCES = {
-  ONGOING: 1,
-  COMPLETED: 2,
+export const COLUMN_WIDTHS = {
+  FULL: 1,
+  HALF: 0.5,
+  MAIN: 0.72,
+  OTHER: 0.28,
 };
-
-export const CYCLE_TAXONOMY_ID = 2;
 
 /**
  * Server settings
@@ -211,45 +208,291 @@ export const API = {
   BOOKMARKS: 'bookmarks',
 };
 
-export const COLUMN_WIDTHS = {
-  FULL: 1,
-  HALF: 0.5,
-  MAIN: 0.72,
-  OTHER: 0.28,
+export const ACTIONTYPES = {
+  INTL: '1',
+  REGLSEAS: '2',
+  REGL: '3',
+  NATL: '4',
+  DONOR: '5',
+  INIT: '6',
+};
+export const ACTORTYPES = {
+  COUNTRY: '1',
+  ORG: '2',
+  CLASS: '3',
+  REG: '4',
+  GROUP: '5',
 };
 
 export const ACTIONTYPE_GROUPS = {
   // donor activities
   1: {
-    types: [5], // donor activities
+    types: [ACTIONTYPES.DONOR], // donor activities
     primary: true,
   },
   // policies etc
   2: {
     types: [
-      4, // national strategies
-      3, // regional strategies
-      2, // regional seas conventions
-      1, // international frameworks
+      ACTIONTYPES.NATL, // national strategies
+      ACTIONTYPES.REGL, // regional strategies
+      ACTIONTYPES.REGLSEAS, // regional seas conventions
+      ACTIONTYPES.INTL, // international frameworks
     ],
   },
   // initiatives
   3: {
-    types: [6], // initiatives
+    types: [ACTIONTYPES.INIT], // initiatives
   },
 };
 export const ACTORTYPE_GROUPS = {
   // countries
   1: {
-    types: [1],
+    types: [ACTORTYPES.COUNTRY],
   },
   // policies etc
   2: {
     types: [
-      2, // orgs
-      5, // groups
-      4, // regions
-      3, // classes
+      ACTORTYPES.ORG, // orgs
+      ACTORTYPES.GROUP, // groups
+      ACTORTYPES.REG, // regions
+      ACTORTYPES.CLASS, // classes
     ],
+  },
+};
+
+export const ACTION_FIELDS = {
+  CONNECTIONS: {
+    categories: {
+      table: API.CATEGORIES,
+      connection: API.ACTION_CATEGORIES,
+      groupby: {
+        table: API.TAXONOMIES,
+        on: 'taxonomy_id',
+      },
+    },
+    actors: {
+      table: API.ACTORS,
+      connection: API.ACTOR_ACTIONS,
+      groupby: {
+        table: API.ACTORTYPES,
+        on: 'actortype_id',
+      },
+    },
+    targets: {
+      table: API.ACTORS,
+      connection: API.ACTION_ACTORS,
+      groupby: {
+        table: API.ACTORTYPES,
+        on: 'actortype_id',
+      },
+    },
+  },
+  ATTRIBUTES: {
+    measuretype_id: {
+      defaultValue: '1',
+      required: Object.values(ACTIONTYPES), // all types
+      type: 'reference',
+      table: API.ACTIONTYPES,
+    },
+    draft: {
+      defaultValue: true,
+      required: Object.values(ACTIONTYPES), // all types
+      type: 'bool',
+      ui: 'dropdown',
+      options: [
+        { value: true, message: 'ui.publishStatuses.draft' },
+        { value: false, message: 'ui.publishStatuses.public' },
+      ],
+    },
+    code: {
+      optional: Object.values(ACTIONTYPES), // all types
+      type: 'text',
+    },
+    title: {
+      required: Object.values(ACTIONTYPES), // all types
+      type: 'text',
+    },
+    description: {
+      optional: [
+        ACTIONTYPES.INTL,
+        ACTIONTYPES.REGL,
+        ACTIONTYPES.NATL,
+        ACTIONTYPES.DONOR,
+        ACTIONTYPES.INIT,
+      ],
+      type: 'markdown',
+    },
+    comment: {
+      optional: [
+        ACTIONTYPES.INIT,
+      ],
+      type: 'markdown',
+    },
+    url: {
+      optional: [
+        ACTIONTYPES.INTL,
+        ACTIONTYPES.REGLSEAS,
+        ACTIONTYPES.DONOR,
+        ACTIONTYPES.INIT,
+      ],
+      type: 'url',
+    },
+    date_start: {
+      optional: [
+        ACTIONTYPES.INTL,
+        ACTIONTYPES.REGLSEAS,
+        ACTIONTYPES.NATL,
+        ACTIONTYPES.DONOR,
+        ACTIONTYPES.INIT,
+      ],
+      type: 'date',
+    },
+    date_end: {
+      optional: [
+        ACTIONTYPES.INTL,
+        ACTIONTYPES.REGLSEAS,
+        ACTIONTYPES.NATL,
+        ACTIONTYPES.DONOR,
+        ACTIONTYPES.INIT,
+      ],
+      type: 'date',
+    },
+    date_comment: {
+      optional: [
+        ACTIONTYPES.INTL,
+        ACTIONTYPES.REGLSEAS,
+        ACTIONTYPES.NATL,
+        ACTIONTYPES.DONOR,
+        ACTIONTYPES.INIT,
+      ],
+      type: 'text',
+    },
+    target_comment: {
+      optional: [
+        ACTIONTYPES.REGLSEAS,
+        ACTIONTYPES.DONOR,
+        ACTIONTYPES.INIT,
+      ],
+      type: 'markdown',
+    },
+    status_comment: {
+      optional: [
+        ACTIONTYPES.INTL,
+        ACTIONTYPES.REGLSEAS,
+      ],
+      type: 'markdown',
+    },
+    reference_ml: {
+      optional: [ACTIONTYPES.INTL],
+      type: 'text',
+    },
+    status_lbs_protocol: {
+      optional: [ACTIONTYPES.REGLSEAS],
+      type: 'text',
+    },
+    reference_landbased_ml: {
+      optional: [ACTIONTYPES.REGLSEAS],
+      type: 'text',
+    },
+    has_reference_landbased_ml: {
+      optional: [ACTIONTYPES.REGLSEAS],
+      type: 'bool',
+      ui: 'checkbox',
+    },
+    amount: {
+      optional: [ACTIONTYPES.DONOR],
+      type: 'number',
+    },
+    amount_comment: {
+      optional: [ACTIONTYPES.DONOR],
+      type: 'text',
+    },
+  },
+};
+
+export const ACTOR_FIELDS = {
+  CONNECTIONS: {
+    categories: {
+      table: API.CATEGORIES,
+      connection: API.ACTOR_CATEGORIES,
+      groupby: {
+        table: API.TAXONOMIES,
+        on: 'taxonomy_id',
+      },
+    },
+    actions: {
+      table: API.ACTIONS,
+      connection: API.ACTOR_ACTIONS,
+      groupby: {
+        table: API.ACTIONTYPES,
+        on: 'measuretype_id',
+      },
+    },
+    targeted: {
+      table: API.ACTIONS,
+      connection: API.ACTION_ACTORS,
+      groupby: {
+        table: API.ACTIONTYPES,
+        on: 'measuretype_id',
+      },
+    },
+  },
+  ATTRIBUTES: {
+    actortype_id: {
+      defaultValue: '1',
+      required: Object.values(ACTORTYPES), // all types
+      type: 'reference',
+      table: API.ACTORTYPES,
+    },
+    draft: {
+      defaultValue: true,
+      required: Object.values(ACTORTYPES), // all types
+      type: 'bool',
+      ui: 'dropdown',
+      options: [
+        { value: true, message: 'ui.publishStatuses.draft' },
+        { value: false, message: 'ui.publishStatuses.public' },
+      ],
+    },
+    code: {
+      optional: Object.values(ACTORTYPES), // all types
+      type: 'text',
+    },
+    title: {
+      required: Object.values(ACTORTYPES), // all types
+      type: 'text',
+    },
+    description: {
+      optional: [
+        ACTORTYPES.ORG,
+        ACTORTYPES.CLASS,
+        ACTORTYPES.REG,
+        ACTORTYPES.GROUP,
+      ],
+      type: 'markdown',
+    },
+    activity_summary: {
+      optional: [
+        ACTORTYPES.COUNTRY,
+        ACTORTYPES.ORG,
+        ACTORTYPES.GROUP,
+      ],
+      type: 'markdown',
+    },
+    url: {
+      optional: [
+        ACTORTYPES.ORG,
+        ACTORTYPES.GROUP,
+      ],
+      type: 'url',
+    },
+    gdp: {
+      optional: [ACTORTYPES.COUNTRY],
+      type: 'number',
+    },
+    population: {
+      optional: [ACTORTYPES.COUNTRY],
+      type: 'number',
+    },
   },
 };

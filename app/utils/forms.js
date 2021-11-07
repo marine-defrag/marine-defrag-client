@@ -335,11 +335,11 @@ export const getActortypeFormField = (formatMessage, actortypeOptions) => ({
   })),
 });
 
-export const getTitleFormField = (formatMessage, controlType = 'title', attribute = 'title') => getFormField({
+export const getTitleFormField = (formatMessage, controlType = 'title', attribute = 'title', required) => getFormField({
   formatMessage,
   controlType,
   attribute,
-  required: true,
+  required,
 });
 
 export const getReferenceFormField = (formatMessage, required = false, isAutoReference = false) => getFormField({
@@ -350,7 +350,29 @@ export const getReferenceFormField = (formatMessage, required = false, isAutoRef
   label: required ? 'reference' : 'referenceOptional',
   hint: isAutoReference ? formatMessage(appMessages.hints.autoReference) : null,
 });
+export const getCodeFormField = (formatMessage, att = 'code', required = false) => getFormField({
+  formatMessage,
+  controlType: 'short',
+  attribute: att,
+  label: att,
+  required,
+});
 
+export const getAmountFormField = (formatMessage, required, att = 'amount') => getFormField({
+  formatMessage,
+  controlType: att,
+  attribute: att,
+  required,
+  hint: formatMessage(appMessages.hints.amount),
+  // TODO: validate
+});
+export const getLinkFormField = (formatMessage, required, att = 'url') => getFormField({
+  formatMessage,
+  controlType: att,
+  attribute: att,
+  required,
+  // TODO: validate
+});
 export const getShortTitleFormField = (formatMessage) => getFormField({
   formatMessage,
   controlType: 'short',
@@ -375,9 +397,10 @@ export const getMenuOrderFormField = (formatMessage) => {
   return field;
 };
 
-export const getMarkdownField = (formatMessage, attribute = 'description', label, placeholder, hint) => getFormField({
+export const getMarkdownField = (formatMessage, required, attribute = 'description', label, placeholder, hint) => getFormField({
   formatMessage,
   controlType: 'markdown',
+  required,
   attribute,
   label: label || attribute,
   placeholder: placeholder || attribute,
@@ -600,7 +623,7 @@ const getActorFields = ({ actortypes, hasResponse }, formatMessage) => ({
   body: {
     main: [{
       fields: [
-        getMarkdownField(formatMessage, 'description', 'fullActor', 'fullActor', 'fullActor'),
+        getMarkdownField(formatMessage, 'description'),
         hasResponse && getAcceptedField(formatMessage),
         hasResponse && getMarkdownField(formatMessage, 'response'),
       ],

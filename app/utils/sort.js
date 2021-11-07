@@ -1,5 +1,4 @@
 import { find } from 'lodash/collection';
-import { CYCLE_TAXONOMY_ID } from 'themes/config';
 import { getCategoryShortTitle } from 'utils/entities';
 import isNumber from 'utils/is-number';
 
@@ -147,18 +146,16 @@ export const sortEntities = (entities, sortOrder, sortBy, type, asList = true) =
   return asList ? sorted.toList() : sorted;
 };
 
-export const sortCategories = (categories, taxonomyId, sortOrder, sortBy) => {
-  if (taxonomyId && parseInt(taxonomyId, 10) === CYCLE_TAXONOMY_ID) {
-    return sortEntities(
-      categories,
-      sortOrder || 'desc',
-      sortBy || 'date',
-      'date', // fild type
-    );
-  }
-  return sortEntities(
-    categories,
-    sortOrder || 'asc',
-    sortBy || 'referenceThenTitle',
-  );
-};
+// if (taxonomyId && parseInt(taxonomyId, 10) === CYCLE_TAXONOMY_ID) {
+//   return sortEntities(
+//     categories,
+//     sortOrder || 'desc',
+//     sortBy || 'date',
+//     'date', // fild type
+//   );
+// }
+export const sortCategories = (categories, taxonomyId, sortOrder, sortBy) => sortEntities(
+  categories,
+  sortOrder || 'asc',
+  sortBy || 'referenceThenTitle',
+);
