@@ -46,23 +46,19 @@ export const CONFIG = {
       order: 'desc',
     },
   ],
-  actortypes: { // filter by actortype
-    query: 'actortypex',
-    key: 'actortype_id',
-  },
   taxonomies: { // filter by each category
     query: 'cat',
     search: true,
     connectPath: API.ACTOR_CATEGORIES,
     key: 'category_id',
     ownKey: 'actor_id',
-    defaultGroupAttribute: 'groups_actors_default', // used when no actortype is set
-    // TODO better store in database join table actortype_taxonomies
-    defaultGroupsByActortype: {
-      1: { 1: '1', 2: '2' }, // actortype 1 actors are grouped by taxonomies 1 & 2
-      2: { 1: '9', 2: '10' }, // actortype 2 SDS are grouped by taxonomies 9 & 10
-      3: { 1: '7' }, // actortype 3 SDGs are grouped by taxonomy 7
-    },
+    // defaultGroupAttribute: 'groups_actors_default', // used when no actortype is set
+    // // TODO better store in database join table actortype_taxonomies
+    // defaultGroupsByActortype: {
+    //   1: { 1: '1', 2: '2' }, // actortype 1 actors are grouped by taxonomies 1 & 2
+    //   2: { 1: '9', 2: '10' }, // actortype 2 SDS are grouped by taxonomies 9 & 10
+    //   3: { 1: '7' }, // actortype 3 SDGs are grouped by taxonomy 7
+    // },
     groupBy: 'actortype_id',
     editForActortypes: true,
   },
@@ -71,14 +67,14 @@ export const CONFIG = {
     options: [
       {
         search: true,
-        message: 'entities.actions.plural',
+        message: 'entities.actions_{actiontypeid}.plural',
         path: API.ACTIONS, // filter by actor connection
         clientPath: ROUTES.ACTIONS, // filter by actor connection
         key: 'action_id',
         connectPath: API.ACTOR_ACTIONS, // filter by actor connection
         ownKey: 'actor_id',
-        editForActortypes: true,
-        actortypeFilter: 'has_actions',
+        groupByActiontype: true,
+        actiontypeFilter: 'has_actions',
       },
     ],
   },

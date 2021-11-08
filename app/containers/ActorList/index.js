@@ -15,7 +15,7 @@ import { getAcceptanceStatus } from 'utils/entities';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import {
   selectReady,
-  selectActorTaxonomies,
+  selectActortypeTaxonomies,
   selectActiveActortypes,
   selectIsUserManager,
   selectIsSignedIn,
@@ -172,8 +172,14 @@ ActorList.contextTypes = {
 
 const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  entities: selectActors(state, fromJS(props.location.query)),
-  taxonomies: selectActorTaxonomies(state),
+  entities: selectActors(
+    state,
+    {
+      locationQuery: fromJS(props.location.query),
+      type: props.params.id,
+    },
+  ),
+  taxonomies: selectActortypeTaxonomies(state, { type: props.params.id }),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
   actortypes: selectActiveActortypes(state),

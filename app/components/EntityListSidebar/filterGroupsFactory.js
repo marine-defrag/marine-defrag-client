@@ -2,7 +2,9 @@ import { reduce } from 'lodash/collection';
 import { sortEntities } from 'utils/sort';
 import { qe } from 'utils/quasi-equals';
 
-const checkActortype = (actortypes, attribute) => actortypes.some((actortype) => actortype.getIn(['attributes', attribute]));
+const checkActortype = (actortypes, attribute) => actortypes.some(
+  (actortype) => actortype.getIn(['attributes', attribute])
+);
 
 // figure out filter groups for filter panel
 export const makeFilterGroups = (

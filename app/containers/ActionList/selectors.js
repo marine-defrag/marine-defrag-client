@@ -150,11 +150,11 @@ const selectActionsWithCategories = createSelector(
 );
 
 // nest connected actor ids
-// nest connected actor ids byactortype
+// nest connected actor ids by actortype
 const selectActionsWithActors = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActionsWithCategories,
-  (state) => selectConnections(state),
+  selectConnections,
   selectActorActionsByAction,
   (ready, entities, connections, associationsGrouped) => {
     if (ready && connections.get('actors')) {

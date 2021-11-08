@@ -52,20 +52,20 @@ export const CONFIG = {
     connectPath: API.ACTION_CATEGORIES,
     key: 'category_id',
     ownKey: 'action_id',
-    defaultGroupAttribute: 'groups_actions_default',
+    // defaultGroupAttribute: 'groups_actions_default',
   },
-  connectedTaxonomies: { // filter by each category
-    query: 'catx',
-    search: true,
-    exclude: 'tags_actions',
-    connections: [
-      {
-        path: API.ACTORS, // filter by actor connection
-        message: 'entities.actors.plural',
-        key: 'actor_id',
-      },
-    ],
-  },
+  // connectedTaxonomies: { // filter by each category
+  //   query: 'catx',
+  //   search: true,
+  //   exclude: 'tags_actions',
+  //   connections: [
+  //     {
+  //       path: API.ACTORS, // filter by actor connection
+  //       message: 'entities.actors.plural',
+  //       key: 'actor_id',
+  //     },
+  //   ],
+  // },
   connections: { // filter by associated entity
     query: 'connected',
     options: [
