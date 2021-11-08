@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { toLower } from 'lodash/string';
-import { format, parse } from 'date-fns';
+import { format, parseISO, parse } from 'date-fns';
 
 import validateDateFormat from 'components/forms/validators/validate-date-format';
 import DayPickerInput from 'react-day-picker/DayPickerInput';
@@ -12,44 +12,52 @@ import InputComponent from './InputComponent';
 // Import DayPicker styles
 import DatePickerStyle from './styles';
 
+const UI_DATE_FORMAT = 'yyyy-MM-d';
+
 class DatePicker extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
     const { intl } = this.context;
-
     // format from db format to input format if valid
     const formattedDay = this.props.value
-      && validateDateFormat(this.props.value, API_DATE_FORMAT)
+      && validateDateFormat(this.props.value)
       ? format(
-        parse(this.props.value, API_DATE_FORMAT, new Date()),
+        parseISO(this.props.value),
         DATE_FORMAT,
       )
       : this.props.value;
-
     return (
       <React.Fragment>
         <DayPickerInput
+          // Date parser used for parsing the string typed in the input field
+          // returns Date from text
           parseDate={(value) => {
-            if (
-              value.trim() !== ''
-              && validateDateFormat(value, DATE_FORMAT)
-            ) {
-              return parse(value, DATE_FORMAT, new Date());
+            if (value.trim() !== '') {
+              if (validateDateFormat(value, DATE_FORMAT)) {
+                return parse(value, DATE_FORMAT, new Date());
+              }
+              if (validateDateFormat(value, UI_DATE_FORMAT)) {
+                return parse(value, UI_DATE_FORMAT, new Date());
+              }
+              return false;
             }
             return null;
           }}
           value={formattedDay}
           onDayChange={(valueDate) => {
-            // format to API format
+            // fires on day picker use
+            // returns API format from Date
             if (valueDate) {
-              const formattedAPI = valueDate && format(valueDate, API_DATE_FORMAT);
-              return formattedAPI && this.props.onChange(formattedAPI);
+              const formattedAPI = format(valueDate, API_DATE_FORMAT);
+              if (formattedAPI) {
+                this.props.onChange(formattedAPI);
+              }
             }
-            return null;
           }}
           inputProps={{
             onChange: ({ target }) => {
+              // fires on input field change
               const { value } = target;
-              // format string to db format if in valid input format
+              // format string to db format if we have a valid input format
               if (
                 value.trim() !== ''
                 && validateDateFormat(value, DATE_FORMAT)
