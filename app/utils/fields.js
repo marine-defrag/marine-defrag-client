@@ -1,6 +1,6 @@
 import { truncateText } from 'utils/string';
 import { sortEntities, sortCategories } from 'utils/sort';
-import { filterTaxonomies, getAcceptanceStatus } from 'utils/entities';
+import { filterTaxonomies } from 'utils/entities';
 import {
   USER_ROLES, TEXT_TRUNCATE, ROUTES, API,
 } from 'themes/config';
@@ -98,7 +98,7 @@ export const getMetaField = (entity) => {
   const fields = [];
   if (entity.get('user') && entity.getIn(['user', 'attributes', 'name'])) {
     fields.push({
-      label: appMessages.attributes.meta.updated_by,
+      label: appMessages.attributes.meta.updated_by_id,
       value: entity.get('user') && entity.getIn(['user', 'attributes', 'name']),
     });
   }
@@ -292,7 +292,6 @@ export const getActorConnectionField = (
   connections,
   onEntityClick,
   actortypeid, // actortype id
-  hasResponse,
 ) => getConnectionField({
   entities: sortEntities(entities, 'asc', 'reference'),
   taxonomies: filterTaxonomies(taxonomies, 'tags_actors'),
@@ -301,11 +300,6 @@ export const getActorConnectionField = (
   entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
   entityPath: API.ACTORS,
   onEntityClick,
-  entityIcon: (entity) => {
-    if (!hasResponse) return null;
-    const status = getAcceptanceStatus(entity);
-    return status ? status.icon : null;
-  },
 });
 export const getActionConnectionField = (entities, taxonomies, connections, onEntityClick) => getConnectionField({
   entities: sortEntities(entities, 'asc', 'id'),
@@ -352,7 +346,6 @@ export const getActorConnectionGroupsField = (
   connections,
   onEntityClick,
   actortypeid, // actortype id
-  hasResponse,
 ) => getConnectionGroupsField({
   entityGroups,
   groupedBy,
@@ -362,11 +355,6 @@ export const getActorConnectionGroupsField = (
   entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
   entityPath: API.ACTORS,
   onEntityClick,
-  entityIcon: (entity) => {
-    if (!hasResponse) return null;
-    const status = getAcceptanceStatus(entity);
-    return status ? status.icon : null;
-  },
 });
 export const getActionConnectionGroupsField = (entityGroups, groupedBy, taxonomies, connections, onEntityClick) => getConnectionGroupsField({
   entityGroups,

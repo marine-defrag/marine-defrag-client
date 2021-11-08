@@ -274,7 +274,7 @@ function* createConnectionsSaga({
   entityId, path, updates, keyPair,
 }) {
   // make sure to use new entity id for full payload
-  // we should have either the one (actor_id) or the other (action_id)
+  // we should have either the one (actor_id) or the other (measure_id)
   const updatesUpdated = updates;
   updatesUpdated.create = updatesUpdated.create.map((create) => ({
     [keyPair[0]]: create[keyPair[0]] || entityId,
@@ -438,7 +438,7 @@ export function* newEntitySaga({ data }, updateClient = true, multiple = false) 
             entityId: entityCreated.data.id,
             path: API.ACTOR_ACTIONS,
             updates: data.entity.actorActions,
-            keyPair: ['actor_id', 'action_id'],
+            keyPair: ['actor_id', 'measure_id'],
           });
         }
         // update action-category connections
@@ -447,7 +447,7 @@ export function* newEntitySaga({ data }, updateClient = true, multiple = false) 
             entityId: entityCreated.data.id,
             path: API.ACTION_CATEGORIES,
             updates: data.entity.actionCategories,
-            keyPair: ['category_id', 'action_id'],
+            keyPair: ['category_id', 'measure_id'],
           });
         }
 

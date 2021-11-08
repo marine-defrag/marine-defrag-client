@@ -10,28 +10,30 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import { actions as formActions } from 'react-redux-form/immutable';
-
 import { Map } from 'immutable';
 
 import {
   taxonomyOptions,
-  entityOptions,
-  renderActionControl,
-  renderTaxonomyControl,
-  getCategoryUpdatesFromFormData,
-  getConnectionUpdatesFromFormData,
   getTitleFormField,
-  getReferenceFormField,
-  getAcceptedField,
   getStatusField,
   getMarkdownField,
+  getCodeFormField,
+  renderTaxonomyControl,
+  getLinkFormField,
+  getAmountFormField,
+  getNumberFormField,
+  // renderActionControl,
+  // renderTaxonomyControl,
+  // getCategoryUpdatesFromFormData,
+  // getConnectionUpdatesFromFormData,
 } from 'utils/forms';
+import { getInfoField, getMetaField } from 'utils/fields';
 
 import { scrollToTop } from 'utils/scroll-to-component';
 import { hasNewError } from 'utils/entity-form';
+import { checkActorAttribute, checkActorRequired } from 'utils/entities';
 
-import { getMetaField } from 'utils/fields';
-import { qe } from 'utils/quasi-equals';
+// import { qe } from 'utils/quasi-equals';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
 import { USER_ROLES, ROUTES, API } from 'themes/config';
@@ -52,7 +54,7 @@ import {
   selectReady,
   selectReadyForAuthCheck,
   selectIsUserAdmin,
-  selectActortypes,
+  // selectActortypes,
 } from 'containers/App/selectors';
 
 import Messages from 'components/Messages';
@@ -64,9 +66,9 @@ import EntityForm from 'containers/EntityForm';
 import {
   selectDomain,
   selectViewEntity,
-  selectTaxonomies,
-  selectActions,
-  selectConnectedTaxonomies,
+  // selectTaxonomies,
+  // selectActions,
+  // selectConnectedTaxonomies,
 } from './selectors';
 
 import messages from './messages';
@@ -106,7 +108,8 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
   getInitialFormData = (nextProps) => {
     const props = nextProps || this.props;
     const {
-      taxonomies, actions, viewEntity,
+      viewEntity,
+      taxonomies,
     } = props;
     return viewEntity
       ? Map({
@@ -116,21 +119,38 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
           FORM_INITIAL.get('attributes')
         ),
         associatedTaxonomies: taxonomyOptions(taxonomies),
-        associatedActions: entityOptions(actions, true),
+        // associatedActions: entityOptions(actions, true),
       })
       : Map();
   };
 
-  getHeaderMainFields = () => {
+  getHeaderMainFields = (entity) => {
     const { intl } = this.context;
-    return ([ // fieldGroups
-      { // fieldGroup
-        fields: [
-          getReferenceFormField(intl.formatMessage, true), // required
-          getTitleFormField(intl.formatMessage, 'titleText'),
-        ],
-      },
-    ]);
+    const typeId = entity.getIn(['attributes', 'actortype_id']);
+    return (
+      [ // fieldGroups
+        { // fieldGroup
+          fields: [
+            getInfoField(
+              'measuretype_id',
+              intl.formatMessage(appMessages.actiontypes[typeId]),
+              true // large
+            ), // required
+            checkActorAttribute(typeId, 'code') && getCodeFormField(
+              intl.formatMessage,
+              'code',
+              checkActorRequired(typeId, 'code'),
+            ),
+            checkActorAttribute(typeId, 'title') && getTitleFormField(
+              intl.formatMessage,
+              'title',
+              'title',
+              checkActorRequired(typeId, 'title'),
+            ),
+          ],
+        },
+      ]
+    );
   };
 
   getHeaderAsideFields = (entity) => {
@@ -146,36 +166,70 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
   };
 
   getBodyMainFields = (
-    connectedTaxonomies,
     entity,
-    actions,
-    onCreateOption,
-    hasResponse,
+    // connectedTaxonomies,
+    // actions,
+    // onCreateOption,
   ) => {
     const { intl } = this.context;
+    const typeId = entity.getIn(['attributes', 'actortype_id']);
     const groups = [];
-    groups.push({
-      fields: [
-        getMarkdownField(intl.formatMessage, 'description'),
-        hasResponse && getAcceptedField(intl.formatMessage, entity),
-        hasResponse && getMarkdownField(intl.formatMessage, 'response'),
-      ],
-    });
-    if (actions) {
-      groups.push({
-        label: intl.formatMessage(appMessages.nav.actionsSuper),
-        icon: 'actions',
+    groups.push(
+      {
         fields: [
-          renderActionControl(actions, connectedTaxonomies, onCreateOption, intl),
+          checkActorAttribute(typeId, 'description') && getMarkdownField(
+            intl.formatMessage,
+            checkActorRequired(typeId, 'description'),
+            'description',
+          ),
+          checkActorAttribute(typeId, 'activity_summary') && getMarkdownField(
+            intl.formatMessage,
+            checkActorRequired(typeId, 'activity_summary'),
+            'activity_summary',
+          ),
         ],
-      });
-    }
+      },
+    );
+    // if (actions) {
+    //   groups.push({
+    //     label: intl.formatMessage(appMessages.nav.actionsSuper),
+    //     icon: 'actions',
+    //     fields: [
+    //       renderActionControl(actions, connectedTaxonomies, onCreateOption, intl),
+    //     ],
+    //   });
+    // }
     return groups;
   }
 
-  getBodyAsideFields = (taxonomies, onCreateOption) => {
+  getBodyAsideFields = (entity, taxonomies, onCreateOption) => {
     const { intl } = this.context;
+    const typeId = entity.getIn(['attributes', 'actortype_id']);
+
     return ([ // fieldGroups
+      { // fieldGroup
+        fields: [
+          checkActorAttribute(typeId, 'url') && getLinkFormField(
+            intl.formatMessage,
+            checkActorRequired(typeId, 'url'),
+            'url',
+          ),
+        ],
+      },
+      { // fieldGroup
+        fields: [
+          checkActorAttribute(typeId, 'gdp') && getAmountFormField(
+            intl.formatMessage,
+            checkActorRequired(typeId, 'gdp'),
+            'gdp',
+          ),
+          checkActorAttribute(typeId, 'population') && getNumberFormField(
+            intl.formatMessage,
+            checkActorRequired(typeId, 'population'),
+            'population',
+          ),
+        ],
+      },
       { // fieldGroup
         label: intl.formatMessage(appMessages.entities.taxonomies.plural),
         icon: 'categories',
@@ -190,26 +244,25 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
       viewEntity,
       dataReady,
       viewDomain,
-      connectedTaxonomies,
+      // connectedTaxonomies,
       actions,
       taxonomies,
       onCreateOption,
-      actortypes,
     } = this.props;
     const reference = this.props.params.id;
     const {
       saveSending, saveError, deleteSending, deleteError, submitValid,
     } = viewDomain.get('page').toJS();
-    const actortypeId = viewEntity && viewEntity.getIn(['attributes', 'actortype_id']);
+    const typeId = viewEntity && viewEntity.getIn(['attributes', 'actortype_id']);
+
     const type = intl.formatMessage(
-      appMessages.entities[actortypeId ? `actors_${actortypeId}` : 'actors'].single
+      appMessages.entities[typeId ? `actors_${typeId}` : 'actors'].single
     );
 
-    const currentActortype = dataReady && actortypes.find((actortype) => qe(actortype.get('id'), actortypeId));
-    const hasResponse = dataReady && currentActortype && currentActortype.getIn(['attributes', 'has_response']);
-    const hasActions = dataReady && currentActortype && currentActortype.getIn(['attributes', 'has_actions']);
-    const actortypeTaxonomies = taxonomies && taxonomies.filter((tax) => tax.get('actortypeIds').find((id) => qe(id, actortypeId))
-      || qe(actortypeId, tax.getIn(['attributes', 'actortype_id'])));
+    // const currentActortype = dataReady && actortypes.find((actortype) => qe(actortype.get('id'), actortypeId));
+    // const hasActions = dataReady && currentActortype && currentActortype.getIn(['attributes', 'has_actions']);
+    // const actortypeTaxonomies = taxonomies && taxonomies.filter((tax) => tax.get('actortypeIds').find((id) => qe(id, actortypeId))
+    //   || qe(actortypeId, tax.getIn(['attributes', 'actortype_id'])));
 
     // console.log('render', this.scrollContainer)
     // console.log('render', this.scrollContainer.current)
@@ -228,7 +281,6 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}
-            icon={actortypeId ? `actors_${actortypeId}` : 'actors'}
             buttons={
               viewEntity && dataReady ? [{
                 type: 'cancel',
@@ -280,9 +332,8 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
                 saving={saveSending}
                 handleSubmit={(formData) => this.props.handleSubmit(
                   formData,
-                  actortypeTaxonomies,
+                  taxonomies,
                   actions,
-                  currentActortype,
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={this.props.handleCancel}
@@ -290,18 +341,22 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
                 handleDelete={this.props.isUserAdmin ? this.props.handleDelete : null}
                 fields={{
                   header: {
-                    main: this.getHeaderMainFields(),
+                    main: this.getHeaderMainFields(viewEntity),
                     aside: this.getHeaderAsideFields(viewEntity),
                   },
                   body: {
                     main: this.getBodyMainFields(
-                      connectedTaxonomies,
                       viewEntity,
-                      hasActions && actions,
-                      onCreateOption,
-                      hasResponse,
+                      // connectedTaxonomies,
+                      // hasActions && actions,
+                      // onCreateOption,
+                      // hasResponse,
                     ),
-                    aside: this.getBodyAsideFields(actortypeTaxonomies, onCreateOption),
+                    aside: this.getBodyAsideFields(
+                      viewEntity,
+                      taxonomies,
+                      onCreateOption,
+                    ),
                   },
                 }}
                 scrollContainer={this.scrollContainer.current}
@@ -351,10 +406,10 @@ const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   authReady: selectReadyForAuthCheck(state),
   viewEntity: selectViewEntity(state, props.params.id),
-  taxonomies: selectTaxonomies(state, props.params.id),
-  actions: selectActions(state, props.params.id),
-  connectedTaxonomies: selectConnectedTaxonomies(state),
-  actortypes: selectActortypes(state),
+  // taxonomies: selectTaxonomies(state, props.params.id),
+  // actions: selectActions(state, props.params.id),
+  // connectedTaxonomies: selectConnectedTaxonomies(state),
+  // actortypes: selectActortypes(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -381,38 +436,41 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, taxonomies, actions, currentActortype) => {
-      let saveData = formData
-        .set(
-          'actorCategories',
-          getCategoryUpdatesFromFormData({
-            formData,
-            taxonomies,
-            createKey: 'actor_id',
-          })
-        )
-        .set(
-          'actorActions',
-          getConnectionUpdatesFromFormData({
-            formData,
-            connections: actions,
-            connectionAttribute: 'associatedActions',
-            createConnectionKey: 'action_id',
-            createKey: 'actor_id',
-          })
-        );
-      // cleanup attributes for actortype
-      if (!currentActortype || !currentActortype.getIn(['attributes', 'has_response'])) {
-        saveData = saveData
-          .setIn(['attributes', 'accepted'], '')
-          .setIn(['attributes', 'response'], '');
-      } else if (saveData.getIn(['attributes', 'accepted']) === '') {
-        saveData = saveData.setIn(['attributes', 'accepted'], 'true');
-      }
-      dispatch(save(saveData.toJS()));
+    handleSubmit: (formData) => {
+      dispatch(save(formData.toJS()));
     },
+    // handleSubmit: (formData, taxonomies, actions, currentActortype) => {
+    //   let saveData = formData
+    //     .set(
+    //       'actorCategories',
+    //       getCategoryUpdatesFromFormData({
+    //         formData,
+    //         taxonomies,
+    //         createKey: 'actor_id',
+    //       })
+    //     )
+    //     .set(
+    //       'actorActions',
+    //       getConnectionUpdatesFromFormData({
+    //         formData,
+    //         connections: actions,
+    //         connectionAttribute: 'associatedActions',
+    //         createConnectionKey: 'measure_id',
+    //         createKey: 'actor_id',
+    //       })
+    //     );
+    //   // cleanup attributes for actortype
+    //   if (!currentActortype || !currentActortype.getIn(['attributes', 'has_response'])) {
+    //     saveData = saveData
+    //       .setIn(['attributes', 'accepted'], '')
+    //       .setIn(['attributes', 'response'], '');
+    //   } else if (saveData.getIn(['attributes', 'accepted']) === '') {
+    //     saveData = saveData.setIn(['attributes', 'accepted'], 'true');
+    //   }
+    //   dispatch(save(saveData.toJS()));
+    // },
     handleCancel: () => {
-      dispatch(updatePath(`${ROUTES.ACTORS}/${props.params.id}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.ACTOR}/${props.params.id}`, { replace: true }));
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));
@@ -421,6 +479,7 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(deleteEntity({
         path: API.ACTORS,
         id: props.params.id,
+        redirect: ROUTES.ACTORS,
       }));
     },
     onCreateOption: (args) => {

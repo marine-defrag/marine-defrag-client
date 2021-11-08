@@ -8,7 +8,7 @@ import { Map } from 'immutable';
 
 import styled from 'styled-components';
 
-import rootMessages from 'containers/App/messages';
+import appMessages from 'containers/App/messages';
 
 import { ROUTES, ACTORTYPE_GROUPS } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
@@ -45,12 +45,13 @@ export function ActorsOverview({ onLoadData, types, onUpdatePath }) {
           {Object.keys(ACTORTYPE_GROUPS).map((key) => (
             <Group key={key}>
               <GroupTitle>
-                <FormattedMessage {...rootMessages.actortypeGroups[key]} />
+                <FormattedMessage {...appMessages.actortypeGroups[key]} />
               </GroupTitle>
-              {ACTORTYPE_GROUPS[key].types.map((type) => {
-                const path = `${ROUTES.ACTORS}/${type}`;
+              {ACTORTYPE_GROUPS[key].types.map((typeId) => {
+                const path = `${ROUTES.ACTORS}/${typeId}`;
                 return (
                   <TypeButton
+                    key={typeId}
                     primary={ACTORTYPE_GROUPS[key].primary}
                     href={`${path}`}
                     onClick={(evt) => {
@@ -59,9 +60,9 @@ export function ActorsOverview({ onLoadData, types, onUpdatePath }) {
                     }}
                   >
                     <TypeTitle>
-                      <TypeCount>{types.getIn([type, 'count']) || '0'}</TypeCount>
+                      <TypeCount>{types.getIn([typeId, 'count']) || '0'}</TypeCount>
                       <TypeTitleInner>
-                        <FormattedMessage {...rootMessages.actortypes[type]} />
+                        <FormattedMessage {...appMessages.entities[`actors_${typeId}`].plural} />
                       </TypeTitleInner>
                     </TypeTitle>
                   </TypeButton>

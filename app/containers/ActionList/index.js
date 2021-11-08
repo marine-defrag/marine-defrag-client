@@ -14,10 +14,8 @@ import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import {
   selectReady,
   selectActiontypeTaxonomies,
-  selectActiveActortypes,
   selectIsUserManager,
   selectIsSignedIn,
-  selectActiontypes,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
@@ -50,26 +48,25 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
       dataReady,
       entities,
       taxonomies,
-      actortypes,
       connections,
       connectedTaxonomies,
       location,
       isManager,
       isUserSignedIn,
       params, // { id: the action type }
-      // actiontypes,
     } = this.props;
     const { intl } = this.context;
     const typeId = params.id;
+    const type = `actions_${typeId}`;
     const headerOptions = {
       supTitle: intl.formatMessage(messages.pageTitle),
-      icon: 'actions',
       actions: [],
     };
     if (isUserSignedIn) {
       headerOptions.actions.push({
         type: 'bookmarker',
-        title: intl.formatMessage(messages.pageTitle),
+        title: intl.formatMessage(appMessages.entities[type].plural),
+        entityType: type,
       });
     }
     if (window.print) {
@@ -91,7 +88,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
         title: [
           intl.formatMessage(appMessages.buttons.add),
           {
-            title: intl.formatMessage(appMessages.actiontypesSingle[typeId]),
+            title: intl.formatMessage(appMessages.entities[type].single),
             hiddenSmall: true,
           },
         ],
@@ -110,15 +107,14 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
         <EntityList
           entities={entities}
           taxonomies={taxonomies}
-          actortypes={actortypes}
           connections={connections}
           connectedTaxonomies={connectedTaxonomies}
           config={CONFIG}
           header={headerOptions}
           dataReady={dataReady}
           entityTitle={{
-            single: intl.formatMessage(appMessages.actiontypesSingle[typeId]),
-            plural: intl.formatMessage(appMessages.actiontypes[typeId]),
+            single: intl.formatMessage(appMessages.entities[type].single),
+            plural: intl.formatMessage(appMessages.entities[type].plural),
           }}
           locationQuery={fromJS(location.query)}
         />
@@ -128,20 +124,18 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
 }
 
 ActionList.propTypes = {
-  params: PropTypes.object,
   loadEntitiesIfNeeded: PropTypes.func,
   handleNew: PropTypes.func,
   handleImport: PropTypes.func,
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
-  location: PropTypes.object,
   entities: PropTypes.instanceOf(List).isRequired,
   taxonomies: PropTypes.instanceOf(Map),
-  // actiontypes: PropTypes.instanceOf(Map),
-  actortypes: PropTypes.instanceOf(Map),
-  connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
+  connections: PropTypes.instanceOf(Map),
+  location: PropTypes.object,
   isUserSignedIn: PropTypes.bool,
+  params: PropTypes.object,
 };
 
 ActionList.contextTypes = {
@@ -157,11 +151,9 @@ const mapStateToProps = (state, props) => ({
       locationQuery: fromJS(props.location.query),
     },
   ),
-  actiontypes: selectActiontypes(state, props.params.id),
   taxonomies: selectActiontypeTaxonomies(state, { type: props.params.id }),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
-  actortypes: selectActiveActortypes(state),
   isManager: selectIsUserManager(state),
   isUserSignedIn: selectIsSignedIn(state),
 });

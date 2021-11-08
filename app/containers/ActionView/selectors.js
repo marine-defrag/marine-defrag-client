@@ -41,7 +41,7 @@ export const selectTaxonomies = createSelector(
     categories,
     associations,
     'tags_actions',
-    'action_id',
+    'measure_id',
     id,
   )
 );

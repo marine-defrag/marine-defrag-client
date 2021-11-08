@@ -4,7 +4,7 @@
  *
  */
 import { fromJS } from 'immutable';
-import { API } from 'themes/config';
+import { API, ACTOR_FIELDS } from 'themes/config';
 
 export const SAVE = 'impactoss/ActorNew/SAVE';
 
@@ -12,22 +12,21 @@ export const DEPENDENCIES = [
   API.USER_ROLES,
   API.CATEGORIES,
   API.TAXONOMIES,
-  API.ACTIONS,
   API.ACTORTYPES,
-  API.ACTORTYPE_TAXONOMIES,
+  API.ACTIONTYPES,
+  API.ACTOR_CATEGORIES,
   API.ACTION_CATEGORIES,
+  API.ACTORTYPE_TAXONOMIES,
+  API.ACTIONTYPE_TAXONOMIES,
+  API.ACTIONS,
 ];
 
 export const FORM_INITIAL = fromJS({
-  attributes: {
-    title: '',
-    description: '',
-    reference: '',
-    accepted: true,
-    response: '',
-    draft: true,
-    actortype_id: '',
-  },
+  id: '',
+  attributes: Object.keys(ACTOR_FIELDS.ATTRIBUTES).reduce((memo, att) => ({
+    ...memo,
+    [att]: ACTOR_FIELDS.ATTRIBUTES[att].defaultValue || '',
+  }), {}),
   associatedTaxonomies: {},
   associatedActions: [],
   associatedActors: [],

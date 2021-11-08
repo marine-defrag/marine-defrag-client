@@ -15,7 +15,7 @@ import { Map } from 'immutable';
 
 import {
   taxonomyOptions,
-  entityOptions,
+  // entityOptions,
   getTitleFormField,
   getStatusField,
   getMarkdownField,
@@ -116,7 +116,9 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
   getInitialFormData = (nextProps) => {
     const props = nextProps || this.props;
     const {
-      viewEntity, taxonomies, actorsByActortype,
+      viewEntity,
+      taxonomies,
+      // actorsByActortype,
     } = props;
     // console.log(viewEntity && viewEntity.toJS())
     // console.log(FORM_INITIAL.get('attributes') && FORM_INITIAL.get('attributes').toJS())
@@ -128,9 +130,9 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
           FORM_INITIAL.get('attributes')
         ),
         associatedTaxonomies: taxonomyOptions(taxonomies),
-        associatedActorsByActortype: actorsByActortype
-          ? actorsByActortype.map((actors) => entityOptions(actors, true))
-          : Map(),
+        // associatedActorsByActortype: actorsByActortype
+        //   ? actorsByActortype.map((actors) => entityOptions(actors, true))
+        //   : Map(),
       })
       : Map();
   }
@@ -327,9 +329,15 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     } = this.props;
     const { intl } = this.context;
     const reference = this.props.params.id;
+    const typeId = viewEntity && viewEntity.getIn(['attributes', 'measuretype_id']);
+
     const {
       saveSending, saveError, deleteSending, deleteError, submitValid,
     } = viewDomain.get('page').toJS();
+
+    const type = typeId
+      ? intl.formatMessage(appMessages.entities[`actions_${typeId}`].single)
+      : intl.formatMessage(appMessages.entities.actions.single);
 
     return (
       <div>
@@ -341,9 +349,8 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
         />
         <Content ref={this.scrollContainer}>
           <ContentHeader
-            title={intl.formatMessage(messages.pageTitle)}
+            title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}
-            icon="actions"
             buttons={
               viewEntity && dataReady
                 ? [{
@@ -509,7 +516,7 @@ function mapDispatchToProps(dispatch, props) {
     //   //     getCategoryUpdatesFromFormData({
     //   //       formData,
     //   //       taxonomies,
-    //   //       createKey: 'action_id',
+    //   //       createKey: 'measure_id',
     //   //     })
     //   //   );
     //   // saveData = saveData.set(
@@ -520,7 +527,7 @@ function mapDispatchToProps(dispatch, props) {
     //   //       connections: actors,
     //   //       connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
     //   //       createConnectionKey: 'actor_id',
-    //   //       createKey: 'action_id',
+    //   //       createKey: 'measure_id',
     //   //     }))
     //   //     .reduce(
     //   //       (memo, deleteCreateLists) => {
@@ -540,7 +547,7 @@ function mapDispatchToProps(dispatch, props) {
     //   dispatch(save(saveData.toJS()));
     // },
     handleCancel: () => {
-      dispatch(updatePath(`${ROUTES.ACTIONS}/${props.params.id}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.ACTION}/${props.params.id}`, { replace: true }));
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));

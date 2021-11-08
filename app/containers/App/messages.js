@@ -50,28 +50,6 @@ export default defineMessages({
       defaultMessage: 'Actortype 5',
     },
   },
-  actortypesSingle: {
-    1: {
-      id: 'app.containers.App.actortypesSingle.1',
-      defaultMessage: 'Human Rights Actors',
-    },
-    2: {
-      id: 'app.containers.App.actortypesSingle.2',
-      defaultMessage: 'Sustainable Development Goals',
-    },
-    3: {
-      id: 'app.containers.App.actortypesSingle.3',
-      defaultMessage: 'Actortype 3',
-    },
-    4: {
-      id: 'app.containers.App.actortypesSingle.4',
-      defaultMessage: 'Actortype 4',
-    },
-    5: {
-      id: 'app.containers.App.actortypesSingle.5',
-      defaultMessage: 'Actortype 5',
-    },
-  },
   actortypeGroups: {
     1: {
       id: 'app.containers.App.actortypeGroups.1',
@@ -80,58 +58,6 @@ export default defineMessages({
     2: {
       id: 'app.containers.App.actortypeGroups.2',
       defaultMessage: 'Other actors and activity targets',
-    },
-  },
-  actortypeActors: {
-    all: {
-      id: 'app.containers.App.actortypeActors.all',
-      defaultMessage: 'All actortypes',
-    },
-    1: {
-      id: 'app.containers.App.actortypeActors.1',
-      defaultMessage: 'Human Rights Actors',
-    },
-    2: {
-      id: 'app.containers.App.actortypeActors.2',
-      defaultMessage: 'SDG Targets',
-    },
-    3: {
-      id: 'app.containers.App.actortypeActors.3',
-      defaultMessage: 'Actortype 3',
-    },
-    4: {
-      id: 'app.containers.App.actortypeActors.4',
-      defaultMessage: 'Actortype 4',
-    },
-    5: {
-      id: 'app.containers.App.actortypeActors.5',
-      defaultMessage: 'Actortype 5',
-    },
-  },
-  actortypeActorsShort: {
-    all: {
-      id: 'app.containers.App.actortypeActorsShort.all',
-      defaultMessage: 'All Actortypes',
-    },
-    1: {
-      id: 'app.containers.App.actortypeActorsShort.1',
-      defaultMessage: 'HR Actors',
-    },
-    2: {
-      id: 'app.containers.App.actortypeActorsShort.2',
-      defaultMessage: 'SDG Targets',
-    },
-    3: {
-      id: 'app.containers.App.actortypeActorsShort.3',
-      defaultMessage: 'Actortype 3',
-    },
-    4: {
-      id: 'app.containers.App.actortypeActorsShort.4',
-      defaultMessage: 'Actortype 4',
-    },
-    5: {
-      id: 'app.containers.App.actortypeActorsShort.5',
-      defaultMessage: 'Actortype 5',
     },
   },
   actortypes_short: {
@@ -195,32 +121,6 @@ export default defineMessages({
     },
     6: {
       id: 'app.containers.App.actiontypes.6',
-      defaultMessage: 'Actortype 6',
-    },
-  },
-  actiontypesSingle: {
-    1: {
-      id: 'app.containers.App.actiontypesSingle.1',
-      defaultMessage: 'Human Rights Actors',
-    },
-    2: {
-      id: 'app.containers.App.actiontypesSingle.2',
-      defaultMessage: 'Sustainable Development Goals',
-    },
-    3: {
-      id: 'app.containers.App.actiontypesSingle.3',
-      defaultMessage: 'Actortype 3',
-    },
-    4: {
-      id: 'app.containers.App.actiontypesSingle.4',
-      defaultMessage: 'Actortype 4',
-    },
-    5: {
-      id: 'app.containers.App.actiontypesSingle.5',
-      defaultMessage: 'Actortype 5',
-    },
-    6: {
-      id: 'app.containers.App.actiontypesSingle.6',
       defaultMessage: 'Actortype 6',
     },
   },
@@ -485,6 +385,10 @@ export default defineMessages({
       id: 'app.containers.App.hints.printListMore',
       defaultMessage: 'List only showing {no} items.',
     },
+    content: {
+      id: 'app.containers.App.hints.content',
+      defaultMessage: 'content hint',
+    },
   },
   textValues: {
     user_only: {
@@ -539,37 +443,9 @@ export default defineMessages({
       id: 'app.containers.App.importFields.title',
       defaultMessage: 'Title',
     },
-    reference: {
-      id: 'app.containers.App.importFields.reference',
-      defaultMessage: 'Reference',
-    },
-    referenceRequired: {
-      id: 'app.containers.App.importFields.referenceRequired',
-      defaultMessage: 'Reference',
-    },
     description: {
       id: 'app.containers.App.importFields.description',
       defaultMessage: 'Description',
-    },
-    accepted: {
-      id: 'app.containers.App.importFields.accepted',
-      defaultMessage: 'Accepted',
-    },
-    response: {
-      id: 'app.containers.App.importFields.response',
-      defaultMessage: 'Government response',
-    },
-    outcome: {
-      id: 'app.containers.App.importFields.outcome',
-      defaultMessage: 'Desired outcome',
-    },
-    target_date: {
-      id: 'app.containers.App.importFields.target_date',
-      defaultMessage: 'Target Date',
-    },
-    target_date_comment: {
-      id: 'app.containers.App.importFields.target_date_comment',
-      defaultMessage: 'Target date comment',
     },
   },
   placeholders: {
@@ -629,6 +505,10 @@ export default defineMessages({
       id: 'app.containers.App.placeholders.comment',
       defaultMessage: 'Enter comment',
     },
+    content: {
+      id: 'app.containers.App.placeholders.content',
+      defaultMessage: 'Enter content',
+    },
     date_comment: {
       id: 'app.containers.App.placeholders.target_date_comment',
       defaultMessage: 'Additional information',
@@ -681,6 +561,10 @@ export default defineMessages({
     },
     comment: {
       id: 'app.containers.App.attributes.comment',
+      defaultMessage: 'Comment',
+    },
+    content: {
+      id: 'app.containers.App.attributes.content',
       defaultMessage: 'Comment',
     },
     url: {
@@ -790,8 +674,8 @@ export default defineMessages({
         id: 'app.containers.App.attributes.meta.title',
         defaultMessage: 'Meta',
       },
-      updated_by: {
-        id: 'app.containers.App.attributes.meta.updated_by',
+      updated_by_id: {
+        id: 'app.containers.App.attributes.meta.updated_by_id',
         defaultMessage: 'Updated by',
       },
       updated_at: {
@@ -1075,6 +959,186 @@ export default defineMessages({
       empty: {
         id: 'app.containers.App.entities.actions.empty',
         defaultMessage: 'No actions yet',
+      },
+    },
+    actions_1: {
+      single: {
+        id: 'app.containers.App.entities.actions_1.single',
+        defaultMessage: 'Actor',
+      },
+      plural: {
+        id: 'app.containers.App.entities.actions_1.plural',
+        defaultMessage: 'Actors',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.actions_1.singleLong',
+        defaultMessage: 'Actor',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.actions_1.pluralLong',
+        defaultMessage: 'Actors',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.actions_1.singleShort',
+        defaultMessage: 'Actor',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.actions_1.pluralShort',
+        defaultMessage: 'Actors',
+      },
+      empty: {
+        id: 'app.containers.App.entities.actions_1.empty',
+        defaultMessage: 'No actors yet',
+      },
+    },
+    actions_2: {
+      single: {
+        id: 'app.containers.App.entities.actions_2.single',
+        defaultMessage: 'Actor',
+      },
+      plural: {
+        id: 'app.containers.App.entities.actions_2.plural',
+        defaultMessage: 'Actors',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.actions_2.singleLong',
+        defaultMessage: 'Actor',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.actions_2.pluralLong',
+        defaultMessage: 'Actors',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.actions_2.singleShort',
+        defaultMessage: 'Actor',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.actions_2.pluralShort',
+        defaultMessage: 'Actors',
+      },
+      empty: {
+        id: 'app.containers.App.entities.actions_2.empty',
+        defaultMessage: 'No actors yet',
+      },
+    },
+    actions_3: {
+      single: {
+        id: 'app.containers.App.entities.actions_3.single',
+        defaultMessage: 'Actor',
+      },
+      plural: {
+        id: 'app.containers.App.entities.actions_3.plural',
+        defaultMessage: 'Actors',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.actions_3.singleLong',
+        defaultMessage: 'Actor',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.actions_3.pluralLong',
+        defaultMessage: 'Actors',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.actions_3.singleShort',
+        defaultMessage: 'Actor',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.actions_3.pluralShort',
+        defaultMessage: 'Actors',
+      },
+      empty: {
+        id: 'app.containers.App.entities.actions_3.empty',
+        defaultMessage: 'No actors yet',
+      },
+    },
+    actions_4: {
+      single: {
+        id: 'app.containers.App.entities.actions_4.single',
+        defaultMessage: 'Actor',
+      },
+      plural: {
+        id: 'app.containers.App.entities.actions_4.plural',
+        defaultMessage: 'Actors',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.actions_4.singleLong',
+        defaultMessage: 'Actor',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.actions_4.pluralLong',
+        defaultMessage: 'Actors',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.actions_4.singleShort',
+        defaultMessage: 'Actor',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.actions_4.pluralShort',
+        defaultMessage: 'Actors',
+      },
+      empty: {
+        id: 'app.containers.App.entities.actions_4.empty',
+        defaultMessage: 'No actors yet',
+      },
+    },
+    actions_5: {
+      single: {
+        id: 'app.containers.App.entities.actions_5.single',
+        defaultMessage: 'Actor',
+      },
+      plural: {
+        id: 'app.containers.App.entities.actions_5.plural',
+        defaultMessage: 'Actors',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.actions_5.singleLong',
+        defaultMessage: 'Actor',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.actions_5.pluralLong',
+        defaultMessage: 'Actors',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.actions_5.singleShort',
+        defaultMessage: 'Actor',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.actions_5.pluralShort',
+        defaultMessage: 'Actors',
+      },
+      empty: {
+        id: 'app.containers.App.entities.actions_5.empty',
+        defaultMessage: 'No actors yet',
+      },
+    },
+    actions_6: {
+      single: {
+        id: 'app.containers.App.entities.actions_6.single',
+        defaultMessage: 'Actor',
+      },
+      plural: {
+        id: 'app.containers.App.entities.actions_6.plural',
+        defaultMessage: 'Actors',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.actions_6.singleLong',
+        defaultMessage: 'Actor',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.actions_6.pluralLong',
+        defaultMessage: 'Actors',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.actions_6.singleShort',
+        defaultMessage: 'Actor',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.actions_6.pluralShort',
+        defaultMessage: 'Actors',
+      },
+      empty: {
+        id: 'app.containers.App.entities.actions_6.empty',
+        defaultMessage: 'No actors yet',
       },
     },
     pages: {
@@ -1501,16 +1565,6 @@ export default defineMessages({
       private: {
         id: 'app.containers.App.ui.docPublishStatuses.private',
         defaultMessage: 'Private',
-      },
-    },
-    acceptedStatuses: {
-      accepted: {
-        id: 'app.containers.App.ui.acceptedStatuses.accepted',
-        defaultMessage: 'Accepted',
-      },
-      noted: {
-        id: 'app.containers.App.ui.acceptedStatuses.noted',
-        defaultMessage: 'Not accepted',
       },
     },
     checkAttributeStatuses: {

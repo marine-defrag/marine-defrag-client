@@ -13,7 +13,6 @@ import { actions as formActions } from 'react-redux-form/immutable';
 // import { Map, List, fromJS } from 'immutable';
 import { Map, List } from 'immutable';
 
-import { getInfoField } from 'utils/fields';
 import {
   // getConnectionUpdatesFromFormData,
   getTitleFormField,
@@ -29,6 +28,7 @@ import {
   getFormField,
   getCheckboxField,
 } from 'utils/forms';
+import { getInfoField } from 'utils/fields';
 
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
 
@@ -100,10 +100,10 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
 
   getInitialFormData = (nextProps) => {
     const props = nextProps || this.props;
-    const { actortypeId } = props;
+    const { params } = props;
     return Map(FORM_INITIAL.setIn(
       ['attributes', 'actortype_id'],
-      actortypeId
+      params.id
     ));
   }
 
@@ -146,7 +146,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
   }
 
   getBodyMainFields = (
-    type
+    type,
     // connectedTaxonomies,
     // actorsByActortype,
     // onCreateOption,
@@ -293,17 +293,20 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
       taxonomies,
       onCreateOption,
       actiontype,
+      params,
     } = this.props;
+    const typeId = params.id;
+    const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
     // console.log('FORM_INITIAL', FORM_INITIAL && FORM_INITIAL.toJS());
     // console.log('actiontype', actiontype && actiontype.toJS());
     // console.log('taxonomies', taxonomies && taxonomies.toJS());
     // console.log('connectedTaxonomies', connectedTaxonomies && connectedTaxonomies.toJS());
     // console.log('actorsByActortype', actorsByActortype && actorsByActortype.toJS());
-    const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
+    const type = intl.formatMessage(appMessages.entities[`actions_${typeId}`].single);
     return (
       <div>
         <Helmet
-          title={`${intl.formatMessage(messages.pageTitle)}`}
+          title={`${intl.formatMessage(messages.pageTitle, { type })}`}
           meta={[
             {
               name: 'description',
@@ -313,13 +316,12 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
         />
         <Content ref={this.scrollContainer}>
           <ContentHeader
-            title={intl.formatMessage(messages.pageTitle)}
+            title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}
-            icon="actions"
             buttons={
               dataReady ? [{
                 type: 'cancel',
-                onClick: () => this.props.handleCancel(actiontype),
+                onClick: () => this.props.handleCancel(typeId),
               },
               {
                 type: 'save',
@@ -357,7 +359,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                 saving={saveSending}
                 handleSubmit={(formData) => this.props.handleSubmit(formData, actiontype)}
                 handleSubmitFail={this.props.handleSubmitFail}
-                handleCancel={this.props.handleCancel}
+                handleCancel={() => this.props.handleCancel(typeId)}
                 handleUpdate={this.props.handleUpdate}
                 fields={{
                   header: {
@@ -410,6 +412,7 @@ ActionNew.propTypes = {
   onCreateOption: PropTypes.func,
   connectedTaxonomies: PropTypes.object,
   actiontype: PropTypes.instanceOf(Map),
+  params: PropTypes.object,
 };
 
 ActionNew.contextTypes = {
@@ -484,7 +487,7 @@ function mapDispatchToProps(dispatch) {
       //         connections: actors,
       //         connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
       //         createConnectionKey: 'actor_id',
-      //         createKey: 'action_id',
+      //         createKey: 'measure_id',
       //       }))
       //       .reduce(
       //         (memo, deleteCreateLists) => {
@@ -500,8 +503,8 @@ function mapDispatchToProps(dispatch) {
       // }
       dispatch(save(saveData.toJS(), actiontype.get('id')));
     },
-    handleCancel: (type) => {
-      dispatch(updatePath(`${ROUTES.ACTIONS}/${type}`), { replace: true });
+    handleCancel: (typeId) => {
+      dispatch(updatePath(`${ROUTES.ACTIONS}/${typeId}`), { replace: true });
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));

@@ -12,7 +12,7 @@ export function* save({ data }) {
   yield put(newEntity({
     path: API.ACTORS,
     entity: data,
-    redirect: ROUTES.ACTORS,
+    redirect: ROUTES.ACTOR,
   }));
 }
 

@@ -54,7 +54,7 @@ export const selectViewEntity = createSelector(
         {
           related: users,
           key: 'user',
-          relatedKey: 'last_modified_user_id',
+          relatedKey: 'updated_by_id',
         },
         {
           related: users,

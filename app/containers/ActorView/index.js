@@ -11,22 +11,25 @@ import Helmet from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 
 import {
-  getReferenceField,
-  getTitleTextField,
+  getTitleField,
   getStatusField,
   getMetaField,
   getMarkdownField,
-  getActionConnectionField,
-  getTaxonomyFields,
-  hasTaxonomyCategories,
+  getTextField,
+  getInfoField,
+  getLinkField,
+  getAmountField,
+  // getTaxonomyFields,
+  // hasTaxonomyCategories,
+  // getActionConnectionField,
 } from 'utils/fields';
-import { qe } from 'utils/quasi-equals';
-import { getEntityTitleTruncated, getEntityReference } from 'utils/entities';
+// import { qe } from 'utils/quasi-equals';
+import { getEntityTitleTruncated, checkActorAttribute } from 'utils/entities';
 
 import { loadEntitiesIfNeeded, updatePath, closeEntity } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, ACCEPTED_STATUSES } from 'themes/config';
+import { ROUTES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -36,9 +39,9 @@ import EntityView from 'components/EntityView';
 import {
   selectReady,
   selectIsUserManager,
-  selectActionTaxonomies,
-  selectActionConnections,
-  selectActiveActortypes,
+  // selectActionTaxonomies,
+  // selectActionConnections,
+  // selectActiveActortypes,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
@@ -46,8 +49,8 @@ import messages from './messages';
 
 import {
   selectViewEntity,
-  selectTaxonomies,
-  selectActions,
+  // selectTaxonomies,
+  // selectActions,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
@@ -78,14 +81,26 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
     }
   }
 
-  getHeaderMainFields = (entity, isManager) => ([ // fieldGroups
-    { // fieldGroup
-      fields: [
-        getReferenceField(entity, isManager),
-        getTitleTextField(entity, isManager),
-      ],
-    },
-  ]);
+  getHeaderMainFields = (entity) => {
+    const { intl } = this.context;
+    const typeId = entity.getIn(['attributes', 'actortype_id']);
+    return ([ // fieldGroups
+      { // fieldGroup
+        fields: [
+          getInfoField(
+            'actortype_id',
+            intl.formatMessage(appMessages.actortypes[typeId]),
+            true // large
+          ), // required
+          checkActorAttribute(typeId, 'code') && getInfoField(
+            'code',
+            entity.getIn(['attributes', 'code']),
+          ),
+          checkActorAttribute(typeId, 'title') && getTitleField(entity),
+        ],
+      },
+    ]);
+  };
 
   getHeaderAsideFields = (entity) => ([
     {
@@ -99,55 +114,70 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
 
   getBodyMainFields = (
     entity,
-    actions,
-    actionTaxonomies,
-    actionConnections,
-    onEntityClick,
-    hasResponse,
+    // actions,
+    // actionTaxonomies,
+    // actionConnections,
+    // onEntityClick,
   ) => {
     const fields = [];
+    const typeId = entity.getIn(['attributes', 'actortype_id']);
+
     // own attributes
-    fields.push({
-      fields: [
-        getMarkdownField(entity, 'description', true),
-        hasResponse && getStatusField(
-          entity,
-          'accepted',
-          ACCEPTED_STATUSES,
-          appMessages.attributes.accepted,
-          false // defaultValue
-        ),
-        hasResponse && getMarkdownField(entity, 'response', true),
-      ],
-    });
+    fields.push(
+      {
+        fields: [
+          checkActorAttribute(typeId, 'description')
+            && getMarkdownField(entity, 'description', true),
+          checkActorAttribute(typeId, 'activity_summary')
+            && getMarkdownField(entity, 'activity_summary', true),
+        ],
+      },
+    );
 
     // actions
-    if (actions) {
-      fields.push({
-        label: appMessages.nav.actionsSuper,
-        icon: 'actions',
-        fields: [
-          getActionConnectionField(
-            actions,
-            actionTaxonomies,
-            actionConnections,
-            onEntityClick,
-          ),
-        ],
-      });
-    }
+    // if (actions) {
+    //   fields.push({
+    //     label: appMessages.nav.actionsSuper,
+    //     icon: 'actions',
+    //     fields: [
+    //       getActionConnectionField(
+    //         actions,
+    //         actionTaxonomies,
+    //         actionConnections,
+    //         onEntityClick,
+    //       ),
+    //     ],
+    //   });
+    // }
     return fields;
   };
 
-  getBodyAsideFields = (taxonomies) => ([ // fieldGroups
-    hasTaxonomyCategories(taxonomies)
-      ? { // fieldGroup
-        label: appMessages.entities.taxonomies.plural,
-        icon: 'categories',
-        fields: getTaxonomyFields(taxonomies),
-      }
-      : null,
-  ]);
+  getBodyAsideFields = (entity) => {
+    const fields = [];
+    const typeId = entity.getIn(['attributes', 'actortype_id']);
+    fields.push(
+      {
+        fields: [
+          checkActorAttribute(typeId, 'url') && getLinkField(entity),
+        ],
+      },
+      {
+        type: 'dark',
+        fields: [
+          checkActorAttribute(typeId, 'gdp') && getAmountField(entity, 'gdp', true),
+          checkActorAttribute(typeId, 'population') && getTextField(entity, 'population'),
+        ],
+      },
+    );
+    // hasTaxonomyCategories(taxonomies)
+    //   ? { // fieldGroup
+    //     label: appMessages.entities.taxonomies.plural,
+    //     icon: 'categories',
+    //     fields: getTaxonomyFields(taxonomies),
+    //   }
+    //   : null,
+    return fields;
+  };
 
   render() {
     const { intl } = this.context;
@@ -155,31 +185,14 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
       viewEntity,
       dataReady,
       isManager,
-      actions,
-      taxonomies,
-      actionTaxonomies,
-      actionConnections,
-      onEntityClick,
-      actortypes,
+      // actions,
+      // taxonomies,
+      // actionTaxonomies,
+      // actionConnections,
+      // onEntityClick,
+      // actortypes,
     } = this.props;
-    const actortypeId = viewEntity && viewEntity.getIn(['attributes', 'actortype_id']);
-    const type = intl.formatMessage(
-      appMessages.entities[actortypeId ? `actors_${actortypeId}` : 'actors'].single
-    );
-
-    const currentActortype = dataReady
-      && (
-        actortypes.find(
-          (actortype) => qe(actortype.get('id'), actortypeId)
-        )
-        || actortypes.first()
-      );
-    const hasResponse = dataReady
-      && currentActortype
-      && currentActortype.getIn(['attributes', 'has_response']);
-    const hasActions = dataReady
-      && currentActortype
-      && currentActortype.getIn(['attributes', 'has_actions']);
+    const typeId = viewEntity && viewEntity.getIn(['attributes', 'actortype_id']);
     let buttons = [];
     if (dataReady) {
       buttons.push({
@@ -196,18 +209,21 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
           },
           {
             type: 'close',
-            onClick: this.props.handleClose,
+            onClick: () => this.props.handleClose(typeId),
           },
         ])
         : buttons.concat([{
           type: 'close',
-          onClick: this.props.handleClose,
+          onClick: () => this.props.handleClose(typeId),
         }]);
     }
-    const pageTitle = intl.formatMessage(messages.pageTitle, { type });
+    const pageTitle = typeId
+      ? intl.formatMessage(appMessages.entities[`actors_${typeId}`].single)
+      : intl.formatMessage(appMessages.entities.actors.single);
+
     const metaTitle = viewEntity
-      ? `${pageTitle} ${getEntityReference(viewEntity)}: ${getEntityTitleTruncated(viewEntity)}`
-      : `${pageTitle} ${this.props.params.id}`;
+      ? `${pageTitle}: ${getEntityTitleTruncated(viewEntity)}`
+      : `${pageTitle}: ${this.props.params.id}`;
 
     return (
       <div>
@@ -221,7 +237,6 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
           <ContentHeader
             title={pageTitle}
             type={CONTENT_SINGLE}
-            icon={actortypeId ? `actors_${actortypeId}` : 'actors'}
             buttons={buttons}
           />
           { !dataReady
@@ -239,19 +254,19 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
               <EntityView
                 fields={{
                   header: {
-                    main: this.getHeaderMainFields(viewEntity, isManager),
-                    aside: isManager && this.getHeaderAsideFields(viewEntity, isManager),
+                    main: this.getHeaderMainFields(viewEntity),
+                    aside: this.getHeaderAsideFields(viewEntity),
                   },
                   body: {
                     main: this.getBodyMainFields(
                       viewEntity,
-                      hasActions && actions,
-                      actionTaxonomies,
-                      actionConnections,
-                      onEntityClick,
-                      hasResponse,
+                      // hasActions && actions,
+                      // actionTaxonomies,
+                      // actionConnections,
+                      // onEntityClick,
+                      // hasResponse,
                     ),
-                    aside: this.getBodyAsideFields(taxonomies),
+                    aside: this.getBodyAsideFields(viewEntity),
                   },
                 }}
               />
@@ -264,19 +279,19 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
 }
 
 ActorView.propTypes = {
+  viewEntity: PropTypes.object,
   loadEntitiesIfNeeded: PropTypes.func,
-  onEntityClick: PropTypes.func,
+  dataReady: PropTypes.bool,
   handleEdit: PropTypes.func,
   handleClose: PropTypes.func,
-  viewEntity: PropTypes.object,
-  dataReady: PropTypes.bool,
-  taxonomies: PropTypes.object,
-  actionTaxonomies: PropTypes.object,
-  actionConnections: PropTypes.object,
-  actions: PropTypes.object,
+  onEntityClick: PropTypes.func,
+  // taxonomies: PropTypes.object,
+  // actionTaxonomies: PropTypes.object,
+  // actionConnections: PropTypes.object,
+  // actions: PropTypes.object,
+  // actortypes: PropTypes.object,
   params: PropTypes.object,
   isManager: PropTypes.bool,
-  actortypes: PropTypes.object,
 };
 
 ActorView.contextTypes = {
@@ -287,11 +302,11 @@ const mapStateToProps = (state, props) => ({
   isManager: selectIsUserManager(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   viewEntity: selectViewEntity(state, props.params.id),
-  taxonomies: selectTaxonomies(state, props.params.id),
-  actions: selectActions(state, props.params.id),
-  actionTaxonomies: selectActionTaxonomies(state),
-  actionConnections: selectActionConnections(state),
-  actortypes: selectActiveActortypes(state),
+  // taxonomies: selectTaxonomies(state, props.params.id),
+  // actions: selectActions(state, props.params.id),
+  // actionTaxonomies: selectActionTaxonomies(state),
+  // actionConnections: selectActionConnections(state),
+  // actortypes: selectActiveActortypes(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -300,10 +315,10 @@ function mapDispatchToProps(dispatch, props) {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
     handleEdit: () => {
-      dispatch(updatePath(`${ROUTES.ACTORS}${ROUTES.EDIT}/${props.params.id}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.ACTOR}${ROUTES.EDIT}/${props.params.id}`, { replace: true }));
     },
-    handleClose: () => {
-      dispatch(closeEntity(ROUTES.ACTORS));
+    handleClose: (typeId) => {
+      dispatch(closeEntity(`${ROUTES.ACTORS}/${typeId}`));
     },
     onEntityClick: (id, path) => {
       dispatch(updatePath(`${path}/${id}`));

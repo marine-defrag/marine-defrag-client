@@ -9,7 +9,7 @@ import {
   selectCategoryQuery,
   selectSortByQuery,
   selectSortOrderQuery,
-  selectActortypeActions,
+  selectActions,
   selectReady,
   selectActorCategoriesByActor,
   selectActionCategoriesByAction,
@@ -35,15 +35,17 @@ import { CONFIG, DEPENDENCIES } from './constants';
 
 export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectActortypeActions,
+  selectActions,
   selectActionCategoriesByAction,
-  (ready, actions, associationsGrouped) => {
+  (state) => selectEntities(state, API.CATEGORIES),
+  (ready, actions, associationsGrouped, categories) => {
     if (ready) {
       return new Map().set(
         'actions',
         entitiesSetCategoryIds(
           actions,
           associationsGrouped,
+          categories,
         )
       );
     }

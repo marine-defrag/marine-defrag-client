@@ -51,7 +51,7 @@ export const CONFIG = {
     search: true,
     connectPath: API.ACTION_CATEGORIES,
     key: 'category_id',
-    ownKey: 'action_id',
+    ownKey: 'measure_id',
     // defaultGroupAttribute: 'groups_actions_default',
   },
   // connectedTaxonomies: { // filter by each category
@@ -66,21 +66,21 @@ export const CONFIG = {
   //     },
   //   ],
   // },
-  connections: { // filter by associated entity
-    query: 'connected',
-    options: [
-      {
-        search: true,
-        message: 'entities.actors_{actortypeid}.plural',
-        path: API.ACTORS, // filter by actor connection
-        key: 'actor_id',
-        connectPath: API.ACTOR_ACTIONS, // filter by actor connection
-        ownKey: 'action_id',
-        groupByActortype: true,
-        actortypeFilter: 'has_actions',
-      },
-    ],
-  },
+  // connections: { // filter by associated entity
+  //   query: 'connected',
+  //   options: [
+  //     {
+  //       search: true,
+  //       message: 'entities.actors_{actortypeid}.plural',
+  //       path: API.ACTORS, // filter by actor connection
+  //       key: 'actor_id',
+  //       connectPath: API.ACTOR_ACTIONS, // filter by actor connection
+  //       ownKey: 'measure_id',
+  //       groupByActortype: true,
+  //       actortypeFilter: 'has_actions',
+  //     },
+  //   ],
+  // },
   attributes: { // filter by attribute value
     options: [
       {

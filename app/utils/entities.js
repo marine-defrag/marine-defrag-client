@@ -2,7 +2,6 @@ import { Map } from 'immutable';
 
 import {
   TEXT_TRUNCATE,
-  ACCEPTED_STATUSES,
   ACTION_FIELDS,
   ACTOR_FIELDS,
 } from 'themes/config';
@@ -13,11 +12,6 @@ import asList from 'utils/as-list';
 import isNumber from 'utils/is-number';
 import appMessage from 'utils/app-message';
 import { qe } from 'utils/quasi-equals';
-
-export const getAcceptanceStatus = (entity) => find(
-  ACCEPTED_STATUSES,
-  (option) => option.value === (entity.getIn(['attributes', 'accepted']) || null)
-);
 
 // check if entity has nested connection by id
 export const testEntityEntityAssociation = (
@@ -286,7 +280,7 @@ export const entitySetSingle = (
   );
 
 export const entitySetUser = (entity, users) => entity
-  && entitySetSingle(entity, users, 'user', 'last_modified_user_id');
+  && entitySetSingle(entity, users, 'user', 'updated_by_id');
 
 export const entitySetSingles = (entity, singles) => entity
   && singles.reduce(
@@ -574,6 +568,7 @@ export const getEntityCategories = (
   associationsGrouped,
   categories,
 ) => {
+  if (!associationsGrouped) return Map();
   // directly associated categories
   const categoryIds = associationsGrouped.get(
     parseInt(entityId, 10)

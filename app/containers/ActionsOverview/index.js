@@ -8,7 +8,7 @@ import { Map } from 'immutable';
 
 import styled from 'styled-components';
 
-import rootMessages from 'containers/App/messages';
+import appMessages from 'containers/App/messages';
 
 import { ROUTES, ACTIONTYPE_GROUPS } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
@@ -45,12 +45,13 @@ export function ActionsOverview({ onLoadData, types, onUpdatePath }) {
           {Object.keys(ACTIONTYPE_GROUPS).map((key) => (
             <Group key={key}>
               <GroupTitle>
-                <FormattedMessage {...rootMessages.actiontypeGroups[key]} />
+                <FormattedMessage {...appMessages.actiontypeGroups[key]} />
               </GroupTitle>
-              {ACTIONTYPE_GROUPS[key].types.map((type) => {
-                const path = `${ROUTES.ACTIONS}/${type}`;
+              {ACTIONTYPE_GROUPS[key].types.map((typeId) => {
+                const path = `${ROUTES.ACTIONS}/${typeId}`;
                 return (
                   <TypeButton
+                    key={typeId}
                     primary={ACTIONTYPE_GROUPS[key].primary}
                     href={`${path}`}
                     onClick={(evt) => {
@@ -59,9 +60,9 @@ export function ActionsOverview({ onLoadData, types, onUpdatePath }) {
                     }}
                   >
                     <TypeTitle>
-                      <TypeCount>{types.getIn([type, 'count']) || '0'}</TypeCount>
+                      <TypeCount>{types.getIn([typeId, 'count']) || '0'}</TypeCount>
                       <TypeTitleInner>
-                        <FormattedMessage {...rootMessages.actiontypes[type]} />
+                        <FormattedMessage {...appMessages.entities[`actions_${typeId}`].plural} />
                       </TypeTitleInner>
                     </TypeTitle>
                   </TypeButton>

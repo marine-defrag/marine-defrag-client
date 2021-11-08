@@ -20,7 +20,6 @@ import {
   PUBLISH_STATUSES,
   USER_ROLES,
   DATE_FORMAT,
-  ACCEPTED_STATUSES,
   API,
 } from 'themes/config';
 
@@ -309,14 +308,6 @@ export const getRoleFormField = (formatMessage, roleOptions) => ({
     || userRole.value === USER_ROLES.DEFAULT.value)),
 });
 
-export const getAcceptedField = (formatMessage) => ({
-  id: 'accepted',
-  controlType: 'select',
-  model: '.attributes.accepted',
-  label: formatMessage(appMessages.attributes.accepted),
-  options: ACCEPTED_STATUSES,
-});
-
 export const getStatusField = (formatMessage) => ({
   id: 'status',
   controlType: 'select',
@@ -364,6 +355,14 @@ export const getAmountFormField = (formatMessage, required, att = 'amount') => g
   attribute: att,
   required,
   hint: formatMessage(appMessages.hints.amount),
+  // TODO: validate
+});
+export const getNumberFormField = (formatMessage, required, att = 'value') => getFormField({
+  formatMessage,
+  controlType: att,
+  attribute: att,
+  required,
+  hint: appMessages.hints[att] && formatMessage(appMessages.hints[att]),
   // TODO: validate
 });
 export const getLinkFormField = (formatMessage, required, att = 'url') => getFormField({
@@ -605,7 +604,7 @@ const getCategoryFields = (args, formatMessage) => ({
   },
 });
 
-const getActorFields = ({ actortypes, hasResponse }, formatMessage) => ({
+const getActorFields = ({ actortypes }, formatMessage) => ({
   header: {
     main: [{ // fieldGroup
       fields: [
@@ -624,8 +623,6 @@ const getActorFields = ({ actortypes, hasResponse }, formatMessage) => ({
     main: [{
       fields: [
         getMarkdownField(formatMessage, 'description'),
-        hasResponse && getAcceptedField(formatMessage),
-        hasResponse && getMarkdownField(formatMessage, 'response'),
       ],
     }],
   },

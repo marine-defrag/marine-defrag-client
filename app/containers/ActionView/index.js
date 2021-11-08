@@ -29,14 +29,13 @@ import {
 // import { qe } from 'utils/quasi-equals';
 import {
   getEntityTitleTruncated,
-  getEntityReference,
   checkActionAttribute,
 } from 'utils/entities';
 
 import { loadEntitiesIfNeeded, updatePath, closeEntity } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES, ROUTES } from 'themes/config';
+import { ROUTES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -45,7 +44,7 @@ import EntityView from 'components/EntityView';
 
 import {
   selectReady,
-  selectHasUserRole,
+  selectIsUserManager,
   // selectActorTaxonomies,
   // selectActorConnections,
   // selectActiveActortypes,
@@ -227,16 +226,15 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
     const {
       viewEntity,
       dataReady,
-      hasUserRole,
-      taxonomies,
+      isManager,
+      // taxonomies,
       // actorsByActortype,
       // actorTaxonomies,
       // onEntityClick,
       // actorConnections,
       // actortypes,
     } = this.props;
-    const typeId = viewEntity.getIn(['attributes', 'measuretype_id']);
-    const isManager = hasUserRole[USER_ROLES.MANAGER.value];
+    const typeId = viewEntity && viewEntity.getIn(['attributes', 'measuretype_id']);
     let buttons = [];
     if (dataReady) {
       buttons.push({
@@ -249,7 +247,7 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
         ? buttons.concat([
           {
             type: 'edit',
-            onClick: () => this.props.handleEdit(this.props.params.id),
+            onClick: this.props.handleEdit,
           },
           {
             type: 'close',
@@ -261,10 +259,13 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
           onClick: () => this.props.handleClose(typeId),
         }]);
     }
-    const pageTitle = intl.formatMessage(messages.pageTitle);
+    const pageTitle = typeId
+      ? intl.formatMessage(appMessages.entities[`actions_${typeId}`].single)
+      : intl.formatMessage(appMessages.entities.actions.single);
+
     const metaTitle = viewEntity
-      ? `${pageTitle} ${getEntityReference(viewEntity)}: ${getEntityTitleTruncated(viewEntity)}`
-      : `${pageTitle} ${this.props.params.id}`;
+      ? `${pageTitle}: ${getEntityTitleTruncated(viewEntity)}`
+      : `${pageTitle}: ${this.props.params.id}`;
 
     return (
       <div>
@@ -278,7 +279,6 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
           <ContentHeader
             title={pageTitle}
             type={CONTENT_SINGLE}
-            icon="actions"
             buttons={buttons}
           />
           { !dataReady
@@ -297,7 +297,7 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
                 fields={{
                   header: {
                     main: this.getHeaderMainFields(viewEntity),
-                    aside: isManager && this.getHeaderAsideFields(viewEntity),
+                    aside: this.getHeaderAsideFields(viewEntity),
                   },
                   body: {
                     main: this.getBodyMainFields(
@@ -310,7 +310,7 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
                     ),
                     aside: this.getBodyAsideFields(
                       viewEntity,
-                      taxonomies,
+                      // taxonomies,
                     ),
                   },
                 }}
@@ -324,19 +324,19 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
 }
 
 ActionView.propTypes = {
+  viewEntity: PropTypes.object,
   loadEntitiesIfNeeded: PropTypes.func,
+  dataReady: PropTypes.bool,
   handleEdit: PropTypes.func,
   handleClose: PropTypes.func,
   onEntityClick: PropTypes.func,
-  viewEntity: PropTypes.object,
-  dataReady: PropTypes.bool,
-  hasUserRole: PropTypes.object,
-  taxonomies: PropTypes.object,
-  actorTaxonomies: PropTypes.object,
-  actorsByActortype: PropTypes.object,
-  actorConnections: PropTypes.object,
+  isManager: PropTypes.bool,
+  // taxonomies: PropTypes.object,
+  // actorTaxonomies: PropTypes.object,
+  // actorsByActortype: PropTypes.object,
+  // actorConnections: PropTypes.object,
+  // actortypes: PropTypes.object,
   params: PropTypes.object,
-  actortypes: PropTypes.object,
 };
 
 ActionView.contextTypes = {
@@ -345,7 +345,7 @@ ActionView.contextTypes = {
 
 
 const mapStateToProps = (state, props) => ({
-  hasUserRole: selectHasUserRole(state),
+  isManager: selectIsUserManager(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   viewEntity: selectViewEntity(state, props.params.id),
   // taxonomies: selectTaxonomies(state, props.params.id),
@@ -355,7 +355,7 @@ const mapStateToProps = (state, props) => ({
   // actortypes: selectActiveActortypes(state),
 });
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, props) {
   return {
     loadEntitiesIfNeeded: () => {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
@@ -363,8 +363,8 @@ function mapDispatchToProps(dispatch) {
     onEntityClick: (id, path) => {
       dispatch(updatePath(`/${path}/${id}`));
     },
-    handleEdit: (actionId) => {
-      dispatch(updatePath(`${ROUTES.ACTION}${ROUTES.EDIT}/${actionId}`, { replace: true }));
+    handleEdit: () => {
+      dispatch(updatePath(`${ROUTES.ACTION}${ROUTES.EDIT}/${props.params.id}`, { replace: true }));
     },
     handleClose: (typeId) => {
       dispatch(closeEntity(`${ROUTES.ACTIONS}/${typeId}`));

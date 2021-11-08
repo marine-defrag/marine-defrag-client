@@ -14,8 +14,6 @@ import { Map, List } from 'immutable';
 
 import {
   taxonomyOptions,
-  renderTaxonomyControl,
-  getCategoryUpdatesFromFormData,
   getTitleFormField,
   getEmailField,
   getHighestUserRoleId,
@@ -56,7 +54,6 @@ import EntityForm from 'containers/EntityForm';
 import {
   selectDomain,
   selectViewEntity,
-  selectTaxonomies,
   selectRoles,
 } from './selectors';
 
@@ -135,14 +132,14 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
     }]);
   };
 
-  getBodyAsideFields = (taxonomies, onCreateOption) => {
-    const { intl } = this.context;
-    return ([ // fieldGroups
-      { // fieldGroup
-        fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
-      },
-    ]);
-  };
+  // getBodyAsideFields = (taxonomies, onCreateOption) => {
+  //   const { intl } = this.context;
+  //   return ([ // fieldGroups
+  //     { // fieldGroup
+  //       fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
+  //     },
+  //   ]);
+  // };
 
   getEditableUserRoles = (roles, sessionUserHighestRoleId) => {
     if (roles) {
@@ -161,7 +158,7 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
   render() {
     const { intl } = this.context;
     const {
-      viewEntity, dataReady, viewDomain, taxonomies, roles, sessionUserHighestRoleId, onCreateOption,
+      viewEntity, dataReady, viewDomain, roles, sessionUserHighestRoleId,
     } = this.props;
     const reference = this.props.params.id;
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
@@ -229,7 +226,6 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
                 saving={saveSending}
                 handleSubmit={(formData) => this.props.handleSubmit(
                   formData,
-                  taxonomies,
                   roles,
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
@@ -242,7 +238,7 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
                   },
                   body: {
                     main: this.getBodyMainFields(),
-                    aside: (sessionUserHighestRoleId <= USER_ROLES.MANAGER.value) && this.getBodyAsideFields(taxonomies, onCreateOption),
+                    // aside: (sessionUserHighestRoleId <= USER_ROLES.MANAGER.value) && this.getBodyAsideFields(taxonomies, onCreateOption),
                   },
                 }}
                 scrollContainer={this.scrollContainer.current}
@@ -269,7 +265,6 @@ UserEdit.propTypes = {
   viewDomain: PropTypes.object,
   viewEntity: PropTypes.object,
   roles: PropTypes.object,
-  taxonomies: PropTypes.object,
   dataReady: PropTypes.bool,
   sessionUserHighestRoleId: PropTypes.number,
   params: PropTypes.object,
@@ -287,7 +282,6 @@ const mapStateToProps = (state, props) => ({
   viewDomain: selectDomain(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   viewEntity: selectViewEntity(state, props.params.id),
-  taxonomies: selectTaxonomies(state, props.params.id),
   roles: selectRoles(state, props.params.id),
 });
 
@@ -312,17 +306,8 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, taxonomies, roles) => {
-      let saveData = formData
-        .set(
-          'userCategories',
-          getCategoryUpdatesFromFormData({
-            formData,
-            taxonomies,
-            createKey: 'user_id',
-          })
-        );
-
+    handleSubmit: (formData, roles) => {
+      let saveData = formData;
       // roles
       // higher is actually lower
       const newHighestRole = parseInt(formData.get('associatedRole'), 10);

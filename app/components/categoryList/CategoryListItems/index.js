@@ -7,7 +7,7 @@ import { palette } from 'styled-theme';
 
 import { getSortOption } from 'utils/sort';
 import { getCategoryTitle } from 'utils/entities';
-import { qe } from 'utils/quasi-equals';
+// import { qe } from 'utils/quasi-equals';
 
 import CategoryListHeader from 'components/categoryList/CategoryListHeader';
 import CategoryListItem from 'components/categoryList/CategoryListItem';
@@ -57,37 +57,37 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
       )
     );
 
-  getColumnKeys = (taxonomy, actortypes) => {
-    const { intl } = this.context;
-    // figure out if tagged directly or via child category
-    const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
-    return tagsActors && actortypes && taxonomy.get('actortypeIds').toArray().reduce(
-      (memo, actortypeid) => {
-        const actortype = actortypes.find((type) => qe(type.get('id'), actortypeid));
-        // TODO figure out multiple actortype with responses
-        if (actortype && actortype.getIn(['attributes', 'has_response'])) {
-          return [{
-            items: [
-              {
-                label: intl.formatMessage(appMessages.ui.acceptedStatuses.accepted),
-                palette: 'actors',
-                pIndex: 0,
-              },
-              {
-                label: intl.formatMessage(appMessages.ui.acceptedStatuses.noted),
-                palette: 'actors',
-                pIndex: 1,
-              },
-            ],
-          }];
-        }
-        return memo;
-      },
-      [],
-    );
-  };
+  // getColumnKeys = (taxonomy, actortypes) => {
+  //   const { intl } = this.context;
+  //   // figure out if tagged directly or via child category
+  //   const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
+  //   return tagsActors && actortypes && taxonomy.get('actortypeIds').toArray().reduce(
+  //     (memo, actortypeid) => {
+  //       const actortype = actortypes.find((type) => qe(type.get('id'), actortypeid));
+  //       // TODO figure out multiple actortype with responses
+  //       if (actortype && actortype.getIn(['attributes', 'has_response'])) {
+  //         return [{
+  //           items: [
+  //             {
+  //               label: intl.formatMessage(appMessages.ui.acceptedStatuses.accepted),
+  //               palette: 'actors',
+  //               pIndex: 0,
+  //             },
+  //             {
+  //               label: intl.formatMessage(appMessages.ui.acceptedStatuses.noted),
+  //               palette: 'actors',
+  //               pIndex: 1,
+  //             },
+  //           ],
+  //         }];
+  //       }
+  //       return memo;
+  //     },
+  //     [],
+  //   );
+  // };
 
-  getHeaderAttributes = (taxonomy, actortypeId, actortypes) => {
+  getHeaderAttributes = (taxonomy, actortypeId) => {
     const { intl } = this.context;
     // figure out if tagged directly or via child category
     const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
@@ -114,7 +114,7 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
       attributes.push({
         query: 'actors',
         label: actorLabel,
-        keys: this.getColumnKeys(taxonomy, actortypes),
+        // keys: this.getColumnKeys(taxonomy, actortypes),
       });
       // indirectly associated/inferred actions
       if (!tagsActions) {
@@ -144,14 +144,13 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
     onSort,
     userOnly,
     isGrouped,
-    actortypes,
   }) => {
     const { intl } = this.context;
     const sortOptionActive = getSortOption(sortOptions, sortBy, 'query');
     const titleColumnSortOption = sortOptions.find((option) => option.query === 'title');
     const titleColumnActive = titleColumnSortOption.query === sortOptionActive.query;
     const titleColumnSortOrderOption = SORT_ORDER_OPTIONS.find((option) => (sortOrder || titleColumnSortOption.order) === option.value);
-    const headerAttributes = this.getHeaderAttributes(taxonomy, actortypeId, actortypes);
+    const headerAttributes = this.getHeaderAttributes(taxonomy, actortypeId);
     // category title column
     const columns = [
       {
@@ -315,7 +314,6 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
       onSort,
       userOnly,
       isGrouped: categoryGroups.size > 0 && !!taxonomy.get('parent'),
-      actortypes,
     });
 
     const columns = this.getListColumns({

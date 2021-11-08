@@ -369,12 +369,12 @@ export const selectActiveActiontypes = createSelector(
 
 export const selectActortypeActors = createSelector(
   (state) => selectEntities(state, API.ACTORS),
-  selectActortypeQuery,
-  (entities, actortype) => {
-    if (entities && actortype && actortype !== 'all') {
+  (state, { type }) => type,
+  (entities, type) => {
+    if (entities && type) {
       return entities.filter(
         (actor) => qe(
-          actortype,
+          type,
           actor.getIn(['attributes', 'actortype_id']),
         )
       );
@@ -386,7 +386,7 @@ export const selectActiontypeActions = createSelector(
   (state) => selectEntities(state, API.ACTIONS),
   (state, { type }) => type,
   (entities, type) => {
-    if (entities && type && type !== 'all') {
+    if (entities && type) {
       return entities.filter(
         (actor) => qe(
           type,
@@ -423,7 +423,7 @@ export const selectActortypeActions = createSelector(
 //           (action) => {
 //             const actorIds = actorActions.filter(
 //               (rm) => qe(
-//                 rm.getIn(['attributes', 'action_id']),
+//                 rm.getIn(['attributes', 'measure_id']),
 //                 action.get('id'),
 //               )
 //             ).map(
@@ -463,7 +463,7 @@ export const selectActiontypeActors = createSelector(
 //                 actor.get('id'),
 //               )
 //             ).map(
-//               (rm) => rm.getIn(['attributes', 'action_id'])
+//               (rm) => rm.getIn(['attributes', 'measure_id'])
 //             );
 //             // TODO check manager check here
 //             return (isManager && actionIds.size === 0) || actionIds.some(
@@ -750,7 +750,7 @@ export const selectActorsWhere = createSelector(
 // filter entities by attributes, using locationQuery
 const selectActorsWhereQuery = createSelector(
   selectAttributeQuery,
-  selectActiontypeActors,
+  selectActortypeActors,
   (query, entities) => query
     ? filterEntitiesByAttributes(entities, query)
     : entities
@@ -868,7 +868,7 @@ export const selectActorActionsByActor = createSelector(
       (entity) => entity.getIn(['attributes', 'actor_id'])
     ).map(
       (group) => group.map(
-        (entity) => entity.getIn(['attributes', 'action_id'])
+        (entity) => entity.getIn(['attributes', 'measure_id'])
       )
     ),
 );
@@ -876,7 +876,7 @@ export const selectActorActionsByAction = createSelector(
   (state) => selectEntities(state, API.ACTOR_ACTIONS),
   (entities) => entities
     && entities.groupBy(
-      (entity) => entity.getIn(['attributes', 'action_id'])
+      (entity) => entity.getIn(['attributes', 'measure_id'])
     ).map(
       (group) => group.map(
         (entity) => entity.getIn(['attributes', 'actor_id'])
@@ -888,7 +888,7 @@ export const selectActionCategoriesByAction = createSelector(
   (state) => selectEntities(state, API.ACTION_CATEGORIES),
   (entities) => entities
     && entities.groupBy(
-      (entity) => entity.getIn(['attributes', 'action_id'])
+      (entity) => entity.getIn(['attributes', 'measure_id'])
     ).map(
       (group) => group.map(
         (entity) => entity.getIn(['attributes', 'category_id'])
@@ -902,7 +902,7 @@ export const selectActionCategoriesByCategory = createSelector(
       (entity) => entity.getIn(['attributes', 'category_id'])
     ).map(
       (group) => group.map(
-        (entity) => entity.getIn(['attributes', 'action_id'])
+        (entity) => entity.getIn(['attributes', 'measure_id'])
       )
     ),
 );

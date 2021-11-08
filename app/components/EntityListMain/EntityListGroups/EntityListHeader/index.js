@@ -86,7 +86,6 @@ class EntityListHeader extends React.PureComponent { // eslint-disable-line reac
 
     const sortOption = getSortOption(sortOptions, this.props.sortBy);
     // const { intl } = this.context;
-    console.log(intl);
     return (
       <Styled>
         <ColumnSelect

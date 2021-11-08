@@ -93,7 +93,7 @@ const VisibleMobile = styled.span`
 `;
 
 class ContentHeader extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  renderTitle = (type, title, icon) => {
+  renderTitle = (type, title) => {
     switch (type) {
       case CONTENT_PAGE:
       case CONTENT_LIST:
@@ -101,7 +101,7 @@ class ContentHeader extends React.PureComponent { // eslint-disable-line react/p
       case CONTENT_MODAL:
       case CONTENT_SINGLE:
         return (
-          <SupTitle icon={icon} title={title} />
+          <SupTitle title={title} />
           // <TitleIconWrap>
           //   { icon &&
           //     <Icon name={icon} text textLeft />
@@ -117,7 +117,6 @@ class ContentHeader extends React.PureComponent { // eslint-disable-line react/p
   render() {
     const {
       type,
-      icon,
       supTitle,
       title,
       buttons,
@@ -145,10 +144,10 @@ class ContentHeader extends React.PureComponent { // eslint-disable-line react/p
           </VisibleMobile>
         )}
         <TitleWrap>
-          {supTitle && <SupTitle icon={icon} title={supTitle} />}
+          {supTitle && <SupTitle title={supTitle} />}
           <Table>
             <TableCell>
-              {this.renderTitle(type, title, icon)}
+              {this.renderTitle(type, title)}
             </TableCell>
             {buttons && (
               <TableCell hiddenMobile>
@@ -178,7 +177,6 @@ ContentHeader.propTypes = {
   buttons: PropTypes.array,
   supTitle: PropTypes.string,
   subTitle: PropTypes.string,
-  icon: PropTypes.string,
   type: PropTypes.string,
 };
 

@@ -149,11 +149,6 @@ export const PUBLISH_STATUSES = [
   { value: true, message: 'ui.publishStatuses.draft' },
   { value: false, message: 'ui.publishStatuses.public' },
 ];
-// Actor statuses
-export const ACCEPTED_STATUSES = [
-  { value: true, icon: 'actorAccepted', message: 'ui.acceptedStatuses.accepted' },
-  { value: false, icon: 'actorNoted', message: 'ui.acceptedStatuses.noted' },
-];
 
 export const DEFAULT_ACTIONTYPE = 1;
 

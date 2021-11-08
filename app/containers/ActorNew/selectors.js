@@ -3,9 +3,10 @@ import { API } from 'themes/config';
 
 import {
   selectEntities,
-  selectActortypeTaxonomiesSorted,
+  selectActionTaxonomiesSorted,
+  selectActionsCategorised,
 } from 'containers/App/selectors';
-import { prepareTaxonomiesMultipleTags } from 'utils/entities';
+import { prepareTaxonomies } from 'utils/entities';
 
 export const selectDomain = createSelector(
   (state) => state.get('actorNew'),
@@ -13,12 +14,18 @@ export const selectDomain = createSelector(
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  (state) => selectActortypeTaxonomiesSorted(state),
+  selectActionTaxonomiesSorted,
   (state) => selectEntities(state, API.CATEGORIES),
-  (taxonomies, categories) => prepareTaxonomiesMultipleTags(
+  (taxonomies, categories) => prepareTaxonomies(
     taxonomies,
     categories,
-    ['tags_actions'],
     false,
+  )
+);
+
+export const selectActionsByActiontype = createSelector(
+  selectActionsCategorised,
+  (entities) => entities && entities.groupBy(
+    (r) => r.getIn(['attributes', 'measuretype_id']).toString()
   )
 );

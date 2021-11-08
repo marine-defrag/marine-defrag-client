@@ -10,13 +10,10 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { Map, List, fromJS } from 'immutable';
 
-import { getAcceptanceStatus } from 'utils/entities';
-
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import {
   selectReady,
   selectActortypeTaxonomies,
-  selectActiveActortypes,
   selectIsUserManager,
   selectIsSignedIn,
 } from 'containers/App/selectors';
@@ -27,7 +24,12 @@ import { ROUTES } from 'themes/config';
 import EntityList from 'containers/EntityList';
 
 import { CONFIG, DEPENDENCIES } from './constants';
-import { selectActors, selectConnectedTaxonomies, selectConnections } from './selectors';
+import {
+  selectActors,
+  selectConnectedTaxonomies,
+  selectConnections,
+} from './selectors';
+
 import messages from './messages';
 
 export class ActorList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
@@ -40,45 +42,25 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
     if (!nextProps.dataReady) {
       this.props.loadEntitiesIfNeeded();
     }
-    // console.log('test props')
-    // console.log('test location', isEqual(this.props.location, nextProps.location));
-    // console.log('test dataReady', isEqual(this.props.dataReady, nextProps.dataReady));
-    // console.log('test entities', isEqual(this.props.entities, nextProps.entities));
-    // console.log('test entities', this.props.entities === nextProps.entities);
-    // console.log('test taxonomies', isEqual(this.props.taxonomies, nextProps.taxonomies));
-    // console.log('test taxonomies', this.props.taxonomies === nextProps.taxonomies);
-    // console.log('test connections', isEqual(this.props.connections, nextProps.connections));
-    // console.log('test connections', this.props.connections === nextProps.connections);
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   // console.log('EntityListSidebar.shouldComponentUpdate')
-  //   // console.log('props isEqual', isEqual(this.props, nextProps))
-  //   return !isEqual(this.props.location, nextProps.location)
-  //     || !isEqual(this.props.dataReady, nextProps.dataReady)
-  //     || !isEqual(this.props.taxonomies, nextProps.taxonomies)
-  //     || !isEqual(this.props.connections, nextProps.connections)
-  //     || !isEqual(this.props.entities, nextProps.entities)
-  //     || !isEqual(this.state, nextState);
-  // }
   render() {
     const { intl } = this.context;
     const {
       dataReady,
-      actortypes,
+      entities,
+      taxonomies,
+      connections,
+      connectedTaxonomies,
+      location,
       isManager,
       isUserSignedIn,
       params, // { id: the action type }
     } = this.props;
     const typeId = params.id;
-    // console.log('RecList:render')
-    const currentActortype = actortypes && actortypes.size === 1 && actortypes.first();
-    const type = currentActortype
-      ? `actors_${currentActortype.get('id')}`
-      : 'actors';
+    const type = `actors_${typeId}`;
     const headerOptions = {
       supTitle: intl.formatMessage(messages.pageTitle),
-      icon: type,
       actions: [],
     };
     if (isUserSignedIn) {
@@ -107,20 +89,13 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
         title: [
           intl.formatMessage(appMessages.buttons.add),
           {
-            title: intl.formatMessage(appMessages.actortypesSingle[typeId]),
+            title: intl.formatMessage(appMessages.entities[type].single),
             hiddenSmall: true,
           },
         ],
-        onClick: () => this.props.handleNew(),
+        onClick: () => this.props.handleNew(typeId),
       });
     }
-    // if (dataReady) {
-    //   console.log(this.props.entities.toJS())
-    //   console.log(this.props.connections.toJS())
-    //   console.log(this.props.taxonomies.toJS())
-    //   console.log(this.props.actortypes.toJS())
-    //   console.log(this.props.connectedTaxonomies.toJS())
-    // }
     return (
       <div>
         <Helmet
@@ -130,23 +105,18 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
           ]}
         />
         <EntityList
-          entities={this.props.entities}
-          taxonomies={this.props.taxonomies}
-          connections={this.props.connections}
-          actortypes={actortypes}
-          connectedTaxonomies={this.props.connectedTaxonomies}
+          entities={entities}
+          taxonomies={taxonomies}
+          connections={connections}
+          connectedTaxonomies={connectedTaxonomies}
           config={CONFIG}
           header={headerOptions}
           dataReady={dataReady}
           entityTitle={{
-            single: intl.formatMessage(appMessages.actortypesSingle[typeId]),
-            plural: intl.formatMessage(appMessages.actortypes[typeId]),
+            single: intl.formatMessage(appMessages.entities[type].single),
+            plural: intl.formatMessage(appMessages.entities[type].plural),
           }}
-          entityIcon={(entity) => {
-            const status = getAcceptanceStatus(entity);
-            return status ? status.icon : null;
-          }}
-          locationQuery={fromJS(this.props.location.query)}
+          locationQuery={fromJS(location.query)}
         />
       </div>
     );
@@ -161,7 +131,6 @@ ActorList.propTypes = {
   isManager: PropTypes.bool,
   entities: PropTypes.instanceOf(List).isRequired,
   taxonomies: PropTypes.instanceOf(Map),
-  actortypes: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   location: PropTypes.object,
@@ -178,14 +147,13 @@ const mapStateToProps = (state, props) => ({
   entities: selectActors(
     state,
     {
+      type: props.params.id, // type
       locationQuery: fromJS(props.location.query),
-      type: props.params.id,
     },
   ),
   taxonomies: selectActortypeTaxonomies(state, { type: props.params.id }),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
-  actortypes: selectActiveActortypes(state),
   isManager: selectIsUserManager(state),
   isUserSignedIn: selectIsSignedIn(state),
 });
@@ -195,8 +163,8 @@ function mapDispatchToProps(dispatch) {
     loadEntitiesIfNeeded: () => {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
-    handleNew: () => {
-      dispatch(updatePath(`${ROUTES.ACTORS}${ROUTES.NEW}`, { replace: true }));
+    handleNew: (typeId) => {
+      dispatch(updatePath(`${ROUTES.ACTORS}/${typeId}${ROUTES.NEW}`, { replace: true }));
     },
     handleImport: () => {
       dispatch(updatePath(`${ROUTES.ACTORS}${ROUTES.IMPORT}`));

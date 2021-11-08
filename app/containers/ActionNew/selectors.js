@@ -15,7 +15,7 @@ export const selectDomain = createSelector(
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  (state) => selectActorTaxonomiesSorted(state),
+  selectActorTaxonomiesSorted,
   (state) => selectEntities(state, API.CATEGORIES),
   (taxonomies, categories) => prepareTaxonomies(
     taxonomies,
@@ -25,7 +25,7 @@ export const selectConnectedTaxonomies = createSelector(
 );
 
 export const selectActorsByActortype = createSelector(
-  (state) => selectActorsCategorised(state),
+  selectActorsCategorised,
   (entities) => entities && entities.groupBy(
     (r) => r.getIn(['attributes', 'actortype_id']).toString()
   )

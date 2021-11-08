@@ -421,7 +421,7 @@ function mapDispatchToProps(dispatch) {
               formData,
               connections: actions,
               connectionAttribute: 'associatedActions',
-              createConnectionKey: 'action_id',
+              createConnectionKey: 'measure_id',
               createKey: 'category_id',
             })
           );

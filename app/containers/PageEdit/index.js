@@ -134,7 +134,7 @@ export class PageEdit extends React.Component { // eslint-disable-line react/pre
   getBodyMainFields = () => {
     const { intl } = this.context;
     return ([{
-      fields: [getMarkdownField(intl.formatMessage, 'content')],
+      fields: [getMarkdownField(intl.formatMessage, true, 'content')],
     }]);
   };
 

@@ -10,27 +10,36 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { actions as formActions } from 'react-redux-form/immutable';
 
-import { Map, List } from 'immutable';
+// import { Map, List } from 'immutable';
+import { Map } from 'immutable';
 
 import {
-  renderActionControl,
-  renderTaxonomyControl,
   getTitleFormField,
-  getReferenceFormField,
-  getAcceptedField,
   getStatusField,
   getMarkdownField,
-  getActortypeFormField,
+  getCodeFormField,
+  renderTaxonomyControl,
+  getLinkFormField,
+  getAmountFormField,
+  getNumberFormField,
+  // renderActionControl,
+  // getDateField,
+  // getTextareaField,
+  // getFormField,
+  // getCheckboxField,
+  // getActortypeFormField,
 } from 'utils/forms';
+import { getInfoField } from 'utils/fields';
 
-import { qe } from 'utils/quasi-equals';
+// import { qe } from 'utils/quasi-equals';
 import { scrollToTop } from 'utils/scroll-to-component';
 import { hasNewError } from 'utils/entity-form';
+import { checkActorAttribute, checkActorRequired } from 'utils/entities';
 
-import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
+// import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, USER_ROLES, DEFAULT_ACTIONTYPE } from 'themes/config';
+import { ROUTES, USER_ROLES } from 'themes/config';
 import appMessages from 'containers/App/messages';
 
 import {
@@ -46,10 +55,9 @@ import {
 import {
   selectReady,
   selectReadyForAuthCheck,
-  selectActionsCategorised,
-  selectActorTaxonomies,
-  selectActortypeQuery,
-  selectActiveActortypes,
+  // selectActionsCategorised,
+  selectActortypeTaxonomiesWithCats,
+  selectActortype,
 } from 'containers/App/selectors';
 
 import Messages from 'components/Messages';
@@ -60,7 +68,8 @@ import EntityForm from 'containers/EntityForm';
 
 import {
   selectDomain,
-  selectConnectedTaxonomies,
+  // selectConnectedTaxonomies,
+  // selectActionsByActiontype,
 } from './selectors';
 
 import messages from './messages';
@@ -87,9 +96,6 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
     if (nextProps.authReady && !this.props.authReady) {
       this.props.redirectIfNotPermitted();
     }
-    if (!this.props.actortypeId && nextProps.actortypeId) {
-      this.props.initialiseForm('actorNew.form.data', this.getInitialFormData(nextProps));
-    }
     if (hasNewError(nextProps, this.props) && this.scrollContainer) {
       scrollToTop(this.scrollContainer.current);
     }
@@ -97,23 +103,35 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
 
   getInitialFormData = (nextProps) => {
     const props = nextProps || this.props;
-    const { actortypeId } = props;
+    const { params } = props;
     return Map(FORM_INITIAL.setIn(
       ['attributes', 'actortype_id'],
-      (actortypeId && actortypeId !== 'all')
-        ? actortypeId
-        : DEFAULT_ACTIONTYPE,
+      params.id,
     ));
   }
 
-  getHeaderMainFields = (actortypes) => {
+  getHeaderMainFields = (type) => {
     const { intl } = this.context;
+    const typeId = type.get('id');
     return ([ // fieldGroups
       { // fieldGroup
         fields: [
-          actortypes && getActortypeFormField(intl.formatMessage, actortypes), // required
-          getReferenceFormField(intl.formatMessage, true), // required
-          getTitleFormField(intl.formatMessage, 'titleText'),
+          getInfoField(
+            'actortype_id',
+            intl.formatMessage(appMessages.actortypes[typeId]),
+            true // large
+          ), // required
+          checkActorAttribute(typeId, 'code') && getCodeFormField(
+            intl.formatMessage,
+            'code',
+            checkActorRequired(typeId, 'code'),
+          ),
+          checkActorAttribute(typeId, 'title') && getTitleFormField(
+            intl.formatMessage,
+            'title',
+            'title',
+            checkActorRequired(typeId, 'title'),
+          ),
         ],
       },
     ]);
@@ -127,35 +145,68 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
   }
 
   getBodyMainFields = (
-    connectedTaxonomies,
-    actions,
-    onCreateOption,
-    hasResponse,
+    type,
+    // connectedTaxonomies,
+    // actions,
+    // onCreateOption,
+    // hasResponse,
   ) => {
     const { intl } = this.context;
+    const typeId = type.get('id');
     const groups = [];
     groups.push({
       fields: [
-        getMarkdownField(intl.formatMessage, 'description'),
-        hasResponse && getAcceptedField(intl.formatMessage),
-        hasResponse && getMarkdownField(intl.formatMessage, 'response'),
+        checkActorAttribute(typeId, 'description') && getMarkdownField(
+          intl.formatMessage,
+          checkActorRequired(typeId, 'description'),
+          'description',
+        ),
+        checkActorAttribute(typeId, 'activity_summary') && getMarkdownField(
+          intl.formatMessage,
+          checkActorRequired(typeId, 'activity_summary'),
+          'activity_summary',
+        ),
       ],
     });
-    if (actions) {
-      groups.push({
-        label: intl.formatMessage(appMessages.nav.actionsSuper),
-        icon: 'actions',
-        fields: [
-          renderActionControl(actions, connectedTaxonomies, onCreateOption, intl),
-        ],
-      });
-    }
+    // if (actions) {
+    //   groups.push({
+    //     label: intl.formatMessage(appMessages.nav.actionsSuper),
+    //     icon: 'actions',
+    //     fields: [
+    //       renderActionControl(actions, connectedTaxonomies, onCreateOption, intl),
+    //     ],
+    //   });
+    // }
     return groups;
   }
 
-  getBodyAsideFields = (taxonomies, onCreateOption) => {
+  getBodyAsideFields = (type, taxonomies, onCreateOption) => {
     const { intl } = this.context;
-    return ([ // fieldGroup
+    const typeId = type.get('id');
+    return ([ // fieldGroups
+      { // fieldGroup
+        fields: [
+          checkActorAttribute(typeId, 'url') && getLinkFormField(
+            intl.formatMessage,
+            checkActorRequired(typeId, 'url'),
+            'url',
+          ),
+        ],
+      },
+      { // fieldGroup
+        fields: [
+          checkActorAttribute(typeId, 'gdp') && getAmountFormField(
+            intl.formatMessage,
+            checkActorRequired(typeId, 'gdp'),
+            'gdp',
+          ),
+          checkActorAttribute(typeId, 'population') && getNumberFormField(
+            intl.formatMessage,
+            checkActorRequired(typeId, 'population'),
+            'population',
+          ),
+        ],
+      },
       { // fieldGroup
         label: intl.formatMessage(appMessages.entities.taxonomies.plural),
         icon: 'categories',
@@ -169,29 +220,25 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
     const {
       dataReady,
       viewDomain,
-      connectedTaxonomies,
+      // connectedTaxonomies,
+      // actions,
       taxonomies,
-      actions,
       onCreateOption,
-      actortypeId,
-      actortypes,
+      actortype,
+      params,
     } = this.props;
+    const typeId = params.id;
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
-    const actortypeSpecified = (actortypeId && actortypeId !== 'all');
 
-    const type = intl.formatMessage(
-      appMessages.entities[actortypeSpecified ? `actors_${actortypeId}` : 'actors'].single
-    );
-
-    const currentActortypeId = actortypeSpecified
-      ? actortypeId
-      : viewDomain.getIn(['form', 'data', 'attributes', 'actortype_id']) || DEFAULT_ACTIONTYPE;
-    const currentActortype = dataReady && actortypes.find((actortype) => qe(actortype.get('id'), currentActortypeId));
-    const hasResponse = dataReady && currentActortype.getIn(['attributes', 'has_response']);
-    const hasActions = dataReady && currentActortype.getIn(['attributes', 'has_actions']);
-
-    const actortypeTaxonomies = taxonomies && taxonomies.filter((tax) => tax.get('actortypeIds').find((id) => qe(id, currentActortypeId))
-      || qe(currentActortypeId, tax.getIn(['attributes', 'actortype_id'])));
+    // const currentActortypeId = actortypeSpecified
+    //   ? actortypeId
+    //   : viewDomain.getIn(['form', 'data', 'attributes', 'actortype_id']) || DEFAULT_ACTIONTYPE;
+    //
+    // const hasActions = dataReady && currentActortype.getIn(['attributes', 'has_actions']);
+    //
+    // const actortypeTaxonomies = taxonomies && taxonomies.filter((tax) => tax.get('actortypeIds').find((id) => qe(id, currentActortypeId))
+    //   || qe(currentActortypeId, tax.getIn(['attributes', 'actortype_id'])));
+    const type = intl.formatMessage(appMessages.entities[`actors_${typeId}`].single);
     return (
       <div>
         <Helmet
@@ -207,11 +254,10 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}
-            icon={actortypeSpecified ? `actors_${actortypeId}` : 'actors'}
             buttons={
               dataReady ? [{
                 type: 'cancel',
-                onClick: this.props.handleCancel,
+                onClick: () => this.props.handleCancel(typeId),
               },
               {
                 type: 'save',
@@ -249,27 +295,30 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
                 saving={saveSending}
                 handleSubmit={(formData) => this.props.handleSubmit(
                   formData,
-                  currentActortype,
-                  actortypeTaxonomies,
+                  actortype,
+                  // actortypeTaxonomies,
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
-                handleCancel={this.props.handleCancel}
+                handleCancel={() => this.props.handleCancel(typeId)}
                 handleUpdate={this.props.handleUpdate}
                 fields={{ // isManager, taxonomies,
                   header: {
-                    main: this.getHeaderMainFields(
-                      actortypeId === 'all' ? actortypes : null
-                    ),
+                    main: this.getHeaderMainFields(actortype),
                     aside: this.getHeaderAsideFields(),
                   },
                   body: {
                     main: this.getBodyMainFields(
-                      connectedTaxonomies,
-                      hasActions && actions,
-                      onCreateOption,
-                      hasResponse,
+                      actortype,
+                      // connectedTaxonomies,
+                      // hasActions && actions,
+                      // onCreateOption,
+                      // hasResponse,
                     ),
-                    aside: this.getBodyAsideFields(actortypeTaxonomies, onCreateOption),
+                    aside: this.getBodyAsideFields(
+                      actortype,
+                      taxonomies,
+                      onCreateOption,
+                    ),
                   },
                 }}
                 scrollContainer={this.scrollContainer.current}
@@ -297,29 +346,34 @@ ActorNew.propTypes = {
   dataReady: PropTypes.bool,
   authReady: PropTypes.bool,
   taxonomies: PropTypes.object,
-  actions: PropTypes.object,
   onCreateOption: PropTypes.func,
   initialiseForm: PropTypes.func,
-  connectedTaxonomies: PropTypes.object,
+  // actions: PropTypes.object,
+  // connectedTaxonomies: PropTypes.object,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
-  actortypeId: PropTypes.string,
-  actortypes: PropTypes.object,
+  actortype: PropTypes.instanceOf(Map),
+  params: PropTypes.object,
 };
 
 ActorNew.contextTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, { params }) => ({
   viewDomain: selectDomain(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   authReady: selectReadyForAuthCheck(state),
-  taxonomies: selectActorTaxonomies(state, { includeParents: false }),
-  actions: selectActionsCategorised(state),
-  connectedTaxonomies: selectConnectedTaxonomies(state),
-  actortypeId: selectActortypeQuery(state),
-  actortypes: selectActiveActortypes(state),
+  taxonomies: selectActortypeTaxonomiesWithCats(
+    state,
+    {
+      type: params.id,
+      includeParents: false,
+    },
+  ),
+  // actionsByActiontype: selectActionsByActiontype(state),
+  // connectedTaxonomies: selectConnectedTaxonomies(state),
+  actortype: selectActortype(state, params.id),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -347,61 +401,60 @@ function mapDispatchToProps(dispatch) {
       dispatch(formActions.submit(model));
     },
     // handleSubmit: (formData, currentActortype) => {
-    handleSubmit: (formData, currentActortype, actortypeTaxonomies) => {
-      let saveData = formData;
-
+    handleSubmit: (formData, actortype) => {
+      const saveData = formData.setIn(['attributes', 'actortype_id'], actortype.get('id'));
       // actorCategories=
-      if (formData.get('associatedTaxonomies')) {
-        // get List of valid categories (for actortype)
-        const validCategories = actortypeTaxonomies && actortypeTaxonomies
-          .map((actortypet) => actortypet.get('categories').keySeq())
-          .valueSeq()
-          .flatten();
-        // get list of selected categories by taxonomy,
-        // filter by valid categories
-        const selectedCategories = formData
-          .get('associatedTaxonomies')
-          .map(getCheckedValuesFromOptions)
-          .valueSeq()
-          .flatten()
-          .filter((id) => !validCategories || validCategories.includes(id));
-        // const categoryIds =
-        saveData = saveData.set(
-          'actorCategories',
-          Map({
-            delete: List(),
-            create: selectedCategories.map((id) => Map({ category_id: id })),
-          }),
-        );
-      }
-
-      // actions if allowed by actortype
-      if (
-        formData.get('associatedActions')
-        && currentActortype.getIn(['attributes', 'has_actions'])
-      ) {
-        saveData = saveData.set('actorActions', Map({
-          delete: List(),
-          create: getCheckedValuesFromOptions(formData.get('associatedActions'))
-            .map((id) => Map({
-              action_id: id,
-            })),
-        }));
-      }
-
-      // cleanup attributes for actortype
-      if (!currentActortype.getIn(['attributes', 'has_response'])) {
-        saveData = saveData
-          .setIn(['attributes', 'accepted'], null)
-          .setIn(['attributes', 'response'], null);
-      }
-      if (!currentActortype.get('id')) {
-        saveData = saveData.setIn(['attributes', 'actortype_id'], DEFAULT_ACTIONTYPE);
-      }
-      dispatch(save(saveData.toJS()));
+      // if (formData.get('associatedTaxonomies')) {
+      //   // get List of valid categories (for actortype)
+      //   const validCategories = actortypeTaxonomies && actortypeTaxonomies
+      //     .map((actortypet) => actortypet.get('categories').keySeq())
+      //     .valueSeq()
+      //     .flatten();
+      //   // get list of selected categories by taxonomy,
+      //   // filter by valid categories
+      //   const selectedCategories = formData
+      //     .get('associatedTaxonomies')
+      //     .map(getCheckedValuesFromOptions)
+      //     .valueSeq()
+      //     .flatten()
+      //     .filter((id) => !validCategories || validCategories.includes(id));
+      //   // const categoryIds =
+      //   saveData = saveData.set(
+      //     'actorCategories',
+      //     Map({
+      //       delete: List(),
+      //       create: selectedCategories.map((id) => Map({ category_id: id })),
+      //     }),
+      //   );
+      // }
+      //
+      // // actions if allowed by actortype
+      // if (
+      //   formData.get('associatedActions')
+      //   && currentActortype.getIn(['attributes', 'has_actions'])
+      // ) {
+      //   saveData = saveData.set('actorActions', Map({
+      //     delete: List(),
+      //     create: getCheckedValuesFromOptions(formData.get('associatedActions'))
+      //       .map((id) => Map({
+      //         measure_id: id,
+      //       })),
+      //   }));
+      // }
+      //
+      // // cleanup attributes for actortype
+      // if (!currentActortype.getIn(['attributes', 'has_response'])) {
+      //   saveData = saveData
+      //     .setIn(['attributes', 'accepted'], null)
+      //     .setIn(['attributes', 'response'], null);
+      // }
+      // if (!currentActortype.get('id')) {
+      //   saveData = saveData.setIn(['attributes', 'actortype_id'], DEFAULT_ACTIONTYPE);
+      // }
+      dispatch(save(saveData.toJS(), actortype.get('id')));
     },
-    handleCancel: () => {
-      dispatch(updatePath(ROUTES.ACTORS, { replace: true }));
+    handleCancel: (typeId) => {
+      dispatch(updatePath(`${ROUTES.ACTORS}/${typeId}`), { replace: true });
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));

@@ -8,7 +8,7 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
   pageTitle: {
     id: 'app.containers.ActionNew.pageTitle',
-    defaultMessage: 'New Action',
+    defaultMessage: 'New {type}',
   },
   metaDescription: {
     id: 'app.containers.ActionNew.metaDescription',
@@ -16,6 +16,6 @@ export default defineMessages({
   },
   header: {
     id: 'app.containers.ActionNew.header',
-    defaultMessage: 'New Action',
+    defaultMessage: 'New {type}',
   },
 });

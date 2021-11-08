@@ -2,10 +2,6 @@ import { reduce } from 'lodash/collection';
 import { sortEntities } from 'utils/sort';
 import { qe } from 'utils/quasi-equals';
 
-const checkActortype = (actortypes, attribute) => actortypes.some(
-  (actortype) => actortype.getIn(['attributes', attribute])
-);
-
 // figure out filter groups for filter panel
 export const makeFilterGroups = (
   config,
@@ -18,21 +14,6 @@ export const makeFilterGroups = (
 ) => {
   const filterGroups = {};
 
-  // taxonomy option group
-  if (config.actortypes && actortypes && actortypes.size > 1) {
-    filterGroups.actortypes = {
-      id: 'actortypes', // filterGroupId
-      label: messages.actortypesGroup,
-      show: true,
-      icon: 'actors',
-      options: [{
-        id: 'actortypes', // filterOptionId
-        label: messages.actortypes,
-        color: 'actors',
-        active: !!activeFilterOption && activeFilterOption.optionId === 'actortypes',
-      }],
-    };
-  }
   // taxonomy option group
   if (config.taxonomies && taxonomies) {
     // multi actortype mode
@@ -189,23 +170,17 @@ export const makeFilterGroups = (
       show: true,
       options: reduce(
         config.attributes.options,
-        (options, option) => (
-          (
-            typeof option.role === 'undefined'
-            || (hasUserRole && hasUserRole[option.role])
-          )
-          && (
-            typeof option.actortypeFilter === 'undefined'
-            || checkActortype(actortypes, option.actortypeFilter)
-          )
+        (memo, option) => (
+          typeof option.role === 'undefined'
+          || (hasUserRole && hasUserRole[option.role])
         )
-          ? options.concat([{
+          ? memo.concat([{
             id: option.attribute, // filterOptionId
             label: option.label,
             message: option.message,
             active: !!activeFilterOption && activeFilterOption.optionId === option.attribute,
           }])
-          : options,
+          : memo,
         [],
       ),
     };

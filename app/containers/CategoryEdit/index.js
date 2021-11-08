@@ -485,7 +485,7 @@ function mapDispatchToProps(dispatch, props) {
             formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
             connections: actions,
             connectionAttribute: 'associatedActions',
-            createConnectionKey: 'action_id',
+            createConnectionKey: 'measure_id',
             createKey: 'category_id',
           })
         );
