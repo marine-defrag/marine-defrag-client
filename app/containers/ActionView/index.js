@@ -235,6 +235,7 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       // actorConnections,
       // actortypes,
     } = this.props;
+    const typeId = viewEntity.getIn(['attributes', 'measuretype_id']);
     const isManager = hasUserRole[USER_ROLES.MANAGER.value];
     let buttons = [];
     if (dataReady) {
@@ -252,12 +253,12 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
           },
           {
             type: 'close',
-            onClick: this.props.handleClose,
+            onClick: () => this.props.handleClose(typeId),
           },
         ])
         : buttons.concat([{
           type: 'close',
-          onClick: this.props.handleClose,
+          onClick: () => this.props.handleClose(typeId),
         }]);
     }
     const pageTitle = intl.formatMessage(messages.pageTitle);
@@ -365,8 +366,8 @@ function mapDispatchToProps(dispatch) {
     handleEdit: (actionId) => {
       dispatch(updatePath(`${ROUTES.ACTION}${ROUTES.EDIT}/${actionId}`, { replace: true }));
     },
-    handleClose: () => {
-      dispatch(closeEntity(ROUTES.ACTIONS));
+    handleClose: (typeId) => {
+      dispatch(closeEntity(`${ROUTES.ACTIONS}/${typeId}`));
     },
   };
 }

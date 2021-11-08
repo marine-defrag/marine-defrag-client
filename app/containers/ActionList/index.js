@@ -91,7 +91,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
         title: [
           intl.formatMessage(appMessages.buttons.add),
           {
-            title: intl.formatMessage(appMessages.entities.actions.single),
+            title: intl.formatMessage(appMessages.actiontypesSingle[typeId]),
             hiddenSmall: true,
           },
         ],
@@ -117,8 +117,8 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
           header={headerOptions}
           dataReady={dataReady}
           entityTitle={{
-            single: intl.formatMessage(appMessages.entities.actions.single),
-            plural: intl.formatMessage(appMessages.entities.actions.plural),
+            single: intl.formatMessage(appMessages.actiontypesSingle[typeId]),
+            plural: intl.formatMessage(appMessages.actiontypes[typeId]),
           }}
           locationQuery={fromJS(location.query)}
         />

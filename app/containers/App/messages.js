@@ -50,6 +50,28 @@ export default defineMessages({
       defaultMessage: 'Actortype 5',
     },
   },
+  actortypesSingle: {
+    1: {
+      id: 'app.containers.App.actortypesSingle.1',
+      defaultMessage: 'Human Rights Actors',
+    },
+    2: {
+      id: 'app.containers.App.actortypesSingle.2',
+      defaultMessage: 'Sustainable Development Goals',
+    },
+    3: {
+      id: 'app.containers.App.actortypesSingle.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actortypesSingle.4',
+      defaultMessage: 'Actortype 4',
+    },
+    5: {
+      id: 'app.containers.App.actortypesSingle.5',
+      defaultMessage: 'Actortype 5',
+    },
+  },
   actortypeGroups: {
     1: {
       id: 'app.containers.App.actortypeGroups.1',
@@ -173,6 +195,32 @@ export default defineMessages({
     },
     6: {
       id: 'app.containers.App.actiontypes.6',
+      defaultMessage: 'Actortype 6',
+    },
+  },
+  actiontypesSingle: {
+    1: {
+      id: 'app.containers.App.actiontypesSingle.1',
+      defaultMessage: 'Human Rights Actors',
+    },
+    2: {
+      id: 'app.containers.App.actiontypesSingle.2',
+      defaultMessage: 'Sustainable Development Goals',
+    },
+    3: {
+      id: 'app.containers.App.actiontypesSingle.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actiontypesSingle.4',
+      defaultMessage: 'Actortype 4',
+    },
+    5: {
+      id: 'app.containers.App.actiontypesSingle.5',
+      defaultMessage: 'Actortype 5',
+    },
+    6: {
+      id: 'app.containers.App.actiontypesSingle.6',
       defaultMessage: 'Actortype 6',
     },
   },

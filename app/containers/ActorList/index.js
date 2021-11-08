@@ -68,7 +68,9 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
       actortypes,
       isManager,
       isUserSignedIn,
+      params, // { id: the action type }
     } = this.props;
+    const typeId = params.id;
     // console.log('RecList:render')
     const currentActortype = actortypes && actortypes.size === 1 && actortypes.first();
     const type = currentActortype
@@ -105,7 +107,7 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
         title: [
           intl.formatMessage(appMessages.buttons.add),
           {
-            title: intl.formatMessage(appMessages.entities[type].single),
+            title: intl.formatMessage(appMessages.actortypesSingle[typeId]),
             hiddenSmall: true,
           },
         ],
@@ -137,8 +139,8 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
           header={headerOptions}
           dataReady={dataReady}
           entityTitle={{
-            single: intl.formatMessage(appMessages.entities[type].single),
-            plural: intl.formatMessage(appMessages.entities[type].plural),
+            single: intl.formatMessage(appMessages.actortypesSingle[typeId]),
+            plural: intl.formatMessage(appMessages.actortypes[typeId]),
           }}
           entityIcon={(entity) => {
             const status = getAcceptanceStatus(entity);
@@ -164,6 +166,7 @@ ActorList.propTypes = {
   connections: PropTypes.instanceOf(Map),
   location: PropTypes.object,
   isUserSignedIn: PropTypes.bool,
+  params: PropTypes.object,
 };
 
 ActorList.contextTypes = {

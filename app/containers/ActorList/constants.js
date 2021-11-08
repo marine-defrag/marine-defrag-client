@@ -62,22 +62,22 @@ export const CONFIG = {
     groupBy: 'actortype_id',
     editForActortypes: true,
   },
-  connections: { // filter by associated entity
-    query: 'connected',
-    options: [
-      {
-        search: true,
-        message: 'entities.actions_{actiontypeid}.plural',
-        path: API.ACTIONS, // filter by actor connection
-        clientPath: ROUTES.ACTIONS, // filter by actor connection
-        key: 'action_id',
-        connectPath: API.ACTOR_ACTIONS, // filter by actor connection
-        ownKey: 'actor_id',
-        groupByActiontype: true,
-        actiontypeFilter: 'has_actions',
-      },
-    ],
-  },
+  // connections: { // filter by associated entity
+  //   query: 'connected',
+  //   options: [
+  //     {
+  //       search: true,
+  //       message: 'entities.actions_{actiontypeid}.plural',
+  //       path: API.ACTIONS, // filter by actor connection
+  //       clientPath: ROUTES.ACTIONS, // filter by actor connection
+  //       key: 'action_id',
+  //       connectPath: API.ACTOR_ACTIONS, // filter by actor connection
+  //       ownKey: 'actor_id',
+  //       groupByActiontype: true,
+  //       actiontypeFilter: 'has_actions',
+  //     },
+  //   ],
+  // },
   attributes: { // filter by attribute value
     options: [
       {
