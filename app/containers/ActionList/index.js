@@ -13,7 +13,7 @@ import { List, Map, fromJS } from 'immutable';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import {
   selectReady,
-  selectActionTaxonomies,
+  selectActiontypeTaxonomies,
   selectActiveActortypes,
   selectIsUserManager,
   selectIsSignedIn,
@@ -158,7 +158,7 @@ const mapStateToProps = (state, props) => ({
     },
   ),
   actiontypes: selectActiontypes(state, props.params.id),
-  taxonomies: selectActionTaxonomies(state),
+  taxonomies: selectActiontypeTaxonomies(state, { type: props.params.id }),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
   actortypes: selectActiveActortypes(state),

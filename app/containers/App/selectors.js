@@ -556,7 +556,7 @@ export const selectActionTaxonomies = createSelector(
   (taxonomies, actiontypeTaxonomies) => taxonomies
     && actiontypeTaxonomies
     && taxonomies.filter(
-      // connected to current actortype
+      // connected to any actortype
       (tax) => actiontypeTaxonomies.some(
         (type) => qe(
           type.getIn(['attributes', 'taxonomy_id']),
