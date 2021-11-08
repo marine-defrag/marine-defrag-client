@@ -34,9 +34,10 @@ import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl
 
 import { scrollToTop } from 'utils/scroll-to-component';
 import { hasNewError } from 'utils/entity-form';
+import { checkActionAttribute, checkActionRequired } from 'utils/entities';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES, ROUTES, ACTION_FIELDS } from 'themes/config';
+import { USER_ROLES, ROUTES } from 'themes/config';
 
 import {
   loadEntitiesIfNeeded,
@@ -106,25 +107,6 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
     ));
   }
 
-  checkAttribute = (typeId, att) => {
-    if (ACTION_FIELDS && ACTION_FIELDS.ATTRIBUTES && ACTION_FIELDS.ATTRIBUTES[att]) {
-      if (ACTION_FIELDS.ATTRIBUTES[att].optional) {
-        return ACTION_FIELDS.ATTRIBUTES[att].optional.indexOf(typeId) > -1;
-      }
-      if (ACTION_FIELDS.ATTRIBUTES[att].required) {
-        return ACTION_FIELDS.ATTRIBUTES[att].required.indexOf(typeId) > -1;
-      }
-    }
-    return false;
-  }
-
-  checkRequired = (typeId, att) => {
-    if (ACTION_FIELDS && ACTION_FIELDS.ATTRIBUTES && ACTION_FIELDS.ATTRIBUTES[att] && ACTION_FIELDS.ATTRIBUTES[att].required) {
-      return ACTION_FIELDS.ATTRIBUTES[att].required.indexOf(typeId) > -1;
-    }
-    return false;
-  }
-
   getHeaderMainFields = (type) => {
     const { intl } = this.context;
     const typeId = type.get('id');
@@ -136,21 +118,16 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
             intl.formatMessage(appMessages.actiontypes[typeId]),
             true // large
           ), // required
-          this.checkAttribute(typeId, 'code') && getCodeFormField(
+          checkActionAttribute(typeId, 'code') && getCodeFormField(
             intl.formatMessage,
             'code',
-            this.checkRequired(typeId, 'code'),
+            checkActionRequired(typeId, 'code'),
           ),
-          this.checkAttribute(typeId, 'title') && getTitleFormField(
+          checkActionAttribute(typeId, 'title') && getTitleFormField(
             intl.formatMessage,
             'title',
             'title',
-            this.checkRequired(typeId, 'title'),
-          ),
-          this.checkAttribute(typeId, 'url') && getLinkFormField(
-            intl.formatMessage,
-            this.checkRequired(typeId, 'url'),
-            'url',
+            checkActionRequired(typeId, 'title'),
           ),
         ],
       },
@@ -181,51 +158,51 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
       {
         fields: [
           // description
-          this.checkAttribute(typeId, 'description') && getMarkdownField(
+          checkActionAttribute(typeId, 'description') && getMarkdownField(
             intl.formatMessage,
-            this.checkRequired(typeId, 'description'),
+            checkActionRequired(typeId, 'description'),
             'description',
           ),
-          this.checkAttribute(typeId, 'comment') && getMarkdownField(
+          checkActionAttribute(typeId, 'comment') && getMarkdownField(
             intl.formatMessage,
-            this.checkRequired(typeId, 'comment'),
+            checkActionRequired(typeId, 'comment'),
             'comment',
           ),
         ],
       },
       {
         fields: [
-          this.checkAttribute(typeId, 'reference_ml') && getMarkdownField(
+          checkActionAttribute(typeId, 'reference_ml') && getMarkdownField(
             intl.formatMessage,
-            this.checkRequired(typeId, 'reference_ml'),
+            checkActionRequired(typeId, 'reference_ml'),
             'reference_ml',
           ),
-          this.checkAttribute(typeId, 'status_lbs_protocol') && getMarkdownField(
+          checkActionAttribute(typeId, 'status_lbs_protocol') && getMarkdownField(
             intl.formatMessage,
-            this.checkRequired(typeId, 'status_lbs_protocol'),
+            checkActionRequired(typeId, 'status_lbs_protocol'),
             'status_lbs_protocol',
           ),
-          this.checkAttribute(typeId, 'has_reference_landbased_ml') && getCheckboxField(
+          checkActionAttribute(typeId, 'has_reference_landbased_ml') && getCheckboxField(
             intl.formatMessage,
             'has_reference_landbased_ml',
           ),
-          this.checkAttribute(typeId, 'reference_landbased_ml') && getMarkdownField(
+          checkActionAttribute(typeId, 'reference_landbased_ml') && getMarkdownField(
             intl.formatMessage,
-            this.checkRequired(typeId, 'reference_landbased_ml'),
+            checkActionRequired(typeId, 'reference_landbased_ml'),
             'reference_landbased_ml',
           ),
         ],
       },
       {
         fields: [
-          this.checkAttribute(typeId, 'target_comment') && getMarkdownField(
+          checkActionAttribute(typeId, 'target_comment') && getMarkdownField(
             intl.formatMessage,
-            this.checkRequired(typeId, 'target_comment'),
+            checkActionRequired(typeId, 'target_comment'),
             'target_comment',
           ),
-          this.checkAttribute(typeId, 'status_comment') && getMarkdownField(
+          checkActionAttribute(typeId, 'status_comment') && getMarkdownField(
             intl.formatMessage,
-            this.checkRequired(typeId, 'status_comment'),
+            checkActionRequired(typeId, 'status_comment'),
             'status_comment',
           ),
         ],
@@ -257,14 +234,23 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
     return ([ // fieldGroups
       { // fieldGroup
         fields: [
-          this.checkAttribute(typeId, 'amount') && getAmountFormField(
+          checkActionAttribute(typeId, 'url') && getLinkFormField(
             intl.formatMessage,
-            this.checkRequired(typeId, 'amount'),
+            checkActionRequired(typeId, 'url'),
+            'url',
+          ),
+        ],
+      },
+      { // fieldGroup
+        fields: [
+          checkActionAttribute(typeId, 'amount') && getAmountFormField(
+            intl.formatMessage,
+            checkActionRequired(typeId, 'amount'),
             'amount',
           ),
-          this.checkAttribute(typeId, 'amount_comment') && getFormField({
+          checkActionAttribute(typeId, 'amount_comment') && getFormField({
             formatMessage: intl.formatMessage,
-            required: this.checkRequired(typeId, 'amount_comment'),
+            required: checkActionRequired(typeId, 'amount_comment'),
             attribute: 'amount_comment',
             controlType: 'input',
           }),
@@ -272,20 +258,20 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
       },
       { // fieldGroup
         fields: [
-          this.checkAttribute(typeId, 'date_start') && getDateField(
+          checkActionAttribute(typeId, 'date_start') && getDateField(
             intl.formatMessage,
             'date_start',
-            this.checkRequired(typeId, 'date_start'),
+            checkActionRequired(typeId, 'date_start'),
           ),
-          this.checkAttribute(typeId, 'date_end') && getDateField(
+          checkActionAttribute(typeId, 'date_end') && getDateField(
             intl.formatMessage,
             'date_end',
-            this.checkRequired(typeId, 'date_end'),
+            checkActionRequired(typeId, 'date_end'),
           ),
-          this.checkAttribute(typeId, 'date_comment') && getTextareaField(
+          checkActionAttribute(typeId, 'date_comment') && getTextareaField(
             intl.formatMessage,
             'date_comment',
-            this.checkRequired(typeId, 'date_comment'),
+            checkActionRequired(typeId, 'date_comment'),
           ),
         ],
       },

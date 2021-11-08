@@ -4,6 +4,7 @@ import { FormattedMessage } from 'react-intl';
 
 import FieldWrap from 'components/fields/FieldWrap';
 import Label from 'components/fields/Label';
+import EmptyHint from 'components/fields/EmptyHint';
 
 class TextField extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
@@ -13,7 +14,15 @@ class TextField extends React.PureComponent { // eslint-disable-line react/prefe
         <Label>
           <FormattedMessage {...field.label} />
         </Label>
-        <p>{field.value}</p>
+        { !!field.value && (<p>{field.value}</p>)}
+        { !field.value
+          && field.showEmpty
+          && (
+            <EmptyHint>
+              <FormattedMessage {...field.showEmpty} />
+            </EmptyHint>
+          )
+        }
       </FieldWrap>
     );
   }

@@ -13,12 +13,11 @@ export const getInfoField = (att, value, large = false) => ({
   large,
   label: appMessages.attributes[att],
 });
-export const getIdField = (entity, isManager) => ({
+export const getIdField = (entity) => ({
   controlType: 'info',
   type: 'reference',
   value: entity.get('id'),
   large: true,
-  isManager,
   label: appMessages.attributes.id,
 });
 export const getReferenceField = (entity, isManager, defaultToId) => {
@@ -64,7 +63,13 @@ export const getTitleTextField = (entity, isManager, attribute = 'title', label)
   isManager,
   label,
 });
-export const getStatusField = (entity, attribute = 'draft', options, label, defaultValue = true) => ({
+export const getStatusField = (
+  entity,
+  attribute = 'draft',
+  options,
+  label,
+  defaultValue = true,
+) => ({
   controlType: 'info',
   type: 'status',
   value: (
@@ -115,7 +120,12 @@ export const getMetaField = (entity) => {
   };
 };
 
-export const getMarkdownField = (entity, attribute, hasLabel = true, label) => !!entity.getIn(['attributes', attribute])
+export const getMarkdownField = (
+  entity,
+  attribute,
+  hasLabel = true,
+  label,
+) => !!entity.getIn(['attributes', attribute])
   && (entity.getIn(['attributes', attribute]).trim().length > 0)
   && ({
     type: 'markdown',
@@ -123,9 +133,29 @@ export const getMarkdownField = (entity, attribute, hasLabel = true, label) => !
     label: hasLabel && (appMessages.attributes[label || attribute]),
   });
 
-export const getDateField = (entity, attribute, showEmpty, emptyMessage) => (showEmpty || (
+export const getAmountField = (
+  entity,
+  attribute,
+  showEmpty,
+  emptyMessage,
+) => (showEmpty || (
   !!entity.getIn(['attributes', attribute])
-    && (entity.getIn(['attributes', attribute]).trim().length > 0)
+  && (entity.getIn(['attributes', attribute]).trim().length > 0)
+))
+  && ({
+    type: 'text',
+    value: !!entity.getIn(['attributes', attribute]) && entity.getIn(['attributes', attribute]),
+    label: appMessages.attributes[attribute],
+    showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
+  });
+export const getDateField = (
+  entity,
+  attribute,
+  showEmpty,
+  emptyMessage,
+) => (showEmpty || (
+  !!entity.getIn(['attributes', attribute])
+  && (entity.getIn(['attributes', attribute]).trim().length > 0)
 ))
   && ({
     type: 'date',
@@ -134,7 +164,12 @@ export const getDateField = (entity, attribute, showEmpty, emptyMessage) => (sho
     showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
   });
 
-export const getDateRelatedField = (value, attribute, showEmpty, emptyMessage) => (showEmpty || (!!value && (value.trim().length > 0)))
+export const getDateRelatedField = (
+  value,
+  attribute,
+  showEmpty,
+  emptyMessage,
+) => (showEmpty || (!!value && (value.trim().length > 0)))
   && ({
     type: 'date',
     value: !!value && value,
@@ -142,7 +177,10 @@ export const getDateRelatedField = (value, attribute, showEmpty, emptyMessage) =
     showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
   });
 
-export const getTextField = (entity, attribute) => !!entity.getIn(['attributes', attribute])
+export const getTextField = (
+  entity,
+  attribute,
+) => !!entity.getIn(['attributes', attribute])
   && (entity.getIn(['attributes', attribute]).trim().length > 0)
   && ({
     type: 'text',

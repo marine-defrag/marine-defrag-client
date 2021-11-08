@@ -59,13 +59,25 @@ class FieldFactory extends React.PureComponent { // eslint-disable-line react/pr
 
   render() {
     const { field, nested } = this.props;
-    return ((typeof field.value !== 'undefined' && field.value !== null)
-      || (typeof field.values !== 'undefined' && (
-        (field.values.length && field.values.length > 0)
-        || (field.values.size && field.values.size > 0)
-      ))
+    return (
+      // value not empty or not undefined or nor empty string
+      (
+        typeof field.value !== 'undefined'
+        && field.value !== null
+        && field.value.toString().trim() !== ''
+      )
+      // values (multiple) not empty or undefined
+      || (
+        typeof field.values !== 'undefined'
+        && (
+          (field.values.length && field.values.length > 0)
+          || (field.values.size && field.values.size > 0)
+        )
+      )
+      // fields not empty or undefined
       || (typeof field.fields !== 'undefined' && field.fields.length > 0)
-      || typeof field.showEmpty !== 'undefined')
+      // or showEmpty
+      || (typeof field.showEmpty !== 'undefined' && field.showEmpty))
       ? (
         <Field nested={nested} noPadding={field.type === 'smartTaxonomy'}>
           {this.renderField(field)}

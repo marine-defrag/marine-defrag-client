@@ -687,6 +687,10 @@ export default defineMessages({
       id: 'app.containers.App.attributes.amount',
       defaultMessage: 'amount',
     },
+    amount_empty: {
+      id: 'app.containers.App.attributes.amount_empty',
+      defaultMessage: 'amount',
+    },
     amount_comment: {
       id: 'app.containers.App.attributes.amount_comment',
       defaultMessage: 'amount_comment',
@@ -1459,6 +1463,16 @@ export default defineMessages({
       noted: {
         id: 'app.containers.App.ui.acceptedStatuses.noted',
         defaultMessage: 'Not accepted',
+      },
+    },
+    checkAttributeStatuses: {
+      true: {
+        id: 'app.containers.App.ui.checkAttributeStatuses.true',
+        defaultMessage: 'Yes',
+      },
+      false: {
+        id: 'app.containers.App.ui.checkAttributeStatuses.false',
+        defaultMessage: 'No',
       },
     },
     sortOrderOptions: {

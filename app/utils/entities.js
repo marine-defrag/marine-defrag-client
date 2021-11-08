@@ -1,6 +1,11 @@
 import { Map } from 'immutable';
 
-import { TEXT_TRUNCATE, ACCEPTED_STATUSES } from 'themes/config';
+import {
+  TEXT_TRUNCATE,
+  ACCEPTED_STATUSES,
+  ACTION_FIELDS,
+  ACTOR_FIELDS,
+} from 'themes/config';
 import { find, reduce, every } from 'lodash/collection';
 
 import { cleanupSearchTarget, regExMultipleWords, truncateText } from 'utils/string';
@@ -644,3 +649,54 @@ export const getTaxonomyCategories = (
     }
   );
 };
+
+
+const checkAttribute = (typeId, att, attributes) => {
+  if (typeId && attributes && attributes[att]) {
+    if (attributes[att].optional) {
+      return attributes[att].optional.indexOf(typeId.toString()) > -1;
+    }
+    if (attributes[att].required) {
+      return attributes[att].required.indexOf(typeId.toString()) > -1;
+    }
+  }
+  return false;
+};
+
+const checkRequired = (typeId, att, attributes) => {
+  if (typeId && attributes && attributes[att] && attributes[att].required) {
+    return attributes[att].required.indexOf(typeId.toString()) > -1;
+  }
+  return false;
+};
+export const checkActionAttribute = (typeId, att) => ACTION_FIELDS
+  && ACTION_FIELDS.ATTRIBUTES
+  && checkAttribute(
+    typeId,
+    att,
+    ACTION_FIELDS.ATTRIBUTES,
+  );
+
+export const checkActionRequired = (typeId, att) => ACTION_FIELDS
+  && ACTION_FIELDS.ATTRIBUTES
+  && checkRequired(
+    typeId,
+    att,
+    ACTION_FIELDS.ATTRIBUTES,
+  );
+
+export const checkActorAttribute = (typeId, att) => ACTOR_FIELDS
+  && ACTOR_FIELDS.ATTRIBUTES
+  && checkAttribute(
+    typeId,
+    att,
+    ACTOR_FIELDS.ATTRIBUTES,
+  );
+
+export const checkActorRequired = (typeId, att) => ACTOR_FIELDS
+  && ACTOR_FIELDS.ATTRIBUTES
+  && checkRequired(
+    typeId,
+    att,
+    ACTOR_FIELDS.ATTRIBUTES,
+  );

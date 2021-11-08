@@ -15,16 +15,23 @@ import {
   getStatusField,
   getMetaField,
   getMarkdownField,
-  getActorConnectionField,
-  getTaxonomyFields,
-  hasTaxonomyCategories,
   getDateField,
   getTextField,
-  getIdField,
+  getInfoField,
+  getLinkField,
+  getAmountField,
+  // getActorConnectionField,
+  // getTaxonomyFields,
+  // hasTaxonomyCategories,
+  // getIdField,
 } from 'utils/fields';
 
-import { qe } from 'utils/quasi-equals';
-import { getEntityTitleTruncated, getEntityReference } from 'utils/entities';
+// import { qe } from 'utils/quasi-equals';
+import {
+  getEntityTitleTruncated,
+  getEntityReference,
+  checkActionAttribute,
+} from 'utils/entities';
 
 import { loadEntitiesIfNeeded, updatePath, closeEntity } from 'containers/App/actions';
 
@@ -39,9 +46,9 @@ import EntityView from 'components/EntityView';
 import {
   selectReady,
   selectHasUserRole,
-  selectActorTaxonomies,
-  selectActorConnections,
-  selectActiveActortypes,
+  // selectActorTaxonomies,
+  // selectActorConnections,
+  // selectActiveActortypes,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
@@ -49,8 +56,8 @@ import messages from './messages';
 
 import {
   selectViewEntity,
-  selectTaxonomies,
-  selectActors,
+  // selectTaxonomies,
+  // selectActors,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
@@ -67,14 +74,26 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
     }
   }
 
-  getHeaderMainFields = (entity, isManager) => ([ // fieldGroups
-    { // fieldGroup
-      fields: [
-        getIdField(entity, isManager),
-        getTitleField(entity, isManager),
-      ],
-    },
-  ]);
+  getHeaderMainFields = (entity) => {
+    const { intl } = this.context;
+    const typeId = entity.getIn(['attributes', 'measuretype_id']);
+    return ([ // fieldGroups
+      { // fieldGroup
+        fields: [
+          getInfoField(
+            'measuretype_id',
+            intl.formatMessage(appMessages.actiontypes[typeId]),
+            true // large
+          ), // required
+          checkActionAttribute(typeId, 'code') && getInfoField(
+            'code',
+            entity.getIn(['attributes', 'code']),
+          ),
+          checkActionAttribute(typeId, 'title') && getTitleField(entity),
+        ],
+      },
+    ]);
+  };
 
   getHeaderAsideFields = (entity) => ([
     {
@@ -88,63 +107,118 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
 
   getBodyMainFields = (
     entity,
-    actorsByActortype,
-    actorTaxonomies,
-    actorConnections,
-    actortypes,
-    onEntityClick,
+    // actorsByActortype,
+    // actorTaxonomies,
+    // actorConnections,
+    // actortypes,
+    // onEntityClick,
   ) => {
+    const { intl } = this.context;
+    const typeId = entity.getIn(['attributes', 'measuretype_id']);
     const fields = [];
-    // own attributes
-    fields.push({
-      fields: [
-        getMarkdownField(entity, 'description', true),
-        // getMarkdownField(entity, 'outcome', true),
-      ],
-    });
-
-    // actors
-    if (actorsByActortype) {
-      const actorConnectionsLocal = [];
-      actorsByActortype.forEach((actors, actortypeid) => {
-        const actortype = actortypes.find((at) => qe(at.get('id'), actortypeid));
-        const hasResponse = actortype && actortype.getIn(['attributes', 'has_response']);
-        actorConnectionsLocal.push(
-          getActorConnectionField(
-            actors,
-            actorTaxonomies,
-            actorConnections,
-            onEntityClick,
-            actortypeid,
-            hasResponse,
-          ),
+    let hasLandbasedValue;
+    if (checkActionAttribute(typeId, 'has_reference_landbased_ml')) {
+      if (typeof entity.getIn(['attributes', 'has_reference_landbased_ml']) !== 'undefined') {
+        hasLandbasedValue = intl.formatMessage(
+          appMessages.ui.checkAttributeStatuses[
+            entity.getIn(['attributes', 'has_reference_landbased_ml']).toString()
+          ],
         );
-      });
-      fields.push({
-        label: appMessages.nav.actorsSuper,
-        icon: 'actors',
-        fields: actorConnectionsLocal,
-      });
+      }
     }
+    // own attributes
+    fields.push(
+      {
+        fields: [
+          checkActionAttribute(typeId, 'description')
+            && getMarkdownField(entity, 'description', true),
+          checkActionAttribute(typeId, 'comment')
+            && getMarkdownField(entity, 'comment', true),
+        ],
+      },
+      {
+        fields: [
+          checkActionAttribute(typeId, 'reference_ml')
+            && getMarkdownField(entity, 'reference_ml', true),
+          checkActionAttribute(typeId, 'status_lbs_protocol')
+            && getMarkdownField(entity, 'status_lbs_protocol', true),
+          checkActionAttribute(typeId, 'has_reference_landbased_ml')
+            && getInfoField(
+              'has_reference_landbased_ml',
+              hasLandbasedValue,
+            ),
+          checkActionAttribute(typeId, 'reference_landbased_ml')
+            && getMarkdownField(entity, 'reference_landbased_ml', true),
+        ],
+      },
+      {
+        fields: [
+          checkActionAttribute(typeId, 'target_comment')
+            && getMarkdownField(entity, 'target_comment', true),
+          checkActionAttribute(typeId, 'status_comment')
+            && getMarkdownField(entity, 'status_comment', true),
+        ],
+      },
+    );
+
+    // // actors
+    // if (actorsByActortype) {
+    //   const actorConnectionsLocal = [];
+    //   actorsByActortype.forEach((actors, actortypeid) => {
+    //     const actortype = actortypes.find((at) => qe(at.get('id'), actortypeid));
+    //     const hasResponse = actortype && actortype.getIn(['attributes', 'has_response']);
+    //     actorConnectionsLocal.push(
+    //       getActorConnectionField(
+    //         actors,
+    //         actorTaxonomies,
+    //         actorConnections,
+    //         onEntityClick,
+    //         actortypeid,
+    //         hasResponse,
+    //       ),
+    //     );
+    //   });
+    //   fields.push({
+    //     label: appMessages.nav.actorsSuper,
+    //     icon: 'actors',
+    //     fields: actorConnectionsLocal,
+    //   });
+    // }
     return fields;
   };
 
-  getBodyAsideFields = (viewEntity, taxonomies) => {
+  getBodyAsideFields = (entity) => {
     const fields = [];
-    fields.push({
-      type: 'dark',
-      fields: [
-        getDateField(viewEntity, 'target_date', true),
-        getTextField(viewEntity, 'target_date_comment'),
-      ],
-    });
-    if (hasTaxonomyCategories(taxonomies)) {
-      fields.push({ // fieldGroup
-        label: appMessages.entities.taxonomies.plural,
-        icon: 'categories',
-        fields: getTaxonomyFields(taxonomies),
-      });
-    }
+    const typeId = entity.getIn(['attributes', 'measuretype_id']);
+    fields.push(
+      {
+        fields: [
+          checkActionAttribute(typeId, 'url') && getLinkField(entity),
+        ],
+      },
+      {
+        type: 'dark',
+        fields: [
+          checkActionAttribute(typeId, 'amount') && getAmountField(entity, 'amount', true),
+          checkActionAttribute(typeId, 'amount_comment') && getTextField(entity, 'amount_comment'),
+        ],
+      },
+      {
+        type: 'dark',
+        fields: [
+          checkActionAttribute(typeId, 'date_start') && getDateField(entity, 'date_start', true),
+          checkActionAttribute(typeId, 'date_end') && getDateField(entity, 'date_end'),
+          checkActionAttribute(typeId, 'date_comment') && getTextField(entity, 'date_comment'),
+        ],
+      }
+    );
+    // if (hasTaxonomyCategories(taxonomies)) {
+    //   fields.push({ // fieldGroup
+    //     label: appMessages.entities.taxonomies.plural,
+    //     icon: 'categories',
+    //     fields: getTaxonomyFields(taxonomies),
+    //   });
+    // }
     return fields;
   };
 
@@ -154,12 +228,12 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       viewEntity,
       dataReady,
       hasUserRole,
-      actorsByActortype,
       taxonomies,
-      actorTaxonomies,
-      onEntityClick,
-      actorConnections,
-      actortypes,
+      // actorsByActortype,
+      // actorTaxonomies,
+      // onEntityClick,
+      // actorConnections,
+      // actortypes,
     } = this.props;
     const isManager = hasUserRole[USER_ROLES.MANAGER.value];
     let buttons = [];
@@ -221,17 +295,17 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
               <EntityView
                 fields={{
                   header: {
-                    main: this.getHeaderMainFields(viewEntity, isManager),
+                    main: this.getHeaderMainFields(viewEntity),
                     aside: isManager && this.getHeaderAsideFields(viewEntity),
                   },
                   body: {
                     main: this.getBodyMainFields(
                       viewEntity,
-                      actorsByActortype,
-                      actorTaxonomies,
-                      actorConnections,
-                      actortypes,
-                      onEntityClick,
+                      // actorsByActortype,
+                      // actorTaxonomies,
+                      // actorConnections,
+                      // actortypes,
+                      // onEntityClick,
                     ),
                     aside: this.getBodyAsideFields(
                       viewEntity,
@@ -273,11 +347,11 @@ const mapStateToProps = (state, props) => ({
   hasUserRole: selectHasUserRole(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   viewEntity: selectViewEntity(state, props.params.id),
-  taxonomies: selectTaxonomies(state, props.params.id),
-  actorsByActortype: selectActors(state, props.params.id),
-  actorTaxonomies: selectActorTaxonomies(state),
-  actorConnections: selectActorConnections(state),
-  actortypes: selectActiveActortypes(state),
+  // taxonomies: selectTaxonomies(state, props.params.id),
+  // actorsByActortype: selectActors(state, props.params.id),
+  // actorTaxonomies: selectActorTaxonomies(state),
+  // actorConnections: selectActorConnections(state),
+  // actortypes: selectActiveActortypes(state),
 });
 
 function mapDispatchToProps(dispatch) {

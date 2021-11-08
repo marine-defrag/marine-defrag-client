@@ -21,7 +21,7 @@ class StatusField extends React.PureComponent { // eslint-disable-line react/pre
     return (
       <FieldWrapInline>
         <Label>
-          <FormattedMessage {...(field.label || appMessages.attributes.status)} />
+          <FormattedMessage {...(field.label || appMessages.attributes.draft)} />
         </Label>
         <Status>
           { status && status.message

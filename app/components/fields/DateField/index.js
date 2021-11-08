@@ -30,6 +30,7 @@ class DateField extends React.PureComponent { // eslint-disable-line react/prefe
           )
         }
         { !field.value
+          && field.showEmpty
           && (
             <EmptyHint>
               <FormattedMessage {...field.showEmpty} />
