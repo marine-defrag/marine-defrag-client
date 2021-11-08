@@ -13,7 +13,7 @@ export function* save({ data }) {
   yield put(saveEntity({
     path: API.ACTIONS,
     entity: data,
-    redirect: `${ROUTES.ACTIONS}/${data.id}`,
+    redirect: `${ROUTES.ACTION}/${data.id}`,
   }));
 }
 

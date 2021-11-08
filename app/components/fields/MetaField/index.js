@@ -12,6 +12,7 @@ class MetaField extends React.PureComponent { // eslint-disable-line react/prefe
   render() {
     const { field } = this.props;
     const { intl } = this.context;
+
     return (
       <FieldWrap>
         <Label>

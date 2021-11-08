@@ -363,7 +363,7 @@ function mapDispatchToProps(dispatch) {
       dispatch(updatePath(`/${path}/${id}`));
     },
     handleEdit: (actionId) => {
-      dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.EDIT}/${actionId}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.ACTION}${ROUTES.EDIT}/${actionId}`, { replace: true }));
     },
     handleClose: () => {
       dispatch(closeEntity(ROUTES.ACTIONS));

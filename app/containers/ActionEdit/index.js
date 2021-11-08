@@ -10,25 +10,34 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import { actions as formActions } from 'react-redux-form/immutable';
-import { Map, fromJS } from 'immutable';
+import { Map } from 'immutable';
+// import { Map, fromJS } from 'immutable';
 
 import {
   taxonomyOptions,
   entityOptions,
-  getCategoryUpdatesFromFormData,
-  getConnectionUpdatesFromFormData,
   getTitleFormField,
   getStatusField,
   getMarkdownField,
-  renderActorsByActortypeControl,
   getDateField,
   getTextareaField,
   renderTaxonomyControl,
+  getCodeFormField,
+  getCheckboxField,
+  getLinkFormField,
+  getFormField,
+  getAmountFormField,
+  // getCategoryUpdatesFromFormData,
+  // getConnectionUpdatesFromFormData,
+  // renderActorsByActortypeControl,
 } from 'utils/forms';
 
 import {
   getMetaField,
+  getInfoField,
 } from 'utils/fields';
+
+import { checkActionAttribute, checkActionRequired } from 'utils/entities';
 
 import { scrollToTop } from 'utils/scroll-to-component';
 import { hasNewError } from 'utils/entity-form';
@@ -64,9 +73,9 @@ import appMessages from 'containers/App/messages';
 import {
   selectDomain,
   selectViewEntity,
-  selectTaxonomies,
-  selectActorsByActortype,
-  selectConnectedTaxonomies,
+  // selectTaxonomies,
+  // selectActorsByActortype,
+  // selectConnectedTaxonomies,
 } from './selectors';
 
 import messages from './messages';
@@ -109,7 +118,8 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     const {
       viewEntity, taxonomies, actorsByActortype,
     } = props;
-
+    // console.log(viewEntity && viewEntity.toJS())
+    // console.log(FORM_INITIAL.get('attributes') && FORM_INITIAL.get('attributes').toJS())
     return viewEntity
       ? Map({
         id: viewEntity.get('id'),
@@ -125,13 +135,29 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       : Map();
   }
 
-  getHeaderMainFields = () => {
+  getHeaderMainFields = (entity) => {
     const { intl } = this.context;
+    const typeId = entity.getIn(['attributes', 'measuretype_id']);
     return (
       [ // fieldGroups
         { // fieldGroup
           fields: [
-            getTitleFormField(intl.formatMessage),
+            getInfoField(
+              'measuretype_id',
+              intl.formatMessage(appMessages.actiontypes[typeId]),
+              true // large
+            ), // required
+            checkActionAttribute(typeId, 'code') && getCodeFormField(
+              intl.formatMessage,
+              'code',
+              checkActionRequired(typeId, 'code'),
+            ),
+            checkActionAttribute(typeId, 'title') && getTitleFormField(
+              intl.formatMessage,
+              'title',
+              'title',
+              checkActionRequired(typeId, 'title'),
+            ),
           ],
         },
       ]
@@ -151,52 +177,133 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
   };
 
   getBodyMainFields = (
-    connectedTaxonomies,
-    actorsByActortype,
-    onCreateOption,
+    entity,
+    // connectedTaxonomies,
+    // actorsByActortype,
+    // onCreateOption,
   ) => {
     const { intl } = this.context;
+    const typeId = entity.getIn(['attributes', 'measuretype_id']);
+
     const groups = [];
     groups.push(
       {
         fields: [
-          getMarkdownField(intl.formatMessage),
-          // getMarkdownField(intl.formatMessage, 'outcome'),
+          checkActionAttribute(typeId, 'description') && getMarkdownField(
+            intl.formatMessage,
+            checkActionRequired(typeId, 'description'),
+            'description',
+          ),
+          checkActionAttribute(typeId, 'comment') && getMarkdownField(
+            intl.formatMessage,
+            checkActionRequired(typeId, 'comment'),
+            'comment',
+          ),
+        ],
+      },
+      {
+        fields: [
+          checkActionAttribute(typeId, 'reference_ml') && getMarkdownField(
+            intl.formatMessage,
+            checkActionRequired(typeId, 'reference_ml'),
+            'reference_ml',
+          ),
+          checkActionAttribute(typeId, 'status_lbs_protocol') && getMarkdownField(
+            intl.formatMessage,
+            checkActionRequired(typeId, 'status_lbs_protocol'),
+            'status_lbs_protocol',
+          ),
+          checkActionAttribute(typeId, 'has_reference_landbased_ml') && getCheckboxField(
+            intl.formatMessage,
+            'has_reference_landbased_ml',
+          ),
+          checkActionAttribute(typeId, 'reference_landbased_ml') && getMarkdownField(
+            intl.formatMessage,
+            checkActionRequired(typeId, 'reference_landbased_ml'),
+            'reference_landbased_ml',
+          ),
+        ],
+      },
+      {
+        fields: [
+          checkActionAttribute(typeId, 'target_comment') && getMarkdownField(
+            intl.formatMessage,
+            checkActionRequired(typeId, 'target_comment'),
+            'target_comment',
+          ),
+          checkActionAttribute(typeId, 'status_comment') && getMarkdownField(
+            intl.formatMessage,
+            checkActionRequired(typeId, 'status_comment'),
+            'status_comment',
+          ),
         ],
       },
     );
-    if (actorsByActortype) {
-      const actorConnections = renderActorsByActortypeControl(
-        actorsByActortype,
-        connectedTaxonomies,
-        onCreateOption,
-        intl,
-      );
-      if (actorConnections) {
-        groups.push(
-          {
-            label: intl.formatMessage(appMessages.nav.actorsSuper),
-            icon: 'actors',
-            fields: actorConnections,
-          },
-        );
-      }
-    }
+    // if (actorsByActortype) {
+    //   const actorConnections = renderActorsByActortypeControl(
+    //     actorsByActortype,
+    //     connectedTaxonomies,
+    //     onCreateOption,
+    //     intl,
+    //   );
+    //   if (actorConnections) {
+    //     groups.push(
+    //       {
+    //         label: intl.formatMessage(appMessages.nav.actorsSuper),
+    //         icon: 'actors',
+    //         fields: actorConnections,
+    //       },
+    //     );
+    //   }
+    // }
     return groups;
   };
 
-  getBodyAsideFields = (taxonomies, onCreateOption) => {
+  getBodyAsideFields = (entity, taxonomies, onCreateOption) => {
     const { intl } = this.context;
+    const typeId = entity.getIn(['attributes', 'measuretype_id']);
+
     return ([ // fieldGroups
       { // fieldGroup
         fields: [
-          getDateField(
+          checkActionAttribute(typeId, 'url') && getLinkFormField(
             intl.formatMessage,
-            'target_date',
+            checkActionRequired(typeId, 'url'),
+            'url',
           ),
-          getTextareaField(
+        ],
+      },
+      { // fieldGroup
+        fields: [
+          checkActionAttribute(typeId, 'amount') && getAmountFormField(
             intl.formatMessage,
-            'target_date_comment',
+            checkActionRequired(typeId, 'amount'),
+            'amount',
+          ),
+          checkActionAttribute(typeId, 'amount_comment') && getFormField({
+            formatMessage: intl.formatMessage,
+            required: checkActionRequired(typeId, 'amount_comment'),
+            attribute: 'amount_comment',
+            controlType: 'input',
+          }),
+        ],
+      },
+      { // fieldGroup
+        fields: [
+          checkActionAttribute(typeId, 'date_start') && getDateField(
+            intl.formatMessage,
+            'date_start',
+            checkActionRequired(typeId, 'date_start'),
+          ),
+          checkActionAttribute(typeId, 'date_end') && getDateField(
+            intl.formatMessage,
+            'date_end',
+            checkActionRequired(typeId, 'date_end'),
+          ),
+          checkActionAttribute(typeId, 'date_comment') && getTextareaField(
+            intl.formatMessage,
+            'date_comment',
+            checkActionRequired(typeId, 'date_comment'),
           ),
         ],
       },
@@ -299,16 +406,18 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
                 handleDelete={this.props.isUserAdmin ? this.props.handleDelete : null}
                 fields={{
                   header: {
-                    main: this.getHeaderMainFields(),
+                    main: this.getHeaderMainFields(viewEntity),
                     aside: this.getHeaderAsideFields(viewEntity),
                   },
                   body: {
                     main: this.getBodyMainFields(
+                      viewEntity,
                       connectedTaxonomies,
                       actorsByActortype,
                       onCreateOption,
                     ),
                     aside: this.getBodyAsideFields(
+                      viewEntity,
                       taxonomies,
                       onCreateOption,
                     ),
@@ -361,9 +470,9 @@ const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   authReady: selectReadyForAuthCheck(state),
   viewEntity: selectViewEntity(state, props.params.id),
-  taxonomies: selectTaxonomies(state, props.params.id),
-  connectedTaxonomies: selectConnectedTaxonomies(state),
-  actorsByActortype: selectActorsByActortype(state, props.params.id),
+  // taxonomies: selectTaxonomies(state, props.params.id),
+  // connectedTaxonomies: selectConnectedTaxonomies(state),
+  // actorsByActortype: selectActorsByActortype(state, props.params.id),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -390,43 +499,46 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, taxonomies, actorsByActortype) => {
-      let saveData = formData
-        .set(
-          'actionCategories',
-          getCategoryUpdatesFromFormData({
-            formData,
-            taxonomies,
-            createKey: 'action_id',
-          })
-        );
-      saveData = saveData.set(
-        'actorActions',
-        actorsByActortype
-          .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
-            formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
-            connections: actors,
-            connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
-            createConnectionKey: 'actor_id',
-            createKey: 'action_id',
-          }))
-          .reduce(
-            (memo, deleteCreateLists) => {
-              const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
-              const creates = memo.get('create').concat(deleteCreateLists.get('create'));
-              return memo
-                .set('delete', deletes)
-                .set('create', creates);
-            },
-            fromJS({
-              delete: [],
-              create: [],
-            }),
-          )
-      );
-
-      dispatch(save(saveData.toJS()));
+    handleSubmit: (formData) => {
+      dispatch(save(formData.toJS()));
     },
+    // handleSubmit: (formData, taxonomies, actorsByActortype) => {
+    //   let saveData = formData
+    //   //   .set(
+    //   //     'actionCategories',
+    //   //     getCategoryUpdatesFromFormData({
+    //   //       formData,
+    //   //       taxonomies,
+    //   //       createKey: 'action_id',
+    //   //     })
+    //   //   );
+    //   // saveData = saveData.set(
+    //   //   'actorActions',
+    //   //   actorsByActortype
+    //   //     .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
+    //   //       formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
+    //   //       connections: actors,
+    //   //       connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
+    //   //       createConnectionKey: 'actor_id',
+    //   //       createKey: 'action_id',
+    //   //     }))
+    //   //     .reduce(
+    //   //       (memo, deleteCreateLists) => {
+    //   //         const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
+    //   //         const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+    //   //         return memo
+    //   //           .set('delete', deletes)
+    //   //           .set('create', creates);
+    //   //       },
+    //   //       fromJS({
+    //   //         delete: [],
+    //   //         create: [],
+    //   //       }),
+    //   //     )
+    //   // );
+    //
+    //   dispatch(save(saveData.toJS()));
+    // },
     handleCancel: () => {
       dispatch(updatePath(`${ROUTES.ACTIONS}/${props.params.id}`, { replace: true }));
     },

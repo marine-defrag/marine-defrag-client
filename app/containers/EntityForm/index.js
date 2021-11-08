@@ -311,11 +311,19 @@ class EntityForm extends React.Component { // eslint-disable-line react/prefer-s
     <Main hasAside={hasAside} bottom={bottom}>
       {
         asArray(fieldGroups).map(
-          (fieldGroup, i) => fieldGroup.fields && (
-            <div key={i}>
-              {this.renderGroup(fieldGroup, hasEntityNewModal, scrollContainer)}
-            </div>
-          )
+          (fieldGroup, i) => {
+            // skip group if no group or fields are present
+            if (!fieldGroup.fields
+              || !fieldGroup.fields.reduce((memo, field) => memo || field, false)
+            ) {
+              return null;
+            }
+            return (
+              <div key={i}>
+                {this.renderGroup(fieldGroup, hasEntityNewModal, scrollContainer)}
+              </div>
+            );
+          }
         )
       }
     </Main>
@@ -330,11 +338,19 @@ class EntityForm extends React.Component { // eslint-disable-line react/prefer-s
     <Aside bottom={bottom}>
       {
         asArray(fieldGroups).map(
-          (fieldGroup, i) => (
-            <div key={i}>
-              {this.renderGroup(fieldGroup, hasEntityNewModal, scrollContainer)}
-            </div>
-          )
+          (fieldGroup, i) => {
+            // skip group if no group or fields are present
+            if (!fieldGroup.fields
+              || !fieldGroup.fields.reduce((memo, field) => memo || field, false)
+            ) {
+              return null;
+            }
+            return (
+              <div key={i}>
+                {this.renderGroup(fieldGroup, hasEntityNewModal, scrollContainer)}
+              </div>
+            );
+          }
         )
       }
     </Aside>
