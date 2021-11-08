@@ -10,11 +10,22 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { actions as formActions } from 'react-redux-form/immutable';
 
+import { format, parse } from 'date-fns';
+
 import { fromJS } from 'immutable';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, USER_ROLES, API } from 'themes/config';
+import {
+  ROUTES,
+  USER_ROLES,
+  API,
+  ACTION_FIELDS,
+  DATE_FORMAT,
+  API_DATE_FORMAT,
+} from 'themes/config';
 import { getImportFields, getColumnAttribute } from 'utils/import';
+import { checkActionAttribute } from 'utils/entities';
+import validateDateFormat from 'components/forms/validators/validate-date-format';
 
 import {
   redirectIfNotPermitted,
@@ -100,35 +111,21 @@ export class ActionImport extends React.PureComponent { // eslint-disable-line r
             template={{
               filename: `${intl.formatMessage(messages.filename)}.csv`,
               data: getImportFields({
-                fields: [
-                  {
-                    attribute: 'title',
-                    type: 'text',
-                    required: true,
-                    import: true,
-                  },
-                  {
-                    attribute: 'description',
-                    type: 'markdown',
-                    import: true,
-                  },
-                  {
-                    disabled: true,
-                    attribute: 'outcome',
-                    type: 'markdown',
-                    import: true,
-                  },
-                  {
-                    attribute: 'target_date',
-                    type: 'date',
-                    import: true,
-                  },
-                  {
-                    attribute: 'target_date_comment',
-                    type: 'text',
-                    import: true,
-                  },
-                ],
+                fields: Object.keys(ACTION_FIELDS.ATTRIBUTES).reduce((memo, key) => {
+                  const val = ACTION_FIELDS.ATTRIBUTES[key];
+                  if (!val.skipImport) {
+                    return [
+                      ...memo,
+                      {
+                        attribute: key,
+                        type: val.type || 'text',
+                        required: !!val.required,
+                        import: true,
+                      },
+                    ];
+                  }
+                  return memo;
+                }, []),
               }, intl.formatMessage),
             }}
           />
@@ -189,13 +186,31 @@ function mapDispatchToProps(dispatch) {
     handleSubmit: (formData) => {
       if (formData.get('import') !== null) {
         fromJS(formData.get('import').rows).forEach((row, index) => {
-          dispatch(save({
-            attributes: row
-              .mapKeys((k) => getColumnAttribute(k))
+          const rowCleanColumns = row.mapKeys((k) => getColumnAttribute(k));
+          const typeId = rowCleanColumns.get('measuretype_id');
+          const rowClean = {
+            attributes: rowCleanColumns
+              // make sure only valid fields are imported
+              .filter((val, att) => checkActionAttribute(typeId, att))
+              // make sure we store well formatted date
+              .map((val, att) => {
+                const config = ACTION_FIELDS.ATTRIBUTES[att];
+                if (config.type === 'date' && val && val.trim() !== '') {
+                  if (validateDateFormat(val, DATE_FORMAT)) {
+                    return format(
+                      parse(val, DATE_FORMAT, new Date()),
+                      API_DATE_FORMAT
+                    );
+                  }
+                  return '';
+                }
+                return val;
+              })
               .set('draft', true)
               .toJS(),
             saveRef: index + 1,
-          }));
+          };
+          dispatch(save(rowClean));
         });
       }
     },

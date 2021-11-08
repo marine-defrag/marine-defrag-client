@@ -212,6 +212,27 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
+      path: `${ROUTES.ACTIONS}${ROUTES.IMPORT}`,
+      name: 'actionImport',
+      onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/ActionImport/reducer'),
+          import('containers/ActionImport/sagas'),
+          import('containers/ActionImport'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([reducer, sagas, component]) => {
+          injectReducer('actionImport', reducer.default);
+          injectSagas(sagas.default);
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
       // ROUTES.ID: actiontype, ROUTES.VIEW: map, list or stats
       path: `${ROUTES.ACTIONS}${ROUTES.ID}`,
       name: 'actionListForType',
@@ -268,27 +289,6 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: `${ROUTES.ACTIONS}${ROUTES.IMPORT}`,
-      name: 'actionImport',
-      onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
-      getComponent(nextState, cb) {
-        const importModules = Promise.all([
-          import('containers/ActionImport/reducer'),
-          import('containers/ActionImport/sagas'),
-          import('containers/ActionImport'),
-        ]);
-
-        const renderRoute = loadModule(cb);
-
-        importModules.then(([reducer, sagas, component]) => {
-          injectReducer('actionImport', reducer.default);
-          injectSagas(sagas.default);
-          renderRoute(component);
-        });
-
-        importModules.catch(errorLoading);
-      },
-    }, {
       path: `${ROUTES.ACTION}${ROUTES.ID}`,
       name: 'actionView',
       onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
@@ -320,6 +320,27 @@ export default function createRoutes(store) {
 
         importModules.then(([reducer, sagas, component]) => {
           injectReducer('actionEdit', reducer.default);
+          injectSagas(sagas.default);
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
+      path: `${ROUTES.ACTORS}${ROUTES.IMPORT}`,
+      name: 'actorImport',
+      onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/ActorImport/reducer'),
+          import('containers/ActorImport/sagas'),
+          import('containers/ActorImport'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([reducer, sagas, component]) => {
+          injectReducer('actorImport', reducer.default);
           injectSagas(sagas.default);
           renderRoute(component);
         });
@@ -375,27 +396,6 @@ export default function createRoutes(store) {
 
         importModules.then(([reducer, sagas, component]) => {
           injectReducer('actorNew', reducer.default);
-          injectSagas(sagas.default);
-          renderRoute(component);
-        });
-
-        importModules.catch(errorLoading);
-      },
-    }, {
-      path: `${ROUTES.ACTORS}${ROUTES.IMPORT}`,
-      name: 'actorImport',
-      onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
-      getComponent(nextState, cb) {
-        const importModules = Promise.all([
-          import('containers/ActorImport/reducer'),
-          import('containers/ActorImport/sagas'),
-          import('containers/ActorImport'),
-        ]);
-
-        const renderRoute = loadModule(cb);
-
-        importModules.then(([reducer, sagas, component]) => {
-          injectReducer('actorImport', reducer.default);
           injectSagas(sagas.default);
           renderRoute(component);
         });

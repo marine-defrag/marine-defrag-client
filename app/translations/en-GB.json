@@ -220,6 +220,7 @@
   "app.containers.App.import.markdown": "text (markdown supported)",
   "app.containers.App.import.bool": "boolean ('true' or 'false')",
   "app.containers.App.import.date": "date ({format})",
+  "app.containers.App.import.url": "url (e.g. https://example.org)",
   "app.containers.App.importFields.actortype_id": "Type: 1 - Country; 2 - Organisation; 3 - Region; 4 - Group; 5 - Class",
   "app.containers.App.importFields.measuretype_id": "Type: 1 - Int. Conv.; 2 - Reg. Seas Conv.; 3 - Reg. Strategy; 4 - Nat. Strategy; 5 - Donor Activity; 6 - Initiative",
   "app.containers.App.placeholders.title": "Enter title",

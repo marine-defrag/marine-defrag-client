@@ -286,18 +286,19 @@ export const ACTION_FIELDS = {
     measuretype_id: {
       defaultValue: '1',
       required: Object.values(ACTIONTYPES), // all types
-      type: 'reference',
+      type: 'number',
       table: API.ACTIONTYPES,
     },
     draft: {
       defaultValue: true,
       required: Object.values(ACTIONTYPES), // all types
       type: 'bool',
-      ui: 'dropdown',
-      options: [
-        { value: true, message: 'ui.publishStatuses.draft' },
-        { value: false, message: 'ui.publishStatuses.public' },
-      ],
+      // ui: 'dropdown',
+      skipImport: true,
+      // options: [
+      //   { value: true, message: 'ui.publishStatuses.draft' },
+      //   { value: false, message: 'ui.publishStatuses.public' },
+      // ],
     },
     code: {
       optional: Object.values(ACTIONTYPES), // all types
@@ -437,18 +438,19 @@ export const ACTOR_FIELDS = {
     actortype_id: {
       defaultValue: '1',
       required: Object.values(ACTORTYPES), // all types
-      type: 'reference',
+      type: 'number',
       table: API.ACTORTYPES,
     },
     draft: {
       defaultValue: true,
       required: Object.values(ACTORTYPES), // all types
       type: 'bool',
-      ui: 'dropdown',
-      options: [
-        { value: true, message: 'ui.publishStatuses.draft' },
-        { value: false, message: 'ui.publishStatuses.public' },
-      ],
+      skipImport: true,
+      // ui: 'dropdown',
+      // options: [
+      //   { value: true, message: 'ui.publishStatuses.draft' },
+      //   { value: false, message: 'ui.publishStatuses.public' },
+      // ],
     },
     code: {
       optional: Object.values(ACTORTYPES), // all types

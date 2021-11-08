@@ -429,6 +429,10 @@ export default defineMessages({
       id: 'app.containers.App.import.date',
       defaultMessage: 'date ({format})',
     },
+    url: {
+      id: 'app.containers.App.import.url',
+      defaultMessage: 'url',
+    },
   },
   importFields: {
     actortype_id: {
