@@ -328,7 +328,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       onCreateOption,
     } = this.props;
     const { intl } = this.context;
-    const reference = this.props.params.id;
+    // const reference = this.props.params.id;
     const typeId = viewEntity && viewEntity.getIn(['attributes', 'measuretype_id']);
 
     const {
@@ -342,7 +342,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     return (
       <div>
         <Helmet
-          title={`${intl.formatMessage(messages.pageTitle)}: ${reference}`}
+          title={`${intl.formatMessage(messages.pageTitle, { type })}`}
           meta={[
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
