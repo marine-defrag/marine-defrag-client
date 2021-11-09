@@ -18,7 +18,7 @@ import { qe } from 'utils/quasi-equals';
 import { loadEntitiesIfNeeded, openBookmark } from 'containers/App/actions';
 import { selectReady, selectEntities } from 'containers/App/selectors';
 import { CONTENT_LIST, VIEWPORTS } from 'containers/App/constants';
-import { API } from 'themes/config';
+import { API, ROUTES } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
 
@@ -131,16 +131,16 @@ const ListEntitiesMain = styled.div`
 const STATE_INITIAL = {
   viewport: null,
 };
-
+const stripSlash = (txt) => txt.replace('/', '');
 const getTypeLabel = (type, formatMessage, short = true) => {
-  const [path, actortype] = type.indexOf('_') > -1
+  const [path, entitytype] = type.indexOf('_') > -1
     ? type.split('_')
     : [type, null];
   let label = formatMessage(appMessages.entities[path].plural);
-  if (actortype) {
-    label = `${label} | ${formatMessage(appMessages[short ? 'actortypes_short' : 'actortypes'][actortype])}`;
-  } else if (path === API.ACTORS) {
-    label = `${label} | ${formatMessage(appMessages.actortypes.all)}`;
+  if (entitytype && path === stripSlash(ROUTES.ACTORS)) {
+    label = `${label} | ${formatMessage(appMessages[short ? 'actortypes_short' : 'actortypes'][entitytype])}`;
+  } else if (entitytype && path === stripSlash(ROUTES.ACTIONS)) {
+    label = `${label} | ${formatMessage(appMessages[short ? 'actiontypes_short' : 'actiontypes'][entitytype])}`;
   }
   return label;
 };
@@ -192,6 +192,7 @@ export class BookmarkList extends React.PureComponent { // eslint-disable-line r
               .keySeq()
               .sort((a, b) => a > b ? 1 : -1)
               .map((type) => {
+                console.log(type);
                 const label = getTypeLabel(type, intl.formatMessage, true);
                 return (
                   <Target
