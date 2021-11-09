@@ -931,7 +931,7 @@ export const selectUserCategoriesByCategory = createSelector(
 
 // get actors with category ids
 export const selectActorsCategorised = createSelector(
-  selectActortypeActors,
+  selectActors,
   selectActorCategoriesByActor,
   (entities, associationsGrouped) => entitiesSetCategoryIds(
     entities,
