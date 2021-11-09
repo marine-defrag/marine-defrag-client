@@ -7,7 +7,13 @@ const EXCLUDES = [
   'page',
 ];
 
-const getPathFromLocation = (location) => location.get('pathname').replace('/', '');
+// replace leading '/'
+const getPathFromLocation = (location) => {
+  if (location.get('pathname')[0] === '/') {
+    return location.get('pathname').replace('/', '');
+  }
+  return location.get('pathname');
+};
 
 const getBookmarksForPath = (bookmarks, path) => bookmarks.filter(
   (b) => b.getIn(['attributes', 'view', 'path']) === path,
@@ -37,12 +43,20 @@ const checkValues = (valueCheck, value) => {
 export const getBookmarkForLocation = (location, bookmarks) => {
   const pathCheck = getPathFromLocation(location);
   const queryCheck = filterQueryForChecking(location.get('query'));
+  console.log('pathCheck', pathCheck);
+  console.log('queryCheck', queryCheck && queryCheck.toJS());
 
   const bmForType = getBookmarksForPath(bookmarks, pathCheck);
-
+  console.log('bmForType', bmForType && bmForType.toJS());
   return bmForType.find(
     (bookmark) => {
       const queryBM = bookmark.getIn(['attributes', 'view', 'query']);
+      console.log('queryChecked', queryCheck.every(
+        (valueCheck, key) => checkValues(valueCheck, queryBM.get(key))
+      ));
+      console.log('queryBMChecked', queryBM.every(
+        (valueCheck, key) => checkValues(valueCheck, queryCheck.get(key))
+      ));
       return queryCheck.every(
         (valueCheck, key) => checkValues(valueCheck, queryBM.get(key))
       )

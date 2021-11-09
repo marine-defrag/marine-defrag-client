@@ -192,7 +192,6 @@ export class BookmarkList extends React.PureComponent { // eslint-disable-line r
               .keySeq()
               .sort((a, b) => a > b ? 1 : -1)
               .map((type) => {
-                console.log(type);
                 const label = getTypeLabel(type, intl.formatMessage, true);
                 return (
                   <Target
