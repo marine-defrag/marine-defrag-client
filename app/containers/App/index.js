@@ -22,6 +22,7 @@ import { ROUTES, API } from 'themes/config';
 import {
   selectIsSignedIn,
   selectIsUserManager,
+  selectIsUserAnalyst,
   selectSessionUserAttributes,
   selectReady,
   selectEntitiesWhere,
@@ -91,7 +92,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
 
   prepareMainMenuItems = (
     isManager,
-    isUserSignedIn,
+    isAnalyst,
     currentPath,
   ) => {
     const { intl } = this.context;
@@ -123,7 +124,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
         },
       ]);
     }
-    if (isUserSignedIn) {
+    if (isAnalyst) {
       navItems = navItems.concat([
         {
           path: ROUTES.BOOKMARKS,
@@ -142,6 +143,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       onPageLink,
       isUserSignedIn,
       isManager,
+      isAnalyst,
       location,
       newEntityModal,
       user,
@@ -163,7 +165,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           pages={pages && this.preparePageMenuPages(pages)}
           navItems={this.prepareMainMenuItems(
             isUserSignedIn && isManager,
-            isUserSignedIn,
+            isUserSignedIn && isAnalyst,
             location.pathname,
           )}
           search={{
@@ -216,6 +218,7 @@ App.propTypes = {
   children: PropTypes.node,
   isUserSignedIn: PropTypes.bool,
   isManager: PropTypes.bool,
+  isAnalyst: PropTypes.bool,
   user: PropTypes.object,
   pages: PropTypes.object,
   validateToken: PropTypes.func,
@@ -232,6 +235,7 @@ App.contextTypes = {
 const mapStateToProps = (state) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   isManager: selectIsUserManager(state),
+  isAnalyst: selectIsUserAnalyst(state),
   isUserSignedIn: selectIsSignedIn(state),
   user: selectSessionUserAttributes(state),
   pages: selectEntitiesWhere(state, {

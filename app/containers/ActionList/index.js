@@ -15,7 +15,7 @@ import {
   selectReady,
   selectActiontypeTaxonomies,
   selectIsUserManager,
-  selectIsSignedIn,
+  selectIsUserAnalyst,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
@@ -52,7 +52,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
       connectedTaxonomies,
       location,
       isManager,
-      isUserSignedIn,
+      isAnalyst,
       params, // { id: the action type }
     } = this.props;
     const { intl } = this.context;
@@ -62,7 +62,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
       supTitle: intl.formatMessage(messages.pageTitle),
       actions: [],
     };
-    if (isUserSignedIn) {
+    if (isAnalyst) {
       headerOptions.actions.push({
         type: 'bookmarker',
         title: intl.formatMessage(appMessages.entities[type].plural),
@@ -134,7 +134,7 @@ ActionList.propTypes = {
   connectedTaxonomies: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   location: PropTypes.object,
-  isUserSignedIn: PropTypes.bool,
+  isAnalyst: PropTypes.bool,
   params: PropTypes.object,
 };
 
@@ -155,7 +155,7 @@ const mapStateToProps = (state, props) => ({
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
   isManager: selectIsUserManager(state),
-  isUserSignedIn: selectIsSignedIn(state),
+  isAnalyst: selectIsUserAnalyst(state),
 });
 function mapDispatchToProps(dispatch) {
   return {
