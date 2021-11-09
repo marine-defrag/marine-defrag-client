@@ -7,13 +7,17 @@ import {
 
 import appMessages from 'containers/App/messages';
 
-export const getInfoField = (att, value, large = false) => ({
+const checkEmpty = (
+  val
+) => typeof val !== 'undefined' && val !== null && val.toString().trim().length > 0;
+
+export const getInfoField = (att, value, large = false) => checkEmpty(value) && ({
   controlType: 'info',
   value,
   large,
   label: appMessages.attributes[att],
 });
-export const getIdField = (entity) => ({
+export const getIdField = (entity) => checkEmpty(entity.get('id')) && ({
   controlType: 'info',
   type: 'reference',
   value: entity.get('id'),
@@ -24,7 +28,7 @@ export const getReferenceField = (entity, isManager, defaultToId) => {
   const value = defaultToId
     ? entity.getIn(['attributes', 'reference']) || entity.get('id')
     : entity.getIn(['attributes', 'reference']);
-  if (!!value && value.trim().length > 0) {
+  if (checkEmpty(value)) {
     return ({
       controlType: 'info',
       type: 'reference',
@@ -37,12 +41,19 @@ export const getReferenceField = (entity, isManager, defaultToId) => {
 };
 const getLinkAnchor = (url) => truncateText(url.replace(/^https?:\/\//i, ''), TEXT_TRUNCATE.LINK_FIELD);
 
-export const getLinkField = (entity) => ({
+export const getLinkField = (
+  entity
+) => checkEmpty(entity.getIn(['attributes', 'url'])) && ({
   type: 'link',
   value: entity.getIn(['attributes', 'url']),
   anchor: getLinkAnchor(entity.getIn(['attributes', 'url'])),
 });
-export const getEntityLinkField = (entity, path, label, labelFormatted) => ({
+export const getEntityLinkField = (
+  entity,
+  path,
+  label,
+  labelFormatted,
+) => checkEmpty(entity.getIn(['attributes', 'title']) || entity.getIn(['attributes', 'name'])) && ({
   type: 'link',
   internal: true,
   value: `${path}/${entity.get('id')}`,
@@ -51,13 +62,17 @@ export const getEntityLinkField = (entity, path, label, labelFormatted) => ({
   labelFormatted,
 });
 
-export const getTitleField = (entity, isManager, attribute = 'title', label) => ({
+export const getTitleField = (
+  entity, isManager, attribute = 'title', label
+) => checkEmpty(entity.getIn(['attributes', attribute])) && ({
   type: 'title',
   value: entity.getIn(['attributes', attribute]),
   isManager,
   label,
 });
-export const getTitleTextField = (entity, isManager, attribute = 'title', label) => ({
+export const getTitleTextField = (
+  entity, isManager, attribute = 'title', label
+) => checkEmpty(entity.getIn(['attributes', attribute])) && ({
   type: 'titleText',
   value: entity.getIn(['attributes', attribute]),
   isManager,
@@ -69,7 +84,7 @@ export const getStatusField = (
   options,
   label,
   defaultValue = true,
-) => ({
+) => (defaultValue || checkEmpty(entity.getIn(['attributes', attribute]))) && ({
   controlType: 'info',
   type: 'status',
   value: (
@@ -84,8 +99,10 @@ export const getStatusField = (
 });
 
 // only show the highest rated role (lower role ids means higher)
-const getHighestUserRoleId = (roles) => roles.reduce((memo, role) => role.get('id') < memo ? role.get('id') : memo,
-  USER_ROLES.DEFAULT.value);
+const getHighestUserRoleId = (roles) => roles.reduce(
+  (memo, role) => role.get('id') < memo ? role.get('id') : memo,
+  USER_ROLES.DEFAULT.value
+);
 
 export const getRoleField = (entity) => ({
   controlType: 'info',
@@ -125,68 +142,56 @@ export const getMarkdownField = (
   attribute,
   hasLabel = true,
   label,
-) => !!entity.getIn(['attributes', attribute])
-  && (entity.getIn(['attributes', attribute]).trim().length > 0)
-  && ({
-    type: 'markdown',
-    value: entity.getIn(['attributes', attribute]),
-    label: hasLabel && (appMessages.attributes[label || attribute]),
-  });
+) => checkEmpty(entity.getIn(['attributes', attribute])) && ({
+  type: 'markdown',
+  value: entity.getIn(['attributes', attribute]),
+  label: hasLabel && (appMessages.attributes[label || attribute]),
+});
 
 export const getAmountField = (
   entity,
   attribute,
   showEmpty,
   emptyMessage,
-) => (showEmpty || (
-  !!entity.getIn(['attributes', attribute])
-  && (entity.getIn(['attributes', attribute]).trim().length > 0)
-))
-  && ({
-    type: 'text',
-    value: !!entity.getIn(['attributes', attribute]) && entity.getIn(['attributes', attribute]),
-    label: appMessages.attributes[attribute],
-    showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
-  });
+) => (showEmpty || checkEmpty(entity.getIn(['attributes', attribute]))) && ({
+  type: 'text',
+  value: !!entity.getIn(['attributes', attribute]) && entity.getIn(['attributes', attribute]),
+  label: appMessages.attributes[attribute],
+  showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
+});
+
 export const getDateField = (
   entity,
   attribute,
   showEmpty,
   emptyMessage,
-) => (showEmpty || (
-  !!entity.getIn(['attributes', attribute])
-  && (entity.getIn(['attributes', attribute]).trim().length > 0)
-))
-  && ({
-    type: 'date',
-    value: !!entity.getIn(['attributes', attribute]) && entity.getIn(['attributes', attribute]),
-    label: appMessages.attributes[attribute],
-    showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
-  });
+) => (showEmpty || checkEmpty(entity.getIn(['attributes', attribute]))) && ({
+  type: 'date',
+  value: !!entity.getIn(['attributes', attribute]) && entity.getIn(['attributes', attribute]),
+  label: appMessages.attributes[attribute],
+  showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
+});
 
 export const getDateRelatedField = (
   value,
   attribute,
   showEmpty,
   emptyMessage,
-) => (showEmpty || (!!value && (value.trim().length > 0)))
-  && ({
-    type: 'date',
-    value: !!value && value,
-    label: appMessages.attributes[attribute],
-    showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
-  });
+) => (showEmpty || checkEmpty(value)) && ({
+  type: 'date',
+  value: !!value && value,
+  label: appMessages.attributes[attribute],
+  showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
+});
 
 export const getTextField = (
   entity,
   attribute,
-) => !!entity.getIn(['attributes', attribute])
-  && (entity.getIn(['attributes', attribute]).trim().length > 0)
-  && ({
-    type: 'text',
-    value: entity.getIn(['attributes', attribute]),
-    label: appMessages.attributes[attribute],
-  });
+) => checkEmpty(entity.getIn(['attributes', attribute])) && ({
+  type: 'text',
+  value: entity.getIn(['attributes', attribute]),
+  label: appMessages.attributes[attribute],
+});
 
 const mapCategoryOptions = (categories, taxId) => categories
   ? sortCategories(categories, taxId)
