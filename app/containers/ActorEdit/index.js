@@ -132,8 +132,8 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
         { // fieldGroup
           fields: [
             getInfoField(
-              'measuretype_id',
-              intl.formatMessage(appMessages.actiontypes[typeId]),
+              'actortype_id',
+              intl.formatMessage(appMessages.actortypes[typeId]),
               true // large
             ), // required
             checkActorAttribute(typeId, 'code') && getCodeFormField(
