@@ -127,7 +127,10 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
     const fields = [];
     let hasLandbasedValue;
     if (checkActionAttribute(typeId, 'has_reference_landbased_ml')) {
-      if (typeof entity.getIn(['attributes', 'has_reference_landbased_ml']) !== 'undefined') {
+      if (
+        typeof entity.getIn(['attributes', 'has_reference_landbased_ml']) !== 'undefined'
+        && entity.getIn(['attributes', 'has_reference_landbased_ml']) !== null
+      ) {
         hasLandbasedValue = intl.formatMessage(
           appMessages.ui.checkAttributeStatuses[
             entity.getIn(['attributes', 'has_reference_landbased_ml']).toString()

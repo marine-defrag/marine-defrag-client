@@ -134,13 +134,18 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
     ]);
   };
 
-  getHeaderAsideFields = () => {
+  getHeaderAsideFields = (taxonomies, onCreateOption) => {
     const { intl } = this.context;
     return ([
       {
         fields: [
           getStatusField(intl.formatMessage),
         ],
+      },
+      { // fieldGroup
+        label: intl.formatMessage(appMessages.entities.taxonomies.plural),
+        icon: 'categories',
+        fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
       },
     ]);
   }
@@ -228,7 +233,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
     return groups;
   };
 
-  getBodyAsideFields = (type, taxonomies, onCreateOption) => {
+  getBodyAsideFields = (type) => {
     const { intl } = this.context;
     const typeId = type.get('id');
     return ([ // fieldGroups
@@ -274,11 +279,6 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
             checkActionRequired(typeId, 'date_comment'),
           ),
         ],
-      },
-      { // fieldGroup
-        label: intl.formatMessage(appMessages.entities.taxonomies.plural),
-        icon: 'categories',
-        fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
       },
     ]);
   }
@@ -364,7 +364,10 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                 fields={{
                   header: {
                     main: this.getHeaderMainFields(actiontype),
-                    aside: this.getHeaderAsideFields(),
+                    aside: this.getHeaderAsideFields(
+                      taxonomies,
+                      onCreateOption,
+                    ),
                   },
                   body: {
                     main: this.getBodyMainFields(
@@ -374,9 +377,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                       onCreateOption,
                     ),
                     aside: this.getBodyAsideFields(
-                      actiontype,
-                      taxonomies,
-                      onCreateOption,
+                      actiontype
                     ),
                   },
                 }}

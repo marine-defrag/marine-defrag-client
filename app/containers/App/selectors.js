@@ -408,7 +408,7 @@ export const selectActiveActiontypes = createSelector(
 // all actors for a given type id
 export const selectActortypeActors = createSelector(
   selectActors,
-  (state, { type }) => type,
+  (state, args) => args ? args.type : null,
   (entities, type) => {
     if (entities && type) {
       return entities.filter(
@@ -424,7 +424,7 @@ export const selectActortypeActors = createSelector(
 // all actions for a given type id
 export const selectActiontypeActions = createSelector(
   selectActions,
-  (state, { type }) => type,
+  (state, args) => args ? args.type : null,
   (entities, type) => {
     if (entities && type) {
       return entities.filter(
