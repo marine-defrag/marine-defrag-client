@@ -1,6 +1,6 @@
 import { reduce } from 'lodash/collection';
-import { sortEntities } from 'utils/sort';
-import { qe } from 'utils/quasi-equals';
+// import { sortEntities } from 'utils/sort';
+// import { qe } from 'utils/quasi-equals';
 import { API } from 'themes/config';
 
 export const makeEditGroups = (
@@ -10,12 +10,12 @@ export const makeEditGroups = (
   hasUserRole,
   messages,
   actortypes,
-  selectedActortypeIds,
+  // selectedActortypeIds,
 ) => {
   const editGroups = {};
-  const selectedActortypes = actortypes && actortypes.filter(
-    (actortype) => selectedActortypeIds.find((id) => qe(id, actortype.get('id'))),
-  );
+  // const selectedActortypes = actortypes && actortypes.filter(
+  //   (actortype) => selectedActortypeIds.find((id) => qe(id, actortype.get('id'))),
+  // );
   // taxonomy option group
   if (config.taxonomies && taxonomies) {
     // first prepare taxonomy options
@@ -26,37 +26,37 @@ export const makeEditGroups = (
       icon: 'categories',
       options:
         // all selectedActortypeIds must be included in tax.actortypeIds
-        sortEntities(taxonomies, 'asc', 'priority')
-          .filter(
-            (tax) => (
-              !config.taxonomies.editForActortypes
-              || selectedActortypeIds.isSubset(tax.get('actortypeIds'))
-            )
-            // not a parent
-            && !taxonomies.some(
-              (otherTax) => qe(
-                tax.get('id'),
-                otherTax.getIn(['attributes', 'parent_id']),
-              )
-            )
-          )
+        taxonomies
+          // .filter(
+          //   // (tax) =>
+          //   // (
+          //   //   !config.taxonomies.editForActortypes
+          //   //   || selectedActortypeIds.isSubset(tax.get('actortypeIds'))
+          //   // )
+          //   // // not a parent
+          //   // &&
+          //   (tax) => !taxonomies.some(
+          //     (otherTax) => qe(
+          //       tax.get('id'),
+          //       otherTax.getIn(['attributes', 'parent_id']),
+          //     )
+          //   )
+          // )
           .reduce(
-            (memo, taxonomy) => taxonomy.get('tags')
-              ? memo.concat([
-                {
-                  id: taxonomy.get('id'), // filterOptionId
-                  label: messages.taxonomies(taxonomy.get('id')),
-                  path: config.taxonomies.connectPath,
-                  key: config.taxonomies.key,
-                  ownKey: config.taxonomies.ownKey,
-                  active: !!activeEditOption && activeEditOption.optionId === taxonomy.get('id'),
-                  create: {
-                    path: API.CATEGORIES,
-                    attributes: { taxonomy_id: taxonomy.get('id') },
-                  },
+            (memo, taxonomy) => memo.concat([
+              {
+                id: taxonomy.get('id'), // filterOptionId
+                label: messages.taxonomies(taxonomy.get('id')),
+                path: config.taxonomies.connectPath,
+                key: config.taxonomies.key,
+                ownKey: config.taxonomies.ownKey,
+                active: !!activeEditOption && activeEditOption.optionId === taxonomy.get('id'),
+                create: {
+                  path: API.CATEGORIES,
+                  attributes: { taxonomy_id: taxonomy.get('id') },
                 },
-              ])
-              : memo,
+              },
+            ]),
             [],
           ),
     };
@@ -73,14 +73,14 @@ export const makeEditGroups = (
         config.connections.options,
         (optionsMemo, option) => {
           // exclude connections not applicabel for all actortypes
-          if (
-            option.actortypeFilter
-            && option.editForActortypes
-            && actortypes
-            && !selectedActortypes.every((actortype) => actortype.getIn(['attributes', option.actortypeFilter]))
-          ) {
-            return optionsMemo;
-          }
+          // if (
+          //   option.actortypeFilter
+          //   && option.editForActortypes
+          //   && actortypes
+          //   && !selectedActortypes.every((actortype) => actortype.getIn(['attributes', option.actortypeFilter]))
+          // ) {
+          //   return optionsMemo;
+          // }
           if (option.groupByActortype && actortypes) {
             return actortypes
               .filter((actortype) => !option.actortypeFilter || actortype.getIn(['attributes', option.actortypeFilter]))
@@ -136,30 +136,30 @@ export const makeEditGroups = (
       options: reduce(
         config.attributes.options,
         (optionsMemo, option) => {
+          // if (
+          //   option.actortypeFilter
+          //   && option.editForActortypes
+          //   && actortypes
+          //   && !selectedActortypes.every((actortype) => actortype.getIn(['attributes', option.actortypeFilter]))
+          // ) {
+          //   return optionsMemo;
+          // }
           if (
-            option.actortypeFilter
-            && option.editForActortypes
-            && actortypes
-            && !selectedActortypes.every((actortype) => actortype.getIn(['attributes', option.actortypeFilter]))
-          ) {
-            return optionsMemo;
-          }
-          return (
             (typeof option.edit === 'undefined' || option.edit)
             && (typeof option.role === 'undefined' || hasUserRole[option.role])
-          )
-            ? optionsMemo.concat({
+          ) {
+            return optionsMemo.concat({
               id: option.attribute, // filterOptionId
               label: option.label,
               message: option.message,
               active: !!activeEditOption && activeEditOption.optionId === option.attribute,
-            })
-            : optionsMemo;
+            });
+          }
+          return optionsMemo;
         },
         [],
       ),
     };
   }
-
   return editGroups;
 };
