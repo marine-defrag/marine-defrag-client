@@ -10,15 +10,13 @@ import Helmet from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 import { fromJS } from 'immutable';
-import { getDefaultTaxonomy } from 'utils/taxonomies';
 
 // containers
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import {
-  selectActortypeTaxonomies,
+  selectTaxonomiesSorted,
   selectReady,
   selectIsUserManager,
-  selectActortypeQuery,
   selectActiveActortypes,
 } from 'containers/App/selectors';
 import { CONTENT_LIST } from 'containers/App/constants';
@@ -56,18 +54,15 @@ const Description = styled.p`
     font-size: ${(props) => props.theme.sizes.print.default};
   }
 `;
+const DEFAULT_TAX = '1';
+
 export class CategoryList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   // make sure to load all data from server
   UNSAFE_componentWillMount() {
     this.props.loadEntitiesIfNeeded();
     // redirect to default taxonomy if needed
     if (this.props.dataReady && typeof this.props.taxonomy === 'undefined') {
-      this.props.redirectToDefaultTaxonomy(
-        getDefaultTaxonomy(
-          this.props.taxonomies,
-          this.props.actortypeId,
-        ).get('id')
-      );
+      this.props.redirectToDefaultTaxonomy(DEFAULT_TAX);
     }
   }
 
@@ -78,12 +73,7 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
     }
     // redirect to default taxonomy if needed
     if (nextProps.dataReady && typeof nextProps.taxonomy === 'undefined') {
-      this.props.redirectToDefaultTaxonomy(
-        getDefaultTaxonomy(
-          nextProps.taxonomies,
-          nextProps.actortypeId,
-        ).get('id')
-      );
+      this.props.redirectToDefaultTaxonomy(DEFAULT_TAX);
     }
   }
 
@@ -109,12 +99,12 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
       onPageLink,
       onTaxonomyLink,
       actortypes,
-      actortypeId,
     } = this.props;
     const reference = taxonomy && taxonomy.get('id');
     const contentTitle = (taxonomy && typeof reference !== 'undefined') ? this.getTaxTitle(reference) : '';
     const contentDescription = (taxonomy && typeof reference !== 'undefined') && this.getTaxDescription(reference);
     const buttons = [];
+
     if (dataReady) {
       buttons.push({
         type: 'icon',
@@ -142,6 +132,7 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
       && userOnlyCategoryGroups
       && userOnlyCategoryGroups.reduce((memo, group) => memo || (group.get('categories') && group.get('categories').size > 0),
         false);
+
     return (
       <div>
         <Helmet
@@ -158,7 +149,6 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
             <TaxonomySidebar
               taxonomies={taxonomies}
               active={reference}
-              actortypeId={actortypeId}
               actortypes={actortypes}
               onTaxonomyLink={onTaxonomyLink}
             />
@@ -185,7 +175,6 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
                   <CategoryListItems
                     taxonomy={taxonomy}
                     actortypes={actortypes}
-                    actortypeId={actortypeId}
                     categoryGroups={categoryGroups}
                     onPageLink={onPageLink}
                     onSort={this.props.onSort}
@@ -207,7 +196,6 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
                   <CategoryListItems
                     taxonomy={taxonomy}
                     actortypes={actortypes}
-                    actortypeId={actortypeId}
                     categoryGroups={userOnlyCategoryGroups}
                     onPageLink={onPageLink}
                     onSort={this.props.onSort}
@@ -240,7 +228,6 @@ CategoryList.propTypes = {
   isManager: PropTypes.bool,
   location: PropTypes.object,
   actortypes: PropTypes.object,
-  actortypeId: PropTypes.string,
 };
 
 CategoryList.contextTypes = {
@@ -249,10 +236,9 @@ CategoryList.contextTypes = {
 
 const mapStateToProps = (state, props) => ({
   actortypes: selectActiveActortypes(state),
-  actortypeId: selectActortypeQuery(state),
   isManager: selectIsUserManager(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  taxonomies: selectActortypeTaxonomies(state),
+  taxonomies: selectTaxonomiesSorted(state),
   taxonomy: selectTaxonomy(state, { id: props.params.id }),
   categoryGroups: selectCategoryGroups(
     state,

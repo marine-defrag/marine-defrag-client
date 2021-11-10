@@ -102,6 +102,7 @@ theme.palette = {
     '#416680', // 8: State
     '#E56700', // 9: SMART
     '#007c3a', // 10: Progress status
+    '#333333', // 10: Progress status
   ],
   taxonomiesHover: [
     '#656F75', // default, not used
@@ -115,6 +116,7 @@ theme.palette = {
     '#395970', // 8: State
     '#C75300', // 9: SMART
     '#007034', // 10: Progress status
+    '#111111', // 10: Progress status
   ],
 
   // bg inactive, bg hover, icon

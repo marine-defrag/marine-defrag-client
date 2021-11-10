@@ -595,7 +595,7 @@ export const selectTaxonomies = createSelector(
 export const selectTaxonomiesSorted = createSelector(
   selectTaxonomies,
   (entities) => entities
-    && sortEntities(entities, 'asc', 'priority', null, false)
+    && sortEntities(entities, 'asc', 'id', null, false)
 );
 // get all actor taxonomies for a given type
 

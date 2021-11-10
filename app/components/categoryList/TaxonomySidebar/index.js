@@ -111,14 +111,12 @@ class TaxonomySidebar extends React.PureComponent { // eslint-disable-line react
       taxonomies,
       active,
       onTaxonomyLink,
-      actortypeId,
       actortypes,
     } = this.props;
     const taxonomyGroups = actortypes && taxonomies && prepareTaxonomyGroups(
       taxonomies,
       active,
       onTaxonomyLink,
-      actortypeId,
       actortypes,
     );
     const { intl } = this.context;
@@ -188,7 +186,6 @@ class TaxonomySidebar extends React.PureComponent { // eslint-disable-line react
 TaxonomySidebar.propTypes = {
   taxonomies: PropTypes.object,
   actortypes: PropTypes.object,
-  actortypeId: PropTypes.string,
   onTaxonomyLink: PropTypes.func,
   active: PropTypes.string,
   theme: PropTypes.object,

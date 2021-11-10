@@ -199,7 +199,7 @@ const mapCategoryOptions = (categories, taxId) => categories
       label: cat.getIn(['attributes', 'title']),
       reference: cat.getIn(['attributes', 'reference']) || null,
       draft: cat.getIn(['attributes', 'draft']) || null,
-      linkTo: `${ROUTES.CATEGORIES}/${cat.get('id')}`,
+      linkTo: `${ROUTES.CATEGORY}/${cat.get('id')}`,
     }))
     .valueSeq().toArray()
   : [];
@@ -215,7 +215,7 @@ const mapSmartCategoryOptions = (categories) => categories
       isSmart: cat.get('associated') && cat.get('associated').size > 0,
       reference: cat.getIn(['attributes', 'reference']) || null,
       draft: cat.getIn(['attributes', 'draft']) || null,
-      linkTo: `${ROUTES.CATEGORIES}/${cat.get('id')}`,
+      linkTo: `${ROUTES.CATEGORY}/${cat.get('id')}`,
     }))
     .valueSeq().toArray()
   : [];

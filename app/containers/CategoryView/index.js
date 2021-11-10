@@ -100,7 +100,7 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
         fields: [
           getEntityLinkField(
             entity.get('category'),
-            ROUTES.CATEGORIES,
+            ROUTES.CATEGORY,
             '',
             getEntityTitle(parentTaxonomy)
           ),
@@ -308,12 +308,16 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
           },
           {
             type: 'close',
-            onClick: () => this.props.handleClose(this.props.viewEntity && this.props.viewEntity.getIn(['taxonomy', 'id'])),
+            onClick: () => this.props.handleClose(
+              this.props.viewEntity && this.props.viewEntity.getIn(['taxonomy', 'id'])
+            ),
           },
         ])
         : buttons.concat([{
           type: 'close',
-          onClick: () => this.props.handleClose(this.props.viewEntity && this.props.viewEntity.getIn(['taxonomy', 'id'])),
+          onClick: () => this.props.handleClose(
+            this.props.viewEntity && this.props.viewEntity.getIn(['taxonomy', 'id'])
+          ),
         }]);
     }
 
@@ -442,10 +446,10 @@ function mapDispatchToProps(dispatch) {
       dispatch(updatePath(`/${path}/${id}`));
     },
     handleEdit: (categoryId) => {
-      dispatch(updatePath(`${ROUTES.CATEGORIES}${ROUTES.EDIT}/${categoryId}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.CATEGORY}${ROUTES.EDIT}/${categoryId}`, { replace: true }));
     },
-    handleClose: () => {
-      dispatch(closeEntity('/'));
+    handleClose: (taxId) => {
+      dispatch(closeEntity(`${ROUTES.TAXONOMIES}/${taxId}`));
     },
   };
 }

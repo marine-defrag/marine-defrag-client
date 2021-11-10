@@ -52,14 +52,14 @@ export class EntityListGroupHeader extends React.PureComponent { // eslint-disab
     }
     return level === 1
       ? (
-        <ListEntitiesGroupHeaderLink to={`${ROUTES.CATEGORIES}/${group.get('id')}`}>
+        <ListEntitiesGroupHeaderLink to={`${ROUTES.CATEGORY}/${group.get('id')}`}>
           <ListEntitiesGroupHeader>
             {group.get('label')}
           </ListEntitiesGroupHeader>
         </ListEntitiesGroupHeaderLink>
       )
       : (
-        <ListEntitiesGroupHeaderLink to={`${ROUTES.CATEGORIES}/${group.get('id')}`}>
+        <ListEntitiesGroupHeaderLink to={`${ROUTES.CATEGORY}/${group.get('id')}`}>
           <ListEntitiesSubgroupHeader>
             {group.get('label')}
           </ListEntitiesSubgroupHeader>

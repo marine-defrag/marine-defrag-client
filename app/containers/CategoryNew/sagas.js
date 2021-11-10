@@ -11,7 +11,7 @@ export function* save({ data }) {
   yield put(newEntity({
     path: API.CATEGORIES,
     entity: data,
-    redirect: ROUTES.CATEGORIES,
+    redirect: ROUTES.CATEGORY,
   }));
 }
 

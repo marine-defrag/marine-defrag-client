@@ -6,7 +6,7 @@ import {
   selectEntities,
   selectSortByQuery,
   selectSortOrderQuery,
-  selectActortypeTaxonomies,
+  selectTaxonomies,
   selectActortypeActors,
   selectActions,
   selectActiveActortypes,
@@ -22,7 +22,7 @@ import { TAXONOMY_DEFAULT, SORT_OPTIONS } from './constants';
 
 export const selectTaxonomy = createSelector(
   (state, { id }) => id,
-  selectActortypeTaxonomies,
+  selectTaxonomies,
   (taxonomyId, taxonomies) => {
     if (!taxonomies || taxonomies.size === 0) return null;
     const id = typeof taxonomyId !== 'undefined' ? taxonomyId : TAXONOMY_DEFAULT;

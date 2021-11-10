@@ -42,23 +42,6 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: ROUTES.OVERVIEW,
-      name: 'overview',
-      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
-      getComponent(nextState, cb) {
-        const importModules = Promise.all([
-          import('containers/Overview'),
-        ]);
-
-        const renderRoute = loadModule(cb);
-
-        importModules.then(([component]) => {
-          renderRoute(component);
-        });
-
-        importModules.catch(errorLoading);
-      },
-    }, {
       path: ROUTES.LOGOUT,
       name: 'userLogout',
       getComponent(nextState, cb) {
@@ -441,6 +424,25 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
+      path: `${ROUTES.TAXONOMIES}`, // the taxonomy id
+      name: 'categoryList',
+      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/CategoryList/sagas'),
+          import('containers/CategoryList'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([sagas, component]) => {
+          injectSagas(sagas.default);
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
       path: `${ROUTES.TAXONOMIES}${ROUTES.ID}`, // the taxonomy id
       name: 'categoryList',
       onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
@@ -481,7 +483,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: `${ROUTES.CATEGORIES}${ROUTES.ID}`,
+      path: `${ROUTES.CATEGORY}${ROUTES.ID}`,
       name: 'categoryView',
       onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
       getComponent(nextState, cb) {
@@ -498,7 +500,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: `${ROUTES.CATEGORIES}${ROUTES.EDIT}${ROUTES.ID}`,
+      path: `${ROUTES.CATEGORY}${ROUTES.EDIT}${ROUTES.ID}`,
       name: 'categoryEdit',
       onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
       getComponent(nextState, cb) {

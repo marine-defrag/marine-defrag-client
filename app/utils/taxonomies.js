@@ -27,13 +27,13 @@ const mapTaxonomy = (tax, childTaxonomies, activeId, onLink) => {
   return fromJS({
     id: tax.get('id'),
     count: tax.count,
-    onLink: (isActive = false) => onLink(isActive ? ROUTES.OVERVIEW : `${ROUTES.TAXONOMIES}/${tax.get('id')}`),
+    onLink: (isActive = false) => onLink(isActive ? ROUTES.TAXONOMIES : `${ROUTES.TAXONOMIES}/${tax.get('id')}`),
     active: parseInt(activeId, 10) === parseInt(tax.get('id'), 10),
     children: children && children.map((child) => ({
       id: child.id,
       child: true,
       count: child.count,
-      onLink: (isActive = false) => onLink(isActive ? ROUTES.OVERVIEW : `${ROUTES.TAXONOMIES}/${child.id}`),
+      onLink: (isActive = false) => onLink(isActive ? ROUTES.TAXONOMIES : `${ROUTES.TAXONOMIES}/${child.id}`),
       active: parseInt(activeId, 10) === parseInt(child.id, 10),
     })),
   });
@@ -43,58 +43,43 @@ export const prepareTaxonomyGroups = (
   taxonomies, // OrderedMap
   activeId,
   onLink,
-  actortypeId,
-  actortypes,
+  // actortypes,
 ) => {
   const parentTaxonomies = taxonomies.filter((tax) => tax.getIn(['attributes', 'parent_id']) === ''
     || tax.getIn(['attributes', 'parent_id']) === null);
   const childTaxonomies = taxonomies.filter((tax) => !!tax.getIn(['attributes', 'parent_id']));
   const groups = [];
-  if (actortypeId && actortypeId !== 'all') {
-    // single actortype mode
-    groups.push({
-      id: actortypeId,
-      actortypeId,
-      taxonomies: parentTaxonomies
-        .filter((tax) => tax.get('actortypeIds').find((actortype) => qe(actortype, actortypeId)))
-        .map((tax) => mapTaxonomy(tax, childTaxonomies, activeId, onLink))
-        .toList()
-        .toJS(),
-    });
-  } else {
-    // multi-actortype mode
-    // exclusive taxonomies (one actortype only)
-    actortypes.forEach((actortype) => {
-      const actortypeTaxonomies = parentTaxonomies
-        .filter((tax) => {
-          const taxActortypeIds = tax.get('actortypeIds');
-          return tax.getIn(['attributes', 'tags_actors'])
-            && taxActortypeIds.size === 1
-            && taxActortypeIds.find((actortypeid) => qe(actortypeid, actortype.get('id')));
-        })
-        .map((tax) => mapTaxonomy(tax, childTaxonomies, activeId, onLink))
-        .toList()
-        .toJS();
-
-      if (actortypeTaxonomies && actortypeTaxonomies.length > 0) {
-        groups.push({
-          id: actortype.get('id'),
-          actortypeId: actortype.get('id'),
-          taxonomies: actortypeTaxonomies,
-        });
-      }
-    });
-    // common actortypes
-    groups.push({
-      id: 'common',
-      taxonomies: parentTaxonomies
-        .filter((tax) => tax.getIn(['attributes', 'tags_actors'])
-          && tax.get('actortypeIds').size > 1)
-        .map((tax) => mapTaxonomy(tax, childTaxonomies, activeId, onLink))
-        .toList()
-        .toJS(),
-    });
-  }
+  //
+  // actortypes.forEach((actortype) => {
+  //   const actortypeTaxonomies = parentTaxonomies
+  //     .filter((tax) => {
+  //       const taxActortypeIds = tax.get('actortypeIds');
+  //       return tax.getIn(['attributes', 'tags_actors'])
+  //         && taxActortypeIds.size === 1
+  //         && taxActortypeIds.find((actortypeid) => qe(actortypeid, actortype.get('id')));
+  //     })
+  //     .map((tax) => mapTaxonomy(tax, childTaxonomies, activeId, onLink))
+  //     .toList()
+  //     .toJS();
+  //
+  //   if (actortypeTaxonomies && actortypeTaxonomies.length > 0) {
+  //     groups.push({
+  //       id: actortype.get('id'),
+  //       actortypeId: actortype.get('id'),
+  //       taxonomies: actortypeTaxonomies,
+  //     });
+  //   }
+  // });
+  // common actortypes
+  groups.push({
+    id: 'common',
+    taxonomies: parentTaxonomies
+      // .filter((tax) => tax.getIn(['attributes', 'tags_actors'])
+      //   && tax.get('actortypeIds').size > 1)
+      .map((tax) => mapTaxonomy(tax, childTaxonomies, activeId, onLink))
+      .toList()
+      .toJS(),
+  });
 
   const actionOnlyTaxonomies = parentTaxonomies
     .filter((tax) => tax.getIn(['attributes', 'tags_actions'])

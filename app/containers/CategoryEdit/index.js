@@ -18,8 +18,6 @@ import {
   entityOptions,
   renderParentCategoryControl,
   getTitleFormField,
-  getReferenceFormField,
-  getShortTitleFormField,
   getMarkdownField,
   getFormField,
   getCheckboxField,
@@ -142,9 +140,7 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
     const groups = [];
     groups.push({ // fieldGroup
       fields: [
-        getReferenceFormField(intl.formatMessage),
         getTitleFormField(intl.formatMessage),
-        getShortTitleFormField(intl.formatMessage),
       ],
     });
     if (parentOptions && parentTaxonomy) {
@@ -342,7 +338,7 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
             )
           }
           {deleteError
-            && <Messages type="error" messages={deleteError} />
+            && <Messages type="error" messages={[deleteError]} />
           }
           {(saveSending || deleteSending || !dataReady)
             && <Loading />
@@ -541,7 +537,7 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(save(saveData.toJS()));
     },
     handleCancel: (reference) => {
-      dispatch(updatePath(`${ROUTES.CATEGORIES}/${reference}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.CATEGORY}/${reference}`, { replace: true }));
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));

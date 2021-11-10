@@ -10,22 +10,22 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { actions as formActions } from 'react-redux-form/immutable';
 
-import { List, fromJS } from 'immutable';
+import { List } from 'immutable';
 
 import {
-  renderUserControl,
-  renderActionControl,
-  renderActorsByActortypeControl,
   renderParentCategoryControl,
   getTitleFormField,
-  getReferenceFormField,
-  getShortTitleFormField,
   getMarkdownField,
   getFormField,
-  getConnectionUpdatesFromFormData,
   getCheckboxField,
   getStatusField,
-  getDateField,
+  // renderUserControl,
+  // renderActionControl,
+  // renderActorsByActortypeControl,
+  // getReferenceFormField,
+  // getShortTitleFormField,
+  // getConnectionUpdatesFromFormData,
+  // getDateField,
 } from 'utils/forms';
 
 import { scrollToTop } from 'utils/scroll-to-component';
@@ -65,12 +65,12 @@ import { getEntityTitle } from 'utils/entities';
 
 import {
   selectDomain,
-  selectUsers,
-  selectConnectedTaxonomies,
   selectParentOptions,
   selectParentTaxonomy,
-  selectActorsByActortype,
-  selectActions,
+  // selectActorsByActortype,
+  // selectActions,
+  // selectUsers,
+  // selectConnectedTaxonomies,
 } from './selectors';
 
 import messages from './messages';
@@ -107,9 +107,7 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
     const groups = [];
     groups.push({ // fieldGroup
       fields: [
-        getReferenceFormField(intl.formatMessage),
         getTitleFormField(intl.formatMessage),
-        getShortTitleFormField(intl.formatMessage),
       ],
     });
     if (parentOptions && parentTaxonomy) {
@@ -147,62 +145,57 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
   }
 
   getBodyMainFields = (
-    taxonomy,
-    connectedTaxonomies,
-    actorsByActortype,
-    actions,
-    onCreateOption,
-    userOnly,
+    // taxonomy,
+    // connectedTaxonomies,
+    // actorsByActortype,
+    // actions,
+    // onCreateOption,
+    // userOnly,
   ) => {
     const { intl } = this.context;
     const groups = [];
     groups.push({
       fields: [getMarkdownField(intl.formatMessage)],
     });
-    if (!userOnly) {
-      if (taxonomy.getIn(['attributes', 'tags_actions']) && actions) {
-        groups.push({
-          label: intl.formatMessage(appMessages.nav.actionsSuper),
-          icon: 'actions',
-          fields: [
-            renderActionControl(actions, connectedTaxonomies, onCreateOption, intl),
-          ],
-        });
-      }
-      if (
-        taxonomy.getIn(['attributes', 'tags_actors'])
-        && actorsByActortype
-      ) {
-        const actorConnections = renderActorsByActortypeControl(
-          actorsByActortype,
-          connectedTaxonomies,
-          onCreateOption,
-          intl,
-        );
-        if (actorConnections) {
-          groups.push(
-            {
-              label: intl.formatMessage(appMessages.nav.actorsSuper),
-              icon: 'actors',
-              fields: actorConnections,
-            },
-          );
-        }
-      }
-    }
+    // if (!userOnly) {
+    //   // if (taxonomy.getIn(['attributes', 'tags_actions']) && actions) {
+    //   //   groups.push({
+    //   //     label: intl.formatMessage(appMessages.nav.actionsSuper),
+    //   //     icon: 'actions',
+    //   //     fields: [
+    //   //       renderActionControl(actions, connectedTaxonomies, onCreateOption, intl),
+    //   //     ],
+    //   //   });
+    //   // }
+    //   // if (
+    //   //   taxonomy.getIn(['attributes', 'tags_actors'])
+    //   //   && actorsByActortype
+    //   // ) {
+    //   //   const actorConnections = renderActorsByActortypeControl(
+    //   //     actorsByActortype,
+    //   //     connectedTaxonomies,
+    //   //     onCreateOption,
+    //   //     intl,
+    //   //   );
+    //   //   if (actorConnections) {
+    //   //     groups.push(
+    //   //       {
+    //   //         label: intl.formatMessage(appMessages.nav.actorsSuper),
+    //   //         icon: 'actors',
+    //   //         fields: actorConnections,
+    //   //       },
+    //   //     );
+    //   //   }
+    //   // }
+    // }
     return groups;
   };
 
-  getBodyAsideFields = (users, isAdmin, taxonomy) => {
+  getBodyAsideFields = () => {
     const { intl } = this.context;
     const fields = []; // fieldGroups
     fields.push({
       fields: [
-        taxonomy.getIn(['attributes', 'has_date'])
-          && getDateField(
-            intl.formatMessage,
-            'date',
-          ),
         getFormField({
           formatMessage: intl.formatMessage,
           controlType: 'url',
@@ -210,16 +203,16 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
         }),
       ],
     });
-    if (isAdmin && !!taxonomy.getIn(['attributes', 'has_manager'])) {
-      fields.push({
-        fields: [
-          renderUserControl(
-            users,
-            intl.formatMessage(appMessages.attributes.manager_id.categories)
-          ),
-        ],
-      });
-    }
+    // if (isAdmin && !!taxonomy.getIn(['attributes', 'has_manager'])) {
+    //   fields.push({
+    //     fields: [
+    //       renderUserControl(
+    //         users,
+    //         intl.formatMessage(appMessages.attributes.manager_id.categories)
+    //       ),
+    //     ],
+    //   });
+    // }
     return fields;
   }
 
@@ -232,15 +225,15 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
     const {
       taxonomy,
       dataReady,
-      isAdmin,
       viewDomain,
-      users,
-      connectedTaxonomies,
-      actorsByActortype,
-      actions,
-      onCreateOption,
       parentOptions,
       parentTaxonomy,
+      // actorsByActortype,
+      // actions,
+      // isAdmin,
+      // users,
+      // connectedTaxonomies,
+      // onCreateOption,
     } = this.props;
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
     const taxonomyReference = this.props.params.id;
@@ -309,8 +302,8 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
                 saving={saveSending}
                 handleSubmit={(formData) => this.props.handleSubmit(
                   formData,
-                  actions,
-                  actorsByActortype,
+                  // actions,
+                  // actorsByActortype,
                   taxonomy
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
@@ -323,14 +316,16 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
                   },
                   body: {
                     main: this.getBodyMainFields(
-                      taxonomy,
-                      connectedTaxonomies,
-                      actorsByActortype,
-                      actions,
-                      onCreateOption,
-                      viewDomain.getIn(['form', 'data', 'attributes', 'user_only'])
+                      // taxonomy,
+                      // connectedTaxonomies,
+                      // actorsByActortype,
+                      // actions,
+                      // onCreateOption,
+                      // viewDomain.getIn(['form', 'data', 'attributes', 'user_only'])
                     ),
-                    aside: this.getBodyAsideFields(users, isAdmin, taxonomy),
+                    aside: this.getBodyAsideFields(
+                      // users, isAdmin, taxonomy
+                    ),
                   },
                 }}
                 scrollContainer={this.scrollContainer.current}
@@ -353,20 +348,20 @@ CategoryNew.propTypes = {
   handleUpdate: PropTypes.func.isRequired,
   dataReady: PropTypes.bool,
   authReady: PropTypes.bool,
-  isAdmin: PropTypes.bool,
   viewDomain: PropTypes.object,
   taxonomy: PropTypes.object,
   params: PropTypes.object,
   parentOptions: PropTypes.object,
   parentTaxonomy: PropTypes.object,
-  users: PropTypes.object,
-  actions: PropTypes.object,
-  actorsByActortype: PropTypes.object,
-  connectedTaxonomies: PropTypes.object,
   initialiseForm: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
-  onCreateOption: PropTypes.func,
+  // actions: PropTypes.object,
+  // actorsByActortype: PropTypes.object,
+  // isAdmin: PropTypes.bool,
+  // users: PropTypes.object,
+  // connectedTaxonomies: PropTypes.object,
+  // onCreateOption: PropTypes.func,
 };
 
 CategoryNew.contextTypes = {
@@ -381,10 +376,10 @@ const mapStateToProps = (state, props) => ({
   taxonomy: selectTaxonomy(state, props.params.id),
   parentOptions: selectParentOptions(state, props.params.id),
   parentTaxonomy: selectParentTaxonomy(state, props.params.id),
-  users: selectUsers(state),
-  actions: selectActions(state),
-  actorsByActortype: selectActorsByActortype(state, props.params.id),
-  connectedTaxonomies: selectConnectedTaxonomies(state),
+  // actions: selectActions(state),
+  // actorsByActortype: selectActorsByActortype(state, props.params.id),
+  // users: selectUsers(state),
+  // connectedTaxonomies: selectConnectedTaxonomies(state),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -411,54 +406,55 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, actions, actorsByActortype, taxonomy) => {
+    // handleSubmit: (formData, actions, actorsByActortype, taxonomy) => {
+    handleSubmit: (formData, taxonomy) => {
       let saveData = formData.setIn(['attributes', 'taxonomy_id'], taxonomy.get('id'));
-      if (!formData.getIn(['attributes', 'user_only'])) {
-        if (taxonomy.getIn(['attributes', 'tags_actions'])) {
-          saveData = saveData.set(
-            'actionCategories',
-            getConnectionUpdatesFromFormData({
-              formData,
-              connections: actions,
-              connectionAttribute: 'associatedActions',
-              createConnectionKey: 'measure_id',
-              createKey: 'category_id',
-            })
-          );
-        }
-        if (actorsByActortype && taxonomy.getIn(['attributes', 'tags_actors'])) {
-          saveData = saveData.set(
-            'actorCategories',
-            actorsByActortype
-              .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
-                formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
-                connections: actors,
-                connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
-                createConnectionKey: 'actor_id',
-                createKey: 'category_id',
-              }))
-              .reduce(
-                (memo, deleteCreateLists) => {
-                  const creates = memo.get('create').concat(deleteCreateLists.get('create'));
-                  return memo.set('create', creates);
-                },
-                fromJS({
-                  delete: [],
-                  create: [],
-                }),
-              )
-          );
-        }
-      }
+      // if (!formData.getIn(['attributes', 'user_only'])) {
+      //   if (taxonomy.getIn(['attributes', 'tags_actions'])) {
+      //     saveData = saveData.set(
+      //       'actionCategories',
+      //       getConnectionUpdatesFromFormData({
+      //         formData,
+      //         connections: actions,
+      //         connectionAttribute: 'associatedActions',
+      //         createConnectionKey: 'measure_id',
+      //         createKey: 'category_id',
+      //       })
+      //     );
+      //   }
+      //   if (actorsByActortype && taxonomy.getIn(['attributes', 'tags_actors'])) {
+      //     saveData = saveData.set(
+      //       'actorCategories',
+      //       actorsByActortype
+      //         .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
+      //           formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
+      //           connections: actors,
+      //           connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
+      //           createConnectionKey: 'actor_id',
+      //           createKey: 'category_id',
+      //         }))
+      //         .reduce(
+      //           (memo, deleteCreateLists) => {
+      //             const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+      //             return memo.set('create', creates);
+      //           },
+      //           fromJS({
+      //             delete: [],
+      //             create: [],
+      //           }),
+      //         )
+      //     );
+      //   }
+      // }
 
 
-      // TODO: remove once have singleselect instead of multiselect
-      const formUserIds = getCheckedValuesFromOptions(formData.get('associatedUser'));
-      if (List.isList(formUserIds) && formUserIds.size) {
-        saveData = saveData.setIn(['attributes', 'manager_id'], formUserIds.first());
-      } else {
-        saveData = saveData.setIn(['attributes', 'manager_id'], null);
-      }
+      // // TODO: remove once have singleselect instead of multiselect
+      // const formUserIds = getCheckedValuesFromOptions(formData.get('associatedUser'));
+      // if (List.isList(formUserIds) && formUserIds.size) {
+      //   saveData = saveData.setIn(['attributes', 'manager_id'], formUserIds.first());
+      // } else {
+      //   saveData = saveData.setIn(['attributes', 'manager_id'], null);
+      // }
       // TODO: remove once have singleselect instead of multiselect
       const formCategoryIds = getCheckedValuesFromOptions(formData.get('associatedCategory'));
       if (List.isList(formCategoryIds) && formCategoryIds.size) {

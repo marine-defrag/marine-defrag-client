@@ -102,7 +102,7 @@ export class EntityListPrintKey extends React.Component { // eslint-disable-line
                           {cat.short}
                         </ButtonTagCategory>
                       </TagWrapper>
-                      <a href={`${ROUTES.CATEGORIES}/${cat.id}`}>
+                      <a href={`${ROUTES.CATEGORY}/${cat.id}`}>
                         <CatLabel>
                           {cat.label}
                         </CatLabel>

@@ -338,7 +338,7 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
 
     return (
       <Styled
-        onClick={() => onPageLink(`${ROUTES.CATEGORIES}/${catItem.id}`)}
+        onClick={() => onPageLink(`${ROUTES.CATEGORY}/${catItem.id}`)}
       >
         <TableWrap>
           {

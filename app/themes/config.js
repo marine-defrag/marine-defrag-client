@@ -172,7 +172,7 @@ export const ROUTES = {
   ACTION: '/action',
   ACTOR: '/actor',
   TAXONOMIES: '/categories',
-  CATEGORIES: '/category',
+  CATEGORY: '/category',
   PAGES: '/pages',
   SEARCH: '/search',
 };
