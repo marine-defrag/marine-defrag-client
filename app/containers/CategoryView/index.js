@@ -13,7 +13,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   getReferenceField,
   getTitleField,
-  getCategoryShortTitleField,
+  // getCategoryShortTitleField,
   getStatusField,
   getMetaField,
   getMarkdownField,
@@ -90,7 +90,7 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
         fields: [
           getReferenceField(entity, isManager),
           getTitleField(entity, isManager),
-          getCategoryShortTitleField(entity, isManager),
+          // getCategoryShortTitleField(entity, isManager),
         ],
       },
     );
@@ -275,17 +275,17 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
       viewEntity,
       dataReady,
       isManager,
-      actorsByActortype,
-      childActorsByActortype,
-      actions,
-      childActions,
-      taxonomies,
-      onEntityClick,
-      actionConnections,
-      actorConnections,
       parentTaxonomy,
-      childTaxonomies,
-      actortypes,
+      // actorsByActortype,
+      // childActorsByActortype,
+      // actions,
+      // childActions,
+      // taxonomies,
+      // onEntityClick,
+      // actionConnections,
+      // actorConnections,
+      // childTaxonomies,
+      // actortypes,
     } = this.props;
     let buttons = [];
     if (dataReady) {
@@ -297,10 +297,10 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
       });
       buttons = isManager
         ? buttons.concat([
-          {
-            type: 'edit',
-            onClick: () => this.props.handleEdit(this.props.params.id),
-          },
+          // {
+          //   type: 'edit',
+          //   onClick: () => this.props.handleEdit(this.props.params.id),
+          // },
           {
             type: 'close',
             onClick: () => this.props.handleClose(this.props.viewEntity && this.props.viewEntity.getIn(['taxonomy', 'id'])),
@@ -358,25 +358,25 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
                     main: this.getHeaderMainFields(viewEntity, isManager, parentTaxonomy),
                     aside: this.getHeaderAsideFields(viewEntity, isManager),
                   },
-                  body: {
-                    main: this.getBodyMainFields(
-                      viewEntity,
-                      actorsByActortype,
-                      childActorsByActortype,
-                      actions,
-                      childActions,
-                      taxonomies,
-                      onEntityClick,
-                      actionConnections,
-                      actorConnections,
-                      actortypes,
-                    ),
-                    aside: this.getBodyAsideFields(
-                      viewEntity,
-                      isManager,
-                      childTaxonomies,
-                    ),
-                  },
+                  // body: {
+                  //   main: this.getBodyMainFields(
+                  //     viewEntity,
+                  //     actorsByActortype,
+                  //     childActorsByActortype,
+                  //     actions,
+                  //     childActions,
+                  //     taxonomies,
+                  //     onEntityClick,
+                  //     actionConnections,
+                  //     actorConnections,
+                  //     actortypes,
+                  //   ),
+                  //   aside: this.getBodyAsideFields(
+                  //     viewEntity,
+                  //     isManager,
+                  //     childTaxonomies,
+                  //   ),
+                  // },
                 }}
               />
             )
@@ -439,8 +439,8 @@ function mapDispatchToProps(dispatch) {
     handleEdit: (categoryId) => {
       dispatch(updatePath(`${ROUTES.CATEGORIES}${ROUTES.EDIT}/${categoryId}`, { replace: true }));
     },
-    handleClose: (taxonomyId) => {
-      dispatch(closeEntity(taxonomyId ? `${ROUTES.TAXONOMIES}/${taxonomyId}` : ROUTES.OVERVIEW));
+    handleClose: () => {
+      dispatch(closeEntity('/'));
     },
   };
 }
