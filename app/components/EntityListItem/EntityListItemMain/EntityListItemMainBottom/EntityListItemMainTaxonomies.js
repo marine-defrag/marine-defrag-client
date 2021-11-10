@@ -31,7 +31,7 @@ const Styled = styled.div`
 `;
 // border-top-color:;
 
-class EntityListItemMainBottomTaxonomies extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+class EntityListItemMainTaxonomies extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   getEntityTags = (categories, taxonomies, onClick) => {
     const tags = [];
     if (categories) {
@@ -142,14 +142,14 @@ class EntityListItemMainBottomTaxonomies extends React.PureComponent { // eslint
   }
 }
 
-EntityListItemMainBottomTaxonomies.propTypes = {
+EntityListItemMainTaxonomies.propTypes = {
   categories: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
   taxonomies: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
   onEntityClick: PropTypes.func,
 };
 
-EntityListItemMainBottomTaxonomies.contextTypes = {
+EntityListItemMainTaxonomies.contextTypes = {
   intl: PropTypes.object,
 };
 
-export default EntityListItemMainBottomTaxonomies;
+export default EntityListItemMainTaxonomies;

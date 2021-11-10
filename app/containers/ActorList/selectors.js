@@ -1,8 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { API } from 'themes/config';
 import {
-  selectEntities,
   selectActorsSearchQuery,
   selectWithoutQuery,
   selectConnectionQuery,
@@ -14,6 +12,7 @@ import {
   selectActorCategoriesGroupedByActor,
   selectActionCategoriesGroupedByAction,
   selectActorActionsGroupedByActor,
+  selectCategories,
   // selectActorConnections,
   // selectActortypeTaxonomies,
   // selectActortypeQuery,
@@ -37,7 +36,7 @@ export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActions,
   selectActionCategoriesGroupedByAction,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (ready, actions, associationsGrouped, categories) => {
     if (ready) {
       return new Map().set(
@@ -72,7 +71,7 @@ const selectActorsWithCategories = createSelector(
     ...args,
   }),
   selectActorCategoriesGroupedByActor,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (ready, entities, associationsGrouped, categories) => {
     if (ready) {
       return entitiesSetCategoryIds(
@@ -158,7 +157,7 @@ const selectActorsWithActions = createSelector(
 
 const selectActorsWithout = createSelector(
   selectActorsWithActions,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (state, { locationQuery }) => selectWithoutQuery(state, locationQuery),
   (entities, categories, query) => query
     ? filterEntitiesWithoutAssociation(entities, categories, query)

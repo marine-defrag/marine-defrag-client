@@ -18,6 +18,7 @@ import {
   selectActorCategoriesGroupedByActor,
   selectActionCategoriesGroupedByAction,
   selectActorActionsGroupedByAction,
+  selectCategories,
 } from 'containers/App/selectors';
 
 import {
@@ -136,7 +137,7 @@ const selectActionsWithCategories = createSelector(
     ...args,
   }),
   selectActionCategoriesGroupedByAction,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (ready, entities, associationsGrouped, categories) => {
     if (ready) {
       return entitiesSetCategoryIds(
@@ -192,7 +193,7 @@ const selectActionsWithActors = createSelector(
 
 const selectActionsWithout = createSelector(
   selectActionsWithActors,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (state, { locationQuery }) => selectWithoutQuery(state, locationQuery),
   (entities, categories, query) => query
     ? filterEntitiesWithoutAssociation(entities, categories, query)
