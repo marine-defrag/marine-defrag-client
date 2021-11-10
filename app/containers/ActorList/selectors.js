@@ -11,11 +11,11 @@ import {
   selectSortOrderQuery,
   selectActions,
   selectReady,
-  selectActorCategoriesByActor,
-  selectActionCategoriesByAction,
-  selectActorActionsByActor,
+  selectActorCategoriesGroupedByActor,
+  selectActionCategoriesGroupedByAction,
+  selectActorActionsGroupedByActor,
   // selectActorConnections,
-  // selectActortypeTaxonomiesSorted,
+  // selectActortypeTaxonomies,
   // selectActortypeQuery,
   // selectActortypeListQuery,
 } from 'containers/App/selectors';
@@ -36,7 +36,7 @@ import { CONFIG, DEPENDENCIES } from './constants';
 export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActions,
-  selectActionCategoriesByAction,
+  selectActionCategoriesGroupedByAction,
   (state) => selectEntities(state, API.CATEGORIES),
   (ready, actions, associationsGrouped, categories) => {
     if (ready) {
@@ -57,7 +57,7 @@ export const selectConnectedTaxonomies = createSelector(
   () => Map()
 );
 // export const selectConnectedTaxonomies = createSelector(
-//   (state) => selectActortypeTaxonomiesSorted(state),
+//   (state) => selectActortypeTaxonomies(state),
 //   (state) => selectEntities(state, API.CATEGORIES),
 //   (taxonomies, categories) => prepareTaxonomiesMultipleTags(
 //     taxonomies,
@@ -71,7 +71,7 @@ const selectActorsWithCategories = createSelector(
     searchAttributes: CONFIG.search || ['reference', 'title'],
     ...args,
   }),
-  selectActorCategoriesByActor,
+  selectActorCategoriesGroupedByActor,
   (state) => selectEntities(state, API.CATEGORIES),
   (ready, entities, associationsGrouped, categories) => {
     if (ready) {
@@ -88,7 +88,7 @@ const selectActorsWithCategories = createSelector(
 //   (state) => selectReady(state, { path: DEPENDENCIES }),
 //   selectActorsWithCategories,
 //   (state) => selectActorConnections(state),
-//   selectActorActionsByActor,
+//   selectActorActionsGroupedByActor,
 //   (ready, entities, connections, associationsGrouped) => {
 //     if (ready && connections.get('actions')) {
 //       return entities.map(
@@ -105,7 +105,7 @@ const selectActorsWithActions = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActorsWithCategories,
   selectConnections,
-  selectActorActionsByActor,
+  selectActorActionsGroupedByActor,
   (ready, entities, connections, associationsGrouped) => {
     if (ready && connections.get('actions')) {
       return entities.map(

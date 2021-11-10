@@ -5,10 +5,12 @@ import {
   selectEntity,
   selectEntities,
   selectActorsCategorised,
-  selectActortypeTaxonomiesSorted,
+  selectActortypeTaxonomies,
   selectActortypes,
-  selectActorActionsByAction,
-  selectActionCategoriesByAction,
+  selectActorActionsGroupedByAction,
+  selectActionCategoriesGroupedByAction,
+  selectCategories,
+  selectTaxonomiesSorted,
 } from 'containers/App/selectors';
 
 import {
@@ -28,28 +30,51 @@ export const selectViewEntity = createSelector(
   (state) => selectEntities(state, API.USERS),
   (entity, users) => entitySetUser(entity, users)
 );
-export const selectTaxonomies = createSelector(
-  (state, id) => id,
-  selectActortypeTaxonomiesSorted,
-  (state) => selectEntities(state, API.CATEGORIES),
-  selectActionCategoriesByAction,
+export const selectTaxonomyOptions = createSelector(
+  (state, id) => selectEntity(state, { path: API.ACTIONS, id }),
+  selectTaxonomiesSorted,
+  (state) => selectEntities(state, API.ACTIONTYPE_TAXONOMIES),
+  selectCategories,
+  selectActionCategoriesGroupedByAction,
   (
-    id,
+    entity,
     taxonomies,
+    actiontypeTaxonomies,
     categories,
     associations,
-  ) => prepareTaxonomiesAssociated(
-    taxonomies,
-    categories,
-    associations,
-    'tags_actions',
-    id,
-    false,
-  )
+  ) => {
+    if (
+      entity
+      && taxonomies
+      && actiontypeTaxonomies
+      && categories
+      && associations
+    ) {
+      const id = entity.get('id');
+      const taxonomiesForType = taxonomies.filter((tax) => actiontypeTaxonomies.some(
+        (type) => qe(
+          type.getIn(['attributes', 'taxonomy_id']),
+          tax.get('id'),
+        ) && qe(
+          type.getIn(['attributes', 'measuretype_id']),
+          entity.getIn(['attributes', 'measuretype_id']),
+        )
+      ));
+      return prepareTaxonomiesAssociated(
+        taxonomiesForType,
+        categories,
+        associations,
+        'tags_actions',
+        id,
+        false,
+      );
+    }
+    return null;
+  }
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  (state) => selectActortypeTaxonomiesSorted(state),
+  (state) => selectActortypeTaxonomies(state),
   (state) => selectEntities(state, API.CATEGORIES),
   (taxonomies, categories) => prepareTaxonomiesMultipleTags(
     taxonomies,
@@ -62,7 +87,7 @@ export const selectConnectedTaxonomies = createSelector(
 export const selectActorsByActortype = createSelector(
   (state, id) => id,
   selectActorsCategorised,
-  selectActorActionsByAction,
+  selectActorActionsGroupedByAction,
   selectActortypes,
   (id, actors, associations, actortypes) => {
     const filtered = actors.filter(

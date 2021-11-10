@@ -8,10 +8,11 @@ import {
   selectEntities,
   selectActionConnections,
   selectTaxonomiesSorted,
-  selectActortypeActions,
-  selectActorActionsByAction,
-  selectActionCategoriesByAction,
-  selectActorActionsByActor,
+  selectActions,
+  selectActorActionsGroupedByAction,
+  selectActionCategoriesGroupedByAction,
+  selectActorActionsGroupedByActor,
+  selectCategories,
 } from 'containers/App/selectors';
 
 import {
@@ -28,7 +29,7 @@ export const selectViewEntity = createSelector(
   (entity, users) => entitySetUser(entity, users)
 );
 
-// TODO optimise use selectActorCategoriesByActor
+// TODO optimise use selectActorCategoriesGroupedByActor
 export const selectTaxonomies = createSelector(
   (state, id) => id,
   (state) => selectTaxonomiesSorted(state),
@@ -46,14 +47,14 @@ export const selectTaxonomies = createSelector(
 
 const selectActionAssociations = createSelector(
   (state, id) => id,
-  selectActorActionsByActor,
+  selectActorActionsGroupedByActor,
   (actorId, associations) => associations.get(
     parseInt(actorId, 10)
   )
 );
 const selectActionsAssociated = createSelector(
   selectActionAssociations,
-  selectActortypeActions,
+  selectActions,
   (associations, actions) => associations
     && associations.reduce(
       (memo, id) => {
@@ -66,13 +67,13 @@ const selectActionsAssociated = createSelector(
     )
 );
 // all connected actions
-export const selectActions = createSelector(
+export const selectActionsWithAssociations = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActionsAssociated,
-  (state) => selectActionConnections(state),
-  selectActorActionsByAction,
-  selectActionCategoriesByAction,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectActionConnections,
+  selectActorActionsGroupedByAction,
+  selectActionCategoriesGroupedByAction,
+  selectCategories,
   (
     ready,
     actions,

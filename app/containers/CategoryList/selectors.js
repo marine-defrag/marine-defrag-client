@@ -6,13 +6,13 @@ import {
   selectEntities,
   selectSortByQuery,
   selectSortOrderQuery,
-  selectActortypeTaxonomiesSorted,
+  selectActortypeTaxonomies,
   selectActortypeActors,
-  selectActortypeActions,
+  selectActions,
   selectActiveActortypes,
-  selectActorActionsByAction,
-  selectActionCategoriesByAction,
-  selectActorCategoriesByActor,
+  selectActorActionsGroupedByAction,
+  selectActionCategoriesGroupedByAction,
+  selectActorCategoriesGroupedByActor,
 } from 'containers/App/selectors';
 
 import { qe } from 'utils/quasi-equals';
@@ -22,7 +22,7 @@ import { TAXONOMY_DEFAULT, SORT_OPTIONS } from './constants';
 
 export const selectTaxonomy = createSelector(
   (state, { id }) => id,
-  (state) => selectActortypeTaxonomiesSorted(state),
+  selectActortypeTaxonomies,
   (taxonomyId, taxonomies) => {
     if (!taxonomies || taxonomies.size === 0) return null;
     const id = typeof taxonomyId !== 'undefined' ? taxonomyId : TAXONOMY_DEFAULT;
@@ -47,10 +47,10 @@ export const selectTaxonomy = createSelector(
   }
 );
 
-const selectActions = createSelector(
-  selectActortypeActions,
-  selectActionCategoriesByAction,
-  selectActorActionsByAction,
+const selectActionsAssociated = createSelector(
+  selectActions,
+  selectActionCategoriesGroupedByAction,
+  selectActorActionsGroupedByAction,
   (entities, actionCategories, actionActors) => entities
     && actionCategories
     && actionActors
@@ -65,9 +65,9 @@ const selectActions = createSelector(
     )
 );
 
-const selectActors = createSelector(
+const selectActorsAssociated = createSelector(
   selectActortypeActors,
-  selectActorCategoriesByActor,
+  selectActorCategoriesGroupedByActor,
   (entities, actorCategories) => entities && actorCategories && entities.map(
     (entity, id) => entity.set(
       'category_ids',
@@ -276,8 +276,8 @@ const getCategoryCounts = (
 
 const selectCategoryCountGroups = createSelector(
   selectTaxonomy,
-  selectActors,
-  selectActions,
+  selectActorsAssociated,
+  selectActionsAssociated,
   (state) => selectEntities(state, API.CATEGORIES),
   selectActiveActortypes,
   (taxonomy, actors, actions, categories, actortypes) => {

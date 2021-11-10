@@ -12,12 +12,12 @@ import {
   selectTaxonomies,
   selectActortypeActors,
   selectActortypeActions,
-  selectActorCategoriesByCategory,
-  selectActionCategoriesByCategory,
-  selectActorActionsByAction,
-  selectActionCategoriesByAction,
-  selectActorActionsByActor,
-  selectActorCategoriesByActor,
+  selectActorCategoriesGroupedByCategory,
+  selectActionCategoriesGroupedByCategory,
+  selectActorActionsGroupedByAction,
+  selectActionCategoriesGroupedByAction,
+  selectActorActionsGroupedByActor,
+  selectActorCategoriesGroupedByActor,
   selectActortypes,
 } from 'containers/App/selectors';
 
@@ -142,7 +142,7 @@ const selectTagsActors = createSelector(
 
 const selectActorAssociations = createSelector(
   (state, id) => id,
-  selectActorCategoriesByCategory,
+  selectActorCategoriesGroupedByCategory,
   (catId, associations) => associations.get(
     parseInt(catId, 10)
   )
@@ -168,8 +168,8 @@ export const selectActors = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActorsAssociated,
   selectActorConnections,
-  selectActorActionsByActor,
-  selectActorCategoriesByActor,
+  selectActorActionsGroupedByActor,
+  selectActorCategoriesGroupedByActor,
   (state) => selectEntities(state, API.CATEGORIES),
   (state) => selectActortypes(state),
   (
@@ -221,7 +221,7 @@ const selectChildActorsAssociated = createSelector(
   selectChildrenTagActors,
   selectChildTaxonomies,
   selectActortypeActors,
-  selectActorCategoriesByCategory,
+  selectActorCategoriesGroupedByCategory,
   (tag, childTaxonomies, actors, associations) => tag && childTaxonomies
     ? childTaxonomies.map(
       (tax) => tax.set(
@@ -254,8 +254,8 @@ const selectChildActorsAssociated = createSelector(
 export const selectChildActors = createSelector(
   selectChildActorsAssociated,
   selectActorConnections,
-  selectActorActionsByActor,
-  selectActorCategoriesByActor,
+  selectActorActionsGroupedByActor,
+  selectActorCategoriesGroupedByActor,
   (state) => selectEntities(state, API.CATEGORIES),
   (
     actorsByTaxCat,
@@ -297,7 +297,7 @@ const selectTagsActions = createSelector(
 
 const selectActionAssociations = createSelector(
   (state, id) => id,
-  selectActionCategoriesByCategory,
+  selectActionCategoriesGroupedByCategory,
   (catId, associations) => associations.get(
     parseInt(catId, 10)
   )
@@ -318,8 +318,8 @@ export const selectActions = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActionsAssociated,
   selectActionConnections,
-  selectActorActionsByAction,
-  selectActionCategoriesByAction,
+  selectActorActionsGroupedByAction,
+  selectActionCategoriesGroupedByAction,
   (state) => selectEntities(state, API.CATEGORIES),
   (
     ready,
@@ -380,7 +380,7 @@ const selectChildActionsAssociated = createSelector(
   selectChildrenTagActions,
   selectChildTaxonomies,
   selectActortypeActions,
-  selectActionCategoriesByCategory,
+  selectActionCategoriesGroupedByCategory,
   (tag, childTaxonomies, actions, associations) => tag
     ? childTaxonomies.map(
       (tax) => tax.set(
@@ -413,8 +413,8 @@ const selectChildActionsAssociated = createSelector(
 export const selectChildActions = createSelector(
   selectChildActionsAssociated,
   selectActionConnections,
-  selectActorActionsByAction,
-  selectActionCategoriesByAction,
+  selectActorActionsGroupedByAction,
+  selectActionCategoriesGroupedByAction,
   (state) => selectEntities(state, API.CATEGORIES),
   (
     actionsByTaxCat,

@@ -5,7 +5,7 @@ import {
   selectEntity,
   selectEntities,
   selectTaxonomiesSorted,
-  selectUserCategoriesByUser,
+  selectUserCategoriesGroupedByUser,
 } from 'containers/App/selectors';
 
 import {
@@ -46,7 +46,7 @@ export const selectTaxonomies = createSelector(
   (state, id) => id,
   selectTaxonomiesSorted,
   (state) => selectEntities(state, API.CATEGORIES),
-  selectUserCategoriesByUser,
+  selectUserCategoriesGroupedByUser,
   (id, taxonomies, categories, associations) => prepareTaxonomiesAssociated(
     taxonomies,
     categories,

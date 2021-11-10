@@ -50,7 +50,7 @@ import messages from './messages';
 import {
   selectViewEntity,
   // selectTaxonomies,
-  // selectActions,
+  // selectActionsWithAssociations,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
@@ -303,7 +303,7 @@ const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   viewEntity: selectViewEntity(state, props.params.id),
   // taxonomies: selectTaxonomies(state, props.params.id),
-  // actions: selectActions(state, props.params.id),
+  // actions: selectActionsWithAssociations(state, props.params.id),
   // actionTaxonomies: selectActionTaxonomies(state),
   // actionConnections: selectActionConnections(state),
   // actortypes: selectActiveActortypes(state),

@@ -3,7 +3,7 @@ import { API } from 'themes/config';
 
 import {
   selectEntities,
-  selectActorTaxonomiesSorted,
+  selectActorTaxonomies,
   selectActorsCategorised,
 } from 'containers/App/selectors';
 
@@ -15,7 +15,7 @@ export const selectDomain = createSelector(
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  selectActorTaxonomiesSorted,
+  selectActorTaxonomies,
   (state) => selectEntities(state, API.CATEGORIES),
   (taxonomies, categories) => prepareTaxonomies(
     taxonomies,

@@ -7,7 +7,7 @@ import {
   selectSearchQuery,
   selectSortByQuery,
   selectSortOrderQuery,
-  selectActortypeTaxonomiesSorted,
+  selectActortypeTaxonomies,
   selectActiveActortypes,
 } from 'containers/App/selectors';
 
@@ -28,7 +28,7 @@ const selectPathQuery = createSelector(
 export const selectEntitiesByQuery = createSelector(
   (state, locationQuery) => selectSearchQuery(state, locationQuery),
   selectActortypeEntitiesAll,
-  selectActortypeTaxonomiesSorted,
+  selectActortypeTaxonomies,
   selectActiveActortypes,
   selectPathQuery,
   selectSortByQuery,

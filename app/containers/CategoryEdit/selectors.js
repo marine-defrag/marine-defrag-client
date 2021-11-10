@@ -6,7 +6,7 @@ import {
   selectEntities,
   selectActionsCategorised,
   selectActorsCategorised,
-  selectActortypeTaxonomiesSorted,
+  selectActortypeTaxonomies,
   selectTaxonomies,
 } from 'containers/App/selectors';
 
@@ -27,7 +27,7 @@ export const selectDomain = createSelector(
 export const selectViewEntity = createSelector(
   (state, id) => selectEntity(state, { path: API.CATEGORIES, id }),
   (state) => selectEntities(state, API.USERS),
-  (state) => selectActortypeTaxonomiesSorted(state),
+  (state) => selectActortypeTaxonomies(state),
   (entity, users, taxonomies) => prepareCategory(entity, users, taxonomies)
 );
 
@@ -171,7 +171,7 @@ export const selectActorsByActortype = createSelector(
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  (state) => selectActortypeTaxonomiesSorted(state),
+  (state) => selectActortypeTaxonomies(state),
   (state) => selectEntities(state, API.CATEGORIES),
   (taxonomies, categories) => prepareTaxonomiesMultipleTags(
     taxonomies,

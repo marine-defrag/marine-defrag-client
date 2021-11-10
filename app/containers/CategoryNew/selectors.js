@@ -4,7 +4,7 @@ import { List } from 'immutable';
 import {
   selectEntity,
   selectEntities,
-  selectActortypeTaxonomiesSorted,
+  selectActortypeTaxonomies,
   selectTaxonomies,
   selectActorsCategorised,
   selectActionsCategorised,
@@ -80,7 +80,7 @@ export const selectUsers = createSelector(
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  (state) => selectActortypeTaxonomiesSorted(state),
+  (state) => selectActortypeTaxonomies(state),
   (state) => selectEntities(state, API.CATEGORIES),
   (taxonomies, categories) => prepareTaxonomiesMultipleTags(
     taxonomies,

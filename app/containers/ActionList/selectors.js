@@ -12,12 +12,12 @@ import {
   selectSortByQuery,
   selectSortOrderQuery,
   selectActors,
-  // selectActortypeTaxonomiesSorted,
+  // selectActortypeTaxonomies,
   // selectActortypes,
   selectReady,
-  selectActorCategoriesByActor,
-  selectActionCategoriesByAction,
-  selectActorActionsByAction,
+  selectActorCategoriesGroupedByActor,
+  selectActionCategoriesGroupedByAction,
+  selectActorActionsGroupedByAction,
 } from 'containers/App/selectors';
 
 import {
@@ -37,7 +37,7 @@ import { CONFIG, DEPENDENCIES } from './constants';
 export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActors,
-  selectActorCategoriesByActor,
+  selectActorCategoriesGroupedByActor,
   (state) => selectEntities(state, API.CATEGORIES),
   (ready, actors, associationsGrouped, categories) => {
     if (ready) {
@@ -60,7 +60,7 @@ export const selectConnectedTaxonomies = createSelector(
 // export const selectConnectedTaxonomies = createSelector(
 //   (state) => selectReady(state, { path: DEPENDENCIES }),
 //   (state) => selectConnections(state),
-//   (state) => selectActortypeTaxonomiesSorted(state),
+//   (state) => selectActortypeTaxonomies(state),
 //   (state) => selectEntities(state, API.CATEGORIES),
 //   (state) => selectEntities(state, API.ACTOR_CATEGORIES),
 //   (state) => selectActortypes(state),
@@ -135,7 +135,7 @@ const selectActionsWithCategories = createSelector(
     searchAttributes: CONFIG.search || ['title'],
     ...args,
   }),
-  selectActionCategoriesByAction,
+  selectActionCategoriesGroupedByAction,
   (state) => selectEntities(state, API.CATEGORIES),
   (ready, entities, associationsGrouped, categories) => {
     if (ready) {
@@ -155,7 +155,7 @@ const selectActionsWithActors = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActionsWithCategories,
   selectConnections,
-  selectActorActionsByAction,
+  selectActorActionsGroupedByAction,
   (ready, entities, connections, associationsGrouped) => {
     if (ready && connections.get('actors')) {
       return entities.map(

@@ -6,8 +6,9 @@ import {
   selectEntities,
   selectActionsCategorised,
   selectTaxonomiesSorted,
-  selectActorActionsByActor,
-  selectActorCategoriesByActor,
+  selectActorActionsGroupedByActor,
+  selectActorCategoriesGroupedByActor,
+  selectCategories,
 } from 'containers/App/selectors';
 
 import {
@@ -24,6 +25,7 @@ export const selectDomain = createSelector(
 
 export const selectViewEntity = createSelector(
   (state, id) => selectEntity(state, { path: API.ACTORS, id }),
+  (state, id) => selectEntity(state, { path: API.ACTORS, id }),
   (state) => selectEntities(state, API.USERS),
   (entity, users) => entitySetUser(entity, users)
 );
@@ -31,8 +33,8 @@ export const selectViewEntity = createSelector(
 export const selectTaxonomies = createSelector(
   (state, id) => id,
   selectTaxonomiesSorted,
-  (state) => selectEntities(state, API.CATEGORIES),
-  selectActorCategoriesByActor,
+  selectCategories,
+  selectActorCategoriesGroupedByActor,
   (
     id,
     taxonomies,
@@ -50,7 +52,7 @@ export const selectTaxonomies = createSelector(
 
 export const selectConnectedTaxonomies = createSelector(
   (state) => selectTaxonomiesSorted(state),
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (taxonomies, categories) => prepareTaxonomiesMultipleTags(
     taxonomies,
     categories,
@@ -62,7 +64,7 @@ export const selectConnectedTaxonomies = createSelector(
 export const selectActions = createSelector(
   (state, id) => id,
   selectActionsCategorised,
-  selectActorActionsByActor,
+  selectActorActionsGroupedByActor,
   (id, entities, associations) => entitiesSetAssociated(
     entities,
     associations,

@@ -16,7 +16,7 @@ import styled, { withTheme } from 'styled-components';
 // containers
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import {
-  selectActortypeTaxonomiesSorted,
+  selectActortypeTaxonomies,
   selectReady,
   selectActiveActortypes,
   selectActortypeQuery,
@@ -553,7 +553,7 @@ Overview.contextTypes = {
 
 const mapStateToProps = (state) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  taxonomies: selectActortypeTaxonomiesSorted(state),
+  taxonomies: selectActortypeTaxonomies(state),
   actortypes: selectActiveActortypes(state),
   actortypeId: selectActortypeQuery(state),
   actorCountByActortype: selectActorCount(state),
