@@ -64,6 +64,8 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
     }
   }
 
+
+  // todo set/pass type
   getInitialFormData = (nextProps) => {
     const props = nextProps || this.props;
     const { actortypeId } = props;

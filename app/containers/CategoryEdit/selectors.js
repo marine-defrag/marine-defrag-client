@@ -27,7 +27,7 @@ export const selectDomain = createSelector(
 export const selectViewEntity = createSelector(
   (state, id) => selectEntity(state, { path: API.CATEGORIES, id }),
   (state) => selectEntities(state, API.USERS),
-  (state) => selectActortypeTaxonomies(state),
+  (state) => selectTaxonomies(state),
   (entity, users, taxonomies) => prepareCategory(entity, users, taxonomies)
 );
 

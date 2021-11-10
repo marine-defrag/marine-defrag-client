@@ -102,11 +102,11 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
     ]);
   };
 
-  getHeaderAsideFields = (entity, taxonomies) => {
+  getHeaderAsideFields = (entity, isManager, taxonomies) => {
     const fields = ([
       {
         fields: [
-          getStatusField(entity),
+          isManager && getStatusField(entity),
           getMetaField(entity),
         ],
       },
@@ -257,7 +257,7 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
                 fields={{
                   header: {
                     main: this.getHeaderMainFields(viewEntity),
-                    aside: this.getHeaderAsideFields(viewEntity, taxonomies),
+                    aside: this.getHeaderAsideFields(viewEntity, isManager, taxonomies),
                   },
                   body: {
                     main: this.getBodyMainFields(

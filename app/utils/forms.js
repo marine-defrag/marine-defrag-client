@@ -566,9 +566,7 @@ const getCategoryFields = (args, formatMessage) => ({
   header: {
     main: [{ // fieldGroup
       fields: [
-        getReferenceFormField(formatMessage),
         getTitleFormField(formatMessage),
-        getShortTitleFormField(formatMessage),
       ],
     }],
     aside: args.taxonomy && args.taxonomy.getIn(['attributes', 'tags_users'])
@@ -594,11 +592,6 @@ const getCategoryFields = (args, formatMessage) => ({
             getEntityTitle(args.parentTaxonomy),
           )
           : null,
-        getFormField({
-          formatMessage,
-          controlType: 'url',
-          attribute: 'url',
-        }),
       ],
     }],
   },

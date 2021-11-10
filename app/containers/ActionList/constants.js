@@ -31,14 +31,14 @@ export const CONFIG = {
       default: true,
     },
     {
-      attribute: 'title',
+      attribute: 'code',
       type: 'string',
       order: 'asc',
     },
     {
-      attribute: 'target_date',
-      type: 'date',
-      order: 'desc',
+      attribute: 'title',
+      type: 'string',
+      order: 'asc',
     },
     {
       attribute: 'updated_at',

@@ -18,6 +18,10 @@ export default defineMessages({
       id: 'app.components.ColumnSelect.sortAttributes.reference',
       defaultMessage: 'Reference',
     },
+    code: {
+      id: 'app.components.ColumnSelect.sortAttributes.code',
+      defaultMessage: 'code',
+    },
     title: {
       id: 'app.components.ColumnSelect.sortAttributes.title',
       defaultMessage: 'Title',

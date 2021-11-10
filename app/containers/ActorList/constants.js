@@ -30,10 +30,9 @@ export const CONFIG = {
       order: 'desc',
     },
     {
-      attribute: 'reference',
+      attribute: 'code',
       type: 'string',
       order: 'asc',
-      default: true,
     },
     {
       attribute: 'title',

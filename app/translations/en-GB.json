@@ -18,6 +18,7 @@
   "app.components.ColumnSelect.selectAll": "Select all {number}.",
   "app.components.ColumnSelect.sortAttributes.id": "Created at",
   "app.components.ColumnSelect.sortAttributes.reference": "Reference",
+  "app.components.ColumnSelect.sortAttributes.code": "Code",
   "app.components.ColumnSelect.sortAttributes.title": "Title",
   "app.components.ColumnSelect.sortAttributes.name": "Name",
   "app.components.ColumnSelect.sortAttributes.updated_at": "Updated at",

@@ -22,24 +22,18 @@ import {
   selectActortypeQuery,
 } from 'containers/App/selectors';
 import { CONTENT_LIST } from 'containers/App/constants';
-import { ROUTES } from 'themes/config';
 
 // components
-import Button from 'components/buttons/Button';
 import ContainerWithSidebar from 'components/styled/Container/ContainerWithSidebar';
 import Container from 'components/styled/Container';
-import Icon from 'components/Icon';
-import Loading from 'components/Loading';
 
 import ContentHeader from 'components/ContentHeader';
 import TaxonomySidebar from 'components/categoryList/TaxonomySidebar';
 import EntityListSidebarLoading from 'components/EntityListSidebarLoading';
 
 import { qe } from 'utils/quasi-equals';
-import isNumber from 'utils/is-number';
 
 // relative
-import appMessages from 'containers/App/messages';
 import messages from './messages';
 import { DEPENDENCIES } from './constants';
 import {
@@ -68,105 +62,6 @@ const Description = styled.p`
     font-size: ${(props) => props.theme.sizes.print.default};
   }
 `;
-const Diagram = styled.div`
-  position: relative;
-  width: 100%;
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    margin-bottom: 180px;
-  }
-`;
-
-const DiagramSectionVertical = styled.div`
-  display: block;
-  position: relative;
-  border-top: 1px dashed ${palette('light', 4)};
-`;
-
-const DiagramSectionVerticalCenter = styled.div`
-  text-align: center;
-  display: block;
-  margin: 0 auto;
-  position: relative;
-`;
-
-const DiagramButtonWrap = styled.div`
-  position: relative;
-  display: inline-block;
-  padding: 20px 0;
-  vertical-align: bottom;
-  margin: ${({ multiple }) => multiple ? '30px 2px' : '30px 0'};
-  &:first-child {
-    margin-left: 0;
-  }
-  &:last-child {
-    margin-right: 0;
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    margin: ${({ multiple }) => multiple ? '30px 5px' : '30px 0'};
-    &:first-child {
-      margin-left: 0;
-    }
-    &:last-child {
-      margin-right: 0;
-    }
-  }
-  @media print {
-    margin: 15px 5px;
-    padding: 0;
-  }
-`;
-
-const DiagramButton = styled(Button)`
-  background-color: ${palette('primary', 4)};
-  color: ${palette('primary', 1)};
-  padding: ${({ draft }) => draft ? '0.4em 0.5em 0.75em' : '0.6em 0.5em'};
-  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
-  font-size: 0.7em;
-  border-radius: 15px;
-  max-width: ${({ multiple }) => multiple ? '70px' : 'none'};
-  min-width: none;
-  &:hover {
-    color: ${palette('primary', 0)};
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    font-size: 1em;
-    padding: ${({ draft }) => draft ? '0.4em 0.5em 0.4em' : '0.6em 0.5em'};
-    max-width: ${({ multiple }) => multiple ? '100px' : 'none'};
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    font-size: 1.1em;
-    min-width: ${({ multiple }) => multiple ? 'none' : '180px'};
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    font-weight: bold;
-    max-width: none;
-    padding: ${({ draft }) => draft ? '0.6em 1em 0.2em' : '0.8em 1em'};
-  }
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.default};
-    box-shadow: none;
-    border: 1px solid ${palette('light', 3)};
-    min-width: none;
-    width: 130px;
-    height: 90px;
-  }
-`;
-const DiagramButtonIcon = styled.div`
-  padding-bottom: 5px;
-`;
-
-const DraftEntities = styled.div`
-  display: none;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    display: block;
-    font-size: 0.8em;
-    font-weight: normal;
-  }
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.smaller};
-  }
-`;
 
 const DiagramSvg = styled.svg``;
 const DiagramSvgWrapper = styled.div`
@@ -187,17 +82,6 @@ const PathLineCustom = styled(PathLine)`
 `;
 const PathLineArrow = styled(PathLine)`
   fill: ${palette('dark', 2)};
-`;
-const SectionLabel = styled.div`
-  color: ${palette('text', 1)};
-  font-size: ${(props) => props.theme.sizes.text.small};
-  margin-top: 5px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.small};
-  }
 `;
 
 const STATE_INITIAL = {
@@ -364,57 +248,6 @@ export class Overview extends React.PureComponent { // eslint-disable-line react
     );
   }
 
-  renderButton = ({
-    path,
-    query,
-    paletteDefault,
-    paletteHover,
-    icon,
-    type,
-    count,
-    draftCount,
-    stateButton,
-    multiple,
-  }) => {
-    const { intl } = this.context;
-    return (
-      <DiagramButton
-        onClick={() => this.props.onPageLink(path, query)}
-        paletteDefault={paletteDefault}
-        paletteHover={paletteHover}
-        ref={(node) => {
-          if (!this.state[stateButton]) {
-            this.setState({ [stateButton]: node });
-          }
-        }}
-        draft={draftCount > 0}
-        multiple={multiple}
-      >
-        <DiagramButtonIcon>
-          <Icon
-            name={icon}
-            sizes={{
-              mobile: '24px',
-              small: '24px',
-              medium: '24px',
-              large: '24px',
-            }}
-          />
-        </DiagramButtonIcon>
-        <div>
-          {`${count || 0} ${intl.formatMessage(appMessages.entities[type][count !== 1 ? 'plural' : 'single'])}`}
-        </div>
-        { draftCount > 0
-          && (
-            <DraftEntities>
-              <FormattedMessage {...messages.buttons.draft} values={{ count: draftCount }} />
-            </DraftEntities>
-          )
-        }
-      </DiagramButton>
-    );
-  };
-
   render() {
     const { intl } = this.context;
     const {
@@ -453,71 +286,6 @@ export class Overview extends React.PureComponent { // eslint-disable-line react
               <Description>
                 <FormattedMessage {...messages.description} />
               </Description>
-              {!dataReady && <Loading />}
-              {dataReady && (
-                <Diagram
-                  ref={(node) => {
-                    if (!this.state.diagram) {
-                      this.setState({ diagram: node });
-                    }
-                  }}
-                >
-                  { this.renderPathsSVG(actortypes) }
-                  <div>
-                    <DiagramSectionVertical>
-                      <SectionLabel>
-                        <FormattedMessage {...appMessages.nav.actorsSuper} />
-                      </SectionLabel>
-                      <DiagramSectionVerticalCenter>
-                        {actortypes && actortypes.valueSeq().map(
-                          (actortype) => {
-                            const actortypeIdLocal = isNumber(actortype.get('id')) ? parseInt(actortype.get('id'), 10) : actortype.get('id');
-                            return (
-                              <DiagramButtonWrap key={actortypeId} multiple={actortypes.size > 1}>
-                                {this.renderButton({
-                                  path: ROUTES.ACTORS,
-                                  query: actortypes.size > 1 && {
-                                    arg: 'actortypex',
-                                    value: actortypeIdLocal,
-                                    replace: true,
-                                  },
-                                  paletteDefault: 'actors',
-                                  paletteHover: 'actorsHover',
-                                  stateButton: `buttonActors_${actortypeIdLocal}`,
-                                  icon: `actors_${actortypeIdLocal}`,
-                                  type: `actors_${actortypeIdLocal}`,
-                                  count: this.props.actorCountByActortype.get(actortypeIdLocal),
-                                  draftCount: this.props.actorDraftCountByActortype.get(actortypeIdLocal),
-                                  multiple: actortypes.size > 1,
-                                })}
-                              </DiagramButtonWrap>
-                            );
-                          }
-                        )}
-                      </DiagramSectionVerticalCenter>
-                    </DiagramSectionVertical>
-                    <DiagramSectionVertical>
-                      <SectionLabel>
-                        <FormattedMessage {...appMessages.nav.actionsSuper} />
-                      </SectionLabel>
-                      <DiagramSectionVerticalCenter>
-                        <DiagramButtonWrap>
-                          {this.renderButton({
-                            path: ROUTES.ACTIONS,
-                            paletteDefault: 'actions',
-                            paletteHover: 'actionsHover',
-                            stateButton: 'buttonActions',
-                            icon: 'actions',
-                            type: 'actions',
-                            count: this.props.actionCount,
-                            draftCount: this.props.actionDraftCount,
-                          })}
-                        </DiagramButtonWrap>
-                      </DiagramSectionVerticalCenter>
-                    </DiagramSectionVertical>
-                  </div>
-                </Diagram>
-              )}
             </Content>
           </Container>
         </ContainerWithSidebar>

@@ -11,25 +11,24 @@ import Helmet from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import { actions as formActions } from 'react-redux-form/immutable';
 
-import { Map, List, fromJS } from 'immutable';
+import { Map, List } from 'immutable';
 
 import {
   userOptions,
   entityOptions,
-  renderUserControl,
-  renderActionControl,
-  renderActorsByActortypeControl,
   renderParentCategoryControl,
   getTitleFormField,
   getReferenceFormField,
   getShortTitleFormField,
   getMarkdownField,
   getFormField,
-  getConnectionUpdatesFromFormData,
   getCheckboxField,
   getStatusField,
   parentCategoryOptions,
-  getDateField,
+  // renderUserControl,
+  // renderActionControl,
+  // renderActorsByActortypeControl,
+  // getConnectionUpdatesFromFormData,
 } from 'utils/forms';
 
 import {
@@ -73,12 +72,12 @@ import { getEntityTitle } from 'utils/entities';
 import {
   selectDomain,
   selectViewEntity,
-  selectUsers,
-  selectActions,
-  selectActorsByActortype,
-  selectConnectedTaxonomies,
   selectParentOptions,
   selectParentTaxonomy,
+  // selectUsers,
+  // selectActions,
+  // selectActorsByActortype,
+  // selectConnectedTaxonomies,
 } from './selectors';
 
 import messages from './messages';
@@ -186,75 +185,76 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
   }
 
   getBodyMainFields = (
-    entity,
-    connectedTaxonomies,
-    actorsByActortype,
-    actions,
-    onCreateOption,
-    userOnly,
+    // entity,
+    // connectedTaxonomies,
+    // actorsByActortype,
+    // actions,
+    // onCreateOption,
+    // userOnly,
   ) => {
     const { intl } = this.context;
     const fields = [];
     fields.push({
       fields: [getMarkdownField(intl.formatMessage)],
     });
-    if (!userOnly) {
-      if (entity.getIn(['taxonomy', 'attributes', 'tags_actions']) && actions) {
-        fields.push(
-          {
-            label: intl.formatMessage(appMessages.nav.actionsSuper),
-            icon: 'actions',
-            fields: [
-              renderActionControl(actions, connectedTaxonomies, onCreateOption, intl),
-            ],
-          },
-        );
-      }
-      if (
-        entity.getIn(['taxonomy', 'attributes', 'tags_actors'])
-        && actorsByActortype
-      ) {
-        const actorConnections = renderActorsByActortypeControl(
-          actorsByActortype,
-          connectedTaxonomies,
-          onCreateOption,
-          intl,
-        );
-        if (actorConnections) {
-          fields.push(
-            {
-              label: intl.formatMessage(appMessages.nav.actorsSuper),
-              icon: 'actors',
-              fields: actorConnections,
-            },
-          );
-        }
-      }
-    }
+    // if (!userOnly) {
+    //   if (entity.getIn(['taxonomy', 'attributes', 'tags_actions']) && actions) {
+    //     fields.push(
+    //       {
+    //         label: intl.formatMessage(appMessages.nav.actionsSuper),
+    //         icon: 'actions',
+    //         fields: [
+    //           renderActionControl(actions, connectedTaxonomies, onCreateOption, intl),
+    //         ],
+    //       },
+    //     );
+    //   }
+    //   if (
+    //     entity.getIn(['taxonomy', 'attributes', 'tags_actors'])
+    //     && actorsByActortype
+    //   ) {
+    //     const actorConnections = renderActorsByActortypeControl(
+    //       actorsByActortype,
+    //       connectedTaxonomies,
+    //       onCreateOption,
+    //       intl,
+    //     );
+    //     if (actorConnections) {
+    //       fields.push(
+    //         {
+    //           label: intl.formatMessage(appMessages.nav.actorsSuper),
+    //           icon: 'actors',
+    //           fields: actorConnections,
+    //         },
+    //       );
+    //     }
+    //   }
+    // }
     return fields;
   };
 
-  getBodyAsideFields = (entity, users, isAdmin) => {
+  // getBodyAsideFields = (entity, users, isAdmin) => {
+  getBodyAsideFields = () => {
     const { intl } = this.context;
     const fields = []; // fieldGroups
-    if (isAdmin && !!entity.getIn(['taxonomy', 'attributes', 'has_manager'])) {
-      fields.push({
-        fields: [
-          renderUserControl(
-            users,
-            intl.formatMessage(appMessages.attributes.manager_id.categories),
-            entity.getIn(['attributes', 'manager_id'])
-          ),
-        ],
-      });
-    }
+    // if (isAdmin && !!entity.getIn(['taxonomy', 'attributes', 'has_manager'])) {
+    //   // fields.push({
+    //   //   fields: [
+    //   //     renderUserControl(
+    //   //       users,
+    //   //       intl.formatMessage(appMessages.attributes.manager_id.categories),
+    //   //       entity.getIn(['attributes', 'manager_id'])
+    //   //     ),
+    //   //   ],
+    //   // });
+    // }
     fields.push({
       fields: [
-        entity.getIn(['taxonomy', 'attributes', 'has_date'])
-          && getDateField(
-            intl.formatMessage,
-            'date',
-          ),
+        // entity.getIn(['taxonomy', 'attributes', 'has_date'])
+        //   && getDateField(
+        //     intl.formatMessage,
+        //     'date',
+        //   ),
         getFormField({
           formatMessage: intl.formatMessage,
           controlType: 'url',
@@ -274,13 +274,13 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
       dataReady,
       isAdmin,
       viewDomain,
-      users,
-      connectedTaxonomies,
-      actorsByActortype,
-      actions,
-      onCreateOption,
       parentOptions,
       parentTaxonomy,
+      // actorsByActortype,
+      // actions,
+      // users,
+      // connectedTaxonomies,
+      // onCreateOption,
     } = this.props;
     const reference = this.props.params.id;
     const {
@@ -362,8 +362,8 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
                 saving={saveSending}
                 handleSubmit={(formData) => this.props.handleSubmit(
                   formData,
-                  actions,
-                  actorsByActortype,
+                  // actions,
+                  // actorsByActortype,
                   viewEntity.get('taxonomy'),
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
@@ -384,14 +384,16 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
                   },
                   body: {
                     main: this.getBodyMainFields(
-                      viewEntity,
-                      connectedTaxonomies,
-                      actorsByActortype,
-                      actions,
-                      onCreateOption,
-                      viewDomain.getIn(['form', 'data', 'attributes', 'user_only']),
+                      // viewEntity,
+                      // connectedTaxonomies,
+                      // actorsByActortype,
+                      // actions,
+                      // onCreateOption,
+                      // viewDomain.getIn(['form', 'data', 'attributes', 'user_only']),
                     ),
-                    aside: this.getBodyAsideFields(viewEntity, users, isAdmin),
+                    aside: this.getBodyAsideFields(
+                      // viewEntity, users, isAdmin
+                    ),
                   },
                 }}
                 scrollContainer={this.scrollContainer.current}
@@ -446,10 +448,10 @@ const mapStateToProps = (state, props) => ({
   viewEntity: selectViewEntity(state, props.params.id),
   parentOptions: selectParentOptions(state, props.params.id),
   parentTaxonomy: selectParentTaxonomy(state, props.params.id),
-  users: selectUsers(state),
-  actions: selectActions(state, props.params.id),
-  actorsByActortype: selectActorsByActortype(state, props.params.id),
-  connectedTaxonomies: selectConnectedTaxonomies(state),
+  // users: selectUsers(state),
+  // actions: selectActions(state, props.params.id),
+  // actorsByActortype: selectActorsByActortype(state, props.params.id),
+  // connectedTaxonomies: selectConnectedTaxonomies(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -476,54 +478,59 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, actions, actorsByActortype, taxonomy) => {
+    handleSubmit: (
+      formData,
+      // actions,
+      // actorsByActortype,
+      // taxonomy,
+    ) => {
       let saveData = formData;
-      if (taxonomy.getIn(['attributes', 'tags_actions'])) {
-        saveData = saveData.set(
-          'actionCategories',
-          getConnectionUpdatesFromFormData({
-            formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
-            connections: actions,
-            connectionAttribute: 'associatedActions',
-            createConnectionKey: 'measure_id',
-            createKey: 'category_id',
-          })
-        );
-      }
-      if (actorsByActortype && taxonomy.getIn(['attributes', 'tags_actors'])) {
-        saveData = saveData.set(
-          'actorCategories',
-          actorsByActortype
-            .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
-              formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
-              connections: actors,
-              connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
-              createConnectionKey: 'actor_id',
-              createKey: 'category_id',
-            }))
-            .reduce(
-              (memo, deleteCreateLists) => {
-                const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
-                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
-                return memo
-                  .set('delete', deletes)
-                  .set('create', creates);
-              },
-              fromJS({
-                delete: [],
-                create: [],
-              }),
-            )
-        );
-      }
-
-      // TODO: remove once have singleselect instead of multiselect
-      const formUserIds = getCheckedValuesFromOptions(formData.get('associatedUser'));
-      if (List.isList(formUserIds) && formUserIds.size) {
-        saveData = saveData.setIn(['attributes', 'manager_id'], formUserIds.first());
-      } else {
-        saveData = saveData.setIn(['attributes', 'manager_id'], null);
-      }
+      // if (taxonomy.getIn(['attributes', 'tags_actions'])) {
+      //   saveData = saveData.set(
+      //     'actionCategories',
+      //     getConnectionUpdatesFromFormData({
+      //       formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
+      //       connections: actions,
+      //       connectionAttribute: 'associatedActions',
+      //       createConnectionKey: 'measure_id',
+      //       createKey: 'category_id',
+      //     })
+      //   );
+      // }
+      // if (actorsByActortype && taxonomy.getIn(['attributes', 'tags_actors'])) {
+      //   saveData = saveData.set(
+      //     'actorCategories',
+      //     actorsByActortype
+      //       .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
+      //         formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
+      //         connections: actors,
+      //         connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
+      //         createConnectionKey: 'actor_id',
+      //         createKey: 'category_id',
+      //       }))
+      //       .reduce(
+      //         (memo, deleteCreateLists) => {
+      //           const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
+      //           const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+      //           return memo
+      //             .set('delete', deletes)
+      //             .set('create', creates);
+      //         },
+      //         fromJS({
+      //           delete: [],
+      //           create: [],
+      //         }),
+      //       )
+      //   );
+      // }
+      //
+      // // TODO: remove once have singleselect instead of multiselect
+      // const formUserIds = getCheckedValuesFromOptions(formData.get('associatedUser'));
+      // if (List.isList(formUserIds) && formUserIds.size) {
+      //   saveData = saveData.setIn(['attributes', 'manager_id'], formUserIds.first());
+      // } else {
+      //   saveData = saveData.setIn(['attributes', 'manager_id'], null);
+      // }
       // TODO: remove once have singleselect instead of multiselect
       const formCategoryIds = getCheckedValuesFromOptions(formData.get('associatedCategory'));
       if (List.isList(formCategoryIds) && formCategoryIds.size) {
