@@ -14,8 +14,8 @@ import { Map } from 'immutable';
 // import { Map, fromJS } from 'immutable';
 
 import {
-  taxonomyOptions,
   // entityOptions,
+  taxonomyOptions,
   getTitleFormField,
   getStatusField,
   getMarkdownField,
@@ -27,7 +27,7 @@ import {
   getLinkFormField,
   getFormField,
   getAmountFormField,
-  // getCategoryUpdatesFromFormData,
+  getCategoryUpdatesFromFormData,
   // getConnectionUpdatesFromFormData,
   // renderActorsByActortypeControl,
 } from 'utils/forms';
@@ -73,7 +73,7 @@ import appMessages from 'containers/App/messages';
 import {
   selectDomain,
   selectViewEntity,
-  // selectTaxonomies,
+  selectTaxonomyOptions,
   // selectActorsByActortype,
   // selectConnectedTaxonomies,
 } from './selectors';
@@ -166,7 +166,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     );
   };
 
-  getHeaderAsideFields = (entity) => {
+  getHeaderAsideFields = (entity, taxonomies, onCreateOption) => {
     const { intl } = this.context;
     return ([
       {
@@ -174,6 +174,11 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
           getStatusField(intl.formatMessage),
           getMetaField(entity),
         ],
+      },
+      { // fieldGroup
+        label: intl.formatMessage(appMessages.entities.taxonomies.plural),
+        icon: 'categories',
+        fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
       },
     ]);
   };
@@ -261,7 +266,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     return groups;
   };
 
-  getBodyAsideFields = (entity, taxonomies, onCreateOption) => {
+  getBodyAsideFields = (entity) => {
     const { intl } = this.context;
     const typeId = entity.getIn(['attributes', 'measuretype_id']);
 
@@ -308,11 +313,6 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
             checkActionRequired(typeId, 'date_comment'),
           ),
         ],
-      },
-      { // fieldGroup
-        label: intl.formatMessage(appMessages.entities.taxonomies.plural),
-        icon: 'categories',
-        fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
       },
     ]);
   };
@@ -414,7 +414,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
                 fields={{
                   header: {
                     main: this.getHeaderMainFields(viewEntity),
-                    aside: this.getHeaderAsideFields(viewEntity),
+                    aside: this.getHeaderAsideFields(viewEntity, taxonomies, onCreateOption),
                   },
                   body: {
                     main: this.getBodyMainFields(
@@ -423,11 +423,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
                       actorsByActortype,
                       onCreateOption,
                     ),
-                    aside: this.getBodyAsideFields(
-                      viewEntity,
-                      taxonomies,
-                      onCreateOption,
-                    ),
+                    aside: this.getBodyAsideFields(viewEntity),
                   },
                 }}
                 scrollContainer={this.scrollContainer.current}
@@ -477,7 +473,7 @@ const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   authReady: selectReadyForAuthCheck(state),
   viewEntity: selectViewEntity(state, props.params.id),
-  // taxonomies: selectTaxonomies(state, props.params.id),
+  taxonomies: selectTaxonomyOptions(state, props.params.id),
   // connectedTaxonomies: selectConnectedTaxonomies(state),
   // actorsByActortype: selectActorsByActortype(state, props.params.id),
 });
@@ -506,46 +502,42 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData) => {
-      dispatch(save(formData.toJS()));
-    },
     // handleSubmit: (formData, taxonomies, actorsByActortype) => {
-    //   let saveData = formData
-    //   //   .set(
-    //   //     'actionCategories',
-    //   //     getCategoryUpdatesFromFormData({
-    //   //       formData,
-    //   //       taxonomies,
-    //   //       createKey: 'measure_id',
-    //   //     })
-    //   //   );
-    //   // saveData = saveData.set(
-    //   //   'actorActions',
-    //   //   actorsByActortype
-    //   //     .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
-    //   //       formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
-    //   //       connections: actors,
-    //   //       connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
-    //   //       createConnectionKey: 'actor_id',
-    //   //       createKey: 'measure_id',
-    //   //     }))
-    //   //     .reduce(
-    //   //       (memo, deleteCreateLists) => {
-    //   //         const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
-    //   //         const creates = memo.get('create').concat(deleteCreateLists.get('create'));
-    //   //         return memo
-    //   //           .set('delete', deletes)
-    //   //           .set('create', creates);
-    //   //       },
-    //   //       fromJS({
-    //   //         delete: [],
-    //   //         create: [],
-    //   //       }),
-    //   //     )
-    //   // );
-    //
-    //   dispatch(save(saveData.toJS()));
-    // },
+    handleSubmit: (formData, taxonomies) => {
+      const saveData = formData.set(
+        'actionCategories',
+        getCategoryUpdatesFromFormData({
+          formData,
+          taxonomies,
+          createKey: 'measure_id',
+        })
+      );
+      // saveData = saveData.set(
+      //   'actorActions',
+      //   actorsByActortype
+      //     .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
+      //       formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
+      //       connections: actors,
+      //       connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
+      //       createConnectionKey: 'actor_id',
+      //       createKey: 'measure_id',
+      //     }))
+      //     .reduce(
+      //       (memo, deleteCreateLists) => {
+      //         const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
+      //         const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+      //         return memo
+      //           .set('delete', deletes)
+      //           .set('create', creates);
+      //       },
+      //       fromJS({
+      //         delete: [],
+      //         create: [],
+      //       }),
+      //     )
+      // );
+      dispatch(save(saveData.toJS()));
+    },
     handleCancel: () => {
       dispatch(updatePath(`${ROUTES.ACTION}/${props.params.id}`, { replace: true }));
     },
