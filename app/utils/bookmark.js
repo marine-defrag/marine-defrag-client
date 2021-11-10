@@ -43,20 +43,11 @@ const checkValues = (valueCheck, value) => {
 export const getBookmarkForLocation = (location, bookmarks) => {
   const pathCheck = getPathFromLocation(location);
   const queryCheck = filterQueryForChecking(location.get('query'));
-  console.log('pathCheck', pathCheck);
-  console.log('queryCheck', queryCheck && queryCheck.toJS());
 
   const bmForType = getBookmarksForPath(bookmarks, pathCheck);
-  console.log('bmForType', bmForType && bmForType.toJS());
   return bmForType.find(
     (bookmark) => {
       const queryBM = bookmark.getIn(['attributes', 'view', 'query']);
-      console.log('queryChecked', queryCheck.every(
-        (valueCheck, key) => checkValues(valueCheck, queryBM.get(key))
-      ));
-      console.log('queryBMChecked', queryBM.every(
-        (valueCheck, key) => checkValues(valueCheck, queryCheck.get(key))
-      ));
       return queryCheck.every(
         (valueCheck, key) => checkValues(valueCheck, queryBM.get(key))
       )
