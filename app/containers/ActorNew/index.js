@@ -10,8 +10,7 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { actions as formActions } from 'react-redux-form/immutable';
 
-// import { Map, List } from 'immutable';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 
 import {
   getTitleFormField,
@@ -36,7 +35,7 @@ import { scrollToTop } from 'utils/scroll-to-component';
 import { hasNewError } from 'utils/entity-form';
 import { checkActorAttribute, checkActorRequired } from 'utils/entities';
 
-// import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
+import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
 import { ROUTES, USER_ROLES } from 'themes/config';
@@ -137,11 +136,18 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
     ]);
   };
 
-  getHeaderAsideFields = () => {
+  getHeaderAsideFields = (taxonomies, onCreateOption) => {
     const { intl } = this.context;
-    return ([{
-      fields: [getStatusField(intl.formatMessage)],
-    }]);
+    return ([
+      {
+        fields: [getStatusField(intl.formatMessage)],
+      },
+      { // fieldGroup
+        label: intl.formatMessage(appMessages.entities.taxonomies.plural),
+        icon: 'categories',
+        fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
+      },
+    ]);
   }
 
   getBodyMainFields = (
@@ -180,7 +186,7 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
     return groups;
   }
 
-  getBodyAsideFields = (type, taxonomies, onCreateOption) => {
+  getBodyAsideFields = (type) => {
     const { intl } = this.context;
     const typeId = type.get('id');
     return ([ // fieldGroups
@@ -206,11 +212,6 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
             'population',
           ),
         ],
-      },
-      { // fieldGroup
-        label: intl.formatMessage(appMessages.entities.taxonomies.plural),
-        icon: 'categories',
-        fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
       },
     ]);
   };
@@ -304,7 +305,10 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
                 fields={{ // isManager, taxonomies,
                   header: {
                     main: this.getHeaderMainFields(actortype),
-                    aside: this.getHeaderAsideFields(),
+                    aside: this.getHeaderAsideFields(
+                      taxonomies,
+                      onCreateOption
+                    ),
                   },
                   body: {
                     main: this.getBodyMainFields(
@@ -316,8 +320,6 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
                     ),
                     aside: this.getBodyAsideFields(
                       actortype,
-                      taxonomies,
-                      onCreateOption,
                     ),
                   },
                 }}
@@ -402,31 +404,34 @@ function mapDispatchToProps(dispatch) {
     },
     // handleSubmit: (formData, currentActortype) => {
     handleSubmit: (formData, actortype) => {
-      const saveData = formData.setIn(['attributes', 'actortype_id'], actortype.get('id'));
+      let saveData = formData.setIn(
+        ['attributes', 'actortype_id'],
+        actortype.get('id'),
+      );
       // actorCategories=
-      // if (formData.get('associatedTaxonomies')) {
-      //   // get List of valid categories (for actortype)
-      //   const validCategories = actortypeTaxonomies && actortypeTaxonomies
-      //     .map((actortypet) => actortypet.get('categories').keySeq())
-      //     .valueSeq()
-      //     .flatten();
-      //   // get list of selected categories by taxonomy,
-      //   // filter by valid categories
-      //   const selectedCategories = formData
-      //     .get('associatedTaxonomies')
-      //     .map(getCheckedValuesFromOptions)
-      //     .valueSeq()
-      //     .flatten()
-      //     .filter((id) => !validCategories || validCategories.includes(id));
-      //   // const categoryIds =
-      //   saveData = saveData.set(
-      //     'actorCategories',
-      //     Map({
-      //       delete: List(),
-      //       create: selectedCategories.map((id) => Map({ category_id: id })),
-      //     }),
-      //   );
-      // }
+      if (formData.get('associatedTaxonomies')) {
+        // get List of valid categories (for actortype)
+        // const validCategories = actortypeTaxonomies && actortypeTaxonomies
+        //   .map((actortypet) => actortypet.get('categories').keySeq())
+        //   .valueSeq()
+        //   .flatten();
+        // get list of selected categories by taxonomy,
+        // filter by valid categories
+        const selectedCategories = formData
+          .get('associatedTaxonomies')
+          .map(getCheckedValuesFromOptions)
+          .valueSeq()
+          .flatten();
+          // .filter((id) => !validCategories || validCategories.includes(id));
+        // const categoryIds =
+        saveData = saveData.set(
+          'actorCategories',
+          Map({
+            delete: List(),
+            create: selectedCategories.map((id) => Map({ category_id: id })),
+          }),
+        );
+      }
       //
       // // actions if allowed by actortype
       // if (
@@ -440,16 +445,6 @@ function mapDispatchToProps(dispatch) {
       //         measure_id: id,
       //       })),
       //   }));
-      // }
-      //
-      // // cleanup attributes for actortype
-      // if (!currentActortype.getIn(['attributes', 'has_response'])) {
-      //   saveData = saveData
-      //     .setIn(['attributes', 'accepted'], null)
-      //     .setIn(['attributes', 'response'], null);
-      // }
-      // if (!currentActortype.get('id')) {
-      //   saveData = saveData.setIn(['attributes', 'actortype_id'], DEFAULT_ACTIONTYPE);
       // }
       dispatch(save(saveData.toJS(), actortype.get('id')));
     },

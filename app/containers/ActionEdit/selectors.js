@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { API } from 'themes/config';
+import { qe } from 'utils/quasi-equals';
 
 import {
   selectEntity,
@@ -19,7 +20,6 @@ import {
   prepareTaxonomiesAssociated,
   prepareTaxonomiesMultipleTags,
 } from 'utils/entities';
-import { qe } from 'utils/quasi-equals';
 export const selectDomain = createSelector(
   (state) => state.get('actionEdit'),
   (substate) => substate

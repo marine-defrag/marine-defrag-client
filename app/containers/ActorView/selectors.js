@@ -33,7 +33,7 @@ export const selectViewEntity = createSelector(
 export const selectTaxonomies = createSelector(
   (state, id) => id,
   (state) => selectTaxonomiesSorted(state),
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (state) => selectEntities(state, API.ACTOR_CATEGORIES),
   (id, taxonomies, categories, associations) => prepareTaxonomiesIsAssociated(
     taxonomies,

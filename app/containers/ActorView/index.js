@@ -19,8 +19,8 @@ import {
   getInfoField,
   getLinkField,
   getAmountField,
-  // getTaxonomyFields,
-  // hasTaxonomyCategories,
+  getTaxonomyFields,
+  hasTaxonomyCategories,
   // getActionConnectionField,
 } from 'utils/fields';
 // import { qe } from 'utils/quasi-equals';
@@ -49,7 +49,7 @@ import messages from './messages';
 
 import {
   selectViewEntity,
-  // selectTaxonomies,
+  selectTaxonomies,
   // selectActionsWithAssociations,
 } from './selectors';
 
@@ -102,15 +102,24 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
     ]);
   };
 
-  getHeaderAsideFields = (entity) => ([
-    {
-      fields: [
-        getStatusField(entity),
-        getMetaField(entity),
-      ],
-    },
-  ]);
-
+  getHeaderAsideFields = (entity, taxonomies) => {
+    const fields = ([
+      {
+        fields: [
+          getStatusField(entity),
+          getMetaField(entity),
+        ],
+      },
+    ]);
+    if (hasTaxonomyCategories(taxonomies)) {
+      fields.push({ // fieldGroup
+        label: appMessages.entities.taxonomies.plural,
+        icon: 'categories',
+        fields: getTaxonomyFields(taxonomies),
+      });
+    }
+    return fields;
+  };
 
   getBodyMainFields = (
     entity,
@@ -169,13 +178,6 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
         ],
       },
     );
-    // hasTaxonomyCategories(taxonomies)
-    //   ? { // fieldGroup
-    //     label: appMessages.entities.taxonomies.plural,
-    //     icon: 'categories',
-    //     fields: getTaxonomyFields(taxonomies),
-    //   }
-    //   : null,
     return fields;
   };
 
@@ -186,7 +188,7 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
       dataReady,
       isManager,
       // actions,
-      // taxonomies,
+      taxonomies,
       // actionTaxonomies,
       // actionConnections,
       // onEntityClick,
@@ -255,7 +257,7 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
                 fields={{
                   header: {
                     main: this.getHeaderMainFields(viewEntity),
-                    aside: this.getHeaderAsideFields(viewEntity),
+                    aside: this.getHeaderAsideFields(viewEntity, taxonomies),
                   },
                   body: {
                     main: this.getBodyMainFields(
@@ -285,7 +287,7 @@ ActorView.propTypes = {
   handleEdit: PropTypes.func,
   handleClose: PropTypes.func,
   onEntityClick: PropTypes.func,
-  // taxonomies: PropTypes.object,
+  taxonomies: PropTypes.object,
   // actionTaxonomies: PropTypes.object,
   // actionConnections: PropTypes.object,
   // actions: PropTypes.object,
@@ -302,7 +304,7 @@ const mapStateToProps = (state, props) => ({
   isManager: selectIsUserManager(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   viewEntity: selectViewEntity(state, props.params.id),
-  // taxonomies: selectTaxonomies(state, props.params.id),
+  taxonomies: selectTaxonomies(state, props.params.id),
   // actions: selectActionsWithAssociations(state, props.params.id),
   // actionTaxonomies: selectActionTaxonomies(state),
   // actionConnections: selectActionConnections(state),

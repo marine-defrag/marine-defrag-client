@@ -22,9 +22,8 @@ import {
   getLinkFormField,
   getAmountFormField,
   getNumberFormField,
+  getCategoryUpdatesFromFormData,
   // renderActionControl,
-  // renderTaxonomyControl,
-  // getCategoryUpdatesFromFormData,
   // getConnectionUpdatesFromFormData,
 } from 'utils/forms';
 import { getInfoField, getMetaField } from 'utils/fields';
@@ -66,7 +65,7 @@ import EntityForm from 'containers/EntityForm';
 import {
   selectDomain,
   selectViewEntity,
-  // selectTaxonomies,
+  selectTaxonomyOptions,
   // selectActions,
   // selectConnectedTaxonomies,
 } from './selectors';
@@ -153,7 +152,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
     );
   };
 
-  getHeaderAsideFields = (entity) => {
+  getHeaderAsideFields = (entity, taxonomies, onCreateOption) => {
     const { intl } = this.context;
     return ([
       {
@@ -161,6 +160,11 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
           getStatusField(intl.formatMessage),
           getMetaField(entity),
         ],
+      },
+      { // fieldGroup
+        label: intl.formatMessage(appMessages.entities.taxonomies.plural),
+        icon: 'categories',
+        fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
       },
     ]);
   };
@@ -202,7 +206,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
     return groups;
   }
 
-  getBodyAsideFields = (entity, taxonomies, onCreateOption) => {
+  getBodyAsideFields = (entity) => {
     const { intl } = this.context;
     const typeId = entity.getIn(['attributes', 'actortype_id']);
 
@@ -230,11 +234,6 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
           ),
         ],
       },
-      { // fieldGroup
-        label: intl.formatMessage(appMessages.entities.taxonomies.plural),
-        icon: 'categories',
-        fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
-      },
     ]);
   };
 
@@ -258,16 +257,6 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
     const type = intl.formatMessage(
       appMessages.entities[typeId ? `actors_${typeId}` : 'actors'].single
     );
-
-    // const currentActortype = dataReady && actortypes.find((actortype) => qe(actortype.get('id'), actortypeId));
-    // const hasActions = dataReady && currentActortype && currentActortype.getIn(['attributes', 'has_actions']);
-    // const actortypeTaxonomies = taxonomies && taxonomies.filter((tax) => tax.get('actortypeIds').find((id) => qe(id, actortypeId))
-    //   || qe(actortypeId, tax.getIn(['attributes', 'actortype_id'])));
-
-    // console.log('render', this.scrollContainer)
-    // console.log('render', this.scrollContainer.current)
-    // console.log('render', this.scrollContainer.current && this.scrollContainer.current.getBoundingClientRect)
-
 
     return (
       <div>
@@ -342,7 +331,11 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
                 fields={{
                   header: {
                     main: this.getHeaderMainFields(viewEntity),
-                    aside: this.getHeaderAsideFields(viewEntity),
+                    aside: this.getHeaderAsideFields(
+                      viewEntity,
+                      taxonomies,
+                      onCreateOption,
+                    ),
                   },
                   body: {
                     main: this.getBodyMainFields(
@@ -353,9 +346,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
                       // hasResponse,
                     ),
                     aside: this.getBodyAsideFields(
-                      viewEntity,
-                      taxonomies,
-                      onCreateOption,
+                      viewEntity
                     ),
                   },
                 }}
@@ -406,7 +397,7 @@ const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   authReady: selectReadyForAuthCheck(state),
   viewEntity: selectViewEntity(state, props.params.id),
-  // taxonomies: selectTaxonomies(state, props.params.id),
+  taxonomies: selectTaxonomyOptions(state, props.params.id),
   // actions: selectActions(state, props.params.id),
   // connectedTaxonomies: selectConnectedTaxonomies(state),
   // actortypes: selectActortypes(state),
@@ -436,39 +427,33 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData) => {
-      dispatch(save(formData.toJS()));
-    },
-    // handleSubmit: (formData, taxonomies, actions, currentActortype) => {
-    //   let saveData = formData
-    //     .set(
-    //       'actorCategories',
-    //       getCategoryUpdatesFromFormData({
-    //         formData,
-    //         taxonomies,
-    //         createKey: 'actor_id',
-    //       })
-    //     )
-    //     .set(
-    //       'actorActions',
-    //       getConnectionUpdatesFromFormData({
-    //         formData,
-    //         connections: actions,
-    //         connectionAttribute: 'associatedActions',
-    //         createConnectionKey: 'measure_id',
-    //         createKey: 'actor_id',
-    //       })
-    //     );
-    //   // cleanup attributes for actortype
-    //   if (!currentActortype || !currentActortype.getIn(['attributes', 'has_response'])) {
-    //     saveData = saveData
-    //       .setIn(['attributes', 'accepted'], '')
-    //       .setIn(['attributes', 'response'], '');
-    //   } else if (saveData.getIn(['attributes', 'accepted']) === '') {
-    //     saveData = saveData.setIn(['attributes', 'accepted'], 'true');
-    //   }
-    //   dispatch(save(saveData.toJS()));
+    // handleSubmit: (formData) => {
+    //   dispatch(save(formData.toJS()));
     // },
+    // handleSubmit: (formData, taxonomies, actions, currentActortype) => {
+    handleSubmit: (formData, taxonomies) => {
+      const saveData = formData
+        .set(
+          'actorCategories',
+          getCategoryUpdatesFromFormData({
+            formData,
+            taxonomies,
+            createKey: 'actor_id',
+          })
+        // )
+        // .set(
+        //   'actorActions',
+        //   getConnectionUpdatesFromFormData({
+        //     formData,
+        //     connections: actions,
+        //     connectionAttribute: 'associatedActions',
+        //     createConnectionKey: 'measure_id',
+        //     createKey: 'actor_id',
+        //   })
+        );
+
+      dispatch(save(saveData.toJS()));
+    },
     handleCancel: () => {
       dispatch(updatePath(`${ROUTES.ACTOR}/${props.params.id}`, { replace: true }));
     },

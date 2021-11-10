@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { API } from 'themes/config';
+import { qe } from 'utils/quasi-equals';
 
 import {
   selectEntity,
@@ -25,29 +26,52 @@ export const selectDomain = createSelector(
 
 export const selectViewEntity = createSelector(
   (state, id) => selectEntity(state, { path: API.ACTORS, id }),
-  (state, id) => selectEntity(state, { path: API.ACTORS, id }),
   (state) => selectEntities(state, API.USERS),
   (entity, users) => entitySetUser(entity, users)
 );
 
-export const selectTaxonomies = createSelector(
-  (state, id) => id,
+export const selectTaxonomyOptions = createSelector(
+  (state, id) => selectEntity(state, { path: API.ACTORS, id }),
   selectTaxonomiesSorted,
+  (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
   selectCategories,
   selectActorCategoriesGroupedByActor,
   (
-    id,
+    entity,
     taxonomies,
+    typeTaxonomies,
     categories,
     associations,
-  ) => prepareTaxonomiesAssociated(
-    taxonomies,
-    categories,
-    associations,
-    'tags_actors',
-    id,
-    false, //  do not include parent taxonomies
-  )
+  ) => {
+    if (
+      entity
+      && taxonomies
+      && typeTaxonomies
+      && categories
+      && associations
+    ) {
+      const id = entity.get('id');
+      const taxonomiesForType = taxonomies.filter((tax) => typeTaxonomies.some(
+        (type) => qe(
+          type.getIn(['attributes', 'taxonomy_id']),
+          tax.get('id'),
+        ) && qe(
+          type.getIn(['attributes', 'actortype_id']),
+          entity.getIn(['attributes', 'actortype_id']),
+        )
+      ));
+
+      return prepareTaxonomiesAssociated(
+        taxonomiesForType,
+        categories,
+        associations,
+        'tags_actors',
+        id,
+        false,
+      );
+    }
+    return null;
+  }
 );
 
 export const selectConnectedTaxonomies = createSelector(
