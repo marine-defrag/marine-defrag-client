@@ -6,8 +6,9 @@ import {
   selectReady,
   selectEntity,
   selectEntities,
+  selectCategories,
   selectActorConnections,
-  selectActortypeTaxonomies,
+  selectTaxonomiesSorted,
   selectActortypeActors,
   selectActortypes,
   selectActorActionsGroupedByAction,
@@ -33,8 +34,8 @@ export const selectViewEntity = createSelector(
 // TODO optimise use selectActionCategoriesGroupedByAction
 export const selectTaxonomies = createSelector(
   (state, id) => id,
-  (state) => selectActortypeTaxonomies(state),
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectTaxonomiesSorted,
+  selectCategories,
   (state) => selectEntities(state, API.ACTION_CATEGORIES),
   (id, taxonomies, categories, associations) => prepareTaxonomiesIsAssociated(
     taxonomies,
