@@ -144,13 +144,7 @@ ActorList.contextTypes = {
 
 const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  entities: selectActors(
-    state,
-    {
-      type: props.params.id, // type
-      locationQuery: fromJS(props.location.query),
-    },
-  ),
+  entities: selectActors(state, { type: props.params.id }),
   taxonomies: selectActortypeTaxonomiesWithCats(state, { type: props.params.id }),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),

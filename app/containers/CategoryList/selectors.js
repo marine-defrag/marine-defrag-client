@@ -1,9 +1,8 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { API } from 'themes/config';
 
 import {
-  selectEntities,
+  selectCategories,
   selectSortByQuery,
   selectSortOrderQuery,
   selectTaxonomies,
@@ -278,7 +277,7 @@ const selectCategoryCountGroups = createSelector(
   selectTaxonomy,
   selectActorsAssociated,
   selectActionsAssociated,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   selectActiveActortypes,
   (taxonomy, actors, actions, categories, actortypes) => {
     if (taxonomy && actors && actions && categories && actortypes) {
@@ -392,8 +391,8 @@ const mapCategoryGroups = (
 
 export const selectCategoryGroups = createSelector(
   selectCategoryCountGroups,
-  (state, { query }) => selectSortByQuery(state, query),
-  (state, { query }) => selectSortOrderQuery(state, query),
+  selectSortByQuery,
+  selectSortOrderQuery,
   (categoryGroups, sort, order) => categoryGroups
     ? mapCategoryGroups(
       categoryGroups,
@@ -405,8 +404,8 @@ export const selectCategoryGroups = createSelector(
 
 export const selectUserOnlyCategoryGroups = createSelector(
   selectCategoryCountGroups,
-  (state, { query }) => selectSortByQuery(state, query),
-  (state, { query }) => selectSortOrderQuery(state, query),
+  selectSortByQuery,
+  selectSortOrderQuery,
   (categoryGroups, sort, order) => categoryGroups
     ? mapCategoryGroups(
       categoryGroups,

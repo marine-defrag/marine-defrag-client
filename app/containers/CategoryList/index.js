@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
-import { fromJS } from 'immutable';
 
 // containers
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
@@ -243,15 +242,13 @@ const mapStateToProps = (state, props) => ({
   categoryGroups: selectCategoryGroups(
     state,
     {
-      id: typeof props.params.id !== 'undefined' ? props.params.id : 1,
-      query: fromJS(props.location.query),
+      id: typeof props.params.id !== 'undefined' ? props.params.id : DEFAULT_TAX,
     },
   ),
   userOnlyCategoryGroups: selectUserOnlyCategoryGroups(
     state,
     {
-      id: typeof props.params.id !== 'undefined' ? props.params.id : 1,
-      query: fromJS(props.location.query),
+      id: typeof props.params.id !== 'undefined' ? props.params.id : DEFAULT_TAX,
     },
   ),
 });

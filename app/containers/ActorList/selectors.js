@@ -57,7 +57,7 @@ export const selectConnectedTaxonomies = createSelector(
 );
 // export const selectConnectedTaxonomies = createSelector(
 //   (state) => selectActortypeTaxonomies(state),
-//   (state) => selectEntities(state, API.CATEGORIES),
+//   selectCategories,
 //   (taxonomies, categories) => prepareTaxonomiesMultipleTags(
 //     taxonomies,
 //     categories,
@@ -158,21 +158,21 @@ const selectActorsWithActions = createSelector(
 const selectActorsWithout = createSelector(
   selectActorsWithActions,
   selectCategories,
-  (state, { locationQuery }) => selectWithoutQuery(state, locationQuery),
+  selectWithoutQuery,
   (entities, categories, query) => query
     ? filterEntitiesWithoutAssociation(entities, categories, query)
     : entities
 );
 const selectActorsByConnections = createSelector(
   selectActorsWithout,
-  (state, { locationQuery }) => selectConnectionQuery(state, locationQuery),
+  selectConnectionQuery,
   (entities, query) => query
     ? filterEntitiesByConnection(entities, query)
     : entities
 );
 const selectActorsByCategories = createSelector(
   selectActorsByConnections,
-  (state, { locationQuery }) => selectCategoryQuery(state, locationQuery),
+  selectCategoryQuery,
   (entities, query) => query
     ? filterEntitiesByCategories(entities, query)
     : entities
@@ -197,8 +197,8 @@ const selectActorsByCategories = createSelector(
 // 6. selectActorsByCategories will filter by specific categories
 export const selectActors = createSelector(
   selectActorsByCategories,
-  (state, { locationQuery }) => selectSortByQuery(state, locationQuery),
-  (state, { locationQuery }) => selectSortOrderQuery(state, locationQuery),
+  selectSortByQuery,
+  selectSortOrderQuery,
   (entities, sort, order) => {
     const sortOption = getSortOption(CONFIG.sorting, sort);
     return sortEntities(

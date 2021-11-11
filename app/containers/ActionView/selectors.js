@@ -76,7 +76,7 @@ export const selectActors = createSelector(
   selectActorConnections,
   selectActorActionsGroupedByActor,
   selectActorCategoriesGroupedByActor,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (state) => selectActortypes(state),
   (
     ready,

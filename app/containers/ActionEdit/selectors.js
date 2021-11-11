@@ -75,7 +75,7 @@ export const selectTaxonomyOptions = createSelector(
 
 export const selectConnectedTaxonomies = createSelector(
   (state) => selectActortypeTaxonomies(state),
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (taxonomies, categories) => prepareTaxonomiesMultipleTags(
     taxonomies,
     categories,

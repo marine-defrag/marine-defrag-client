@@ -1,8 +1,7 @@
 import { createSelector } from 'reselect';
-import { API } from 'themes/config';
 
 import {
-  selectEntities,
+  selectCategories,
   selectActorTaxonomies,
   selectActorsCategorised,
 } from 'containers/App/selectors';
@@ -16,7 +15,7 @@ export const selectDomain = createSelector(
 
 export const selectConnectedTaxonomies = createSelector(
   selectActorTaxonomies,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (taxonomies, categories) => prepareTaxonomies(
     taxonomies,
     categories,

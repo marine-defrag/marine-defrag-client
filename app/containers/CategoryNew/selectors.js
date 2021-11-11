@@ -5,7 +5,9 @@ import {
   selectEntity,
   selectEntities,
   selectActortypeTaxonomies,
+  selectTaxonomy,
   selectTaxonomies,
+  selectCategories,
   selectActorsCategorised,
   selectActionsCategorised,
 } from 'containers/App/selectors';
@@ -25,8 +27,8 @@ export const selectDomain = createSelector(
 
 
 export const selectParentOptions = createSelector(
-  (state, id) => selectEntity(state, { path: API.TAXONOMIES, id }),
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectTaxonomy,
+  selectCategories,
   selectTaxonomies,
   (taxonomy, categories, taxonomies) => {
     if (taxonomy && taxonomies && categories) {
@@ -81,7 +83,7 @@ export const selectUsers = createSelector(
 
 export const selectConnectedTaxonomies = createSelector(
   (state) => selectActortypeTaxonomies(state),
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (taxonomies, categories) => prepareTaxonomiesMultipleTags(
     taxonomies,
     categories,

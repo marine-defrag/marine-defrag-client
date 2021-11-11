@@ -6,6 +6,7 @@ import {
   selectEntities,
   selectTaxonomiesSorted,
   selectUserCategoriesGroupedByUser,
+  selectCategories,
 } from 'containers/App/selectors';
 
 import {
@@ -45,7 +46,7 @@ export const selectViewEntity = createSelector(
 export const selectTaxonomies = createSelector(
   (state, id) => id,
   selectTaxonomiesSorted,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   selectUserCategoriesGroupedByUser,
   (id, taxonomies, categories, associations) => prepareTaxonomiesAssociated(
     taxonomies,

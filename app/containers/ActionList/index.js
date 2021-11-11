@@ -144,13 +144,7 @@ ActionList.contextTypes = {
 
 const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  entities: selectActions(
-    state,
-    {
-      type: props.params.id, // type
-      locationQuery: fromJS(props.location.query),
-    },
-  ),
+  entities: selectActions(state, { type: props.params.id }), // type
   taxonomies: selectActiontypeTaxonomiesWithCats(state, { type: props.params.id }),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),

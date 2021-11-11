@@ -452,9 +452,9 @@ Search.contextTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  entities: selectEntitiesByQuery(state, fromJS(props.location.query)),
+  entities: selectEntitiesByQuery(state),
 });
 function mapDispatchToProps(dispatch) {
   return {

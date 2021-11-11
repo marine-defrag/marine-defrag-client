@@ -9,6 +9,7 @@ import {
   selectCategoryQuery,
   selectSortByQuery,
   selectSortOrderQuery,
+  selectCategories,
 } from 'containers/App/selectors';
 import { USER_ROLES, API } from 'themes/config';
 
@@ -65,7 +66,7 @@ const selectUsersNested = createSelector(
 );
 const selectUsersWithout = createSelector(
   selectUsersNested,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   selectWithoutQuery,
   (entities, categories, query) => query
     ? filterEntitiesWithoutAssociation(entities, categories, query)

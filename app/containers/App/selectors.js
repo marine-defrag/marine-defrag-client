@@ -249,13 +249,12 @@ export const selectLocationQuery = createSelector(
 
 // filter queries //////////////////////////////////////////////////////////////
 
-// TODO consider replacing all "(state, locationQuery) => locationQuery" with selectLocationQuery
 const selectWhereQuery = createSelector(
-  (state, locationQuery) => locationQuery,
+  selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('where')
 );
 export const selectAttributeQuery = createSelector(
-  (state, { locationQuery }) => selectWhereQuery(state, locationQuery),
+  selectWhereQuery,
   (whereQuery) => whereQuery && asList(whereQuery).reduce(
     (memo, where) => {
       const attrValue = where.split(':');
@@ -266,39 +265,39 @@ export const selectAttributeQuery = createSelector(
 );
 
 export const selectWithoutQuery = createSelector(
-  (state, locationQuery) => locationQuery,
+  selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('without')
 );
 export const selectCategoryQuery = createSelector(
-  (state, locationQuery) => locationQuery,
+  selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('cat')
 );
 export const selectConnectionQuery = createSelector(
-  (state, locationQuery) => locationQuery,
+  selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('connected')
 );
 export const selectConnectedCategoryQuery = createSelector(
-  (state, locationQuery) => locationQuery,
+  selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('catx')
 );
 export const selectSearchQuery = createSelector(
-  (state, locationQuery) => locationQuery,
+  selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('search')
 );
 export const selectActortypeListQuery = createSelector(
-  (state, locationQuery) => locationQuery,
+  selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('actortypex')
 );
 export const selectActiontypeListQuery = createSelector(
-  (state, locationQuery) => locationQuery,
+  selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('actiontypex')
 );
 export const selectSortOrderQuery = createSelector(
-  (state, locationQuery) => locationQuery,
+  selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('order')
 );
 export const selectSortByQuery = createSelector(
-  (state, locationQuery) => locationQuery,
+  selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('sort')
 );
 
@@ -517,7 +516,7 @@ const selectEntitiesWhereQuery = createSelector(
 );
 export const selectEntitiesSearchQuery = createSelector(
   selectEntitiesWhereQuery,
-  (state, { locationQuery }) => selectSearchQuery(state, locationQuery),
+  selectSearchQuery,
   (state, { searchAttributes }) => searchAttributes,
   (entities, query, searchAttributes) => query
     ? filterEntitiesByKeywords(entities, query, searchAttributes)
@@ -545,7 +544,7 @@ const selectActorsWhereQuery = createSelector(
 // TODO: passing of location query likely not needed if selectSearchQuery changed
 export const selectActorsSearchQuery = createSelector(
   selectActorsWhereQuery,
-  (state, { locationQuery }) => selectSearchQuery(state, locationQuery),
+  selectSearchQuery,
   (state, { searchAttributes }) => searchAttributes,
   (entities, query, searchAttributes) => query
     ? filterEntitiesByKeywords(entities, query, searchAttributes)
@@ -571,7 +570,7 @@ const selectActionsWhereQuery = createSelector(
 );
 export const selectActionsSearchQuery = createSelector(
   selectActionsWhereQuery,
-  (state, { locationQuery }) => selectSearchQuery(state, locationQuery),
+  selectSearchQuery,
   (state, { searchAttributes }) => searchAttributes,
   (entities, query, searchAttributes) => query
     ? filterEntitiesByKeywords(entities, query, searchAttributes)
@@ -603,6 +602,12 @@ export const selectTaxonomiesSorted = createSelector(
 export const selectTaxonomy = createSelector(
   (state, id) => id,
   selectTaxonomies,
+  (id, entities) => id && entities.get(id.toString())
+);
+// select single taxonomy
+export const selectCategory = createSelector(
+  (state, id) => id,
+  selectCategories,
   (id, entities) => id && entities.get(id.toString())
 );
 
@@ -725,7 +730,7 @@ export const selectActortypeTaxonomies = createSelector(
 export const selectActortypeTaxonomiesWithCats = createSelector(
   (state, args) => args ? args.includeParents : true,
   selectActortypeTaxonomies,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (includeParents, taxonomies, categories) => prepareTaxonomies(
     taxonomies,
     categories,
@@ -778,7 +783,7 @@ export const selectActiontypeTaxonomies = createSelector(
 export const selectActiontypeTaxonomiesWithCats = createSelector(
   (state, args) => args ? args.includeParents : true,
   selectActiontypeTaxonomies,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (includeParents, taxonomies, categories) => prepareTaxonomies(
     taxonomies,
     categories,
@@ -805,7 +810,7 @@ export const selectAllTaxonomiesWithCategories = createSelector(
 
 export const selectUserTaxonomies = createSelector(
   selectTaxonomiesSorted,
-  (state) => selectEntities(state, API.CATEGORIES),
+  selectCategories,
   (taxonomies, categories) => prepareTaxonomiesTags(
     taxonomies,
     categories,

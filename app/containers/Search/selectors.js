@@ -26,7 +26,7 @@ const selectPathQuery = createSelector(
 
 // kicks off series of cascading selectors
 export const selectEntitiesByQuery = createSelector(
-  (state, locationQuery) => selectSearchQuery(state, locationQuery),
+  selectSearchQuery,
   selectActortypeEntitiesAll,
   selectActortypeTaxonomies,
   selectActiveActortypes,
