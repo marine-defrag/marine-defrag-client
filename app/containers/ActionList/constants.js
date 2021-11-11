@@ -22,7 +22,7 @@ export const DEPENDENCIES = [
 export const CONFIG = {
   serverPath: API.ACTIONS,
   clientPath: ROUTES.ACTION,
-  search: ['title'],
+  search: ['code', 'title', 'description'],
   sorting: [
     {
       attribute: 'id', // proxy for created at

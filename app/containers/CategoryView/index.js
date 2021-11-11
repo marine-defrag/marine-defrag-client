@@ -12,7 +12,7 @@ import { FormattedMessage } from 'react-intl';
 
 import {
   getTitleField,
-  // getCategoryShortTitleField,
+  getCategoryShortTitleField,
   getStatusField,
   getMetaField,
   getMarkdownField,
@@ -88,7 +88,7 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
         fields: [
           // getReferenceField(entity, isManager),
           getTitleField(entity, isManager),
-          // getCategoryShortTitleField(entity, isManager),
+          getCategoryShortTitleField(entity, isManager),
         ],
       },
     );

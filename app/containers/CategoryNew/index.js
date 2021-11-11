@@ -19,11 +19,11 @@ import {
   getFormField,
   getCheckboxField,
   getStatusField,
+  getShortTitleFormField,
   // renderUserControl,
   // renderActionControl,
   // renderActorsByActortypeControl,
   // getReferenceFormField,
-  // getShortTitleFormField,
   // getConnectionUpdatesFromFormData,
   // getDateField,
 } from 'utils/forms';
@@ -108,6 +108,7 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
     groups.push({ // fieldGroup
       fields: [
         getTitleFormField(intl.formatMessage),
+        getShortTitleFormField(intl.formatMessage),
       ],
     });
     if (parentOptions && parentTaxonomy) {

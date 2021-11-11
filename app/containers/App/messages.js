@@ -655,6 +655,10 @@ export default defineMessages({
       id: 'app.containers.App.attributes.menu_title',
       defaultMessage: 'Menu title',
     },
+    short_title: {
+      id: 'app.containers.App.attributes.short_title',
+      defaultMessage: 'Short title',
+    },
     order: {
       id: 'app.containers.App.attributes.order',
       defaultMessage: 'Menu order',

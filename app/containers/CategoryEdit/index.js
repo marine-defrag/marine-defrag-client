@@ -23,6 +23,7 @@ import {
   getCheckboxField,
   getStatusField,
   parentCategoryOptions,
+  getShortTitleFormField,
   // renderUserControl,
   // renderActionControl,
   // renderActorsByActortypeControl,
@@ -141,6 +142,7 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
     groups.push({ // fieldGroup
       fields: [
         getTitleFormField(intl.formatMessage),
+        getShortTitleFormField(intl.formatMessage),
       ],
     });
     if (parentOptions && parentTaxonomy) {
