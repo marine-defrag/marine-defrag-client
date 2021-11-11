@@ -81,7 +81,7 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
     }
   }
 
-  getHeaderMainFields = (entity, isManager, parentTaxonomy) => {
+  getHeaderMainFields = (entity, isManager) => {
     const groups = [];
     groups.push(
       { // fieldGroup
@@ -92,6 +92,33 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
         ],
       },
     );
+    return groups;
+  };
+
+  getHeaderAsideFields = (entity, isManager, parentTaxonomy) => {
+    const { intl } = this.context;
+    const groups = [
+      {
+        fields: [
+          isManager && getStatusField(entity),
+          getMetaField(entity),
+        ],
+      },
+    ]; // fieldGroups
+
+    if (
+      entity.getIn(['taxonomy', 'attributes', 'tags_users'])
+      && entity.getIn(['attributes', 'user_only'])
+    ) {
+      groups.push({
+        type: 'dark',
+        fields: [{
+          type: 'text',
+          value: intl.formatMessage(appMessages.textValues.user_only),
+          label: appMessages.attributes.user_only,
+        }],
+      });
+    }
     // include parent link
     if (entity.get('category') && parentTaxonomy) {
       groups.push({
@@ -107,34 +134,7 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
         ],
       });
     }
-    return groups;
-  };
-
-  getHeaderAsideFields = (entity, isManager) => {
-    const { intl } = this.context;
-    const fields = [
-      {
-        fields: [
-          isManager && getStatusField(entity),
-          getMetaField(entity),
-        ],
-      },
-    ]; // fieldGroups
-
-    if (
-      entity.getIn(['taxonomy', 'attributes', 'tags_users'])
-      && entity.getIn(['attributes', 'user_only'])
-    ) {
-      fields.push({
-        type: 'dark',
-        fields: [{
-          type: 'text',
-          value: intl.formatMessage(appMessages.textValues.user_only),
-          label: appMessages.attributes.user_only,
-        }],
-      });
-    }
-    return fields.length > 0 ? fields : null;
+    return groups.length > 0 ? groups : null;
   }
 
   getBodyMainFields = (
@@ -281,6 +281,7 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
       dataReady,
       isManager,
       parentTaxonomy,
+      childTaxonomies,
       // actorsByActortype,
       // childActorsByActortype,
       // actions,
@@ -289,7 +290,6 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
       // onEntityClick,
       // actionConnections,
       // actorConnections,
-      // childTaxonomies,
       // actortypes,
     } = this.props;
     let buttons = [];
@@ -364,8 +364,8 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
               <EntityView
                 fields={{
                   header: {
-                    main: this.getHeaderMainFields(viewEntity, isManager, parentTaxonomy),
-                    aside: this.getHeaderAsideFields(viewEntity, isManager),
+                    main: this.getHeaderMainFields(viewEntity, isManager),
+                    aside: this.getHeaderAsideFields(viewEntity, isManager, parentTaxonomy),
                   },
                   body: {
                     main: this.getBodyMainFields(
@@ -380,11 +380,11 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
                       // actorConnections,
                       // actortypes,
                     ),
-                    // aside: this.getBodyAsideFields(
-                    //   viewEntity,
-                    //   isManager,
-                    //   childTaxonomies,
-                    // ),
+                    aside: this.getBodyAsideFields(
+                      viewEntity,
+                      isManager,
+                      childTaxonomies,
+                    ),
                   },
                 }}
               />

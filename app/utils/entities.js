@@ -316,7 +316,7 @@ export const filterTaxonomies = (
   (tax, key, list) => includeParents
     // only non-parents
     || !list.some(
-      (other) => qe(tax.get('id'), other.getIn(['attributes', 'parent_id']))
+      (otherTax) => qe(tax.get('id'), otherTax.getIn(['attributes', 'parent_id']))
     )
 );
 
@@ -337,7 +337,6 @@ export const prepareTaxonomiesIsAssociated = (
   );
   const filteredTaxonomies = taxonomies && filterTaxonomies(
     taxonomies,
-    tagsKey,
     includeParents,
   ).map(
     (tax) => tax.set(
@@ -416,7 +415,7 @@ export const prepareTaxonomiesAssociated = (
   associationId,
   includeParents = true,
 ) => taxonomies
-  && filterTaxonomies(taxonomies, tagsKey, includeParents).map(
+  && filterTaxonomies(taxonomies, includeParents).map(
     (tax) => {
       const taxCategories = getTaxCategories(categories, tax, tagsKey);
       const catsAssociated = entitiesSetAssociated(

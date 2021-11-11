@@ -16,6 +16,7 @@ import {
 
 import { qe } from 'utils/quasi-equals';
 import { getSortOption, sortEntities } from 'utils/sort';
+import { NO_PARENT_KEY } from 'themes/config';
 
 import { TAXONOMY_DEFAULT, SORT_OPTIONS } from './constants';
 
@@ -311,7 +312,7 @@ const selectCategoryCountGroups = createSelector(
               taxonomy.get('parent').get('id')
             )
           );
-          return taxParentCategories.map(
+          const taxParentCats = taxParentCategories.map(
             (parentCat) => {
               const taxChildCategories = taxonomyCategories.filter(
                 (cat) => qe(
@@ -330,6 +331,36 @@ const selectCategoryCountGroups = createSelector(
               return parentCat.set('categories', catCounts);
             }
           );
+          const withoutParentCats = taxonomyCategories.filter(
+            (cat) => !cat.getIn(['attributes', 'parent_id'])
+          );
+          if (withoutParentCats && withoutParentCats.size > 0) {
+            const withoutParentCatCounts = getCategoryCounts(
+              withoutParentCats,
+              taxonomy,
+              actions,
+              actors,
+              categories,
+              actortypes,
+            );
+            return taxParentCats.set(
+              NO_PARENT_KEY,
+              Map()
+                .set(
+                  'id',
+                  NO_PARENT_KEY
+                )
+                .set(
+                  'type',
+                  'categories'
+                )
+                .set(
+                  'categories',
+                  withoutParentCatCounts
+                )
+            );
+          }
+          return taxParentCats;
         }
       }
       return Map();
@@ -345,6 +376,7 @@ const mapCategoryGroups = (
   userOnly = false,
 ) => {
   const sortOption = getSortOption(SORT_OPTIONS, sort, 'query');
+
   const groups = categoryGroups && categoryGroups.map(
     (group) => {
       const filtered = group.get('categories').filter(

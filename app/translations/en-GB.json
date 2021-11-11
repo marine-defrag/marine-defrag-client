@@ -466,6 +466,8 @@
   "app.containers.App.entities.taxonomies.11.description": "TODO: Commitment type description",
   "app.containers.App.entities.categories.single": "Category",
   "app.containers.App.entities.categories.plural": "Categories",
+  "app.containers.App.entities.categories.noParentsAssociated": "Without parent category",
+  "app.containers.App.entities.categories.noChildrenAssociated": "No child categories yet associated",
   "app.containers.App.entities.roles.single": "User role",
   "app.containers.App.entities.roles.plural": "User roles",
   "app.containers.App.messages.notSignedIn": "Please sign in or register first to access this page",

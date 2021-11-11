@@ -1502,6 +1502,14 @@ export default defineMessages({
         id: 'app.containers.App.entities.categories.plural',
         defaultMessage: 'Categories',
       },
+      noParentsAssociated: {
+        id: 'app.containers.App.entities.categories.noParentsAssociated',
+        defaultMessage: 'No parent categories yet associated',
+      },
+      noChildrenAssociated: {
+        id: 'app.containers.App.entities.categories.noChildrenAssociated',
+        defaultMessage: 'No child categories yet associated',
+      },
     },
     roles: {
       single: {

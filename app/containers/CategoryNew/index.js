@@ -102,7 +102,7 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
     }
   }
 
-  getHeaderMainFields = (parentOptions, parentTaxonomy) => {
+  getHeaderMainFields = () => {
     const { intl } = this.context;
     const groups = [];
     groups.push({ // fieldGroup
@@ -111,6 +111,27 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
         getShortTitleFormField(intl.formatMessage),
       ],
     });
+    return groups;
+  };
+
+  getHeaderAsideFields = (taxonomy, parentOptions, parentTaxonomy) => {
+    const { intl } = this.context;
+    const groups = []; // fieldGroups
+    groups.push({
+      fields: [
+        getStatusField(intl.formatMessage),
+      ],
+    });
+    if (taxonomy.getIn(['attributes', 'tags_users'])) {
+      groups.push({
+        fields: [
+          getCheckboxField(
+            intl.formatMessage,
+            'user_only',
+          ),
+        ],
+      });
+    }
     if (parentOptions && parentTaxonomy) {
       groups.push({
         label: intl.formatMessage(appMessages.entities.taxonomies.parent),
@@ -122,27 +143,6 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
       });
     }
     return groups;
-  };
-
-  getHeaderAsideFields = (taxonomy) => {
-    const { intl } = this.context;
-    const fields = []; // fieldGroups
-    fields.push({
-      fields: [
-        getStatusField(intl.formatMessage),
-      ],
-    });
-    if (taxonomy.getIn(['attributes', 'tags_users'])) {
-      fields.push({
-        fields: [
-          getCheckboxField(
-            intl.formatMessage,
-            'user_only',
-          ),
-        ],
-      });
-    }
-    return fields;
   }
 
   getBodyMainFields = (
@@ -312,8 +312,8 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
                 handleUpdate={this.props.handleUpdate}
                 fields={{ // isManager, taxonomies,
                   header: {
-                    main: this.getHeaderMainFields(parentOptions, parentTaxonomy),
-                    aside: this.getHeaderAsideFields(taxonomy),
+                    main: this.getHeaderMainFields(),
+                    aside: this.getHeaderAsideFields(taxonomy, parentOptions, parentTaxonomy),
                   },
                   body: {
                     main: this.getBodyMainFields(

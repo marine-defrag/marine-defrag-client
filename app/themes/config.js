@@ -152,6 +152,7 @@ export const PUBLISH_STATUSES = [
 
 export const DEFAULT_ACTIONTYPE = 1;
 export const DEFAULT_TAXONOMY = '1';
+export const NO_PARENT_KEY = 'parentUndefined';
 
 // client app routes **************************
 export const ROUTES = {

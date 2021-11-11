@@ -1,6 +1,6 @@
 import { reduce } from 'lodash/collection';
 // import { sortEntities } from 'utils/sort';
-// import { qe } from 'utils/quasi-equals';
+import { qe } from 'utils/quasi-equals';
 import { API } from 'themes/config';
 
 export const makeEditGroups = (
@@ -10,7 +10,6 @@ export const makeEditGroups = (
   hasUserRole,
   messages,
   actortypes,
-  // selectedActortypeIds,
 ) => {
   const editGroups = {};
   // const selectedActortypes = actortypes && actortypes.filter(
@@ -27,21 +26,15 @@ export const makeEditGroups = (
       options:
         // all selectedActortypeIds must be included in tax.actortypeIds
         taxonomies
-          // .filter(
-          //   // (tax) =>
-          //   // (
-          //   //   !config.taxonomies.editForActortypes
-          //   //   || selectedActortypeIds.isSubset(tax.get('actortypeIds'))
-          //   // )
-          //   // // not a parent
-          //   // &&
-          //   (tax) => !taxonomies.some(
-          //     (otherTax) => qe(
-          //       tax.get('id'),
-          //       otherTax.getIn(['attributes', 'parent_id']),
-          //     )
-          //   )
-          // )
+          .filter(
+            // exclude parent taxonomies
+            (tax) => !taxonomies.some(
+              (otherTax) => qe(
+                tax.get('id'),
+                otherTax.getIn(['attributes', 'parent_id']),
+              )
+            )
+          )
           .reduce(
             (memo, taxonomy) => memo.concat([
               {

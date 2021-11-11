@@ -136,7 +136,7 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
       : Map();
   }
 
-  getHeaderMainFields = (entity, parentOptions, parentTaxonomy) => {
+  getHeaderMainFields = () => {
     const { intl } = this.context;
     const groups = [];
     groups.push({ // fieldGroup
@@ -145,6 +145,29 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
         getShortTitleFormField(intl.formatMessage),
       ],
     });
+    return groups;
+  };
+
+
+  getHeaderAsideFields = (entity, parentOptions, parentTaxonomy) => {
+    const { intl } = this.context;
+    const groups = []; // fieldGroups
+    groups.push({
+      fields: [
+        getStatusField(intl.formatMessage),
+        getMetaField(entity),
+      ],
+    });
+    if (entity.getIn(['taxonomy', 'attributes', 'tags_users'])) {
+      groups.push({
+        fields: [
+          getCheckboxField(
+            intl.formatMessage,
+            'user_only',
+          ),
+        ],
+      });
+    }
     if (parentOptions && parentTaxonomy) {
       groups.push({
         label: intl.formatMessage(appMessages.entities.taxonomies.parent),
@@ -157,29 +180,6 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
       });
     }
     return groups;
-  };
-
-
-  getHeaderAsideFields = (entity) => {
-    const { intl } = this.context;
-    const fields = []; // fieldGroups
-    fields.push({
-      fields: [
-        getStatusField(intl.formatMessage),
-        getMetaField(entity),
-      ],
-    });
-    if (entity.getIn(['taxonomy', 'attributes', 'tags_users'])) {
-      fields.push({
-        fields: [
-          getCheckboxField(
-            intl.formatMessage,
-            'user_only',
-          ),
-        ],
-      });
-    }
-    return fields;
   }
 
   getBodyMainFields = (
@@ -373,12 +373,12 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
                 }
                 fields={{
                   header: {
-                    main: this.getHeaderMainFields(
+                    main: this.getHeaderMainFields(),
+                    aside: this.getHeaderAsideFields(
                       viewEntity,
                       parentOptions,
                       parentTaxonomy,
                     ),
-                    aside: this.getHeaderAsideFields(viewEntity),
                   },
                   body: {
                     main: this.getBodyMainFields(

@@ -4,14 +4,15 @@ import PropTypes from 'prop-types';
 import { List } from 'immutable';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
-
+import { FormattedMessage } from 'react-intl';
 import { getSortOption } from 'utils/sort';
 import { getCategoryTitle } from 'utils/entities';
-// import { qe } from 'utils/quasi-equals';
+import { qe } from 'utils/quasi-equals';
 
+// import EmptyHint from 'components/fields/EmptyHint';
 import CategoryListHeader from 'components/categoryList/CategoryListHeader';
 import CategoryListItem from 'components/categoryList/CategoryListItem';
-
+import { ROUTES, NO_PARENT_KEY } from 'themes/config';
 import { SORT_ORDER_OPTIONS } from 'containers/App/constants';
 import appMessages from 'containers/App/messages';
 
@@ -30,6 +31,7 @@ const GroupHeaderLink = styled(Link)`
 
 const GroupHeader = styled.h6`
   font-weight: normal;
+  font-style: ${({ empty }) => (empty ? 'italic' : 'normal')};
   margin-top: 6px;
   margin-bottom: 3px;
   @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
@@ -327,18 +329,21 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
         <CategoryListHeader columns={headerColumns} />
         <CategoryListBody>
           {categoryGroups.valueSeq().toArray().map((group) => {
-            if (group.get('categories')) {
+            if (group.get('categories') && group.get('categories').size > 0) {
               return (
                 <span key={group.get('id')}>
-                  {group.get('type') === 'categories' && group.get('categories').size > 0
-                    && (
-                      <GroupHeaderLink to={`/category/${group.get('id')}`}>
-                        <GroupHeader>
-                          {getCategoryTitle(group)}
-                        </GroupHeader>
-                      </GroupHeaderLink>
-                    )
-                  }
+                  {group.get('type') === 'categories' && !qe(group.get('id'), NO_PARENT_KEY) && (
+                    <GroupHeaderLink to={`${ROUTES.CATEGORY}/${group.get('id')}`}>
+                      <GroupHeader>
+                        {getCategoryTitle(group)}
+                      </GroupHeader>
+                    </GroupHeaderLink>
+                  )}
+                  {group.get('type') === 'categories' && qe(group.get('id'), NO_PARENT_KEY) && (
+                    <GroupHeader empty>
+                      <FormattedMessage {...appMessages.entities.categories.noParentsAssociated} />
+                    </GroupHeader>
+                  )}
                   {group.get('categories').map((cat) => (
                     <CategoryListItem
                       key={cat.get('id')}
@@ -359,6 +364,11 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
     );
   }
 }
+// {group.get('categories').size === 0 && (
+//   <EmptyHint>
+//   <FormattedMessage {...appMessages.entities.categories.noChildrenAssociated} />
+//   </EmptyHint>
+// )}
 
 CategoryListItems.propTypes = {
   categoryGroups: PropTypes.object,
