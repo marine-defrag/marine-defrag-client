@@ -117,31 +117,29 @@ class ColumnSelect extends React.PureComponent { // eslint-disable-line react/pr
               </LabelWrap>
             )
           }
-          { sortOptions
-            && (
-              <SelectWrapper>
-                <SelectReset
-                  value={this.props.sortBy}
-                  index="sortby"
-                  options={sortOptions}
-                  isReset={false}
-                  onChange={this.props.onSortBy}
-                />
-                {nextSortOrderOption
-                && (
-                  <SortButton
-                    onClick={(e) => {
-                      e.preventDefault();
-                      this.props.onSortOrder(nextSortOrderOption.value);
-                    }}
-                  >
-                    <Icon name={sortOrderOption.icon} />
-                  </SortButton>
-                )
-                }
-              </SelectWrapper>
-            )
-          }
+          { sortOptions && this.props.sortBy && (
+            <SelectWrapper>
+              <SelectReset
+                value={this.props.sortBy}
+                index="sortby"
+                options={sortOptions}
+                isReset={false}
+                onChange={this.props.onSortBy}
+              />
+              {nextSortOrderOption
+              && (
+                <SortButton
+                  onClick={(e) => {
+                    e.preventDefault();
+                    this.props.onSortOrder(nextSortOrderOption.value);
+                  }}
+                >
+                  <Icon name={sortOrderOption.icon} />
+                </SortButton>
+              )
+              }
+            </SelectWrapper>
+          )}
         </Wrapper>
       </Styled>
     );

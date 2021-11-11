@@ -5,7 +5,7 @@
 import { getAsyncInjectors } from 'utils/asyncInjectors';
 import { getRedirects } from 'utils/redirects';
 
-import { ROUTES, USER_ROLES } from 'themes/config';
+import { ROUTES, USER_ROLES, DEFAULT_TAXONOMY } from 'themes/config';
 
 const errorLoading = (err) => {
   console.error('Dynamic page loading failed', err); // eslint-disable-line no-console
@@ -22,6 +22,7 @@ export default function createRoutes(store) {
     redirectIfSignedIn,
     redirectIfNotSignedIn,
     redirectIfNotPermitted,
+    redirect,
   } = getRedirects(store);
 
   return [
@@ -426,22 +427,7 @@ export default function createRoutes(store) {
     }, {
       path: `${ROUTES.TAXONOMIES}`, // the taxonomy id
       name: 'categoryList',
-      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
-      getComponent(nextState, cb) {
-        const importModules = Promise.all([
-          import('containers/CategoryList/sagas'),
-          import('containers/CategoryList'),
-        ]);
-
-        const renderRoute = loadModule(cb);
-
-        importModules.then(([sagas, component]) => {
-          injectSagas(sagas.default);
-          renderRoute(component);
-        });
-
-        importModules.catch(errorLoading);
-      },
+      onEnter: redirect(`${ROUTES.TAXONOMIES}/${DEFAULT_TAXONOMY}`),
     }, {
       path: `${ROUTES.TAXONOMIES}${ROUTES.ID}`, // the taxonomy id
       name: 'categoryList',

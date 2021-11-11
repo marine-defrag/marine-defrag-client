@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { FormattedMessage } from 'react-intl';
 
-import Icon from 'components/Icon';
 import Button from 'components/buttons/Button';
 
 import appMessages from 'containers/App/messages';
@@ -38,15 +37,6 @@ const TaxTitle = styled.div`
   display: table-cell;
 `;
 
-const TaxIcon = styled.div`
-  padding-right: 8px;
-  vertical-align: middle;
-  display: table-cell;
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    padding-right: 12px;
-  }
-`;
-
 class TaxonomySidebarItem extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
     const { taxonomy, nested, onTaxonomyClick } = this.props;
@@ -64,12 +54,6 @@ class TaxonomySidebarItem extends React.PureComponent { // eslint-disable-line r
         onMouseOut={() => taxonomy.onMouseOver && taxonomy.onMouseOver(false)}
         onBlur={() => taxonomy.onMouseOver && taxonomy.onMouseOver(false)}
       >
-        <TaxIcon>
-          <Icon
-            name={`taxonomy_${taxonomy.id}`}
-            size={nested ? '28px' : '40px'}
-          />
-        </TaxIcon>
         <TaxTitle>
           <FormattedMessage {...appMessages.entities.taxonomies[taxonomy.id].plural} />
         </TaxTitle>

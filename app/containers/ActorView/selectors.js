@@ -32,7 +32,7 @@ export const selectViewEntity = createSelector(
 // TODO optimise use selectActorCategoriesGroupedByActor
 export const selectTaxonomies = createSelector(
   (state, id) => id,
-  (state) => selectTaxonomiesSorted(state),
+  selectTaxonomiesSorted,
   selectCategories,
   (state) => selectEntities(state, API.ACTOR_CATEGORIES),
   (id, taxonomies, categories, associations) => prepareTaxonomiesIsAssociated(

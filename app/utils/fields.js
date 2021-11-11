@@ -113,23 +113,23 @@ export const getRoleField = (entity) => ({
 
 export const getMetaField = (entity) => {
   const fields = [];
-  if (entity.get('user') && entity.getIn(['user', 'attributes', 'name'])) {
-    fields.push({
-      label: appMessages.attributes.meta.updated_by_id,
-      value: entity.get('user') && entity.getIn(['user', 'attributes', 'name']),
-    });
-  }
+  fields.push({
+    label: appMessages.attributes.meta.created_at,
+    value: entity.getIn(['attributes', 'created_at']),
+    date: true,
+  });
   fields.push({
     label: appMessages.attributes.meta.updated_at,
     value: entity.getIn(['attributes', 'updated_at']),
     date: true,
     time: true,
   });
-  fields.push({
-    label: appMessages.attributes.meta.created_at,
-    value: entity.getIn(['attributes', 'created_at']),
-    date: true,
-  });
+  if (entity.get('user') && entity.getIn(['user', 'attributes', 'name'])) {
+    fields.push({
+      label: appMessages.attributes.meta.updated_by_id,
+      value: entity.get('user') && entity.getIn(['user', 'attributes', 'name']),
+    });
+  }
   return {
     controlType: 'info',
     type: 'meta',

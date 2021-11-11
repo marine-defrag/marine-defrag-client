@@ -16,14 +16,11 @@ import ButtonDefault from 'components/buttons/ButtonDefault';
 
 import Component from 'components/styled/Component';
 import SidebarHeader from 'components/styled/SidebarHeader';
-import SidebarGroupLabel from 'components/styled/SidebarGroupLabel';
 import Sidebar from 'components/styled/Sidebar';
 import Scrollable from 'components/styled/Scrollable';
 import PrintHide from 'components/styled/PrintHide';
 
 import { prepareTaxonomyGroups } from 'utils/taxonomies';
-
-import appMessages from 'containers/App/messages';
 
 import messages from './messages';
 
@@ -146,21 +143,6 @@ class TaxonomySidebar extends React.PureComponent { // eslint-disable-line react
                   </SidebarHeader>
                   {taxonomyGroups && map(taxonomyGroups, (group) => (
                     <div key={group.id}>
-                      <SidebarGroupLabel>
-                        {group.actortypeId && (
-                          <FormattedMessage
-                            {... appMessages.taxonomyGroups.objectives}
-                            values={{
-                              type: intl.formatMessage(
-                                appMessages.entities[`actors_${group.actortypeId}`].pluralLong
-                              ),
-                            }}
-                          />
-                        )}
-                        {!group.actortypeId && (
-                          <FormattedMessage {... appMessages.taxonomyGroups[group.id]} />
-                        )}
-                      </SidebarGroupLabel>
                       <div>
                         {map(group.taxonomies, (taxonomy) => (
                           <div key={taxonomy.id}>
@@ -182,6 +164,21 @@ class TaxonomySidebar extends React.PureComponent { // eslint-disable-line react
     );
   }
 }
+// <SidebarGroupLabel>
+//   {group.actortypeId && (
+//     <FormattedMessage
+//       {... appMessages.taxonomyGroups.objectives}
+//       values={{
+//         type: intl.formatMessage(
+//           appMessages.entities[`actors_${group.actortypeId}`].pluralLong
+//         ),
+//       }}
+//     />
+//   )}
+//   {!group.actortypeId && (
+//     <FormattedMessage {... appMessages.taxonomyGroups[group.id]} />
+//   )}
+// </SidebarGroupLabel>
 
 TaxonomySidebar.propTypes = {
   taxonomies: PropTypes.object,

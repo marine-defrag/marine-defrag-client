@@ -75,6 +75,7 @@ export class SelectReset extends React.PureComponent { // eslint-disable-line re
       hidePrint,
     } = this.props;
     const optionActive = find(options, (option) => option.value === value);
+
     return (
       <Styled hidePrint={hidePrint}>
         {label

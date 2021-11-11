@@ -50,6 +50,11 @@ function redirectIfNotPermitted(store, roleRequired, replacePath) {
     }
   };
 }
+function redirect(store, replacePath) {
+  return (nextState, replace) => {
+    replace(replacePath);
+  };
+}
 
 /**
  * Helper for creating redirects
@@ -61,5 +66,6 @@ export function getRedirects(store) {
     redirectIfSignedIn: (info) => redirectIfSignedIn(store, info),
     redirectIfNotSignedIn: (info) => redirectIfNotSignedIn(store, info),
     redirectIfNotPermitted: (roleRequired, replacePath) => redirectIfNotPermitted(store, roleRequired, replacePath),
+    redirect: (replacePath) => redirect(store, replacePath),
   };
 }
