@@ -16,7 +16,7 @@ import {
   selectTaxonomiesSorted,
   selectReady,
   selectIsUserManager,
-  selectActiveActortypes,
+  selectActortypes,
 } from 'containers/App/selectors';
 import { CONTENT_LIST } from 'containers/App/constants';
 import { ROUTES } from 'themes/config';
@@ -234,7 +234,7 @@ CategoryList.contextTypes = {
 };
 
 const mapStateToProps = (state, props) => ({
-  actortypes: selectActiveActortypes(state),
+  actortypes: selectActortypes(state),
   isManager: selectIsUserManager(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   taxonomies: selectTaxonomiesSorted(state),

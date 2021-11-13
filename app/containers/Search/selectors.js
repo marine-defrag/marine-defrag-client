@@ -8,7 +8,7 @@ import {
   selectSortByQuery,
   selectSortOrderQuery,
   selectActortypeTaxonomies,
-  selectActiveActortypes,
+  selectActortypes,
 } from 'containers/App/selectors';
 
 import { filterEntitiesByKeywords } from 'utils/entities';
@@ -29,7 +29,7 @@ export const selectEntitiesByQuery = createSelector(
   selectSearchQuery,
   selectActortypeEntitiesAll,
   selectActortypeTaxonomies,
-  selectActiveActortypes,
+  selectActortypes,
   selectPathQuery,
   selectSortByQuery,
   selectSortOrderQuery,

@@ -373,37 +373,37 @@ export const selectActortype = createSelector(
 );
 
 // TODO check: likely not needed
-export const selectActiveActortypes = createSelector(
-  selectActortypes,
-  selectActortypeQuery,
-  (entities, typeQuery) => {
-    if (
-      entities
-      && entities.size > 1
-      && typeQuery
-      && typeQuery !== 'all'
-    ) {
-      return entities.filter((type) => qe(typeQuery, type.get('id')));
-    }
-    return entities;
-  }
-);
-// TODO check: likely not needed
-export const selectActiveActiontypes = createSelector(
-  selectActiontypes,
-  selectActiontypeQuery,
-  (entities, typeQuery) => {
-    if (
-      entities
-      && entities.size > 1
-      && typeQuery
-      && typeQuery !== 'all'
-    ) {
-      return entities.filter((type) => qe(typeQuery, type.get('id')));
-    }
-    return entities;
-  }
-);
+// export const selectActiveActortypes = createSelector(
+//   selectActortypes,
+//   selectActortypeQuery,
+//   (entities, typeQuery) => {
+//     if (
+//       entities
+//       && entities.size > 1
+//       && typeQuery
+//       && typeQuery !== 'all'
+//     ) {
+//       return entities.filter((type) => qe(typeQuery, type.get('id')));
+//     }
+//     return entities;
+//   }
+// );
+// // TODO check: likely not needed
+// export const selectActiveActiontypes = createSelector(
+//   selectActiontypes,
+//   selectActiontypeQuery,
+//   (entities, typeQuery) => {
+//     if (
+//       entities
+//       && entities.size > 1
+//       && typeQuery
+//       && typeQuery !== 'all'
+//     ) {
+//       return entities.filter((type) => qe(typeQuery, type.get('id')));
+//     }
+//     return entities;
+//   }
+// );
 // all actors for a given type id
 export const selectActortypeActors = createSelector(
   selectActors,
@@ -439,10 +439,10 @@ export const selectActiontypeActions = createSelector(
 
 // TODO check: likely not needed
 // returns actions not associated or associated with current actortype
-export const selectActortypeActions = createSelector(
-  (state) => selectEntities(state, API.ACTIONS),
-  (entities) => entities
-);
+// export const selectActortypeActions = createSelector(
+//   (state) => selectEntities(state, API.ACTIONS),
+//   (entities) => entities
+// );
 // export const selectActortypeActions = createSelector(
 //   (state) => selectEntities(state, API.ACTIONS),
 //   selectActortypeQuery,
@@ -479,8 +479,8 @@ export const selectActortypeActions = createSelector(
 // TODO check: likely not needed
 export const selectActortypeEntitiesAll = createSelector(
   selectEntitiesAll,
-  selectActortypeActors,
-  selectActortypeActions,
+  selectActors,
+  selectActions,
   (entities, actors, actions) => entities
     .set('actors', actors)
     .set('actions', actions)
@@ -488,8 +488,8 @@ export const selectActortypeEntitiesAll = createSelector(
 // TODO check: likely not needed
 export const selectActiontypeEntitiesAll = createSelector(
   selectEntitiesAll,
-  selectActortypeActors,
-  selectActiontypeActions,
+  selectActors,
+  selectActions,
   (entities, actors, actions) => entities
     .set('actors', actors)
     .set('actions', actions)
@@ -587,7 +587,36 @@ export const selectCategories = createSelector(
 // select all taxonomies
 export const selectTaxonomies = createSelector(
   (state) => selectEntities(state, API.TAXONOMIES),
-  (entities) => entities
+  (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
+  (state) => selectEntities(state, API.ACTIONTYPE_TAXONOMIES),
+  (entities, actortypeTaxonomies, actiontypeTaxonomies) => {
+    if (entities) {
+      // set and check for applicable types
+      return (!actortypeTaxonomies && !actiontypeTaxonomies)
+        ? entities
+        : entities.map((tax) => {
+          const actortypeIds = actortypeTaxonomies && actortypeTaxonomies
+            .filter((type) => qe(
+              type.getIn(['attributes', 'taxonomy_id']),
+              tax.get('id'),
+            ))
+            .map((type) => type.getIn(['attributes', 'actortype_id']));
+          const actiontypeIds = actiontypeTaxonomies && actiontypeTaxonomies
+            .filter((type) => qe(
+              type.getIn(['attributes', 'taxonomy_id']),
+              tax.get('id'),
+            ))
+            .map((type) => type.getIn(['attributes', 'measuretype_id']));
+
+          return tax
+            .setIn(['attributes', 'tags_actors'], actortypeIds && actortypeIds.size > 0)
+            .setIn(['attributes', 'tags_actions'], actiontypeIds && actiontypeIds.size > 0)
+            .set('actortypeIds', actortypeIds.toList())
+            .set('actiontypeIds', actiontypeIds.toList());
+        });
+    }
+    return null;
+  }
 );
 
 // select all taxonomies sorted by priority
@@ -859,7 +888,7 @@ export const selectActorCategoriesGroupedByCategory = createSelector(
       (group) => group.map(
         (entity) => entity.getIn(['attributes', 'actor_id'])
       )
-    ),
+    )
 );
 
 export const selectActorActionsGroupedByActor = createSelector(

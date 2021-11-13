@@ -8,7 +8,7 @@ import {
   selectTaxonomies,
   selectActortypeActors,
   selectActions,
-  selectActiveActortypes,
+  selectActortypes,
   selectActorActionsGroupedByAction,
   selectActionCategoriesGroupedByAction,
   selectActorCategoriesGroupedByActor,
@@ -279,7 +279,7 @@ const selectCategoryCountGroups = createSelector(
   selectActorsAssociated,
   selectActionsAssociated,
   selectCategories,
-  selectActiveActortypes,
+  selectActortypes,
   (taxonomy, actors, actions, categories, actortypes) => {
     if (taxonomy && actors && actions && categories && actortypes) {
       const taxonomyCategories = taxonomy && categories && categories.filter(

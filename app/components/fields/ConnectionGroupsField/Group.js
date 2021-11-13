@@ -5,6 +5,8 @@ import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 
+import { ROUTES } from 'themes/config';
+
 import appMessages from 'containers/App/messages';
 import EntityListItems from 'components/EntityListMain/EntityListGroups/EntityListItems';
 
@@ -45,7 +47,7 @@ class Group extends React.PureComponent { // eslint-disable-line react/prefer-st
 
     return (
       <div>
-        <GroupHeaderLink to={`/category/${group.get('id')}`}>
+        <GroupHeaderLink to={`${ROUTES.CATEGORY}/${group.get('id')}`}>
           <GroupHeader>
             {getCategoryTitle(group)}
           </GroupHeader>

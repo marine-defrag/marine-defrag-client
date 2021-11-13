@@ -24,7 +24,7 @@ import {
 import {
   selectEntity,
   selectActortypeQuery,
-  selectActiveActortypes,
+  selectActortypes,
 } from 'containers/App/selectors';
 import { selectParentOptions, selectParentTaxonomy } from 'containers/CategoryNew/selectors';
 
@@ -254,7 +254,7 @@ const mapStateToProps = (state, { path, attributes }) => ({
     ? selectActortypeQuery(state)
     : null,
   actortypes: path === API.ACTORS
-    ? selectActiveActortypes(state)
+    ? selectActortypes(state)
     : null,
   actortype: path === API.ACTORS && attributes && attributes.get('actortype_id')
     ? selectEntity(state, { path: API.ACTORTYPES, id: attributes.get('actortype_id') })

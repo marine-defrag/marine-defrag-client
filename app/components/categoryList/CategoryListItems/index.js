@@ -89,57 +89,58 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
   //   );
   // };
 
-  getHeaderAttributes = (taxonomy, actortypeId) => {
-    const { intl } = this.context;
-    // figure out if tagged directly or via child category
-    const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
-    const tagsActions = this.getTagsTax(taxonomy, 'tags_actions');
-    const isList = taxonomy.get('actortypeIds')
-      && taxonomy.get('actortypeIds').size > 1;
-    const actortypeSet = actortypeId && actortypeId !== 'all';
+  getHeaderAttributes = () => {
+  // getHeaderAttributes = (taxonomy, actortypeId) => {
+    // const { intl } = this.context;
+    // // figure out if tagged directly or via child category
+    // const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
+    // const tagsActions = this.getTagsTax(taxonomy, 'tags_actions');
+    // const isList = taxonomy.get('actortypeIds')
+    //   && taxonomy.get('actortypeIds').size > 1;
+    // const actortypeSet = actortypeId && actortypeId !== 'all';
     const attributes = [];
     // directly associated objectives/actors
-    if (tagsActors) {
-      let actorLabel;
-      if (isList && !actortypeSet) {
-        actorLabel = `${intl.formatMessage(
-          appMessages.entities.actors.plural
-        )} (${intl.formatMessage(
-          appMessages.actortypes.all
-        )})`;
-      } else if (actortypeSet) {
-        actorLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeId}`].plural);
-      } else {
-        const actortypeIdLocal = taxonomy.get('actortypeIds').first();
-        actorLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeIdLocal}`].plural);
-      }
-      attributes.push({
-        query: 'actors',
-        label: actorLabel,
-        // keys: this.getColumnKeys(taxonomy, actortypes),
-      });
-      // indirectly associated/inferred actions
-      if (!tagsActions) {
-        attributes.push({
-          via: intl.formatMessage(appMessages.entities.connected),
-          query: 'actions',
-          label: intl.formatMessage(appMessages.entities.actions.plural),
-        });
-      }
-    }
-    // directly associated actions
-    if (tagsActions) {
-      attributes.push({
-        query: 'actions',
-        label: intl.formatMessage(appMessages.entities.actions.plural),
-      });
-    }
+    // if (tagsActors) {
+    //   let actorLabel;
+    //   if (isList && !actortypeSet) {
+    //     actorLabel = `${intl.formatMessage(
+    //       appMessages.entities.actors.plural
+    //     )} (${intl.formatMessage(
+    //       appMessages.actortypes.all
+    //     )})`;
+    //   } else if (actortypeSet) {
+    //     actorLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeId}`].plural);
+    //   } else {
+    //     const actortypeIdLocal = taxonomy.get('actortypeIds').first();
+    //     actorLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeIdLocal}`].plural);
+    //   }
+    //   attributes.push({
+    //     query: 'actors',
+    //     label: actorLabel,
+    //     // keys: this.getColumnKeys(taxonomy, actortypes),
+    //   });
+    //   // indirectly associated/inferred actions
+    //   if (!tagsActions) {
+    //     attributes.push({
+    //       via: intl.formatMessage(appMessages.entities.connected),
+    //       query: 'actions',
+    //       label: intl.formatMessage(appMessages.entities.actions.plural),
+    //     });
+    //   }
+    // }
+    // // directly associated actions
+    // if (tagsActions) {
+    //   attributes.push({
+    //     query: 'actions',
+    //     label: intl.formatMessage(appMessages.entities.actions.plural),
+    //   });
+    // }
     return attributes;
   }
 
   getListHeaderColumns = ({
     taxonomy,
-    actortypeId,
+    // actortypeId,
     sortOptions,
     sortBy,
     sortOrder,
@@ -152,7 +153,8 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
     const titleColumnSortOption = sortOptions.find((option) => option.query === 'title');
     const titleColumnActive = titleColumnSortOption.query === sortOptionActive.query;
     const titleColumnSortOrderOption = SORT_ORDER_OPTIONS.find((option) => (sortOrder || titleColumnSortOption.order) === option.value);
-    const headerAttributes = this.getHeaderAttributes(taxonomy, actortypeId);
+    // const headerAttributes = this.getHeaderAttributes(taxonomy, actortypeId);
+    const headerAttributes = [];
     // category title column
     const columns = [
       {

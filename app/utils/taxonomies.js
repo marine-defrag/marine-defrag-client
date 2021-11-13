@@ -81,18 +81,18 @@ export const prepareTaxonomyGroups = (
       .toJS(),
   });
 
-  const actionOnlyTaxonomies = parentTaxonomies
-    .filter((tax) => tax.getIn(['attributes', 'tags_actions'])
-      && !tax.getIn(['attributes', 'tags_actors']));
-  if (actionOnlyTaxonomies && actionOnlyTaxonomies.size > 0) {
-    groups.push({
-      id: 'actions',
-      taxonomies: actionOnlyTaxonomies
-        .map((tax) => mapTaxonomy(tax, taxonomies, activeId, onLink))
-        .toList()
-        .toJS(),
-    });
-  }
+  // const actionOnlyTaxonomies = parentTaxonomies
+  //   .filter((tax) => tax.getIn(['attributes', 'tags_actions'])
+  //     && !tax.getIn(['attributes', 'tags_actors']));
+  // if (actionOnlyTaxonomies && actionOnlyTaxonomies.size > 0) {
+  //   groups.push({
+  //     id: 'actions',
+  //     taxonomies: actionOnlyTaxonomies
+  //       .map((tax) => mapTaxonomy(tax, taxonomies, activeId, onLink))
+  //       .toList()
+  //       .toJS(),
+  //   });
+  // }
   return groups;
 };
 

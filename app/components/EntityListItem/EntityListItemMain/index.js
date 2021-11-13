@@ -178,7 +178,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
             evt.preventDefault();
             onEntityClick(entity.id, entity.path);
           }}
-          href={`/${entity.path}/${entity.id}`}
+          href={`${entity.path}/${entity.id}`}
         >
           <EntityListItemMainTitle>
             {entity.title}

@@ -17,9 +17,9 @@ import {
   getMetaField,
   getMarkdownField,
   getLinkField,
-  // getActionConnectionField,
+  getActionConnectionField,
   // getActionConnectionGroupsField,
-  // getActorConnectionField,
+  getActorConnectionField,
   // getActorConnectionGroupsField,
   getManagerField,
   getEntityLinkField,
@@ -34,6 +34,8 @@ import {
   getEntityReference,
 } from 'utils/entities';
 
+// import qe from 'utils/quasi-equals';
+
 import { loadEntitiesIfNeeded, updatePath, closeEntity } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
@@ -47,9 +49,8 @@ import EntityView from 'components/EntityView';
 import {
   selectReady,
   selectIsUserManager,
-  selectActionConnections,
   selectActorConnections,
-  selectActiveActortypes,
+  selectActionConnections,
 } from 'containers/App/selectors';
 
 
@@ -58,13 +59,13 @@ import messages from './messages';
 
 import {
   selectViewEntity,
-  selectActors,
-  selectActions,
+  selectActorsByType,
+  selectActionsByType,
   selectTaxonomiesWithCategories,
   selectParentTaxonomy,
   selectChildTaxonomies,
-  selectChildActors,
-  selectChildActions,
+  selectChildActorsByType,
+  selectChildActionsByType,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
@@ -139,97 +140,93 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
 
   getBodyMainFields = (
     entity,
-    // actorsByActortype,
-    // childActorsByActortype,
-    // actions,
-    // childActions,
-    // taxonomies,
-    // onEntityClick,
-    // actionConnections,
-    // actorConnections,
-    // actortypes,
+    taxonomies,
+    actorsByActortype,
+    actionsByActiontype,
+    childActorsByActortype,
+    childActionsByActiontype,
+    actorConnections,
+    actionConnections,
+    onEntityClick,
   ) => {
+    // console.log(entity && entity.toJS())
+    // console.log(childActorsByActortype && childActorsByActortype.toJS())
     const fields = [];
     // own attributes
     fields.push({
       fields: [getMarkdownField(entity, 'description', true)],
     });
     // connections
-    // if (!entity.getIn(['attributes', 'user_only'])) {
-    //   // actions
-    //   // child categories related actions
-    //   const actionsConnections = [];
-    //   if (childActions) {
-    //     childActions.forEach((tax) => actionsConnections.push(
-    //       getActionConnectionGroupsField(
-    //         tax.get('categories'),
-    //         appMessages.entities.taxonomies[tax.get('id')].single,
-    //         taxonomies,
-    //         actionConnections,
-    //         onEntityClick,
-    //       )
-    //     ));
-    //   } else if (entity.getIn(['taxonomy', 'attributes', 'tags_actions']) && actions) {
-    //     // related actions
-    //     actionsConnections.push(
-    //       getActionConnectionField(
-    //         actions,
-    //         taxonomies,
-    //         actionConnections,
-    //         onEntityClick,
-    //       ),
-    //     );
-    //   }
-    //   fields.push({
-    //     label: appMessages.nav.actionsSuper,
-    //     icon: 'actions',
-    //     fields: actionsConnections,
-    //   });
-    //
-    //   // child taxonomies tag actors
-    //   // child categories related actors
-    //   const actorConnectionsLocal = [];
-    //   if (childActorsByActortype) {
-    //     childActorsByActortype.forEach((actors, actortypeid) => {
-    //       const actortype = actortypes.find((type) => qe(type.get('id'), actortypeid));
-    //       const hasResponse = actortype && actortype.getIn(['attributes', 'has_response']);
-    //       actors.forEach((tax) => {
-    //         actorConnectionsLocal.push(
-    //           getActorConnectionGroupsField(
-    //             tax.get('categories'),
-    //             appMessages.entities.taxonomies[tax.get('id')].single,
-    //             taxonomies,
-    //             actorConnections,
-    //             onEntityClick,
-    //             actortypeid,
-    //             hasResponse,
-    //           )
-    //         );
-    //       });
-    //     });
-    //     // related actors
-    //   } else if (entity.getIn(['taxonomy', 'attributes', 'tags_actors']) && actorsByActortype) {
-    //     actorsByActortype.forEach((actors, actortypeid) => {
-    //       const actortype = actortypes.find((type) => qe(type.get('id'), actortypeid));
-    //       const hasResponse = actortype && actortype.getIn(['attributes', 'has_response']);
-    //       actorConnectionsLocal.push(
-    //         getActorConnectionField(
-    //           actors,
-    //           taxonomies,
-    //           actorConnections,
-    //           onEntityClick,
-    //           actortypeid,
-    //           hasResponse,
-    //         ),
-    //       );
-    //     });
-    //   }
-    //   fields.push({
-    //     label: appMessages.nav.actors,
-    //     icon: 'actors',
-    //     fields: actorConnectionsLocal,
-    //   });
-    // }
+    if (!entity.getIn(['attributes', 'user_only'])) {
+      // child taxonomies tag actors
+      // child categories related actors
+      const actorConnectionsLocal = [];
+      // show actors of child categories
+      if (childActorsByActortype && childActorsByActortype.size > 0) {
+        childActorsByActortype.forEach((actors, actortypeid) => {
+          actorConnectionsLocal.push(
+            getActorConnectionField(
+              actors,
+              taxonomies,
+              actorConnections,
+              onEntityClick,
+              actortypeid,
+            ),
+          );
+        });
+      // show actors of category
+      // } else if (entity.getIn(['taxonomy', 'attributes', 'tags_actors']) && actorsByActortype) {
+      } else if (actorsByActortype) {
+        actorsByActortype.forEach((actors, actortypeid) => {
+          actorConnectionsLocal.push(
+            getActorConnectionField(
+              actors,
+              taxonomies,
+              actorConnections,
+              onEntityClick,
+              actortypeid,
+            ),
+          );
+        });
+      }
+      fields.push({
+        label: appMessages.nav.actors,
+        fields: actorConnectionsLocal,
+      });
+
+      const actionConnectionsLocal = [];
+      // show actors of child categories
+      if (childActionsByActiontype && childActionsByActiontype.size > 0) {
+        childActionsByActiontype.forEach((actions, actiontypeid) => {
+          actionConnectionsLocal.push(
+            getActionConnectionField(
+              actions,
+              taxonomies,
+              actionConnections,
+              onEntityClick,
+              actiontypeid,
+            ),
+          );
+        });
+      // show actors of category
+      } else if (actionsByActiontype) {
+        actionsByActiontype.forEach((actions, actiontypeid) => {
+          actionConnectionsLocal.push(
+            getActionConnectionField(
+              actions,
+              taxonomies,
+              actionConnections,
+              onEntityClick,
+              actiontypeid,
+            ),
+          );
+        });
+      }
+      fields.push({
+        label: appMessages.nav.actions,
+        fields: actionConnectionsLocal,
+      });
+    }
     return fields;
   };
 
@@ -282,15 +279,14 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
       isManager,
       parentTaxonomy,
       childTaxonomies,
-      // actorsByActortype,
-      // childActorsByActortype,
-      // actions,
-      // childActions,
-      // taxonomies,
-      // onEntityClick,
-      // actionConnections,
-      // actorConnections,
-      // actortypes,
+      actionsByActiontype,
+      childActionsByActiontype,
+      taxonomies,
+      onEntityClick,
+      actionConnections,
+      actorsByActortype,
+      childActorsByActortype,
+      actorConnections,
     } = this.props;
     let buttons = [];
     if (dataReady) {
@@ -333,7 +329,12 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
         ? `${pageTitle} ${ref}: ${getEntityTitleTruncated(viewEntity)}`
         : `${pageTitle}: ${getEntityTitleTruncated(viewEntity)}`;
     }
-
+    // console.log('taxonomies', taxonomies && taxonomies.toJS())
+    // console.log('actionsByActiontype', actionsByActiontype && actionsByActiontype.toJS())
+    // console.log('childActionsByActiontype', childActionsByActiontype && childActionsByActiontype.toJS())
+    // console.log('actorsByActortype', actorsByActortype && actorsByActortype.toJS())
+    // console.log('childActorsByActortype', childActorsByActortype && childActorsByActortype.toJS())
+    // console.log('actortypes', actortypes && actortypes.toJS())
     return (
       <div>
         <Helmet
@@ -370,15 +371,14 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
                   body: {
                     main: this.getBodyMainFields(
                       viewEntity,
-                      // actorsByActortype,
-                      // childActorsByActortype,
-                      // actions,
-                      // childActions,
-                      // taxonomies,
-                      // onEntityClick,
-                      // actionConnections,
-                      // actorConnections,
-                      // actortypes,
+                      taxonomies,
+                      actorsByActortype,
+                      actionsByActiontype,
+                      childActorsByActortype,
+                      childActionsByActiontype,
+                      actorConnections,
+                      actionConnections,
+                      onEntityClick,
                     ),
                     aside: this.getBodyAsideFields(
                       viewEntity,
@@ -407,14 +407,13 @@ CategoryView.propTypes = {
   isManager: PropTypes.bool,
   parentTaxonomy: PropTypes.object,
   actorsByActortype: PropTypes.object,
+  actionsByActiontype: PropTypes.object,
   childActorsByActortype: PropTypes.object,
+  childActionsByActiontype: PropTypes.object,
   taxonomies: PropTypes.object,
   childTaxonomies: PropTypes.object,
-  actions: PropTypes.object,
-  childActions: PropTypes.object,
-  actionConnections: PropTypes.object,
   actorConnections: PropTypes.object,
-  actortypes: PropTypes.object,
+  actionConnections: PropTypes.object,
 };
 
 CategoryView.contextTypes = {
@@ -425,16 +424,15 @@ const mapStateToProps = (state, props) => ({
   isManager: selectIsUserManager(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   viewEntity: selectViewEntity(state, props.params.id),
-  actorsByActortype: selectActors(state, props.params.id),
-  childActorsByActortype: selectChildActors(state, props.params.id),
-  childActions: selectChildActions(state, props.params.id),
-  actions: selectActions(state, props.params.id),
   taxonomies: selectTaxonomiesWithCategories(state),
   parentTaxonomy: selectParentTaxonomy(state, props.params.id),
   childTaxonomies: selectChildTaxonomies(state, props.params.id),
-  actionConnections: selectActionConnections(state),
   actorConnections: selectActorConnections(state),
-  actortypes: selectActiveActortypes(state),
+  actionConnections: selectActionConnections(state),
+  actorsByActortype: selectActorsByType(state, props.params.id),
+  actionsByActiontype: selectActionsByType(state, props.params.id),
+  childActorsByActortype: selectChildActorsByType(state, props.params.id),
+  childActionsByActiontype: selectChildActionsByType(state, props.params.id),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -443,7 +441,7 @@ function mapDispatchToProps(dispatch) {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
     onEntityClick: (id, path) => {
-      dispatch(updatePath(`/${path}/${id}`));
+      dispatch(updatePath(`${path}/${id}`));
     },
     handleEdit: (categoryId) => {
       dispatch(updatePath(`${ROUTES.CATEGORY}${ROUTES.EDIT}/${categoryId}`, { replace: true }));

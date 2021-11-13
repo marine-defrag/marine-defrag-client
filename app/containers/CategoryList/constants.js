@@ -1,14 +1,19 @@
+import { API } from 'themes/config';
+
 export const DEPENDENCIES = [
-  'user_roles',
-  'categories',
-  'taxonomies',
-  'actortypes',
-  'actortype_taxonomies',
-  'actor_categories',
-  'actors',
-  'measure_categories',
-  'actor_measures',
-  'actions',
+  API.USERS,
+  API.USER_ROLES,
+  API.CATEGORIES,
+  API.TAXONOMIES,
+  API.ACTIONS,
+  API.ACTIONTYPES,
+  API.ACTIONTYPE_TAXONOMIES,
+  API.ACTION_CATEGORIES,
+  API.ACTORS,
+  API.ACTORTYPES,
+  API.ACTORTYPE_TAXONOMIES,
+  API.ACTOR_CATEGORIES,
+  API.ACTOR_MEASURES,
 ];
 
 export const TAXONOMY_DEFAULT = 1;

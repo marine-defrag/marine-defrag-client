@@ -298,21 +298,27 @@ export const getActorConnectionField = (
   onEntityClick,
   actortypeid, // actortype id
 ) => getConnectionField({
-  entities: sortEntities(entities, 'asc', 'reference'),
+  entities: sortEntities(entities, 'asc', 'id'),
   taxonomies: filterTaxonomies(taxonomies, 'tags_actors'),
   connections,
   connectionOptions: ['actions'],
   entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
-  entityPath: API.ACTORS,
+  entityPath: ROUTES.ACTOR,
   onEntityClick,
 });
-export const getActionConnectionField = (entities, taxonomies, connections, onEntityClick) => getConnectionField({
+export const getActionConnectionField = (
+  entities,
+  taxonomies,
+  connections,
+  onEntityClick,
+  actiontypeid, // actortype id
+) => getConnectionField({
   entities: sortEntities(entities, 'asc', 'id'),
   taxonomies: filterTaxonomies(taxonomies, 'tags_actions'),
   connections,
   connectionOptions: ['actors'],
-  entityType: 'actions',
-  entityPath: API.ACTIONS,
+  entityType: actiontypeid ? `actions_${actiontypeid}` : 'actions',
+  entityPath: ROUTES.ACTION,
   onEntityClick,
 });
 
@@ -358,7 +364,7 @@ export const getActorConnectionGroupsField = (
   connections,
   connectionOptions: ['actions'],
   entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
-  entityPath: API.ACTORS,
+  entityPath: ROUTES.ACTOR,
   onEntityClick,
 });
 export const getActionConnectionGroupsField = (entityGroups, groupedBy, taxonomies, connections, onEntityClick) => getConnectionGroupsField({
@@ -368,7 +374,7 @@ export const getActionConnectionGroupsField = (entityGroups, groupedBy, taxonomi
   connections,
   connectionOptions: ['actors'],
   entityType: 'actions',
-  entityPath: API.ACTIONS,
+  entityPath: ROUTES.ACTION,
   onEntityClick,
 });
 
