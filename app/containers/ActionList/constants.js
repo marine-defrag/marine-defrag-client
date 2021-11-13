@@ -66,18 +66,33 @@ export const CONFIG = {
   //     },
   //   ],
   // },
-  // connections: { // filter by associated entity
-  //   query: 'connected',
+  connections: { // filter by associated entity
+    query: 'connected',
+    options: [
+      {
+        search: true,
+        message: 'entities.actors_{actortypeid}.plural',
+        path: API.ACTORS, // filter by actor connection
+        key: 'actor_id',
+        connectPath: API.ACTOR_ACTIONS, // filter by actor connection
+        ownKey: 'measure_id',
+        groupByActortype: true,
+        actortypeFilter: 'is_active',
+      },
+    ],
+  },
+  // targets: { // filter by associated entity
+  //   query: 'targeted',
   //   options: [
   //     {
   //       search: true,
   //       message: 'entities.actors_{actortypeid}.plural',
-  //       path: API.ACTORS, // filter by actor connection
+  //       path: 'targets', // filter by actor connection
   //       key: 'actor_id',
-  //       connectPath: API.ACTOR_ACTIONS, // filter by actor connection
+  //       connectPath: API.ACTION_ACTORS, // filter by actor connection
   //       ownKey: 'measure_id',
   //       groupByActortype: true,
-  //       actortypeFilter: 'has_actions',
+  //       actortypeFilter: 'is_target',
   //     },
   //   ],
   // },

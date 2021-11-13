@@ -496,3 +496,53 @@ export const ACTOR_FIELDS = {
     },
   },
 };
+
+// type compatibility: actors for actions
+export const ACTIONTYPE_ACTORTYPES = {
+  INTL: [
+    ACTORTYPES.COUNTRY,
+    ACTORTYPES.ORG,
+    ACTORTYPES.GROUP,
+  ],
+  REGLSEAS: [
+    ACTORTYPES.COUNTRY,
+  ],
+  REGL: [
+    ACTORTYPES.COUNTRY,
+    ACTORTYPES.GROUP,
+  ],
+  NATL: [
+    ACTORTYPES.COUNTRY,
+  ],
+  DONOR: [
+    ACTORTYPES.COUNTRY,
+    ACTORTYPES.ORG,
+    ACTORTYPES.GROUP,
+  ],
+  INIT: [
+    ACTORTYPES.COUNTRY,
+    ACTORTYPES.ORG,
+    ACTORTYPES.GROUP,
+  ],
+};
+// type compatibility: targets for actions
+export const ACTIONTYPE_TARGETTYPES = {
+  INTL: [],
+  REGLSEAS: [
+    ACTORTYPES.COUNTRY,
+    ACTORTYPES.CLASS,
+    ACTORTYPES.REGION,
+  ],
+  REGL: [],
+  NATL: [],
+  DONOR: [
+    ACTORTYPES.COUNTRY,
+    ACTORTYPES.CLASS,
+    ACTORTYPES.REGION,
+  ],
+  INIT: [
+    ACTORTYPES.COUNTRY,
+    ACTORTYPES.CLASS,
+    ACTORTYPES.REGION,
+  ],
+};

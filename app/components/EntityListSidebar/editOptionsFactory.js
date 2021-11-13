@@ -27,7 +27,9 @@ export const makeActiveEditOptions = (entities, config, activeEditOption, taxono
     case 'taxonomies':
       return makeTaxonomyEditOptions(entities, taxonomies, activeEditOption, messages);
     case 'connections':
-      return makeConnectionEditOptions(entities, config, connections, connectedTaxonomies, activeEditOption, messages, contextIntl);
+      return makeConnectionEditOptions(entities, config.connections, connections, connectedTaxonomies, activeEditOption, messages, contextIntl);
+    case 'targets':
+      return makeConnectionEditOptions(entities, config.targets, connections, connectedTaxonomies, activeEditOption, messages, contextIntl);
     case 'attributes':
       return makeAttributeEditOptions(entities, config, activeEditOption, messages);
     default:
@@ -120,13 +122,13 @@ export const makeConnectionEditOptions = (
   // const option = find(config.connections.options, (o) => o.path === activeEditOption.optionId);
   // get the active option
   const option = find(
-    config.connections.options,
+    config.options,
     (o) => o.groupByActortype
       ? startsWith(activeEditOption.optionId, o.path)
       : o.path === activeEditOption.optionId,
   );
   const editOptions = {
-    groupId: 'connections',
+    groupId: activeEditOption.group,
     search: true,
     options: {},
     selectedCount: entities.size,

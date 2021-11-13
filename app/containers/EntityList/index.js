@@ -162,6 +162,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             entities={entities}
             taxonomies={this.props.taxonomies}
             actortypes={this.props.actortypes}
+            actiontypes={this.props.actiontypes}
             connections={this.props.connections}
             connectedTaxonomies={this.props.connectedTaxonomies}
             entityIdsSelected={
@@ -192,6 +193,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           taxonomies={this.props.taxonomies}
           allTaxonomies={allTaxonomies}
           actortypes={this.props.actortypes}
+          actiontypes={this.props.actiontypes}
           connections={this.props.connections}
           connectedTaxonomies={this.props.connectedTaxonomies}
           entityIdsSelected={
@@ -320,6 +322,7 @@ EntityList.propTypes = {
   taxonomies: PropTypes.instanceOf(Map),
   allTaxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
+  actiontypes: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   config: PropTypes.object,
@@ -535,6 +538,7 @@ function mapDispatchToProps(dispatch, props) {
                 existingAssignments = entity.get('categories');
                 break;
               case ('connections'):
+              case ('targets'):
                 existingAssignments = entity.get(activeEditOption.connection);
                 break;
               default:

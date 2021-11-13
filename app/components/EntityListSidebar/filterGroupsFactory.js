@@ -11,6 +11,7 @@ export const makeFilterGroups = (
   hasUserRole,
   messages,
   actortypes,
+  actiontypes,
 ) => {
   const filterGroups = {};
 
@@ -142,7 +143,76 @@ export const makeFilterGroups = (
                       : option.message,
                     icon: id,
                     color: option.path,
-                    active: !!activeFilterOption && activeFilterOption.optionId === id,
+                    active: !!activeFilterOption
+                      && activeFilterOption.group === 'connections'
+                      && activeFilterOption.optionId === id,
+                  });
+                },
+                optionsMemo,
+              );
+          }
+
+          if (option.groupByActiontype && actiontypes) {
+            return actiontypes
+              .filter((actiontype) => !option.actiontypeFilter || actiontype.getIn(['attributes', option.actiontypeFilter]))
+              .reduce(
+                (memo, actiontype) => {
+                  const id = `${option.path}_${actiontype.get('id')}`;
+                  return memo.concat({
+                    id, // filterOptionId
+                    label: option.label,
+                    message: (option.message && option.message.indexOf('{actiontypeid}') > -1)
+                      ? option.message.replace('{actiontypeid}', actiontype.get('id'))
+                      : option.message,
+                    icon: id,
+                    color: option.path,
+                    active: !!activeFilterOption
+                      && activeFilterOption.group === 'connections'
+                      && activeFilterOption.optionId === id,
+                  });
+                },
+                optionsMemo,
+              );
+          }
+          return optionsMemo.concat({
+            id: option.path, // filterOptionId
+            label: option.label,
+            message: option.message,
+            icon: option.path,
+            active: !!activeFilterOption && activeFilterOption.optionId === option.path,
+          });
+        },
+        [],
+      ),
+    };
+  }
+  // targets option group
+  if (config.targets) {
+    // first prepare taxonomy options
+    filterGroups.targets = {
+      id: 'targets', // filterGroupId
+      label: messages.targets,
+      show: true,
+      options: reduce(
+        config.targets.options,
+        (optionsMemo, option) => {
+          if (option.groupByActortype && actortypes) {
+            return actortypes
+              .filter((actortype) => !option.actortypeFilter || actortype.getIn(['attributes', option.actortypeFilter]))
+              .reduce(
+                (memo, actortype) => {
+                  const id = `${option.path}_${actortype.get('id')}`;
+                  return memo.concat({
+                    id, // filterOptionId
+                    label: option.label,
+                    message: (option.message && option.message.indexOf('{actortypeid}') > -1)
+                      ? option.message.replace('{actortypeid}', actortype.get('id'))
+                      : option.message,
+                    icon: id,
+                    color: option.path,
+                    active: !!activeFilterOption
+                      && activeFilterOption.group === 'targets'
+                      && activeFilterOption.optionId === id,
                   });
                 },
                 optionsMemo,

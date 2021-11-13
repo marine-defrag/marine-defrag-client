@@ -101,8 +101,14 @@ const STATE_INITIAL = {
     taxonomies_5: true,
     taxonomies_6: true,
     taxonomies_7: true,
+    taxonomies_8: true,
+    taxonomies_9: true,
+    taxonomies_10: true,
+    taxonomies_11: true,
+    taxonomies_12: true,
     connectedTaxonomies: true,
     connections: true,
+    targets: true,
     attributes: true,
   },
   visible: false,
@@ -267,6 +273,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
       connections,
       entityIdsSelected,
       actortypes,
+      actiontypes,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -301,11 +308,14 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
             ),
           actortypesGroup: intl.formatMessage(messages.filterGroupLabel.actortypes),
           connections: intl.formatMessage(messages.filterGroupLabel.connections),
+          targets: intl.formatMessage(messages.filterGroupLabel.targets),
           connectedTaxonomies: intl.formatMessage(messages.filterGroupLabel.connectedTaxonomies),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
           actortypes: intl.formatMessage(appMessages.actortypes.plural),
+          actiontypes: intl.formatMessage(appMessages.actiontypes.plural),
         },
         actortypes,
+        actiontypes,
       );
     } else if (activePanel === EDIT_PANEL && canEdit && hasSelected) {
       panelGroups = makeEditGroups(
@@ -317,11 +327,14 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
           attributes: intl.formatMessage(messages.editGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.editGroupLabel.taxonomies),
           connections: intl.formatMessage(messages.editGroupLabel.connections),
+          targets: intl.formatMessage(messages.editGroupLabel.targets),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
         },
         actortypes,
         // selectedActortypeIds
         entitiesSelected.groupBy((e) => e.getIn(['attributes', 'actortype_id'])).keySeq(),
+        actiontypes,
+        entitiesSelected.groupBy((e) => e.getIn(['attributes', 'measuretype_id'])).keySeq(),
       );
     }
     let formOptions = null;
@@ -341,6 +354,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
           },
           intl,
           actortypes,
+          actiontypes,
         );
       } else if (activePanel === EDIT_PANEL && canEdit && hasSelected) {
         formOptions = makeActiveEditOptions(
@@ -467,6 +481,7 @@ EntityListSidebar.propTypes = {
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
+  actiontypes: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   entityIdsSelected: PropTypes.instanceOf(List),

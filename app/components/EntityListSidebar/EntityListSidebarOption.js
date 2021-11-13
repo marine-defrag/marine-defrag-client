@@ -76,6 +76,7 @@ class EntityListSidebarOption extends React.PureComponent { // eslint-disable-li
       case 'actortypes':
         return (<Dot palette={color} pIndex={0} active={active} />);
       case 'connections':
+      case 'targets':
         return (<Dot palette={color} pIndex={0} round active={active} />);
       default:
         return null;

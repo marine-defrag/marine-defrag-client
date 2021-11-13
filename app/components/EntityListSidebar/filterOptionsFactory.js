@@ -15,7 +15,7 @@ import {
   getEntityReference,
   getEntityParentId,
 } from 'utils/entities';
-import { qe } from 'utils/quasi-equals';
+
 import { makeTagFilterGroups } from 'utils/forms';
 
 import {
@@ -33,7 +33,6 @@ export const makeActiveFilterOptions = (
   connectedTaxonomies,
   messages,
   contextIntl,
-  actortypes,
 ) => {
   // create filterOptions
   switch (activeFilterOption.group) {
@@ -46,14 +45,6 @@ export const makeActiveFilterOptions = (
         locationQuery,
         messages,
         contextIntl,
-      );
-    case 'actortypes':
-      return makeActortypeFilterOptions(
-        entities,
-        config.actortypes,
-        actortypes,
-        activeFilterOption.optionId,
-        locationQuery,
       );
     case 'connectedTaxonomies':
       return makeConnectedTaxonomyFilterOptions(
@@ -75,6 +66,19 @@ export const makeActiveFilterOptions = (
         locationQuery,
         messages,
         contextIntl,
+        activeFilterOption.group,
+      );
+    case 'targets':
+      return makeConnectionFilterOptions(
+        entities,
+        config.targets,
+        connections,
+        connectedTaxonomies,
+        activeFilterOption.optionId,
+        locationQuery,
+        messages,
+        contextIntl,
+        activeFilterOption.group,
       );
     case 'attributes':
       return makeAttributeFilterOptions(
@@ -184,77 +188,8 @@ export const makeAttributeFilterOptions = (entities, config, activeOptionId, loc
   return filterOptions;
 };
 
-//
-//
-//
-const getTaxTitle = (id, contextIntl) => contextIntl.formatMessage(appMessages.entities.taxonomies[id].single);
 
-export const makeActortypeFilterOptions = (
-  entities,
-  config,
-  actortypes,
-  activeTaxId,
-  locationQuery,
-) => {
-  const filterOptions = {
-    groupId: 'actortypes',
-    search: false,
-    options: {},
-    multiple: false,
-    required: false,
-    selectAll: false,
-    groups: null,
-  };
-  if (actortypes) {
-    if (entities.size === 0) {
-      if (locationQuery.get(config.query)) {
-        const locationQueryValue = locationQuery.get(config.query);
-        forEach(asArray(locationQueryValue), (queryValue) => {
-          const value = parseInt(queryValue, 10);
-          const actortype = actortypes.get(value);
-          if (actortype) {
-            filterOptions.options[value] = {
-              label: getEntityTitle(actortype),
-              showCount: true,
-              value,
-              count: 0,
-              query: config.query,
-              checked: true,
-            };
-          }
-        });
-      }
-    } else {
-      entities.forEach((entity) => {
-        const actortypeIds = [];
-        // if entity has categories
-        if (entity.getIn(['attributes', 'actortype_id'])) {
-          // add categories from entities if not present otherwise increase count
-          actortypes.forEach((actortype, actortypeId) => {
-            // if entity has category of active taxonomy
-            if (qe(entity.getIn(['attributes', 'actortype_id']), actortypeId)) {
-              actortypeIds.push(actortypeId);
-              // if category already added
-              if (filterOptions.options[actortypeId]) {
-                filterOptions.options[actortypeId].count += 1;
-              } else {
-                filterOptions.options[actortypeId] = {
-                  label: getEntityTitle(actortype),
-                  showCount: true,
-                  value: actortypeId,
-                  count: 1,
-                  query: config.query,
-                  checked: optionChecked(locationQuery.get(config.query), actortypeId),
-                };
-              }
-            }
-          });
-        }
-      }); // for each entities
-    }
-  }
-  return filterOptions;
-};
+const getTaxTitle = (id, contextIntl) => contextIntl.formatMessage(appMessages.entities.taxonomies[id].single);
 
 export const makeTaxonomyFilterOptions = (
   entities,
@@ -385,9 +320,10 @@ export const makeConnectionFilterOptions = (
   locationQuery,
   messages,
   contextIntl,
+  group,
 ) => {
   const filterOptions = {
-    groupId: 'connections',
+    groupId: group || 'connections',
     options: {},
     multiple: true,
     required: false,
@@ -399,13 +335,14 @@ export const makeConnectionFilterOptions = (
   // get the active option
   const option = find(
     config.options,
-    (o) => o.groupByActortype
+    (o) => o.groupByActortype || o.groupByActiontype
       ? startsWith(activeOptionId, o.path)
       : o.path === activeOptionId,
   );
+
   // if option active
   if (option) {
-    const actortypeid = option.groupByActortype
+    const actortypeid = (option.groupByActortype || option.groupByActiontype)
       && activeOptionId.indexOf('_') > -1
       && parseInt(activeOptionId.split('_')[1], 10);
     // the option path
@@ -502,16 +439,25 @@ export const makeConnectionFilterOptions = (
             // add without option
             filterOptions.options.without.count += 1;
           } else {
+            let { message } = option;
+            if (
+              option.groupByActortype
+              && option.message
+              && option.message.indexOf('{actortypeid}') > -1
+            ) {
+              message = option.message.replace('{actortypeid}', actortypeid);
+            }
+            if (
+              option.groupByActiontype
+              && option.message
+              && option.message.indexOf('{actiontypeid}') > -1
+            ) {
+              message = option.message.replace('{actiontypeid}', actortypeid);
+            }
             filterOptions.options.without = {
               messagePrefix: messages.without,
               label: option.label,
-              message: (
-                option.groupByActortype
-                && option.message
-                && option.message.indexOf('{actortypeid}') > -1
-              )
-                ? option.message.replace('{actortypeid}', actortypeid)
-                : option.message,
+              message,
               showCount: true,
               labelBold: true,
               value: path,

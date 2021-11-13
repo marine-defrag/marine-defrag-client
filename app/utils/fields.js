@@ -2,7 +2,7 @@ import { truncateText } from 'utils/string';
 import { sortEntities, sortCategories } from 'utils/sort';
 import { filterTaxonomies } from 'utils/entities';
 import {
-  USER_ROLES, TEXT_TRUNCATE, ROUTES, API,
+  USER_ROLES, TEXT_TRUNCATE, ROUTES,
 } from 'themes/config';
 
 import appMessages from 'containers/App/messages';

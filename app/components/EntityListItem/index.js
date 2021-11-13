@@ -10,7 +10,7 @@ import Component from 'components/styled/Component';
 import EntityListItemMain from './EntityListItemMain';
 import EntityListItemSelect from './EntityListItemSelect';
 
-import messages from './messages';
+// import messages from './messages';
 
 const Styled = styled.span`
   display: inline-block;
@@ -54,20 +54,22 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
       || this.props.error !== nextProps.error;
   }
 
-  transformMessage = (type, msg) => {
-    const { intl } = this.context;
-    if (type === 'delete') {
-      return intl
-        ? intl.formatMessage(messages.associationNotExistent)
-        : msg;
-    }
-    if (type === 'new') {
-      return intl
-        ? intl.formatMessage(messages.associationAlreadyPresent)
-        : msg;
-    }
-    return msg;
-  }
+  transformMessage = (type, msg) => msg;
+  // transformMessage = (type, msg) => {
+  //   // const { intl } = this.context;
+  //   // if (type === 'delete') {
+  //   //   return intl
+  //   //     ? intl.formatMessage(messages.associationNotExistent)
+  //   //     : msg;
+  //   // }
+  //   // if (type === 'new') {
+  //   //   // return intl
+  //   //   //   ? intl.formatMessage(messages.associationAlreadyPresent)
+  //   //   //   : msg;
+  //   //   return msg;
+  //   // }
+  //   return msg;
+  // }
 
   render() {
     const {

@@ -10,6 +10,7 @@ export const makeEditGroups = (
   hasUserRole,
   messages,
   actortypes,
+  actiontypes,
 ) => {
   const editGroups = {};
   // const selectedActortypes = actortypes && actortypes.filter(
@@ -92,6 +93,123 @@ export const makeEditGroups = (
                     ownKey: option.ownKey,
                     icon: id,
                     active: !!activeEditOption && activeEditOption.optionId === id,
+                    create: { path: option.path },
+                    color: option.path,
+                  });
+                },
+                optionsMemo,
+              );
+          }
+          if (option.groupByActiontype && actiontypes) {
+            return actiontypes
+              .filter((actiontype) => !option.actiontypeFilter || actiontype.getIn(['attributes', option.actiontypeFilter]))
+              .reduce(
+                (memo, actiontype) => {
+                  const id = `${option.path}_${actiontype.get('id')}`;
+                  return memo.concat({
+                    id, // filterOptionId
+                    label: option.label,
+                    message: (option.message && option.message.indexOf('{actiontypeid}') > -1)
+                      ? option.message.replace('{actiontypeid}', actiontype.get('id'))
+                      : option.message,
+                    path: option.connectPath,
+                    connection: option.path,
+                    key: option.key,
+                    ownKey: option.ownKey,
+                    icon: id,
+                    active: !!activeEditOption
+                      && activeEditOption.group === 'targets'
+                      && activeEditOption.optionId === id,
+                    create: { path: option.path },
+                    color: option.path,
+                  });
+                },
+                optionsMemo,
+              );
+          }
+          return typeof option.edit === 'undefined' || option.edit
+            ? optionsMemo.concat({
+              id: option.path, // filterOptionId
+              label: option.label,
+              message: option.message,
+              path: option.connectPath,
+              connection: option.path,
+              key: option.key,
+              ownKey: option.ownKey,
+              icon: option.path,
+              active: !!activeEditOption && activeEditOption.optionId === option.path,
+              create: { path: option.path },
+            })
+            : optionsMemo;
+        },
+        [],
+      ),
+    };
+  }
+  // targets option group
+  if (config.targets) {
+    // first prepare taxonomy options
+    editGroups.targets = {
+      id: 'targets', // filterGroupId
+      label: messages.targets,
+      show: true,
+      options: reduce(
+        config.targets.options,
+        (optionsMemo, option) => {
+          // exclude connections not applicabel for all actortypes
+          // if (
+          //   option.actortypeFilter
+          //   && option.editForActortypes
+          //   && actortypes
+          //   && !selectedActortypes.every((actortype) => actortype.getIn(['attributes', option.actortypeFilter]))
+          // ) {
+          //   return optionsMemo;
+          // }
+          if (option.groupByActortype && actortypes) {
+            return actortypes
+              .filter((actortype) => !option.actortypeFilter || actortype.getIn(['attributes', option.actortypeFilter]))
+              .reduce(
+                (memo, actortype) => {
+                  const id = `${option.path}_${actortype.get('id')}`;
+                  return memo.concat({
+                    id, // filterOptionId
+                    label: option.label,
+                    message: (option.message && option.message.indexOf('{actortypeid}') > -1)
+                      ? option.message.replace('{actortypeid}', actortype.get('id'))
+                      : option.message,
+                    path: option.connectPath,
+                    connection: option.path,
+                    key: option.key,
+                    ownKey: option.ownKey,
+                    icon: id,
+                    active: !!activeEditOption && activeEditOption.optionId === id,
+                    create: { path: option.path },
+                    color: option.path,
+                  });
+                },
+                optionsMemo,
+              );
+          }
+          if (option.groupByActiontype && actiontypes) {
+            return actiontypes
+              .filter((actiontype) => !option.actiontypeFilter || actiontype.getIn(['attributes', option.actiontypeFilter]))
+              .reduce(
+                (memo, actiontype) => {
+                  const id = `${option.path}_${actiontype.get('id')}`;
+                  return memo.concat({
+                    id, // filterOptionId
+                    label: option.label,
+                    message: (option.message && option.message.indexOf('{actiontypeid}') > -1)
+                      ? option.message.replace('{actiontypeid}', actiontype.get('id'))
+                      : option.message,
+                    path: option.connectPath,
+                    connection: option.path,
+                    key: option.key,
+                    ownKey: option.ownKey,
+                    icon: id,
+                    active: !!activeEditOption
+                      && activeEditOption.group === 'targets'
+                      && activeEditOption.optionId === id,
                     create: { path: option.path },
                     color: option.path,
                   });

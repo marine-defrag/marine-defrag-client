@@ -16,6 +16,8 @@ import {
   selectActortypeTaxonomiesWithCats,
   selectIsUserManager,
   selectIsUserAnalyst,
+  selectActortypes,
+  selectActiontypes,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
@@ -56,6 +58,8 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
       isManager,
       isAnalyst,
       params, // { id: the action type }
+      actiontypes,
+      actortypes,
     } = this.props;
     const typeId = params.id;
     const type = `actors_${typeId}`;
@@ -117,6 +121,8 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
             plural: intl.formatMessage(appMessages.entities[type].plural),
           }}
           locationQuery={fromJS(location.query)}
+          actortypes={actortypes}
+          actiontypes={actiontypes}
         />
       </div>
     );
@@ -133,6 +139,8 @@ ActorList.propTypes = {
   taxonomies: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
+  actortypes: PropTypes.instanceOf(Map),
+  actiontypes: PropTypes.instanceOf(Map),
   location: PropTypes.object,
   isAnalyst: PropTypes.bool,
   params: PropTypes.object,
@@ -150,6 +158,8 @@ const mapStateToProps = (state, props) => ({
   connectedTaxonomies: selectConnectedTaxonomies(state),
   isManager: selectIsUserManager(state),
   isAnalyst: selectIsUserAnalyst(state),
+  actiontypes: selectActiontypes(state),
+  actortypes: selectActortypes(state),
 });
 
 function mapDispatchToProps(dispatch) {

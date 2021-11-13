@@ -55,8 +55,8 @@ export const testEntityTaxonomyAssociation = (
 export const testEntityAssociation = (entity, associatedPath) => {
   // check for actortype
   if (associatedPath.indexOf('_') > -1) {
-    const path = associatedPath.split('_');
-    const associations = entity.getIn([`${path[0]}ByActortype`, parseInt(path[1], 10)]);
+    const [path, typeId] = associatedPath.split('_');
+    const associations = entity.getIn([`${path}ByActortype`, parseInt(typeId, 10)]);
     return associations && associations.size > 0;
   }
   return entity.get(associatedPath) && entity.get(associatedPath).size > 0;
@@ -94,10 +94,17 @@ export const filterEntitiesWithoutAssociation = (
   query,
 ) => entities && entities.filter(
   (entity) => asList(query).every(
-    (pathOrTax) => isNumber(pathOrTax)
-      ? !testEntityTaxonomyAssociation(entity, categories, parseInt(pathOrTax, 10))
-      : !testEntityAssociation(entity, pathOrTax)
-  ),
+    (pathOrTax) => {
+      if (isNumber(pathOrTax)) {
+        return !testEntityTaxonomyAssociation(entity, categories, parseInt(pathOrTax, 10));
+      }
+      if (pathOrTax.indexOf('|') > -1) {
+        const [group, path] = pathOrTax.split('|');
+        return !testEntityAssociation(entity, path, group);
+      }
+      return !testEntityAssociation(entity, pathOrTax);
+    }
+  )
 );
 
 // filter entities by association with one or more categories

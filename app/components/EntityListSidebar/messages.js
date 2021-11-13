@@ -74,6 +74,10 @@ export default defineMessages({
       id: 'app.components.EntityListSidebar.filterGroupLabel.connections',
       defaultMessage: 'By connection',
     },
+    targets: {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.targets',
+      defaultMessage: 'By target',
+    },
     connectedTaxonomies: {
       id: 'app.components.EntityListSidebar.filterGroupLabel.connectedTaxonomies',
       defaultMessage: 'By connected category',
@@ -91,6 +95,10 @@ export default defineMessages({
     connections: {
       id: 'app.components.EntityListSidebar.editGroupLabel.connections',
       defaultMessage: 'Update connections',
+    },
+    targets: {
+      id: 'app.components.EntityListSidebar.editGroupLabel.targets',
+      defaultMessage: 'Update targets',
     },
   },
   filterFormTitlePrefix: {
