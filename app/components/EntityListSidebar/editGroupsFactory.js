@@ -61,7 +61,7 @@ export const makeEditGroups = (
     // first prepare taxonomy options
     editGroups.connections = {
       id: 'connections', // filterGroupId
-      label: messages.connections,
+      label: messages.connections(config.connections.type),
       show: true,
       options: reduce(
         config.connections.options,

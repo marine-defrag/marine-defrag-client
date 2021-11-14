@@ -63,6 +63,7 @@ export const CONFIG = {
   },
   connections: { // filter by associated entity
     query: 'connected',
+    type: 'activities',
     options: [
       {
         search: true,

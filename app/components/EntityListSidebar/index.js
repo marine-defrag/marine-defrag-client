@@ -115,6 +115,16 @@ const STATE_INITIAL = {
   viewport: null,
 };
 
+const getFilterConnectionsMsg = (intl, type) => type
+  && messages.filterGroupLabel[`connections-${type}`]
+  ? intl.formatMessage(messages.filterGroupLabel[`connections-${type}`])
+  : intl.formatMessage(messages.filterGroupLabel.connections);
+
+const getEditConnectionsMsg = (intl, type) => type
+  && messages.editGroupLabel[`connections-${type}`]
+  ? intl.formatMessage(messages.editGroupLabel[`connections-${type}`])
+  : intl.formatMessage(messages.editGroupLabel.connections);
+
 export class EntityListSidebar extends React.Component { // eslint-disable-line react/prefer-stateless-function
   constructor() {
     super();
@@ -307,8 +317,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
               },
             ),
           actortypesGroup: intl.formatMessage(messages.filterGroupLabel.actortypes),
-          connections: intl.formatMessage(messages.filterGroupLabel.connections),
-          targets: intl.formatMessage(messages.filterGroupLabel.targets),
+          connections: (type) => getFilterConnectionsMsg(intl, type),
           connectedTaxonomies: intl.formatMessage(messages.filterGroupLabel.connectedTaxonomies),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
           actortypes: intl.formatMessage(appMessages.actortypes.plural),
@@ -326,8 +335,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
         {
           attributes: intl.formatMessage(messages.editGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.editGroupLabel.taxonomies),
-          connections: intl.formatMessage(messages.editGroupLabel.connections),
-          targets: intl.formatMessage(messages.editGroupLabel.targets),
+          connections: (type) => getEditConnectionsMsg(intl, type),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
         },
         actortypes,

@@ -16,7 +16,6 @@ import {
   selectActiontypeTaxonomiesWithCats,
   selectIsUserManager,
   selectIsUserAnalyst,
-  selectActortypes,
   selectActiontypes,
 } from 'containers/App/selectors';
 
@@ -29,6 +28,7 @@ import {
   selectConnections,
   selectActions,
   selectConnectedTaxonomies,
+  selectValidActortypes,
 } from './selectors';
 
 import messages from './messages';
@@ -159,7 +159,7 @@ const mapStateToProps = (state, props) => ({
   isManager: selectIsUserManager(state),
   isAnalyst: selectIsUserAnalyst(state),
   actiontypes: selectActiontypes(state),
-  actortypes: selectActortypes(state),
+  actortypes: selectValidActortypes(state, { type: props.params.id }),
 });
 function mapDispatchToProps(dispatch) {
   return {

@@ -74,9 +74,17 @@ export default defineMessages({
       id: 'app.components.EntityListSidebar.filterGroupLabel.connections',
       defaultMessage: 'By connection',
     },
-    targets: {
-      id: 'app.components.EntityListSidebar.filterGroupLabel.targets',
-      defaultMessage: 'By target',
+    'connections-actors': {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-actors',
+      defaultMessage: 'By connection',
+    },
+    'connections-targets': {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-targets',
+      defaultMessage: 'By connection',
+    },
+    'connections-activities': {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-activities',
+      defaultMessage: 'By connection',
     },
     connectedTaxonomies: {
       id: 'app.components.EntityListSidebar.filterGroupLabel.connectedTaxonomies',

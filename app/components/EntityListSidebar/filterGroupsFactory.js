@@ -124,7 +124,7 @@ export const makeFilterGroups = (
     // first prepare taxonomy options
     filterGroups.connections = {
       id: 'connections', // filterGroupId
-      label: messages.connections,
+      label: messages.connections(config.connections.type),
       show: true,
       options: reduce(
         config.connections.options,

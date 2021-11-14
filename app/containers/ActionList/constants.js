@@ -68,6 +68,7 @@ export const CONFIG = {
   // },
   connections: { // filter by associated entity
     query: 'connected',
+    type: 'actors',
     options: [
       {
         search: true,
