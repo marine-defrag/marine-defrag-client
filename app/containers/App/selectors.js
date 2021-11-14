@@ -16,7 +16,12 @@ import asArray from 'utils/as-array';
 import asList from 'utils/as-list';
 import { sortEntities } from 'utils/sort';
 
-import { USER_ROLES, API, ROUTES } from 'themes/config';
+import {
+  API,
+  ROUTES,
+  USER_ROLES,
+  ACTIONTYPE_ACTORTYPES,
+} from 'themes/config';
 
 import {
   filterEntitiesByAttributes,
@@ -358,6 +363,30 @@ export const selectActiontypes = createSelector(
       ? entity.set('active', true)
       : entity
   )
+);
+export const selectActortypesForActiontype = createSelector(
+  (state, { type }) => type,
+  selectActortypes,
+  (typeId, actortypes) => {
+    const validActortypeIds = ACTIONTYPE_ACTORTYPES[typeId];
+    return actortypes.filter(
+      (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
+    );
+  }
+);
+
+export const selectActiontypesForActortype = createSelector(
+  (state, { type }) => type,
+  selectActiontypes,
+  (typeId, actiontypes) => {
+    const validActiontypeIds = Object.keys(ACTIONTYPE_ACTORTYPES).filter((actiontypeId) => {
+      const actortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
+      return actortypeIds && actortypeIds.indexOf(typeId) > -1;
+    });
+    return actiontypes.filter(
+      (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
+    );
+  }
 );
 // single action type
 export const selectActiontype = createSelector(

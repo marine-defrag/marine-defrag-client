@@ -13,7 +13,6 @@ import {
   selectActionCategoriesGroupedByAction,
   selectActorActionsGroupedByActor,
   selectCategories,
-  selectActiontypes,
   // selectActorConnections,
   // selectActortypeTaxonomies,
   // selectActortypeQuery,
@@ -30,22 +29,9 @@ import {
 // import { qe } from 'utils/quasi-equals';
 
 import { sortEntities, getSortOption } from 'utils/sort';
-import { ACTIONTYPE_ACTORTYPES } from 'themes/config';
 
 import { CONFIG, DEPENDENCIES } from './constants';
-export const selectValidActiontypes = createSelector(
-  (state, { type }) => type,
-  selectActiontypes,
-  (typeId, actiontypes) => {
-    const validActiontypeIds = Object.keys(ACTIONTYPE_ACTORTYPES).filter((actiontypeId) => {
-      const actortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
-      return actortypeIds && actortypeIds.indexOf(typeId) > -1;
-    });
-    return actiontypes.filter(
-      (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
-    );
-  }
-);
+
 export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActions,

@@ -17,7 +17,6 @@ import {
   selectActionCategoriesGroupedByAction,
   selectActorActionsGroupedByAction,
   selectCategories,
-  selectActortypes,
 } from 'containers/App/selectors';
 
 import {
@@ -32,19 +31,7 @@ import {
 // import { qe } from 'utils/quasi-equals';
 import { sortEntities, getSortOption } from 'utils/sort';
 
-import { ACTIONTYPE_ACTORTYPES } from 'themes/config';
 import { CONFIG, DEPENDENCIES } from './constants';
-
-export const selectValidActortypes = createSelector(
-  (state, { type }) => type,
-  selectActortypes,
-  (typeId, actortypes) => {
-    const validActortypeIds = ACTIONTYPE_ACTORTYPES[typeId];
-    return actortypes.filter(
-      (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
-    );
-  }
-);
 
 export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
