@@ -10,16 +10,16 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { actions as formActions } from 'react-redux-form/immutable';
 
-// import { Map, List, fromJS } from 'immutable';
-import { Map, List } from 'immutable';
+import { Map, List, fromJS } from 'immutable';
+// import { Map, List } from 'immutable';
 
 import {
-  // getConnectionUpdatesFromFormData,
+  getConnectionUpdatesFromFormData,
   getTitleFormField,
   getStatusField,
   getMarkdownField,
   getCodeFormField,
-  // renderActorsByActortypeControl,
+  renderActorsByActortypeControl,
   getDateField,
   getTextareaField,
   renderTaxonomyControl,
@@ -152,9 +152,9 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
 
   getBodyMainFields = (
     type,
-    // connectedTaxonomies,
-    // actorsByActortype,
-    // onCreateOption,
+    connectedTaxonomies,
+    actorsByActortype,
+    onCreateOption,
   ) => {
     const { intl } = this.context;
     const typeId = type.get('id');
@@ -213,23 +213,23 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
         ],
       },
     );
-    // if (actorsByActortype) {
-    //   const actorConnections = renderActorsByActortypeControl(
-    //     actorsByActortype,
-    //     connectedTaxonomies,
-    //     onCreateOption,
-    //     intl,
-    //   );
-    //   if (actorConnections) {
-    //     groups.push(
-    //       {
-    //         label: intl.formatMessage(appMessages.nav.actorsSuper),
-    //         icon: 'actors',
-    //         fields: actorConnections,
-    //       },
-    //     );
-    //   }
-    // }
+    if (actorsByActortype) {
+      const actorConnections = renderActorsByActortypeControl(
+        actorsByActortype,
+        connectedTaxonomies,
+        onCreateOption,
+        intl,
+      );
+      if (actorConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.actors),
+            icon: 'actors',
+            fields: actorConnections,
+          },
+        );
+      }
+    }
     return groups;
   };
 
@@ -357,7 +357,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                 model="actionNew.form.data"
                 formData={viewDomain.getIn(['form', 'data'])}
                 saving={saveSending}
-                handleSubmit={(formData) => this.props.handleSubmit(formData, actiontype)}
+                handleSubmit={(formData) => this.props.handleSubmit(formData, actiontype, actorsByActortype)}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={() => this.props.handleCancel(typeId)}
                 handleUpdate={this.props.handleUpdate}
@@ -431,9 +431,9 @@ const mapStateToProps = (state, { params }) => ({
       includeParents: false,
     },
   ),
-  actorsByActortype: selectActorsByActortype(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
   actiontype: selectActiontype(state, params.id),
+  actorsByActortype: selectActorsByActortype(state, params.id),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -460,8 +460,7 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    // handleSubmit: (formData, actorsByActortype) => {
-    handleSubmit: (formData, actiontype) => {
+    handleSubmit: (formData, actiontype, actorsByActortype) => {
       let saveData = formData.setIn(['attributes', 'measuretype_id'], actiontype.get('id'));
       // actionCategories
       if (formData.get('associatedTaxonomies')) {
@@ -479,29 +478,29 @@ function mapDispatchToProps(dispatch) {
       }
 
       // actors
-      // if (formData.get('associatedActorsByActortype') && actorsByActortype) {
-      //   saveData = saveData.set(
-      //     'actorActions',
-      //     actorsByActortype
-      //       .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
-      //         formData,
-      //         connections: actors,
-      //         connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
-      //         createConnectionKey: 'actor_id',
-      //         createKey: 'measure_id',
-      //       }))
-      //       .reduce(
-      //         (memo, deleteCreateLists) => {
-      //           const creates = memo.get('create').concat(deleteCreateLists.get('create'));
-      //           return memo.set('create', creates);
-      //         },
-      //         fromJS({
-      //           delete: [],
-      //           create: [],
-      //         }),
-      //       )
-      //   );
-      // }
+      if (formData.get('associatedActorsByActortype') && actorsByActortype) {
+        saveData = saveData.set(
+          'actorActions',
+          actorsByActortype
+            .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: actors,
+              connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
+              createConnectionKey: 'actor_id',
+              createKey: 'measure_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo.set('create', creates);
+              },
+              fromJS({
+                delete: [],
+                create: [],
+              }),
+            )
+        );
+      }
       dispatch(save(saveData.toJS(), actiontype.get('id')));
     },
     handleCancel: (typeId) => {

@@ -1,12 +1,12 @@
 import { createSelector } from 'reselect';
-import { API } from 'themes/config';
+import { API, ACTIONTYPE_ACTORTYPES } from 'themes/config';
 import { qe } from 'utils/quasi-equals';
 
 import {
   selectEntity,
   selectEntities,
   selectActorsCategorised,
-  selectActortypeTaxonomies,
+  selectActorTaxonomies,
   selectActortypes,
   selectActorActionsGroupedByAction,
   selectActionCategoriesGroupedByAction,
@@ -18,7 +18,7 @@ import {
   entitiesSetAssociated,
   entitySetUser,
   prepareTaxonomiesAssociated,
-  prepareTaxonomiesMultipleTags,
+  prepareTaxonomies,
 } from 'utils/entities';
 export const selectDomain = createSelector(
   (state) => state.get('actionEdit'),
@@ -74,39 +74,43 @@ export const selectTaxonomyOptions = createSelector(
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  (state) => selectActortypeTaxonomies(state),
+  selectActorTaxonomies,
   selectCategories,
-  (taxonomies, categories) => prepareTaxonomiesMultipleTags(
+  (taxonomies, categories) => prepareTaxonomies(
     taxonomies,
     categories,
-    ['tags_actors'],
     false,
   )
 );
 
 export const selectActorsByActortype = createSelector(
-  (state, id) => id,
+  selectViewEntity,
   selectActorsCategorised,
   selectActorActionsGroupedByAction,
   selectActortypes,
-  (id, actors, associations, actortypes) => {
+  (activity, actors, associations, actortypes) => {
+    const actiontypeId = activity && activity.getIn(['attributes', 'measuretype_id']).toString();
+    const validActortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
+    const actortypesForActiontype = actortypes.filter(
+      (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
+    );
     const filtered = actors.filter(
-      (r) => {
-        const actortype = actortypes.find(
+      (actor) => {
+        const actortype = actortypesForActiontype.find(
           (at) => qe(
             at.get('id'),
-            r.getIn(['attributes', 'actortype_id']),
+            actor.getIn(['attributes', 'actortype_id']),
           )
         );
-        return actortype.getIn(['attributes', 'has_actions']);
+        return actortype && actortype.getIn(['attributes', 'is_active']);
       }
     );
     return entitiesSetAssociated(
       filtered,
       associations,
-      id,
+      activity && activity.get('id'),
     ).groupBy(
-      (r) => r.getIn(['attributes', 'actortype_id']).toString()
+      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
     );
   }
 );

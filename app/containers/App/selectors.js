@@ -344,10 +344,18 @@ export const selectActions = createSelector(
   (state) => selectEntities(state, API.ACTIONS),
   (entities) => entities
 );
+export const selectAction = createSelector(
+  (state, id) => selectEntity(state, { id, path: API.ACTIONS }),
+  (entity) => entity
+);
 // all actors
 export const selectActors = createSelector(
   (state) => selectEntities(state, API.ACTORS),
   (entities) => entities
+);
+export const selectActor = createSelector(
+  (state, id) => selectEntity(state, { id, path: API.ACTORS }),
+  (entity) => entity
 );
 // all action types
 export const selectActortypes = createSelector(

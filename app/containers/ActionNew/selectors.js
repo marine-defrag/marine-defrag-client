@@ -1,9 +1,13 @@
 import { createSelector } from 'reselect';
+import { ACTIONTYPE_ACTORTYPES } from 'themes/config';
+import { qe } from 'utils/quasi-equals';
 
 import {
   selectCategories,
+  selectActortypes,
   selectActorTaxonomies,
   selectActorsCategorised,
+  selectActorActionsGroupedByAction,
 } from 'containers/App/selectors';
 
 import { prepareTaxonomies } from 'utils/entities';
@@ -24,8 +28,28 @@ export const selectConnectedTaxonomies = createSelector(
 );
 
 export const selectActorsByActortype = createSelector(
+  (state, id) => id,
   selectActorsCategorised,
-  (entities) => entities && entities.groupBy(
-    (r) => r.getIn(['attributes', 'actortype_id']).toString()
-  )
+  selectActorActionsGroupedByAction,
+  selectActortypes,
+  (actiontypeId, actors, associations, actortypes) => {
+    const validActortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
+    const actortypesForActiontype = actortypes.filter(
+      (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
+    );
+    const filtered = actors.filter(
+      (actor) => {
+        const actortype = actortypesForActiontype.find(
+          (at) => qe(
+            at.get('id'),
+            actor.getIn(['attributes', 'actortype_id']),
+          )
+        );
+        return actortype && actortype.getIn(['attributes', 'is_active']);
+      }
+    );
+    return filtered.groupBy(
+      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
+    );
+  }
 );

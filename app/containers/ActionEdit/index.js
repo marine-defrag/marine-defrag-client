@@ -10,11 +10,10 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import { actions as formActions } from 'react-redux-form/immutable';
-import { Map } from 'immutable';
-// import { Map, fromJS } from 'immutable';
+import { Map, fromJS } from 'immutable';
 
 import {
-  // entityOptions,
+  entityOptions,
   taxonomyOptions,
   getTitleFormField,
   getStatusField,
@@ -28,8 +27,8 @@ import {
   getFormField,
   getAmountFormField,
   getCategoryUpdatesFromFormData,
-  // getConnectionUpdatesFromFormData,
-  // renderActorsByActortypeControl,
+  getConnectionUpdatesFromFormData,
+  renderActorsByActortypeControl,
 } from 'utils/forms';
 
 import {
@@ -74,8 +73,8 @@ import {
   selectDomain,
   selectViewEntity,
   selectTaxonomyOptions,
-  // selectActorsByActortype,
-  // selectConnectedTaxonomies,
+  selectActorsByActortype,
+  selectConnectedTaxonomies,
 } from './selectors';
 
 import messages from './messages';
@@ -118,9 +117,8 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     const {
       viewEntity,
       taxonomies,
-      // actorsByActortype,
+      actorsByActortype,
     } = props;
-    // console.log(viewEntity && viewEntity.toJS())
     // console.log(FORM_INITIAL.get('attributes') && FORM_INITIAL.get('attributes').toJS())
     return viewEntity
       ? Map({
@@ -130,9 +128,9 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
           FORM_INITIAL.get('attributes')
         ),
         associatedTaxonomies: taxonomyOptions(taxonomies),
-        // associatedActorsByActortype: actorsByActortype
-        //   ? actorsByActortype.map((actors) => entityOptions(actors, true))
-        //   : Map(),
+        associatedActorsByActortype: actorsByActortype
+          ? actorsByActortype.map((actors) => entityOptions(actors, true))
+          : Map(),
       })
       : Map();
   }
@@ -185,9 +183,9 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
 
   getBodyMainFields = (
     entity,
-    // connectedTaxonomies,
-    // actorsByActortype,
-    // onCreateOption,
+    connectedTaxonomies,
+    actorsByActortype,
+    onCreateOption,
   ) => {
     const { intl } = this.context;
     const typeId = entity.getIn(['attributes', 'measuretype_id']);
@@ -246,23 +244,23 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
         ],
       },
     );
-    // if (actorsByActortype) {
-    //   const actorConnections = renderActorsByActortypeControl(
-    //     actorsByActortype,
-    //     connectedTaxonomies,
-    //     onCreateOption,
-    //     intl,
-    //   );
-    //   if (actorConnections) {
-    //     groups.push(
-    //       {
-    //         label: intl.formatMessage(appMessages.nav.actorsSuper),
-    //         icon: 'actors',
-    //         fields: actorConnections,
-    //       },
-    //     );
-    //   }
-    // }
+    if (actorsByActortype) {
+      const actorConnections = renderActorsByActortypeControl(
+        actorsByActortype,
+        connectedTaxonomies,
+        onCreateOption,
+        intl,
+      );
+      if (actorConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.actors),
+            icon: 'actors',
+            fields: actorConnections,
+          },
+        );
+      }
+    }
     return groups;
   };
 
@@ -474,8 +472,8 @@ const mapStateToProps = (state, props) => ({
   authReady: selectReadyForAuthCheck(state),
   viewEntity: selectViewEntity(state, props.params.id),
   taxonomies: selectTaxonomyOptions(state, props.params.id),
-  // connectedTaxonomies: selectConnectedTaxonomies(state),
-  // actorsByActortype: selectActorsByActortype(state, props.params.id),
+  connectedTaxonomies: selectConnectedTaxonomies(state),
+  actorsByActortype: selectActorsByActortype(state, props.params.id),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -502,9 +500,8 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    // handleSubmit: (formData, taxonomies, actorsByActortype) => {
-    handleSubmit: (formData, taxonomies) => {
-      const saveData = formData.set(
+    handleSubmit: (formData, taxonomies, actorsByActortype) => {
+      let saveData = formData.set(
         'actionCategories',
         getCategoryUpdatesFromFormData({
           formData,
@@ -512,30 +509,30 @@ function mapDispatchToProps(dispatch, props) {
           createKey: 'measure_id',
         })
       );
-      // saveData = saveData.set(
-      //   'actorActions',
-      //   actorsByActortype
-      //     .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
-      //       formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
-      //       connections: actors,
-      //       connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
-      //       createConnectionKey: 'actor_id',
-      //       createKey: 'measure_id',
-      //     }))
-      //     .reduce(
-      //       (memo, deleteCreateLists) => {
-      //         const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
-      //         const creates = memo.get('create').concat(deleteCreateLists.get('create'));
-      //         return memo
-      //           .set('delete', deletes)
-      //           .set('create', creates);
-      //       },
-      //       fromJS({
-      //         delete: [],
-      //         create: [],
-      //       }),
-      //     )
-      // );
+      saveData = saveData.set(
+        'actorActions',
+        actorsByActortype
+          .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
+            formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
+            connections: actors,
+            connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
+            createConnectionKey: 'actor_id',
+            createKey: 'measure_id',
+          }))
+          .reduce(
+            (memo, deleteCreateLists) => {
+              const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
+              const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+              return memo
+                .set('delete', deletes)
+                .set('create', creates);
+            },
+            fromJS({
+              delete: [],
+              create: [],
+            }),
+          )
+      );
       dispatch(save(saveData.toJS()));
     },
     handleCancel: () => {
