@@ -158,7 +158,35 @@ export const renderActorsByActortypeControl = (
         : null,
     }),
     [],
-  )
+  ).sort((a, b) => a.id > b.id ? 1 : -1)
+  : null;
+
+export const renderActionsByActiontypeControl = (
+  entitiesByActiontype,
+  taxonomies,
+  onCreateOption,
+  contextIntl,
+) => entitiesByActiontype
+  ? entitiesByActiontype.reduce(
+    (controls, entities, typeid) => controls.concat({
+      id: `actors.${typeid}`,
+      model: `.associatedActionsByActiontype.${typeid}`,
+      dataPath: ['associatedActorsByActortype', typeid],
+      label: contextIntl.formatMessage(appMessages.entities[`actions_${typeid}`].plural),
+      controlType: 'multiselect',
+      options: entityOptions(entities),
+      advanced: true,
+      selectAll: true,
+      tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
+      onCreate: onCreateOption
+        ? () => onCreateOption({
+          path: API.ACTIONS,
+          attributes: { measuretype_id: typeid },
+        })
+        : null,
+    }),
+    [],
+  ).sort((a, b) => a.id > b.id ? 1 : -1)
   : null;
 
 // taxonomies with categories "embedded"

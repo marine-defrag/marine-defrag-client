@@ -11,7 +11,7 @@ import {
 } from 'containers/App/selectors';
 
 import { prepareTaxonomies } from 'utils/entities';
-// import { qe } from 'utils/quasi-equals';
+
 export const selectDomain = createSelector(
   (state) => state.get('actionNew'),
   (substate) => substate
@@ -33,6 +33,7 @@ export const selectActorsByActortype = createSelector(
   selectActorActionsGroupedByAction,
   selectActortypes,
   (actiontypeId, actors, associations, actortypes) => {
+    // compare App/selectors/selectActortypesForActiontype
     const validActortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
     const actortypesForActiontype = actortypes.filter(
       (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1

@@ -10,9 +10,10 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { actions as formActions } from 'react-redux-form/immutable';
 
-import { Map, List } from 'immutable';
+import { Map, List, fromJS } from 'immutable';
 
 import {
+  getConnectionUpdatesFromFormData,
   getTitleFormField,
   getStatusField,
   getMarkdownField,
@@ -21,12 +22,7 @@ import {
   getLinkFormField,
   getAmountFormField,
   getNumberFormField,
-  // renderActionControl,
-  // getDateField,
-  // getTextareaField,
-  // getFormField,
-  // getCheckboxField,
-  // getActortypeFormField,
+  renderActionsByActiontypeControl,
 } from 'utils/forms';
 import { getInfoField } from 'utils/fields';
 
@@ -54,7 +50,6 @@ import {
 import {
   selectReady,
   selectReadyForAuthCheck,
-  // selectActionsCategorised,
   selectActortypeTaxonomiesWithCats,
   selectActortype,
 } from 'containers/App/selectors';
@@ -67,8 +62,8 @@ import EntityForm from 'containers/EntityForm';
 
 import {
   selectDomain,
-  // selectConnectedTaxonomies,
-  // selectActionsByActiontype,
+  selectConnectedTaxonomies,
+  selectActionsByActiontype,
 } from './selectors';
 
 import messages from './messages';
@@ -152,10 +147,9 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
 
   getBodyMainFields = (
     type,
-    // connectedTaxonomies,
-    // actions,
-    // onCreateOption,
-    // hasResponse,
+    connectedTaxonomies,
+    actionsByActiontype,
+    onCreateOption,
   ) => {
     const { intl } = this.context;
     const typeId = type.get('id');
@@ -174,15 +168,22 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
         ),
       ],
     });
-    // if (actions) {
-    //   groups.push({
-    //     label: intl.formatMessage(appMessages.nav.actionsSuper),
-    //     icon: 'actions',
-    //     fields: [
-    //       renderActionControl(actions, connectedTaxonomies, onCreateOption, intl),
-    //     ],
-    //   });
-    // }
+    if (actionsByActiontype) {
+      const actionConnections = renderActionsByActiontypeControl(
+        actionsByActiontype,
+        connectedTaxonomies,
+        onCreateOption,
+        intl,
+      );
+      if (actionConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.actions),
+            fields: actionConnections,
+          },
+        );
+      }
+    }
     return groups;
   }
 
@@ -221,8 +222,8 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
     const {
       dataReady,
       viewDomain,
-      // connectedTaxonomies,
-      // actions,
+      connectedTaxonomies,
+      actionsByActiontype,
       taxonomies,
       onCreateOption,
       actortype,
@@ -231,14 +232,6 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
     const typeId = params.id;
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
 
-    // const currentActortypeId = actortypeSpecified
-    //   ? actortypeId
-    //   : viewDomain.getIn(['form', 'data', 'attributes', 'actortype_id']) || DEFAULT_ACTIONTYPE;
-    //
-    // const hasActions = dataReady && currentActortype.getIn(['attributes', 'has_actions']);
-    //
-    // const actortypeTaxonomies = taxonomies && taxonomies.filter((tax) => tax.get('actortypeIds').find((id) => qe(id, currentActortypeId))
-    //   || qe(currentActortypeId, tax.getIn(['attributes', 'actortype_id'])));
     const type = intl.formatMessage(appMessages.entities[`actors_${typeId}`].single);
     return (
       <div>
@@ -297,6 +290,7 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
                 handleSubmit={(formData) => this.props.handleSubmit(
                   formData,
                   actortype,
+                  actionsByActiontype,
                   // actortypeTaxonomies,
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
@@ -313,10 +307,9 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
                   body: {
                     main: this.getBodyMainFields(
                       actortype,
-                      // connectedTaxonomies,
-                      // hasActions && actions,
-                      // onCreateOption,
-                      // hasResponse,
+                      connectedTaxonomies,
+                      actionsByActiontype,
+                      onCreateOption,
                     ),
                     aside: this.getBodyAsideFields(
                       actortype,
@@ -350,8 +343,8 @@ ActorNew.propTypes = {
   taxonomies: PropTypes.object,
   onCreateOption: PropTypes.func,
   initialiseForm: PropTypes.func,
-  // actions: PropTypes.object,
-  // connectedTaxonomies: PropTypes.object,
+  actionsByActiontype: PropTypes.object,
+  connectedTaxonomies: PropTypes.object,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
   actortype: PropTypes.instanceOf(Map),
@@ -373,9 +366,9 @@ const mapStateToProps = (state, { params }) => ({
       includeParents: false,
     },
   ),
-  // actionsByActiontype: selectActionsByActiontype(state),
-  // connectedTaxonomies: selectConnectedTaxonomies(state),
+  connectedTaxonomies: selectConnectedTaxonomies(state),
   actortype: selectActortype(state, params.id),
+  actionsByActiontype: selectActionsByActiontype(state, params.id),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -402,8 +395,7 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    // handleSubmit: (formData, currentActortype) => {
-    handleSubmit: (formData, actortype) => {
+    handleSubmit: (formData, actortype, actionsByActiontype) => {
       let saveData = formData.setIn(
         ['attributes', 'actortype_id'],
         actortype.get('id'),
@@ -433,19 +425,29 @@ function mapDispatchToProps(dispatch) {
         );
       }
       //
-      // // actions if allowed by actortype
-      // if (
-      //   formData.get('associatedActions')
-      //   && currentActortype.getIn(['attributes', 'has_actions'])
-      // ) {
-      //   saveData = saveData.set('actorActions', Map({
-      //     delete: List(),
-      //     create: getCheckedValuesFromOptions(formData.get('associatedActions'))
-      //       .map((id) => Map({
-      //         measure_id: id,
-      //       })),
-      //   }));
-      // }
+      // actions if allowed by actortype
+      if (formData.get('associatedActionsByActiontype')) {
+        saveData = saveData.set(
+          'actionActors',
+          actionsByActiontype
+            .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: actors,
+              connectionAttribute: ['associatedActionsByActiontype', actortypeid.toString()],
+              createConnectionKey: 'measure_id',
+              createKey: 'actor_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo.set('create', creates);
+              },
+              fromJS({
+                create: [],
+              }),
+            )
+        );
+      }
       dispatch(save(saveData.toJS(), actortype.get('id')));
     },
     handleCancel: (typeId) => {

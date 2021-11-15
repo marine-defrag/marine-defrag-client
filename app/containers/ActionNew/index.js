@@ -224,7 +224,6 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
         groups.push(
           {
             label: intl.formatMessage(appMessages.nav.actors),
-            icon: 'actors',
             fields: actorConnections,
           },
         );
@@ -357,7 +356,11 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                 model="actionNew.form.data"
                 formData={viewDomain.getIn(['form', 'data'])}
                 saving={saveSending}
-                handleSubmit={(formData) => this.props.handleSubmit(formData, actiontype, actorsByActortype)}
+                handleSubmit={(formData) => this.props.handleSubmit(
+                  formData,
+                  actiontype,
+                  actorsByActortype,
+                )}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={() => this.props.handleCancel(typeId)}
                 handleUpdate={this.props.handleUpdate}
@@ -495,7 +498,6 @@ function mapDispatchToProps(dispatch) {
                 return memo.set('create', creates);
               },
               fromJS({
-                delete: [],
                 create: [],
               }),
             )

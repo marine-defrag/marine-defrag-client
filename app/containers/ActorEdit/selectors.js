@@ -1,23 +1,28 @@
 import { createSelector } from 'reselect';
-import { API } from 'themes/config';
+import { API, ACTIONTYPE_ACTORTYPES } from 'themes/config';
 import { qe } from 'utils/quasi-equals';
 
 import {
   selectEntity,
   selectEntities,
   selectActionsCategorised,
-  selectTaxonomiesSorted,
-  selectActorActionsGroupedByActor,
+  selectActionTaxonomies,
+  selectActiontypes,
+  selectActionActorsGroupedByActor,
   selectActorCategoriesGroupedByActor,
   selectCategories,
+  selectTaxonomiesSorted,
+  selectReady,
 } from 'containers/App/selectors';
 
 import {
-  entitiesSetAssociated,
   entitySetUser,
+  entitiesSetAssociated,
   prepareTaxonomiesAssociated,
-  prepareTaxonomiesMultipleTags,
+  prepareTaxonomies,
 } from 'utils/entities';
+
+import { DEPENDENCIES } from './constants';
 
 export const selectDomain = createSelector(
   (state) => state.get('actorEdit'),
@@ -31,7 +36,7 @@ export const selectViewEntity = createSelector(
 );
 
 export const selectTaxonomyOptions = createSelector(
-  (state, id) => selectEntity(state, { path: API.ACTORS, id }),
+  selectViewEntity,
   selectTaxonomiesSorted,
   (state) => selectEntities(state, API.ACTORTYPE_TAXONOMIES),
   selectCategories,
@@ -75,23 +80,50 @@ export const selectTaxonomyOptions = createSelector(
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  (state) => selectTaxonomiesSorted(state),
+  selectActionTaxonomies,
   selectCategories,
-  (taxonomies, categories) => prepareTaxonomiesMultipleTags(
+  (taxonomies, categories) => prepareTaxonomies(
     taxonomies,
     categories,
-    ['tags_actions'],
     false,
   )
 );
 
-export const selectActions = createSelector(
-  (state, id) => id,
+export const selectActionsByActiontype = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectViewEntity,
   selectActionsCategorised,
-  selectActorActionsGroupedByActor,
-  (id, entities, associations) => entitiesSetAssociated(
-    entities,
-    associations,
-    id,
-  )
+  selectActionActorsGroupedByActor,
+  selectActiontypes,
+  (ready, actor, actions, associations, actiontypes) => {
+    if (!ready) return null;
+    const actortypeId = actor.getIn(['attributes', 'actortype_id']).toString();
+    // compare App/selectors/selectActiontypesForActortype
+    const validActiontypeIds = Object.keys(ACTIONTYPE_ACTORTYPES).filter((actiontypeId) => {
+      const actortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
+      return actortypeIds && actortypeIds.indexOf(actortypeId) > -1;
+    });
+
+    const actiontypesForActortype = actiontypes.filter(
+      (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
+    );
+    const filtered = actions.filter(
+      (action) => {
+        const actiontype = actiontypesForActortype.find(
+          (at) => qe(
+            at.get('id'),
+            action.getIn(['attributes', 'measuretype_id']),
+          )
+        );
+        return !!actiontype;
+      }
+    );
+    return entitiesSetAssociated(
+      filtered,
+      associations,
+      actor.get('id'),
+    ).groupBy(
+      (action) => action.getIn(['attributes', 'measuretype_id']).toString()
+    );
+  }
 );

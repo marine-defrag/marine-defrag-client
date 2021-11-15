@@ -3,16 +3,16 @@ import { sortEntities } from 'utils/sort';
 import { qe } from 'utils/quasi-equals';
 
 // figure out filter groups for filter panel
-export const makeFilterGroups = (
+export const makeFilterGroups = ({
   config,
   taxonomies,
   connectedTaxonomies,
-  activeFilterOption,
   hasUserRole,
-  messages,
   actortypes,
   actiontypes,
-) => {
+  activeFilterOption,
+  messages,
+}) => {
   const filterGroups = {};
 
   // taxonomy option group

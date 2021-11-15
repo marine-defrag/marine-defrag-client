@@ -300,13 +300,15 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
       && entities.filter((entity) => entityIdsSelected.includes(entity.get('id')));
 
     if (activePanel === FILTERS_PANEL) {
-      panelGroups = makeFilterGroups(
+      panelGroups = makeFilterGroups({
         config,
         taxonomies,
         connectedTaxonomies,
-        activeOption,
         hasUserRole,
-        {
+        actortypes,
+        actiontypes,
+        activeFilterOption: activeOption,
+        messages: {
           attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.filterGroupLabel.taxonomies),
           taxonomyGroupByActortype:
@@ -323,60 +325,57 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
           actortypes: intl.formatMessage(appMessages.actortypes.plural),
           actiontypes: intl.formatMessage(appMessages.actiontypes.plural),
         },
-        actortypes,
-        actiontypes,
-      );
+      });
     } else if (activePanel === EDIT_PANEL && canEdit && hasSelected) {
-      panelGroups = makeEditGroups(
+      panelGroups = makeEditGroups({
         config,
         taxonomies,
-        activeOption,
+        activeEditOption: activeOption,
         hasUserRole,
-        {
+        messages: {
           attributes: intl.formatMessage(messages.editGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.editGroupLabel.taxonomies),
           connections: (type) => getEditConnectionsMsg(intl, type),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
         },
         actortypes,
-        // selectedActortypeIds
-        entitiesSelected.groupBy((e) => e.getIn(['attributes', 'actortype_id'])).keySeq(),
         actiontypes,
-        entitiesSelected.groupBy((e) => e.getIn(['attributes', 'measuretype_id'])).keySeq(),
-      );
+        // selectedActortypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'actortype_id'])).keySeq(),
+        // selectedActiontypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'measuretype_id'])).keySeq(),
+      });
     }
     let formOptions = null;
     if (activeOption) {
       if (activePanel === FILTERS_PANEL) {
-        formOptions = makeActiveFilterOptions(
+        formOptions = makeActiveFilterOptions({
           entities,
           config,
-          activeOption,
           locationQuery,
           taxonomies,
           connections,
+          // actortypes,
+          // actiontypes,
           connectedTaxonomies,
-          {
+          activeFilterOption: activeOption,
+          contextIntl: intl,
+          messages: {
             titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
             without: intl.formatMessage(messages.filterFormWithoutPrefix),
           },
-          intl,
-          actortypes,
-          actiontypes,
-        );
+        });
       } else if (activePanel === EDIT_PANEL && canEdit && hasSelected) {
-        formOptions = makeActiveEditOptions(
-          entitiesSelected,
+        formOptions = makeActiveEditOptions({
+          entities: entitiesSelected,
           config,
-          activeOption,
           taxonomies,
           connections,
           connectedTaxonomies,
-          {
+          activeEditOption: activeOption,
+          contextIntl: intl,
+          messages: {
             title: `${intl.formatMessage(messages.editFormTitlePrefix)} ${entitiesSelected.size} ${intl.formatMessage(messages.editFormTitlePostfix)}`,
           },
-          intl
-        );
+        });
       }
     }
     return (

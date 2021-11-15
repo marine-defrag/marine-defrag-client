@@ -365,12 +365,7 @@ export const selectActortypes = createSelector(
 // all action types
 export const selectActiontypes = createSelector(
   (state) => selectEntities(state, API.ACTIONTYPES),
-  (state, active) => active,
-  (entities, active) => entities && entities.map(
-    (entity) => active && qe(active, entity.get('id'))
-      ? entity.set('active', true)
-      : entity
-  )
+  (entities) => entities
 );
 export const selectActortypesForActiontype = createSelector(
   (state, { type }) => type,
@@ -947,6 +942,17 @@ export const selectActorActionsGroupedByAction = createSelector(
     ).map(
       (group) => group.map(
         (entity) => entity.getIn(['attributes', 'actor_id'])
+      )
+    ),
+);
+export const selectActionActorsGroupedByActor = createSelector(
+  (state) => selectEntities(state, API.ACTOR_ACTIONS),
+  (entities) => entities
+    && entities.groupBy(
+      (entity) => entity.getIn(['attributes', 'actor_id'])
+    ).map(
+      (group) => group.map(
+        (entity) => entity.getIn(['attributes', 'measure_id'])
       )
     ),
 );

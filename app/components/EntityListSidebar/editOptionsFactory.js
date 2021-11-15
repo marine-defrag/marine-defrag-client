@@ -1,5 +1,4 @@
 import { find, forEach } from 'lodash/collection';
-import { STATES as CHECKBOX } from 'components/forms/IndeterminateCheckbox';
 import { startsWith } from 'utils/string';
 
 import {
@@ -12,16 +11,18 @@ import {
 import { qe } from 'utils/quasi-equals';
 import { makeTagFilterGroups } from 'utils/forms';
 
-export const checkedState = (count, length) => {
-  if (count === length) {
-    return CHECKBOX.CHECKED;
-  } if (count < length && count > 0) {
-    return CHECKBOX.INDETERMINATE;
-  }
-  return CHECKBOX.UNCHECKED;
-};
+import { checkedState } from './utils';
 
-export const makeActiveEditOptions = (entities, config, activeEditOption, taxonomies, connections, connectedTaxonomies, messages, contextIntl) => {
+export const makeActiveEditOptions = ({
+  entities,
+  config,
+  taxonomies,
+  connections,
+  connectedTaxonomies,
+  activeEditOption,
+  contextIntl,
+  messages,
+}) => {
   // create edit options
   switch (activeEditOption.group) {
     case 'taxonomies':
@@ -37,7 +38,7 @@ export const makeActiveEditOptions = (entities, config, activeEditOption, taxono
   }
 };
 
-export const makeAttributeEditOptions = (entities, config, activeEditOption, messages) => {
+const makeAttributeEditOptions = (entities, config, activeEditOption, messages) => {
   const editOptions = {
     groupId: 'attributes',
     search: true,
@@ -72,7 +73,7 @@ export const makeAttributeEditOptions = (entities, config, activeEditOption, mes
   return editOptions;
 };
 
-export const makeTaxonomyEditOptions = (entities, taxonomies, activeEditOption, messages) => {
+const makeTaxonomyEditOptions = (entities, taxonomies, activeEditOption, messages) => {
   const editOptions = {
     groupId: 'taxonomies',
     search: true,
@@ -110,7 +111,7 @@ export const makeTaxonomyEditOptions = (entities, taxonomies, activeEditOption, 
   return editOptions;
 };
 
-export const makeConnectionEditOptions = (
+const makeConnectionEditOptions = (
   entities,
   config,
   connections,

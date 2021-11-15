@@ -28,6 +28,5 @@ export const FORM_INITIAL = fromJS({
     [att]: ACTOR_FIELDS.ATTRIBUTES[att].defaultValue || '',
   }), {}),
   associatedTaxonomies: {},
-  associatedActions: [],
-  associatedActors: [],
+  associatedActionsByActiontype: [],
 });

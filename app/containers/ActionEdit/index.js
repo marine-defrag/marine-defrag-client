@@ -255,7 +255,6 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
         groups.push(
           {
             label: intl.formatMessage(appMessages.nav.actors),
-            icon: 'actors',
             fields: actorConnections,
           },
         );
@@ -513,7 +512,6 @@ function mapDispatchToProps(dispatch, props) {
         'actorActions',
         actorsByActortype
           .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
-            formData: !formData.getIn(['attributes', 'user_only']) ? formData : null,
             connections: actors,
             connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
             createConnectionKey: 'actor_id',

@@ -12,6 +12,7 @@ import {
   selectActionCategoriesGroupedByAction,
   selectCategories,
   selectTaxonomiesSorted,
+  selectReady,
 } from 'containers/App/selectors';
 
 import {
@@ -20,6 +21,9 @@ import {
   prepareTaxonomiesAssociated,
   prepareTaxonomies,
 } from 'utils/entities';
+
+import { DEPENDENCIES } from './constants';
+
 export const selectDomain = createSelector(
   (state) => state.get('actionEdit'),
   (substate) => substate
@@ -31,7 +35,7 @@ export const selectViewEntity = createSelector(
   (entity, users) => entitySetUser(entity, users)
 );
 export const selectTaxonomyOptions = createSelector(
-  (state, id) => selectEntity(state, { path: API.ACTIONS, id }),
+  selectViewEntity,
   selectTaxonomiesSorted,
   (state) => selectEntities(state, API.ACTIONTYPE_TAXONOMIES),
   selectCategories,
@@ -84,12 +88,14 @@ export const selectConnectedTaxonomies = createSelector(
 );
 
 export const selectActorsByActortype = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
   selectViewEntity,
   selectActorsCategorised,
   selectActorActionsGroupedByAction,
   selectActortypes,
-  (activity, actors, associations, actortypes) => {
-    const actiontypeId = activity && activity.getIn(['attributes', 'measuretype_id']).toString();
+  (ready, action, actors, associations, actortypes) => {
+    if (!ready) return null;
+    const actiontypeId = action.getIn(['attributes', 'measuretype_id']).toString();
     const validActortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
     const actortypesForActiontype = actortypes.filter(
       (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
@@ -108,7 +114,7 @@ export const selectActorsByActortype = createSelector(
     return entitiesSetAssociated(
       filtered,
       associations,
-      activity && activity.get('id'),
+      action.get('id'),
     ).groupBy(
       (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
     );

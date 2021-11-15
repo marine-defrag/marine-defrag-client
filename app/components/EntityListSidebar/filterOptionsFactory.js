@@ -23,17 +23,17 @@ import {
   attributeOptionChecked,
 } from './utils';
 
-export const makeActiveFilterOptions = (
+export const makeActiveFilterOptions = ({
   entities,
   config,
-  activeFilterOption,
   locationQuery,
   taxonomies,
   connections,
   connectedTaxonomies,
-  messages,
+  activeFilterOption,
   contextIntl,
-) => {
+  messages,
+}) => {
   // create filterOptions
   switch (activeFilterOption.group) {
     case 'taxonomies':

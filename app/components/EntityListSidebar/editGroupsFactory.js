@@ -3,7 +3,7 @@ import { reduce } from 'lodash/collection';
 import { qe } from 'utils/quasi-equals';
 import { API } from 'themes/config';
 
-export const makeEditGroups = (
+export const makeEditGroups = ({
   config,
   taxonomies,
   activeEditOption,
@@ -11,7 +11,7 @@ export const makeEditGroups = (
   messages,
   actortypes,
   actiontypes,
-) => {
+}) => {
   const editGroups = {};
   // const selectedActortypes = actortypes && actortypes.filter(
   //   (actortype) => selectedActortypeIds.find((id) => qe(id, actortype.get('id'))),
@@ -156,15 +156,6 @@ export const makeEditGroups = (
       options: reduce(
         config.targets.options,
         (optionsMemo, option) => {
-          // exclude connections not applicabel for all actortypes
-          // if (
-          //   option.actortypeFilter
-          //   && option.editForActortypes
-          //   && actortypes
-          //   && !selectedActortypes.every((actortype) => actortype.getIn(['attributes', option.actortypeFilter]))
-          // ) {
-          //   return optionsMemo;
-          // }
           if (option.groupByActortype && actortypes) {
             return actortypes
               .filter((actortype) => !option.actortypeFilter || actortype.getIn(['attributes', option.actortypeFilter]))
