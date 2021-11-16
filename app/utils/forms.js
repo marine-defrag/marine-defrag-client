@@ -1,5 +1,4 @@
 import { Map, List } from 'immutable';
-import { sortEntities } from 'utils/sort';
 
 import { filter } from 'lodash/collection';
 
@@ -68,7 +67,7 @@ export const dateOption = (entity, activeDateId) => Map({
 });
 
 export const taxonomyOptions = (taxonomies) => taxonomies
-  ? sortEntities(taxonomies, 'asc', 'priority').reduce(
+  ? taxonomies.toList().reduce(
     (values, tax) => values.set(
       tax.get('id'),
       entityOptions(tax.get('categories'), false, false)
@@ -80,17 +79,18 @@ export const taxonomyOptions = (taxonomies) => taxonomies
 const getTaxTitle = (id, contextIntl) => contextIntl ? contextIntl.formatMessage(appMessages.entities.taxonomies[id].single) : '';
 
 // turn taxonomies into multiselect options
-export const makeTagFilterGroups = (taxonomies, contextIntl) => taxonomies && sortEntities(taxonomies, 'asc', 'priority').map((taxonomy) => ({
-  title: getTaxTitle(parseInt(taxonomy.get('id'), 10), contextIntl),
-  palette: ['taxonomies', parseInt(taxonomy.get('id'), 10)],
-  options: taxonomy.get('categories').map((category) => ({
-    reference: getEntityReference(category, false),
-    label: getEntityTitle(category),
-    filterLabel: getCategoryShortTitle(category),
-    showCount: false,
-    value: category.get('id'),
-  })).valueSeq().toArray(),
-})).toArray();
+export const makeTagFilterGroups = (taxonomies, contextIntl) => taxonomies
+  && taxonomies.toList().map((taxonomy) => ({
+    title: getTaxTitle(parseInt(taxonomy.get('id'), 10), contextIntl),
+    palette: ['taxonomies', parseInt(taxonomy.get('id'), 10)],
+    options: taxonomy.get('categories').map((category) => ({
+      reference: getEntityReference(category, false),
+      label: getEntityTitle(category),
+      filterLabel: getCategoryShortTitle(category),
+      showCount: false,
+      value: category.get('id'),
+    })).valueSeq().toArray(),
+  })).toArray();
 
 export const renderActionControl = (entities, taxonomies, onCreateOption, contextIntl) => entities
   ? {
@@ -195,7 +195,7 @@ export const renderTaxonomyControl = (
   onCreateOption,
   contextIntl,
 ) => taxonomies
-  ? sortEntities(taxonomies, 'asc', 'priority').reduce(
+  ? taxonomies.toList().reduce(
     (controls, taxonomy) => controls.concat({
       id: taxonomy.get('id'),
       model: `.associatedTaxonomies.${taxonomy.get('id')}`,

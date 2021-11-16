@@ -56,7 +56,7 @@ export const testEntityAssociation = (entity, associatedPath) => {
   // check for actortype
   if (associatedPath.indexOf('_') > -1) {
     const [path, typeId] = associatedPath.split('_');
-    const associations = entity.getIn([`${path}ByActortype`, parseInt(typeId, 10)]);
+    const associations = entity.getIn([`${path}ByType`, parseInt(typeId, 10)]);
     return associations && associations.size > 0;
   }
   return entity.get(associatedPath) && entity.get(associatedPath).size > 0;

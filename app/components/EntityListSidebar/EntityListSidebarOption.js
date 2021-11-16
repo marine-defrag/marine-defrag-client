@@ -95,7 +95,7 @@ class EntityListSidebarOption extends React.PureComponent { // eslint-disable-li
         onClick={() => onShowForm({
           group: groupType || groupId,
           optionId: option.get('id'),
-          path: option.get('path'),
+          path: option.get('query'),
           connection: option.get('connection'),
           key: option.get('key'),
           ownKey: option.get('ownKey'),

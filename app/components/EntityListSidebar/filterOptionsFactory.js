@@ -335,21 +335,22 @@ export const makeConnectionFilterOptions = (
   // get the active option
   const option = find(
     config.options,
-    (o) => o.groupByActortype || o.groupByActiontype
-      ? startsWith(activeOptionId, o.path)
-      : o.path === activeOptionId,
+    (o) => o.groupByType
+      ? startsWith(activeOptionId, o.query)
+      : o.query === activeOptionId,
   );
 
   // if option active
   if (option) {
-    const actortypeid = (option.groupByActortype || option.groupByActiontype)
+    const typeid = option.groupByType
       && activeOptionId.indexOf('_') > -1
       && parseInt(activeOptionId.split('_')[1], 10);
+
     // the option path
     const path = activeOptionId;
     filterOptions.messagePrefix = messages.titlePrefix;
-    filterOptions.message = (actortypeid && option.message && option.message.indexOf('{actortypeid}') > -1)
-      ? option.message.replace('{actortypeid}', actortypeid)
+    filterOptions.message = (typeid && option.message && option.message.indexOf('{typeid}') > -1)
+      ? option.message.replace('{typeid}', typeid)
       : option.message;
     filterOptions.search = option.search;
     const { query } = config;
@@ -362,7 +363,7 @@ export const makeConnectionFilterOptions = (
           if (locationQueryValueConnection.length > 1) {
             if (path === locationQueryValueConnection[0]) {
               const value = locationQueryValueConnection[1];
-              const connection = connections.get(option.path) && connections.getIn([option.path, value]);
+              const connection = connections.get(option.query) && connections.getIn([option.query, value]);
               filterOptions.options[value] = {
                 reference: connection ? getEntityReference(connection) : '',
                 label: connection ? getEntityTitle(connection, option.labels, contextIntl) : upperFirst(value),
@@ -400,14 +401,14 @@ export const makeConnectionFilterOptions = (
     } else {
       entities.forEach((entity) => {
         let optionConnections = List();
-        const entityConnections = option.groupByActortype
-          ? entity.getIn([`${option.path}ByActortype`, actortypeid])
-          : entity.get(option.path);
+        const entityConnections = option.groupByType
+          ? entity.getIn([`${option.query}ByType`, parseInt(typeid, 10)])
+          : entity.get(option.query);
         // if entity has connected entities
         if (entityConnections) {
           // add connected entities if not present otherwise increase count
           entityConnections.forEach((connectedId) => {
-            const connection = connections.getIn([option.path, connectedId.toString()]);
+            const connection = connections.getIn([option.query, connectedId.toString()]);
             // if not taxonomy already considered
             if (connection) {
               optionConnections = optionConnections.push(connection);
@@ -441,18 +442,18 @@ export const makeConnectionFilterOptions = (
           } else {
             let { message } = option;
             if (
-              option.groupByActortype
+              option.groupByType
               && option.message
-              && option.message.indexOf('{actortypeid}') > -1
+              && option.message.indexOf('{typeid}') > -1
             ) {
-              message = option.message.replace('{actortypeid}', actortypeid);
+              message = option.message.replace('{typeid}', typeid);
             }
             if (
-              option.groupByActiontype
+              option.groupByType
               && option.message
-              && option.message.indexOf('{actiontypeid}') > -1
+              && option.message.indexOf('{typeid}') > -1
             ) {
-              message = option.message.replace('{actiontypeid}', actortypeid);
+              message = option.message.replace('{typeid}', typeid);
             }
             filterOptions.options.without = {
               messagePrefix: messages.without,

@@ -3,16 +3,16 @@ import {
 } from 'themes/config';
 
 export const DEPENDENCIES = [
-  API.ACTIONS,
   API.ACTORS,
-  API.ACTION_ACTORS,
+  API.ACTIONS,
   API.ACTOR_ACTIONS,
-  API.ACTION_CATEGORIES,
+  API.ACTION_ACTORS,
   API.ACTOR_CATEGORIES,
-  API.ACTIONTYPES,
+  API.ACTION_CATEGORIES,
   API.ACTORTYPES,
-  API.ACTIONTYPE_TAXONOMIES,
+  API.ACTIONTYPES,
   API.ACTORTYPE_TAXONOMIES,
+  API.ACTIONTYPE_TAXONOMIES,
   API.TAXONOMIES,
   API.CATEGORIES,
   API.USERS,
@@ -72,13 +72,14 @@ export const CONFIG = {
     options: [
       {
         search: true,
-        message: 'entities.actors_{actortypeid}.plural',
+        message: 'entities.actors_{typeid}.plural',
         path: API.ACTORS, // filter by actor connection
+        query: API.ACTORS, // filter by actor connection
         key: 'actor_id',
         connectPath: API.ACTOR_ACTIONS, // filter by actor connection
         ownKey: 'measure_id',
-        groupByActortype: true,
-        actortypeFilter: 'is_active',
+        groupByType: true,
+        typeFilter: 'is_active',
       },
     ],
   },
@@ -92,8 +93,8 @@ export const CONFIG = {
   //       key: 'actor_id',
   //       connectPath: API.ACTION_ACTORS, // filter by actor connection
   //       ownKey: 'measure_id',
-  //       groupByActortype: true,
-  //       actortypeFilter: 'is_target',
+  //       groupByType: true,
+  //       typeFilter: 'is_target',
   //     },
   //   ],
   // },
@@ -104,7 +105,7 @@ export const CONFIG = {
         message: 'attributes.draft',
         attribute: 'draft',
         options: PUBLISH_STATUSES,
-        role: USER_ROLES.ANALYST.value,
+        role: USER_ROLES.MANAGER.value,
       },
     ],
   },

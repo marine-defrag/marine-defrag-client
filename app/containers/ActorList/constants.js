@@ -3,16 +3,16 @@ import {
 } from 'themes/config';
 
 export const DEPENDENCIES = [
-  API.ACTIONS,
   API.ACTORS,
-  API.ACTION_ACTORS,
+  API.ACTIONS,
   API.ACTOR_ACTIONS,
-  API.ACTION_CATEGORIES,
+  API.ACTION_ACTORS,
   API.ACTOR_CATEGORIES,
-  API.ACTIONTYPES,
+  API.ACTION_CATEGORIES,
   API.ACTORTYPES,
-  API.ACTIONTYPE_TAXONOMIES,
+  API.ACTIONTYPES,
   API.ACTORTYPE_TAXONOMIES,
+  API.ACTIONTYPE_TAXONOMIES,
   API.TAXONOMIES,
   API.CATEGORIES,
   API.USERS,
@@ -28,6 +28,7 @@ export const CONFIG = {
       attribute: 'id', // proxy for created at
       type: 'number',
       order: 'desc',
+      default: true,
     },
     {
       attribute: 'code',
@@ -63,17 +64,17 @@ export const CONFIG = {
   },
   connections: { // filter by associated entity
     query: 'connected',
-    type: 'activities',
+    type: 'actions',
     options: [
       {
         search: true,
-        message: 'entities.actions_{actiontypeid}.plural',
+        message: 'entities.actions_{typeid}.plural',
         path: API.ACTIONS, // filter by actor connection
-        clientPath: ROUTES.ACTIONS, // filter by actor connection
+        query: 'actions', // filter by actor connection
         key: 'measure_id',
         connectPath: API.ACTOR_ACTIONS, // filter by actor connection
         ownKey: 'actor_id',
-        groupByActiontype: true,
+        groupByType: true,
       },
     ],
   },
@@ -84,7 +85,7 @@ export const CONFIG = {
         message: 'attributes.draft',
         attribute: 'draft',
         options: PUBLISH_STATUSES,
-        role: USER_ROLES.ANALYST.value,
+        role: USER_ROLES.MANAGER.value,
       },
     ],
   },

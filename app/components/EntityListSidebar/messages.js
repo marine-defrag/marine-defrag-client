@@ -82,8 +82,8 @@ export default defineMessages({
       id: 'app.components.EntityListSidebar.filterGroupLabel.connections-targets',
       defaultMessage: 'By connection',
     },
-    'connections-activities': {
-      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-activities',
+    'connections-actions': {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-actions',
       defaultMessage: 'By connection',
     },
     connectedTaxonomies: {

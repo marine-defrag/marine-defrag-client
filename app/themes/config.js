@@ -181,16 +181,16 @@ export const ROUTES = {
 
 // Server endpoints for database tables **************************
 export const API = {
-  ACTIONS: 'measures', // actions/ACTIONS
-  ACTION_CATEGORIES: 'measure_categories', // measure_categories
-  ACTION_ACTORS: 'measure_actors', // linking actions with their targets
-  ACTIONTYPES: 'measuretypes', // action types
-  ACTIONTYPE_TAXONOMIES: 'measuretype_taxonomies', // action taxonomies
   ACTORS: 'actors',
-  ACTOR_CATEGORIES: 'actor_categories',
-  ACTOR_ACTIONS: 'actor_measures', // linking actors with their actions
+  ACTIONS: 'measures', // actions/ACTIONS
   ACTORTYPES: 'actortypes', // action types
+  ACTIONTYPES: 'measuretypes', // action types
+  ACTOR_ACTIONS: 'actor_measures', // linking actors with their actions
+  ACTION_ACTORS: 'measure_actors', // linking actions with their targets
+  ACTOR_CATEGORIES: 'actor_categories',
+  ACTION_CATEGORIES: 'measure_categories', // measure_categories
   ACTORTYPE_TAXONOMIES: 'actortype_taxonomies', // action taxonomies
+  ACTIONTYPE_TAXONOMIES: 'measuretype_taxonomies', // action taxonomies
   MEMBERSHIPS: 'memberships', // quasi: actor_actors
   // RESOURCES: 'resources',
   // ACTION_RESOURCES: 'measure_resources',
@@ -199,7 +199,7 @@ export const API = {
   CATEGORIES: 'categories',
   USERS: 'users',
   USER_ROLES: 'user_roles',
-  USER_CATEGORIES: 'user_categories',
+  // USER_CATEGORIES: 'user_categories',
   ROLES: 'roles',
   PAGES: 'pages',
   BOOKMARKS: 'bookmarks',

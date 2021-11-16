@@ -248,18 +248,18 @@ const getCurrentConnectionFilters = (
 ) => {
   const tags = [];
   forEach(connectionFilters.options, (option) => {
-    if (locationQuery.get(connectionFilters.query) && connections.get(option.path)) {
+    if (locationQuery.get(connectionFilters.query) && connections.get(option.query)) {
       const locationQueryValue = locationQuery.get(connectionFilters.query);
       asList(locationQueryValue).forEach((queryValue) => {
         const valueSplit = queryValue.split(':');
         if (valueSplit.length > 0) {
-          if (option.path === valueSplit[0].split('_')[0]) {
+          if (option.query === valueSplit[0].split('_')[0]) {
             const value = valueSplit[1].toString();
-            const connection = connections.getIn([option.path, value]);
+            const connection = connections.getIn([option.query, value]);
             if (connection) {
               tags.push({
                 label: getConnectionLabel(connection, value),
-                type: option.path,
+                type: option.query,
                 inverse: connection.getIn(['attributes', 'draft']),
                 onClick: () => onClick({
                   value: queryValue,
@@ -278,27 +278,27 @@ const getCurrentConnectionFilters = (
     const locationQueryValue = locationQuery.get('without');
     forEach(connectionFilters.options, (option) => {
       asList(locationQueryValue).forEach((queryValue) => {
-        const valueActortype = queryValue.split('_');
-        const actortypeid = valueActortype.length > 1 && valueActortype[1];
+        const valueType = queryValue.split('_');
+        const typeid = valueType.length > 1 && valueType[1];
         // numeric means taxonomy
-        if (option.path === valueActortype[0]) {
+        if (option.query === valueType[0]) {
           tags.push({
             labels: [
               { label: withoutLabel },
               {
                 appMessage: true,
                 label: (
-                  option.groupByActortype
+                  option.groupByType
                   && option.message
-                  && option.message.indexOf('{actortypeid}') > -1
+                  && option.message.indexOf('{typeid}') > -1
                 )
-                  ? option.message.replace('{actortypeid}', actortypeid)
+                  ? option.message.replace('{typeid}', typeid)
                   : option.message,
                 lowerCase: true,
               },
               { label: option.label },
             ],
-            type: option.path,
+            type: option.query,
             onClick: () => onClick({
               value: queryValue,
               query: 'without',

@@ -124,9 +124,9 @@ const makeConnectionEditOptions = (
   // get the active option
   const option = find(
     config.options,
-    (o) => o.groupByActortype
-      ? startsWith(activeEditOption.optionId, o.path)
-      : o.path === activeEditOption.optionId,
+    (o) => o.groupByType
+      ? startsWith(activeEditOption.optionId, o.query)
+      : o.query === activeEditOption.optionId,
   );
   const editOptions = {
     groupId: activeEditOption.group,
@@ -141,15 +141,24 @@ const makeConnectionEditOptions = (
   };
 
   if (option) {
-    const actortypeid = option.groupByActortype && activeEditOption.optionId.split('_')[1];
+    const typeid = option.groupByType && activeEditOption.optionId.split('_')[1];
     editOptions.title = messages.title;
-    editOptions.path = option.connectPath;
+    editOptions.query = option.connectPath;
     editOptions.search = option.search;
     connections
-      .get(option.path)
-      .filter((c) => !option.groupByActortype || qe(actortypeid, c.getIn(['attributes', 'actortype_id'])))
+      .get(option.query)
+      .filter((c) => {
+        if (!option.groupByType) return true;
+        if (option.groupByType && config.type === 'actions') {
+          return qe(typeid, c.getIn(['attributes', 'measuretype_id']));
+        }
+        if (option.groupByType && config.type === 'actors') {
+          return qe(typeid, c.getIn(['attributes', 'actortype_id']));
+        }
+        return true;
+      })
       .forEach((connection) => {
-        const count = entities.reduce((counter, entity) => testEntityEntityAssociation(entity, option.path, connection.get('id')) ? counter + 1 : counter,
+        const count = entities.reduce((counter, entity) => testEntityEntityAssociation(entity, option.query, connection.get('id')) ? counter + 1 : counter,
           0);
         editOptions.options[connection.get('id')] = {
           reference: getEntityReference(connection),

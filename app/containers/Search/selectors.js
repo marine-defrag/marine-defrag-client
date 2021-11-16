@@ -81,7 +81,7 @@ export const selectEntitiesByQuery = createSelector(
             (memo, target) => {
               const targetEntties = allEntities.get(target.get('path'));
               // target by actortype
-              if (actortypes && target.get('groupByActortype')) {
+              if (actortypes && target.get('groupByType')) {
                 return actortypes.reduce((innerMemo, actortype) => {
                   const actortypeEntities = targetEntties
                     .filter(

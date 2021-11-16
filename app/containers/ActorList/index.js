@@ -100,6 +100,7 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
         onClick: () => this.props.handleNew(typeId),
       });
     }
+
     return (
       <div>
         <Helmet

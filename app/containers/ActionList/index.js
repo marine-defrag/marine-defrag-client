@@ -99,7 +99,8 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
         onClick: () => this.props.handleNew(typeId),
       });
     }
-    // console.log('actiontypes', actiontypes && actiontypes.toJS())
+    console.log('connections', connections && connections.toJS());
+    console.log('connectedTaxonomies', connectedTaxonomies && connectedTaxonomies.toJS());
     return (
       <div>
         <Helmet

@@ -60,20 +60,20 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
       // console.log(memo, option, entity.toJS())
       let memoX = memo;
       if ((option.popover !== false)
-        && entity.get(option.path)
-        && connections.get(option.path)
-        && entity.get(option.path).size > 0
+        && entity.get(option.query)
+        && connections.get(option.query)
+        && entity.get(option.query).size > 0
       ) {
-        if (option.groupByActortype) {
-          const entitiesByActortype = entity.get(`${option.path}ByActortype`);
+        if (option.groupByType) {
+          const entitiesByType = entity.get(`${option.query}ByType`);
           // console.log(entity, entity.toJS())
-          if (entitiesByActortype) {
-            entitiesByActortype.forEach((actortypeentities, actortypeid) => {
-              if (actortypeentities.size > 0) {
-                const connectedEntities = actortypeentities.map(
-                  (connectionId) => connections.getIn([option.path, connectionId.toString()])
+          if (entitiesByType) {
+            entitiesByType.forEach((typeentities, typeid) => {
+              if (typeentities.size > 0) {
+                const connectedEntities = typeentities.map(
+                  (connectionId) => connections.getIn([option.query, connectionId.toString()])
                 );
-                const path = `${option.path}_${actortypeid}`;
+                const path = `${option.query}_${typeid}`;
                 memoX = memoX.concat([{
                   option: {
                     label: (size) => intl
@@ -82,8 +82,8 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
                           ? appMessages.entities[path].single
                           : appMessages.entities[path].plural
                       ),
-                    style: option.path,
-                    path: option.clientPath || option.path,
+                    style: option.query,
+                    path: option.query,
                   },
                   entities: connectedEntities,
                 }]);
@@ -92,17 +92,17 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
           }
         } else {
           const connectedEntities = entity
-            .get(option.path)
+            .get(option.query)
             .map(
-              (connectionId) => connections.getIn([option.path, connectionId.toString()])
+              (connectionId) => connections.getIn([option.query, connectionId.toString()])
             );
           memoX = memoX.concat([{
             option: {
               label: (size) => intl && intl.formatMessage(
-                size === 1 ? appMessages.entities[option.path].single : appMessages.entities[option.path].plural
+                size === 1 ? appMessages.entities[option.query].single : appMessages.entities[option.query].plural
               ),
-              style: option.path,
-              path: option.clientPath || option.path,
+              style: option.query,
+              path: option.query,
             },
             entities: connectedEntities,
           }]);
@@ -122,10 +122,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
   getReference = (entity) => {
     const { intl } = this.context;
     const reference = entity.getIn(['attributes', 'reference']) || entity.get('id');
-    let type = entity.get('type');
-    if (entity.getIn(['attributes', 'actortype_id'])) {
-      type = `${type}_${entity.getIn(['attributes', 'actortype_id'])}`;
-    }
+    const type = entity.get('type');
     if (intl
       && appMessages.entities[type]
       && appMessages.entities[type].singleShort

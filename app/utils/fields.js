@@ -284,7 +284,7 @@ const getConnectionField = ({
   showEmpty: appMessages.entities[entityType].empty,
   connectionOptions: connectionOptions.map((option) => ({
     label: appMessages.entities[option].plural,
-    groupByActortype: option === 'actors',
+    groupByType: option === 'actors',
     path: option,
     // TODO check path
     clientPath: option === 'actions' ? 'actions' : option,

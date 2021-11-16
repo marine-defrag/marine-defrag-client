@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
 import {
+  selectEntities,
   selectActorsSearchQuery,
   selectWithoutQuery,
   selectConnectionQuery,
@@ -13,6 +14,7 @@ import {
   selectActionCategoriesGroupedByAction,
   selectActorActionsGroupedByActor,
   selectCategories,
+  selectActionTaxonomies,
   // selectActorConnections,
   // selectActortypeTaxonomies,
   // selectActortypeQuery,
@@ -23,12 +25,14 @@ import {
   filterEntitiesByConnection,
   filterEntitiesByCategories,
   filterEntitiesWithoutAssociation,
-  // prepareTaxonomiesMultipleTags,
   entitiesSetCategoryIds,
+  getTaxonomyCategories,
 } from 'utils/entities';
 // import { qe } from 'utils/quasi-equals';
 
 import { sortEntities, getSortOption } from 'utils/sort';
+
+import { API } from 'themes/config';
 
 import { CONFIG, DEPENDENCIES } from './constants';
 
@@ -52,11 +56,8 @@ export const selectConnections = createSelector(
   }
 );
 
-export const selectConnectedTaxonomies = createSelector(
-  () => Map()
-);
 // export const selectConnectedTaxonomies = createSelector(
-//   (state) => selectActortypeTaxonomies(state),
+//   (state) => selectActiontypeTaxonomies(state),
 //   selectCategories,
 //   (taxonomies, categories) => prepareTaxonomiesMultipleTags(
 //     taxonomies,
@@ -64,6 +65,51 @@ export const selectConnectedTaxonomies = createSelector(
 //     ['tags_actions'],
 //   )
 // );
+
+
+export const selectConnectedTaxonomies = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectConnections,
+  selectActionTaxonomies,
+  selectCategories,
+  (state) => selectEntities(state, API.ACTION_CATEGORIES),
+  (
+    ready,
+    connections,
+    taxonomies,
+    categories,
+    actionCategories,
+  ) => {
+    if (!ready) return Map();
+    const relationship = {
+      tags: 'tags_actions',
+      path: 'actions',
+      key: 'measure_id',
+      associations: actionCategories,
+    };
+
+    const groupedAssociations = relationship.associations.filter(
+      (association) => association.getIn(['attributes', relationship.key])
+        && connections.getIn([
+          relationship.path,
+          association.getIn(['attributes', relationship.key]).toString(),
+        ])
+    ).groupBy(
+      (association) => association.getIn(['attributes', 'category_id'])
+    );
+    return taxonomies.map(
+      (taxonomy) => taxonomy.set(
+        'categories',
+        getTaxonomyCategories(
+          taxonomy,
+          categories,
+          relationship,
+          groupedAssociations,
+        )
+      )
+    );
+  }
+);
 const selectActorsWithCategories = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   (state, args) => selectActorsSearchQuery(state, {
@@ -129,7 +175,7 @@ const selectActorsWithActions = createSelector(
             'actions',
             entityActions
           ).set(
-            'actionsByActiontype',
+            'actionsByType',
             entityActionsByActiontype,
           );
         }

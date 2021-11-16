@@ -1,6 +1,5 @@
 import { reduce } from 'lodash/collection';
 import { sortEntities } from 'utils/sort';
-import { qe } from 'utils/quasi-equals';
 
 // figure out filter groups for filter panel
 export const makeFilterGroups = ({
@@ -17,79 +16,26 @@ export const makeFilterGroups = ({
 
   // taxonomy option group
   if (config.taxonomies && taxonomies) {
-    // multi actortype mode
-    if (config.actortypes && actortypes && actortypes.size > 1) {
-      // single actortype taxonomy
-      actortypes.forEach((actortype) => {
-        const actortypeTaxonomies = taxonomies.filter((tax) => {
-          const taxActortypeIds = tax.get('actortypeIds');
-          return taxActortypeIds.size === 1
-              && taxActortypeIds.find((actortypeid) => qe(actortypeid, actortype.get('id')));
-        });
-        filterGroups[`taxonomies_${actortype.get('id')}`] = {
-          id: `taxonomies_${actortype.get('id')}`, // filterGroupId
-          type: 'taxonomies',
-          label: messages.taxonomyGroupByActortype(actortype.get('id')),
-          show: true,
-          icon: 'categories',
-          options:
-            sortEntities(actortypeTaxonomies, 'asc', 'priority')
-              .reduce(
-                (memo, taxonomy) => memo.concat([
-                  {
-                    id: taxonomy.get('id'), // filterOptionId
-                    label: messages.taxonomies(taxonomy.get('id')),
-                    active: !!activeFilterOption && activeFilterOption.optionId === taxonomy.get('id'),
-                    nested: taxonomy.getIn(['attributes', 'parent_id']),
-                  },
-                ]),
-                [],
-              ),
-        };
-      });
-      const commonTaxonomies = taxonomies.filter((tax) => tax.get('actortypeIds')
-          && tax.get('actortypeIds').size > 1);
-      filterGroups.taxonomies = {
-        id: 'taxonomies', // filterGroupId
-        label: messages.taxonomyGroupByActortype('common'),
-        show: true,
-        icon: 'categories',
-        options:
-          sortEntities(commonTaxonomies, 'asc', 'priority')
-            .reduce(
-              (memo, taxonomy) => memo.concat([
-                {
-                  id: taxonomy.get('id'), // filterOptionId
-                  label: messages.taxonomies(taxonomy.get('id')),
-                  active: !!activeFilterOption && activeFilterOption.optionId === taxonomy.get('id'),
-                  nested: taxonomy.getIn(['attributes', 'parent_id']),
-                },
-              ]),
-              [],
-            ),
-      };
-    } else {
-      // first prepare taxonomy options
-      filterGroups.taxonomies = {
-        id: 'taxonomies', // filterGroupId
-        label: messages.taxonomyGroup,
-        show: true,
-        icon: 'categories',
-        options:
-          sortEntities(taxonomies, 'asc', 'priority')
-            .reduce(
-              (memo, taxonomy) => memo.concat([
-                {
-                  id: taxonomy.get('id'), // filterOptionId
-                  label: messages.taxonomies(taxonomy.get('id')),
-                  active: !!activeFilterOption && activeFilterOption.optionId === taxonomy.get('id'),
-                  nested: taxonomy.getIn(['attributes', 'parent_id']),
-                },
-              ]),
-              [],
-            ),
-      };
-    }
+    // first prepare taxonomy options
+    filterGroups.taxonomies = {
+      id: 'taxonomies', // filterGroupId
+      label: messages.taxonomyGroup,
+      show: true,
+      icon: 'categories',
+      options:
+        sortEntities(taxonomies, 'asc', 'priority')
+          .reduce(
+            (memo, taxonomy) => memo.concat([
+              {
+                id: taxonomy.get('id'), // filterOptionId
+                label: messages.taxonomies(taxonomy.get('id')),
+                active: !!activeFilterOption && activeFilterOption.optionId === taxonomy.get('id'),
+                nested: taxonomy.getIn(['attributes', 'parent_id']),
+              },
+            ]),
+            [],
+          ),
+    };
   }
 
   // connectedTaxonomies option group
@@ -129,43 +75,27 @@ export const makeFilterGroups = ({
       options: reduce(
         config.connections.options,
         (optionsMemo, option) => {
-          if (option.groupByActortype && actortypes) {
-            return actortypes
-              .filter((actortype) => !option.actortypeFilter || actortype.getIn(['attributes', option.actortypeFilter]))
-              .reduce(
-                (memo, actortype) => {
-                  const id = `${option.path}_${actortype.get('id')}`;
-                  return memo.concat({
-                    id, // filterOptionId
-                    label: option.label,
-                    message: (option.message && option.message.indexOf('{actortypeid}') > -1)
-                      ? option.message.replace('{actortypeid}', actortype.get('id'))
-                      : option.message,
-                    icon: id,
-                    color: option.path,
-                    active: !!activeFilterOption
-                      && activeFilterOption.group === 'connections'
-                      && activeFilterOption.optionId === id,
-                  });
-                },
-                optionsMemo,
-              );
+          let connectedTypes;
+          if (config.connections.type === 'actors') {
+            connectedTypes = actortypes;
+          } else if (config.connections.type === 'actions') {
+            connectedTypes = actiontypes;
           }
 
-          if (option.groupByActiontype && actiontypes) {
-            return actiontypes
-              .filter((actiontype) => !option.actiontypeFilter || actiontype.getIn(['attributes', option.actiontypeFilter]))
+          if (option.groupByType && connectedTypes) {
+            return connectedTypes
+              .filter((type) => !option.typeFilter || type.getIn(['attributes', option.typeFilter]))
               .reduce(
-                (memo, actiontype) => {
-                  const id = `${option.path}_${actiontype.get('id')}`;
+                (memo, type) => {
+                  const id = `${option.query}_${type.get('id')}`;
                   return memo.concat({
                     id, // filterOptionId
                     label: option.label,
-                    message: (option.message && option.message.indexOf('{actiontypeid}') > -1)
-                      ? option.message.replace('{actiontypeid}', actiontype.get('id'))
+                    message: (option.message && option.message.indexOf('{typeid}') > -1)
+                      ? option.message.replace('{typeid}', type.get('id'))
                       : option.message,
                     icon: id,
-                    color: option.path,
+                    color: option.query,
                     active: !!activeFilterOption
                       && activeFilterOption.group === 'connections'
                       && activeFilterOption.optionId === id,
@@ -175,11 +105,11 @@ export const makeFilterGroups = ({
               );
           }
           return optionsMemo.concat({
-            id: option.path, // filterOptionId
+            id: option.query, // filterOptionId
             label: option.label,
             message: option.message,
-            icon: option.path,
-            active: !!activeFilterOption && activeFilterOption.optionId === option.path,
+            icon: option.query,
+            active: !!activeFilterOption && activeFilterOption.optionId === option.query,
           });
         },
         [],
@@ -187,49 +117,49 @@ export const makeFilterGroups = ({
     };
   }
   // targets option group
-  if (config.targets) {
-    // first prepare taxonomy options
-    filterGroups.targets = {
-      id: 'targets', // filterGroupId
-      label: messages.targets,
-      show: true,
-      options: reduce(
-        config.targets.options,
-        (optionsMemo, option) => {
-          if (option.groupByActortype && actortypes) {
-            return actortypes
-              .filter((actortype) => !option.actortypeFilter || actortype.getIn(['attributes', option.actortypeFilter]))
-              .reduce(
-                (memo, actortype) => {
-                  const id = `${option.path}_${actortype.get('id')}`;
-                  return memo.concat({
-                    id, // filterOptionId
-                    label: option.label,
-                    message: (option.message && option.message.indexOf('{actortypeid}') > -1)
-                      ? option.message.replace('{actortypeid}', actortype.get('id'))
-                      : option.message,
-                    icon: id,
-                    color: option.path,
-                    active: !!activeFilterOption
-                      && activeFilterOption.group === 'targets'
-                      && activeFilterOption.optionId === id,
-                  });
-                },
-                optionsMemo,
-              );
-          }
-          return optionsMemo.concat({
-            id: option.path, // filterOptionId
-            label: option.label,
-            message: option.message,
-            icon: option.path,
-            active: !!activeFilterOption && activeFilterOption.optionId === option.path,
-          });
-        },
-        [],
-      ),
-    };
-  }
+  // if (config.targets) {
+  //   // first prepare taxonomy options
+  //   filterGroups.targets = {
+  //     id: 'targets', // filterGroupId
+  //     label: messages.targets,
+  //     show: true,
+  //     options: reduce(
+  //       config.targets.options,
+  //       (optionsMemo, option) => {
+  //         if (option.groupByType && actortypes) {
+  //           return actortypes
+  //             .filter((actortype) => !option.typeFilter || actortype.getIn(['attributes', option.typeFilter]))
+  //             .reduce(
+  //               (memo, actortype) => {
+  //                 const id = `${option.path}_${actortype.get('id')}`;
+  //                 return memo.concat({
+  //                   id, // filterOptionId
+  //                   label: option.label,
+  //                   message: (option.message && option.message.indexOf('{typeid}') > -1)
+  //                     ? option.message.replace('{typeid}', actortype.get('id'))
+  //                     : option.message,
+  //                   icon: id,
+  //                   color: option.path,
+  //                   active: !!activeFilterOption
+  //                     && activeFilterOption.group === 'targets'
+  //                     && activeFilterOption.optionId === id,
+  //                 });
+  //               },
+  //               optionsMemo,
+  //             );
+  //         }
+  //         return optionsMemo.concat({
+  //           id: option.path, // filterOptionId
+  //           label: option.label,
+  //           message: option.message,
+  //           icon: option.path,
+  //           active: !!activeFilterOption && activeFilterOption.optionId === option.path,
+  //         });
+  //       },
+  //       [],
+  //     ),
+  //   };
+  // }
 
   // attributes
   if (config.attributes) {
