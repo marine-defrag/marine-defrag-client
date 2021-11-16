@@ -150,7 +150,8 @@ export const PUBLISH_STATUSES = [
   { value: false, message: 'ui.publishStatuses.public' },
 ];
 
-export const DEFAULT_ACTIONTYPE = 1;
+export const DEFAULT_ACTORTYPE = '1';
+export const DEFAULT_ACTIONTYPE = '1';
 export const DEFAULT_TAXONOMY = '1';
 export const NO_PARENT_KEY = 'parentUndefined';
 

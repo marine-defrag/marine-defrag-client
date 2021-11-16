@@ -19,7 +19,7 @@ export default defineMessages({
   actions: {
     pageTitle: {
       id: 'app.containers.EntityNew.actions.pageTitle',
-      defaultMessage: 'New Action',
+      defaultMessage: 'New { type }',
     },
   },
   actors: {

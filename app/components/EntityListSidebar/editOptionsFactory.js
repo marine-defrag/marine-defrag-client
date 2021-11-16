@@ -143,7 +143,7 @@ const makeConnectionEditOptions = (
   if (option) {
     const typeid = option.groupByType && activeEditOption.optionId.split('_')[1];
     editOptions.title = messages.title;
-    editOptions.query = option.connectPath;
+    editOptions.path = option.connectPath;
     editOptions.search = option.search;
     connections
       .get(option.query)
@@ -158,8 +158,14 @@ const makeConnectionEditOptions = (
         return true;
       })
       .forEach((connection) => {
-        const count = entities.reduce((counter, entity) => testEntityEntityAssociation(entity, option.query, connection.get('id')) ? counter + 1 : counter,
-          0);
+        const count = entities.reduce(
+          (counter, entity) => testEntityEntityAssociation(
+            entity,
+            option.path,
+            connection.get('id')
+          ) ? counter + 1 : counter,
+          0, // initial value
+        );
         editOptions.options[connection.get('id')] = {
           reference: getEntityReference(connection),
           label: getEntityTitle(connection),

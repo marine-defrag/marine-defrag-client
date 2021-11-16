@@ -11,7 +11,6 @@ import { actions as formActions } from 'react-redux-form/immutable';
 import { Map, List } from 'immutable';
 
 import { getEntityAttributeFields } from 'utils/forms';
-import { qe } from 'utils/quasi-equals';
 import { scrollToTop } from 'utils/scroll-to-component';
 import { hasNewError } from 'utils/entity-form';
 
@@ -21,15 +20,11 @@ import {
   saveErrorDismiss,
 } from 'containers/App/actions';
 
-import {
-  selectEntity,
-  selectActortypeQuery,
-  selectActortypes,
-} from 'containers/App/selectors';
+import { selectEntity } from 'containers/App/selectors';
 import { selectParentOptions, selectParentTaxonomy } from 'containers/CategoryNew/selectors';
 
 
-import { API, DEFAULT_ACTIONTYPE } from 'themes/config';
+import { API, DEFAULT_ACTIONTYPE, DEFAULT_ACTORTYPE } from 'themes/config';
 import { CONTENT_MODAL } from 'containers/App/constants';
 import appMessages from 'containers/App/messages';
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
@@ -59,7 +54,7 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
     if (hasNewError(nextProps, this.props) && this.scrollContainer) {
       scrollToTop(this.scrollContainer.current);
     }
-    if (!this.props.actortypeId && nextProps.actortypeId) {
+    if (!this.props.attributes && nextProps.attributes) {
       this.props.initialiseForm('actorNew.form.data', this.getInitialFormData(nextProps));
     }
   }
@@ -68,13 +63,18 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
   // todo set/pass type
   getInitialFormData = (nextProps) => {
     const props = nextProps || this.props;
-    const { actortypeId } = props;
-    return Map(FORM_INITIAL.setIn(
-      ['attributes', 'actortype_id'],
-      (actortypeId && actortypeId !== 'all')
-        ? actortypeId
-        : DEFAULT_ACTIONTYPE,
-    ));
+    const { attributes, path } = props;
+    if (path === API.ACTORS) {
+      return attributes.get('actortype_id')
+        ? Map(FORM_INITIAL.set('attributes', attributes))
+        : Map(FORM_INITIAL.setIn(['attributes', 'actortype_id'], DEFAULT_ACTIONTYPE));
+    }
+    if (path === API.ACTIONS) {
+      return attributes.get('measuretype_id')
+        ? Map(FORM_INITIAL.set('attributes', attributes))
+        : Map(FORM_INITIAL.setIn(['attributes', 'measuretype_id'], DEFAULT_ACTIONTYPE));
+    }
+    return Map(FORM_INITIAL);
   }
 
   /* eslint-disable react/destructuring-assignment */
@@ -91,15 +91,11 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
       taxonomy,
       categoryParentOptions,
       parentTaxonomy,
-      actortypes,
-      actortype,
-      actortypeId,
+      type,
     } = this.props;
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
 
     let pageTitle;
-    let hasResponse;
-    let actortypeSpecified;
     let icon = path;
     if (path === API.CATEGORIES && taxonomy && taxonomy.get('attributes')) {
       pageTitle = intl.formatMessage(messages[path].pageTitleTaxonomy, {
@@ -107,31 +103,38 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
       });
     } else if (path === API.ACTORS) {
       // figure out actortype id from form if not set
-      const currentActortypeId = (actortype && actortype.get('id'))
-        || actortypeId
+      const currentTypeId = (type && type.get('id'))
         || viewDomain.getIn(['form', 'data', 'attributes', 'actortype_id'])
-        || DEFAULT_ACTIONTYPE;
+        || DEFAULT_ACTORTYPE;
       // check if single actortype set
-      actortypeSpecified = (currentActortypeId && currentActortypeId !== 'all');
       // get current actortype
-      const currentActortype = actortype
-        || (
-          actortypeSpecified
-          && actortypes
-          && actortypes.find((at) => qe(at.get('id'), currentActortypeId))
-        );
       // check if response is required
-      hasResponse = currentActortype && currentActortype.getIn(['attributes', 'has_response']);
       // figure out title and icon
       pageTitle = intl.formatMessage(
-        messages[path].pageTitle,
+        messages.actors.pageTitle,
         {
           type: intl.formatMessage(
-            appMessages.entities[actortypeSpecified ? `${path}_${currentActortypeId}` : path].single
+            appMessages.entities[`actors_${currentTypeId}`].single
           ),
         }
       );
-      icon = actortypeSpecified ? `${path}_${currentActortypeId}` : path;
+      icon = `${path}_${currentTypeId}`;
+    } else if (path === API.ACTIONS) {
+      // figure out actortype id from form if not set
+      const currentTypeId = (type && type.get('id'))
+        || viewDomain.getIn(['form', 'data', 'attributes', 'measuretype_id'])
+        || DEFAULT_ACTIONTYPE;
+      // check if single actortype set
+      // figure out title and icon
+      pageTitle = intl.formatMessage(
+        messages.actions.pageTitle,
+        {
+          type: intl.formatMessage(
+            appMessages.entities[`actions_${currentTypeId}`].single
+          ),
+        }
+      );
+      icon = `${path}_${currentTypeId}`;
     } else {
       pageTitle = intl.formatMessage(messages[path].pageTitle);
     }
@@ -197,10 +200,6 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
                   categoryParentOptions,
                   parentTaxonomy,
                 },
-                actors: {
-                  actortypes: !actortypeSpecified ? actortypes : null,
-                  hasResponse,
-                },
               },
               intl,
             )}
@@ -230,36 +229,35 @@ EntityNew.propTypes = {
   initialiseForm: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
-  actortype: PropTypes.object,
-  actortypes: PropTypes.object,
-  actortypeId: PropTypes.string,
+  type: PropTypes.object,
 };
 
 EntityNew.contextTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state, { path, attributes }) => ({
-  viewDomain: selectDomain(state),
-  taxonomy: path === API.CATEGORIES && attributes && attributes.get('taxonomy_id')
-    ? selectEntity(state, { path: API.TAXONOMIES, id: attributes.get('taxonomy_id') })
-    : null,
-  categoryParentOptions: path === API.CATEGORIES && attributes && attributes.get('taxonomy_id')
-    ? selectParentOptions(state, attributes.get('taxonomy_id'))
-    : null,
-  parentTaxonomy: path === API.CATEGORIES && attributes && attributes.get('taxonomy_id')
-    ? selectParentTaxonomy(state, attributes.get('taxonomy_id'))
-    : null,
-  actortypeId: path === API.ACTORS
-    ? selectActortypeQuery(state)
-    : null,
-  actortypes: path === API.ACTORS
-    ? selectActortypes(state)
-    : null,
-  actortype: path === API.ACTORS && attributes && attributes.get('actortype_id')
-    ? selectEntity(state, { path: API.ACTORTYPES, id: attributes.get('actortype_id') })
-    : null,
-});
+const mapStateToProps = (state, { path, attributes }) => {
+  let type;
+  if (path === API.ACTORS && attributes && attributes.get('actortype_id')) {
+    type = selectEntity(state, { path: API.ACTORTYPES, id: attributes.get('actortype_id') });
+  }
+  if (path === API.ACTIONS && attributes && attributes.get('measuretype_id')) {
+    type = selectEntity(state, { path: API.ACTIONTYPES, id: attributes.get('measuretype_id') });
+  }
+  return {
+    viewDomain: selectDomain(state),
+    taxonomy: path === API.CATEGORIES && attributes && attributes.get('taxonomy_id')
+      ? selectEntity(state, { path: API.TAXONOMIES, id: attributes.get('taxonomy_id') })
+      : null,
+    categoryParentOptions: path === API.CATEGORIES && attributes && attributes.get('taxonomy_id')
+      ? selectParentOptions(state, attributes.get('taxonomy_id'))
+      : null,
+    parentTaxonomy: path === API.CATEGORIES && attributes && attributes.get('taxonomy_id')
+      ? selectParentTaxonomy(state, attributes.get('taxonomy_id'))
+      : null,
+    type,
+  };
+};
 
 function mapDispatchToProps(dispatch, props) {
   return {

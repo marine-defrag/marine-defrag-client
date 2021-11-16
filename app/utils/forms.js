@@ -140,11 +140,11 @@ export const renderActorsByActortypeControl = (
   contextIntl,
 ) => entitiesByActortype
   ? entitiesByActortype.reduce(
-    (controls, entities, actortypeid) => controls.concat({
-      id: `actors.${actortypeid}`,
-      model: `.associatedActorsByActortype.${actortypeid}`,
-      dataPath: ['associatedActorsByActortype', actortypeid],
-      label: contextIntl.formatMessage(appMessages.entities[`actors_${actortypeid}`].plural),
+    (controls, entities, typeid) => controls.concat({
+      id: `actors.${typeid}`,
+      model: `.associatedActorsByActortype.${typeid}`,
+      dataPath: ['associatedActorsByActortype', typeid],
+      label: contextIntl.formatMessage(appMessages.entities[`actors_${typeid}`].plural),
       controlType: 'multiselect',
       options: entityOptions(entities),
       advanced: true,
@@ -153,7 +153,7 @@ export const renderActorsByActortypeControl = (
       onCreate: onCreateOption
         ? () => onCreateOption({
           path: API.ACTORS,
-          attributes: { actortype_id: actortypeid },
+          attributes: { actortype_id: typeid },
         })
         : null,
     }),
@@ -625,12 +625,10 @@ const getCategoryFields = (args, formatMessage) => ({
   },
 });
 
-const getActorFields = ({ actortypes }, formatMessage) => ({
+const getActorFields = (formatMessage) => ({
   header: {
     main: [{ // fieldGroup
       fields: [
-        actortypes && getActortypeFormField(formatMessage, actortypes),
-        getReferenceFormField(formatMessage, true), // required
         getTitleFormField(formatMessage),
       ],
     }],
@@ -670,8 +668,8 @@ const getActionFields = (formatMessage) => ({
     }],
     aside: [{ // fieldGroup
       fields: [
-        getDateField(formatMessage, 'target_date'),
-        getTextareaField(formatMessage, 'target_date_comment'),
+        // getDateField(formatMessage, 'target_date'),
+        // getTextareaField(formatMessage, 'target_date_comment'),
       ],
     }],
   },
@@ -679,12 +677,12 @@ const getActionFields = (formatMessage) => ({
 
 export const getEntityAttributeFields = (path, args, contextIntl) => {
   switch (path) {
-    case 'categories':
+    case API.CATEGORIES:
       return getCategoryFields(args.categories, contextIntl.formatMessage);
-    case 'actions':
+    case API.ACTIONS:
       return getActionFields(contextIntl.formatMessage);
-    case 'actors':
-      return getActorFields(args.actors, contextIntl.formatMessage);
+    case API.ACTORS:
+      return getActorFields(contextIntl.formatMessage);
     default:
       return {};
   }
