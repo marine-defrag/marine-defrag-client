@@ -269,7 +269,7 @@ export const selectActionsByType = createSelector(
       }
     ).groupBy(
       (r) => r.getIn(['attributes', 'measuretype_id'])
-    );
+    ).sortBy((val, key) => key);
   }
 );
 
@@ -326,7 +326,7 @@ export const selectActorsByType = createSelector(
       }
     ).groupBy(
       (r) => r.getIn(['attributes', 'actortype_id'])
-    );
+    ).sortBy((val, key) => key);
   }
 );
 

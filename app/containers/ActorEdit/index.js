@@ -444,9 +444,10 @@ function mapDispatchToProps(dispatch, props) {
           })
         );
       saveData = saveData.set(
-        'actionActors',
+        'actorActions',
         actionsByActiontype
           .map((actions, actiontypeid) => getConnectionUpdatesFromFormData({
+            formData,
             connections: actions,
             connectionAttribute: ['associatedActionsByActiontype', actiontypeid.toString()],
             createConnectionKey: 'measure_id',

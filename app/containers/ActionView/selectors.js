@@ -119,6 +119,6 @@ export const selectActorsByType = createSelector(
       }
     ).groupBy(
       (r) => r.getIn(['attributes', 'actortype_id'])
-    );
+    ).sortBy((val, key) => key);
   }
 );
