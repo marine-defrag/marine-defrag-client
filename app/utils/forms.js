@@ -217,6 +217,34 @@ export const renderActionsByActiontypeControl = (
   ).sort((a, b) => a.id > b.id ? 1 : -1)
   : null;
 
+export const renderActionsAsTargetByActiontypeControl = (
+  entitiesByActiontype,
+  taxonomies,
+  onCreateOption,
+  contextIntl,
+) => entitiesByActiontype
+  ? entitiesByActiontype.reduce(
+    (controls, entities, typeid) => controls.concat({
+      id: `actorsAsTarget.${typeid}`,
+      model: `.associatedActionsAsTargetByActiontype.${typeid}`,
+      dataPath: ['associatedActionsAsTargetByActiontype', typeid],
+      label: contextIntl.formatMessage(appMessages.entities[`actions_${typeid}`].plural),
+      controlType: 'multiselect',
+      options: entityOptions(entities),
+      advanced: true,
+      selectAll: true,
+      tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
+      onCreate: onCreateOption
+        ? () => onCreateOption({
+          path: API.ACTIONS,
+          attributes: { measuretype_id: typeid },
+        })
+        : null,
+    }),
+    [],
+  ).sort((a, b) => a.id > b.id ? 1 : -1)
+  : null;
+
 // taxonomies with categories "embedded"
 export const renderTaxonomyControl = (
   taxonomies,
@@ -320,7 +348,6 @@ export const getConnectionUpdatesFromFormData = ({
   createKey,
 }) => {
   let formConnectionIds = List();
-  console.log(formData && formData.toJS());
   if (formData) {
     if (Array.isArray(connectionAttribute)) {
       formConnectionIds = getCheckedValuesFromOptions(formData.getIn(connectionAttribute));

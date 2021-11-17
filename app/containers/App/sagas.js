@@ -397,7 +397,7 @@ export function* deleteEntitySaga({ data }, updateClient = true, multiple = fals
     yield call(deleteEntityRequest, data.path, data.id);
     if (!multiple && data.redirect !== false) {
       yield put(updatePath(
-        `/${data.redirect || data.path}`,
+        `${data.redirect || data.path}`,
         { replace: true },
       ));
     }

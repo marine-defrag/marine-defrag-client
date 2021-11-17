@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { API, ACTIONTYPE_ACTORTYPES } from 'themes/config';
+import { API, ACTIONTYPE_ACTORTYPES, ACTIONTYPE_TARGETTYPES } from 'themes/config';
 import { qe } from 'utils/quasi-equals';
 
 import {
@@ -9,6 +9,7 @@ import {
   selectActionTaxonomies,
   selectActiontypes,
   selectActorActionsGroupedByActor,
+  selectActionActorsGroupedByActor,
   selectActorCategoriesGroupedByActor,
   selectCategories,
   selectTaxonomiesSorted,
@@ -118,6 +119,47 @@ export const selectActionsByActiontype = createSelector(
           )
         );
         return !!actiontype;
+      }
+    );
+    return entitiesSetAssociated(
+      filtered,
+      associations,
+      actor.get('id'),
+    ).groupBy(
+      (action) => action.getIn(['attributes', 'measuretype_id']).toString()
+    );
+  }
+);
+
+export const selectActionsAsTargetByActiontype = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectViewEntity,
+  selectActionsCategorised,
+  selectActionActorsGroupedByActor,
+  selectActiontypes,
+  (ready, actor, actions, associations, actiontypes) => {
+    if (!ready) return null;
+    const actortypeId = actor.getIn(['attributes', 'actortype_id']).toString();
+    // compare App/selectors/selectActiontypesForActortype
+    const validActiontypeIds = Object.keys(ACTIONTYPE_TARGETTYPES).filter((actiontypeId) => {
+      const actortypeIds = ACTIONTYPE_TARGETTYPES[actiontypeId];
+      return actortypeIds && actortypeIds.indexOf(actortypeId) > -1;
+    });
+    if (!validActiontypeIds || validActiontypeIds.length === 0) {
+      return null;
+    }
+    const actiontypesForActortype = actiontypes.filter(
+      (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
+    );
+    const filtered = actions.filter(
+      (action) => {
+        const actiontype = actiontypesForActortype.find(
+          (at) => qe(
+            at.get('id'),
+            action.getIn(['attributes', 'measuretype_id']),
+          )
+        );
+        return actiontype && actiontype.getIn(['attributes', 'has_target']);
       }
     );
     return entitiesSetAssociated(

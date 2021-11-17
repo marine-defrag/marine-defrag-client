@@ -5,6 +5,7 @@
  */
 import { fromJS } from 'immutable';
 import { API, ACTION_FIELDS } from 'themes/config';
+
 export const SAVE = 'impactoss/ActionNew/SAVE';
 
 export const DEPENDENCIES = [

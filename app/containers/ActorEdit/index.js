@@ -25,6 +25,7 @@ import {
   getNumberFormField,
   getCategoryUpdatesFromFormData,
   renderActionsByActiontypeControl,
+  renderActionsAsTargetByActiontypeControl,
   getConnectionUpdatesFromFormData,
 } from 'utils/forms';
 import { getInfoField, getMetaField } from 'utils/fields';
@@ -65,6 +66,7 @@ import {
   selectViewEntity,
   selectTaxonomyOptions,
   selectActionsByActiontype,
+  selectActionsAsTargetByActiontype,
   selectConnectedTaxonomies,
 } from './selectors';
 
@@ -174,6 +176,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
     entity,
     connectedTaxonomies,
     actionsByActiontype,
+    actionsAsTargetByActiontype,
     onCreateOption,
   ) => {
     const { intl } = this.context;
@@ -207,6 +210,22 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
         groups.push(
           {
             label: intl.formatMessage(appMessages.nav.actions),
+            fields: actionConnections,
+          },
+        );
+      }
+    }
+    if (actionsAsTargetByActiontype) {
+      const actionConnections = renderActionsAsTargetByActiontypeControl(
+        actionsAsTargetByActiontype,
+        connectedTaxonomies,
+        onCreateOption,
+        intl,
+      );
+      if (actionConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.actionsAsTarget),
             fields: actionConnections,
           },
         );
@@ -255,6 +274,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
       taxonomies,
       connectedTaxonomies,
       actionsByActiontype,
+      actionsAsTargetByActiontype,
       onCreateOption,
     } = this.props;
     const typeId = viewEntity && viewEntity.getIn(['attributes', 'actortype_id']);
@@ -332,6 +352,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
                   formData,
                   taxonomies,
                   actionsByActiontype,
+                  actionsAsTargetByActiontype,
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={this.props.handleCancel}
@@ -351,6 +372,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
                       viewEntity,
                       connectedTaxonomies,
                       actionsByActiontype,
+                      actionsAsTargetByActiontype,
                       onCreateOption,
                     ),
                     aside: this.getBodyAsideFields(
@@ -389,6 +411,7 @@ ActorEdit.propTypes = {
   params: PropTypes.object,
   taxonomies: PropTypes.object,
   actionsByActiontype: PropTypes.object,
+  actionsAsTargetByActiontype: PropTypes.object,
   onCreateOption: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
@@ -406,6 +429,7 @@ const mapStateToProps = (state, props) => ({
   viewEntity: selectViewEntity(state, props.params.id),
   taxonomies: selectTaxonomyOptions(state, props.params.id),
   actionsByActiontype: selectActionsByActiontype(state, props.params.id),
+  actionsAsTargetByActiontype: selectActionsAsTargetByActiontype(state, props.params.id),
   connectedTaxonomies: selectConnectedTaxonomies(state),
 });
 
@@ -433,7 +457,7 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, taxonomies, actionsByActiontype) => {
+    handleSubmit: (formData, taxonomies, actionsByActiontype, actionsAsTargetByActiontype) => {
       let saveData = formData
         .set(
           'actorCategories',
@@ -450,6 +474,30 @@ function mapDispatchToProps(dispatch, props) {
             formData,
             connections: actions,
             connectionAttribute: ['associatedActionsByActiontype', actiontypeid.toString()],
+            createConnectionKey: 'measure_id',
+            createKey: 'actor_id',
+          }))
+          .reduce(
+            (memo, deleteCreateLists) => {
+              const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
+              const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+              return memo
+                .set('delete', deletes)
+                .set('create', creates);
+            },
+            fromJS({
+              delete: [],
+              create: [],
+            }),
+          )
+      );
+      saveData = saveData.set(
+        'actionActors',
+        actionsAsTargetByActiontype
+          .map((actions, actiontypeid) => getConnectionUpdatesFromFormData({
+            formData,
+            connections: actions,
+            connectionAttribute: ['associatedActionsAsTargetByActiontype', actiontypeid.toString()],
             createConnectionKey: 'measure_id',
             createKey: 'actor_id',
           }))

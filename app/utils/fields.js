@@ -348,6 +348,27 @@ export const getActionConnectionField = (
   entityPath: ROUTES.ACTION,
   onEntityClick,
 });
+export const getActionAsTargetConnectionField = (
+  entities,
+  taxonomies,
+  connections,
+  onEntityClick,
+  actiontypeid, // actortype id
+) => getConnectionField({
+  entities: sortEntities(entities, 'asc', 'id'),
+  taxonomies: filterTaxonomies(taxonomies, 'tags_actions'),
+  connections,
+  connectionOptions: [{
+    label: appMessages.entities.actors.plural,
+    groupByType: true,
+    path: 'actors',
+    clientPath: ROUTES.ACTOR,
+    query: 'actors',
+  }],
+  entityType: actiontypeid ? `actions_${actiontypeid}` : 'actions',
+  entityPath: ROUTES.ACTION,
+  onEntityClick,
+});
 
 const getConnectionGroupsField = ({
   entityGroups,

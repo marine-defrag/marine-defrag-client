@@ -713,6 +713,10 @@ export default defineMessages({
       id: 'app.containers.App.nav.actions',
       defaultMessage: 'Actions',
     },
+    actionsAsTarget: {
+      id: 'app.containers.App.nav.actionsAsTarget',
+      defaultMessage: 'Targeted by',
+    },
     actors: {
       id: 'app.containers.App.nav.actors',
       defaultMessage: 'Actors',

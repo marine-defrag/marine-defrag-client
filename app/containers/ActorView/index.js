@@ -22,6 +22,7 @@ import {
   getTaxonomyFields,
   hasTaxonomyCategories,
   getActionConnectionField,
+  getActionAsTargetConnectionField,
 } from 'utils/fields';
 // import { qe } from 'utils/quasi-equals';
 import { getEntityTitleTruncated, checkActorAttribute } from 'utils/entities';
@@ -51,6 +52,7 @@ import {
   selectViewEntity,
   selectViewTaxonomies,
   selectActionsByType,
+  selectActionsAsTargetByType,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
@@ -110,6 +112,7 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
   getBodyMainFields = (
     entity,
     actionsByActortype,
+    actionsAsTargetByActiontype,
     taxonomies,
     actionConnections,
     onEntityClick,
@@ -147,6 +150,24 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
         fields: actionConnectionsLocal,
       });
     }
+    if (actionsAsTargetByActiontype) {
+      const actionAsTargetConnectionsLocal = [];
+      actionsAsTargetByActiontype.forEach((actions, actiontypeid) => {
+        actionAsTargetConnectionsLocal.push(
+          getActionAsTargetConnectionField(
+            actions,
+            taxonomies,
+            actionConnections,
+            onEntityClick,
+            actiontypeid,
+          ),
+        );
+      });
+      fields.push({
+        label: appMessages.nav.actionsAsTarget,
+        fields: actionAsTargetConnectionsLocal,
+      });
+    }
     return fields;
   };
 
@@ -179,6 +200,7 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
       taxonomies,
       viewTaxonomies,
       actionsByActiontype,
+      actionsAsTargetByActiontype,
       actionConnections,
       onEntityClick,
     } = this.props;
@@ -251,6 +273,7 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
                     main: this.getBodyMainFields(
                       viewEntity,
                       actionsByActiontype,
+                      actionsAsTargetByActiontype,
                       taxonomies,
                       actionConnections,
                       onEntityClick,
@@ -278,6 +301,7 @@ ActorView.propTypes = {
   taxonomies: PropTypes.object,
   actionConnections: PropTypes.object,
   actionsByActiontype: PropTypes.object,
+  actionsAsTargetByActiontype: PropTypes.object,
   params: PropTypes.object,
   isManager: PropTypes.bool,
 };
@@ -293,6 +317,7 @@ const mapStateToProps = (state, props) => ({
   viewTaxonomies: selectViewTaxonomies(state, props.params.id),
   taxonomies: selectTaxonomiesWithCategories(state),
   actionsByActiontype: selectActionsByType(state, props.params.id),
+  actionsAsTargetByActiontype: selectActionsAsTargetByType(state, props.params.id),
   actionConnections: selectActionConnections(state),
 });
 

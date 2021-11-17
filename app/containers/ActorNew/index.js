@@ -23,6 +23,7 @@ import {
   getAmountFormField,
   getNumberFormField,
   renderActionsByActiontypeControl,
+  renderActionsAsTargetByActiontypeControl,
 } from 'utils/forms';
 import { getInfoField } from 'utils/fields';
 
@@ -64,6 +65,7 @@ import {
   selectDomain,
   selectConnectedTaxonomies,
   selectActionsByActiontype,
+  selectActionsAsTargetByActiontype,
 } from './selectors';
 
 import messages from './messages';
@@ -149,6 +151,7 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
     type,
     connectedTaxonomies,
     actionsByActiontype,
+    actionsAsTargetByActiontype,
     onCreateOption,
   ) => {
     const { intl } = this.context;
@@ -179,6 +182,22 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
         groups.push(
           {
             label: intl.formatMessage(appMessages.nav.actions),
+            fields: actionConnections,
+          },
+        );
+      }
+    }
+    if (actionsAsTargetByActiontype) {
+      const actionConnections = renderActionsAsTargetByActiontypeControl(
+        actionsAsTargetByActiontype,
+        connectedTaxonomies,
+        onCreateOption,
+        intl,
+      );
+      if (actionConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.actionsAsTarget),
             fields: actionConnections,
           },
         );
@@ -224,6 +243,7 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
       viewDomain,
       connectedTaxonomies,
       actionsByActiontype,
+      actionsAsTargetByActiontype,
       taxonomies,
       onCreateOption,
       actortype,
@@ -291,6 +311,7 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
                   formData,
                   actortype,
                   actionsByActiontype,
+                  actionsAsTargetByActiontype,
                   // actortypeTaxonomies,
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
@@ -309,6 +330,7 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
                       actortype,
                       connectedTaxonomies,
                       actionsByActiontype,
+                      actionsAsTargetByActiontype,
                       onCreateOption,
                     ),
                     aside: this.getBodyAsideFields(
@@ -344,6 +366,7 @@ ActorNew.propTypes = {
   onCreateOption: PropTypes.func,
   initialiseForm: PropTypes.func,
   actionsByActiontype: PropTypes.object,
+  actionsAsTargetByActiontype: PropTypes.object,
   connectedTaxonomies: PropTypes.object,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
@@ -369,6 +392,7 @@ const mapStateToProps = (state, { params }) => ({
   connectedTaxonomies: selectConnectedTaxonomies(state),
   actortype: selectActortype(state, params.id),
   actionsByActiontype: selectActionsByActiontype(state, params.id),
+  actionsAsTargetByActiontype: selectActionsAsTargetByActiontype(state, params.id),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -395,7 +419,7 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, actortype, actionsByActiontype) => {
+    handleSubmit: (formData, actortype, actionsByActiontype, actionsAsTargetByActiontype) => {
       let saveData = formData.setIn(
         ['attributes', 'actortype_id'],
         actortype.get('id'),
@@ -428,12 +452,35 @@ function mapDispatchToProps(dispatch) {
       // actions if allowed by actortype
       if (formData.get('associatedActionsByActiontype')) {
         saveData = saveData.set(
-          'actionActors',
+          'actorActions',
           actionsByActiontype
             .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
               formData,
               connections: actors,
               connectionAttribute: ['associatedActionsByActiontype', actortypeid.toString()],
+              createConnectionKey: 'measure_id',
+              createKey: 'actor_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo.set('create', creates);
+              },
+              fromJS({
+                create: [],
+              }),
+            )
+        );
+      }
+      // actions if allowed by actortype
+      if (formData.get('associatedActionsAsTargetByActiontype')) {
+        saveData = saveData.set(
+          'actionActors',
+          actionsAsTargetByActiontype
+            .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: actors,
+              connectionAttribute: ['associatedActionsAsTargetByActiontype', actortypeid.toString()],
               createConnectionKey: 'measure_id',
               createKey: 'actor_id',
             }))

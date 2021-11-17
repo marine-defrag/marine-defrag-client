@@ -157,14 +157,14 @@ export const selectTargetsByType = createSelector(
     ready,
     targets,
     connections,
-    actionTargets, // aka actionTargets
+    actorActions, // aka actionTargets
     actorCategories,
     categories,
   ) => {
     if (!ready) return Map();
     return targets && targets.map(
       (target) => {
-        const entityActions = actionTargets.get(parseInt(target.get('id'), 10));
+        const entityActions = actorActions.get(parseInt(target.get('id'), 10));
         const entityActionsByActiontype = entityActions
           && connections.get('actions')
           && entityActions.filter(
