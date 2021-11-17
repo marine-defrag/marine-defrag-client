@@ -5,7 +5,6 @@
  */
 import { fromJS } from 'immutable';
 import { API, ACTOR_FIELDS } from 'themes/config';
-
 export const SAVE = 'impactoss/ActorEdit/SAVE';
 
 export const DEPENDENCIES = [
@@ -20,6 +19,7 @@ export const DEPENDENCIES = [
   API.ACTORTYPE_TAXONOMIES,
   API.ACTIONTYPE_TAXONOMIES,
   API.ACTOR_ACTIONS,
+  API.ACTION_ACTORS,
   API.ACTOR_CATEGORIES,
   API.ACTION_CATEGORIES,
 ];
@@ -32,4 +32,5 @@ export const FORM_INITIAL = fromJS({
   }), {}),
   associatedTaxonomies: {},
   associatedActionsByActiontype: [],
+  associatedActionsAsTargetByActiontype: [],
 });

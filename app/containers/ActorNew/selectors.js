@@ -7,7 +7,7 @@ import {
   selectActiontypes,
   selectActionTaxonomies,
   selectActionsCategorised,
-  selectActionActorsGroupedByActor,
+  selectActorActionsGroupedByActor,
 } from 'containers/App/selectors';
 import { prepareTaxonomies } from 'utils/entities';
 
@@ -29,7 +29,7 @@ export const selectConnectedTaxonomies = createSelector(
 export const selectActionsByActiontype = createSelector(
   (state, id) => id,
   selectActionsCategorised,
-  selectActionActorsGroupedByActor,
+  selectActorActionsGroupedByActor,
   selectActiontypes,
   (actortypeId, actions, associations, actiontypes) => {
     // compare App/selectors/selectActiontypesForActortype
@@ -37,6 +37,9 @@ export const selectActionsByActiontype = createSelector(
       const actortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
       return actortypeIds && actortypeIds.indexOf(actortypeId) > -1;
     });
+    if (!validActiontypeIds || validActiontypeIds.length === 0) {
+      return null;
+    }
     const actiontypesForActortype = actiontypes.filter(
       (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
     );

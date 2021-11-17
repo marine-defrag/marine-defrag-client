@@ -962,14 +962,14 @@ export const selectActorActionsGroupedByAction = createSelector(
       )
     ),
 );
-export const selectActionActorsGroupedByActor = createSelector(
-  (state) => selectEntities(state, API.ACTOR_ACTIONS),
+export const selectActionActorsGroupedByAction = createSelector(
+  (state) => selectEntities(state, API.ACTION_ACTORS),
   (entities) => entities
     && entities.groupBy(
-      (entity) => entity.getIn(['attributes', 'actor_id'])
+      (entity) => entity.getIn(['attributes', 'measure_id'])
     ).map(
       (group) => group.map(
-        (entity) => entity.getIn(['attributes', 'measure_id'])
+        (entity) => entity.getIn(['attributes', 'actor_id'])
       )
     ),
 );

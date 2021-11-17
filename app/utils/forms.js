@@ -160,6 +160,34 @@ export const renderActorsByActortypeControl = (
     [],
   ).sort((a, b) => a.id > b.id ? 1 : -1)
   : null;
+// actors grouped by actortype
+export const renderTargetsByActortypeControl = (
+  entitiesByActortype,
+  taxonomies,
+  onCreateOption,
+  contextIntl,
+) => entitiesByActortype
+  ? entitiesByActortype.reduce(
+    (controls, entities, typeid) => controls.concat({
+      id: `targets.${typeid}`,
+      model: `.associatedTargetsByActortype.${typeid}`,
+      dataPath: ['associatedTargetsByActortype', typeid],
+      label: contextIntl.formatMessage(appMessages.entities[`actors_${typeid}`].plural),
+      controlType: 'multiselect',
+      options: entityOptions(entities),
+      advanced: true,
+      selectAll: true,
+      tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
+      onCreate: onCreateOption
+        ? () => onCreateOption({
+          path: API.ACTORS,
+          attributes: { actortype_id: typeid },
+        })
+        : null,
+    }),
+    [],
+  ).sort((a, b) => a.id > b.id ? 1 : -1)
+  : null;
 
 export const renderActionsByActiontypeControl = (
   entitiesByActiontype,

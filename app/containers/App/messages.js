@@ -717,6 +717,10 @@ export default defineMessages({
       id: 'app.containers.App.nav.actors',
       defaultMessage: 'Actors',
     },
+    targets: {
+      id: 'app.containers.App.nav.targets',
+      defaultMessage: 'Targets',
+    },
     pages: {
       id: 'app.containers.App.nav.pages',
       defaultMessage: 'Page admin',

@@ -327,6 +327,15 @@ export function* saveEntitySaga({ data }, updateClient = true, multiple = false)
           },
         });
       }
+      // update action-actors connections (targets)
+      if (data.entity.actionActors) {
+        yield call(saveConnectionsSaga, {
+          data: {
+            path: API.ACTIONS_ACTORS,
+            updates: data.entity.actionActors,
+          },
+        });
+      }
 
       // update action-category connections
       if (data.entity.actionCategories) {
@@ -438,6 +447,15 @@ export function* newEntitySaga({ data }, updateClient = true, multiple = false) 
             entityId: entityCreated.data.id,
             path: API.ACTOR_ACTIONS,
             updates: data.entity.actorActions,
+            keyPair: ['actor_id', 'measure_id'],
+          });
+        }
+        // update action-actors connections (targets)
+        if (data.entity.actionActors) {
+          yield call(createConnectionsSaga, {
+            entityId: entityCreated.data.id,
+            path: API.ACTIONS_ACTORS,
+            updates: data.entity.actionActors,
             keyPair: ['actor_id', 'measure_id'],
           });
         }

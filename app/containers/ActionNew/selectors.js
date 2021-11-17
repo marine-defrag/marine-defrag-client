@@ -35,6 +35,9 @@ export const selectActorsByActortype = createSelector(
   (actiontypeId, actors, associations, actortypes) => {
     // compare App/selectors/selectActortypesForActiontype
     const validActortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
+    if (!validActortypeIds || validActortypeIds.length === 0) {
+      return null;
+    }
     const actortypesForActiontype = actortypes.filter(
       (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
     );
@@ -51,6 +54,6 @@ export const selectActorsByActortype = createSelector(
     );
     return filtered.groupBy(
       (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
-    );
+    ).sortBy((val, key) => key);
   }
 );

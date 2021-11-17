@@ -8,7 +8,7 @@ import {
   selectActionsCategorised,
   selectActionTaxonomies,
   selectActiontypes,
-  selectActionActorsGroupedByActor,
+  selectActorActionsGroupedByActor,
   selectActorCategoriesGroupedByActor,
   selectCategories,
   selectTaxonomiesSorted,
@@ -93,7 +93,7 @@ export const selectActionsByActiontype = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectViewEntity,
   selectActionsCategorised,
-  selectActionActorsGroupedByActor,
+  selectActorActionsGroupedByActor,
   selectActiontypes,
   (ready, actor, actions, associations, actiontypes) => {
     if (!ready) return null;
@@ -103,7 +103,9 @@ export const selectActionsByActiontype = createSelector(
       const actortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
       return actortypeIds && actortypeIds.indexOf(actortypeId) > -1;
     });
-
+    if (!validActiontypeIds || validActiontypeIds.length === 0) {
+      return null;
+    }
     const actiontypesForActortype = actiontypes.filter(
       (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
     );
