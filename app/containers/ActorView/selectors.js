@@ -101,7 +101,7 @@ export const selectActionsByType = createSelector(
               'attributes',
               'actortype_id',
             ]).toString()
-          );
+          ).sortBy((val, key) => key);
         return action.set(
           'categories',
           getEntityCategories(

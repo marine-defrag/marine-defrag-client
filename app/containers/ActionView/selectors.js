@@ -101,7 +101,7 @@ export const selectActorsByType = createSelector(
               'attributes',
               'measuretype_id',
             ]).toString()
-          );
+          ).sortBy((val, key) => key);
         return actor.set(
           'categories',
           getEntityCategories(

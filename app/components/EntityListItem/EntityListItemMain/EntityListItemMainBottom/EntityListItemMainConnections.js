@@ -7,8 +7,8 @@ import ConnectionPopup from './ConnectionPopup';
 
 const ConnectionWrap = styled.span`
   display: inline-block;
-  margin-right: 10px;
-  margin-left: 5px;
+  margin-right: 12px;
+  margin-left: 0px;
   &:last-child {
     margin-right: 0;
   }
@@ -49,17 +49,24 @@ export default class EntityListItemMainConnections extends React.PureComponent {
       <Styled>
         {
           this.props.connections.map((connection, i) => {
+            const publicEntities = connection.entities.filter(
+              (entity) => entity && !entity.getIn(['attributes', 'draft'])
+            );
             const draftEntities = connection.entities.filter(
               (entity) => entity && entity.getIn(['attributes', 'draft'])
             );
             const entitiesTotal = connection.entities ? connection.entities.size : 0;
             return (
               <ConnectionWrap key={i}>
-                <ConnectionPopup
-                  entities={connection.entities.filter((entity) => entity && !entity.getIn(['attributes', 'draft']))}
-                  option={connection.option}
-                  wrapper={this.props.wrapper}
-                />
+                { publicEntities.size > 0
+                  && (
+                    <ConnectionPopup
+                      entities={publicEntities}
+                      option={connection.option}
+                      wrapper={this.props.wrapper}
+                    />
+                  )
+                }
                 { draftEntities.size > 0
                   && (
                     <ConnectionPopup

@@ -168,7 +168,7 @@ const selectActionsWithActors = createSelector(
               'attributes',
               'actortype_id',
             ])
-          );
+          ).sortBy((val, key) => key);
           // console.log(entityActorsByActortype && entityActorsByActortype.toJS());
           // currently requires both for filtering & display
           return entity.set(
