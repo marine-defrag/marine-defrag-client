@@ -232,7 +232,7 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
                             key={i}
                             ref={(node) => i < 3 && this.setState({ [`listItem_${i}`]: node })}
                           >
-                            <ListItemLink to={`/${option.path}/${entity.get('id')}`}>
+                            <ListItemLink to={`${option.clientPath}/${entity.get('id')}`}>
                               { entity.getIn(['attributes', 'draft'])
                             && <ItemStatus draft />
                               }

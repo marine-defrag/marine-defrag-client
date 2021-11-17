@@ -83,7 +83,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
                           : appMessages.entities[path].plural
                       ),
                     style: option.query,
-                    path: option.query,
+                    clientPath: option.clientPath,
                   },
                   entities: connectedEntities,
                 }]);
@@ -102,7 +102,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
                 size === 1 ? appMessages.entities[option.query].single : appMessages.entities[option.query].plural
               ),
               style: option.query,
-              path: option.query,
+              clientPath: option.clientPath,
             },
             entities: connectedEntities,
           }]);

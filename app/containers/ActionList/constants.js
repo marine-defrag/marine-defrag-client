@@ -75,8 +75,9 @@ export const CONFIG = {
         message: 'entities.actors_{typeid}.plural',
         path: API.ACTORS, // filter by actor connection
         query: API.ACTORS, // filter by actor connection
-        key: 'actor_id',
+        clientPath: ROUTES.ACTOR,
         connectPath: API.ACTOR_ACTIONS, // filter by actor connection
+        key: 'actor_id',
         ownKey: 'measure_id',
         groupByType: true,
         typeFilter: 'is_active',
