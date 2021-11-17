@@ -37,7 +37,6 @@ class EntityListItemMainTaxonomies extends React.PureComponent { // eslint-disab
     if (categories) {
       taxonomies
         .filter((tax) => !tax.getIn(['attributes', 'is_smart']))
-        .sortBy((tax) => tax.getIn(['attributes', 'priority']))
         .forEach((tax) => {
           tax
             .get('categories')
@@ -92,6 +91,8 @@ class EntityListItemMainTaxonomies extends React.PureComponent { // eslint-disab
   render() {
     const { categories, taxonomies, onEntityClick } = this.props;
     const smartTaxonomy = taxonomies && taxonomies.find((tax) => tax.getIn(['attributes', 'is_smart']));
+    console.log('categories', categories && categories.toJS());
+    console.log('taxonomies', taxonomies && taxonomies.toJS());
     const entityTags = this.getEntityTags(categories, taxonomies, onEntityClick);
 
     return (

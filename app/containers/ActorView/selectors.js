@@ -6,13 +6,13 @@ import {
   selectReady,
   selectEntity,
   selectEntities,
-  selectActionConnections,
+  selectCategories,
   selectTaxonomiesSorted,
+  selectActionConnections,
   selectActions,
   selectActorActionsGroupedByAction,
-  selectActionCategoriesGroupedByAction,
   selectActorActionsGroupedByActor,
-  selectCategories,
+  selectActionCategoriesGroupedByAction,
 } from 'containers/App/selectors';
 
 import {
@@ -30,7 +30,7 @@ export const selectViewEntity = createSelector(
 );
 
 // TODO optimise use selectActorCategoriesGroupedByActor
-export const selectTaxonomies = createSelector(
+export const selectViewTaxonomies = createSelector(
   (state, id) => id,
   selectTaxonomiesSorted,
   selectCategories,
@@ -48,26 +48,27 @@ export const selectTaxonomies = createSelector(
 const selectActionAssociations = createSelector(
   (state, id) => id,
   selectActorActionsGroupedByActor,
-  (actorId, associations) => associations.get(
+  (actorId, associationsByActor) => associationsByActor.get(
     parseInt(actorId, 10)
   )
 );
 const selectActionsAssociated = createSelector(
-  selectActionAssociations,
   selectActions,
-  (associations, actions) => associations
-    && associations.reduce(
-      (memo, id) => {
-        const entity = actions.get(id.toString());
-        return entity
-          ? memo.set(id, entity)
-          : memo;
-      },
-      Map(),
-    )
+  selectActionAssociations,
+  (actions, associations) => actions && associations && associations.reduce(
+    (memo, id) => {
+      const entity = actions.get(id.toString());
+      return entity
+        ? memo.set(id, entity)
+        : memo;
+    },
+    Map(),
+  )
 );
 // all connected actions
-export const selectActionsWithAssociations = createSelector(
+// get associated actors with associoted actions and categories
+// - group by actortype
+export const selectActionsByType = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActionsAssociated,
   selectActionConnections,
@@ -78,14 +79,14 @@ export const selectActionsWithAssociations = createSelector(
     ready,
     actions,
     connections,
-    actionActors,
+    actorActions,
     actionCategories,
     categories,
   ) => {
     if (!ready) return Map();
     return actions && actions.map(
       (action) => {
-        const entityActors = actionActors.get(parseInt(action.get('id'), 10));
+        const entityActors = actorActions.get(parseInt(action.get('id'), 10));
         const entityActorsByActortype = entityActors
           && connections.get('actors')
           && entityActors.filter(
@@ -110,13 +111,14 @@ export const selectActionsWithAssociations = createSelector(
           )
         ).set(
           'actors',
-          entityActors
-        // nest connected actor ids byactortype
+          entityActors,
         ).set(
           'actorsByActortype',
           entityActorsByActortype,
         );
       }
+    ).groupBy(
+      (r) => r.getIn(['attributes', 'measuretype_id'])
     );
   }
 );

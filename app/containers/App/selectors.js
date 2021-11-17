@@ -657,6 +657,23 @@ export const selectTaxonomiesSorted = createSelector(
   (entities) => entities
     && sortEntities(entities, 'asc', 'id', null, false)
 );
+
+// select all taxonomies with respective categories
+export const selectTaxonomiesWithCategories = createSelector(
+  selectTaxonomiesSorted,
+  selectCategories,
+  (taxonomies, categories) => taxonomies.map((tax) => tax.set(
+    'categories',
+    categories.filter(
+      (cat) => qe(
+        cat.getIn(['attributes', 'taxonomy_id']),
+        tax.get('id')
+      )
+    )
+  ))
+);
+
+
 // get all actor taxonomies for a given type
 
 // select single taxonomy

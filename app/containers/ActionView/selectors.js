@@ -7,12 +7,11 @@ import {
   selectEntity,
   selectEntities,
   selectCategories,
-  selectActorConnections,
   selectTaxonomiesSorted,
-  selectActortypeActors,
-  selectActortypes,
-  selectActorActionsGroupedByAction,
+  selectActorConnections,
+  selectActors,
   selectActorActionsGroupedByActor,
+  selectActorActionsGroupedByAction,
   selectActorCategoriesGroupedByActor,
 } from 'containers/App/selectors';
 
@@ -21,7 +20,6 @@ import {
   prepareTaxonomiesIsAssociated,
   getEntityCategories,
 } from 'utils/entities';
-import { qe } from 'utils/quasi-equals';
 
 import { DEPENDENCIES } from './constants';
 
@@ -32,7 +30,7 @@ export const selectViewEntity = createSelector(
 );
 
 // TODO optimise use selectActionCategoriesGroupedByAction
-export const selectTaxonomies = createSelector(
+export const selectViewTaxonomies = createSelector(
   (state, id) => id,
   selectTaxonomiesSorted,
   selectCategories,
@@ -50,34 +48,33 @@ export const selectTaxonomies = createSelector(
 const selectActorAssociations = createSelector(
   (state, id) => id,
   selectActorActionsGroupedByAction,
-  (actionId, associations) => associations.get(
+  (actionId, associationsByAction) => associationsByAction.get(
     parseInt(actionId, 10)
   )
 );
 const selectActorsAssociated = createSelector(
+  selectActors,
   selectActorAssociations,
-  selectActortypeActors,
-  (associations, actors) => associations
-    && associations.reduce(
-      (memo, id) => {
-        const entity = actors.get(id.toString());
-        return entity
-          ? memo.set(id, entity)
-          : memo;
-      },
-      Map(),
-    )
+  (actors, associations) => actors && associations && associations.reduce(
+    (memo, id) => {
+      const entity = actors.get(id.toString());
+      return entity
+        ? memo.set(id, entity)
+        : memo;
+    },
+    Map(),
+  )
 );
 
-// all connected actors
-export const selectActors = createSelector(
+// get associated actors with associoted actions and categories
+// - group by actortype
+export const selectActorsByType = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActorsAssociated,
   selectActorConnections,
   selectActorActionsGroupedByActor,
   selectActorCategoriesGroupedByActor,
   selectCategories,
-  (state) => selectActortypes(state),
   (
     ready,
     actors,
@@ -85,20 +82,27 @@ export const selectActors = createSelector(
     actorActions,
     actorCategories,
     categories,
-    actortypes,
   ) => {
     if (!ready) return Map();
-    return actors
-      && actortypes
-      && actors.filter(
-        (actor) => {
-          const currentActortype = actortypes.find(
-            (actortype) => qe(actortype.get('id'), actor.getIn(['attributes', 'actortype_id']))
+    return actors && actors.map(
+      (actor) => {
+        const entityActions = actorActions.get(parseInt(actor.get('id'), 10));
+        const entityActionsByActiontype = entityActions
+          && connections.get('actions')
+          && entityActions.filter(
+            (actionId) => connections.getIn([
+              'actions',
+              actionId.toString(),
+            ])
+          ).groupBy(
+            (actionId) => connections.getIn([
+              'actions',
+              actionId.toString(),
+              'attributes',
+              'measuretype_id',
+            ]).toString()
           );
-          return currentActortype.getIn(['attributes', 'has_actions']);
-        }
-      ).map(
-        (actor) => actor.set(
+        return actor.set(
           'categories',
           getEntityCategories(
             actor.get('id'),
@@ -107,10 +111,14 @@ export const selectActors = createSelector(
           )
         ).set(
           'actions',
-          actorActions.get(parseInt(actor.get('id'), 10))
-        )
-      ).groupBy(
-        (r) => r.getIn(['attributes', 'actortype_id'])
-      );
+          entityActions,
+        ).set(
+          'actionsByActiontype',
+          entityActionsByActiontype,
+        );
+      }
+    ).groupBy(
+      (r) => r.getIn(['attributes', 'actortype_id'])
+    );
   }
 );

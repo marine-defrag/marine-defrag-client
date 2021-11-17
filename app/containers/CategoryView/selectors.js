@@ -73,21 +73,6 @@ export const selectTaxonomy = createSelector(
   )
 );
 
-// select all taxonomies with respective categories
-export const selectTaxonomiesWithCategories = createSelector(
-  selectTaxonomiesSorted,
-  selectCategories,
-  (taxonomies, categories) => taxonomies.map((tax) => tax.set(
-    'categories',
-    categories.filter(
-      (cat) => qe(
-        cat.getIn(['attributes', 'taxonomy_id']),
-        tax.get('id')
-      )
-    )
-  ))
-);
-
 // the parent taxonomy of the view category's taxonomy
 export const selectParentTaxonomy = createSelector(
   selectTaxonomy,
@@ -275,7 +260,7 @@ export const selectActionsByType = createSelector(
         // currently needs both
         ).set(
           'actors',
-          entityActors
+          entityActors,
         // nest connected actor ids byactortype
         ).set(
           'actorsByActortype',
@@ -304,43 +289,47 @@ export const selectActorsByType = createSelector(
     actorActions,
     actorCategories,
     categories,
-  ) => actors && actors.map(
-    (actor) => {
-      const entityActions = actorActions.get(parseInt(actor.get('id'), 10));
-      const entityActionsByActiontype = entityActions
-        && connections.get('actions')
-        && entityActions.filter(
-          (actionId) => connections.getIn([
-            'actions',
-            actionId.toString(),
-          ])
-        ).groupBy(
-          (actionId) => connections.getIn([
-            'actions',
-            actionId.toString(),
-            'attributes',
-            'measuretype_id',
-          ]).toString()
+  ) => {
+    if (!ready) return Map();
+    return actors && actors.map(
+      (actor) => {
+        const entityActions = actorActions.get(parseInt(actor.get('id'), 10));
+        const entityActionsByActiontype = entityActions
+          && connections.get('actions')
+          && entityActions.filter(
+            (actionId) => connections.getIn([
+              'actions',
+              actionId.toString(),
+            ])
+          ).groupBy(
+            (actionId) => connections.getIn([
+              'actions',
+              actionId.toString(),
+              'attributes',
+              'measuretype_id',
+            ]).toString()
+          );
+        return actor.set(
+          'categories',
+          getEntityCategories(
+            actor.get('id'),
+            actorCategories,
+            categories,
+          )
+        ).set(
+          'actions',
+          entityActions,
+        ).set(
+          'actorsByActortype',
+          entityActionsByActiontype,
         );
-      return actor.set(
-        'categories',
-        getEntityCategories(
-          actor.get('id'),
-          actorCategories,
-          categories,
-        )
-      ).set(
-        'actions',
-        actorActions.get(parseInt(actor.get('id'), 10))
-      ).set(
-        'actorsByActortype',
-        entityActionsByActiontype,
-      );
-    }
-  ).groupBy(
-    (r) => r.getIn(['attributes', 'actortype_id'])
-  )
+      }
+    ).groupBy(
+      (r) => r.getIn(['attributes', 'actortype_id'])
+    );
+  }
 );
+
 export const selectChildActorsByType = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectChildActorsAssociated,

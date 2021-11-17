@@ -51,6 +51,7 @@ import {
   selectIsUserManager,
   selectActorConnections,
   selectActionConnections,
+  selectTaxonomiesWithCategories,
 } from 'containers/App/selectors';
 
 
@@ -61,7 +62,6 @@ import {
   selectViewEntity,
   selectActorsByType,
   selectActionsByType,
-  selectTaxonomiesWithCategories,
   selectParentTaxonomy,
   selectChildTaxonomies,
   selectChildActorsByType,

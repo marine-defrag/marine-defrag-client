@@ -21,7 +21,7 @@ import {
   getAmountField,
   getTaxonomyFields,
   hasTaxonomyCategories,
-  // getActionConnectionField,
+  getActionConnectionField,
 } from 'utils/fields';
 // import { qe } from 'utils/quasi-equals';
 import { getEntityTitleTruncated, checkActorAttribute } from 'utils/entities';
@@ -39,8 +39,8 @@ import EntityView from 'components/EntityView';
 import {
   selectReady,
   selectIsUserManager,
-  // selectActionTaxonomies,
-  // selectActionConnections,
+  selectTaxonomiesWithCategories,
+  selectActionConnections,
   // selectActiveActortypes,
 } from 'containers/App/selectors';
 
@@ -49,27 +49,13 @@ import messages from './messages';
 
 import {
   selectViewEntity,
-  selectTaxonomies,
-  // selectActionsWithAssociations,
+  selectViewTaxonomies,
+  selectActionsByType,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
 
 export class ActorView extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  // shouldComponentUpdate(nextProps) {
-  //   console.log('ActorView.shouldComponentUpdate')
-  //   console.log(this.props.viewEntity === nextProps.viewEntity)
-  //   console.log(this.props.taxonomies === nextProps.taxonomies)
-  //   console.log(this.props.actions === nextProps.actions)
-  //   console.log(this.props.dataReady === nextProps.dataReady)
-  //   // console.log(isEqual(this.props.locationQuery, nextProps.locationQuery))
-  //   // console.log(this.props.locationQuery === nextProps.locationQuery)
-  //   // console.log(typeof this.props.scrollContainer !== typeof nextProps.scrollContainer)
-  //   return this.props.viewEntity !== nextProps.viewEntity
-  //     || this.props.taxonomies !== nextProps.taxonomies
-  //     || this.props.dataReady !== nextProps.dataReady
-  //     || this.props.actions !== nextProps.actions
-  // }
   UNSAFE_componentWillMount() {
     this.props.loadEntitiesIfNeeded();
   }
@@ -102,20 +88,20 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
     ]);
   };
 
-  getHeaderAsideFields = (entity, isManager, taxonomies) => {
+  getHeaderAsideFields = (entity, viewTaxonomies) => {
     const fields = ([
       {
         fields: [
-          isManager && getStatusField(entity),
+          getStatusField(entity),
           getMetaField(entity),
         ],
       },
     ]);
-    if (hasTaxonomyCategories(taxonomies)) {
+    if (hasTaxonomyCategories(viewTaxonomies)) {
       fields.push({ // fieldGroup
         label: appMessages.entities.taxonomies.plural,
         icon: 'categories',
-        fields: getTaxonomyFields(taxonomies),
+        fields: getTaxonomyFields(viewTaxonomies),
       });
     }
     return fields;
@@ -123,10 +109,10 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
 
   getBodyMainFields = (
     entity,
-    // actions,
-    // actionTaxonomies,
-    // actionConnections,
-    // onEntityClick,
+    actionsByActortype,
+    taxonomies,
+    actionConnections,
+    onEntityClick,
   ) => {
     const fields = [];
     const typeId = entity.getIn(['attributes', 'actortype_id']);
@@ -143,21 +129,24 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
       },
     );
 
-    // actions
-    // if (actions) {
-    //   fields.push({
-    //     label: appMessages.nav.actionsSuper,
-    //     icon: 'actions',
-    //     fields: [
-    //       getActionConnectionField(
-    //         actions,
-    //         actionTaxonomies,
-    //         actionConnections,
-    //         onEntityClick,
-    //       ),
-    //     ],
-    //   });
-    // }
+    if (actionsByActortype) {
+      const actionConnectionsLocal = [];
+      actionsByActortype.forEach((actions, actiontypeid) => {
+        actionConnectionsLocal.push(
+          getActionConnectionField(
+            actions,
+            taxonomies,
+            actionConnections,
+            onEntityClick,
+            actiontypeid,
+          ),
+        );
+      });
+      fields.push({
+        label: appMessages.nav.actions,
+        fields: actionConnectionsLocal,
+      });
+    }
     return fields;
   };
 
@@ -187,12 +176,11 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
       viewEntity,
       dataReady,
       isManager,
-      // actions,
       taxonomies,
-      // actionTaxonomies,
-      // actionConnections,
-      // onEntityClick,
-      // actortypes,
+      viewTaxonomies,
+      actionsByActiontype,
+      actionConnections,
+      onEntityClick,
     } = this.props;
     const typeId = viewEntity && viewEntity.getIn(['attributes', 'actortype_id']);
     let buttons = [];
@@ -257,16 +245,15 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
                 fields={{
                   header: {
                     main: this.getHeaderMainFields(viewEntity),
-                    aside: this.getHeaderAsideFields(viewEntity, isManager, taxonomies),
+                    aside: this.getHeaderAsideFields(viewEntity, viewTaxonomies),
                   },
                   body: {
                     main: this.getBodyMainFields(
                       viewEntity,
-                      // hasActions && actions,
-                      // actionTaxonomies,
-                      // actionConnections,
-                      // onEntityClick,
-                      // hasResponse,
+                      actionsByActiontype,
+                      taxonomies,
+                      actionConnections,
+                      onEntityClick,
                     ),
                     aside: this.getBodyAsideFields(viewEntity),
                   },
@@ -287,11 +274,10 @@ ActorView.propTypes = {
   handleEdit: PropTypes.func,
   handleClose: PropTypes.func,
   onEntityClick: PropTypes.func,
+  viewTaxonomies: PropTypes.object,
   taxonomies: PropTypes.object,
-  // actionTaxonomies: PropTypes.object,
-  // actionConnections: PropTypes.object,
-  // actions: PropTypes.object,
-  // actortypes: PropTypes.object,
+  actionConnections: PropTypes.object,
+  actionsByActiontype: PropTypes.object,
   params: PropTypes.object,
   isManager: PropTypes.bool,
 };
@@ -304,11 +290,10 @@ const mapStateToProps = (state, props) => ({
   isManager: selectIsUserManager(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   viewEntity: selectViewEntity(state, props.params.id),
-  taxonomies: selectTaxonomies(state, props.params.id),
-  // actions: selectActionsWithAssociations(state, props.params.id),
-  // actionTaxonomies: selectActionTaxonomies(state),
-  // actionConnections: selectActionConnections(state),
-  // actortypes: selectActiveActortypes(state),
+  viewTaxonomies: selectViewTaxonomies(state, props.params.id),
+  taxonomies: selectTaxonomiesWithCategories(state),
+  actionsByActiontype: selectActionsByType(state, props.params.id),
+  actionConnections: selectActionConnections(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
