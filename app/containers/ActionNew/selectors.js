@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { ACTIONTYPE_ACTORTYPES } from 'themes/config';
+import { ACTIONTYPE_ACTORTYPES, ACTIONTYPE_TARGETTYPES } from 'themes/config';
 import { qe } from 'utils/quasi-equals';
 
 import {
@@ -50,6 +50,36 @@ export const selectActorsByActortype = createSelector(
           )
         );
         return actortype && actortype.getIn(['attributes', 'is_active']);
+      }
+    );
+    return filtered.groupBy(
+      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
+    ).sortBy((val, key) => key);
+  }
+);
+export const selectTargetsByActortype = createSelector(
+  (state, id) => id,
+  selectActorsCategorised,
+  selectActorActionsGroupedByAction,
+  selectActortypes,
+  (actiontypeId, actors, associations, actortypes) => {
+    // compare App/selectors/selectActortypesForActiontype
+    const validActortypeIds = ACTIONTYPE_TARGETTYPES[actiontypeId];
+    if (!validActortypeIds || validActortypeIds.length === 0) {
+      return null;
+    }
+    const actortypesForActiontype = actortypes.filter(
+      (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
+    );
+    const filtered = actors.filter(
+      (actor) => {
+        const actortype = actortypesForActiontype.find(
+          (at) => qe(
+            at.get('id'),
+            actor.getIn(['attributes', 'actortype_id']),
+          )
+        );
+        return actortype && actortype.getIn(['attributes', 'is_target']);
       }
     );
     return filtered.groupBy(

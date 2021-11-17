@@ -276,10 +276,12 @@ function* createConnectionsSaga({
   // make sure to use new entity id for full payload
   // we should have either the one (actor_id) or the other (measure_id)
   const updatesUpdated = updates;
-  updatesUpdated.create = updatesUpdated.create.map((create) => ({
-    [keyPair[0]]: create[keyPair[0]] || entityId,
-    [keyPair[1]]: create[keyPair[1]] || entityId,
-  }));
+  if (updatesUpdated.create) {
+    updatesUpdated.create = updatesUpdated.create.map((create) => ({
+      [keyPair[0]]: create[keyPair[0]] || entityId,
+      [keyPair[1]]: create[keyPair[1]] || entityId,
+    }));
+  }
 
   yield call(saveConnectionsSaga, { data: { path, updates: updatesUpdated } });
 }
@@ -504,7 +506,7 @@ export function* newEntitySaga({ data }, updateClient = true, multiple = false) 
       yield put(invalidateEntities(data.invalidateEntitiesOnSuccess));
     }
   } catch (err) {
-    err.response.json = yield err.response.json();
+    err.response.json = yield err.response && err.response.json && err.response.json();
     yield put(saveError(err, dataTS));
     if (updateClient) {
       yield put(invalidateEntities(data.path));
@@ -541,7 +543,7 @@ export function* saveConnectionsSaga({ data }) {
       yield put(updateConnections(data.path, connectionsUpdated));
       yield put(saveSuccess(dataTS));
     } catch (err) {
-      err.response.json = yield err.response.json();
+      err.response.json = yield err.response && err.response.json && err.response.json();
       yield put(saveError(err, dataTS));
       yield put(invalidateEntities(data.path));
     }

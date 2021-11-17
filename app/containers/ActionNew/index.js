@@ -20,6 +20,7 @@ import {
   getMarkdownField,
   getCodeFormField,
   renderActorsByActortypeControl,
+  renderTargetsByActortypeControl,
   getDateField,
   getTextareaField,
   renderTaxonomyControl,
@@ -68,6 +69,7 @@ import {
   selectDomain,
   selectConnectedTaxonomies,
   selectActorsByActortype,
+  selectTargetsByActortype,
 } from './selectors';
 
 import messages from './messages';
@@ -154,6 +156,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
     type,
     connectedTaxonomies,
     actorsByActortype,
+    targetsByActortype,
     onCreateOption,
   ) => {
     const { intl } = this.context;
@@ -229,6 +232,22 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
         );
       }
     }
+    if (targetsByActortype) {
+      const targetConnections = renderTargetsByActortypeControl(
+        targetsByActortype,
+        connectedTaxonomies,
+        onCreateOption,
+        intl,
+      );
+      if (targetConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.targets),
+            fields: targetConnections,
+          },
+        );
+      }
+    }
     return groups;
   };
 
@@ -288,6 +307,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
       dataReady,
       viewDomain,
       actorsByActortype,
+      targetsByActortype,
       connectedTaxonomies,
       taxonomies,
       onCreateOption,
@@ -296,11 +316,6 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
     } = this.props;
     const typeId = params.id;
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
-    // console.log('FORM_INITIAL', FORM_INITIAL && FORM_INITIAL.toJS());
-    // console.log('actiontype', actiontype && actiontype.toJS());
-    // console.log('taxonomies', taxonomies && taxonomies.toJS());
-    // console.log('connectedTaxonomies', connectedTaxonomies && connectedTaxonomies.toJS());
-    // console.log('actorsByActortype', actorsByActortype && actorsByActortype.toJS());
     const type = intl.formatMessage(appMessages.entities[`actions_${typeId}`].single);
     return (
       <div>
@@ -360,6 +375,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                   formData,
                   actiontype,
                   actorsByActortype,
+                  targetsByActortype,
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={() => this.props.handleCancel(typeId)}
@@ -377,6 +393,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                       actiontype,
                       connectedTaxonomies,
                       actorsByActortype,
+                      targetsByActortype,
                       onCreateOption,
                     ),
                     aside: this.getBodyAsideFields(
@@ -409,6 +426,7 @@ ActionNew.propTypes = {
   dataReady: PropTypes.bool,
   authReady: PropTypes.bool,
   actorsByActortype: PropTypes.object,
+  targetsByActortype: PropTypes.object,
   initialiseForm: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
@@ -437,6 +455,7 @@ const mapStateToProps = (state, { params }) => ({
   connectedTaxonomies: selectConnectedTaxonomies(state),
   actiontype: selectActiontype(state, params.id),
   actorsByActortype: selectActorsByActortype(state, params.id),
+  targetsByActortype: selectTargetsByActortype(state, params.id),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -463,7 +482,7 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, actiontype, actorsByActortype) => {
+    handleSubmit: (formData, actiontype, actorsByActortype, targetsByActortype) => {
       let saveData = formData.setIn(['attributes', 'measuretype_id'], actiontype.get('id'));
       // actionCategories
       if (formData.get('associatedTaxonomies')) {
@@ -489,6 +508,29 @@ function mapDispatchToProps(dispatch) {
               formData,
               connections: actors,
               connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
+              createConnectionKey: 'actor_id',
+              createKey: 'measure_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo.set('create', creates);
+              },
+              fromJS({
+                create: [],
+              }),
+            )
+        );
+      }
+      // targets
+      if (formData.get('associatedTargetsByActortype') && targetsByActortype) {
+        saveData = saveData.set(
+          'actionActors',
+          targetsByActortype
+            .map((targets, actortypeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: targets,
+              connectionAttribute: ['associatedTargetsByActortype', actortypeid.toString()],
               createConnectionKey: 'actor_id',
               createKey: 'measure_id',
             }))

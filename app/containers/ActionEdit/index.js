@@ -559,9 +559,9 @@ function mapDispatchToProps(dispatch, props) {
       saveData = saveData.set(
         'actionActors', // targets
         targetsByActortype
-          .map((actors, actortypeid) => getConnectionUpdatesFromFormData({
+          .map((targets, actortypeid) => getConnectionUpdatesFromFormData({
             formData,
-            connections: actors,
+            connections: targets,
             connectionAttribute: ['associatedTargetsByActortype', actortypeid.toString()],
             createConnectionKey: 'actor_id',
             createKey: 'measure_id',
