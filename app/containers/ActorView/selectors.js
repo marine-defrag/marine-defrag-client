@@ -113,7 +113,7 @@ export const selectActionsByType = createSelector(
           'actors',
           entityActors,
         ).set(
-          'actorsByActortype',
+          'actorsByType',
           entityActorsByActortype,
         );
       }

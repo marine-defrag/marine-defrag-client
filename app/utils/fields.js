@@ -282,13 +282,7 @@ const getConnectionField = ({
   entityPath: entityPath || entityType,
   onEntityClick,
   showEmpty: appMessages.entities[entityType].empty,
-  connectionOptions: connectionOptions.map((option) => ({
-    label: appMessages.entities[option].plural,
-    groupByType: option === 'actors',
-    path: option,
-    // TODO check path
-    clientPath: option === 'actions' ? 'actions' : option,
-  })),
+  connectionOptions,
 });
 
 export const getActorConnectionField = (
@@ -301,7 +295,13 @@ export const getActorConnectionField = (
   entities: sortEntities(entities, 'asc', 'id'),
   taxonomies: filterTaxonomies(taxonomies, 'tags_actors'),
   connections,
-  connectionOptions: ['actions'],
+  connectionOptions: [{
+    label: appMessages.entities.actions.plural,
+    groupByType: true,
+    path: 'measures',
+    clientPath: ROUTES.ACTION,
+    query: 'actions',
+  }],
   entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
   entityPath: ROUTES.ACTOR,
   onEntityClick,
@@ -316,7 +316,13 @@ export const getActionConnectionField = (
   entities: sortEntities(entities, 'asc', 'id'),
   taxonomies: filterTaxonomies(taxonomies, 'tags_actions'),
   connections,
-  connectionOptions: ['actors'],
+  connectionOptions: [{
+    label: appMessages.entities.actors.plural,
+    groupByType: true,
+    path: 'actors',
+    clientPath: ROUTES.ACTOR,
+    query: 'actors',
+  }],
   entityType: actiontypeid ? `actions_${actiontypeid}` : 'actions',
   entityPath: ROUTES.ACTION,
   onEntityClick,
