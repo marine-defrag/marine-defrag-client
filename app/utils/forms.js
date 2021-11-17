@@ -320,6 +320,7 @@ export const getConnectionUpdatesFromFormData = ({
   createKey,
 }) => {
   let formConnectionIds = List();
+  console.log(formData && formData.toJS());
   if (formData) {
     if (Array.isArray(connectionAttribute)) {
       formConnectionIds = getCheckedValuesFromOptions(formData.getIn(connectionAttribute));

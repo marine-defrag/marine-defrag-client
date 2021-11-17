@@ -120,6 +120,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       viewEntity,
       taxonomies,
       actorsByActortype,
+      targetsByActortype,
     } = props;
     // console.log(FORM_INITIAL.get('attributes') && FORM_INITIAL.get('attributes').toJS())
     return viewEntity
@@ -132,6 +133,9 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
         associatedTaxonomies: taxonomyOptions(taxonomies),
         associatedActorsByActortype: actorsByActortype
           ? actorsByActortype.map((actors) => entityOptions(actors, true))
+          : Map(),
+        associatedTargetsByActortype: targetsByActortype
+          ? targetsByActortype.map((targets) => entityOptions(targets, true))
           : Map(),
       })
       : Map();

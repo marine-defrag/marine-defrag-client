@@ -333,7 +333,7 @@ export function* saveEntitySaga({ data }, updateClient = true, multiple = false)
       if (data.entity.actionActors) {
         yield call(saveConnectionsSaga, {
           data: {
-            path: API.ACTIONS_ACTORS,
+            path: API.ACTION_ACTORS,
             updates: data.entity.actionActors,
           },
         });
@@ -456,7 +456,7 @@ export function* newEntitySaga({ data }, updateClient = true, multiple = false) 
         if (data.entity.actionActors) {
           yield call(createConnectionsSaga, {
             entityId: entityCreated.data.id,
-            path: API.ACTIONS_ACTORS,
+            path: API.ACTION_ACTORS,
             updates: data.entity.actionActors,
             keyPair: ['actor_id', 'measure_id'],
           });

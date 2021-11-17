@@ -23,6 +23,7 @@ import {
   getTaxonomyFields,
   hasTaxonomyCategories,
   getActorConnectionField,
+  getTargetConnectionField,
 } from 'utils/fields';
 
 // import { qe } from 'utils/quasi-equals';
@@ -55,6 +56,7 @@ import {
   selectViewEntity,
   selectViewTaxonomies,
   selectActorsByType,
+  selectTargetsByType,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
@@ -115,6 +117,7 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
   getBodyMainFields = (
     entity,
     actorsByActortype,
+    targetsByActortype,
     taxonomies,
     actorConnections,
     onEntityClick,
@@ -189,6 +192,25 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
         fields: actorConnectionsLocal,
       });
     }
+    // // targets
+    if (targetsByActortype) {
+      const targetConnectionsLocal = [];
+      targetsByActortype.forEach((targets, actortypeid) => {
+        targetConnectionsLocal.push(
+          getTargetConnectionField(
+            targets,
+            taxonomies,
+            actorConnections,
+            onEntityClick,
+            actortypeid,
+          ),
+        );
+      });
+      fields.push({
+        label: appMessages.nav.targets,
+        fields: targetConnectionsLocal,
+      });
+    }
     return fields;
   };
 
@@ -229,6 +251,7 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       taxonomies,
       viewTaxonomies,
       actorsByActortype,
+      targetsByActortype,
       onEntityClick,
       actorConnections,
     } = this.props;
@@ -301,6 +324,7 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
                     main: this.getBodyMainFields(
                       viewEntity,
                       actorsByActortype,
+                      targetsByActortype,
                       taxonomies,
                       actorConnections,
                       onEntityClick,
@@ -328,6 +352,7 @@ ActionView.propTypes = {
   viewTaxonomies: PropTypes.object,
   taxonomies: PropTypes.object,
   actorsByActortype: PropTypes.object,
+  targetsByActortype: PropTypes.object,
   actorConnections: PropTypes.object,
   params: PropTypes.object,
 };
@@ -344,6 +369,7 @@ const mapStateToProps = (state, props) => ({
   viewTaxonomies: selectViewTaxonomies(state, props.params.id),
   taxonomies: selectTaxonomiesWithCategories(state),
   actorsByActortype: selectActorsByType(state, props.params.id),
+  targetsByActortype: selectTargetsByType(state, props.params.id),
   actorConnections: selectActorConnections(state),
 });
 
