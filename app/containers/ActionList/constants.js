@@ -68,13 +68,14 @@ export const CONFIG = {
   // },
   connections: { // filter by associated entity
     query: 'connected',
-    type: 'actors',
+    type: 'action-actors',
     options: [
       {
         search: true,
         message: 'entities.actors_{typeid}.plural',
-        path: API.ACTORS, // filter by actor connection
-        query: API.ACTORS, // filter by actor connection
+        path: API.ACTORS,
+        query: API.ACTORS,
+        entityType: 'actors',
         clientPath: ROUTES.ACTOR,
         connectPath: API.ACTOR_ACTIONS, // filter by actor connection
         key: 'actor_id',
@@ -84,21 +85,26 @@ export const CONFIG = {
       },
     ],
   },
-  // targets: { // filter by associated entity
-  //   query: 'targeted',
-  //   options: [
-  //     {
-  //       search: true,
-  //       message: 'entities.actors_{actortypeid}.plural',
-  //       path: 'targets', // filter by actor connection
-  //       key: 'actor_id',
-  //       connectPath: API.ACTION_ACTORS, // filter by actor connection
-  //       ownKey: 'measure_id',
-  //       groupByType: true,
-  //       typeFilter: 'is_target',
-  //     },
-  //   ],
-  // },
+  targets: { // filter by associated entity
+    query: 'targeted',
+    type: 'action-targets',
+    options: [
+      {
+        search: true,
+        message: 'entities.actors_{typeid}.plural',
+        path: API.ACTORS,
+        query: API.ACTORS,
+        entityType: 'targets',
+        connectionPath: 'actors',
+        clientPath: ROUTES.ACTOR,
+        connectPath: API.ACTION_ACTORS, // filter by actor connection
+        key: 'actor_id',
+        ownKey: 'measure_id',
+        groupByType: true,
+        typeFilter: 'is_target',
+      },
+    ],
+  },
   attributes: { // filter by attribute value
     options: [
       {

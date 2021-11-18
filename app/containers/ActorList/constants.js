@@ -64,18 +64,37 @@ export const CONFIG = {
   },
   connections: { // filter by associated entity
     query: 'connected',
-    type: 'actions',
+    type: 'actor-actions',
     options: [
       {
         search: true,
         message: 'entities.actions_{typeid}.plural',
         path: API.ACTIONS, // filter by actor connection
-        query: 'actions', // filter by actor connection
+        entityType: 'actions', // filter by actor connection
         clientPath: ROUTES.ACTION,
         connectPath: API.ACTOR_ACTIONS, // filter by actor connection
         key: 'measure_id',
         ownKey: 'actor_id',
         groupByType: true,
+      },
+    ],
+  },
+  targets: { // filter by associated entity
+    query: 'targeting',
+    type: 'target-actions',
+    options: [
+      {
+        search: true,
+        message: 'entities.actions_{typeid}.plural',
+        path: API.ACTIONS, // filter by actor connection
+        entityType: 'targetingActions', // filter by actor connection
+        connectionPath: 'actions',
+        clientPath: ROUTES.ACTION,
+        connectPath: API.ACTION_ACTORS, // filter by actor connection
+        key: 'measure_id',
+        ownKey: 'actor_id',
+        groupByType: true,
+        typeFilter: 'has_target',
       },
     ],
   },

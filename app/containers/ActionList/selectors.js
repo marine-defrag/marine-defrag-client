@@ -7,7 +7,7 @@ import {
   selectWithoutQuery,
   selectConnectionQuery,
   selectCategoryQuery,
-  selectConnectedCategoryQuery,
+  selectTargetedQuery,
   selectSortByQuery,
   selectSortOrderQuery,
   selectActors,
@@ -16,14 +16,15 @@ import {
   selectReady,
   selectActorCategoriesGroupedByActor,
   selectActionCategoriesGroupedByAction,
-  selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByAction, // active
+  selectActionActorsGroupedByAction, // passive, as targets
   selectCategories,
 } from 'containers/App/selectors';
 
 import {
   filterEntitiesByConnection,
   filterEntitiesByCategories,
-  filterEntitiesByConnectedCategories,
+  // filterEntitiesByConnectedCategories,
   filterEntitiesWithoutAssociation,
   entitiesSetCategoryIds,
   // filterTaxonomies,
@@ -151,12 +152,29 @@ const selectActionsWithActors = createSelector(
   selectActionsWithCategories,
   selectConnections,
   selectActorActionsGroupedByAction,
-  (ready, entities, connections, associationsGrouped) => {
+  selectActionActorsGroupedByAction,
+  (ready, entities, connections, actorAssociationsGrouped, targetAssociationsGrouped) => {
     if (ready && connections.get('actors')) {
       return entities.map(
         (entity) => {
-          const entityActors = associationsGrouped.get(parseInt(entity.get('id'), 10));
+          const entityActors = actorAssociationsGrouped.get(parseInt(entity.get('id'), 10));
           const entityActorsByActortype = entityActors && entityActors.filter(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
+            ])
+          ).groupBy(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
+              'attributes',
+              'actortype_id',
+            ])
+          ).sortBy((val, key) => key);
+          const entityTargets = targetAssociationsGrouped.get(parseInt(entity.get('id'), 10));
+          // console.log('actorAssociationsGrouped', actorAssociationsGrouped && actorAssociationsGrouped.toJS())
+          // console.log('targetAssociationsGrouped', targetAssociationsGrouped && targetAssociationsGrouped.toJS())
+          const entityTargetsByActortype = entityTargets && entityTargets.filter(
             (actorId) => connections.getIn([
               'actors',
               actorId.toString(),
@@ -177,6 +195,12 @@ const selectActionsWithActors = createSelector(
           ).set(
             'actorsByType',
             entityActorsByActortype,
+          ).set(
+            'targets',
+            entityTargets,
+          ).set(
+            'targetsByType',
+            entityTargetsByActortype,
           );
         }
       );
@@ -200,21 +224,28 @@ const selectActionsByConnections = createSelector(
     ? filterEntitiesByConnection(entities, query)
     : entities
 );
-const selectActionsByCategories = createSelector(
+const selectActionsByTargets = createSelector(
   selectActionsByConnections,
+  selectTargetedQuery,
+  (entities, query) => query
+    ? filterEntitiesByConnection(entities, query)
+    : entities
+);
+const selectActionsByCategories = createSelector(
+  selectActionsByTargets,
   selectCategoryQuery,
   (entities, query) => query
     ? filterEntitiesByCategories(entities, query)
     : entities
 );
-const selectActionsByConnectedCategories = createSelector(
-  selectActionsByCategories,
-  selectConnections,
-  selectConnectedCategoryQuery,
-  (entities, connections, query) => query
-    ? filterEntitiesByConnectedCategories(entities, connections, query)
-    : entities
-);
+// const selectActionsByConnectedCategories = createSelector(
+//   selectActionsByCategories,
+//   selectConnections,
+//   selectConnectedCategoryQuery,
+//   (entities, connections, query) => query
+//     ? filterEntitiesByConnectedCategories(entities, connections, query)
+//     : entities
+// );
 
 // kicks off series of cascading selectors
 // 1. selectEntitiesWhere filters by attribute
@@ -224,7 +255,7 @@ const selectActionsByConnectedCategories = createSelector(
 // 6. selectActionsByCategories will filter by specific categories
 // 7. selectActionsByCOnnectedCategories will filter by specific categories connected via connection
 export const selectActions = createSelector(
-  selectActionsByConnectedCategories,
+  selectActionsByCategories,
   selectSortByQuery,
   selectSortOrderQuery,
   (entities, sort, order) => {

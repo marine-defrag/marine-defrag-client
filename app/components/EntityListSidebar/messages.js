@@ -74,16 +74,20 @@ export default defineMessages({
       id: 'app.components.EntityListSidebar.filterGroupLabel.connections',
       defaultMessage: 'By connection',
     },
-    'connections-actors': {
-      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-actors',
+    'connections-action-actors': {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-action-actors',
       defaultMessage: 'By connection',
     },
-    'connections-targets': {
-      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-targets',
+    'connections-action-targets': {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-action-targets',
       defaultMessage: 'By connection',
     },
-    'connections-actions': {
-      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-actions',
+    'connections-actor-actions': {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-actor-actions',
+      defaultMessage: 'By connection',
+    },
+    'connections-target-actions': {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-target-actions',
       defaultMessage: 'By connection',
     },
     connectedTaxonomies: {
@@ -104,9 +108,21 @@ export default defineMessages({
       id: 'app.components.EntityListSidebar.editGroupLabel.connections',
       defaultMessage: 'Update connections',
     },
-    targets: {
-      id: 'app.components.EntityListSidebar.editGroupLabel.targets',
+    'connections-action-actors': {
+      id: 'app.components.EntityListSidebar.editGroupLabel.connections-action-actors',
+      defaultMessage: 'Update actors',
+    },
+    'connections-action-targets': {
+      id: 'app.components.EntityListSidebar.editGroupLabel.connections-action-targets',
       defaultMessage: 'Update targets',
+    },
+    'connections-actor-actions': {
+      id: 'app.components.EntityListSidebar.editGroupLabel.connections-actor-actions',
+      defaultMessage: 'Update activities',
+    },
+    'connections-target-actions': {
+      id: 'app.components.EntityListSidebar.editGroupLabel.connections-target-actions',
+      defaultMessage: 'Update activities',
     },
   },
   filterFormTitlePrefix: {

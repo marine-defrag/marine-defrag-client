@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 
-import Icon from 'components/Icon';
 import Button from 'components/buttons/Button';
 
 import messages from './messages';
@@ -40,18 +39,10 @@ const GroupLabel = styled.div`
   vertical-align: middle;
   width: 99%;
 `;
-const GroupIcon = styled.div`
-  position: relative;
-  right: 3px;
-  display: table-cell;
-  width: 26px;
-  vertical-align: middle;
-`;
-
 class EntityListSidebarGroupLabel extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
     const {
-      label, icon, onToggle, expanded,
+      label, onToggle, expanded,
     } = this.props;
     const { intl } = this.context;
     return (
@@ -62,7 +53,6 @@ class EntityListSidebarGroupLabel extends React.PureComponent { // eslint-disabl
         )}
       >
         <GroupLabel>{label}</GroupLabel>
-        <GroupIcon><Icon name={icon} /></GroupIcon>
       </Styled>
     );
   }
@@ -70,7 +60,6 @@ class EntityListSidebarGroupLabel extends React.PureComponent { // eslint-disabl
 
 EntityListSidebarGroupLabel.propTypes = {
   label: PropTypes.string.isRequired,
-  icon: PropTypes.string,
   onToggle: PropTypes.func,
   expanded: PropTypes.bool,
 };

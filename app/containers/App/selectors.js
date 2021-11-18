@@ -21,6 +21,7 @@ import {
   ROUTES,
   USER_ROLES,
   ACTIONTYPE_ACTORTYPES,
+  ACTIONTYPE_TARGETTYPES,
 } from 'themes/config';
 
 import {
@@ -281,6 +282,14 @@ export const selectConnectionQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('connected')
 );
+export const selectTargetedQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('targeted')
+);
+export const selectTargetingQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('targeting')
+);
 export const selectConnectedCategoryQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('catx')
@@ -384,6 +393,30 @@ export const selectActiontypesForActortype = createSelector(
   (typeId, actiontypes) => {
     const validActiontypeIds = Object.keys(ACTIONTYPE_ACTORTYPES).filter((actiontypeId) => {
       const actortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
+      return actortypeIds && actortypeIds.indexOf(typeId) > -1;
+    });
+    return actiontypes.filter(
+      (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
+    );
+  }
+);
+export const selectTargettypesForActiontype = createSelector(
+  (state, { type }) => type,
+  selectActortypes,
+  (typeId, actortypes) => {
+    const validActortypeIds = ACTIONTYPE_TARGETTYPES[typeId];
+    return actortypes.filter(
+      (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
+    );
+  }
+);
+
+export const selectActiontypesForTargettype = createSelector(
+  (state, { type }) => type,
+  selectActiontypes,
+  (typeId, actiontypes) => {
+    const validActiontypeIds = Object.keys(ACTIONTYPE_TARGETTYPES).filter((actiontypeId) => {
+      const actortypeIds = ACTIONTYPE_TARGETTYPES[actiontypeId];
       return actortypeIds && actortypeIds.indexOf(typeId) > -1;
     });
     return actiontypes.filter(
@@ -962,17 +995,7 @@ export const selectActorActionsGroupedByAction = createSelector(
       )
     ),
 );
-export const selectActionActorsGroupedByAction = createSelector(
-  (state) => selectEntities(state, API.ACTION_ACTORS),
-  (entities) => entities
-    && entities.groupBy(
-      (entity) => entity.getIn(['attributes', 'measure_id'])
-    ).map(
-      (group) => group.map(
-        (entity) => entity.getIn(['attributes', 'actor_id'])
-      )
-    ),
-);
+
 export const selectActionActorsGroupedByActor = createSelector(
   (state) => selectEntities(state, API.ACTION_ACTORS),
   (entities) => entities
@@ -984,7 +1007,17 @@ export const selectActionActorsGroupedByActor = createSelector(
       )
     ),
 );
-
+export const selectActionActorsGroupedByAction = createSelector(
+  (state) => selectEntities(state, API.ACTION_ACTORS),
+  (entities) => entities
+    && entities.groupBy(
+      (entity) => entity.getIn(['attributes', 'measure_id'])
+    ).map(
+      (group) => group.map(
+        (entity) => entity.getIn(['attributes', 'actor_id'])
+      )
+    ),
+);
 export const selectActionCategoriesGroupedByAction = createSelector(
   (state) => selectEntities(state, API.ACTION_CATEGORIES),
   (entities) => entities

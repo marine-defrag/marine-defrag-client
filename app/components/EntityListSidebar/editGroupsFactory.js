@@ -11,6 +11,8 @@ export const makeEditGroups = ({
   messages,
   actortypes,
   actiontypes,
+  targettypes,
+  actiontypesForTarget,
 }) => {
   const editGroups = {};
   // const selectedActortypes = actortypes && actortypes.filter(
@@ -67,9 +69,9 @@ export const makeEditGroups = ({
         config.connections.options,
         (optionsMemo, option) => {
           let connectedTypes;
-          if (config.connections.type === 'actors') {
+          if (config.connections.type === 'action-actors') {
             connectedTypes = actortypes;
-          } else if (config.connections.type === 'actions') {
+          } else if (config.connections.type === 'actor-actions') {
             connectedTypes = actiontypes;
           }
           if (option.groupByType && connectedTypes) {
@@ -77,7 +79,7 @@ export const makeEditGroups = ({
               .filter((type) => !option.typeFilter || type.getIn(['attributes', option.typeFilter]))
               .reduce(
                 (memo, type) => {
-                  const id = `${option.query}_${type.get('id')}`;
+                  const id = `${option.entityType}_${type.get('id')}`;
                   return memo.concat({
                     id, // filterOptionId
                     label: option.label,
@@ -85,10 +87,9 @@ export const makeEditGroups = ({
                       ? option.message.replace('{typeid}', type.get('id'))
                       : option.message,
                     path: option.connectPath,
-                    connection: option.query,
+                    connection: option.entityType,
                     key: option.key,
                     ownKey: option.ownKey,
-                    icon: id,
                     active: !!activeEditOption && activeEditOption.optionId === id,
                     create: {
                       path: option.path,
@@ -96,7 +97,7 @@ export const makeEditGroups = ({
                         ? { actortype_id: type.get('id') }
                         : { measuretype_id: type.get('id') },
                     },
-                    color: option.query,
+                    color: option.entityType,
                   });
                 },
                 optionsMemo,
@@ -105,15 +106,14 @@ export const makeEditGroups = ({
 
           return typeof option.edit === 'undefined' || option.edit
             ? optionsMemo.concat({
-              id: option.query, // filterOptionId
+              id: option.entityType, // filterOptionId
               label: option.label,
               message: option.message,
               path: option.connectPath,
-              connection: option.query,
+              connection: option.entityType,
               key: option.key,
               ownKey: option.ownKey,
-              icon: option.query,
-              active: !!activeEditOption && activeEditOption.optionId === option.query,
+              active: !!activeEditOption && activeEditOption.optionId === option.entityType,
               create: { path: option.path },
             })
             : optionsMemo;
@@ -127,23 +127,24 @@ export const makeEditGroups = ({
     // first prepare taxonomy options
     editGroups.targets = {
       id: 'targets', // filterGroupId
-      label: messages.targets,
+      label: messages.connections(config.targets.type),
       show: true,
       options: reduce(
         config.targets.options,
         (optionsMemo, option) => {
           let connectedTypes;
-          if (config.connections.type === 'actors') {
-            connectedTypes = actortypes;
-          } else if (config.connections.type === 'actions') {
-            connectedTypes = actiontypes;
+          if (config.targets.type === 'action-targets') {
+            connectedTypes = targettypes;
+          } else if (config.targets.type === 'target-actions') {
+            connectedTypes = actiontypesForTarget;
           }
+          // const connectionPath = option.connectionPath || option.entityType;
           if (option.groupByType && connectedTypes) {
             return connectedTypes
               .filter((type) => !option.typeFilter || type.getIn(['attributes', option.typeFilter]))
               .reduce(
                 (memo, type) => {
-                  const id = `${option.query}_${type.get('id')}`;
+                  const id = `${option.entityType}_${type.get('id')}`;
                   return memo.concat({
                     id, // filterOptionId
                     label: option.label,
@@ -151,13 +152,12 @@ export const makeEditGroups = ({
                       ? option.message.replace('{typeid}', type.get('id'))
                       : option.message,
                     path: option.connectPath,
-                    connection: option.query,
+                    connection: option.entityType,
                     key: option.key,
                     ownKey: option.ownKey,
-                    icon: id,
                     active: !!activeEditOption && activeEditOption.optionId === id,
                     create: { path: option.path },
-                    color: option.query,
+                    color: option.entityType,
                   });
                 },
                 optionsMemo,
@@ -165,15 +165,14 @@ export const makeEditGroups = ({
           }
           return typeof option.edit === 'undefined' || option.edit
             ? optionsMemo.concat({
-              id: option.query, // filterOptionId
+              id: option.entityType, // filterOptionId
               label: option.label,
               message: option.message,
               path: option.connectPath,
-              connection: option.query,
+              connection: option.entityType,
               key: option.key,
               ownKey: option.ownKey,
-              icon: option.query,
-              active: !!activeEditOption && activeEditOption.optionId === option.query,
+              active: !!activeEditOption && activeEditOption.optionId === option.entityType,
               create: { path: option.path },
             })
             : optionsMemo;

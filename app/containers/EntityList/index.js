@@ -162,7 +162,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             entities={entities}
             taxonomies={this.props.taxonomies}
             actortypes={this.props.actortypes}
+            targettypes={this.props.targettypes}
             actiontypes={this.props.actiontypes}
+            actiontypesForTarget={this.props.actiontypesForTarget}
             connections={this.props.connections}
             connectedTaxonomies={this.props.connectedTaxonomies}
             entityIdsSelected={
@@ -323,6 +325,8 @@ EntityList.propTypes = {
   allTaxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
+  targettypes: PropTypes.instanceOf(Map),
+  actiontypesForTarget: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   config: PropTypes.object,

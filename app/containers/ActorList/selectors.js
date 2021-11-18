@@ -13,7 +13,9 @@ import {
   selectActorCategoriesGroupedByActor,
   selectActionCategoriesGroupedByAction,
   selectActorActionsGroupedByActor,
+  selectActionActorsGroupedByActor,
   selectCategories,
+  selectTargetingQuery,
   selectActionTaxonomies,
   // selectActorConnections,
   // selectActortypeTaxonomies,
@@ -110,6 +112,7 @@ export const selectConnectedTaxonomies = createSelector(
     );
   }
 );
+
 const selectActorsWithCategories = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   (state, args) => selectActorsSearchQuery(state, {
@@ -151,12 +154,27 @@ const selectActorsWithActions = createSelector(
   selectActorsWithCategories,
   selectConnections,
   selectActorActionsGroupedByActor,
-  (ready, entities, connections, associationsGrouped) => {
+  selectActionActorsGroupedByActor, // as targets
+  (ready, entities, connections, actorAssociationsGrouped, targetAssociationsGrouped) => {
     if (ready && connections.get('actions')) {
       return entities.map(
         (entity) => {
-          const entityActions = associationsGrouped.get(parseInt(entity.get('id'), 10));
+          const entityActions = actorAssociationsGrouped.get(parseInt(entity.get('id'), 10));
           const entityActionsByActiontype = entityActions && entityActions.filter(
+            (id) => connections.getIn([
+              'actions',
+              id.toString(),
+            ])
+          ).groupBy(
+            (actionId) => connections.getIn([
+              'actions',
+              actionId.toString(),
+              'attributes',
+              'measuretype_id',
+            ])
+          ).sortBy((val, key) => key);
+          const targetActions = targetAssociationsGrouped.get(parseInt(entity.get('id'), 10));
+          const targetActionsByActiontype = targetActions && targetActions.filter(
             (id) => connections.getIn([
               'actions',
               id.toString(),
@@ -177,6 +195,12 @@ const selectActorsWithActions = createSelector(
           ).set(
             'actionsByType',
             entityActionsByActiontype,
+          ).set(
+            'targetingActions',
+            targetActions,
+          ).set(
+            'targetingActionsByType',
+            targetActionsByActiontype,
           );
         }
       );
@@ -216,8 +240,15 @@ const selectActorsByConnections = createSelector(
     ? filterEntitiesByConnection(entities, query)
     : entities
 );
-const selectActorsByCategories = createSelector(
+const selectActorsByTargeted = createSelector(
   selectActorsByConnections,
+  selectTargetingQuery,
+  (entities, query) => query
+    ? filterEntitiesByConnection(entities, query)
+    : entities
+);
+const selectActorsByCategories = createSelector(
+  selectActorsByTargeted,
   selectCategoryQuery,
   (entities, query) => query
     ? filterEntitiesByCategories(entities, query)

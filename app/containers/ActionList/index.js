@@ -18,6 +18,7 @@ import {
   selectIsUserAnalyst,
   selectActiontypes,
   selectActortypesForActiontype,
+  selectTargettypesForActiontype,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
@@ -58,6 +59,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
       params, // { id: the action type }
       actiontypes,
       actortypes,
+      targettypes,
     } = this.props;
     const { intl } = this.context;
     const typeId = params.id;
@@ -123,6 +125,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
           locationQuery={fromJS(location.query)}
           actortypes={actortypes}
           actiontypes={actiontypes}
+          targettypes={targettypes}
         />
       </div>
     );
@@ -141,6 +144,7 @@ ActionList.propTypes = {
   connections: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
+  targettypes: PropTypes.instanceOf(Map),
   location: PropTypes.object,
   isAnalyst: PropTypes.bool,
   params: PropTypes.object,
@@ -160,6 +164,7 @@ const mapStateToProps = (state, props) => ({
   isAnalyst: selectIsUserAnalyst(state),
   actiontypes: selectActiontypes(state),
   actortypes: selectActortypesForActiontype(state, { type: props.params.id }),
+  targettypes: selectTargettypesForActiontype(state, { type: props.params.id }),
 });
 function mapDispatchToProps(dispatch) {
   return {

@@ -9,7 +9,6 @@ import asList from 'utils/as-list';
 import appMessages from 'containers/App/messages';
 
 import {
-  getConnectedCategories,
   testEntityCategoryAssociation,
   getEntityTitle,
   getEntityReference,
@@ -41,16 +40,6 @@ export const makeActiveFilterOptions = ({
         entities,
         config.taxonomies,
         taxonomies,
-        activeFilterOption.optionId,
-        locationQuery,
-        messages,
-        contextIntl,
-      );
-    case 'connectedTaxonomies':
-      return makeConnectedTaxonomyFilterOptions(
-        entities,
-        config,
-        connectedTaxonomies,
         activeFilterOption.optionId,
         locationQuery,
         messages,
@@ -336,8 +325,8 @@ export const makeConnectionFilterOptions = (
   const option = find(
     config.options,
     (o) => o.groupByType
-      ? startsWith(activeOptionId, o.query)
-      : o.query === activeOptionId,
+      ? startsWith(activeOptionId, o.entityType)
+      : o.entityType === activeOptionId,
   );
 
   // if option active
@@ -354,6 +343,7 @@ export const makeConnectionFilterOptions = (
       : option.message;
     filterOptions.search = option.search;
     const { query } = config;
+    const connectionPath = option.connectionPath || option.entityType;
     let locationQueryValue = locationQuery.get(query);
     // if no entities found show any active options
     if (entities.size === 0) {
@@ -363,7 +353,7 @@ export const makeConnectionFilterOptions = (
           if (locationQueryValueConnection.length > 1) {
             if (path === locationQueryValueConnection[0]) {
               const value = locationQueryValueConnection[1];
-              const connection = connections.get(option.query) && connections.getIn([option.query, value]);
+              const connection = connections.get(connectionPath) && connections.getIn([connectionPath, value]);
               filterOptions.options[value] = {
                 reference: connection ? getEntityReference(connection) : '',
                 label: connection ? getEntityTitle(connection, option.labels, contextIntl) : upperFirst(value),
@@ -402,13 +392,13 @@ export const makeConnectionFilterOptions = (
       entities.forEach((entity) => {
         let optionConnections = List();
         const entityConnections = option.groupByType
-          ? entity.getIn([`${option.query}ByType`, parseInt(typeid, 10)])
-          : entity.get(option.query);
+          ? entity.getIn([`${option.entityType}ByType`, parseInt(typeid, 10)])
+          : entity.get(option.entityType);
         // if entity has connected entities
         if (entityConnections) {
           // add connected entities if not present otherwise increase count
           entityConnections.forEach((connectedId) => {
-            const connection = connections.getIn([option.query, connectedId.toString()]);
+            const connection = connections.getIn([connectionPath, connectedId.toString()]);
             // if not taxonomy already considered
             if (connection) {
               optionConnections = optionConnections.push(connection);
@@ -472,102 +462,5 @@ export const makeConnectionFilterOptions = (
     }
   }
   filterOptions.tagFilterGroups = option && makeTagFilterGroups(connectedTaxonomies, contextIntl);
-  return filterOptions;
-};
-
-
-export const makeConnectedTaxonomyFilterOptions = (
-  entities,
-  config,
-  connectedTaxonomies,
-  activeOptionId,
-  locationQuery,
-  messages,
-  contextIntl,
-) => {
-  const filterOptions = {
-    groupId: 'connectedTaxonomies',
-    search: config.connectedTaxonomies.search,
-    options: {},
-    multiple: true,
-    required: false,
-    selectAll: false,
-    groups: null,
-  };
-
-  const taxonomy = connectedTaxonomies.get(activeOptionId);
-  if (taxonomy) {
-    // figure out parent taxonomy for nested grouping
-    const parentId = getEntityParentId(taxonomy);
-    const parent = parentId && connectedTaxonomies.get(parentId);
-    if (parent) {
-      filterOptions.groups = parent.get('categories').map((cat) => getEntityTitle(cat));
-    }
-    filterOptions.title = `${messages.titlePrefix} ${lowerCase(getTaxTitle(parseInt(taxonomy.get('id'), 10), contextIntl))}`;
-    const { query } = config.connectedTaxonomies;
-    const locationQueryValue = locationQuery.get(query);
-    if (entities.size === 0) {
-      if (locationQueryValue) {
-        asList(locationQueryValue).forEach((queryValue) => {
-          const locationQueryValueCategory = queryValue.split(':');
-          if (locationQueryValueCategory.length > 1) {
-            // for each connection
-            forEach(config.connectedTaxonomies.connections, (connection) => {
-              if (connection.path === locationQueryValueCategory[0]) {
-                const categoryId = parseInt(locationQueryValueCategory[1], 10);
-                if (taxonomy.getIn(['categories', categoryId])) {
-                  const category = taxonomy.getIn(['categories', categoryId]);
-                  filterOptions.options[categoryId] = {
-                    reference: getEntityReference(category, false),
-                    label: getEntityTitle(category),
-                    group: parent && getEntityParentId(category),
-                    showCount: true,
-                    value: `${connection.path}:${categoryId}`,
-                    count: 0,
-                    query,
-                    checked: true,
-                  };
-                }
-              }
-            });
-          }
-        });
-      }
-    } else {
-      entities.forEach((entity) => {
-        forEach(config.connectedTaxonomies.connections, (connection) => {
-          // connection eg actors
-          // if entity has taxonomies
-          if (entity.get(connection.path)) { // action.actors stores actor_actions
-            // add categories from entities for taxonomy
-            const categories = getConnectedCategories(
-              entity.get(connection.path),
-              taxonomy.get('categories'),
-              connection.path,
-            );
-            categories.forEach((category) => {
-              // if category already added
-              if (filterOptions.options[category.get('id')]) {
-                filterOptions.options[category.get('id')].count += 1;
-              } else {
-                const value = `${connection.path}:${category.get('id')}`;
-                const label = getEntityTitle(category);
-                filterOptions.options[category.get('id')] = {
-                  reference: getEntityReference(category, false),
-                  group: parent && getEntityParentId(category),
-                  label,
-                  showCount: true,
-                  value,
-                  count: 1,
-                  query,
-                  checked: optionChecked(locationQueryValue, value),
-                };
-              }
-            });
-          }
-        });
-      });
-    }
-  }
   return filterOptions;
 };

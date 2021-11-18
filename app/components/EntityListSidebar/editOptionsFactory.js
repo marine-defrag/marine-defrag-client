@@ -28,9 +28,27 @@ export const makeActiveEditOptions = ({
     case 'taxonomies':
       return makeTaxonomyEditOptions(entities, taxonomies, activeEditOption, messages);
     case 'connections':
-      return makeConnectionEditOptions(entities, config.connections, connections, connectedTaxonomies, activeEditOption, messages, contextIntl);
+      return makeConnectionEditOptions(
+        entities,
+        config.connections,
+        connections,
+        connectedTaxonomies,
+        activeEditOption,
+        messages,
+        contextIntl,
+        activeEditOption.group,
+      );
     case 'targets':
-      return makeConnectionEditOptions(entities, config.targets, connections, connectedTaxonomies, activeEditOption, messages, contextIntl);
+      return makeConnectionEditOptions(
+        entities,
+        config.targets,
+        connections,
+        connectedTaxonomies,
+        activeEditOption,
+        messages,
+        contextIntl,
+        activeEditOption.group,
+      );
     case 'attributes':
       return makeAttributeEditOptions(entities, config, activeEditOption, messages);
     default:
@@ -119,14 +137,16 @@ const makeConnectionEditOptions = (
   activeEditOption,
   messages,
   contextIntl,
+  // optionGroup,
 ) => {
+  const { type } = config;
   // const option = find(config.connections.options, (o) => o.path === activeEditOption.optionId);
   // get the active option
   const option = find(
     config.options,
     (o) => o.groupByType
-      ? startsWith(activeEditOption.optionId, o.query)
-      : o.query === activeEditOption.optionId,
+      ? startsWith(activeEditOption.optionId, o.entityType)
+      : o.entityType === activeEditOption.optionId,
   );
   const editOptions = {
     groupId: activeEditOption.group,
@@ -145,14 +165,15 @@ const makeConnectionEditOptions = (
     editOptions.title = messages.title;
     editOptions.path = option.connectPath;
     editOptions.search = option.search;
+    const connectionPath = option.connectionPath || option.entityType;
     connections
-      .get(option.query)
+      .get(connectionPath)
       .filter((c) => {
         if (!option.groupByType) return true;
-        if (option.groupByType && config.type === 'actions') {
+        if (option.groupByType && (type === 'target-actions' || type === 'actor-actions')) {
           return qe(typeid, c.getIn(['attributes', 'measuretype_id']));
         }
-        if (option.groupByType && config.type === 'actors') {
+        if (option.groupByType && (type === 'action-targets' || type === 'action-actors')) {
           return qe(typeid, c.getIn(['attributes', 'actortype_id']));
         }
         return true;
@@ -161,7 +182,7 @@ const makeConnectionEditOptions = (
         const count = entities.reduce(
           (counter, entity) => testEntityEntityAssociation(
             entity,
-            option.path,
+            option.entityType,
             connection.get('id')
           ) ? counter + 1 : counter,
           0, // initial value

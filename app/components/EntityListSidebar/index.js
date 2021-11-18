@@ -106,9 +106,9 @@ const STATE_INITIAL = {
     taxonomies_10: true,
     taxonomies_11: true,
     taxonomies_12: true,
-    connectedTaxonomies: true,
+    // connectedTaxonomies: true,
     connections: true,
-    targets: true,
+    targets: false,
     attributes: true,
   },
   visible: false,
@@ -284,6 +284,8 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
       entityIdsSelected,
       actortypes,
       actiontypes,
+      targettypes,
+      actiontypesForTarget,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -307,20 +309,15 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
         hasUserRole,
         actortypes,
         actiontypes,
+        targettypes,
+        actiontypesForTarget,
         activeFilterOption: activeOption,
         messages: {
           attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.filterGroupLabel.taxonomies),
-          taxonomyGroupByActortype:
-            (actortype) => this.context.intl.formatMessage(
-              messages.filterGroupLabel.taxonomiesByActortype,
-              {
-                actortype: intl.formatMessage(appMessages.actortypes_short[actortype]),
-              },
-            ),
           actortypesGroup: intl.formatMessage(messages.filterGroupLabel.actortypes),
           connections: (type) => getFilterConnectionsMsg(intl, type),
-          connectedTaxonomies: intl.formatMessage(messages.filterGroupLabel.connectedTaxonomies),
+          // connectedTaxonomies: intl.formatMessage(messages.filterGroupLabel.connectedTaxonomies),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
           actortypes: intl.formatMessage(appMessages.actortypes.plural),
           actiontypes: intl.formatMessage(appMessages.actiontypes.plural),
@@ -330,16 +327,19 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
       panelGroups = makeEditGroups({
         config,
         taxonomies,
+        connectedTaxonomies,
         activeEditOption: activeOption,
         hasUserRole,
+        actortypes,
+        actiontypes,
+        targettypes,
+        actiontypesForTarget,
         messages: {
           attributes: intl.formatMessage(messages.editGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.editGroupLabel.taxonomies),
           connections: (type) => getEditConnectionsMsg(intl, type),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
         },
-        actortypes,
-        actiontypes,
         // selectedActortypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'actortype_id'])).keySeq(),
         // selectedActiontypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'measuretype_id'])).keySeq(),
       });
@@ -489,6 +489,8 @@ EntityListSidebar.propTypes = {
   taxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
+  targettypes: PropTypes.instanceOf(Map),
+  actiontypesForTarget: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   entityIdsSelected: PropTypes.instanceOf(List),

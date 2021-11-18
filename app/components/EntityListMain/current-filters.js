@@ -19,11 +19,14 @@ export const currentFilterArgs = (config, locationQuery) => {
   if (config.taxonomies && locationQuery.get(config.taxonomies.query)) {
     args = args.concat(config.taxonomies.query);
   }
-  if (config.connectedTaxonomies && locationQuery.get(config.connectedTaxonomies.query)) {
-    args = args.concat(config.connectedTaxonomies.query);
-  }
+  // if (config.connectedTaxonomies && locationQuery.get(config.connectedTaxonomies.query)) {
+  //   args = args.concat(config.connectedTaxonomies.query);
+  // }
   if (config.connections && locationQuery.get(config.connections.query)) {
     args = args.concat(config.connections.query);
+  }
+  if (config.targets && locationQuery.get(config.targets.query)) {
+    args = args.concat(config.targets.query);
   }
   if (locationQuery.get('where')) {
     args = args.concat('where');
@@ -73,17 +76,18 @@ export const currentFilters = (
       withoutLabel
     ));
   }
-  if (config.connectedTaxonomies && taxonomies) {
-    filterTags = filterTags.concat(getCurrentConnectedTaxonomyFilters(
-      config.connectedTaxonomies,
-      taxonomies,
-      locationQuery,
-      onTagClick
-    ));
-  }
   if (config.connections && connections) {
     filterTags = filterTags.concat(getCurrentConnectionFilters(
       config.connections,
+      connections,
+      locationQuery,
+      onTagClick,
+      withoutLabel
+    ));
+  }
+  if (config.targets && connections) {
+    filterTags = filterTags.concat(getCurrentConnectionFilters(
+      config.targets,
       connections,
       locationQuery,
       onTagClick,
@@ -109,7 +113,7 @@ const getErrorTag = (label) => ({
 });
 const getConnectionLabel = (connection, value) => {
   const label = connection
-    ? connection.getIn(['attributes', 'reference']) || connection.get('id')
+    ? connection.getIn(['attributes', 'code']) || connection.getIn(['attributes', 'title']) || connection.get('id')
     : upperFirst(value);
   return truncateText(label, TEXT_TRUNCATE.CONNECTION_TAG);
 };
@@ -204,66 +208,33 @@ const getCurrentActortypeFilter = (
   return tags;
 };
 
-
-const getCurrentConnectedTaxonomyFilters = (
-  taxonomyFilters,
-  taxonomies,
-  locationQuery,
-  onClick
-) => {
-  const tags = [];
-  if (locationQuery.get(taxonomyFilters.query)) {
-    const locationQueryValue = locationQuery.get(taxonomyFilters.query);
-    taxonomies.forEach((taxonomy) => {
-      asList(locationQueryValue).forEach((queryValue) => {
-        const valueSplit = queryValue.split(':');
-        if (valueSplit.length > 0) {
-          const value = valueSplit[1].toString();
-          if (taxonomy.getIn(['categories', value])) {
-            const category = taxonomy.getIn(['categories', value]);
-            tags.push({
-              label: getCategoryLabel(category),
-              type: 'taxonomies',
-              id: taxonomy.get('id'),
-              inverse: category.getIn(['attributes', 'draft']),
-              onClick: () => onClick({
-                value: queryValue,
-                query: taxonomyFilters.query,
-                checked: false,
-              }),
-            });
-          }
-        }
-      });
-    });
-  }
-  return tags;
-};
 const getCurrentConnectionFilters = (
-  connectionFilters,
+  config,
   connections,
   locationQuery,
   onClick,
-  withoutLabel
+  withoutLabel,
 ) => {
   const tags = [];
-  forEach(connectionFilters.options, (option) => {
-    if (locationQuery.get(connectionFilters.query) && connections.get(option.query)) {
-      const locationQueryValue = locationQuery.get(connectionFilters.query);
+  const { options, query } = config;
+  forEach(options, (option) => {
+    const connectionPath = option.connectionPath || option.entityType;
+    if (locationQuery.get(query) && connections.get(connectionPath)) {
+      const locationQueryValue = locationQuery.get(query);
       asList(locationQueryValue).forEach((queryValue) => {
         const valueSplit = queryValue.split(':');
         if (valueSplit.length > 0) {
-          if (option.query === valueSplit[0].split('_')[0]) {
+          if (option.entityType === valueSplit[0].split('_')[0]) {
             const value = valueSplit[1].toString();
-            const connection = connections.getIn([option.query, value]);
+            const connection = connections.getIn([connectionPath, value]);
             if (connection) {
               tags.push({
                 label: getConnectionLabel(connection, value),
-                type: option.query,
+                type: option.connectionPath || option.entityType,
                 inverse: connection.getIn(['attributes', 'draft']),
                 onClick: () => onClick({
                   value: queryValue,
-                  query: connectionFilters.query,
+                  query,
                   checked: false,
                 }),
               });
@@ -276,12 +247,12 @@ const getCurrentConnectionFilters = (
 
   if (locationQuery.get('without')) {
     const locationQueryValue = locationQuery.get('without');
-    forEach(connectionFilters.options, (option) => {
+    forEach(options, (option) => {
       asList(locationQueryValue).forEach((queryValue) => {
         const valueType = queryValue.split('_');
         const typeid = valueType.length > 1 && valueType[1];
         // numeric means taxonomy
-        if (option.query === valueType[0]) {
+        if (option.entityType === valueType[0]) {
           tags.push({
             labels: [
               { label: withoutLabel },
@@ -298,7 +269,7 @@ const getCurrentConnectionFilters = (
               },
               { label: option.label },
             ],
-            type: option.query,
+            type: option.connectionPath || option.entityType,
             onClick: () => onClick({
               value: queryValue,
               query: 'without',
