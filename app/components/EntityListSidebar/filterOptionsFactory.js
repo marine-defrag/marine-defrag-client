@@ -69,6 +69,30 @@ export const makeActiveFilterOptions = ({
         contextIntl,
         activeFilterOption.group,
       );
+    case 'members':
+      return makeConnectionFilterOptions(
+        entities,
+        config.members,
+        connections,
+        connectedTaxonomies,
+        activeFilterOption.optionId,
+        locationQuery,
+        messages,
+        contextIntl,
+        activeFilterOption.group,
+      );
+    case 'associations':
+      return makeConnectionFilterOptions(
+        entities,
+        config.associations,
+        connections,
+        connectedTaxonomies,
+        activeFilterOption.optionId,
+        locationQuery,
+        messages,
+        contextIntl,
+        activeFilterOption.group,
+      );
     case 'attributes':
       return makeAttributeFilterOptions(
         entities,

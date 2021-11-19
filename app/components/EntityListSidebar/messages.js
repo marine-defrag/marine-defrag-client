@@ -90,6 +90,14 @@ export default defineMessages({
       id: 'app.components.EntityListSidebar.filterGroupLabel.connections-target-actions',
       defaultMessage: 'By connection',
     },
+    'connections-association-members': {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-association-members',
+      defaultMessage: 'By member',
+    },
+    'connections-member-associations': {
+      id: 'app.components.EntityListSidebar.filterGroupLabel.connections-member-associations',
+      defaultMessage: 'By membership',
+    },
     connectedTaxonomies: {
       id: 'app.components.EntityListSidebar.filterGroupLabel.connectedTaxonomies',
       defaultMessage: 'By connected category',
@@ -119,6 +127,14 @@ export default defineMessages({
     'connections-actor-actions': {
       id: 'app.components.EntityListSidebar.editGroupLabel.connections-actor-actions',
       defaultMessage: 'Update activities',
+    },
+    'connections-association-members': {
+      id: 'app.components.EntityListSidebar.editGroupLabel.connections-association-members',
+      defaultMessage: 'Update members',
+    },
+    'connections-member-associations': {
+      id: 'app.components.EntityListSidebar.editGroupLabel.connections-member-associations',
+      defaultMessage: 'Update memberships',
     },
     'connections-target-actions': {
       id: 'app.components.EntityListSidebar.editGroupLabel.connections-target-actions',

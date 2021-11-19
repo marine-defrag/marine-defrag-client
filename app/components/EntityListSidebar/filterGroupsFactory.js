@@ -1,5 +1,6 @@
 import { reduce } from 'lodash/collection';
 import { sortEntities } from 'utils/sort';
+import { startsWith } from 'utils/string';
 
 // figure out filter groups for filter panel
 export const makeFilterGroups = ({
@@ -11,6 +12,8 @@ export const makeFilterGroups = ({
   targettypes,
   actiontypesForTarget,
   activeFilterOption,
+  membertypes,
+  associationtypes,
   messages,
 }) => {
   const filterGroups = {};
@@ -119,6 +122,110 @@ export const makeFilterGroups = ({
                     color: option.entityType,
                     active: !!activeFilterOption
                       && activeFilterOption.group === 'targets'
+                      && activeFilterOption.optionId === id,
+                  });
+                },
+                optionsMemo,
+              );
+          }
+          return optionsMemo.concat({
+            id: option.path, // filterOptionId
+            label: option.label,
+            message: option.message,
+            active: !!activeFilterOption && activeFilterOption.optionId === option.path,
+          });
+        },
+        [],
+      ),
+    };
+  }
+  if (config.members && membertypes) {
+    // first prepare taxonomy options
+    filterGroups.members = {
+      id: 'members', // filterGroupId
+      label: messages.connections(config.members.type),
+      show: true,
+      options: reduce(
+        config.members.options,
+        (optionsMemo, option) => {
+          const connectedTypes = membertypes;
+          if (option.groupByType && connectedTypes) {
+            return connectedTypes
+              .filter((type) => {
+                if (!option.typeFilter) return true;
+                let attribute = option.typeFilter;
+                const notFilter = startsWith(option.typeFilter, '!');
+                if (notFilter) {
+                  attribute = option.typeFilter.substring(1);
+                }
+                return notFilter
+                  ? !type.getIn(['attributes', attribute])
+                  : type.getIn(['attributes', attribute]);
+              })
+              .reduce(
+                (memo, type) => {
+                  const id = `${option.entityType}_${type.get('id')}`;
+                  return memo.concat({
+                    id, // filterOptionId
+                    label: option.label,
+                    message: (option.message && option.message.indexOf('{typeid}') > -1)
+                      ? option.message.replace('{typeid}', type.get('id'))
+                      : option.message,
+                    color: option.entityType,
+                    active: !!activeFilterOption
+                      && activeFilterOption.group === 'members'
+                      && activeFilterOption.optionId === id,
+                  });
+                },
+                optionsMemo,
+              );
+          }
+          return optionsMemo.concat({
+            id: option.path, // filterOptionId
+            label: option.label,
+            message: option.message,
+            active: !!activeFilterOption && activeFilterOption.optionId === option.path,
+          });
+        },
+        [],
+      ),
+    };
+  }
+  if (config.associations && associationtypes) {
+    // first prepare taxonomy options
+    filterGroups.associations = {
+      id: 'associations', // filterGroupId
+      label: messages.connections(config.associations.type),
+      show: true,
+      options: reduce(
+        config.associations.options,
+        (optionsMemo, option) => {
+          const connectedTypes = associationtypes;
+          if (option.groupByType && connectedTypes) {
+            return connectedTypes
+              .filter((type) => {
+                if (!option.typeFilter) return true;
+                let attribute = option.typeFilter;
+                const notFilter = startsWith(option.typeFilter, '!');
+                if (notFilter) {
+                  attribute = option.typeFilter.substring(1);
+                }
+                return notFilter
+                  ? !type.getIn(['attributes', attribute])
+                  : type.getIn(['attributes', attribute]);
+              })
+              .reduce(
+                (memo, type) => {
+                  const id = `${option.entityType}_${type.get('id')}`;
+                  return memo.concat({
+                    id, // filterOptionId
+                    label: option.label,
+                    message: (option.message && option.message.indexOf('{typeid}') > -1)
+                      ? option.message.replace('{typeid}', type.get('id'))
+                      : option.message,
+                    color: option.entityType,
+                    active: !!activeFilterOption
+                      && activeFilterOption.group === 'associations'
                       && activeFilterOption.optionId === id,
                   });
                 },

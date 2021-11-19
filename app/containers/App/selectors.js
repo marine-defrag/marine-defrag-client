@@ -290,6 +290,14 @@ export const selectTargetingQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('targeting')
 );
+export const selectMemberQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('by-member')
+);
+export const selectAssociationQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('by-association')
+);
 export const selectConnectedCategoryQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('catx')
@@ -380,6 +388,7 @@ export const selectActortypesForActiontype = createSelector(
   (state, { type }) => type,
   selectActortypes,
   (typeId, actortypes) => {
+    if (!actortypes) return null;
     const validActortypeIds = ACTIONTYPE_ACTORTYPES[typeId];
     return actortypes.filter(
       (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
@@ -391,6 +400,7 @@ export const selectActiontypesForActortype = createSelector(
   (state, { type }) => type,
   selectActiontypes,
   (typeId, actiontypes) => {
+    if (!actiontypes) return null;
     const validActiontypeIds = Object.keys(ACTIONTYPE_ACTORTYPES).filter((actiontypeId) => {
       const actortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
       return actortypeIds && actortypeIds.indexOf(typeId) > -1;
@@ -404,9 +414,36 @@ export const selectTargettypesForActiontype = createSelector(
   (state, { type }) => type,
   selectActortypes,
   (typeId, actortypes) => {
+    if (!actortypes) return null;
     const validActortypeIds = ACTIONTYPE_TARGETTYPES[typeId];
     return actortypes.filter(
       (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
+    );
+  }
+);
+export const selectMembertypesForActortype = createSelector(
+  (state, { type }) => type,
+  selectActortypes,
+  (typeId, actortypes) => {
+    const actortype = actortypes && actortypes.get(typeId);
+    if (!actortype || !actortype.getIn(['attributes', 'has_members'])) {
+      return null;
+    }
+    return actortypes.filter(
+      (type) => !type.getIn(['attributes', 'has_members'])
+    );
+  }
+);
+export const selectAssociationtypesForActortype = createSelector(
+  (state, { type }) => type,
+  selectActortypes,
+  (typeId, actortypes) => {
+    const actortype = actortypes && actortypes.get(typeId);
+    if (!actortype || actortype.getIn(['attributes', 'has_members'])) {
+      return null;
+    }
+    return actortypes.filter(
+      (type) => type.getIn(['attributes', 'has_members'])
     );
   }
 );
@@ -415,6 +452,7 @@ export const selectActiontypesForTargettype = createSelector(
   (state, { type }) => type,
   selectActiontypes,
   (typeId, actiontypes) => {
+    if (!actiontypes) return null;
     const validActiontypeIds = Object.keys(ACTIONTYPE_TARGETTYPES).filter((actiontypeId) => {
       const actortypeIds = ACTIONTYPE_TARGETTYPES[actiontypeId];
       return actortypeIds && actortypeIds.indexOf(typeId) > -1;

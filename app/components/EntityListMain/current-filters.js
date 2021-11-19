@@ -28,6 +28,12 @@ export const currentFilterArgs = (config, locationQuery) => {
   if (config.targets && locationQuery.get(config.targets.query)) {
     args = args.concat(config.targets.query);
   }
+  if (config.members && locationQuery.get(config.members.query)) {
+    args = args.concat(config.members.query);
+  }
+  if (config.associations && locationQuery.get(config.associations.query)) {
+    args = args.concat(config.associations.query);
+  }
   if (locationQuery.get('where')) {
     args = args.concat('where');
   }
@@ -88,6 +94,24 @@ export const currentFilters = (
   if (config.targets && connections) {
     filterTags = filterTags.concat(getCurrentConnectionFilters(
       config.targets,
+      connections,
+      locationQuery,
+      onTagClick,
+      withoutLabel
+    ));
+  }
+  if (config.members && connections) {
+    filterTags = filterTags.concat(getCurrentConnectionFilters(
+      config.members,
+      connections,
+      locationQuery,
+      onTagClick,
+      withoutLabel
+    ));
+  }
+  if (config.associations && connections) {
+    filterTags = filterTags.concat(getCurrentConnectionFilters(
+      config.associations,
       connections,
       locationQuery,
       onTagClick,

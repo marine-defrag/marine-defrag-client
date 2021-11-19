@@ -19,6 +19,8 @@ import {
   selectActortypes,
   selectActiontypesForActortype,
   selectActiontypesForTargettype,
+  selectMembertypesForActortype,
+  selectAssociationtypesForActortype,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
@@ -28,7 +30,7 @@ import EntityList from 'containers/EntityList';
 
 import { CONFIG, DEPENDENCIES } from './constants';
 import {
-  selectActors,
+  selectListActors,
   selectConnectedTaxonomies,
   selectConnections,
 } from './selectors';
@@ -62,6 +64,8 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
       actiontypes,
       actortypes,
       actiontypesForTarget,
+      membertypes,
+      associationtypes,
     } = this.props;
     const typeId = params.id;
     const type = `actors_${typeId}`;
@@ -127,6 +131,8 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
           actortypes={actortypes}
           actiontypes={actiontypes}
           actiontypesForTarget={actiontypesForTarget}
+          membertypes={membertypes}
+          associationtypes={associationtypes}
         />
       </div>
     );
@@ -146,6 +152,8 @@ ActorList.propTypes = {
   actortypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
   actiontypesForTarget: PropTypes.instanceOf(Map),
+  membertypes: PropTypes.instanceOf(Map),
+  associationtypes: PropTypes.instanceOf(Map),
   location: PropTypes.object,
   isAnalyst: PropTypes.bool,
   params: PropTypes.object,
@@ -157,7 +165,7 @@ ActorList.contextTypes = {
 
 const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  entities: selectActors(state, { type: props.params.id }),
+  entities: selectListActors(state, { type: props.params.id }),
   taxonomies: selectActortypeTaxonomiesWithCats(state, { type: props.params.id }),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
@@ -165,6 +173,8 @@ const mapStateToProps = (state, props) => ({
   isAnalyst: selectIsUserAnalyst(state),
   actiontypes: selectActiontypesForActortype(state, { type: props.params.id }),
   actiontypesForTarget: selectActiontypesForTargettype(state, { type: props.params.id }),
+  membertypes: selectMembertypesForActortype(state, { type: props.params.id }),
+  associationtypes: selectAssociationtypesForActortype(state, { type: props.params.id }),
   actortypes: selectActortypes(state),
 });
 

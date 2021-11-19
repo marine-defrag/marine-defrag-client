@@ -109,6 +109,8 @@ const STATE_INITIAL = {
     // connectedTaxonomies: true,
     connections: true,
     targets: false,
+    members: false,
+    associations: false,
     attributes: true,
   },
   visible: false,
@@ -286,6 +288,8 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
       actiontypes,
       targettypes,
       actiontypesForTarget,
+      membertypes,
+      associationtypes,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -311,6 +315,8 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
         actiontypes,
         targettypes,
         actiontypesForTarget,
+        membertypes,
+        associationtypes,
         activeFilterOption: activeOption,
         messages: {
           attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
@@ -334,6 +340,8 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
         actiontypes,
         targettypes,
         actiontypesForTarget,
+        membertypes,
+        associationtypes,
         messages: {
           attributes: intl.formatMessage(messages.editGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.editGroupLabel.taxonomies),
@@ -490,6 +498,8 @@ EntityListSidebar.propTypes = {
   actortypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
   targettypes: PropTypes.instanceOf(Map),
+  membertypes: PropTypes.instanceOf(Map),
+  associationtypes: PropTypes.instanceOf(Map),
   actiontypesForTarget: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),

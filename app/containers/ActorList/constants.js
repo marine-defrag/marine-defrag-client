@@ -17,6 +17,7 @@ export const DEPENDENCIES = [
   API.CATEGORIES,
   API.USERS,
   API.USER_ROLES,
+  API.MEMBERSHIPS,
 ];
 
 export const CONFIG = {
@@ -95,6 +96,44 @@ export const CONFIG = {
         ownKey: 'actor_id',
         groupByType: true,
         typeFilter: 'has_target',
+      },
+    ],
+  },
+  members: { // filter by associated entity
+    query: 'by-member',
+    type: 'association-members',
+    options: [
+      {
+        search: true,
+        message: 'entities.actors_{typeid}.plural',
+        path: API.ACTORS, // filter by actor connection
+        entityType: 'members', // filter by actor connection
+        connectionPath: 'actors',
+        clientPath: ROUTES.ACTOR,
+        connectPath: API.MEMBERSHIP, // filter by actor connection
+        key: 'member_id',
+        ownKey: 'memberof_id',
+        groupByType: true,
+        typeFilter: '!has_members',
+      },
+    ],
+  },
+  associations: { // filter by associated entity
+    query: 'by-association',
+    type: 'member-associations',
+    options: [
+      {
+        search: true,
+        message: 'entities.actors_{typeid}.plural',
+        path: API.ACTORS, // filter by actor connection
+        entityType: 'associations', // filter by actor connection
+        connectionPath: 'actors',
+        clientPath: ROUTES.ACTOR,
+        connectPath: API.MEMBERSHIP, // filter by actor connection
+        key: 'memberof_id',
+        ownKey: 'member_id',
+        groupByType: true,
+        typeFilter: 'has_members',
       },
     ],
   },
