@@ -189,6 +189,61 @@ export const renderTargetsByActortypeControl = (
   ).sort((a, b) => a.id > b.id ? 1 : -1)
   : null;
 
+export const renderMembersByActortypeControl = (
+  entitiesByActortype,
+  taxonomies,
+  onCreateOption,
+  contextIntl,
+) => entitiesByActortype
+  ? entitiesByActortype.reduce(
+    (controls, entities, typeid) => controls.concat({
+      id: `actors.${typeid}`,
+      model: `.associatedMembersByActortype.${typeid}`,
+      dataPath: ['associatedMembersByActortype', typeid],
+      label: contextIntl.formatMessage(appMessages.entities[`actors_${typeid}`].plural),
+      controlType: 'multiselect',
+      options: entityOptions(entities),
+      advanced: true,
+      selectAll: true,
+      tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
+      onCreate: onCreateOption
+        ? () => onCreateOption({
+          path: API.ACTORS,
+          attributes: { actortype_id: typeid },
+        })
+        : null,
+    }),
+    [],
+  ).sort((a, b) => a.id > b.id ? 1 : -1)
+  : null;
+export const renderAssociationsByActortypeControl = (
+  entitiesByActortype,
+  taxonomies,
+  onCreateOption,
+  contextIntl,
+) => entitiesByActortype
+  ? entitiesByActortype.reduce(
+    (controls, entities, typeid) => controls.concat({
+      id: `actors.${typeid}`,
+      model: `.associatedAssociationsByActortype.${typeid}`,
+      dataPath: ['associatedAssociationsByActortype', typeid],
+      label: contextIntl.formatMessage(appMessages.entities[`actors_${typeid}`].plural),
+      controlType: 'multiselect',
+      options: entityOptions(entities),
+      advanced: true,
+      selectAll: true,
+      tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
+      onCreate: onCreateOption
+        ? () => onCreateOption({
+          path: API.ACTORS,
+          attributes: { actortype_id: typeid },
+        })
+        : null,
+    }),
+    [],
+  ).sort((a, b) => a.id > b.id ? 1 : -1)
+  : null;
+
 export const renderActionsByActiontypeControl = (
   entitiesByActiontype,
   taxonomies,
@@ -480,7 +535,7 @@ export const getMenuOrderFormField = (formatMessage) => {
   return field;
 };
 
-export const getMarkdownField = (formatMessage, required, attribute = 'description', label, placeholder, hint) => getFormField({
+export const getMarkdownFormField = (formatMessage, required, attribute = 'description', label, placeholder, hint) => getFormField({
   formatMessage,
   controlType: 'markdown',
   required,
@@ -666,7 +721,7 @@ const getCategoryFields = (args, formatMessage) => ({
   },
   body: {
     main: [{
-      fields: [getMarkdownField(formatMessage)],
+      fields: [getMarkdownFormField(formatMessage)],
     }],
     aside: [{
       fields: [
@@ -697,7 +752,7 @@ const getActorFields = (formatMessage) => ({
   body: {
     main: [{
       fields: [
-        getMarkdownField(formatMessage, 'description'),
+        getMarkdownFormField(formatMessage),
       ],
     }],
   },
@@ -719,7 +774,7 @@ const getActionFields = (formatMessage) => ({
   body: {
     main: [{
       fields: [
-        getMarkdownField(formatMessage),
+        getMarkdownFormField(formatMessage),
       ],
     }],
     aside: [{ // fieldGroup

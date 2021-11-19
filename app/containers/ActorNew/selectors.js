@@ -7,8 +7,8 @@ import {
   selectActiontypes,
   selectActionTaxonomies,
   selectActionsCategorised,
-  selectActorActionsGroupedByActor,
-  selectActionActorsGroupedByActor,
+  selectActorsCategorised,
+  selectActortypes,
 } from 'containers/App/selectors';
 import { prepareTaxonomies } from 'utils/entities';
 
@@ -30,9 +30,9 @@ export const selectConnectedTaxonomies = createSelector(
 export const selectActionsByActiontype = createSelector(
   (state, id) => id,
   selectActionsCategorised,
-  selectActorActionsGroupedByActor,
   selectActiontypes,
-  (actortypeId, actions, associations, actiontypes) => {
+  (actortypeId, actions, actiontypes) => {
+    if (!actiontypes || !actions) return null;
     // compare App/selectors/selectActiontypesForActortype
     const validActiontypeIds = Object.keys(ACTIONTYPE_ACTORTYPES).filter((actiontypeId) => {
       const actortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
@@ -45,27 +45,24 @@ export const selectActionsByActiontype = createSelector(
       (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
     );
     const filtered = actions.filter(
-      (action) => {
-        const actiontype = actiontypesForActortype.find(
-          (at) => qe(
-            at.get('id'),
-            action.getIn(['attributes', 'measuretype_id']),
-          )
-        );
-        return !!actiontype;
-      }
+      (action) => actiontypesForActortype.find(
+        (at) => qe(
+          at.get('id'),
+          action.getIn(['attributes', 'measuretype_id']),
+        )
+      )
     );
     return filtered.groupBy(
       (action) => action.getIn(['attributes', 'measuretype_id']).toString()
-    );
+    ).sortBy((val, key) => key);
   }
 );
 export const selectActionsAsTargetByActiontype = createSelector(
   (state, id) => id,
   selectActionsCategorised,
-  selectActionActorsGroupedByActor,
   selectActiontypes,
-  (actortypeId, actions, associations, actiontypes) => {
+  (actortypeId, actions, actiontypes) => {
+    if (!actiontypes || !actions) return null;
     // compare App/selectors/selectActiontypesForActortype
     const validActiontypeIds = Object.keys(ACTIONTYPE_TARGETTYPES).filter((actiontypeId) => {
       const actortypeIds = ACTIONTYPE_TARGETTYPES[actiontypeId];
@@ -90,6 +87,62 @@ export const selectActionsAsTargetByActiontype = createSelector(
     );
     return filtered.groupBy(
       (action) => action.getIn(['attributes', 'measuretype_id']).toString()
+    ).sortBy((val, key) => key);
+  }
+);
+
+export const selectMembersByActortype = createSelector(
+  (state, id) => id,
+  selectActorsCategorised,
+  selectActortypes,
+  (actortypeId, actors, actortypes) => {
+    if (!actortypes || !actors) return null;
+    const viewActortype = actortypes && actortypes.get(actortypeId);
+    if (!viewActortype || !viewActortype.getIn(['attributes', 'has_members'])) {
+      // console.log('no members for actortype', actortypeId)
+      return null;
+    }
+    const membertypes = actortypes.filter(
+      (type) => !type.getIn(['attributes', 'has_members'])
     );
+    const filtered = actors.filter(
+      (actor) => membertypes.find(
+        (at) => qe(
+          at.get('id'),
+          actor.getIn(['attributes', 'actortype_id']),
+        )
+      )
+    );
+    return filtered.groupBy(
+      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
+    ).sortBy((val, key) => key);
+  }
+);
+
+export const selectAssociationsByActortype = createSelector(
+  (state, id) => id,
+  selectActorsCategorised,
+  selectActortypes,
+  (actortypeId, actors, actortypes) => {
+    if (!actortypes || !actors) return null;
+    const viewActortype = actortypes && actortypes.get(actortypeId);
+    if (!viewActortype || viewActortype.getIn(['attributes', 'has_members'])) {
+      // console.log('no memberships for actortype', actortypeId)
+      return null;
+    }
+    const associationtypes = actortypes.filter(
+      (type) => type.getIn(['attributes', 'has_members'])
+    );
+    const filtered = actors.filter(
+      (actor) => associationtypes.find(
+        (at) => qe(
+          at.get('id'),
+          actor.getIn(['attributes', 'actortype_id']),
+        )
+      )
+    );
+    return filtered.groupBy(
+      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
+    ).sortBy((val, key) => key);
   }
 );

@@ -15,7 +15,7 @@ import { List } from 'immutable';
 import {
   renderParentCategoryControl,
   getTitleFormField,
-  getMarkdownField,
+  getMarkdownFormField,
   getFormField,
   getCheckboxField,
   getStatusField,
@@ -156,7 +156,7 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
     const { intl } = this.context;
     const groups = [];
     groups.push({
-      fields: [getMarkdownField(intl.formatMessage)],
+      fields: [getMarkdownFormField(intl.formatMessage)],
     });
     // if (!userOnly) {
     //   // if (taxonomy.getIn(['attributes', 'tags_actions']) && actions) {

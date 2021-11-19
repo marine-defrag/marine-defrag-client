@@ -23,6 +23,8 @@ import {
   hasTaxonomyCategories,
   getActionConnectionField,
   getActionAsTargetConnectionField,
+  getMemberConnectionField,
+  getAssociationConnectionField,
 } from 'utils/fields';
 // import { qe } from 'utils/quasi-equals';
 import { getEntityTitleTruncated, checkActorAttribute } from 'utils/entities';
@@ -53,6 +55,8 @@ import {
   selectViewTaxonomies,
   selectActionsByType,
   selectActionsAsTargetByType,
+  selectMembersByType,
+  selectAssociationsByType,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
@@ -111,8 +115,10 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
 
   getBodyMainFields = (
     entity,
-    actionsByActortype,
+    actionsByActiontype,
     actionsAsTargetByActiontype,
+    membersByType,
+    associationsByType,
     taxonomies,
     actionConnections,
     onEntityClick,
@@ -132,9 +138,9 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
       },
     );
 
-    if (actionsByActortype) {
+    if (actionsByActiontype) {
       const actionConnectionsLocal = [];
-      actionsByActortype.forEach((actions, actiontypeid) => {
+      actionsByActiontype.forEach((actions, actiontypeid) => {
         actionConnectionsLocal.push(
           getActionConnectionField(
             actions,
@@ -166,6 +172,42 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
       fields.push({
         label: appMessages.nav.actionsAsTarget,
         fields: actionAsTargetConnectionsLocal,
+      });
+    }
+    if (membersByType) {
+      const memberConnectionsLocal = [];
+      membersByType.forEach((member, typeid) => {
+        memberConnectionsLocal.push(
+          getMemberConnectionField(
+            member,
+            taxonomies,
+            actionConnections,
+            onEntityClick,
+            typeid,
+          ),
+        );
+      });
+      fields.push({
+        label: appMessages.nav.members,
+        fields: memberConnectionsLocal,
+      });
+    }
+    if (associationsByType) {
+      const associationConnectionsLocal = [];
+      associationsByType.forEach((association, typeid) => {
+        associationConnectionsLocal.push(
+          getAssociationConnectionField(
+            association,
+            taxonomies,
+            actionConnections,
+            onEntityClick,
+            typeid,
+          ),
+        );
+      });
+      fields.push({
+        label: appMessages.nav.associations,
+        fields: associationConnectionsLocal,
       });
     }
     return fields;
@@ -201,6 +243,8 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
       viewTaxonomies,
       actionsByActiontype,
       actionsAsTargetByActiontype,
+      membersByType,
+      associationsByType,
       actionConnections,
       onEntityClick,
     } = this.props;
@@ -274,6 +318,8 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
                       viewEntity,
                       actionsByActiontype,
                       actionsAsTargetByActiontype,
+                      membersByType,
+                      associationsByType,
                       taxonomies,
                       actionConnections,
                       onEntityClick,
@@ -302,6 +348,8 @@ ActorView.propTypes = {
   actionConnections: PropTypes.object,
   actionsByActiontype: PropTypes.object,
   actionsAsTargetByActiontype: PropTypes.object,
+  membersByType: PropTypes.object,
+  associationsByType: PropTypes.object,
   params: PropTypes.object,
   isManager: PropTypes.bool,
 };
@@ -319,6 +367,8 @@ const mapStateToProps = (state, props) => ({
   actionsByActiontype: selectActionsByType(state, props.params.id),
   actionsAsTargetByActiontype: selectActionsAsTargetByType(state, props.params.id),
   actionConnections: selectActionConnections(state),
+  membersByType: selectMembersByType(state, props.params.id),
+  associationsByType: selectAssociationsByType(state, props.params.id),
 });
 
 function mapDispatchToProps(dispatch, props) {

@@ -725,6 +725,14 @@ export default defineMessages({
       id: 'app.containers.App.nav.targets',
       defaultMessage: 'Targets',
     },
+    members: {
+      id: 'app.containers.App.nav.members',
+      defaultMessage: 'Members',
+    },
+    associations: {
+      id: 'app.containers.App.nav.associations',
+      defaultMessage: 'Member of',
+    },
     pages: {
       id: 'app.containers.App.nav.pages',
       defaultMessage: 'Page admin',

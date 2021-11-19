@@ -18,7 +18,7 @@ import {
   entityOptions,
   renderParentCategoryControl,
   getTitleFormField,
-  getMarkdownField,
+  getMarkdownFormField,
   getFormField,
   getCheckboxField,
   getStatusField,
@@ -193,7 +193,7 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
     const { intl } = this.context;
     const fields = [];
     fields.push({
-      fields: [getMarkdownField(intl.formatMessage)],
+      fields: [getMarkdownFormField(intl.formatMessage)],
     });
     // if (!userOnly) {
     //   if (entity.getIn(['taxonomy', 'attributes', 'tags_actions']) && actions) {

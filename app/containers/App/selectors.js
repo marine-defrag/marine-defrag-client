@@ -1018,6 +1018,28 @@ export const selectActionActorsGroupedByAction = createSelector(
       )
     ),
 );
+export const selectMembershipsGroupedByMember = createSelector(
+  (state) => selectEntities(state, API.MEMBERSHIPS),
+  (entities) => entities
+    && entities.groupBy(
+      (entity) => entity.getIn(['attributes', 'member_id'])
+    ).map(
+      (group) => group.map(
+        (entity) => entity.getIn(['attributes', 'memberof_id'])
+      )
+    ),
+);
+export const selectMembershipsGroupedByAssociation = createSelector(
+  (state) => selectEntities(state, API.MEMBERSHIPS),
+  (entities) => entities
+    && entities.groupBy(
+      (entity) => entity.getIn(['attributes', 'memberof_id'])
+    ).map(
+      (group) => group.map(
+        (entity) => entity.getIn(['attributes', 'member_id'])
+      )
+    ),
+);
 export const selectActionCategoriesGroupedByAction = createSelector(
   (state) => selectEntities(state, API.ACTION_CATEGORIES),
   (entities) => entities

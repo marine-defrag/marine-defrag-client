@@ -16,7 +16,7 @@ import {
   getConnectionUpdatesFromFormData,
   getTitleFormField,
   getStatusField,
-  getMarkdownField,
+  getMarkdownFormField,
   getCodeFormField,
   renderTaxonomyControl,
   getLinkFormField,
@@ -24,6 +24,8 @@ import {
   getNumberFormField,
   renderActionsByActiontypeControl,
   renderActionsAsTargetByActiontypeControl,
+  renderAssociationsByActortypeControl,
+  renderMembersByActortypeControl,
 } from 'utils/forms';
 import { getInfoField } from 'utils/fields';
 
@@ -66,6 +68,8 @@ import {
   selectConnectedTaxonomies,
   selectActionsByActiontype,
   selectActionsAsTargetByActiontype,
+  selectMembersByActortype,
+  selectAssociationsByActortype,
 } from './selectors';
 
 import messages from './messages';
@@ -152,6 +156,8 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
     connectedTaxonomies,
     actionsByActiontype,
     actionsAsTargetByActiontype,
+    membersByActortype,
+    associationsByActortype,
     onCreateOption,
   ) => {
     const { intl } = this.context;
@@ -159,12 +165,12 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
     const groups = [];
     groups.push({
       fields: [
-        checkActorAttribute(typeId, 'description') && getMarkdownField(
+        checkActorAttribute(typeId, 'description') && getMarkdownFormField(
           intl.formatMessage,
           checkActorRequired(typeId, 'description'),
           'description',
         ),
-        checkActorAttribute(typeId, 'activity_summary') && getMarkdownField(
+        checkActorAttribute(typeId, 'activity_summary') && getMarkdownFormField(
           intl.formatMessage,
           checkActorRequired(typeId, 'activity_summary'),
           'activity_summary',
@@ -199,6 +205,38 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
           {
             label: intl.formatMessage(appMessages.nav.actionsAsTarget),
             fields: actionConnections,
+          },
+        );
+      }
+    }
+    if (membersByActortype) {
+      const memberConnections = renderMembersByActortypeControl(
+        membersByActortype,
+        connectedTaxonomies,
+        onCreateOption,
+        intl,
+      );
+      if (memberConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.members),
+            fields: memberConnections,
+          },
+        );
+      }
+    }
+    if (associationsByActortype) {
+      const associationConnections = renderAssociationsByActortypeControl(
+        associationsByActortype,
+        connectedTaxonomies,
+        onCreateOption,
+        intl,
+      );
+      if (associationConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.associations),
+            fields: associationConnections,
           },
         );
       }
@@ -248,6 +286,8 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
       onCreateOption,
       actortype,
       params,
+      membersByActortype,
+      associationsByActortype,
     } = this.props;
     const typeId = params.id;
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
@@ -312,6 +352,8 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
                   actortype,
                   actionsByActiontype,
                   actionsAsTargetByActiontype,
+                  membersByActortype,
+                  associationsByActortype,
                   // actortypeTaxonomies,
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
@@ -331,6 +373,8 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
                       connectedTaxonomies,
                       actionsByActiontype,
                       actionsAsTargetByActiontype,
+                      membersByActortype,
+                      associationsByActortype,
                       onCreateOption,
                     ),
                     aside: this.getBodyAsideFields(
@@ -372,6 +416,8 @@ ActorNew.propTypes = {
   onServerErrorDismiss: PropTypes.func.isRequired,
   actortype: PropTypes.instanceOf(Map),
   params: PropTypes.object,
+  membersByActortype: PropTypes.object,
+  associationsByActortype: PropTypes.object,
 };
 
 ActorNew.contextTypes = {
@@ -393,6 +439,8 @@ const mapStateToProps = (state, { params }) => ({
   actortype: selectActortype(state, params.id),
   actionsByActiontype: selectActionsByActiontype(state, params.id),
   actionsAsTargetByActiontype: selectActionsAsTargetByActiontype(state, params.id),
+  membersByActortype: selectMembersByActortype(state, params.id),
+  associationsByActortype: selectAssociationsByActortype(state, params.id),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -419,7 +467,14 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, actortype, actionsByActiontype, actionsAsTargetByActiontype) => {
+    handleSubmit: (
+      formData,
+      actortype,
+      actionsByActiontype,
+      actionsAsTargetByActiontype,
+      membersByActortype,
+      associationsByActortype,
+    ) => {
       let saveData = formData.setIn(
         ['attributes', 'actortype_id'],
         actortype.get('id'),
@@ -450,7 +505,7 @@ function mapDispatchToProps(dispatch) {
       }
       //
       // actions if allowed by actortype
-      if (formData.get('associatedActionsByActiontype')) {
+      if (actionsByActiontype && formData.get('associatedActionsByActiontype')) {
         saveData = saveData.set(
           'actorActions',
           actionsByActiontype
@@ -473,7 +528,7 @@ function mapDispatchToProps(dispatch) {
         );
       }
       // actions if allowed by actortype
-      if (formData.get('associatedActionsAsTargetByActiontype')) {
+      if (actionsAsTargetByActiontype && formData.get('associatedActionsAsTargetByActiontype')) {
         saveData = saveData.set(
           'actionActors',
           actionsAsTargetByActiontype
@@ -483,6 +538,50 @@ function mapDispatchToProps(dispatch) {
               connectionAttribute: ['associatedActionsAsTargetByActiontype', actortypeid.toString()],
               createConnectionKey: 'measure_id',
               createKey: 'actor_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo.set('create', creates);
+              },
+              fromJS({
+                create: [],
+              }),
+            )
+        );
+      }
+      if (membersByActortype && formData.get('associatedMembersByActortype')) {
+        saveData = saveData.set(
+          'memberships',
+          membersByActortype
+            .map((members, typeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: members,
+              connectionAttribute: ['associatedMembersByActortype', typeid.toString()],
+              createConnectionKey: 'member_id',
+              createKey: 'memberof_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo.set('create', creates);
+              },
+              fromJS({
+                create: [],
+              }),
+            )
+        );
+      }
+      if (associationsByActortype && formData.get('associatedAssociationsByActortype')) {
+        saveData = saveData.set(
+          'memberships',
+          associationsByActortype
+            .map((associations, typeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: associations,
+              connectionAttribute: ['associatedAssociationsByActortype', typeid.toString()],
+              createConnectionKey: 'memberof_id',
+              createKey: 'member_id',
             }))
             .reduce(
               (memo, deleteCreateLists) => {

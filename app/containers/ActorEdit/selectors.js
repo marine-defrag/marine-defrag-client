@@ -6,7 +6,6 @@ import {
   selectEntity,
   selectEntities,
   selectActionsCategorised,
-  selectActionTaxonomies,
   selectActiontypes,
   selectActorActionsGroupedByActor,
   selectActionActorsGroupedByActor,
@@ -14,6 +13,10 @@ import {
   selectCategories,
   selectTaxonomiesSorted,
   selectReady,
+  selectActorsCategorised,
+  selectMembershipsGroupedByMember,
+  selectMembershipsGroupedByAssociation,
+  selectActortypes,
 } from 'containers/App/selectors';
 
 import {
@@ -81,7 +84,7 @@ export const selectTaxonomyOptions = createSelector(
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  selectActionTaxonomies,
+  selectTaxonomiesSorted,
   selectCategories,
   (taxonomies, categories) => prepareTaxonomies(
     taxonomies,
@@ -96,9 +99,9 @@ export const selectActionsByActiontype = createSelector(
   selectActionsCategorised,
   selectActorActionsGroupedByActor,
   selectActiontypes,
-  (ready, actor, actions, associations, actiontypes) => {
+  (ready, viewActor, actions, associations, actiontypes) => {
     if (!ready) return null;
-    const actortypeId = actor.getIn(['attributes', 'actortype_id']).toString();
+    const actortypeId = viewActor.getIn(['attributes', 'actortype_id']).toString();
     // compare App/selectors/selectActiontypesForActortype
     const validActiontypeIds = Object.keys(ACTIONTYPE_ACTORTYPES).filter((actiontypeId) => {
       const actortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
@@ -124,7 +127,7 @@ export const selectActionsByActiontype = createSelector(
     return entitiesSetAssociated(
       filtered,
       associations,
-      actor.get('id'),
+      viewActor.get('id'),
     ).groupBy(
       (action) => action.getIn(['attributes', 'measuretype_id']).toString()
     );
@@ -137,9 +140,9 @@ export const selectActionsAsTargetByActiontype = createSelector(
   selectActionsCategorised,
   selectActionActorsGroupedByActor,
   selectActiontypes,
-  (ready, actor, actions, associations, actiontypes) => {
+  (ready, viewActor, actions, associations, actiontypes) => {
     if (!ready) return null;
-    const actortypeId = actor.getIn(['attributes', 'actortype_id']).toString();
+    const actortypeId = viewActor.getIn(['attributes', 'actortype_id']).toString();
     // compare App/selectors/selectActiontypesForActortype
     const validActiontypeIds = Object.keys(ACTIONTYPE_TARGETTYPES).filter((actiontypeId) => {
       const actortypeIds = ACTIONTYPE_TARGETTYPES[actiontypeId];
@@ -165,9 +168,79 @@ export const selectActionsAsTargetByActiontype = createSelector(
     return entitiesSetAssociated(
       filtered,
       associations,
-      actor.get('id'),
+      viewActor.get('id'),
     ).groupBy(
       (action) => action.getIn(['attributes', 'measuretype_id']).toString()
     );
+  }
+);
+
+export const selectMembersByActortype = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectViewEntity,
+  selectActorsCategorised,
+  selectMembershipsGroupedByAssociation,
+  selectActortypes,
+  (ready, viewActor, actors, associations, actortypes) => {
+    if (!ready) return null;
+    const actortypeId = viewActor.getIn(['attributes', 'actortype_id']).toString();
+    const viewActortype = actortypes.get(actortypeId);
+    if (!viewActortype.getIn(['attributes', 'has_members'])) {
+      // console.log('no members for actortype', actortypeId)
+      return null;
+    }
+    const membertypes = actortypes.filter(
+      (type) => !type.getIn(['attributes', 'has_members'])
+    );
+    const filtered = actors.filter(
+      (actor) => membertypes.find(
+        (at) => qe(
+          at.get('id'),
+          actor.getIn(['attributes', 'actortype_id']),
+        )
+      )
+    );
+    return entitiesSetAssociated(
+      filtered,
+      associations,
+      viewActor.get('id'),
+    ).groupBy(
+      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
+    ).sortBy((val, key) => key);
+  }
+);
+
+export const selectAssociationsByActortype = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectViewEntity,
+  selectActorsCategorised,
+  selectMembershipsGroupedByMember,
+  selectActortypes,
+  (ready, viewActor, actors, joins, actortypes) => {
+    if (!ready) return null;
+    const actortypeId = viewActor.getIn(['attributes', 'actortype_id']).toString();
+    const viewActortype = actortypes.get(actortypeId);
+    if (viewActortype.getIn(['attributes', 'has_members'])) {
+      // console.log('no memberships for actortype', actortypeId)
+      return null;
+    }
+    const associationtypes = actortypes.filter(
+      (type) => type.getIn(['attributes', 'has_members'])
+    );
+    const filtered = actors.filter(
+      (actor) => associationtypes.find(
+        (at) => qe(
+          at.get('id'),
+          actor.getIn(['attributes', 'actortype_id']),
+        )
+      )
+    );
+    return entitiesSetAssociated(
+      filtered,
+      joins,
+      viewActor.get('id'),
+    ).groupBy(
+      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
+    ).sortBy((val, key) => key);
   }
 );

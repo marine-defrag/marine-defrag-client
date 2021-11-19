@@ -17,7 +17,7 @@ import {
   taxonomyOptions,
   getTitleFormField,
   getStatusField,
-  getMarkdownField,
+  getMarkdownFormField,
   getDateField,
   getTextareaField,
   renderTaxonomyControl,
@@ -201,12 +201,12 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     groups.push(
       {
         fields: [
-          checkActionAttribute(typeId, 'description') && getMarkdownField(
+          checkActionAttribute(typeId, 'description') && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'description'),
             'description',
           ),
-          checkActionAttribute(typeId, 'comment') && getMarkdownField(
+          checkActionAttribute(typeId, 'comment') && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'comment'),
             'comment',
@@ -215,12 +215,12 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       },
       {
         fields: [
-          checkActionAttribute(typeId, 'reference_ml') && getMarkdownField(
+          checkActionAttribute(typeId, 'reference_ml') && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'reference_ml'),
             'reference_ml',
           ),
-          checkActionAttribute(typeId, 'status_lbs_protocol') && getMarkdownField(
+          checkActionAttribute(typeId, 'status_lbs_protocol') && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'status_lbs_protocol'),
             'status_lbs_protocol',
@@ -229,7 +229,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
             intl.formatMessage,
             'has_reference_landbased_ml',
           ),
-          checkActionAttribute(typeId, 'reference_landbased_ml') && getMarkdownField(
+          checkActionAttribute(typeId, 'reference_landbased_ml') && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'reference_landbased_ml'),
             'reference_landbased_ml',
@@ -238,12 +238,12 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       },
       {
         fields: [
-          checkActionAttribute(typeId, 'target_comment') && getMarkdownField(
+          checkActionAttribute(typeId, 'target_comment') && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'target_comment'),
             'target_comment',
           ),
-          checkActionAttribute(typeId, 'status_comment') && getMarkdownField(
+          checkActionAttribute(typeId, 'status_comment') && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'status_comment'),
             'status_comment',

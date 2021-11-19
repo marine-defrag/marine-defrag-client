@@ -17,7 +17,7 @@ import {
   taxonomyOptions,
   getTitleFormField,
   getStatusField,
-  getMarkdownField,
+  getMarkdownFormField,
   getCodeFormField,
   renderTaxonomyControl,
   getLinkFormField,
@@ -26,6 +26,8 @@ import {
   getCategoryUpdatesFromFormData,
   renderActionsByActiontypeControl,
   renderActionsAsTargetByActiontypeControl,
+  renderAssociationsByActortypeControl,
+  renderMembersByActortypeControl,
   getConnectionUpdatesFromFormData,
 } from 'utils/forms';
 import { getInfoField, getMetaField } from 'utils/fields';
@@ -68,6 +70,8 @@ import {
   selectActionsByActiontype,
   selectActionsAsTargetByActiontype,
   selectConnectedTaxonomies,
+  selectMembersByActortype,
+  selectAssociationsByActortype,
 } from './selectors';
 
 import messages from './messages';
@@ -110,6 +114,9 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
       viewEntity,
       taxonomies,
       actionsByActiontype,
+      actionsAsTargetByActiontype,
+      membersByActortype,
+      associationsByActortype,
     } = props;
     return viewEntity
       ? Map({
@@ -121,6 +128,15 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
         associatedTaxonomies: taxonomyOptions(taxonomies),
         associatedActionsByActiontype: actionsByActiontype
           ? actionsByActiontype.map((actions) => entityOptions(actions, true))
+          : Map(),
+        associatedActionsAsTargetByActiontype: actionsAsTargetByActiontype
+          ? actionsAsTargetByActiontype.map((actions) => entityOptions(actions, true))
+          : Map(),
+        associatedMembersByActortype: membersByActortype
+          ? membersByActortype.map((actors) => entityOptions(actors, true))
+          : Map(),
+        associatedAssociationsByActortype: associationsByActortype
+          ? associationsByActortype.map((actors) => entityOptions(actors, true))
           : Map(),
       })
       : Map();
@@ -177,6 +193,8 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
     connectedTaxonomies,
     actionsByActiontype,
     actionsAsTargetByActiontype,
+    membersByActortype,
+    associationsByActortype,
     onCreateOption,
   ) => {
     const { intl } = this.context;
@@ -185,12 +203,12 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
     groups.push(
       {
         fields: [
-          checkActorAttribute(typeId, 'description') && getMarkdownField(
+          checkActorAttribute(typeId, 'description') && getMarkdownFormField(
             intl.formatMessage,
             checkActorRequired(typeId, 'description'),
             'description',
           ),
-          checkActorAttribute(typeId, 'activity_summary') && getMarkdownField(
+          checkActorAttribute(typeId, 'activity_summary') && getMarkdownFormField(
             intl.formatMessage,
             checkActorRequired(typeId, 'activity_summary'),
             'activity_summary',
@@ -227,6 +245,38 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
           {
             label: intl.formatMessage(appMessages.nav.actionsAsTarget),
             fields: actionConnections,
+          },
+        );
+      }
+    }
+    if (membersByActortype) {
+      const memberConnections = renderMembersByActortypeControl(
+        membersByActortype,
+        connectedTaxonomies,
+        onCreateOption,
+        intl,
+      );
+      if (memberConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.members),
+            fields: memberConnections,
+          },
+        );
+      }
+    }
+    if (associationsByActortype) {
+      const associationConnections = renderAssociationsByActortypeControl(
+        associationsByActortype,
+        connectedTaxonomies,
+        onCreateOption,
+        intl,
+      );
+      if (associationConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.associations),
+            fields: associationConnections,
           },
         );
       }
@@ -275,6 +325,8 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
       connectedTaxonomies,
       actionsByActiontype,
       actionsAsTargetByActiontype,
+      membersByActortype,
+      associationsByActortype,
       onCreateOption,
     } = this.props;
     const typeId = viewEntity && viewEntity.getIn(['attributes', 'actortype_id']);
@@ -286,7 +338,6 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
     const type = intl.formatMessage(
       appMessages.entities[typeId ? `actors_${typeId}` : 'actors'].single
     );
-
     return (
       <div>
         <Helmet
@@ -353,6 +404,8 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
                   taxonomies,
                   actionsByActiontype,
                   actionsAsTargetByActiontype,
+                  membersByActortype,
+                  associationsByActortype,
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={this.props.handleCancel}
@@ -373,6 +426,8 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
                       connectedTaxonomies,
                       actionsByActiontype,
                       actionsAsTargetByActiontype,
+                      membersByActortype,
+                      associationsByActortype,
                       onCreateOption,
                     ),
                     aside: this.getBodyAsideFields(
@@ -412,6 +467,8 @@ ActorEdit.propTypes = {
   taxonomies: PropTypes.object,
   actionsByActiontype: PropTypes.object,
   actionsAsTargetByActiontype: PropTypes.object,
+  membersByActortype: PropTypes.object,
+  associationsByActortype: PropTypes.object,
   onCreateOption: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
@@ -430,6 +487,8 @@ const mapStateToProps = (state, props) => ({
   taxonomies: selectTaxonomyOptions(state, props.params.id),
   actionsByActiontype: selectActionsByActiontype(state, props.params.id),
   actionsAsTargetByActiontype: selectActionsAsTargetByActiontype(state, props.params.id),
+  membersByActortype: selectMembersByActortype(state, props.params.id),
+  associationsByActortype: selectAssociationsByActortype(state, props.params.id),
   connectedTaxonomies: selectConnectedTaxonomies(state),
 });
 
@@ -457,7 +516,14 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, taxonomies, actionsByActiontype, actionsAsTargetByActiontype) => {
+    handleSubmit: (
+      formData,
+      taxonomies,
+      actionsByActiontype,
+      actionsAsTargetByActiontype,
+      membersByActortype,
+      associationsByActortype,
+    ) => {
       let saveData = formData
         .set(
           'actorCategories',
@@ -467,54 +533,111 @@ function mapDispatchToProps(dispatch, props) {
             createKey: 'actor_id',
           })
         );
-      saveData = saveData.set(
-        'actorActions',
-        actionsByActiontype
-          .map((actions, actiontypeid) => getConnectionUpdatesFromFormData({
-            formData,
-            connections: actions,
-            connectionAttribute: ['associatedActionsByActiontype', actiontypeid.toString()],
-            createConnectionKey: 'measure_id',
-            createKey: 'actor_id',
-          }))
-          .reduce(
-            (memo, deleteCreateLists) => {
-              const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
-              const creates = memo.get('create').concat(deleteCreateLists.get('create'));
-              return memo
-                .set('delete', deletes)
-                .set('create', creates);
-            },
-            fromJS({
-              delete: [],
-              create: [],
-            }),
-          )
-      );
-      saveData = saveData.set(
-        'actionActors',
-        actionsAsTargetByActiontype
-          .map((actions, actiontypeid) => getConnectionUpdatesFromFormData({
-            formData,
-            connections: actions,
-            connectionAttribute: ['associatedActionsAsTargetByActiontype', actiontypeid.toString()],
-            createConnectionKey: 'measure_id',
-            createKey: 'actor_id',
-          }))
-          .reduce(
-            (memo, deleteCreateLists) => {
-              const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
-              const creates = memo.get('create').concat(deleteCreateLists.get('create'));
-              return memo
-                .set('delete', deletes)
-                .set('create', creates);
-            },
-            fromJS({
-              delete: [],
-              create: [],
-            }),
-          )
-      );
+      if (actionsByActiontype) {
+        saveData = saveData.set(
+          'actorActions',
+          actionsByActiontype
+            .map((actions, actiontypeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: actions,
+              connectionAttribute: ['associatedActionsByActiontype', actiontypeid.toString()],
+              createConnectionKey: 'measure_id',
+              createKey: 'actor_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo
+                  .set('delete', deletes)
+                  .set('create', creates);
+              },
+              fromJS({
+                delete: [],
+                create: [],
+              }),
+            )
+        );
+      }
+      if (actionsAsTargetByActiontype) {
+        saveData = saveData.set(
+          'actionActors',
+          actionsAsTargetByActiontype
+            .map((actions, actiontypeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: actions,
+              connectionAttribute: ['associatedActionsAsTargetByActiontype', actiontypeid.toString()],
+              createConnectionKey: 'measure_id',
+              createKey: 'actor_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo
+                  .set('delete', deletes)
+                  .set('create', creates);
+              },
+              fromJS({
+                delete: [],
+                create: [],
+              }),
+            )
+        );
+      }
+      if (membersByActortype) {
+        saveData = saveData.set(
+          'memberships',
+          membersByActortype
+            .map((members, typeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: members,
+              connectionAttribute: ['associatedMembersByActortype', typeid.toString()],
+              createConnectionKey: 'member_id',
+              createKey: 'memberof_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo
+                  .set('delete', deletes)
+                  .set('create', creates);
+              },
+              fromJS({
+                delete: [],
+                create: [],
+              }),
+            )
+        );
+      }
+      if (associationsByActortype) {
+        saveData = saveData.set(
+          'memberships',
+          associationsByActortype
+            .map((associations, typeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: associations,
+              connectionAttribute: ['associatedAssociationsByActortype', typeid.toString()],
+              createConnectionKey: 'memberof_id',
+              createKey: 'member_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo
+                  .set('delete', deletes)
+                  .set('create', creates);
+              },
+              fromJS({
+                delete: [],
+                create: [],
+              }),
+            )
+        );
+      }
+      // console.log(saveData.toJS());
       dispatch(save(saveData.toJS()));
     },
     handleCancel: () => {

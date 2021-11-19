@@ -13,7 +13,7 @@ import { actions as formActions } from 'react-redux-form/immutable';
 import {
   getTitleFormField,
   getMenuTitleFormField,
-  getMarkdownField,
+  getMarkdownFormField,
   getStatusField,
   getMenuOrderFormField,
 } from 'utils/forms';
@@ -96,7 +96,7 @@ export class PageNew extends React.PureComponent { // eslint-disable-line react/
   getBodyMainFields = () => {
     const { intl } = this.context;
     return ([{
-      fields: [getMarkdownField(intl.formatMessage, 'content')],
+      fields: [getMarkdownFormField(intl.formatMessage, 'content')],
     }]);
   };
 
