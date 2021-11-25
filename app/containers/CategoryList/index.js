@@ -103,8 +103,7 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
     const contentTitle = (taxonomy && typeof reference !== 'undefined') ? this.getTaxTitle(reference) : '';
     const contentDescription = (taxonomy && typeof reference !== 'undefined') && this.getTaxDescription(reference);
     const buttons = [];
-
-    if (dataReady) {
+    if (dataReady && !!reference) {
       buttons.push({
         type: 'icon',
         onClick: () => window.print(),

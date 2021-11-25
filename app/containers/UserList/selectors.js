@@ -47,7 +47,7 @@ const selectUsersNested = createSelector(
       );
       return entity.set(
         'categories',
-        entityCategories.filter(
+        entityCategories && entityCategories.filter(
           (association) => qe(
             association.getIn(['attributes', 'user_id']),
             entity.get('id')
