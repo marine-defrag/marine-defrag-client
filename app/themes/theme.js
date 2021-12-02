@@ -92,31 +92,33 @@ theme.palette = {
 
   taxonomies: [
     '#8D95A0', // default, not used
-    '#0059A3', // 1: Human Rights Body
-    '#0077D8', // 2: UN session
-    '#007C70', // 3: Human right
-    '#05A763', // 4: Affected persons
-    '#B7177A', // 5: Thematic cluster
-    '#114060', // 6: Organisation
-    '#009ED8', // 7: SDGs
-    '#416680', // 8: State
-    '#E56700', // 9: SMART
-    '#007c3a', // 10: Progress status
-    '#333333', // 10: Progress status
+    '#0059A3', // 1
+    '#0077D8', // 2
+    '#007C70', // 3
+    '#05A763', // 4
+    '#B7177A', // 5
+    '#114060', // 6
+    '#009ED8', // 7
+    '#416680', // 8
+    '#E56700', // 9
+    '#007c3a', // 10
+    '#333333', // 11
+    '#555555', // 12
   ],
   taxonomiesHover: [
     '#656F75', // default, not used
-    '#005296', // 1: Human Rights Body
-    '#0070CC', // 2: UN session
-    '#007267', // 3: Human right
-    '#008740', // 4: Affected persons
-    '#A5156E', // 5: Thematic cluster
-    '#0F364C', // 6: Organisation
-    '#007FAD', // 7: SDGs
-    '#395970', // 8: State
-    '#C75300', // 9: SMART
-    '#007034', // 10: Progress status
-    '#111111', // 10: Progress status
+    '#005296', // 1
+    '#0070CC', // 2
+    '#007267', // 3
+    '#008740', // 4
+    '#A5156E', // 5
+    '#0F364C', // 6
+    '#007FAD', // 7
+    '#395970', // 8
+    '#C75300', // 9
+    '#007034', // 10
+    '#111111', // 11
+    '#444444', // 12
   ],
 
   // bg inactive, bg hover, icon
