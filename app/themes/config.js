@@ -323,6 +323,7 @@ export const ACTION_FIELDS = {
     },
     comment: {
       optional: [
+        ACTIONTYPES.DONOR,
         ACTIONTYPES.INIT,
       ],
       type: 'markdown',
