@@ -351,7 +351,7 @@
   "app.containers.App.entities.actions_1.pluralLong": "International Frameworks",
   "app.containers.App.entities.actions_1.singleShort": "Intl. Framework",
   "app.containers.App.entities.actions_1.pluralShort": "Intl. Frameworks",
-  "app.containers.App.entities.actions_5.empty": "No International Frameworks yet",
+  "app.containers.App.entities.actions_1.empty": "No International Frameworks yet",
   "app.containers.App.entities.actions_2.single": "Regional Seas Convention",
   "app.containers.App.entities.actions_2.plural": "Regional Seas Conventions",
   "app.containers.App.entities.actions_2.singleLong": "Regional Seas Convention",

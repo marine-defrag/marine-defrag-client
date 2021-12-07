@@ -311,6 +311,11 @@ export const ACTION_FIELDS = {
       required: Object.values(ACTIONTYPES), // all types
       type: 'text',
     },
+    parent_id: {
+      skipImport: true,
+      optional: Object.values(ACTIONTYPES), // controlled by type setting
+      type: 'number',
+    },
     description: {
       optional: [
         ACTIONTYPES.INTL,
