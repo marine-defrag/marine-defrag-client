@@ -95,7 +95,7 @@ export const selectActorsByActortype = createSelector(
   selectActorActionsGroupedByAction,
   selectActortypes,
   (ready, action, actors, associations, actortypes) => {
-    if (!ready) return null;
+    if (!action || !ready) return null;
     const actiontypeId = action.getIn(['attributes', 'measuretype_id']).toString();
     const validActortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
     if (!validActortypeIds || validActortypeIds.length === 0) {
@@ -128,7 +128,7 @@ export const selectTargetsByActortype = createSelector(
   selectActionActorsGroupedByAction,
   selectActortypes,
   (ready, action, actors, associations, actortypes) => {
-    if (!ready) return null;
+    if (!action || !ready) return null;
     const actiontypeId = action.getIn(['attributes', 'measuretype_id']).toString();
     const validActortypeIds = ACTIONTYPE_TARGETTYPES[actiontypeId];
     if (!validActortypeIds || validActortypeIds.length === 0) {

@@ -100,7 +100,7 @@ export const selectActionsByActiontype = createSelector(
   selectActorActionsGroupedByActor,
   selectActiontypes,
   (ready, viewActor, actions, associations, actiontypes) => {
-    if (!ready) return null;
+    if (!viewActor || !ready) return null;
     const actortypeId = viewActor.getIn(['attributes', 'actortype_id']).toString();
     // compare App/selectors/selectActiontypesForActortype
     const validActiontypeIds = Object.keys(ACTIONTYPE_ACTORTYPES).filter((actiontypeId) => {
@@ -135,7 +135,7 @@ export const selectActionsAsTargetByActiontype = createSelector(
   selectActionActorsGroupedByActor,
   selectActiontypes,
   (ready, viewActor, actions, associations, actiontypes) => {
-    if (!ready) return null;
+    if (!viewActor || !ready) return null;
     const actortypeId = viewActor.getIn(['attributes', 'actortype_id']).toString();
     // compare App/selectors/selectActiontypesForActortype
     const validActiontypeIds = Object.keys(ACTIONTYPE_TARGETTYPES).filter((actiontypeId) => {
@@ -172,7 +172,7 @@ export const selectMembersByActortype = createSelector(
   selectMembershipsGroupedByAssociation,
   selectActortypes,
   (ready, viewActor, actors, associations, actortypes) => {
-    if (!ready) return null;
+    if (!viewActor || !ready) return null;
     const actortypeId = viewActor.getIn(['attributes', 'actortype_id']).toString();
     const viewActortype = actortypes.get(actortypeId);
     if (!viewActortype.getIn(['attributes', 'has_members'])) {
@@ -204,7 +204,7 @@ export const selectAssociationsByActortype = createSelector(
   selectMembershipsGroupedByMember,
   selectActortypes,
   (ready, viewActor, actors, joins, actortypes) => {
-    if (!ready) return null;
+    if (!viewActor || !ready) return null;
     const actortypeId = viewActor.getIn(['attributes', 'actortype_id']).toString();
     const viewActortype = actortypes.get(actortypeId);
     if (viewActortype.getIn(['attributes', 'has_members'])) {
