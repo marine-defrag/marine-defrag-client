@@ -312,6 +312,7 @@ export const ACTION_FIELDS = {
       type: 'text',
     },
     parent_id: {
+      skipImport: true,
       optional: Object.values(ACTIONTYPES), // controlled by type setting
       type: 'number',
     },
