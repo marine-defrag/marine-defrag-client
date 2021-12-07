@@ -956,6 +956,14 @@ export default defineMessages({
       },
     },
     actions: {
+      parent: {
+        id: 'app.containers.App.entities.actions.parent',
+        defaultMessage: 'Parent/predecessor activity',
+      },
+      children: {
+        id: 'app.containers.App.entities.actions.children',
+        defaultMessage: 'Child/successor activities',
+      },
       single: {
         id: 'app.containers.App.entities.actions.single',
         defaultMessage: 'Action',

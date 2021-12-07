@@ -33,4 +33,5 @@ export const FORM_INITIAL = fromJS({
   associatedTaxonomies: {},
   associatedActorsByActortype: {},
   associatedTargetsByActortype: {},
+  associatedParent: [],
 });

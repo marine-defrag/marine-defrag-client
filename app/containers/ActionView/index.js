@@ -23,6 +23,7 @@ import {
   getTaxonomyFields,
   hasTaxonomyCategories,
   getActorConnectionField,
+  getActionConnectionField,
   getTargetConnectionField,
 } from 'utils/fields';
 
@@ -46,6 +47,7 @@ import {
   selectReady,
   selectIsUserManager,
   selectActorConnections,
+  selectActionConnections,
   selectTaxonomiesWithCategories,
 } from 'containers/App/selectors';
 
@@ -57,6 +59,8 @@ import {
   selectViewTaxonomies,
   selectActorsByType,
   selectTargetsByType,
+  selectChildActions,
+  selectParentActions,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
@@ -120,11 +124,44 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
     targetsByActortype,
     taxonomies,
     actorConnections,
+    actionConnections,
+    children,
+    parents,
     onEntityClick,
   ) => {
     const { intl } = this.context;
     const typeId = entity.getIn(['attributes', 'measuretype_id']);
     const fields = [];
+    if (parents && parents.size > 0) {
+      fields.push({
+        label: appMessages.entities.actions.parent,
+        fields: [
+          getActionConnectionField(
+            parents,
+            taxonomies,
+            actionConnections,
+            onEntityClick,
+            typeId,
+            true // skip type title
+          ),
+        ],
+      });
+    }
+    if (children && children.size > 0) {
+      fields.push({
+        label: appMessages.entities.actions.children,
+        fields: [
+          getActionConnectionField(
+            children,
+            taxonomies,
+            actionConnections,
+            onEntityClick,
+            typeId,
+            true // skip type title
+          ),
+        ],
+      });
+    }
     let hasLandbasedValue;
     if (checkActionAttribute(typeId, 'has_reference_landbased_ml')) {
       if (
@@ -254,6 +291,9 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       targetsByActortype,
       onEntityClick,
       actorConnections,
+      actionConnections,
+      children,
+      parents,
     } = this.props;
     const typeId = viewEntity && viewEntity.getIn(['attributes', 'measuretype_id']);
     let buttons = [];
@@ -327,6 +367,9 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
                       targetsByActortype,
                       taxonomies,
                       actorConnections,
+                      actionConnections,
+                      children,
+                      parents,
                       onEntityClick,
                     ),
                     aside: this.getBodyAsideFields(viewEntity),
@@ -354,7 +397,10 @@ ActionView.propTypes = {
   actorsByActortype: PropTypes.object,
   targetsByActortype: PropTypes.object,
   actorConnections: PropTypes.object,
+  actionConnections: PropTypes.object,
   params: PropTypes.object,
+  children: PropTypes.object,
+  parents: PropTypes.object,
 };
 
 ActionView.contextTypes = {
@@ -371,6 +417,9 @@ const mapStateToProps = (state, props) => ({
   actorsByActortype: selectActorsByType(state, props.params.id),
   targetsByActortype: selectTargetsByType(state, props.params.id),
   actorConnections: selectActorConnections(state),
+  actionConnections: selectActionConnections(state),
+  children: selectChildActions(state, props.params.id),
+  parents: selectParentActions(state, props.params.id),
 });
 
 function mapDispatchToProps(dispatch, props) {

@@ -1,7 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
 import { API } from 'themes/config';
-
 import {
   selectReady,
   selectEntity,
@@ -9,26 +8,38 @@ import {
   selectCategories,
   selectTaxonomiesSorted,
   selectActorConnections,
+  selectActionConnections,
+  selectActions,
   selectActors,
   selectActionActorsGroupedByAction,
   selectActorActionsGroupedByActor,
   // selectActionActorsGroupedByActor,
   selectActorActionsGroupedByAction,
   selectActorCategoriesGroupedByActor,
+  selectActionCategoriesGroupedByAction,
 } from 'containers/App/selectors';
 
 import {
-  entitySetUser,
+  entitySetSingles,
   prepareTaxonomiesIsAssociated,
   getEntityCategories,
 } from 'utils/entities';
+import { qe } from 'utils/quasi-equals';
 
 import { DEPENDENCIES } from './constants';
 
 export const selectViewEntity = createSelector(
   (state, id) => selectEntity(state, { path: API.ACTIONS, id }),
   (state) => selectEntities(state, API.USERS),
-  (entity, users) => entitySetUser(entity, users)
+  (entity, users) => entity && entitySetSingles(
+    entity, [
+      {
+        related: users,
+        key: 'user',
+        relatedKey: 'updated_by_id',
+      },
+    ],
+  )
 );
 
 // TODO optimise use selectActionCategoriesGroupedByAction
@@ -45,6 +56,126 @@ export const selectViewTaxonomies = createSelector(
     'measure_id',
     id,
   )
+);
+
+
+export const selectChildActions = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  (state, id) => id,
+  selectActions,
+  selectActionConnections,
+  selectActorActionsGroupedByAction,
+  selectActionCategoriesGroupedByAction,
+  selectCategories,
+  (
+    ready,
+    actionId,
+    actions,
+    connections,
+    actorActions,
+    actionCategories,
+    categories,
+  ) => {
+    if (!ready) return null;
+    const children = actions.filter((action) => qe(
+      action.getIn(['attributes', 'parent_id']),
+      actionId,
+    ));
+    if (!children || children.size === 0) return null;
+    return children && children.map(
+      (action) => {
+        const entityActors = actorActions.get(parseInt(action.get('id'), 10));
+        const entityActorsByActortype = entityActors
+          && connections.get('actors')
+          && entityActors.filter(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
+            ])
+          ).groupBy(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
+              'attributes',
+              'actortype_id',
+            ]).toString()
+          ).sortBy((val, key) => key);
+        return action.set(
+          'categories',
+          getEntityCategories(
+            action.get('id'),
+            actionCategories,
+            categories,
+          )
+        ).set(
+          'actors',
+          entityActors,
+        ).set(
+          'actorsByType',
+          entityActorsByActortype,
+        );
+      }
+    );
+  }
+);
+export const selectParentActions = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectViewEntity,
+  selectActions,
+  selectActionConnections,
+  selectActorActionsGroupedByAction,
+  selectActionCategoriesGroupedByAction,
+  selectCategories,
+  (
+    ready,
+    viewAction,
+    actions,
+    connections,
+    actorActions,
+    actionCategories,
+    categories,
+  ) => {
+    if (!ready) return null;
+    const parents = actions.filter((action) => qe(
+      viewAction.getIn(['attributes', 'parent_id']),
+      action.get('id'),
+    ));
+    if (!parents || parents.size === 0) return null;
+    return parents && parents.map(
+      (action) => {
+        const entityActors = actorActions.get(parseInt(action.get('id'), 10));
+        const entityActorsByActortype = entityActors
+          && connections.get('actors')
+          && entityActors.filter(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
+            ])
+          ).groupBy(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
+              'attributes',
+              'actortype_id',
+            ]).toString()
+          ).sortBy((val, key) => key);
+        return action.set(
+          'categories',
+          getEntityCategories(
+            action.get('id'),
+            actionCategories,
+            categories,
+          )
+        ).set(
+          'actors',
+          entityActors,
+        ).set(
+          'actorsByType',
+          entityActorsByActortype,
+        );
+      }
+    );
+  }
 );
 
 const selectActorAssociations = createSelector(

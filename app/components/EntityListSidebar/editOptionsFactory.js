@@ -49,6 +49,28 @@ export const makeActiveEditOptions = ({
         contextIntl,
         activeEditOption.group,
       );
+    case 'members':
+      return makeConnectionEditOptions(
+        entities,
+        config.members,
+        connections,
+        connectedTaxonomies,
+        activeEditOption,
+        messages,
+        contextIntl,
+        activeEditOption.group,
+      );
+    case 'associations':
+      return makeConnectionEditOptions(
+        entities,
+        config.associations,
+        connections,
+        connectedTaxonomies,
+        activeEditOption,
+        messages,
+        contextIntl,
+        activeEditOption.group,
+      );
     case 'attributes':
       return makeAttributeEditOptions(entities, config, activeEditOption, messages);
     default:
@@ -159,7 +181,6 @@ const makeConnectionEditOptions = (
     selectAll: true,
     tagFilterGroups: option && makeTagFilterGroups(connectedTaxonomies, contextIntl),
   };
-
   if (option) {
     const typeid = option.groupByType && activeEditOption.optionId.split('_')[1];
     editOptions.title = messages.title;
@@ -170,10 +191,15 @@ const makeConnectionEditOptions = (
       .get(connectionPath)
       .filter((c) => {
         if (!option.groupByType) return true;
-        if (option.groupByType && (type === 'target-actions' || type === 'actor-actions')) {
+        if (type === 'target-actions' || type === 'actor-actions') {
           return qe(typeid, c.getIn(['attributes', 'measuretype_id']));
         }
-        if (option.groupByType && (type === 'action-targets' || type === 'action-actors')) {
+        if (
+          type === 'action-targets' // targets
+          || type === 'action-actors' // active actors
+          || type === 'member-associations' // associations
+          || type === 'association-members' // members
+        ) {
           return qe(typeid, c.getIn(['attributes', 'actortype_id']));
         }
         return true;
