@@ -101,27 +101,23 @@ export const selectActorsByActortype = createSelector(
     if (!validActortypeIds || validActortypeIds.length === 0) {
       return null;
     }
-    const actortypesForActiontype = actortypes.filter(
-      (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
-    );
-    const filtered = actors.filter(
-      (actor) => {
-        const actortype = actortypesForActiontype.find(
-          (at) => qe(
-            at.get('id'),
-            actor.getIn(['attributes', 'actortype_id']),
-          )
-        );
-        return actortype && actortype.getIn(['attributes', 'is_active']);
-      }
-    );
-    return entitiesSetAssociated(
-      filtered,
-      associations,
-      action.get('id'),
-    ).groupBy(
-      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
-    ).sortBy((val, key) => key);
+    return actortypes.filter(
+      (type) => validActortypeIds
+        && validActortypeIds.indexOf(type.get('id')) > -1
+        && type.getIn(['attributes', 'is_active'])
+    ).map((type) => {
+      const filtered = actors.filter(
+        (actor) => qe(
+          type.get('id'),
+          actor.getIn(['attributes', 'actortype_id']),
+        )
+      );
+      return entitiesSetAssociated(
+        filtered,
+        associations,
+        action.get('id'),
+      );
+    });
   }
 );
 
@@ -138,26 +134,22 @@ export const selectTargetsByActortype = createSelector(
     if (!validActortypeIds || validActortypeIds.length === 0) {
       return null;
     }
-    const actortypesForActiontype = actortypes.filter(
-      (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
-    );
-    const filtered = actors.filter(
-      (actor) => {
-        const actortype = actortypesForActiontype.find(
-          (at) => qe(
-            at.get('id'),
-            actor.getIn(['attributes', 'actortype_id']),
-          )
-        );
-        return actortype && actortype.getIn(['attributes', 'is_target']);
-      }
-    );
-    return entitiesSetAssociated(
-      filtered,
-      associations,
-      action.get('id'),
-    ).groupBy(
-      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
-    ).sortBy((val, key) => key);
+    return actortypes.filter(
+      (type) => validActortypeIds
+        && validActortypeIds.indexOf(type.get('id')) > -1
+        && type.getIn(['attributes', 'is_target'])
+    ).map((type) => {
+      const filtered = actors.filter(
+        (actor) => qe(
+          type.get('id'),
+          actor.getIn(['attributes', 'actortype_id']),
+        )
+      );
+      return entitiesSetAssociated(
+        filtered,
+        associations,
+        action.get('id'),
+      );
+    });
   }
 );

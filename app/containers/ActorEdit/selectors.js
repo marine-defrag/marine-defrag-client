@@ -110,27 +110,21 @@ export const selectActionsByActiontype = createSelector(
     if (!validActiontypeIds || validActiontypeIds.length === 0) {
       return null;
     }
-    const actiontypesForActortype = actiontypes.filter(
+    return actiontypes.filter(
       (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
-    );
-    const filtered = actions.filter(
-      (action) => {
-        const actiontype = actiontypesForActortype.find(
-          (at) => qe(
-            at.get('id'),
-            action.getIn(['attributes', 'measuretype_id']),
-          )
-        );
-        return !!actiontype;
-      }
-    );
-    return entitiesSetAssociated(
-      filtered,
-      associations,
-      viewActor.get('id'),
-    ).groupBy(
-      (action) => action.getIn(['attributes', 'measuretype_id']).toString()
-    );
+    ).map((type) => {
+      const filtered = actions.filter(
+        (action) => qe(
+          type.get('id'),
+          action.getIn(['attributes', 'measuretype_id']),
+        )
+      );
+      return entitiesSetAssociated(
+        filtered,
+        associations,
+        viewActor.get('id'),
+      );
+    });
   }
 );
 
@@ -151,27 +145,23 @@ export const selectActionsAsTargetByActiontype = createSelector(
     if (!validActiontypeIds || validActiontypeIds.length === 0) {
       return null;
     }
-    const actiontypesForActortype = actiontypes.filter(
-      (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
-    );
-    const filtered = actions.filter(
-      (action) => {
-        const actiontype = actiontypesForActortype.find(
-          (at) => qe(
-            at.get('id'),
-            action.getIn(['attributes', 'measuretype_id']),
-          )
-        );
-        return actiontype && actiontype.getIn(['attributes', 'has_target']);
-      }
-    );
-    return entitiesSetAssociated(
-      filtered,
-      associations,
-      viewActor.get('id'),
-    ).groupBy(
-      (action) => action.getIn(['attributes', 'measuretype_id']).toString()
-    );
+    return actiontypes.filter(
+      (type) => validActiontypeIds
+        && validActiontypeIds.indexOf(type.get('id')) > -1
+        && type.getIn(['attributes', 'has_target'])
+    ).map((type) => {
+      const filtered = actions.filter(
+        (action) => qe(
+          type.get('id'),
+          action.getIn(['attributes', 'measuretype_id']),
+        )
+      );
+      return entitiesSetAssociated(
+        filtered,
+        associations,
+        viewActor.get('id'),
+      );
+    });
   }
 );
 
@@ -189,24 +179,21 @@ export const selectMembersByActortype = createSelector(
       // console.log('no members for actortype', actortypeId)
       return null;
     }
-    const membertypes = actortypes.filter(
+    return actortypes.filter(
       (type) => !type.getIn(['attributes', 'has_members'])
-    );
-    const filtered = actors.filter(
-      (actor) => membertypes.find(
-        (at) => qe(
-          at.get('id'),
+    ).map((type) => {
+      const filtered = actors.filter(
+        (actor) => qe(
+          type.get('id'),
           actor.getIn(['attributes', 'actortype_id']),
         )
-      )
-    );
-    return entitiesSetAssociated(
-      filtered,
-      associations,
-      viewActor.get('id'),
-    ).groupBy(
-      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
-    ).sortBy((val, key) => key);
+      );
+      return entitiesSetAssociated(
+        filtered,
+        associations,
+        viewActor.get('id'),
+      );
+    });
   }
 );
 
@@ -224,23 +211,20 @@ export const selectAssociationsByActortype = createSelector(
       // console.log('no memberships for actortype', actortypeId)
       return null;
     }
-    const associationtypes = actortypes.filter(
+    return actortypes.filter(
       (type) => type.getIn(['attributes', 'has_members'])
-    );
-    const filtered = actors.filter(
-      (actor) => associationtypes.find(
-        (at) => qe(
-          at.get('id'),
+    ).map((type) => {
+      const filtered = actors.filter(
+        (actor) => qe(
+          type.get('id'),
           actor.getIn(['attributes', 'actortype_id']),
         )
-      )
-    );
-    return entitiesSetAssociated(
-      filtered,
-      joins,
-      viewActor.get('id'),
-    ).groupBy(
-      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
-    ).sortBy((val, key) => key);
+      );
+      return entitiesSetAssociated(
+        filtered,
+        joins,
+        viewActor.get('id'),
+      );
+    });
   }
 );

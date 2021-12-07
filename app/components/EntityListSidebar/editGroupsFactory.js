@@ -93,7 +93,7 @@ export const makeEditGroups = ({
                     active: !!activeEditOption && activeEditOption.optionId === id,
                     create: {
                       path: option.path,
-                      attributes: config.connections.type === 'actors'
+                      attributes: config.connections.type === 'action-actors'
                         ? { actortype_id: type.get('id') }
                         : { measuretype_id: type.get('id') },
                     },
@@ -156,7 +156,12 @@ export const makeEditGroups = ({
                     key: option.key,
                     ownKey: option.ownKey,
                     active: !!activeEditOption && activeEditOption.optionId === id,
-                    create: { path: option.path },
+                    create: {
+                      path: option.path,
+                      attributes: config.targets.type === 'action-targets'
+                        ? { actortype_id: type.get('id') }
+                        : { measuretype_id: type.get('id') },
+                    },
                     color: option.entityType,
                   });
                 },
