@@ -41,20 +41,14 @@ export const selectActionsByActiontype = createSelector(
     if (!validActiontypeIds || validActiontypeIds.length === 0) {
       return null;
     }
-    const actiontypesForActortype = actiontypes.filter(
+    return actiontypes.filter(
       (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
-    );
-    const filtered = actions.filter(
-      (action) => actiontypesForActortype.find(
-        (at) => qe(
-          at.get('id'),
-          action.getIn(['attributes', 'measuretype_id']),
-        )
+    ).map((type) => actions.filter(
+      (action) => qe(
+        type.get('id'),
+        action.getIn(['attributes', 'measuretype_id']),
       )
-    );
-    return filtered.groupBy(
-      (action) => action.getIn(['attributes', 'measuretype_id']).toString()
-    ).sortBy((val, key) => key);
+    ));
   }
 );
 export const selectActionsAsTargetByActiontype = createSelector(
@@ -71,23 +65,16 @@ export const selectActionsAsTargetByActiontype = createSelector(
     if (!validActiontypeIds || validActiontypeIds.length === 0) {
       return null;
     }
-    const actiontypesForActortype = actiontypes.filter(
-      (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
-    );
-    const filtered = actions.filter(
-      (action) => {
-        const actiontype = actiontypesForActortype.find(
-          (at) => qe(
-            at.get('id'),
-            action.getIn(['attributes', 'measuretype_id']),
-          )
-        );
-        return actiontype && actiontype.getIn(['attributes', 'has_target']);
-      }
-    );
-    return filtered.groupBy(
-      (action) => action.getIn(['attributes', 'measuretype_id']).toString()
-    ).sortBy((val, key) => key);
+    return actiontypes.filter(
+      (type) => validActiontypeIds
+        && validActiontypeIds.indexOf(type.get('id')) > -1
+        && type.getIn(['attributes', 'has_target'])
+    ).map((type) => actions.filter(
+      (action) => qe(
+        type.get('id'),
+        action.getIn(['attributes', 'measuretype_id']),
+      )
+    ));
   }
 );
 
@@ -102,20 +89,14 @@ export const selectMembersByActortype = createSelector(
       // console.log('no members for actortype', actortypeId)
       return null;
     }
-    const membertypes = actortypes.filter(
+    return actortypes.filter(
       (type) => !type.getIn(['attributes', 'has_members'])
-    );
-    const filtered = actors.filter(
-      (actor) => membertypes.find(
-        (at) => qe(
-          at.get('id'),
-          actor.getIn(['attributes', 'actortype_id']),
-        )
+    ).map((type) => actors.filter(
+      (actor) => qe(
+        type.get('id'),
+        actor.getIn(['attributes', 'actortype_id']),
       )
-    );
-    return filtered.groupBy(
-      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
-    ).sortBy((val, key) => key);
+    ));
   }
 );
 
@@ -130,19 +111,13 @@ export const selectAssociationsByActortype = createSelector(
       // console.log('no memberships for actortype', actortypeId)
       return null;
     }
-    const associationtypes = actortypes.filter(
+    return actortypes.filter(
       (type) => type.getIn(['attributes', 'has_members'])
-    );
-    const filtered = actors.filter(
-      (actor) => associationtypes.find(
-        (at) => qe(
-          at.get('id'),
-          actor.getIn(['attributes', 'actortype_id']),
-        )
+    ).map((type) => actors.filter(
+      (actor) => qe(
+        type.get('id'),
+        actor.getIn(['attributes', 'actortype_id']),
       )
-    );
-    return filtered.groupBy(
-      (actor) => actor.getIn(['attributes', 'actortype_id']).toString()
-    ).sortBy((val, key) => key);
+    ));
   }
 );
