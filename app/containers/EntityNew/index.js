@@ -65,12 +65,12 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
     const props = nextProps || this.props;
     const { attributes, path } = props;
     if (path === API.ACTORS) {
-      return attributes.get('actortype_id')
+      return attributes && attributes.get('actortype_id')
         ? Map(FORM_INITIAL.set('attributes', attributes))
-        : Map(FORM_INITIAL.setIn(['attributes', 'actortype_id'], DEFAULT_ACTIONTYPE));
+        : Map(FORM_INITIAL.setIn(['attributes', 'actortype_id'], DEFAULT_ACTORTYPE));
     }
     if (path === API.ACTIONS) {
-      return attributes.get('measuretype_id')
+      return attributes && attributes.get('measuretype_id')
         ? Map(FORM_INITIAL.set('attributes', attributes))
         : Map(FORM_INITIAL.setIn(['attributes', 'measuretype_id'], DEFAULT_ACTIONTYPE));
     }
