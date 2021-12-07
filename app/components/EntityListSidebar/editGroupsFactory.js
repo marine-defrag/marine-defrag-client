@@ -201,10 +201,10 @@ export const makeEditGroups = ({
         (optionsMemo, option) => membertypes
           .filter((type) => {
             if (option.typeFilter) {
-              if (typeof option.typeFilterPass === 'undefined' || option.typeFilterPass) {
-                return type.getIn(['attributes', option.typeFilter]);
+              if (option.typeFilterPass === 'reverse') {
+                return !type.getIn(['attributes', option.typeFilter]);
               }
-              return !type.getIn(['attributes', option.typeFilter]);
+              return type.getIn(['attributes', option.typeFilter]);
             }
             return true;
           })
@@ -247,10 +247,10 @@ export const makeEditGroups = ({
         (optionsMemo, option) => associationtypes
           .filter((type) => {
             if (option.typeFilter) {
-              if (typeof option.typeFilterPass === 'undefined' || option.typeFilterPass) {
-                return type.getIn(['attributes', option.typeFilter]);
+              if (option.typeFilterPass === 'reverse') {
+                return !type.getIn(['attributes', option.typeFilter]);
               }
-              return !type.getIn(['attributes', option.typeFilter]);
+              return type.getIn(['attributes', option.typeFilter]);
             }
             return true;
           })
