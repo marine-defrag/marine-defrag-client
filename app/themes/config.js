@@ -345,6 +345,7 @@ export const ACTION_FIELDS = {
       optional: [
         ACTIONTYPES.INTL,
         ACTIONTYPES.REGLSEAS,
+        ACTIONTYPES.REGL,
         ACTIONTYPES.NATL,
         ACTIONTYPES.DONOR,
         ACTIONTYPES.INIT,
@@ -355,6 +356,7 @@ export const ACTION_FIELDS = {
       optional: [
         ACTIONTYPES.INTL,
         ACTIONTYPES.REGLSEAS,
+        ACTIONTYPES.REGL,
         ACTIONTYPES.NATL,
         ACTIONTYPES.DONOR,
         ACTIONTYPES.INIT,
@@ -364,6 +366,7 @@ export const ACTION_FIELDS = {
     date_comment: {
       optional: [
         ACTIONTYPES.INTL,
+        ACTIONTYPES.REGL,
         ACTIONTYPES.REGLSEAS,
         ACTIONTYPES.NATL,
         ACTIONTYPES.DONOR,

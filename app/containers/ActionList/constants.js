@@ -28,7 +28,6 @@ export const CONFIG = {
       attribute: 'id', // proxy for created at
       type: 'number',
       order: 'desc',
-      default: true,
     },
     {
       attribute: 'code',
@@ -44,6 +43,7 @@ export const CONFIG = {
       attribute: 'updated_at',
       type: 'date',
       order: 'desc',
+      default: true,
     },
   ],
   taxonomies: { // filter by each category
