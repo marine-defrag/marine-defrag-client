@@ -13,6 +13,8 @@ export const makeEditGroups = ({
   actiontypes,
   targettypes,
   actiontypesForTarget,
+  membertypes,
+  associationtypes,
 }) => {
   const editGroups = {};
   // const selectedActortypes = actortypes && actortypes.filter(
@@ -187,6 +189,98 @@ export const makeEditGroups = ({
     };
   }
 
+  // members option groups
+  if (config.members && membertypes) {
+    // first prepare taxonomy options
+    editGroups.members = {
+      id: 'members', // filterGroupId
+      label: messages.connections(config.members.type),
+      show: true,
+      options: reduce(
+        config.members.options,
+        (optionsMemo, option) => membertypes
+          .filter((type) => {
+            if (option.typeFilter) {
+              if (typeof option.typeFilterPass === 'undefined' || option.typeFilterPass) {
+                return type.getIn(['attributes', option.typeFilter]);
+              }
+              return !type.getIn(['attributes', option.typeFilter]);
+            }
+            return true;
+          })
+          .reduce(
+            (memo, type) => {
+              const id = `${option.entityType}_${type.get('id')}`;
+              return memo.concat({
+                id, // filterOptionId
+                label: option.label,
+                message: (option.message && option.message.indexOf('{typeid}') > -1)
+                  ? option.message.replace('{typeid}', type.get('id'))
+                  : option.message,
+                path: option.connectPath,
+                connection: option.entityType,
+                key: option.key,
+                ownKey: option.ownKey,
+                active: !!activeEditOption && activeEditOption.optionId === id,
+                create: {
+                  path: option.path,
+                  attributes: { actortype_id: type.get('id') },
+                },
+                color: option.entityType,
+              });
+            },
+            optionsMemo,
+          ),
+        [],
+      ),
+    };
+  }
+  // associations option groups
+  if (config.associations && associationtypes) {
+    // first prepare taxonomy options
+    editGroups.associations = {
+      id: 'associations', // filterGroupId
+      label: messages.connections(config.associations.type),
+      show: true,
+      options: reduce(
+        config.associations.options,
+        (optionsMemo, option) => associationtypes
+          .filter((type) => {
+            if (option.typeFilter) {
+              if (typeof option.typeFilterPass === 'undefined' || option.typeFilterPass) {
+                return type.getIn(['attributes', option.typeFilter]);
+              }
+              return !type.getIn(['attributes', option.typeFilter]);
+            }
+            return true;
+          })
+          .reduce(
+            (memo, type) => {
+              const id = `${option.entityType}_${type.get('id')}`;
+              return memo.concat({
+                id, // filterOptionId
+                label: option.label,
+                message: (option.message && option.message.indexOf('{typeid}') > -1)
+                  ? option.message.replace('{typeid}', type.get('id'))
+                  : option.message,
+                path: option.connectPath,
+                connection: option.entityType,
+                key: option.key,
+                ownKey: option.ownKey,
+                active: !!activeEditOption && activeEditOption.optionId === id,
+                create: {
+                  path: option.path,
+                  attributes: { actortype_id: type.get('id') },
+                },
+                color: option.entityType,
+              });
+            },
+            optionsMemo,
+          ),
+        [],
+      ),
+    };
+  }
   // attributes
   if (config.attributes) {
     // first prepare taxonomy options
@@ -197,14 +291,6 @@ export const makeEditGroups = ({
       options: reduce(
         config.attributes.options,
         (optionsMemo, option) => {
-          // if (
-          //   option.typeFilter
-          //   && option.editForActortypes
-          //   && actortypes
-          //   && !selectedActortypes.every((actortype) => actortype.getIn(['attributes', option.typeFilter]))
-          // ) {
-          //   return optionsMemo;
-          // }
           if (
             (typeof option.edit === 'undefined' || option.edit)
             && (typeof option.role === 'undefined' || hasUserRole[option.role])

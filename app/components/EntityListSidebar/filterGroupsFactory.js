@@ -147,46 +147,33 @@ export const makeFilterGroups = ({
       show: true,
       options: reduce(
         config.members.options,
-        (optionsMemo, option) => {
-          const connectedTypes = membertypes;
-          if (option.groupByType && connectedTypes) {
-            return connectedTypes
-              .filter((type) => {
-                if (!option.typeFilter) return true;
-                let attribute = option.typeFilter;
-                const notFilter = startsWith(option.typeFilter, '!');
-                if (notFilter) {
-                  attribute = option.typeFilter.substring(1);
-                }
-                return notFilter
-                  ? !type.getIn(['attributes', attribute])
-                  : type.getIn(['attributes', attribute]);
-              })
-              .reduce(
-                (memo, type) => {
-                  const id = `${option.entityType}_${type.get('id')}`;
-                  return memo.concat({
-                    id, // filterOptionId
-                    label: option.label,
-                    message: (option.message && option.message.indexOf('{typeid}') > -1)
-                      ? option.message.replace('{typeid}', type.get('id'))
-                      : option.message,
-                    color: option.entityType,
-                    active: !!activeFilterOption
-                      && activeFilterOption.group === 'members'
-                      && activeFilterOption.optionId === id,
-                  });
-                },
-                optionsMemo,
-              );
-          }
-          return optionsMemo.concat({
-            id: option.path, // filterOptionId
-            label: option.label,
-            message: option.message,
-            active: !!activeFilterOption && activeFilterOption.optionId === option.path,
-          });
-        },
+        (optionsMemo, option) => membertypes
+          .filter((type) => {
+            if (option.typeFilter) {
+              if (option.typeFilterPass === 'reverse') {
+                return !type.getIn(['attributes', option.typeFilter]);
+              }
+              return type.getIn(['attributes', option.typeFilter]);
+            }
+            return true;
+          })
+          .reduce(
+            (memo, type) => {
+              const id = `${option.entityType}_${type.get('id')}`;
+              return memo.concat({
+                id, // filterOptionId
+                label: option.label,
+                message: (option.message && option.message.indexOf('{typeid}') > -1)
+                  ? option.message.replace('{typeid}', type.get('id'))
+                  : option.message,
+                color: option.entityType,
+                active: !!activeFilterOption
+                  && activeFilterOption.group === 'members'
+                  && activeFilterOption.optionId === id,
+              });
+            },
+            optionsMemo,
+          ),
         [],
       ),
     };
@@ -199,46 +186,35 @@ export const makeFilterGroups = ({
       show: true,
       options: reduce(
         config.associations.options,
-        (optionsMemo, option) => {
-          const connectedTypes = associationtypes;
-          if (option.groupByType && connectedTypes) {
-            return connectedTypes
-              .filter((type) => {
-                if (!option.typeFilter) return true;
-                let attribute = option.typeFilter;
-                const notFilter = startsWith(option.typeFilter, '!');
-                if (notFilter) {
-                  attribute = option.typeFilter.substring(1);
-                }
-                return notFilter
-                  ? !type.getIn(['attributes', attribute])
-                  : type.getIn(['attributes', attribute]);
-              })
-              .reduce(
-                (memo, type) => {
-                  const id = `${option.entityType}_${type.get('id')}`;
-                  return memo.concat({
-                    id, // filterOptionId
-                    label: option.label,
-                    message: (option.message && option.message.indexOf('{typeid}') > -1)
-                      ? option.message.replace('{typeid}', type.get('id'))
-                      : option.message,
-                    color: option.entityType,
-                    active: !!activeFilterOption
-                      && activeFilterOption.group === 'associations'
-                      && activeFilterOption.optionId === id,
-                  });
-                },
-                optionsMemo,
-              );
-          }
-          return optionsMemo.concat({
-            id: option.path, // filterOptionId
-            label: option.label,
-            message: option.message,
-            active: !!activeFilterOption && activeFilterOption.optionId === option.path,
-          });
-        },
+        (optionsMemo, option) => associationtypes
+          .filter((type) => {
+            if (!option.typeFilter) return true;
+            let attribute = option.typeFilter;
+            const notFilter = startsWith(option.typeFilter, '!');
+            if (notFilter) {
+              attribute = option.typeFilter.substring(1);
+            }
+            return notFilter
+              ? !type.getIn(['attributes', attribute])
+              : type.getIn(['attributes', attribute]);
+          })
+          .reduce(
+            (memo, type) => {
+              const id = `${option.entityType}_${type.get('id')}`;
+              return memo.concat({
+                id, // filterOptionId
+                label: option.label,
+                message: (option.message && option.message.indexOf('{typeid}') > -1)
+                  ? option.message.replace('{typeid}', type.get('id'))
+                  : option.message,
+                color: option.entityType,
+                active: !!activeFilterOption
+                  && activeFilterOption.group === 'associations'
+                  && activeFilterOption.optionId === id,
+              });
+            },
+            optionsMemo,
+          ),
         [],
       ),
     };

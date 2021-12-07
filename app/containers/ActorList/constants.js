@@ -110,11 +110,12 @@ export const CONFIG = {
         entityType: 'members', // filter by actor connection
         connectionPath: 'actors',
         clientPath: ROUTES.ACTOR,
-        connectPath: API.MEMBERSHIP, // filter by actor connection
+        connectPath: API.MEMBERSHIPS, // filter by actor connection
         key: 'member_id',
         ownKey: 'memberof_id',
         groupByType: true,
-        typeFilter: '!has_members',
+        typeFilter: 'has_members',
+        typeFilterPass: 'reverse',
       },
     ],
   },
@@ -129,7 +130,7 @@ export const CONFIG = {
         entityType: 'associations', // filter by actor connection
         connectionPath: 'actors',
         clientPath: ROUTES.ACTOR,
-        connectPath: API.MEMBERSHIP, // filter by actor connection
+        connectPath: API.MEMBERSHIPS, // filter by actor connection
         key: 'memberof_id',
         ownKey: 'member_id',
         groupByType: true,
