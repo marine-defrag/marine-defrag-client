@@ -272,6 +272,7 @@ const getConnectionField = ({
   entityIcon,
   entityPath,
   onEntityClick,
+  skipLabel,
 }) => ({
   type: 'connections',
   values: entities.toList(),
@@ -283,6 +284,7 @@ const getConnectionField = ({
   onEntityClick,
   showEmpty: appMessages.entities[entityType].empty,
   connectionOptions,
+  skipLabel,
 });
 
 export const getActorConnectionField = (
@@ -291,6 +293,7 @@ export const getActorConnectionField = (
   connections,
   onEntityClick,
   actortypeid, // actortype id
+  skipLabel,
 ) => getConnectionField({
   entities: sortEntities(entities, 'asc', 'id'),
   taxonomies: filterTaxonomies(taxonomies, 'tags_actors'),
@@ -305,6 +308,7 @@ export const getActorConnectionField = (
   entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
   entityPath: ROUTES.ACTOR,
   onEntityClick,
+  skipLabel,
 });
 export const getTargetConnectionField = getActorConnectionField;
 // (
@@ -334,6 +338,7 @@ export const getActionConnectionField = (
   connections,
   onEntityClick,
   actiontypeid, // actortype id
+  skipLabel,
 ) => getConnectionField({
   entities: sortEntities(entities, 'asc', 'id'),
   taxonomies: filterTaxonomies(taxonomies, 'tags_actions'),
@@ -348,6 +353,7 @@ export const getActionConnectionField = (
   entityType: actiontypeid ? `actions_${actiontypeid}` : 'actions',
   entityPath: ROUTES.ACTION,
   onEntityClick,
+  skipLabel,
 });
 export const getActionAsTargetConnectionField = (
   entities,

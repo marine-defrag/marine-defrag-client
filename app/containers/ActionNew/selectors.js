@@ -5,6 +5,8 @@ import { qe } from 'utils/quasi-equals';
 import {
   selectCategories,
   selectActortypes,
+  selectActions,
+  selectActiontypes,
   selectActorTaxonomies,
   selectActorsCategorised,
   selectActorActionsGroupedByAction,
@@ -15,6 +17,27 @@ import { prepareTaxonomies } from 'utils/entities';
 export const selectDomain = createSelector(
   (state) => state.get('actionNew'),
   (substate) => substate
+);
+
+export const selectParentOptions = createSelector(
+  (state, id) => id,
+  selectActions,
+  selectActiontypes,
+  (actiontypeId, actions, actiontypes) => {
+    if (actiontypeId && actions && actiontypes) {
+      const type = actiontypes.find((at) => qe(actiontypeId, at.get('id')));
+      if (type && type.getIn(['attributes', 'has_parent'])) {
+        return actions.filter((action) => {
+          const sameType = qe(actiontypeId, action.getIn(['attributes', 'measuretype_id']));
+          // const hasParent = action.getIn(['attributes', 'parent_id']);
+          // todo: avoid circular dependencies
+          return sameType;
+        });
+      }
+      return null;
+    }
+    return null;
+  }
 );
 
 export const selectConnectedTaxonomies = createSelector(

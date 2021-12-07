@@ -34,19 +34,23 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
   render() {
     const { field } = this.props;
     const { intl } = this.context;
-    const label = `${field.values.size} ${intl.formatMessage(
-      field.values.size === 1
-        ? appMessages.entities[field.entityType].single
-        : appMessages.entities[field.entityType].plural
-    )}`;
+    const label = field.skipLabel
+      ? null
+      : `${field.values.size} ${intl.formatMessage(
+        field.values.size === 1
+          ? appMessages.entities[field.entityType].single
+          : appMessages.entities[field.entityType].plural
+      )}`;
 
     return (
       <StyledFieldWrap>
-        <ConnectionLabelWrap>
-          <ConnectionLabel>
-            {label}
-          </ConnectionLabel>
-        </ConnectionLabelWrap>
+        {label && (
+          <ConnectionLabelWrap>
+            <ConnectionLabel>
+              {label}
+            </ConnectionLabel>
+          </ConnectionLabelWrap>
+        )}
         {(field.values && field.values.size > 0) && (
           <div>
             {field.values.size > CONNECTIONMAX

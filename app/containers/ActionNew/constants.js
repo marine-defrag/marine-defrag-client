@@ -12,6 +12,7 @@ export const DEPENDENCIES = [
   API.USER_ROLES,
   API.CATEGORIES,
   API.TAXONOMIES,
+  API.ACTIONS,
   API.ACTORS,
   API.ACTORTYPES,
   API.ACTIONTYPES,
@@ -30,4 +31,5 @@ export const FORM_INITIAL = fromJS({
   associatedTaxonomies: {},
   associatedActorsByActortype: {},
   associatedTargetsByActortype: {},
+  associatedParent: [],
 });

@@ -28,6 +28,7 @@ import {
   getAmountFormField,
   getFormField,
   getCheckboxField,
+  renderParentActionControl,
 } from 'utils/forms';
 import { getInfoField } from 'utils/fields';
 
@@ -67,6 +68,7 @@ import appMessages from 'containers/App/messages';
 
 import {
   selectDomain,
+  selectParentOptions,
   selectConnectedTaxonomies,
   selectActorsByActortype,
   selectTargetsByActortype,
@@ -138,18 +140,19 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
 
   getHeaderAsideFields = (taxonomies, onCreateOption) => {
     const { intl } = this.context;
-    return ([
-      {
-        fields: [
-          getStatusField(intl.formatMessage),
-        ],
-      },
-      { // fieldGroup
-        label: intl.formatMessage(appMessages.entities.taxonomies.plural),
-        icon: 'categories',
-        fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
-      },
-    ]);
+    const groups = [];
+    groups.push({
+      fields: [
+        getStatusField(intl.formatMessage),
+      ],
+    });
+    groups.push({ // fieldGroup
+      label: intl.formatMessage(appMessages.entities.taxonomies.plural),
+      icon: 'categories',
+      fields: renderTaxonomyControl(taxonomies, onCreateOption, intl),
+    });
+
+    return groups;
   }
 
   getBodyMainFields = (
@@ -157,6 +160,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
     connectedTaxonomies,
     actorsByActortype,
     targetsByActortype,
+    parentOptions,
     onCreateOption,
   ) => {
     const { intl } = this.context;
@@ -216,6 +220,15 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
         ],
       },
     );
+    if (parentOptions) {
+      groups.push({
+        label: intl.formatMessage(appMessages.entities.actions.parent),
+        fields: [renderParentActionControl(
+          parentOptions,
+          intl.formatMessage(appMessages.entities.actions.single),
+        )],
+      });
+    }
     if (actorsByActortype) {
       const actorConnections = renderActorsByActortypeControl(
         actorsByActortype,
@@ -313,6 +326,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
       onCreateOption,
       actiontype,
       params,
+      parentOptions,
     } = this.props;
     const typeId = params.id;
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
@@ -394,6 +408,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                       connectedTaxonomies,
                       actorsByActortype,
                       targetsByActortype,
+                      parentOptions,
                       onCreateOption,
                     ),
                     aside: this.getBodyAsideFields(
@@ -431,6 +446,7 @@ ActionNew.propTypes = {
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
   taxonomies: PropTypes.object,
+  parentOptions: PropTypes.object,
   onCreateOption: PropTypes.func,
   connectedTaxonomies: PropTypes.object,
   actiontype: PropTypes.instanceOf(Map),
@@ -456,6 +472,7 @@ const mapStateToProps = (state, { params }) => ({
   actiontype: selectActiontype(state, params.id),
   actorsByActortype: selectActorsByActortype(state, params.id),
   targetsByActortype: selectTargetsByActortype(state, params.id),
+  parentOptions: selectParentOptions(state, params.id),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -544,6 +561,13 @@ function mapDispatchToProps(dispatch) {
               }),
             )
         );
+      }
+      // TODO: remove once have singleselect instead of multiselect
+      const formParentIds = getCheckedValuesFromOptions(formData.get('associatedParent'));
+      if (List.isList(formParentIds) && formParentIds.size) {
+        saveData = saveData.setIn(['attributes', 'parent_id'], formParentIds.first());
+      } else {
+        saveData = saveData.setIn(['attributes', 'parent_id'], null);
       }
       dispatch(save(saveData.toJS(), actiontype.get('id')));
     },

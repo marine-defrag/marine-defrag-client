@@ -14,6 +14,8 @@ import {
   selectCategories,
   selectTaxonomiesSorted,
   selectReady,
+  selectActions,
+  selectActiontypes,
 } from 'containers/App/selectors';
 
 import {
@@ -35,6 +37,34 @@ export const selectViewEntity = createSelector(
   (state) => selectEntities(state, API.USERS),
   (entity, users) => entitySetUser(entity, users)
 );
+
+export const selectParentOptions = createSelector(
+  selectViewEntity,
+  selectActions,
+  selectActiontypes,
+  (viewAction, actions, actiontypes) => {
+    if (viewAction && actions && actiontypes) {
+      const type = actiontypes.find(
+        (at) => qe(
+          viewAction.getIn(['attributes', 'measuretype_id']),
+          at.get('id'),
+        )
+      );
+      if (type && type.getIn(['attributes', 'has_parent'])) {
+        return actions.filter((action) => {
+          const sameType = qe(type.get('id'), action.getIn(['attributes', 'measuretype_id']));
+          const notSelf = !qe(action.get('id'), viewAction.get('id'));
+          // const hasParent = action.getIn(['attributes', 'parent_id']);
+          // todo: avoid circular dependencies
+          return sameType && notSelf;
+        });
+      }
+      return null;
+    }
+    return null;
+  }
+);
+
 export const selectTaxonomyOptions = createSelector(
   selectViewEntity,
   selectTaxonomiesSorted,

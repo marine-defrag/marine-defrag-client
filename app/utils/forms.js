@@ -54,9 +54,19 @@ export const parentCategoryOption = (entity, activeParentId) => Map({
   label: entity.getIn(['attributes', 'title']),
   checked: activeParentId ? entity.get('id') === activeParentId.toString() : false,
 });
-
 export const parentCategoryOptions = (entities, activeParentId) => entities
   ? entities.reduce((options, entity) => options.push(parentCategoryOption(entity, activeParentId)), List())
+  : List();
+
+export const parentActionOption = (entity, activeParentId) => Map({
+  value: entity.get('id'),
+  label: getEntityTitle(entity),
+  draft: entity.getIn(['attributes', 'draft']),
+  checked: activeParentId ? entity.get('id') === activeParentId.toString() : false,
+});
+
+export const parentActionOptions = (entities, activeParentId) => entities
+  ? entities.reduce((options, entity) => options.push(parentActionOption(entity, activeParentId)), List())
   : List();
 
 export const dateOption = (entity, activeDateId) => Map({
@@ -347,6 +357,17 @@ export const renderParentCategoryControl = (entities, label, activeParentId) => 
     controlType: 'multiselect',
     multiple: false,
     options: parentCategoryOptions(entities, activeParentId),
+  }
+  : null;
+export const renderParentActionControl = (entities, label, activeParentId) => entities
+  ? {
+    id: 'associatedParent',
+    model: '.associatedParent',
+    dataPath: ['associatedParent'],
+    label,
+    controlType: 'multiselect',
+    multiple: false,
+    options: parentActionOptions(entities, activeParentId),
   }
   : null;
 
