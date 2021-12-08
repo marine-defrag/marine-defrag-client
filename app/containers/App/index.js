@@ -107,12 +107,6 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
         title: intl.formatMessage(messages.nav.actors),
         active: currentPath.startsWith(ROUTES.ACTOR),
       },
-      {
-        path: ROUTES.TAXONOMIES,
-        title: intl.formatMessage(messages.nav.taxonomies),
-        active: currentPath.startsWith(ROUTES.CATEGORY)
-          || currentPath.startsWith(ROUTES.TAXONOMIES),
-      },
     ];
     if (isManager) {
       navItems = navItems.concat([
@@ -121,6 +115,13 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           title: intl.formatMessage(messages.nav.pages),
           isAdmin: true,
           active: currentPath === ROUTES.PAGES,
+        },
+        {
+          path: ROUTES.TAXONOMIES,
+          title: intl.formatMessage(messages.nav.taxonomies),
+          isAdmin: true,
+          active: currentPath.startsWith(ROUTES.CATEGORY)
+          || currentPath.startsWith(ROUTES.TAXONOMIES),
         },
         {
           path: ROUTES.USERS,

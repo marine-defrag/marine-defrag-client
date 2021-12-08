@@ -293,7 +293,7 @@
   "app.containers.App.attributes.meta.created_at": "Created",
   "app.containers.App.nav.overviewSuper": "Overview",
   "app.containers.App.nav.overview": "By category",
-  "app.containers.App.nav.taxonomies": "Categories",
+  "app.containers.App.nav.taxonomies": "Category overview",
   "app.containers.App.nav.actions": "Activities",
   "app.containers.App.nav.actors": "Actors",
   "app.containers.App.nav.pages": "Page admin",
