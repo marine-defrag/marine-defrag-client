@@ -1552,6 +1552,10 @@ export default defineMessages({
         id: 'app.containers.App.entities.categories.plural',
         defaultMessage: 'Categories',
       },
+      empty: {
+        id: 'app.containers.App.entities.categories.empty',
+        defaultMessage: 'No categories yet',
+      },
       noParentsAssociated: {
         id: 'app.containers.App.entities.categories.noParentsAssociated',
         defaultMessage: 'No parent categories yet associated',

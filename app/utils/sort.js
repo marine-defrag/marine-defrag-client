@@ -2,12 +2,17 @@ import { find } from 'lodash/collection';
 import { getCategoryShortTitle } from 'utils/entities';
 import isNumber from 'utils/is-number';
 
-export const getSortOption = (sortOptions, sortBy, query = 'attribute') => find(sortOptions, (option) => option[query] === sortBy)
-  || find(sortOptions, (option) => option.default);
+export const getSortOption = (sortOptions, sortBy, query = 'attribute') => find(
+  sortOptions,
+  (option) => option[query] === sortBy
+) || find(sortOptions, (option) => option.default);
 
-const getEntitySortValueMapper = (entity, sortBy) => {
+const getEntitySortValueMapper = (entity, sortBy, type) => {
   if (!entity) {
     return 1;
+  }
+  if (type === 'count') {
+    return entity.getIn(['counts', sortBy]) || 0;
   }
   switch (sortBy) {
     case 'id':
@@ -31,6 +36,7 @@ const getEntitySortValueMapper = (entity, sortBy) => {
     case 'actors':
     case 'sortBy':
       return entity.get(sortBy) || 0;
+
     default:
       return entity.getIn(['attributes', sortBy]);
   }
@@ -139,8 +145,9 @@ export const getEntitySortComparator = (valueA, valueB, sortOrder, type) => {
 };
 
 export const sortEntities = (entities, sortOrder, sortBy, type, asList = true) => {
+  console.log('sortEntities', sortOrder, sortBy, type);
   const sorted = entities && entities.sortBy(
-    (entity) => getEntitySortValueMapper(entity, sortBy || 'id'),
+    (entity) => getEntitySortValueMapper(entity, sortBy || 'id', type),
     (a, b) => getEntitySortComparator(a, b, sortOrder || 'asc', type)
   );
   return asList ? sorted.toList() : sorted;

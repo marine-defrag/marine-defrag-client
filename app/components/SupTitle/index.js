@@ -8,7 +8,7 @@ const Styled = styled.span`
   color: ${palette('text', 1)};
   font-weight: bold;
   font-size: 0.85em;
-  letter-spacing: 0.75px;
+  letter-spacing: 0.5px;
   display: inline-block;
   @media print {
     font-size: ${(props) => props.theme.sizes.print.smaller};

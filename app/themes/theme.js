@@ -202,8 +202,8 @@ theme.palette = {
 
   // CATEGORY SIDEBAR "PALETTES" //////////////////////////////////////////////////////////////
   // asideCatNavItem: ['#color', '#colorActive', '#bg', '#bgActive', '#border'],
-  asideCatNavItem: [dark[2], primary[4], primary[4], primary[2], light[0]],
-  asideCatNavItemHover: [dark[1], primary[4], light[0], primary[2], light[0]],
+  asideCatNavItem: [dark[2], primary[2], primary[4], primary[2], light[0]],
+  asideCatNavItemHover: [dark[1], primary[1], light[0], primary[2], light[0]],
 
   // ENTITYLIST SIDEBAR "PALETTES" //////////////////////////////////////////////////////////////
   // asideCatNavItem: ['#color', '#active', '#bg', '#bgactive', '#border'],
