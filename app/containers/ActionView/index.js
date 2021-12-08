@@ -132,36 +132,6 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
     const { intl } = this.context;
     const typeId = entity.getIn(['attributes', 'measuretype_id']);
     const fields = [];
-    if (parents && parents.size > 0) {
-      fields.push({
-        label: appMessages.entities.actions.parent,
-        fields: [
-          getActionConnectionField(
-            parents,
-            taxonomies,
-            actionConnections,
-            onEntityClick,
-            typeId,
-            true // skip type title
-          ),
-        ],
-      });
-    }
-    if (children && children.size > 0) {
-      fields.push({
-        label: appMessages.entities.actions.children,
-        fields: [
-          getActionConnectionField(
-            children,
-            taxonomies,
-            actionConnections,
-            onEntityClick,
-            typeId,
-            true // skip type title
-          ),
-        ],
-      });
-    }
     let hasLandbasedValue;
     if (checkActionAttribute(typeId, 'has_reference_landbased_ml')) {
       if (
@@ -209,6 +179,36 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
         ],
       },
     );
+    if (parents && parents.size > 0) {
+      fields.push({
+        label: appMessages.entities.actions.parent,
+        fields: [
+          getActionConnectionField(
+            parents,
+            taxonomies,
+            actionConnections,
+            onEntityClick,
+            typeId,
+            true // skip type title
+          ),
+        ],
+      });
+    }
+    if (children && children.size > 0) {
+      fields.push({
+        label: appMessages.entities.actions.children,
+        fields: [
+          getActionConnectionField(
+            children,
+            taxonomies,
+            actionConnections,
+            onEntityClick,
+            typeId,
+            true // skip type title
+          ),
+        ],
+      });
+    }
 
     // // actors
     if (actorsByActortype) {
