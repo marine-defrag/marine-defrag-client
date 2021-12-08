@@ -593,6 +593,7 @@
   "app.containers.UserLogin.registerLinkBefore": "Do not have an account? ",
   "app.containers.UserLogin.registerLink": "Register here",
   "app.containers.UserLogin.recoverPasswordLink": "I forgot my password",
+  "app.containers.UserLogin.resetPasswordHint": "If you forgot your password, please contact your team leader",
   "app.containers.UserLogin.submit": "Sign in",
   "app.containers.UserLogout.pageTitle": "Logging out",
   "app.containers.UserLogout.metaDescription": "Log out page description",
