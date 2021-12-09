@@ -155,7 +155,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 
     return (
       <div>
-        {!this.props.dataReady && <EntityListSidebarLoading />}
+        {!this.props.dataReady && this.props.showSidebar && <EntityListSidebarLoading />}
         {this.props.dataReady && this.props.showSidebar && !printing && (
           <EntityListSidebar
             listUpdating={progress !== null && progress >= 0 && progress < 100}
@@ -191,6 +191,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           />
         )}
         <EntityListMain
+          hasSidebar={this.props.showSidebar}
           listUpdating={progress !== null && progress >= 0 && progress < 100}
           entities={entities}
           errors={errors}

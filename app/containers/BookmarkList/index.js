@@ -27,7 +27,6 @@ import ContainerWithSidebar from 'components/styled/Container/ContainerWithSideb
 import Container from 'components/styled/Container';
 import Loading from 'components/Loading';
 import ContentHeader from 'components/ContentHeader';
-import EntityListSidebarLoading from 'components/EntityListSidebarLoading';
 import TagSearch from 'components/TagSearch';
 import Scrollable from 'components/styled/Scrollable';
 import Sidebar from 'components/styled/Sidebar';
@@ -245,8 +244,10 @@ export class BookmarkList extends React.PureComponent { // eslint-disable-line r
       activeType,
       allBookmarks,
     } = this.props;
+    const hasBookmarks = allBookmarks && allBookmarks.size > 0;
     const filtered = activeType && activeType !== '';
     const bookmarksFiltered = bookmarksForSearch.filter((e) => !filtered || qe(activeType, e.getIn(['attributes', 'view', 'type'])));
+
     return (
       <div>
         <Helmet
@@ -255,10 +256,10 @@ export class BookmarkList extends React.PureComponent { // eslint-disable-line r
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        { !dataReady
-          && <EntityListSidebarLoading responsiveSmall />
-        }
-        { dataReady && this.state.viewport && this.state.viewport !== VIEWPORTS.MOBILE
+        { dataReady
+          && hasBookmarks
+          && this.state.viewport
+          && this.state.viewport !== VIEWPORTS.MOBILE
           && (
             <PrintHide>
               <Sidebar responsiveSmall>
@@ -276,7 +277,7 @@ export class BookmarkList extends React.PureComponent { // eslint-disable-line r
             </PrintHide>
           )
         }
-        <ContainerWithSidebar sidebarResponsiveSmall>
+        <ContainerWithSidebar noSidebar={!hasBookmarks} sidebarResponsiveSmall>
           <Container>
             <Content>
               <ContentHeader

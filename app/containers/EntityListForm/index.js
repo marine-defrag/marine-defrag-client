@@ -32,7 +32,7 @@ const FormWrapper = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
+  right: 0;
   background: ${palette('primary', 4)};
   overflow: hidden;
   box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.2);
