@@ -223,10 +223,10 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
                 </PopupHeader>
                 <PopupContent height={this.calcHeight()}>
                   {
-                    sortEntities(entities, 'asc', 'reference')
+                    sortEntities(entities, 'asc', 'title')
                       .toList()
                       .map((entity, i) => {
-                        const ref = entity.getIn(['attributes', 'reference']) || entity.get('id');
+                        const ref = entity.getIn(['attributes', 'code']);
                         return (
                           <ListItem
                             key={i}
@@ -236,8 +236,8 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
                               { entity.getIn(['attributes', 'draft'])
                             && <ItemStatus draft />
                               }
-                              <Id>{ref}</Id>
-                              <IdSpacer />
+                              {ref && <Id>{ref}</Id>}
+                              {ref && <IdSpacer />}
                               <ItemContent>
                                 {truncateText(entity.getIn(['attributes', 'title']), TEXT_TRUNCATE.CONNECTION_POPUP - ref.length)}
                               </ItemContent>

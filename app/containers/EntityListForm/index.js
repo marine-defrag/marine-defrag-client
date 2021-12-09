@@ -72,7 +72,6 @@ class EntityListForm extends React.Component { // eslint-disable-line react/pref
     } else {
       formTitle = formOptions.title;
     }
-
     return (
       <Styled
         sidebarResponsiveLarge={!formOptions.advanced}

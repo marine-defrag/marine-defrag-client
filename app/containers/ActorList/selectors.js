@@ -137,7 +137,7 @@ export const selectConnectedTaxonomies = createSelector(
 const selectActorsWithCategories = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   (state, args) => selectActorsSearchQuery(state, {
-    searchAttributes: CONFIG.search || ['reference', 'title'],
+    searchAttributes: CONFIG.search || ['code', 'title'],
     ...args,
   }),
   selectActorCategoriesGroupedByActor,

@@ -359,7 +359,7 @@ export const selectEntity = createSelector(
 // all actions
 export const selectActions = createSelector(
   (state) => selectEntities(state, API.ACTIONS),
-  (entities) => entities
+  (entities) => sortEntities(entities, 'asc', 'title', null, false)
 );
 export const selectAction = createSelector(
   (state, id) => selectEntity(state, { id, path: API.ACTIONS }),
@@ -368,7 +368,7 @@ export const selectAction = createSelector(
 // all actors
 export const selectActors = createSelector(
   (state) => selectEntities(state, API.ACTORS),
-  (entities) => entities
+  (entities) => sortEntities(entities, 'asc', 'title', null, false)
 );
 export const selectActor = createSelector(
   (state, id) => selectEntity(state, { id, path: API.ACTORS }),
