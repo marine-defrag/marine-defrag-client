@@ -29,8 +29,16 @@ export function hasRoleRequired(roleIds, roleRequired) {
   || (roleRequired === USER_ROLES.ANALYST.value && (roleIds.includes(USER_ROLES.MANAGER.value) || roleIds.includes(USER_ROLES.ADMIN.value)));
 }
 
-function redirectIfSignedIn(store) {
-  return (nextState, replace) => selectIsSignedIn(store.getState()) && replaceAlreadySignedIn(replace);
+function redirectIfSignedIn(store, replacePath) {
+  return (nextState, replace) => {
+    if (selectIsSignedIn(store.getState())) {
+      if (replacePath) {
+        replace(replacePath);
+      } else {
+        replaceAlreadySignedIn(replace);
+      }
+    }
+  };
 }
 
 function redirectIfNotSignedIn(store, info = PARAMS.NOT_SIGNED_IN) {
@@ -63,7 +71,7 @@ export function getRedirects(store) {
   checkStore(store);
 
   return {
-    redirectIfSignedIn: (info) => redirectIfSignedIn(store, info),
+    redirectIfSignedIn: (replacePath) => redirectIfSignedIn(store, replacePath),
     redirectIfNotSignedIn: (info) => redirectIfNotSignedIn(store, info),
     redirectIfNotPermitted: (roleRequired, replacePath) => redirectIfNotPermitted(store, roleRequired, replacePath),
     redirect: (replacePath) => redirect(store, replacePath),

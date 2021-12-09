@@ -15,7 +15,7 @@ const Sidebar = styled.div`
     ? props.theme.sizes.aside.width.small
     : props.theme.sizes.aside.width.large
 }px;
-    right: auto;
+    left: auto;
   }
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
     width: ${(props) => props.theme.sizes.aside.width.large}px;

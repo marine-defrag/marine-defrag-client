@@ -36,9 +36,9 @@ theme.breakpoints = {
 // 0: main colour, darker, used for links and navigation elements, hover
 // 1: main colour, used for links and navigation elements
 // 2: main colour, light
-// 3: main colour, lighter (UNUSED)
+// 3: main colour, background
 // 4: white
-const primary = coolorsToHex('https://coolors.co/0063b5-0070cc-0077d8-ffffff-ffffff');
+const primary = coolorsToHex('https://coolors.co/0063b5-0070cc-0077d8-f1f3f3-ffffff');
 // secondary color palette: dark to light
 // 0: dark header colour, darker
 // 1: dark header colour
@@ -303,19 +303,33 @@ theme.sizes = {
     paddingTop: 12,
     paddingBottom: 12,
   },
+  headerExplore: {
+    banner: {
+      height: 120,
+      heightMobile: 60,
+    },
+    nav: {
+      height: 40,
+      heightMobile: 30,
+    },
+    listNav: {
+      height: 60,
+      heightMobile: 50,
+    },
+  },
   header: {
     banner: {
-      height: 60,
+      height: 40,
       heightMobile: 40,
     },
     nav: {
-      height: 50,
-      heightMobile: 40,
+      height: 30,
+      heightMobile: 30,
     },
     // px or em
     text: {
-      title: '30px',
-      titleMobile: '20px',
+      title: '24px',
+      titleMobile: '16px',
       claim: '12px',
       claimMobile: '9px',
     },
