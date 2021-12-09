@@ -16,8 +16,7 @@ import { Map, List, fromJS } from 'immutable';
 import Messages from 'components/Messages';
 import Loading from 'components/Loading';
 
-import EntityListSidebar from 'components/EntityListSidebar';
-import EntityListSidebarLoading from 'components/EntityListSidebarLoading';
+import EntityListHeader from 'components/EntityListHeader';
 import EntityListPrintKey from 'components/EntityListPrintKey';
 import EntityListMain from 'components/EntityListMain';
 import PrintOnly from 'components/styled/PrintOnly';
@@ -155,9 +154,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 
     return (
       <div>
-        {!this.props.dataReady && this.props.showSidebar && <EntityListSidebarLoading />}
-        {this.props.dataReady && this.props.showSidebar && !printing && (
-          <EntityListSidebar
+        {this.props.dataReady && this.props.includeHeader && !printing && (
+          <EntityListHeader
             listUpdating={progress !== null && progress >= 0 && progress < 100}
             entities={entities}
             taxonomies={this.props.taxonomies}
@@ -191,7 +189,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           />
         )}
         <EntityListMain
-          hasSidebar={this.props.showSidebar}
           listUpdating={progress !== null && progress >= 0 && progress < 100}
           entities={entities}
           errors={errors}
@@ -317,7 +314,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 }
 
 EntityList.defaultProps = {
-  showSidebar: true,
+  includeHeader: true,
   canEdit: true,
 };
 
@@ -368,7 +365,7 @@ EntityList.propTypes = {
   onDismissError: PropTypes.func.isRequired,
   onDismissAllErrors: PropTypes.func.isRequired,
   canEdit: PropTypes.bool,
-  showSidebar: PropTypes.bool,
+  includeHeader: PropTypes.bool,
 };
 
 EntityList.contextTypes = {

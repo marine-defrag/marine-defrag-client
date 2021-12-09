@@ -66,7 +66,7 @@ export class PageList extends React.PureComponent { // eslint-disable-line react
           config={CONFIG}
           header={headerOptions}
           dataReady={dataReady}
-          showSidebar={false}
+          includeHeader={false}
           canEdit={false}
           entityTitle={{
             single: intl.formatMessage(appMessages.entities.pages.single),

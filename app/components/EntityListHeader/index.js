@@ -1,34 +1,26 @@
 /*
  *
- * EntityListSidebar
+ * EntityListHeader
  *
  */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import styled, { withTheme } from 'styled-components';
-import { palette } from 'styled-theme';
-import { Map, List, fromJS } from 'immutable';
+import { Map, List } from 'immutable';
 
 import { isEqual } from 'lodash/lang';
 
-import { FILTERS_PANEL, EDIT_PANEL, VIEWPORTS } from 'containers/App/constants';
+import { FILTERS_PANEL, EDIT_PANEL } from 'containers/App/constants';
 import { FILTER_FORM_MODEL, EDIT_FORM_MODEL } from 'containers/EntityListForm/constants';
 
-import Scrollable from 'components/styled/Scrollable';
-import Icon from 'components/Icon';
-import Button from 'components/buttons/Button';
-import ButtonToggle from 'components/buttons/ButtonToggle';
 import ButtonDefault from 'components/buttons/ButtonDefault';
-import SupTitle from 'components/SupTitle';
 
 import EntityListForm from 'containers/EntityListForm';
 import appMessages from 'containers/App/messages';
-import Sidebar from 'components/styled/Sidebar';
-import SidebarHeader from 'components/styled/SidebarHeader';
 import PrintHide from 'components/styled/PrintHide';
 
-import EntityListSidebarGroups from './EntityListSidebarGroups';
+import EntityListSidebar from './EntityListSidebar';
 
 import { makeFilterGroups } from './filterGroupsFactory';
 import { makeEditGroups } from './editGroupsFactory';
@@ -38,24 +30,11 @@ import { makeActiveEditOptions } from './editOptionsFactory';
 import messages from './messages';
 
 const Styled = styled(PrintHide)``;
-// const Main = styled.div``;
-const ScrollableWrapper = styled(Scrollable)`
-  background-color: ${palette('aside', 0)};
-`;
-
-const ListEntitiesEmpty = styled.div`
-  font-size: 1.2em;
-  padding: 1.5em;
-  color: ${palette('text', 1)};
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.large};
-  }
-`;
 
 const ToggleShow = styled(ButtonDefault)`
   position: absolute;
-  bottom: 0;
-  left: 0;
+  top: 0;
+  right: 0;
   z-index: 100;
   padding: 0.75em 1em;
   letter-spacing: 0;
@@ -73,48 +52,9 @@ const ToggleShow = styled(ButtonDefault)`
   }
 `;
 
-const ToggleHide = styled(Button)`
-  position: absolute;
-  right:0;
-  top:0;
-`;
-// color: ${palette('link', 3)};
-// &:hover {
-//   color: ${palette('linkHover', 3)};
-// }
-const SidebarWrapper = styled.div`
-  ${(props) => props.sidebarAbsolute
-    ? 'position: absolute;width: 100%;top: 0;bottom: 0;left: 0;right: 0;background-color: rgba(0,0,0,0.2); z-index: 98;'
-    : ''
-}
-`;
-
 const STATE_INITIAL = {
   activeOption: null,
-  expandedGroups: {
-    actortypes: true,
-    taxonomies: true,
-    taxonomies_1: true,
-    taxonomies_2: true,
-    taxonomies_3: true,
-    taxonomies_4: true,
-    taxonomies_5: true,
-    taxonomies_6: true,
-    taxonomies_7: true,
-    taxonomies_8: true,
-    taxonomies_9: true,
-    taxonomies_10: true,
-    taxonomies_11: true,
-    taxonomies_12: true,
-    // connectedTaxonomies: true,
-    connections: true,
-    targets: false,
-    members: false,
-    associations: false,
-    attributes: true,
-  },
-  visible: false,
-  viewport: null,
+  visibleSidebar: false,
 };
 
 const getFilterConnectionsMsg = (intl, type) => type
@@ -127,7 +67,7 @@ const getEditConnectionsMsg = (intl, type) => type
   ? intl.formatMessage(messages.editGroupLabel[`connections-${type}`])
   : intl.formatMessage(messages.editGroupLabel.connections);
 
-export class EntityListSidebar extends React.Component { // eslint-disable-line react/prefer-stateless-function
+export class EntityListHeader extends React.Component { // eslint-disable-line react/prefer-stateless-function
   constructor() {
     super();
     this.state = STATE_INITIAL;
@@ -138,7 +78,6 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
   }
 
   componentDidMount() {
-    this.updateViewport();
     window.addEventListener('resize', this.resize);
   }
 
@@ -150,16 +89,6 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // console.log('shouldComponentUpdate')
-    // console.log('locationQuery', isEqual(this.props.locationQuery, nextProps.locationQuery))
-    // console.log('locationQuery', this.props.locationQuery === nextProps.locationQuery)
-    // console.log('locationQuery.where',!isEqual(this.props.locationQuery.where, nextProps.locationQuery.where))
-    // console.log('locationQuery.without',!isEqual(this.props.locationQuery.without, nextProps.locationQuery.without))
-    // console.log('locationQuery.cat',!isEqual(this.props.locationQuery.cat, nextProps.locationQuery.cat))
-    // console.log('locationQuery.catx',!isEqual(this.props.locationQuery.catx, nextProps.locationQuery.catx))
-    // console.log('entityIdsSelected',this.props.entityIdsSelected !== nextProps.entityIdsSelected)
-    // console.log('activePanel',this.props.activePanel !== nextProps.activePanel)
-    // console.log('state',!isEqual(this.state, nextState));
     // TODO consider targeting specific query params, eg where, without, cat, catx but also actors, etc
     if (nextProps.listUpdating && isEqual(this.state, nextState)) {
       return false;
@@ -179,52 +108,29 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
     window.removeEventListener('resize', this.resize);
   }
 
+  onSetActiveOption = (option) => {
+    this.setState({ activeOption: option });
+  };
+
   onShowForm = (option) => {
     this.setState({ activeOption: option.active ? null : option });
   };
 
   onShowSidebar = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.setState({ visible: true });
+    this.setState({ visibleSidebar: true });
   };
 
   onHideSidebar = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     this.onHideForm(evt);
-    this.setState({ visible: false });
+    this.setState({ visibleSidebar: false });
   };
 
   onHideForm = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     this.setState({ activeOption: null });
   };
-
-  onToggleGroup = (groupId, expanded) => {
-    this.setState((prevState) => {
-      const expandedGroups = { ...prevState.expandedGroups };
-      expandedGroups[groupId] = expanded;
-      return ({
-        expandedGroups,
-        activeOption: null,
-      });
-    });
-  }
-
-  getSidebarButtons = () => {
-    const { intl } = this.context;
-    return ([
-      {
-        label: intl.formatMessage(messages.header.filterButton),
-        panel: FILTERS_PANEL,
-        icon: 'filter',
-      },
-      {
-        label: intl.formatMessage(messages.header.editButton),
-        panel: EDIT_PANEL,
-        icon: 'edit',
-      },
-    ]);
-  }
 
   getFormButtons = (activeOption) => {
     const { intl } = this.context;
@@ -253,22 +159,8 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
   resize = () => {
     // reset
     this.setState(STATE_INITIAL);
-    this.updateViewport();
     this.forceUpdate();
   };
-
-  updateViewport() {
-    const { theme } = this.props;
-    let viewport = VIEWPORTS.MOBILE;
-    if (window.innerWidth >= parseInt(theme.breakpoints.large, 10)) {
-      viewport = VIEWPORTS.LARGE;
-    } else if (window.innerWidth >= parseInt(theme.breakpoints.medium, 10)) {
-      viewport = VIEWPORTS.MEDIUM;
-    } else if (window.innerWidth >= parseInt(theme.breakpoints.small, 10)) {
-      viewport = VIEWPORTS.SMALL;
-    }
-    this.setState({ viewport });
-  }
 
   render() {
     const {
@@ -295,7 +187,6 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
     const { activeOption } = this.state;
 
     const hasSelected = entityIdsSelected && entityIdsSelected.size > 0;
-    const hasEntities = entities && entities.size > 0;
     const formModel = activePanel === FILTERS_PANEL ? FILTER_FORM_MODEL : EDIT_FORM_MODEL;
 
     let panelGroups = null;
@@ -388,77 +279,28 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
     }
     return (
       <Styled>
-        { (!this.state.visible && this.state.viewport < VIEWPORTS.LARGE)
-          && (
-            <ToggleShow onClick={this.onShowSidebar}>
-              { canEdit
-              && <FormattedMessage {...messages.sidebarToggle.showFilterEdit} />
-              }
-              { !canEdit
-              && <FormattedMessage {...messages.sidebarToggle.showFilter} />
-              }
-            </ToggleShow>
-          )
-        }
-        { (this.state.visible || this.state.viewport === VIEWPORTS.LARGE)
-          && (
-            <SidebarWrapper
-              sidebarAbsolute={this.state.viewport < VIEWPORTS.LARGE}
-              onClick={this.onHideSidebar}
-            >
-              <Sidebar onClick={(evt) => evt.stopPropagation()}>
-                <ScrollableWrapper>
-                  <SidebarHeader hasButtons={canEdit}>
-                    {canEdit
-                    && (
-                      <ButtonToggle
-                        options={this.getSidebarButtons()}
-                        activePanel={activePanel}
-                        onSelect={onPanelSelect}
-                      />
-                    )}
-                    {!canEdit
-                    && <SupTitle title={intl.formatMessage(messages.header.filter)} />
-                    }
-                    { this.state.viewport < VIEWPORTS.LARGE
-                    && (
-                      <ToggleHide onClick={this.onHideSidebar}>
-                        <Icon name="close" />
-                      </ToggleHide>
-                    )
-                    }
-                  </SidebarHeader>
-                  <div>
-                    { (activePanel === FILTERS_PANEL || (activePanel === EDIT_PANEL && hasSelected && hasEntities))
-                    && (
-                      <EntityListSidebarGroups
-                        groups={fromJS(panelGroups)}
-                        onShowForm={this.onShowForm}
-                        onToggleGroup={this.onToggleGroup}
-                        expanded={this.state.expandedGroups}
-                      />
-                    )
-                    }
-                    { activePanel === EDIT_PANEL && !hasEntities
-                    && (
-                      <ListEntitiesEmpty>
-                        <FormattedMessage {...messages.entitiesNotFound} />
-                      </ListEntitiesEmpty>
-                    )
-                    }
-                    { activePanel === EDIT_PANEL && hasEntities && !hasSelected
-                    && (
-                      <ListEntitiesEmpty>
-                        <FormattedMessage {...messages.entitiesNotSelected} />
-                      </ListEntitiesEmpty>
-                    )
-                    }
-                  </div>
-                </ScrollableWrapper>
-              </Sidebar>
-            </SidebarWrapper>
-          )
-        }
+        {!this.state.visibleSidebar && (
+          <ToggleShow onClick={this.onShowSidebar}>
+            { canEdit
+            && <FormattedMessage {...messages.sidebarToggle.showFilterEdit} />
+            }
+            { !canEdit
+            && <FormattedMessage {...messages.sidebarToggle.showFilter} />
+            }
+          </ToggleShow>
+        )}
+        {this.state.visibleSidebar && (
+          <EntityListSidebar
+            activePanel={activePanel}
+            canEdit={canEdit}
+            onPanelSelect={onPanelSelect}
+            hasEntities={entities && entities.size > 0}
+            hasSelected={entityIdsSelected && entityIdsSelected.size > 0}
+            panelGroups={panelGroups}
+            onHideSidebar={this.onHideSidebar}
+            setActiveOption={this.onSetActiveOption}
+          />
+        )}
         { formOptions
           && (
             <EntityListForm
@@ -492,7 +334,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
     );
   }
 }
-EntityListSidebar.propTypes = {
+EntityListHeader.propTypes = {
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
@@ -516,8 +358,8 @@ EntityListSidebar.propTypes = {
   theme: PropTypes.object,
 };
 
-EntityListSidebar.contextTypes = {
+EntityListHeader.contextTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default withTheme(EntityListSidebar);
+export default withTheme(EntityListHeader);
