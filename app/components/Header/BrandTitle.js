@@ -8,8 +8,9 @@ export default styled.h1`
   font-family: ${(props) => props.theme.fonts.title};
   font-size: ${(props) => props.theme.sizes.header.text.titleMobile};
   line-height: ${(props) => props.theme.sizes.header.banner.heightMobile}px;
+  float: left;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding: 0px 5px;
+    padding: 4px 0 0 0;
     font-size: ${(props) => props.theme.sizes.header.text.title};
     line-height: ${(props) => props.theme.sizes.header.text.title};
   }

@@ -14,6 +14,8 @@ export default styled(Link)`
     padding-bottom: 0.4em;
     font-size: 0.8em;
     display: inline-flex;
+    align-items: center;
+    height: ${({ theme }) => theme.sizes.header.banner.height}px;
   }
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
     font-size: 0.9em;
