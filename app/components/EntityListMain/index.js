@@ -101,6 +101,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       errors,
       actortypes,
       onDismissAllErrors,
+      hasSidebar,
     } = this.props;
     const { intl } = this.context;
 
@@ -184,7 +185,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
     }
     const headerActions = dataReady ? header.actions : [];
     return (
-      <ContainerWithSidebar ref={this.ScrollContainer}>
+      <ContainerWithSidebar noSidebar={!hasSidebar} ref={this.ScrollContainer}>
         <Container ref={this.ScrollReference}>
           <Content>
             <ContentHeader
@@ -310,6 +311,7 @@ EntityListMain.propTypes = {
   onDismissError: PropTypes.func.isRequired,
   onDismissAllErrors: PropTypes.func.isRequired,
   listUpdating: PropTypes.bool,
+  hasSidebar: PropTypes.bool,
 };
 
 EntityListMain.contextTypes = {

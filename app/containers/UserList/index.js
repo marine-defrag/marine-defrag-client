@@ -69,6 +69,8 @@ export class UserList extends React.PureComponent { // eslint-disable-line react
           config={CONFIG}
           header={headerOptions}
           dataReady={dataReady}
+          showSidebar={false}
+          canEdit={false}
           entityTitle={{
             single: intl.formatMessage(appMessages.entities.users.single),
             plural: intl.formatMessage(appMessages.entities.users.plural),
