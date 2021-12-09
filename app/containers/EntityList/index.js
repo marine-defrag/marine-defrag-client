@@ -66,6 +66,8 @@ import {
   resetSearchQuery,
 } from './actions';
 
+import { currentFilters, currentFilterArgs } from './current-filters';
+
 const Progress = styled.div`
   position: absolute;
   width: 100%;
@@ -93,6 +95,14 @@ const ProgressText = styled.div`
 export class EntityList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   UNSAFE_componentWillMount() {
     this.props.updateClientPath();
+  }
+
+  onClearFilters = () => {
+    this.props.onResetFilters(currentFilterArgs(
+      this.props.config,
+      this.props.locationQuery,
+    ));
+    this.props.onDismissAllErrors();
   }
 
   getMessageForType = (type) => {
@@ -129,8 +139,12 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       progress, viewDomain,
       canEdit,
       progressTypes,
-      onDismissAllErrors,
       allTaxonomies,
+      config,
+      locationQuery,
+      connections,
+      onTagClick,
+      actortypes,
     } = this.props;
 
     const sending = viewDomain.get('sending');
@@ -151,19 +165,35 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       && window.matchMedia
       && window.matchMedia('print').matches
     );
-
+    const filters = currentFilters(
+      {
+        config,
+        entities,
+        taxonomies: allTaxonomies,
+        connections,
+        locationQuery,
+        onTagClick,
+        errors,
+        actortypes,
+      },
+      intl.formatMessage(messages.filterFormWithoutPrefix),
+      intl.formatMessage(messages.filterFormError),
+    );
     return (
       <div>
         {this.props.dataReady && this.props.includeHeader && !printing && (
           <EntityListHeader
+            currentFilters={filters}
+            onClearFilters={this.onClearFilters}
+            onSearch={this.props.onSearch}
             listUpdating={progress !== null && progress >= 0 && progress < 100}
             entities={entities}
             taxonomies={this.props.taxonomies}
-            actortypes={this.props.actortypes}
+            actortypes={actortypes}
             targettypes={this.props.targettypes}
             actiontypes={this.props.actiontypes}
             actiontypesForTarget={this.props.actiontypesForTarget}
-            connections={this.props.connections}
+            connections={connections}
             membertypes={this.props.membertypes}
             associationtypes={this.props.associationtypes}
             connectedTaxonomies={this.props.connectedTaxonomies}
@@ -172,8 +202,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
                 ? entityIdsSelected
                 : entityIdsSelectedFiltered
             }
-            config={this.props.config}
-            locationQuery={this.props.locationQuery}
+            config={config}
+            locationQuery={locationQuery}
             canEdit={canEdit && this.props.hasUserRole[USER_ROLES.MANAGER.value]}
             hasUserRole={this.props.hasUserRole}
             activePanel={this.props.activePanel}
@@ -189,11 +219,13 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           />
         )}
         <EntityListMain
+          currentFilters={filters}
+          onClearFilters={this.onClearFilters}
+          hasHeader={this.props.includeHeader}
           listUpdating={progress !== null && progress >= 0 && progress < 100}
           entities={entities}
           errors={errors}
           taxonomies={this.props.taxonomies}
-          allTaxonomies={allTaxonomies}
           actortypes={this.props.actortypes}
           actiontypes={this.props.actiontypes}
           connections={this.props.connections}
@@ -203,9 +235,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               ? entityIdsSelected
               : entityIdsSelectedFiltered
           }
-          locationQuery={this.props.locationQuery}
+          locationQuery={locationQuery}
 
-          config={this.props.config}
+          config={config}
           header={this.props.header}
           entityTitle={this.props.entityTitle}
 
@@ -216,11 +248,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           entityIcon={this.props.entityIcon}
           onEntitySelect={this.props.onEntitySelect}
           onEntitySelectAll={this.props.onEntitySelectAll}
-          onTagClick={this.props.onTagClick}
           onGroupSelect={this.props.onGroupSelect}
           onSubgroupSelect={this.props.onSubgroupSelect}
           onSearch={this.props.onSearch}
-          onResetFilters={this.props.onResetFilters}
           onPageSelect={this.props.onPageSelect}
           onPageItemsSelect={this.props.onPageItemsSelect}
           onEntityClick={(id, path) => this.props.onEntityClick(
@@ -229,15 +259,14 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           onSortBy={this.props.onSortBy}
           onSortOrder={this.props.onSortOrder}
           onDismissError={this.props.onDismissError}
-          onDismissAllErrors={onDismissAllErrors}
         />
-        {this.props.dataReady && this.props.config.taxonomies && (
+        {this.props.dataReady && config.taxonomies && (
           <PrintOnly>
             <EntityListPrintKey
               entities={entities}
               taxonomies={this.props.taxonomies}
-              config={this.props.config}
-              locationQuery={this.props.locationQuery}
+              config={config}
+              locationQuery={locationQuery}
             />
           </PrintOnly>
         )}

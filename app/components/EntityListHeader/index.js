@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import styled, { withTheme } from 'styled-components';
 import { Map, List } from 'immutable';
+import { palette } from 'styled-theme';
 
 import { isEqual } from 'lodash/lang';
 
@@ -19,6 +20,7 @@ import ButtonDefault from 'components/buttons/ButtonDefault';
 import EntityListForm from 'containers/EntityListForm';
 import appMessages from 'containers/App/messages';
 import PrintHide from 'components/styled/PrintHide';
+import TagSearch from 'components/TagSearch';
 
 import EntityListSidebar from './EntityListSidebar';
 
@@ -33,25 +35,34 @@ const Styled = styled(PrintHide)``;
 
 const ToggleShow = styled(ButtonDefault)`
   position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 100;
+  top:0;
+  right:0;
   padding: 0.75em 1em;
   letter-spacing: 0;
   border-radius: 0;
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
   font-size: 0.85em;
-  width: 100%;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     font-size: 0.85em;
     padding: 0.75em 1em;
-    width: ${(props) => props.theme.sizes.aside.width.large}px;
   }
   @media print {
     font-size: ${(props) => props.theme.sizes.print.smaller};
   }
 `;
-
+const EntityListSearch = styled.div`
+  padding-bottom: 1em;
+  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
+    padding-bottom: 2em;
+  }
+`;
+const TheHeader = styled.div`
+  height: ${({ theme }) => theme.sizes.headerList.banner.height}px;
+  padding: 8px 30px;
+  background-color: ${palette('primary', 3)};
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
+  position: relative;
+`;
 const STATE_INITIAL = {
   activeOption: null,
   visibleSidebar: false,
@@ -66,6 +77,7 @@ const getEditConnectionsMsg = (intl, type) => type
   && messages.editGroupLabel[`connections-${type}`]
   ? intl.formatMessage(messages.editGroupLabel[`connections-${type}`])
   : intl.formatMessage(messages.editGroupLabel.connections);
+
 
 export class EntityListHeader extends React.Component { // eslint-disable-line react/prefer-stateless-function
   constructor() {
@@ -182,6 +194,9 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       actiontypesForTarget,
       membertypes,
       associationtypes,
+      currentFilters,
+      onSearch,
+      onClearFilters,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -279,7 +294,15 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     }
     return (
       <Styled>
-        {!this.state.visibleSidebar && (
+        <TheHeader>
+          <EntityListSearch>
+            <TagSearch
+              filters={currentFilters}
+              searchQuery={locationQuery.get('search') || ''}
+              onSearch={onSearch}
+              onClear={onClearFilters}
+            />
+          </EntityListSearch>
           <ToggleShow onClick={this.onShowSidebar}>
             { canEdit
             && <FormattedMessage {...messages.sidebarToggle.showFilterEdit} />
@@ -288,7 +311,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             && <FormattedMessage {...messages.sidebarToggle.showFilter} />
             }
           </ToggleShow>
-        )}
+        </TheHeader>
         {this.state.visibleSidebar && (
           <EntityListSidebar
             activePanel={activePanel}
@@ -356,6 +379,9 @@ EntityListHeader.propTypes = {
   onCreateOption: PropTypes.func.isRequired,
   listUpdating: PropTypes.bool,
   theme: PropTypes.object,
+  currentFilters: PropTypes.array,
+  onClearFilters: PropTypes.func.isRequired,
+  onSearch: PropTypes.func.isRequired,
 };
 
 EntityListHeader.contextTypes = {

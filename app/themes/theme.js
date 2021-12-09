@@ -303,6 +303,12 @@ theme.sizes = {
     paddingTop: 12,
     paddingBottom: 12,
   },
+  headerList: {
+    banner: {
+      height: 60,
+      heightMobile: 30,
+    },
+  },
   headerExplore: {
     banner: {
       height: 120,
@@ -311,10 +317,6 @@ theme.sizes = {
     nav: {
       height: 40,
       heightMobile: 30,
-    },
-    listNav: {
-      height: 60,
-      heightMobile: 50,
     },
   },
   header: {
