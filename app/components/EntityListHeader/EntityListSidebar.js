@@ -46,10 +46,11 @@ const ToggleHide = styled(Button)`
 //   color: ${palette('linkHover', 3)};
 // }
 const SidebarWrapper = styled.div`
-  ${(props) => props.sidebarAbsolute
-    ? 'position: absolute;top: 0;bottom: 0;right: 0;z-index: 98;'
-    : ''
-}
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 98;
 `;
 
 const STATE_INITIAL = {
@@ -117,10 +118,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
     } = this.props;
     const { intl } = this.context;
     return (
-      <SidebarWrapper
-        sidebarAbsolute
-        onClick={onHideSidebar}
-      >
+      <SidebarWrapper onClick={onHideSidebar}>
         <Sidebar onClick={(evt) => evt.stopPropagation()}>
           <ScrollableWrapper>
             <SidebarHeader>

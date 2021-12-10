@@ -40,9 +40,6 @@ const Tags = styled.div`
 
 const Clear = styled(Button)`
   padding: ${(props) => props.small ? '4px 6px' : '8px 6px'};
-  position: absolute;
-  top: 0;
-  right: 0;
   background-color: ${palette('background', 4)};
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     padding: ${(props) => props.small ? '4px 6px' : '8px 6px'};

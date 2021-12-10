@@ -11,15 +11,18 @@ import { Map, List } from 'immutable';
 import { palette } from 'styled-theme';
 
 import { isEqual } from 'lodash/lang';
+import { truncateText } from 'utils/string';
 
+import { TEXT_TRUNCATE } from 'themes/config';
 import { FILTER_FORM_MODEL, EDIT_FORM_MODEL } from 'containers/EntityListForm/constants';
 
-import ButtonFlat from 'components/buttons/ButtonFlat';
+import Button from 'components/buttons/Button';
 
 import EntityListForm from 'containers/EntityListForm';
 import appMessages from 'containers/App/messages';
 import PrintHide from 'components/styled/PrintHide';
 import TagList from 'components/TagList';
+import Icon from 'components/Icon';
 
 import EntityListSidebar from './EntityListSidebar';
 
@@ -32,11 +35,24 @@ import messages from './messages';
 
 const Styled = styled(PrintHide)``;
 
-const ToggleShow = styled(ButtonFlat)`
-  padding: 0.75em 1em;
+const ToggleShow = styled(Button)`
+  padding: 5px;
   letter-spacing: 0;
   font-weight: normal;
   text-transform: none;
+  display: block;
+  max-width: 160px;
+  margin:0;
+`;
+const SelectType = styled.a`
+  display: none;
+  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+    display: inline-block;
+  }
+`;
+const HeaderSection = styled.div`
+  display: inline-block;
+  position: relative;
 `;
 const EntityListSearch = styled.div`
   padding-bottom: 1em;
@@ -50,9 +66,60 @@ const TheHeader = styled.div`
   background-color: ${palette('primary', 3)};
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
   position: relative;
+  z-index: 96;
 `;
+
+// const LinkSuperTitle = styled.div`
+//   font-size: ${(props) => props.theme.sizes.text.smallMobile};
+//   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+//     font-size: ${(props) => props.theme.sizes.text.smaller};
+//   }
+//   @media print {
+//     font-size: ${(props) => props.theme.sizes.print.smaller};
+//   }
+// `;
+const LinkTitle = styled.div`
+  font-size: ${(props) => props.theme.sizes.text.small};
+  font-weight: bold;
+  color: ${(props) => props.active ? palette('headerNavMainItem', 1) : 'inherit'};
+  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+    font-size: ${(props) => props.theme.sizes.text.default};
+  }
+  @media print {
+    font-size: ${(props) => props.theme.sizes.print.default};
+  }
+`;
+
+const TypeOptions = styled(PrintHide)`
+  display: none;
+  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: block;
+    min-width: ${({ theme }) => theme.sizes.aside.width.small}px;
+  }
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    min-width: ${({ theme }) => theme.sizes.aside.width.large}px;
+  }
+  background: white;
+  box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.2);
+  margin-top: 3px;
+  padding: 5px 0;
+`;
+const TypeOption = styled(Button)`
+  display: block;
+  width: 100%;
+  text-align: left;
+  &:hover {
+    color:${palette('headerNavMainItemHover', 0)};
+  }
+  color: ${(props) => props.active ? palette('headerNavMainItem', 1) : 'inherit'};
+`;
+
 const STATE_INITIAL = {
   activeOption: null,
+  showTypes: false,
 };
 
 const getFilterConnectionsMsg = (intl, type) => type
@@ -70,6 +137,9 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
   constructor() {
     super();
     this.state = STATE_INITIAL;
+    this.typeWrapperRef = React.createRef();
+    this.typeButtonRef = React.createRef();
+    this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
   UNSAFE_componentWillMount() {
@@ -78,6 +148,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
 
   componentDidMount() {
     window.addEventListener('resize', this.resize);
+    window.addEventListener('mousedown', this.handleClickOutside);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -109,6 +180,19 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.resize);
+    window.removeEventListener('mousedown', this.handleClickOutside);
+  }
+
+  handleClickOutside = (evt) => {
+    const wrapperContains = this.typeWrapperRef
+      && this.typeWrapperRef.current
+      && this.typeWrapperRef.current.contains(evt.target);
+    const buttonContains = this.typeButtonRef
+      && this.typeButtonRef.current
+      && this.typeButtonRef.current.contains(evt.target);
+    if (!wrapperContains && !buttonContains) {
+      this.setState({ showTypes: false });
+    }
   }
 
   onSetActiveOption = (option) => {
@@ -122,6 +206,16 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
   onHideForm = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     this.setState({ activeOption: null });
+  };
+
+  onShowTypes = (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    this.setState({ showTypes: true });
+  };
+
+  onHideTypes = (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    this.setState({ showTypes: false });
   };
 
   getFormButtons = (activeOption) => {
@@ -180,6 +274,8 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       onHideEditOptions,
       onShowEditOptions,
       isManager,
+      onSelectType,
+      typeOptions,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -270,23 +366,78 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         });
       }
     }
+    const currentTypeOption = typeOptions
+      && typeOptions.find((option) => option.active);
     return (
       <Styled>
         <TheHeader>
-          <EntityListSearch>
-            <TagList
-              filters={currentFilters}
-              onClear={onClearFilters}
-            />
-          </EntityListSearch>
-          <ToggleShow onClick={onShowFilters} disabled={showFilters || hasSelected}>
-            <FormattedMessage {...messages.sidebarToggle.showFilter} />
-          </ToggleShow>
-          {isManager && (
-            <ToggleShow onClick={onShowEditOptions} disabled={showEditOptions}>
-              <FormattedMessage {...messages.sidebarToggle.showEditOptions} />
-            </ToggleShow>
+          {typeOptions && (
+            <HeaderSection>
+              <Button onClick={() => onSelectType()}>
+                {'<'}
+              </Button>
+            </HeaderSection>
           )}
+          {typeOptions && (
+            <HeaderSection>
+              <SelectType
+                as="button"
+                ref={this.typeButtonRef}
+                onClick={(evt) => this.state.showTypes
+                  ? this.onHideTypes(evt)
+                  : this.onShowTypes(evt)
+                }
+              >
+                <LinkTitle active>
+                  {truncateText(
+                    currentTypeOption.label,
+                    TEXT_TRUNCATE.TYPE_SELECT,
+                    false,
+                  )}
+                  {!this.state.showTypes && (
+                    <Icon name="dropdownOpen" text textRight size="1em" />
+                  )}
+                  {this.state.showTypes && (
+                    <Icon name="dropdownClose" text textRight size="1em" />
+                  )}
+                </LinkTitle>
+              </SelectType>
+              {this.state.showTypes && typeOptions && (
+                <TypeOptions ref={this.typeWrapperRef}>
+                  {typeOptions.map((option) => (
+                    <TypeOption
+                      key={option.value}
+                      active={option.active}
+                      onClick={() => {
+                        onSelectType(option.value);
+                        this.onHideTypes();
+                      }}
+                    >
+                      {option.label}
+                    </TypeOption>
+                  ))}
+                </TypeOptions>
+              )}
+            </HeaderSection>
+          )}
+          <HeaderSection>
+            <EntityListSearch>
+              <TagList
+                filters={currentFilters}
+                onClear={onClearFilters}
+              />
+            </EntityListSearch>
+          </HeaderSection>
+          <HeaderSection>
+            <ToggleShow onClick={onShowFilters} disabled={showFilters || hasSelected}>
+              <FormattedMessage {...messages.sidebarToggle.showFilter} />
+            </ToggleShow>
+            {isManager && (
+              <ToggleShow onClick={onShowEditOptions} disabled={showEditOptions}>
+                <FormattedMessage {...messages.sidebarToggle.showEditOptions} />
+              </ToggleShow>
+            )}
+          </HeaderSection>
         </TheHeader>
         {showFilters && (
           <EntityListSidebar
@@ -365,6 +516,8 @@ EntityListHeader.propTypes = {
   onHideEditOptions: PropTypes.func,
   onShowEditOptions: PropTypes.func,
   isManager: PropTypes.bool,
+  typeOptions: PropTypes.array,
+  onSelectType: PropTypes.func,
 };
 
 EntityListHeader.contextTypes = {

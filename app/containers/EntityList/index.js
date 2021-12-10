@@ -188,6 +188,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       connections,
       onTagClick,
       actortypes,
+      actiontypes,
+      typeOptions,
+      onSelectType,
     } = this.props;
     // detect print to avoid expensive rendering
     const printing = !!(
@@ -235,11 +238,11 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             entityIdsSelected={entityIdsSelected}
             taxonomies={this.props.taxonomies}
             actortypes={actortypes}
+            actiontypes={actiontypes}
             targettypes={this.props.targettypes}
-            actiontypes={this.props.actiontypes}
             actiontypesForTarget={this.props.actiontypesForTarget}
-            connections={connections}
             membertypes={this.props.membertypes}
+            connections={connections}
             associationtypes={this.props.associationtypes}
             connectedTaxonomies={this.props.connectedTaxonomies}
             config={config}
@@ -260,6 +263,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onHideFilters={this.onHideFilters}
             onHideEditOptions={this.onHideEditOptions}
             onShowEditOptions={this.onShowEditOptions}
+            onSelectType={onSelectType}
+            typeOptions={typeOptions}
           />
         )}
         <EntityListMain
@@ -454,6 +459,8 @@ EntityList.propTypes = {
   onDismissAllErrors: PropTypes.func.isRequired,
   canEdit: PropTypes.bool,
   includeHeader: PropTypes.bool,
+  typeOptions: PropTypes.array,
+  onSelectType: PropTypes.func,
 };
 
 EntityList.contextTypes = {
