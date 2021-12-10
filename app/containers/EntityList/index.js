@@ -48,7 +48,6 @@ import messages from './messages';
 
 import {
   resetProgress,
-  showPanel,
   saveMultiple,
   newMultipleConnections,
   deleteMultipleConnections,
@@ -92,10 +91,53 @@ const ProgressText = styled.div`
   }
 `;
 
+const STATE_INITIAL = {
+  visibleFilters: null,
+  visibleEditOptions: null,
+};
+
 export class EntityList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+  constructor() {
+    super();
+    this.state = STATE_INITIAL;
+  }
+
   UNSAFE_componentWillMount() {
     this.props.updateClientPath();
   }
+
+  onShowFilters = (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    this.setState({
+      visibleFilters: true,
+      visibleEditOptions: null,
+    });
+  };
+
+  onHideFilters = (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    this.setState({ visibleFilters: false });
+  };
+
+  onShowEditOptions = (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    this.setState({
+      visibleEditOptions: true,
+      visibleFilters: null,
+    });
+  };
+
+  onResetEditOptions = (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    this.setState({
+      visibleEditOptions: null,
+    });
+  };
+
+  onHideEditOptions = (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    this.setState({ visibleEditOptions: false });
+  };
 
   onClearFilters = () => {
     this.props.onResetFilters(currentFilterArgs(
@@ -136,7 +178,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     // make sure selected entities are still actually on page
     const {
       entityIdsSelected,
-      progress, viewDomain,
+      progress,
+      viewDomain,
       canEdit,
       progressTypes,
       allTaxonomies,
@@ -146,6 +189,12 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onTagClick,
       actortypes,
     } = this.props;
+    // detect print to avoid expensive rendering
+    const printing = !!(
+      typeof window !== 'undefined'
+      && window.matchMedia
+      && window.matchMedia('print').matches
+    );
 
     const sending = viewDomain.get('sending');
     const success = viewDomain.get('success');
@@ -158,13 +207,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     const entityIdsSelectedFiltered = entityIdsSelected.size > 0 && entities
       ? entityIdsSelected.filter((id) => entities.map((entity) => entity.get('id')).includes(id))
       : entityIdsSelected;
+    const isManager = canEdit && this.props.hasUserRole[USER_ROLES.MANAGER.value];
 
-    // detect print to avoid expensive rendering
-    const printing = !!(
-      typeof window !== 'undefined'
-      && window.matchMedia
-      && window.matchMedia('print').matches
-    );
     const filters = currentFilters(
       {
         config,
@@ -179,15 +223,16 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       intl.formatMessage(messages.filterFormWithoutPrefix),
       intl.formatMessage(messages.filterFormError),
     );
+
     return (
       <div>
         {this.props.dataReady && this.props.includeHeader && !printing && (
           <EntityListHeader
             currentFilters={filters}
             onClearFilters={this.onClearFilters}
-            onSearch={this.props.onSearch}
             listUpdating={progress !== null && progress >= 0 && progress < 100}
             entities={entities}
+            entityIdsSelected={entityIdsSelected}
             taxonomies={this.props.taxonomies}
             actortypes={actortypes}
             targettypes={this.props.targettypes}
@@ -197,17 +242,10 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             membertypes={this.props.membertypes}
             associationtypes={this.props.associationtypes}
             connectedTaxonomies={this.props.connectedTaxonomies}
-            entityIdsSelected={
-              entityIdsSelected.size === entityIdsSelectedFiltered.size
-                ? entityIdsSelected
-                : entityIdsSelectedFiltered
-            }
             config={config}
             locationQuery={locationQuery}
-            canEdit={canEdit && this.props.hasUserRole[USER_ROLES.MANAGER.value]}
+            isManager={isManager}
             hasUserRole={this.props.hasUserRole}
-            activePanel={this.props.activePanel}
-            onPanelSelect={this.props.onPanelSelect}
             onCreateOption={this.props.onCreateOption}
             onUpdate={
               (associations, activeEditOption) => this.props.handleEditSubmit(
@@ -216,6 +254,12 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
                 this.props.entityIdsSelected,
                 viewDomain.get('errors'),
               )}
+            showFilters={this.state.visibleFilters}
+            showEditOptions={this.state.visibleEditOptions}
+            onShowFilters={this.onShowFilters}
+            onHideFilters={this.onHideFilters}
+            onHideEditOptions={this.onHideEditOptions}
+            onShowEditOptions={this.onShowEditOptions}
           />
         )}
         <EntityListMain
@@ -230,11 +274,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           actiontypes={this.props.actiontypes}
           connections={this.props.connections}
           connectedTaxonomies={this.props.connectedTaxonomies}
-          entityIdsSelected={
-            entityIdsSelected.size === entityIdsSelectedFiltered.size
-              ? entityIdsSelected
-              : entityIdsSelectedFiltered
-          }
+          entityIdsSelected={entityIdsSelectedFiltered}
           locationQuery={locationQuery}
 
           config={config}
@@ -242,12 +282,32 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           entityTitle={this.props.entityTitle}
 
           dataReady={this.props.dataReady}
-          isManager={canEdit && this.props.hasUserRole[USER_ROLES.MANAGER.value]}
+          isManager={isManager}
           isAnalyst={this.props.hasUserRole[USER_ROLES.ANALYST.value]}
 
           entityIcon={this.props.entityIcon}
-          onEntitySelect={this.props.onEntitySelect}
-          onEntitySelectAll={this.props.onEntitySelectAll}
+          onEntitySelect={(id, checked) => {
+            // show options when selected and not hidden
+            if (checked && this.state.visibleEditOptions !== false) {
+              this.onShowEditOptions();
+            }
+            // reset when unchecking last selected item
+            if (!checked && !this.state.visibleEditOptions && entityIdsSelected.size === 1) {
+              this.onResetEditOptions();
+            }
+            this.props.onEntitySelect(id, checked);
+          }}
+          onEntitySelectAll={(ids) => {
+            // show options when selected and not hidden
+            if (this.state.visibleEditOptions !== false && ids && ids.length > 0) {
+              this.onShowEditOptions();
+            }
+            // reset when unchecking last selected item
+            if (!this.state.visibleEditOptions && (!ids || ids.length === 0)) {
+              this.onResetEditOptions();
+            }
+            this.props.onEntitySelectAll(ids);
+          }}
           onGroupSelect={this.props.onGroupSelect}
           onSubgroupSelect={this.props.onSubgroupSelect}
           onSearch={this.props.onSearch}
@@ -374,7 +434,6 @@ EntityList.propTypes = {
   progress: PropTypes.number,
   progressTypes: PropTypes.instanceOf(List),
   // dispatch props
-  onPanelSelect: PropTypes.func.isRequired,
   handleEditSubmit: PropTypes.func.isRequired,
   onEntitySelect: PropTypes.func.isRequired,
   onEntitySelectAll: PropTypes.func.isRequired,
@@ -427,9 +486,6 @@ function mapDispatchToProps(dispatch, props) {
     },
     updateClientPath: () => {
       dispatch(setClientPath(props.config.clientPath));
-    },
-    onPanelSelect: (activePanel) => {
-      dispatch(showPanel(activePanel));
     },
     onEntitySelect: (id, checked) => {
       dispatch(selectEntity({ id, checked }));

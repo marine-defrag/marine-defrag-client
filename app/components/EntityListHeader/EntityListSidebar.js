@@ -6,16 +6,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { fromJS } from 'immutable';
-
-import { FILTERS_PANEL, EDIT_PANEL } from 'containers/App/constants';
 
 import Scrollable from 'components/styled/Scrollable';
 import Icon from 'components/Icon';
 import Button from 'components/buttons/Button';
-import ButtonToggle from 'components/buttons/ButtonToggle';
 import SupTitle from 'components/SupTitle';
 
 import Sidebar from 'components/styled/Sidebar';
@@ -50,7 +47,7 @@ const ToggleHide = styled(Button)`
 // }
 const SidebarWrapper = styled.div`
   ${(props) => props.sidebarAbsolute
-    ? 'position: absolute;top: 0;bottom: 0;;right: 0;z-index: 98;'
+    ? 'position: absolute;top: 0;bottom: 0;right: 0;z-index: 98;'
     : ''
 }
 `;
@@ -110,27 +107,9 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
     });
   }
 
-  getSidebarButtons = () => {
-    const { intl } = this.context;
-    return ([
-      {
-        label: intl.formatMessage(messages.header.filterButton),
-        panel: FILTERS_PANEL,
-        icon: 'filter',
-      },
-      {
-        label: intl.formatMessage(messages.header.editButton),
-        panel: EDIT_PANEL,
-        icon: 'edit',
-      },
-    ]);
-  }
-
   render() {
     const {
-      canEdit,
-      activePanel,
-      onPanelSelect,
+      isEditPanel,
       hasEntities,
       hasSelected,
       panelGroups,
@@ -144,44 +123,27 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
       >
         <Sidebar onClick={(evt) => evt.stopPropagation()}>
           <ScrollableWrapper>
-            <SidebarHeader hasButtons={canEdit}>
-              {canEdit && (
-                <ButtonToggle
-                  options={this.getSidebarButtons()}
-                  activePanel={activePanel}
-                  onSelect={onPanelSelect}
-                />
-              )}
-              {!canEdit && <SupTitle title={intl.formatMessage(messages.header.filter)} />}
+            <SidebarHeader>
+              {isEditPanel && <SupTitle title={intl.formatMessage(messages.header.edit)} />}
+              {!isEditPanel && <SupTitle title={intl.formatMessage(messages.header.filter)} />}
               <ToggleHide onClick={onHideSidebar}>
                 <Icon name="close" />
               </ToggleHide>
             </SidebarHeader>
             <div>
-              { (activePanel === FILTERS_PANEL || (activePanel === EDIT_PANEL && hasSelected && hasEntities))
-              && (
+              { (!isEditPanel || (isEditPanel && hasSelected && hasEntities)) && (
                 <EntityListSidebarGroups
                   groups={fromJS(panelGroups)}
                   onShowForm={this.onShowForm}
                   onToggleGroup={this.onToggleGroup}
                   expanded={this.state.expandedGroups}
                 />
-              )
-              }
-              { activePanel === EDIT_PANEL && !hasEntities
-              && (
-                <ListEntitiesEmpty>
-                  <FormattedMessage {...messages.entitiesNotFound} />
-                </ListEntitiesEmpty>
-              )
-              }
-              { activePanel === EDIT_PANEL && hasEntities && !hasSelected
-              && (
+              )}
+              { isEditPanel && hasEntities && !hasSelected && (
                 <ListEntitiesEmpty>
                   <FormattedMessage {...messages.entitiesNotSelected} />
                 </ListEntitiesEmpty>
-              )
-              }
+              )}
             </div>
           </ScrollableWrapper>
         </Sidebar>
@@ -190,12 +152,10 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
   }
 }
 EntityListSidebar.propTypes = {
-  theme: PropTypes.object,
   activePanel: PropTypes.string,
-  canEdit: PropTypes.bool,
+  isEditPanel: PropTypes.bool,
   hasEntities: PropTypes.bool,
   hasSelected: PropTypes.bool,
-  onPanelSelect: PropTypes.func.isRequired,
   panelGroups: PropTypes.object,
   onHideSidebar: PropTypes.func,
   setActiveOption: PropTypes.func,
@@ -205,4 +165,4 @@ EntityListSidebar.contextTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-export default withTheme(EntityListSidebar);
+export default EntityListSidebar;

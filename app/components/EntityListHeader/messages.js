@@ -10,6 +10,10 @@ export default defineMessages({
       id: 'app.components.EntityListHeader.header.filter',
       defaultMessage: 'Filter List',
     },
+    edit: {
+      id: 'app.components.EntityListHeader.header.editedit',
+      defaultMessage: 'Edit selected items',
+    },
     filterButton: {
       id: 'app.components.EntityListHeader.header.filterButton',
       defaultMessage: 'Filter',
@@ -23,6 +27,10 @@ export default defineMessages({
     showFilter: {
       id: 'app.components.EntityListHeader.sidebarToggle.showFilter',
       defaultMessage: 'Show filter options',
+    },
+    showEditOptions: {
+      id: 'app.components.EntityListHeader.sidebarToggle.showEditOptions',
+      defaultMessage: 'Show edit options',
     },
     showFilterEdit: {
       id: 'app.components.EntityListHeader.sidebarToggle.showFilterEdit',

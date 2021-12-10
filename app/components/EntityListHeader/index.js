@@ -12,15 +12,14 @@ import { palette } from 'styled-theme';
 
 import { isEqual } from 'lodash/lang';
 
-import { FILTERS_PANEL, EDIT_PANEL } from 'containers/App/constants';
 import { FILTER_FORM_MODEL, EDIT_FORM_MODEL } from 'containers/EntityListForm/constants';
 
-import ButtonDefault from 'components/buttons/ButtonDefault';
+import ButtonFlat from 'components/buttons/ButtonFlat';
 
 import EntityListForm from 'containers/EntityListForm';
 import appMessages from 'containers/App/messages';
 import PrintHide from 'components/styled/PrintHide';
-import TagSearch from 'components/TagSearch';
+import TagList from 'components/TagList';
 
 import EntityListSidebar from './EntityListSidebar';
 
@@ -33,22 +32,11 @@ import messages from './messages';
 
 const Styled = styled(PrintHide)``;
 
-const ToggleShow = styled(ButtonDefault)`
-  position: absolute;
-  top:0;
-  right:0;
+const ToggleShow = styled(ButtonFlat)`
   padding: 0.75em 1em;
   letter-spacing: 0;
-  border-radius: 0;
-  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
-  font-size: 0.85em;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    font-size: 0.85em;
-    padding: 0.75em 1em;
-  }
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.smaller};
-  }
+  font-weight: normal;
+  text-transform: none;
 `;
 const EntityListSearch = styled.div`
   padding-bottom: 1em;
@@ -65,7 +53,6 @@ const TheHeader = styled.div`
 `;
 const STATE_INITIAL = {
   activeOption: null,
-  visibleSidebar: false,
 };
 
 const getFilterConnectionsMsg = (intl, type) => type
@@ -94,7 +81,10 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    if (nextProps.activePanel !== this.props.activePanel) {
+    if (
+      this.props.showFilters !== nextProps.showFilters
+      || this.props.showEditOptions !== nextProps.showEditOptions
+    ) {
       // close and reset option panel
       this.setState({ activeOption: null });
     }
@@ -110,7 +100,8 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     }
     return this.props.locationQuery !== nextProps.locationQuery
       || this.props.entityIdsSelected !== nextProps.entityIdsSelected
-      || this.props.activePanel !== nextProps.activePanel
+      || this.props.showFilters !== nextProps.showFilters
+      || this.props.showEditOptions !== nextProps.showEditOptions
       || this.props.taxonomies !== nextProps.taxonomies
       || this.props.connections !== nextProps.connections
       || !isEqual(this.state, nextState);
@@ -126,17 +117,6 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
 
   onShowForm = (option) => {
     this.setState({ activeOption: option.active ? null : option });
-  };
-
-  onShowSidebar = (evt) => {
-    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.setState({ visibleSidebar: true });
-  };
-
-  onHideSidebar = (evt) => {
-    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.onHideForm(evt);
-    this.setState({ visibleSidebar: false });
   };
 
   onHideForm = (evt) => {
@@ -179,9 +159,6 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       config,
       onUpdate,
       hasUserRole,
-      canEdit,
-      activePanel,
-      onPanelSelect,
       entities,
       locationQuery,
       taxonomies,
@@ -195,23 +172,26 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       membertypes,
       associationtypes,
       currentFilters,
-      onSearch,
       onClearFilters,
+      onShowFilters,
+      onHideFilters,
+      showFilters,
+      showEditOptions,
+      onHideEditOptions,
+      onShowEditOptions,
+      isManager,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
-
     const hasSelected = entityIdsSelected && entityIdsSelected.size > 0;
-    const formModel = activePanel === FILTERS_PANEL ? FILTER_FORM_MODEL : EDIT_FORM_MODEL;
+    const entitiesSelected = hasSelected
+      && entities.filter((entity) => entityIdsSelected.includes(entity.get('id')));
+    const formModel = showFilters ? FILTER_FORM_MODEL : EDIT_FORM_MODEL;
 
     let panelGroups = null;
 
-    const entitiesSelected = activePanel === EDIT_PANEL
-      && canEdit
-      && hasSelected
-      && entities.filter((entity) => entityIdsSelected.includes(entity.get('id')));
-
-    if (activePanel === FILTERS_PANEL) {
+    let formOptions = null;
+    if (showFilters) {
       panelGroups = makeFilterGroups({
         config,
         taxonomies,
@@ -235,7 +215,25 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
           actiontypes: intl.formatMessage(appMessages.actiontypes.plural),
         },
       });
-    } else if (activePanel === EDIT_PANEL && canEdit && hasSelected) {
+      if (activeOption) {
+        formOptions = makeActiveFilterOptions({
+          entities,
+          config,
+          locationQuery,
+          taxonomies,
+          connections,
+          // actortypes,
+          // actiontypes,
+          connectedTaxonomies,
+          activeFilterOption: activeOption,
+          contextIntl: intl,
+          messages: {
+            titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
+            without: intl.formatMessage(messages.filterFormWithoutPrefix),
+          },
+        });
+      }
+    } else if (showEditOptions && hasSelected) {
       panelGroups = makeEditGroups({
         config,
         taxonomies,
@@ -257,27 +255,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         // selectedActortypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'actortype_id'])).keySeq(),
         // selectedActiontypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'measuretype_id'])).keySeq(),
       });
-    }
-    let formOptions = null;
-    if (activeOption) {
-      if (activePanel === FILTERS_PANEL) {
-        formOptions = makeActiveFilterOptions({
-          entities,
-          config,
-          locationQuery,
-          taxonomies,
-          connections,
-          // actortypes,
-          // actiontypes,
-          connectedTaxonomies,
-          activeFilterOption: activeOption,
-          contextIntl: intl,
-          messages: {
-            titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
-            without: intl.formatMessage(messages.filterFormWithoutPrefix),
-          },
-        });
-      } else if (activePanel === EDIT_PANEL && canEdit && hasSelected) {
+      if (activeOption) {
         formOptions = makeActiveEditOptions({
           entities: entitiesSelected,
           config,
@@ -296,69 +274,72 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       <Styled>
         <TheHeader>
           <EntityListSearch>
-            <TagSearch
+            <TagList
               filters={currentFilters}
-              searchQuery={locationQuery.get('search') || ''}
-              onSearch={onSearch}
               onClear={onClearFilters}
             />
           </EntityListSearch>
-          <ToggleShow onClick={this.onShowSidebar}>
-            { canEdit
-            && <FormattedMessage {...messages.sidebarToggle.showFilterEdit} />
-            }
-            { !canEdit
-            && <FormattedMessage {...messages.sidebarToggle.showFilter} />
-            }
+          <ToggleShow onClick={onShowFilters} disabled={showFilters || hasSelected}>
+            <FormattedMessage {...messages.sidebarToggle.showFilter} />
           </ToggleShow>
+          {isManager && (
+            <ToggleShow onClick={onShowEditOptions} disabled={showEditOptions}>
+              <FormattedMessage {...messages.sidebarToggle.showEditOptions} />
+            </ToggleShow>
+          )}
         </TheHeader>
-        {this.state.visibleSidebar && (
+        {showFilters && (
           <EntityListSidebar
-            activePanel={activePanel}
-            canEdit={canEdit}
-            onPanelSelect={onPanelSelect}
             hasEntities={entities && entities.size > 0}
-            hasSelected={entityIdsSelected && entityIdsSelected.size > 0}
             panelGroups={panelGroups}
-            onHideSidebar={this.onHideSidebar}
+            onHideSidebar={onHideFilters}
             setActiveOption={this.onSetActiveOption}
           />
         )}
-        { formOptions
-          && (
-            <EntityListForm
-              model={formModel}
-              activeOptionId={activeOption.optionId}
-              formOptions={formOptions}
-              buttons={activePanel === EDIT_PANEL
-                ? this.getFormButtons(activeOption)
-                : null
+        {showEditOptions && (
+          <EntityListSidebar
+            isEditPanel
+            hasEntities={entities && entities.size > 0}
+            hasSelected={hasSelected}
+            panelGroups={panelGroups}
+            onHideSidebar={onHideEditOptions}
+            setActiveOption={this.onSetActiveOption}
+          />
+        )}
+        {activeOption && formOptions && (
+          <EntityListForm
+            model={formModel}
+            activeOptionId={activeOption.optionId}
+            formOptions={formOptions}
+            buttons={showEditOptions
+              ? this.getFormButtons(activeOption)
+              : null
+            }
+            onCancel={this.onHideForm}
+            showCancelButton={showFilters}
+            onSelect={() => {
+              if (showFilters) {
+                this.onHideForm();
+                this.onHideFilters();
               }
-              onCancel={this.onHideForm}
-              showCancelButton={(activePanel === FILTERS_PANEL)}
-              onSelect={() => {
-                if (activePanel === FILTERS_PANEL) {
-                  this.onHideForm();
-                  this.onHideSidebar();
-                }
-              }}
-              onSubmit={activePanel === EDIT_PANEL
-                ? (associations) => {
-                // close and reset option panel
-                  this.setState({ activeOption: null });
-                  onUpdate(associations, activeOption);
-                }
-                : null
+            }}
+            onSubmit={showEditOptions
+              ? (associations) => {
+              // close and reset option panel
+                this.setState({ activeOption: null });
+                onUpdate(associations, activeOption);
               }
-            />
-          )
-        }
+              : null
+            }
+          />
+        )}
       </Styled>
     );
   }
 }
 EntityListHeader.propTypes = {
   entities: PropTypes.instanceOf(List),
+  entityIdsSelected: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
@@ -368,20 +349,22 @@ EntityListHeader.propTypes = {
   actiontypesForTarget: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
-  entityIdsSelected: PropTypes.instanceOf(List),
   locationQuery: PropTypes.instanceOf(Map),
-  canEdit: PropTypes.bool,
   hasUserRole: PropTypes.object,
   config: PropTypes.object,
-  activePanel: PropTypes.string,
   onUpdate: PropTypes.func.isRequired,
-  onPanelSelect: PropTypes.func.isRequired,
   onCreateOption: PropTypes.func.isRequired,
   listUpdating: PropTypes.bool,
   theme: PropTypes.object,
   currentFilters: PropTypes.array,
   onClearFilters: PropTypes.func.isRequired,
-  onSearch: PropTypes.func.isRequired,
+  onShowFilters: PropTypes.func,
+  onHideFilters: PropTypes.func,
+  showFilters: PropTypes.bool,
+  showEditOptions: PropTypes.bool,
+  onHideEditOptions: PropTypes.func,
+  onShowEditOptions: PropTypes.func,
+  isManager: PropTypes.bool,
 };
 
 EntityListHeader.contextTypes = {

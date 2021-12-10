@@ -18,7 +18,7 @@ import Container from 'components/styled/Container';
 import Content from 'components/styled/Content';
 import Loading from 'components/Loading';
 import ContentHeader from 'components/ContentHeader';
-import TagSearch from 'components/TagSearch';
+import EntityListSearch from 'components/EntityListSearch';
 import PrintOnly from 'components/styled/PrintOnly';
 
 import { CONTENT_LIST, PARAMS } from 'containers/App/constants';
@@ -32,7 +32,7 @@ import { groupEntities } from './group-entities';
 
 import messages from './messages';
 
-const EntityListSearch = styled.div`
+const EntityListSearchWrapper = styled.div`
   padding-bottom: 1em;
   @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
     padding-bottom: 2em;
@@ -97,7 +97,6 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       errors,
       actortypes,
       hasHeader,
-      currentFilters,
       onClearFilters,
     } = this.props;
     const { intl } = this.context;
@@ -200,16 +199,13 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
                 <PrintHintKey>
                   <FormattedMessage {...messages.printHintKey} />
                 </PrintHintKey>
-                {!hasHeader && (
-                  <EntityListSearch>
-                    <TagSearch
-                      filters={currentFilters}
-                      searchQuery={locationQuery.get('search') || ''}
-                      onSearch={onSearch}
-                      onClear={onClearFilters}
-                    />
-                  </EntityListSearch>
-                )}
+                <EntityListSearchWrapper>
+                  <EntityListSearch
+                    searchQuery={locationQuery.get('search') || ''}
+                    onSearch={onSearch}
+                    onClear={onClearFilters}
+                  />
+                </EntityListSearchWrapper>
                 <EntityListOptions
                   groupOptions={getGroupOptions(taxonomies, intl)}
                   subgroupOptions={getGroupOptions(taxonomies, intl)}
@@ -291,7 +287,6 @@ EntityListMain.propTypes = {
   onDismissError: PropTypes.func.isRequired,
   listUpdating: PropTypes.bool,
   hasHeader: PropTypes.bool,
-  currentFilters: PropTypes.array,
   onClearFilters: PropTypes.func.isRequired,
 };
 
