@@ -197,6 +197,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onSetView,
       typeId,
       view,
+      onEntitySelectAll,
     } = this.props;
     // detect print to avoid expensive rendering
     const printing = !!(
@@ -297,7 +298,11 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onHideFilters={this.onHideFilters}
             onHideEditOptions={this.onHideEditOptions}
             onShowEditOptions={this.onShowEditOptions}
-            onSelectType={onSelectType}
+            onSelectType={() => {
+              // reset selection
+              onEntitySelectAll([]);
+              onSelectType();
+            }}
             typeOptions={typeOptions}
           />
         )}
@@ -350,7 +355,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               if (!this.state.visibleEditOptions && (!ids || ids.length === 0)) {
                 this.onResetEditOptions();
               }
-              this.props.onEntitySelectAll(ids);
+              onEntitySelectAll(ids);
             }}
             onGroupSelect={this.props.onGroupSelect}
             onSubgroupSelect={this.props.onSubgroupSelect}
