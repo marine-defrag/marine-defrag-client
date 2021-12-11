@@ -176,7 +176,7 @@ theme.palette = {
   headerBrandHover: [dark[1], dark[3]], // WARNING component sets opacity
 
   // headerNavPages: [ '#bg' ],
-  headerNavPages: [light[0]],
+  headerNavPages: ['white'],
   // headerNavPagesItem: [ '#color', '#colorActive', '#bg', '#bgActive' ],
   headerNavPagesItem: [dark[3], primary[4], 'transparent', primary[2]],
   headerNavPagesItemHover: [dark[2], primary[4], 'transparent', primary[0]],
@@ -303,6 +303,12 @@ theme.sizes = {
     paddingTop: 12,
     paddingBottom: 12,
   },
+  headerList: {
+    banner: {
+      height: 80,
+      heightMobile: 30,
+    },
+  },
   headerExplore: {
     banner: {
       height: 120,
@@ -311,10 +317,6 @@ theme.sizes = {
     nav: {
       height: 40,
       heightMobile: 30,
-    },
-    listNav: {
-      height: 60,
-      heightMobile: 50,
     },
   },
   header: {

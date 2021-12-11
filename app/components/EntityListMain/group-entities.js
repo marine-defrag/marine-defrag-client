@@ -69,9 +69,7 @@ const makeEntityGroups = (
   }
   return List().push(Map({ entities }));
 };
-const getCategoryLabel = (cat) => cat.getIn(['attributes', 'reference'])
-  ? `${cat.getIn(['attributes', 'reference'])} ${cat.getIn(['attributes', 'title']) || cat.getIn(['attributes', 'name'])}`
-  : cat.getIn(['attributes', 'title']) || cat.getIn(['attributes', 'name']);
+const getCategoryLabel = (cat) => cat.getIn(['attributes', 'title']) || cat.getIn(['attributes', 'name']);
 
 const getTaxTitle = (id, contextIntl) => contextIntl ? contextIntl.formatMessage(appMessages.entities.taxonomies[id].single) : '';
 

@@ -20,7 +20,7 @@ export const TAXONOMY_DEFAULT = 1;
 
 export const SORT_OPTION_DEFAULT = {
   query: 'title',
-  field: 'referenceThenTitle',
+  field: 'title',
   order: 'asc',
   type: 'string',
   default: 'true',

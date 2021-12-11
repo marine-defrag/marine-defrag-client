@@ -140,14 +140,6 @@ const Title = styled.div`
 const StatusWrap = styled.div`
   padding: 0 18px;
 `;
-const Reference = styled.span`
-  float: left;
-  padding-right: 5px;
-  color: ${palette('text', 1)};
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    padding-right: 8px;
-  }
-`;
 const WrapAcceptedBars = styled.span`
   height: ${({ multiple }) => multiple ? 10 : 15}px;
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
@@ -222,14 +214,9 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
 
   render() {
     const { category, columns, onPageLink } = this.props;
-    const reference = category.getIn(['attributes', 'reference'])
-      && category.getIn(['attributes', 'reference']).trim() !== ''
-      ? category.getIn(['attributes', 'reference'])
-      : null;
     // return null;
     const catItem = {
       id: category.get('id'),
-      reference,
       title: category.getIn(['attributes', 'title']),
       draft: category.getIn(['attributes', 'draft']),
     };
@@ -258,9 +245,6 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
                 )}
                 {col.type === 'title' && (
                   <Title>
-                    { catItem.reference
-                      && <Reference>{catItem.reference}</Reference>
-                    }
                     {catItem.title}
                   </Title>
                 )}

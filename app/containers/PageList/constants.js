@@ -1,6 +1,4 @@
-import {
-  API, ROUTES, USER_ROLES, PUBLISH_STATUSES,
-} from 'themes/config';
+import { API, ROUTES } from 'themes/config';
 // specify the filter and query  options
 export const DEPENDENCIES = [
   API.PAGES,
@@ -34,15 +32,4 @@ export const CONFIG = {
       order: 'desc',
     },
   ],
-  attributes: { // filter by attribute value
-    options: [
-      {
-        search: false,
-        message: 'attributes.draft',
-        attribute: 'draft',
-        options: PUBLISH_STATUSES,
-        role: USER_ROLES.ANALYST.value,
-      },
-    ],
-  },
 };

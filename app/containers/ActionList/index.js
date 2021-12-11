@@ -46,6 +46,15 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
     }
   }
 
+  prepareTypeOptions = (types, activeId) => {
+    const { intl } = this.context;
+    return Object.values(types.toJS()).map((type) => ({
+      value: type.id,
+      label: intl.formatMessage(appMessages.actiontypes[type.id]),
+      active: activeId === type.id,
+    }));
+  }
+
   render() {
     const {
       dataReady,
@@ -60,6 +69,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
       actiontypes,
       actortypes,
       targettypes,
+      onSelectType,
     } = this.props;
     const { intl } = this.context;
     const typeId = params.id;
@@ -126,6 +136,8 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
           actortypes={actortypes}
           actiontypes={actiontypes}
           targettypes={targettypes}
+          typeOptions={this.prepareTypeOptions(actiontypes, typeId)}
+          onSelectType={onSelectType}
         />
       </div>
     );
@@ -136,6 +148,7 @@ ActionList.propTypes = {
   loadEntitiesIfNeeded: PropTypes.func,
   handleNew: PropTypes.func,
   handleImport: PropTypes.func,
+  onSelectType: PropTypes.func,
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   entities: PropTypes.instanceOf(List).isRequired,
@@ -176,6 +189,9 @@ function mapDispatchToProps(dispatch) {
     },
     handleImport: () => {
       dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.IMPORT}`));
+    },
+    onSelectType: (typeId) => {
+      dispatch(updatePath(typeId ? `${ROUTES.ACTIONS}/${typeId}` : ROUTES.ACTIONS));
     },
   };
 }

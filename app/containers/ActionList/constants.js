@@ -23,6 +23,7 @@ export const CONFIG = {
   serverPath: API.ACTIONS,
   clientPath: ROUTES.ACTION,
   search: ['code', 'title', 'description'],
+  types: 'actiontypes',
   sorting: [
     {
       attribute: 'id', // proxy for created at

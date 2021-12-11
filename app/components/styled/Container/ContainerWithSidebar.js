@@ -5,6 +5,7 @@ import ContainerWrapper from './ContainerWrapper';
 const ContainerWithSidebar = styled(ContainerWrapper)`
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     right: ${(props) => {
+    if (props.noSidebar) return 0;
     // narrow sidebar
     if (props.sidebarResponsiveSmall) {
       return props.theme.sizes.aside.width.small;
@@ -18,6 +19,7 @@ const ContainerWithSidebar = styled(ContainerWrapper)`
   }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     right: ${(props) => {
+    if (props.noSidebar) return 0;
     if (props.sidebarAbsolute) return props.theme.sizes.aside.width.large;
     if (props.sidebarResponsiveSmall) {
       return props.theme.sizes.aside.width.small;
@@ -30,7 +32,7 @@ const ContainerWithSidebar = styled(ContainerWrapper)`
   }}px;
   }
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    right: ${(props) => props.theme.sizes.aside.width.large}px;
+    right: ${(props) => props.noSidebar ? 0 : props.theme.sizes.aside.width.large}px;
   }
 `;
 export default ContainerWithSidebar;

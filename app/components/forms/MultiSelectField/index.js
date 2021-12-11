@@ -196,9 +196,6 @@ class MultiSelectField extends React.Component { // eslint-disable-line react/pr
     if (option.get('order')) {
       return option.get('order');
     }
-    if (option.get('reference')) {
-      return option.get('reference');
-    }
     return option.get('label');
   }
 
