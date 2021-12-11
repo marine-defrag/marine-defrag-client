@@ -13,12 +13,12 @@ import { jumpToComponent } from 'utils/scroll-to-component';
 import { lowerCase } from 'utils/string';
 import { qe } from 'utils/quasi-equals';
 
-import ContainerWithSidebar from 'components/styled/Container/ContainerWithSidebar';
+import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
 import Content from 'components/styled/Content';
 import Loading from 'components/Loading';
 import ContentHeader from 'components/ContentHeader';
-import TagSearch from 'components/TagSearch';
+import EntityListSearch from 'components/EntityListSearch';
 import PrintOnly from 'components/styled/PrintOnly';
 
 import { CONTENT_LIST, PARAMS } from 'containers/App/constants';
@@ -27,13 +27,12 @@ import appMessages from 'containers/App/messages';
 import EntityListGroups from './EntityListGroups';
 
 import EntityListOptions from './EntityListOptions';
-import { currentFilters, currentFilterArgs } from './current-filters';
 import { getGroupOptions, getGroupValue } from './group-options';
 import { groupEntities } from './group-entities';
 
 import messages from './messages';
 
-const EntityListSearch = styled.div`
+const EntityListSearchWrapper = styled.div`
   padding-bottom: 1em;
   @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
     padding-bottom: 2em;
@@ -89,10 +88,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       onGroupSelect,
       onSubgroupSelect,
       onSearch,
-      onResetFilters,
-      onTagClick,
       taxonomies,
-      allTaxonomies,
       connections,
       connectedTaxonomies,
       locationQuery,
@@ -100,8 +96,8 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       entities,
       errors,
       actortypes,
-      onDismissAllErrors,
-      hasSidebar,
+      hasHeader,
+      onClearFilters,
     } = this.props;
     const { intl } = this.context;
 
@@ -185,7 +181,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
     }
     const headerActions = dataReady ? header.actions : [];
     return (
-      <ContainerWithSidebar noSidebar={!hasSidebar} ref={this.ScrollContainer}>
+      <ContainerWrapper hasHeader={hasHeader} ref={this.ScrollContainer}>
         <Container ref={this.ScrollReference}>
           <Content>
             <ContentHeader
@@ -203,30 +199,13 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
                 <PrintHintKey>
                   <FormattedMessage {...messages.printHintKey} />
                 </PrintHintKey>
-                <EntityListSearch>
-                  <TagSearch
-                    filters={currentFilters(
-                      {
-                        config,
-                        entities,
-                        taxonomies: allTaxonomies,
-                        connections,
-                        locationQuery,
-                        onTagClick,
-                        errors,
-                        actortypes,
-                      },
-                      intl.formatMessage(messages.filterFormWithoutPrefix),
-                      intl.formatMessage(messages.filterFormError),
-                    )}
+                <EntityListSearchWrapper>
+                  <EntityListSearch
                     searchQuery={locationQuery.get('search') || ''}
                     onSearch={onSearch}
-                    onClear={() => {
-                      onResetFilters(currentFilterArgs(config, locationQuery));
-                      onDismissAllErrors();
-                    }}
+                    onClear={onClearFilters}
                   />
-                </EntityListSearch>
+                </EntityListSearchWrapper>
                 <EntityListOptions
                   groupOptions={getGroupOptions(taxonomies, intl)}
                   subgroupOptions={getGroupOptions(taxonomies, intl)}
@@ -271,7 +250,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
             )}
           </Content>
         </Container>
-      </ContainerWithSidebar>
+      </ContainerWrapper>
     );
   }
 }
@@ -279,7 +258,6 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
 EntityListMain.propTypes = {
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
-  allTaxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
@@ -299,19 +277,17 @@ EntityListMain.propTypes = {
   onEntityClick: PropTypes.func.isRequired,
   onEntitySelect: PropTypes.func.isRequired,
   onEntitySelectAll: PropTypes.func.isRequired,
-  onTagClick: PropTypes.func.isRequired,
   onGroupSelect: PropTypes.func.isRequired,
   onSubgroupSelect: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
-  onResetFilters: PropTypes.func.isRequired,
   onPageSelect: PropTypes.func.isRequired,
   onPageItemsSelect: PropTypes.func.isRequired,
   onSortOrder: PropTypes.func.isRequired,
   onSortBy: PropTypes.func.isRequired,
   onDismissError: PropTypes.func.isRequired,
-  onDismissAllErrors: PropTypes.func.isRequired,
   listUpdating: PropTypes.bool,
-  hasSidebar: PropTypes.bool,
+  hasHeader: PropTypes.bool,
+  onClearFilters: PropTypes.func.isRequired,
 };
 
 EntityListMain.contextTypes = {

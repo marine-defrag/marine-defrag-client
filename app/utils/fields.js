@@ -208,7 +208,7 @@ const mapSmartCategoryOptions = (categories) => categories
   ? sortEntities(
     categories,
     'asc',
-    'referenceThenTitle',
+    'title',
   )
     .map((cat) => ({
       label: cat.getIn(['attributes', 'title']),

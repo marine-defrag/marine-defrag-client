@@ -51,38 +51,8 @@ const IconWrapper = styled.div`
   display: table-cell;
   width: 35px;
 `;
-const Dot = styled.div`
-  background-color: ${(props) => palette(props.palette, props.pIndex)};
-  display: block;
-  border: 1px solid;
-  border-color: ${(props) => props.active ? 'white' : 'transparent'};
-  border-radius: ${(props) => props.round ? 999 : 3}px;
-  width: 1em;
-  height: 1em;
-`;
-const DotWrapper = styled.div`
-  padding: ${(props) => props.small ? '0px 6px' : '5px'};
-  width: 26px;
-  display: table-cell;
-  vertical-align: middle;
-`;
 
 class EntityListSidebarOption extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  renderDot = (groupId, color, active) => {
-    switch (groupId) {
-      case 'taxonomies':
-      case 'connectedTaxonomies':
-        return (<Dot palette="taxonomies" pIndex={parseInt(color, 10)} active={active} />);
-      case 'actortypes':
-        return (<Dot palette={color} pIndex={0} active={active} />);
-      case 'connections':
-      case 'targets':
-        return (<Dot palette={color} pIndex={0} round active={active} />);
-      default:
-        return null;
-    }
-  }
-
   render() {
     const {
       option, onShowForm, groupId, groupType,
@@ -119,17 +89,6 @@ class EntityListSidebarOption extends React.PureComponent { // eslint-disable-li
             </IconWrapper>
           )
         }
-        {(!option.get('nested') || option.get('nested') === false) && (
-          <DotWrapper>
-            {
-              this.renderDot(
-                groupType || groupId,
-                option.get('color') || option.get('id'),
-                option.get('active'),
-              )
-            }
-          </DotWrapper>
-        )}
       </Styled>
     );
   }

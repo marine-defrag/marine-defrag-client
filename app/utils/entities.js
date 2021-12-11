@@ -543,9 +543,10 @@ export const getEntityTitleTruncated = (
   TEXT_TRUNCATE.META_TITLE,
 );
 
-export const getEntityReference = (entity, defaultToId = true) => defaultToId
+export const getEntityReference = (entity, defaultToId = false) => defaultToId
   ? (
     entity.getIn(['attributes', 'reference'])
+    || entity.getIn(['attributes', 'code'])
     || entity.getIn(['attributes', 'number'])
     || entity.get('id')
   )
@@ -562,8 +563,8 @@ export const getCategoryShortTitle = (category) => truncateText(
   TEXT_TRUNCATE.ENTITY_TAG
 );
 
-export const getCategoryTitle = (cat) => cat.getIn(['attributes', 'reference'])
-  ? `${cat.getIn(['attributes', 'reference'])}. ${cat.getIn(['attributes', 'title']) || cat.getIn(['attributes', 'name'])}`
+export const getCategoryTitle = (cat) => cat.getIn(['attributes', 'code'])
+  ? `${cat.getIn(['attributes', 'code'])}. ${cat.getIn(['attributes', 'title']) || cat.getIn(['attributes', 'name'])}`
   : (cat.getIn(['attributes', 'title']) || cat.getIn(['attributes', 'name']));
 
 export const getEntityParentId = (cat) => cat.getIn(['attributes', 'parent_id'])

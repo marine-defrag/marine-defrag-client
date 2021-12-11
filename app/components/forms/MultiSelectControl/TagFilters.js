@@ -46,19 +46,6 @@ const Dropdown = styled.div`
 `;
 // box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.2);
 
-const DotWrapper = styled.div`
-  padding: 5px 5px 5px 0;
-  display: inline-block;
-  vertical-align: middle;
-`;
-
-const Dot = styled.div`
-  background-color: ${(props) => palette(props.palette, props.pIndex)};
-  border-radius: ${(props) => props.round ? 999 : 3}px;
-  width: 0.9em;
-  height: 0.9em;
-`;
-
 const Label = styled.div`
   display: inline-block;
   vertical-align: middle;
@@ -108,9 +95,6 @@ class TagFilters extends React.PureComponent {
                   }}
                   active={key === this.state.active}
                 >
-                  <DotWrapper>
-                    <Dot palette={group.palette[0]} pIndex={parseInt(group.palette[1], 10)} />
-                  </DotWrapper>
                   <Label>
                     {group.title}
                   </Label>

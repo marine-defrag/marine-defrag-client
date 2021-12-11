@@ -17,6 +17,7 @@ const getEntitySortValueMapper = (entity, sortBy, type) => {
   switch (sortBy) {
     case 'id':
       return entity.get('id');
+    case 'code':
     case 'reference':
       // use id field when reference not available
       return entity.getIn(['attributes', sortBy]) || entity.get('id');
@@ -145,7 +146,6 @@ export const getEntitySortComparator = (valueA, valueB, sortOrder, type) => {
 };
 
 export const sortEntities = (entities, sortOrder, sortBy, type, asList = true) => {
-  console.log('sortEntities', sortOrder, sortBy, type);
   const sorted = entities && entities.sortBy(
     (entity) => getEntitySortValueMapper(entity, sortBy || 'id', type),
     (a, b) => getEntitySortComparator(a, b, sortOrder || 'asc', type)
