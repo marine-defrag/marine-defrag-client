@@ -299,10 +299,11 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       canEdit,
       onSelectType,
       typeOptions,
+      dataReady,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
-    const hasSelected = canEdit && entityIdsSelected && entityIdsSelected.size > 0;
+    const hasSelected = dataReady && canEdit && entityIdsSelected && entityIdsSelected.size > 0;
     const entitiesSelected = hasSelected
       && entities.filter((entity) => entityIdsSelected.includes(entity.get('id')));
     const formModel = showFilters ? FILTER_FORM_MODEL : EDIT_FORM_MODEL;
@@ -310,7 +311,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     let panelGroups = null;
 
     let formOptions = null;
-    if (showFilters) {
+    if (dataReady && showFilters) {
       panelGroups = makeFilterGroups({
         config,
         taxonomies,
@@ -352,7 +353,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
           },
         });
       }
-    } else if (showEditOptions && hasSelected) {
+    } else if (dataReady && showEditOptions && hasSelected) {
       panelGroups = makeEditGroups({
         config,
         taxonomies,
@@ -389,20 +390,20 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         });
       }
     }
-    const currentTypeOption = typeOptions
-      && typeOptions.find((option) => option.active);
+    const hasTypeOptions = typeOptions && typeOptions.length > 0;
+    const currentTypeOption = hasTypeOptions && typeOptions.find((option) => option.active);
 
     return (
       <Styled>
         <TheHeader>
-          {typeOptions && (
+          {config.types && typeOptions && (
             <HeaderSection noBorder>
               <ButtonFlatIconOnly onClick={() => onSelectType()}>
                 <Icon name="arrowLeft" size="2em" />
               </ButtonFlatIconOnly>
             </HeaderSection>
           )}
-          {typeOptions && (
+          {config.types && typeOptions && (
             <HeaderSectionType>
               {config.types && (
                 <Label>
@@ -414,28 +415,30 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                   />
                 </Label>
               )}
-              <SelectType
-                as="button"
-                ref={this.typeButtonRef}
-                onClick={(evt) => this.state.showTypes
-                  ? this.onHideTypes(evt)
-                  : this.onShowTypes(evt)
-                }
-              >
-                <LinkTitle active>
-                  {truncateText(
-                    currentTypeOption.label,
-                    TEXT_TRUNCATE.TYPE_SELECT,
-                    false,
-                  )}
-                  {!this.state.showTypes && (
-                    <Icon name="dropdownOpen" text textRight size="1em" />
-                  )}
-                  {this.state.showTypes && (
-                    <Icon name="dropdownClose" text textRight size="1em" />
-                  )}
-                </LinkTitle>
-              </SelectType>
+              {dataReady && (
+                <SelectType
+                  as="button"
+                  ref={this.typeButtonRef}
+                  onClick={(evt) => this.state.showTypes
+                    ? this.onHideTypes(evt)
+                    : this.onShowTypes(evt)
+                  }
+                >
+                  <LinkTitle active>
+                    {truncateText(
+                      currentTypeOption.label,
+                      TEXT_TRUNCATE.TYPE_SELECT,
+                      false,
+                    )}
+                    {!this.state.showTypes && (
+                      <Icon name="dropdownOpen" text textRight size="1em" />
+                    )}
+                    {this.state.showTypes && (
+                      <Icon name="dropdownClose" text textRight size="1em" />
+                    )}
+                  </LinkTitle>
+                </SelectType>
+              )}
               {this.state.showTypes && typeOptions && (
                 <TypeOptions ref={this.typeWrapperRef}>
                   {typeOptions.map((option) => (
@@ -443,8 +446,8 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                       key={option.value}
                       active={option.active}
                       onClick={() => {
-                        onSelectType(option.value);
                         this.onHideTypes();
+                        onSelectType(option.value);
                       }}
                     >
                       {option.label}
@@ -455,12 +458,14 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             </HeaderSectionType>
           )}
           <HeaderSection grow noBorder={!canEdit}>
-            <EntityListSearch>
-              <TagList
-                filters={currentFilters}
-                onClear={onClearFilters}
-              />
-            </EntityListSearch>
+            {dataReady && (
+              <EntityListSearch>
+                <TagList
+                  filters={currentFilters}
+                  onClear={onClearFilters}
+                />
+              </EntityListSearch>
+            )}
             <ButtonOptions
               onClick={onShowFilters}
               disabled={showFilters}
@@ -511,7 +516,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             onSelect={() => {
               if (showFilters) {
                 this.onHideForm();
-                this.onHideFilters();
+                onHideFilters();
               }
             }}
             onSubmit={showEditOptions
@@ -556,6 +561,7 @@ EntityListHeader.propTypes = {
   onHideEditOptions: PropTypes.func,
   onShowEditOptions: PropTypes.func,
   canEdit: PropTypes.bool,
+  dataReady: PropTypes.bool,
   typeOptions: PropTypes.array,
   onSelectType: PropTypes.func,
 };

@@ -38,6 +38,7 @@ import {
   DISMISS_QUERY_MESSAGES,
   SET_ACTIONTYPE,
   SET_VIEW,
+  SET_MAPSUBJECT,
   OPEN_BOOKMARK,
 } from 'containers/App/constants';
 
@@ -46,6 +47,7 @@ import {
   ENDPOINTS,
   KEYS,
   API,
+  KEEP_FILTERS,
 } from 'themes/config';
 
 import {
@@ -664,6 +666,19 @@ export function* setViewSaga({ view }) {
   );
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
+export function* setMapSubjectSaga({ subject }) {
+  const location = yield select(selectLocation);
+  const queryNext = getNextQuery(
+    {
+      arg: 'ms',
+      value: subject,
+      replace: true,
+    },
+    true, // extend
+    location,
+  );
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
 
 export function* openBookmarkSaga({ bookmark }) {
   const path = bookmark.getIn(['attributes', 'view', 'path']);
@@ -702,8 +717,10 @@ export function* updatePathSaga({ path, args }) {
       queryNext = location.get('query').toJS();
     }
   } else {
-    // always keep "view filter"
-    queryNext = location.get('query').filter((val, key) => key === 'view').toJS();
+    // always keep "specific filters"
+    queryNext = location.get('query').filter(
+      (val, key) => KEEP_FILTERS.indexOf(key) > -1
+    ).toJS();
   }
   // convert to string
   const queryNextString = getNextQueryString(queryNext);
@@ -757,6 +774,7 @@ export default function* rootSaga() {
   yield takeEvery(UPDATE_PATH, updatePathSaga);
   yield takeEvery(SET_ACTIONTYPE, setActortypeSaga);
   yield takeEvery(SET_VIEW, setViewSaga);
+  yield takeEvery(SET_MAPSUBJECT, setMapSubjectSaga);
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);
   yield takeEvery(DISMISS_QUERY_MESSAGES, dismissQueryMessagesSaga);
 

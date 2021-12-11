@@ -340,6 +340,10 @@ export const selectViewQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && (locationQuery.get('view') || 'list')
 );
+export const selectMapSubjectQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && (locationQuery.get('ms') || 'actors')
+);
 
 // database ////////////////////////////////////////////////////////////////////////
 

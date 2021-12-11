@@ -19,7 +19,7 @@ import Loading from 'components/Loading';
 import EntityListHeader from 'components/EntityListHeader';
 import EntityListPrintKey from 'components/EntityListPrintKey';
 import EntityListMain from 'components/EntityListMain';
-import EntityListMap from 'components/EntityListMap';
+import EntitiesMap from 'containers/EntitiesMap';
 import PrintOnly from 'components/styled/PrintOnly';
 
 import {
@@ -198,6 +198,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       typeId,
       view,
       onEntitySelectAll,
+      dataReady,
     } = this.props;
     // detect print to avoid expensive rendering
     const printing = !!(
@@ -210,7 +211,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     const success = viewDomain.get('success');
     const errors = viewDomain.get('errors').size > 0 ? this.mapErrors(viewDomain.get('errors')) : Map();
 
-    const entities = (errors.size > 0)
+    const entities = (dataReady && errors.size > 0)
       ? this.filterByError(this.props.entities, errors)
       : this.props.entities;
 
@@ -262,10 +263,13 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         },
       ];
     }
+    console.log('dataReady', dataReady, showMap);
+
     return (
       <div>
-        {this.props.dataReady && this.props.includeHeader && !printing && (
+        {this.props.includeHeader && !printing && (
           <EntityListHeader
+            dataReady={dataReady}
             currentFilters={filters}
             onClearFilters={this.onClearFilters}
             listUpdating={progress !== null && progress >= 0 && progress < 100}
@@ -298,10 +302,10 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onHideFilters={this.onHideFilters}
             onHideEditOptions={this.onHideEditOptions}
             onShowEditOptions={this.onShowEditOptions}
-            onSelectType={() => {
+            onSelectType={(type) => {
               // reset selection
               onEntitySelectAll([]);
-              onSelectType();
+              onSelectType(type);
             }}
             typeOptions={typeOptions}
           />
@@ -331,7 +335,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             header={this.props.header}
             entityTitle={this.props.entityTitle}
 
-            dataReady={this.props.dataReady}
+            dataReady={dataReady}
             isManager={isManager}
             isAnalyst={this.props.hasUserRole[USER_ROLES.ANALYST.value]}
 
@@ -371,7 +375,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           />
         )}
         {showMap && (
-          <EntityListMap
+          <EntitiesMap
             viewOptions={viewOptions}
             entities={entities}
             taxonomies={this.props.taxonomies}
@@ -381,13 +385,14 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             connectedTaxonomies={this.props.connectedTaxonomies}
             locationQuery={locationQuery}
             config={config}
-            dataReady={this.props.dataReady}
+            dataReady={dataReady}
             onEntityClick={(id, path) => this.props.onEntityClick(
               id, path, viewDomain.get('errors')
             )}
+            typeId={typeId}
           />
         )}
-        {hasList && this.props.dataReady && config.taxonomies && (
+        {hasList && dataReady && config.taxonomies && (
           <PrintOnly>
             <EntityListPrintKey
               entities={entities}

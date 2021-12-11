@@ -48,7 +48,7 @@
   "app.components.EntityListMain.groupSubtitle": "Grouped by {size} {type}",
   "app.components.EntityListMain.printHintKey": "Please refer to the end of this document for an overview of categories and tags",
   "app.components.EntityListPrintKey.title": "List categories by category group",
-  "app.components.EntityListHeader.header.filter": "Add list filter",
+  "app.components.EntityListHeader.header.filter": "Add filter",
   "app.components.EntityListHeader.header.edit": "Edit selected items",
   "app.components.EntityListHeader.listOptions.showFilter": "Add filter",
   "app.components.EntityListHeader.listOptions.showEditOptions": "Edit selected",

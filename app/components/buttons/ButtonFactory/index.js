@@ -10,6 +10,7 @@ import ButtonFlat from '../ButtonFlat';
 import ButtonFlatWithIcon from '../ButtonFlatWithIcon';
 import ButtonDefaultIconOnly from '../ButtonDefaultIconOnly';
 import ButtonFlatIconOnly from '../ButtonFlatIconOnly';
+import ButtonSecondary from '../ButtonSecondary';
 import Bookmarker from '../../../containers/Bookmarker';
 
 class ButtonFactory extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
@@ -27,6 +28,17 @@ class ButtonFactory extends React.PureComponent { // eslint-disable-line react/p
           >
             {button.title}
           </ButtonDefault>
+        );
+      case 'secondary':
+        return (
+          <ButtonSecondary
+            onClick={button.onClick && (() => button.onClick())}
+            type={button.submit ? 'submit' : 'button'}
+            disabled={button.disabled}
+            inactive={!button.active}
+          >
+            {button.title}
+          </ButtonSecondary>
         );
       case 'formPrimary':
         return (

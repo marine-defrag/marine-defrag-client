@@ -192,7 +192,11 @@ function mapDispatchToProps(dispatch) {
       dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.IMPORT}`));
     },
     onSelectType: (typeId) => {
-      dispatch(updatePath(typeId ? `${ROUTES.ACTIONS}/${typeId}` : ROUTES.ACTIONS));
+      dispatch(updatePath(
+        typeId && typeId !== ''
+          ? `${ROUTES.ACTIONS}/${typeId}`
+          : ROUTES.ACTIONS
+      ));
     },
   };
 }

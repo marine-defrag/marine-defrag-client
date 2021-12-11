@@ -561,3 +561,5 @@ export const ACTIONTYPE_TARGETTYPES = {
     ACTORTYPES.CLASS,
   ],
 };
+
+export const KEEP_FILTERS = ['view', 'ms'];
