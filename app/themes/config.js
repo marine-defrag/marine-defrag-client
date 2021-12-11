@@ -101,6 +101,7 @@ export const ENDPOINTS = {
     NODE_ENV === 'production'
       ? 'https://marine-defrag-api.herokuapp.com'
       : 'https://marine-defrag-api.herokuapp.com'
+      // 'https://67vn6.hatchboxapp.com'
   ), // server API endpoint
   SIGN_IN: 'auth/sign_in',
   SIGN_OUT: 'auth/sign_out',
