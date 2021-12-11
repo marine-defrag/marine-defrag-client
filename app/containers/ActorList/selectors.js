@@ -137,7 +137,7 @@ export const selectConnectedTaxonomies = createSelector(
 const selectActorsWithCategories = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   (state, args) => selectActorsSearchQuery(state, {
-    searchAttributes: CONFIG.search || ['code', 'title'],
+    searchAttributes: CONFIG.views.list.search || ['code', 'title'],
     ...args,
   }),
   selectActorCategoriesGroupedByActor,
@@ -358,7 +358,7 @@ export const selectListActors = createSelector(
   selectSortByQuery,
   selectSortOrderQuery,
   (entities, sort, order) => {
-    const sortOption = getSortOption(CONFIG.sorting, sort);
+    const sortOption = getSortOption(CONFIG.views.list.sorting, sort);
     return sortEntities(
       entities,
       order || (sortOption ? sortOption.order : 'desc'),

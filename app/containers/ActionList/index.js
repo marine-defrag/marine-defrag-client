@@ -138,6 +138,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
           targettypes={targettypes}
           typeOptions={this.prepareTypeOptions(actiontypes, typeId)}
           onSelectType={onSelectType}
+          typeId={typeId}
         />
       </div>
     );

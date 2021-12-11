@@ -145,6 +145,7 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
           associationtypes={associationtypes}
           typeOptions={this.prepareTypeOptions(actortypes, typeId)}
           onSelectType={onSelectType}
+          typeId={typeId}
         />
       </div>
     );

@@ -23,6 +23,7 @@ class ButtonFactory extends React.PureComponent { // eslint-disable-line react/p
             onClick={button.onClick && (() => button.onClick())}
             type={button.submit ? 'submit' : 'button'}
             disabled={button.disabled}
+            inactive={!button.active}
           >
             {button.title}
           </ButtonDefault>

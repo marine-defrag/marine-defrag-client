@@ -296,13 +296,13 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       showEditOptions,
       onHideEditOptions,
       onShowEditOptions,
-      isManager,
+      canEdit,
       onSelectType,
       typeOptions,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
-    const hasSelected = entityIdsSelected && entityIdsSelected.size > 0;
+    const hasSelected = canEdit && entityIdsSelected && entityIdsSelected.size > 0;
     const entitiesSelected = hasSelected
       && entities.filter((entity) => entityIdsSelected.includes(entity.get('id')));
     const formModel = showFilters ? FILTER_FORM_MODEL : EDIT_FORM_MODEL;
@@ -454,7 +454,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
               )}
             </HeaderSectionType>
           )}
-          <HeaderSection grow>
+          <HeaderSection grow noBorder={!canEdit}>
             <EntityListSearch>
               <TagList
                 filters={currentFilters}
@@ -468,7 +468,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
               title={intl.formatMessage(messages.listOptions.showFilter)}
             />
           </HeaderSection>
-          {isManager && (
+          {canEdit && (
             <HeaderSection noBorder>
               <ButtonOptions
                 onClick={onShowEditOptions}
@@ -555,7 +555,7 @@ EntityListHeader.propTypes = {
   showEditOptions: PropTypes.bool,
   onHideEditOptions: PropTypes.func,
   onShowEditOptions: PropTypes.func,
-  isManager: PropTypes.bool,
+  canEdit: PropTypes.bool,
   typeOptions: PropTypes.array,
   onSelectType: PropTypes.func,
 };

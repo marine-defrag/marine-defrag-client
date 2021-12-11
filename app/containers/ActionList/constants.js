@@ -1,5 +1,9 @@
 import {
-  API, ROUTES, USER_ROLES, PUBLISH_STATUSES,
+  API,
+  ROUTES,
+  USER_ROLES,
+  PUBLISH_STATUSES,
+  ACTIONTYPES,
 } from 'themes/config';
 
 export const DEPENDENCIES = [
@@ -20,33 +24,40 @@ export const DEPENDENCIES = [
 ];
 
 export const CONFIG = {
+  types: 'actiontypes',
   serverPath: API.ACTIONS,
   clientPath: ROUTES.ACTION,
-  search: ['code', 'title', 'description'],
-  types: 'actiontypes',
-  sorting: [
-    {
-      attribute: 'id', // proxy for created at
-      type: 'number',
-      order: 'desc',
+  views: {
+    list: {
+      search: ['code', 'title', 'description'],
+      sorting: [
+        {
+          attribute: 'title',
+          type: 'string',
+          order: 'asc',
+        },
+        {
+          attribute: 'code',
+          type: 'string',
+          order: 'asc',
+        },
+        {
+          attribute: 'updated_at',
+          type: 'date',
+          order: 'desc',
+          default: true,
+        },
+        {
+          attribute: 'id', // proxy for created at
+          type: 'number',
+          order: 'desc',
+        },
+      ],
     },
-    {
-      attribute: 'code',
-      type: 'string',
-      order: 'asc',
+    map: {
+      types: Object.values(ACTIONTYPES),
     },
-    {
-      attribute: 'title',
-      type: 'string',
-      order: 'asc',
-    },
-    {
-      attribute: 'updated_at',
-      type: 'date',
-      order: 'desc',
-      default: true,
-    },
-  ],
+  },
   taxonomies: { // filter by each category
     query: 'cat',
     search: true,

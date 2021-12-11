@@ -69,6 +69,7 @@ export const SUBMIT_INVALID = 'impactoss/App/SUBMIT_INVALID';
 
 export const DISMISS_QUERY_MESSAGES = 'impactoss/App/DISMISS_QUERY_MESSAGES';
 export const SET_ACTIONTYPE = 'impactoss/App/SET_ACTIONTYPE';
+export const SET_VIEW = 'impactoss/App/SET_VIEW';
 
 export const FILTERS_PANEL = 'filters';
 export const EDIT_PANEL = 'edit';

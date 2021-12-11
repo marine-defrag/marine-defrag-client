@@ -1,5 +1,9 @@
 import {
-  API, USER_ROLES, PUBLISH_STATUSES, ROUTES,
+  API,
+  USER_ROLES,
+  PUBLISH_STATUSES,
+  ROUTES,
+  ACTORTYPES,
 } from 'themes/config';
 
 export const DEPENDENCIES = [
@@ -21,33 +25,40 @@ export const DEPENDENCIES = [
 ];
 
 export const CONFIG = {
+  types: 'actortypes',
   serverPath: API.ACTORS,
   clientPath: ROUTES.ACTOR,
-  search: ['code', 'title', 'description'],
-  types: 'actortypes',
-  sorting: [
-    {
-      attribute: 'id', // proxy for created at
-      type: 'number',
-      order: 'desc',
+  views: {
+    list: {
+      search: ['code', 'title', 'description'],
+      sorting: [
+        {
+          attribute: 'title',
+          type: 'string',
+          order: 'asc',
+          default: true,
+        },
+        {
+          attribute: 'code',
+          type: 'string',
+          order: 'asc',
+        },
+        {
+          attribute: 'updated_at',
+          type: 'date',
+          order: 'desc',
+        },
+        {
+          attribute: 'id', // proxy for created at
+          type: 'number',
+          order: 'desc',
+        },
+      ],
     },
-    {
-      attribute: 'code',
-      type: 'string',
-      order: 'asc',
+    map: {
+      types: [ACTORTYPES.COUNTRY],
     },
-    {
-      attribute: 'title',
-      type: 'string',
-      order: 'asc',
-      default: true,
-    },
-    {
-      attribute: 'updated_at',
-      type: 'date',
-      order: 'desc',
-    },
-  ],
+  },
   taxonomies: { // filter by each category
     query: 'cat',
     search: true,

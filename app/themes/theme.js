@@ -243,7 +243,7 @@ theme.palette = {
   // buttonSecondaryHover: [secondary[4], secondary[0]],
   // buttonToggleInactive: ['#color', '#bg'],
   buttonToggleInactive: [dark[2], light[1]], // list sidebar filter/edit toggle button
-  buttonToggleInactiveHover: [dark[2], light[0]],
+  buttonToggleInactiveHover: [dark[2], light[2]],
   // ButtonInverse: ['#color', '#bg'],
   buttonInverse: [primary[2], primary[4]], // used for taxonomy tags, background only
   buttonInverseHover: [primary[0], primary[4]],

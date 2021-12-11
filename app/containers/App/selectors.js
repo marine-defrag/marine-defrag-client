@@ -336,6 +336,11 @@ export const selectActiontypeQuery = createSelector(
     : 'all'
 );
 
+export const selectViewQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && (locationQuery.get('view') || 'list')
+);
+
 // database ////////////////////////////////////////////////////////////////////////
 
 const selectEntitiesAll = (state) => state.getIn(['global', 'entities']);
