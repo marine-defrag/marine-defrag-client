@@ -24,6 +24,7 @@ export const CONFIG = {
   serverPath: API.ACTORS,
   clientPath: ROUTES.ACTOR,
   search: ['code', 'title', 'description'],
+  types: 'actortypes',
   sorting: [
     {
       attribute: 'id', // proxy for created at

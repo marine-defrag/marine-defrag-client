@@ -24,6 +24,7 @@ import messages from './messages';
 const Styled = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
   position: relative;
   @media print {
     border: none;
@@ -121,7 +122,7 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
             }
           </Tags>
         )}
-        { hasFilters && (
+        { hasFilters && filters.length > 1 && (
           <Clear
             onClick={this.props.onClear}
           >

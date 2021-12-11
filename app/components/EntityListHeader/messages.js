@@ -14,31 +14,15 @@ export default defineMessages({
       id: 'app.components.EntityListHeader.header.editedit',
       defaultMessage: 'Edit selected items',
     },
-    filterButton: {
-      id: 'app.components.EntityListHeader.header.filterButton',
-      defaultMessage: 'Filter',
-    },
-    editButton: {
-      id: 'app.components.EntityListHeader.header.editButton',
-      defaultMessage: 'Edit',
-    },
   },
-  sidebarToggle: {
+  listOptions: {
     showFilter: {
-      id: 'app.components.EntityListHeader.sidebarToggle.showFilter',
+      id: 'app.components.EntityListHeader.listOptions.showFilter',
       defaultMessage: 'Show filter options',
     },
     showEditOptions: {
-      id: 'app.components.EntityListHeader.sidebarToggle.showEditOptions',
+      id: 'app.components.EntityListHeader.listOptions.showEditOptions',
       defaultMessage: 'Show edit options',
-    },
-    showFilterEdit: {
-      id: 'app.components.EntityListHeader.sidebarToggle.showFilterEdit',
-      defaultMessage: 'Show filter & edit options',
-    },
-    hide: {
-      id: 'app.components.EntityListHeader.sidebarToggle.hide',
-      defaultMessage: 'Hide options',
     },
   },
   groupExpand: {
@@ -172,5 +156,9 @@ export default defineMessages({
   entitiesNotSelected: {
     id: 'app.components.EntityListHeader.entitiesNotSelected',
     defaultMessage: 'Please select one or more entities from the list for available edit options',
+  },
+  selectType: {
+    id: 'app.components.EntityListHeader.selectType',
+    defaultMessage: 'Select {types}',
   },
 });

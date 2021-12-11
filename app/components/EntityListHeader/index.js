@@ -17,6 +17,8 @@ import { TEXT_TRUNCATE } from 'themes/config';
 import { FILTER_FORM_MODEL, EDIT_FORM_MODEL } from 'containers/EntityListForm/constants';
 
 import Button from 'components/buttons/Button';
+import ButtonFlatIconOnly from 'components/buttons/ButtonFlatIconOnly';
+import ButtonFlatWithIcon from 'components/buttons/ButtonFlatWithIcon';
 
 import EntityListForm from 'containers/EntityListForm';
 import appMessages from 'containers/App/messages';
@@ -35,49 +37,71 @@ import messages from './messages';
 
 const Styled = styled(PrintHide)``;
 
-const ToggleShow = styled(Button)`
-  padding: 5px;
-  letter-spacing: 0;
-  font-weight: normal;
-  text-transform: none;
-  display: block;
-  max-width: 160px;
-  margin:0;
-`;
-const SelectType = styled.a`
-  display: none;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    display: inline-block;
-  }
-`;
-const HeaderSection = styled.div`
-  display: inline-block;
-  position: relative;
-`;
-const EntityListSearch = styled.div`
-  padding-bottom: 1em;
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
-    padding-bottom: 2em;
-  }
-`;
 const TheHeader = styled.div`
   height: ${({ theme }) => theme.sizes.headerList.banner.height}px;
-  padding: 8px 30px;
+  padding: 0 15px;
   background-color: ${palette('primary', 3)};
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
   position: relative;
   z-index: 96;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+const HeaderSection = styled.div`
+  position: relative;
+  border-right: 1px solid ${({ noBorder }) => noBorder ? 'transparent' : palette('light', 4)};
+  padding: 2px 10px;
+  height: 100%;
+  flex: ${({ grow }) => grow ? '1' : '0'} ${({ shrink = '1' }) => shrink ? '1' : '0'} auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+const HeaderSectionType = styled(HeaderSection)`
+  width: 240px;
+  padding: 2px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 18px;
+`;
+const SelectType = styled(Button)`
+  display: none;
+  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+    display: block;
+    padding-left: 2px;
+    padding-right: 2px;
+    max-width: 100%;
+  }
+`;
+const EntityListSearch = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
-// const LinkSuperTitle = styled.div`
-//   font-size: ${(props) => props.theme.sizes.text.smallMobile};
-//   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-//     font-size: ${(props) => props.theme.sizes.text.smaller};
-//   }
-//   @media print {
-//     font-size: ${(props) => props.theme.sizes.print.smaller};
-//   }
-// `;
+const ButtonOptions = styled((p) => <ButtonFlatWithIcon iconRight iconSize="20px" small {...p} />)`
+  position: relative;
+  top: 3px;
+  padding: 4px 8px;
+  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+    padding: ${(props) => props.inForm ? '1em 1.2em' : '0.25em 1.25em'};
+    padding: 5px 10px;
+  }
+`;
+
+const Label = styled.div`
+  font-size: ${(props) => props.theme.sizes.text.smallMobile};
+  color: ${palette('text', 1)};
+  padding-left: 2px;
+  padding-right: 2px;
+  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+    font-size: ${(props) => props.theme.sizes.text.smaller};
+  }
+  @media print {
+    font-size: ${(props) => props.theme.sizes.print.smaller};
+  }
+`;
 const LinkTitle = styled.div`
   font-size: ${(props) => props.theme.sizes.text.small};
   font-weight: bold;
@@ -97,10 +121,9 @@ const TypeOptions = styled(PrintHide)`
     top: 100%;
     left: 0;
     display: block;
-    min-width: ${({ theme }) => theme.sizes.aside.width.small}px;
   }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    min-width: ${({ theme }) => theme.sizes.aside.width.large}px;
+    min-width: 240px;
   }
   background: white;
   box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.2);
@@ -368,18 +391,29 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     }
     const currentTypeOption = typeOptions
       && typeOptions.find((option) => option.active);
+
     return (
       <Styled>
         <TheHeader>
           {typeOptions && (
-            <HeaderSection>
-              <Button onClick={() => onSelectType()}>
-                {'<'}
-              </Button>
+            <HeaderSection noBorder>
+              <ButtonFlatIconOnly onClick={() => onSelectType()}>
+                <Icon name="arrowLeft" size="2em" />
+              </ButtonFlatIconOnly>
             </HeaderSection>
           )}
           {typeOptions && (
-            <HeaderSection>
+            <HeaderSectionType>
+              {config.types && (
+                <Label>
+                  <FormattedMessage
+                    {...messages.selectType}
+                    values={{
+                      types: intl.formatMessage(appMessages[config.types].single),
+                    }}
+                  />
+                </Label>
+              )}
               <SelectType
                 as="button"
                 ref={this.typeButtonRef}
@@ -418,26 +452,32 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                   ))}
                 </TypeOptions>
               )}
-            </HeaderSection>
+            </HeaderSectionType>
           )}
-          <HeaderSection>
+          <HeaderSection grow>
             <EntityListSearch>
               <TagList
                 filters={currentFilters}
                 onClear={onClearFilters}
               />
             </EntityListSearch>
+            <ButtonOptions
+              onClick={onShowFilters}
+              disabled={showFilters}
+              icon="filter"
+              title={intl.formatMessage(messages.listOptions.showFilter)}
+            />
           </HeaderSection>
-          <HeaderSection>
-            <ToggleShow onClick={onShowFilters} disabled={showFilters || hasSelected}>
-              <FormattedMessage {...messages.sidebarToggle.showFilter} />
-            </ToggleShow>
-            {isManager && (
-              <ToggleShow onClick={onShowEditOptions} disabled={showEditOptions}>
-                <FormattedMessage {...messages.sidebarToggle.showEditOptions} />
-              </ToggleShow>
-            )}
-          </HeaderSection>
+          {isManager && (
+            <HeaderSection noBorder>
+              <ButtonOptions
+                onClick={onShowEditOptions}
+                disabled={showEditOptions}
+                icon="edit"
+                title={intl.formatMessage(messages.listOptions.showEditOptions)}
+              />
+            </HeaderSection>
+          )}
         </TheHeader>
         {showFilters && (
           <EntityListSidebar

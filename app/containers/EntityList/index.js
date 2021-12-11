@@ -269,7 +269,12 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         )}
         <EntityListMain
           currentFilters={filters}
-          onClearFilters={this.onClearFilters}
+          onClearFilters={() => {
+            this.props.onSearch('');
+            if (!this.props.includeHeader) {
+              this.onClearFilters();
+            }
+          }}
           hasHeader={this.props.includeHeader}
           listUpdating={progress !== null && progress >= 0 && progress < 100}
           entities={entities}
