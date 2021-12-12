@@ -16,6 +16,7 @@ const Styled = styled.div`
   right: 0;
   left: 0;
   background: white;
+  z-index: 10;
 `;
 
 const MAP_OPTIONS = {
@@ -47,6 +48,7 @@ const scaleColorCount = (max) => scaleLinear()
 
 export function MapContainer({
   countryFeatures,
+  indicator,
 }) {
   const mapRef = useRef(null);
   const countryLayerGroupRef = useRef(null);
@@ -107,8 +109,8 @@ export function MapContainer({
   useEffect(() => {
     if (countryFeatures) {
       const maxValue = countryFeatures.reduce((memo, f) => {
-        if (!memo) return f.values.count;
-        return Math.max(memo, f.values.count);
+        if (!memo) return f.values[indicator];
+        return Math.max(memo, f.values[indicator]);
       }, null);
       const scale = scaleColorCount(maxValue);
       countryLayerGroupRef.current.clearLayers();
@@ -117,15 +119,15 @@ export function MapContainer({
         {
           style: (f) => ({
             ...DEFAULT_STYLE,
-            fillColor: f.values && f.values.count && f.values.count > 0
-              ? scale(f.values.count)
+            fillColor: f.values && f.values[indicator] && f.values[indicator] > 0
+              ? scale(f.values[indicator])
               : NO_DATA_COLOR,
           }),
         },
       );
       countryLayerGroupRef.current.addLayer(jsonLayer);
     }
-  }, [countryFeatures]);
+  }, [countryFeatures, indicator]);
 
   return (
     <Styled id="ll-map" />
@@ -134,6 +136,7 @@ export function MapContainer({
 
 MapContainer.propTypes = {
   countryFeatures: PropTypes.array,
+  indicator: PropTypes.string,
 };
 
 export default MapContainer;

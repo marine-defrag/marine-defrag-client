@@ -263,7 +263,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         },
       ];
     }
-    console.log('dataReady', dataReady, showMap);
 
     return (
       <div>

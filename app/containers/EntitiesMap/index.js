@@ -57,7 +57,7 @@ export function EntitiesMap({
   typeId,
   mapSubject,
   onSetMapSubject,
-  // countries,
+  countries,
   // connections,
   // connectedTaxonomies,
   // locationQuery,
@@ -73,12 +73,16 @@ export function EntitiesMap({
   let countryFeatures;
   let hasByTarget;
   let subjectOptions;
+  let indicator = 'actions';
   // let cleanMapSubject = 'actors';
   if (dataReady) {
     if (config.types === 'actortypes') {
       type = actortypes.find((at) => qe(at.get('id'), typeId));
       hasByTarget = type.getIn(['attributes', 'is_target']);
       if (hasByTarget) {
+        if (mapSubject === 'targets') {
+          indicator = 'targetingActions';
+        }
         // cleanMapSubject = mapSubject;
         subjectOptions = [
           {
@@ -101,31 +105,23 @@ export function EntitiesMap({
           countryFeatures = countriesJSON.features.map((feature) => {
             const entity = entities.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
             if (entity) {
-              if (mapSubject === 'actors') {
-                if (entity.get('actions')) {
-                  return {
-                    ...feature,
-                    values: {
-                      count: entity.get('actions').size,
-                    },
-                  };
-                }
-              }
-              if (mapSubject === 'targets') {
-                if (entity.get('targetingActions')) {
-                  return {
-                    ...feature,
-                    values: {
-                      count: entity.get('targetingActions').size,
-                    },
-                  };
-                }
-              }
+              return {
+                ...feature,
+                values: {
+                  actions: entity.get('actions')
+                    ? entity.get('actions').size
+                    : 0,
+                  targetingActions: entity.get('targetingActions')
+                    ? entity.get('targetingActions').size
+                    : 0,
+                },
+              };
             }
             return {
               ...feature,
               values: {
-                count: 0,
+                actions: 0,
+                targetingActions: 0,
               },
             };
           });
@@ -135,6 +131,9 @@ export function EntitiesMap({
       type = actiontypes.find((at) => qe(at.get('id'), typeId));
       hasByTarget = type.getIn(['attributes', 'has_target']);
       if (hasByTarget) {
+        if (mapSubject === 'targets') {
+          indicator = 'targetingActions';
+        }
         // cleanMapSubject = mapSubject;
         subjectOptions = [
           {
@@ -153,11 +152,62 @@ export function EntitiesMap({
           },
         ];
       }
+      // entities are filtered actions
+      const countryCounts = entities.reduce((memo, action) => {
+        let updated = memo;
+        // get countries
+        const actionCountries = action.get('actorsByType')
+          && action.getIn(['actorsByType', parseInt(ACTORTYPES.COUNTRY, 10)]);
+        if (actionCountries) {
+          actionCountries.forEach((cid) => {
+            if (memo.get(cid) && memo.getIn([cid, 'actions'])) {
+              updated = updated.setIn([cid, 'actions'], memo.getIn([cid, 'actions']) + 1);
+            } else {
+              updated = updated.setIn([cid, 'actions'], 1);
+            }
+          });
+        }
+        if (hasByTarget) {
+          const actionCountriesAsTargets = action.get('targetsByType')
+            && action.getIn(['targetsByType', parseInt(ACTORTYPES.COUNTRY, 10)]);
+          if (actionCountriesAsTargets) {
+            actionCountriesAsTargets.forEach((cid) => {
+              if (memo.get(cid) && memo.getIn([cid, 'targetingActions'])) {
+                updated = updated.setIn([cid, 'targetingActions'], memo.getIn([cid, 'targetingActions']) + 1);
+              } else {
+                updated = updated.setIn([cid, 'targetingActions'], 1);
+              }
+            });
+          }
+        }
+        return updated;
+      }, Map());
+      // console.log('countryCounts', countryCounts && countryCounts.toJS())
+      countryFeatures = countriesJSON.features.map((feature) => {
+        const country = countries.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
+        const cCounts = country && countryCounts.get(parseInt(country.get('id'), 10));
+        if (country) {
+          return {
+            ...feature,
+            values: {
+              actions: (cCounts && cCounts.get('actions')) || 0,
+              targetingActions: (cCounts && cCounts.get('targetingActions')) || 0,
+            },
+          };
+        }
+        return {
+          ...feature,
+          values: {
+            actions: 0,
+            targetingActions: 0,
+          },
+        };
+      });
     }
   }
   return (
     <ContainerWrapper hasHeader noOverflow>
-      <MapContainer countryFeatures={countryFeatures} />
+      <MapContainer countryFeatures={countryFeatures} indicator={indicator} />
       {!dataReady && (
         <LoadingWrap>
           <Loading />
@@ -179,7 +229,7 @@ EntitiesMap.propTypes = {
   // connections: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
-  // countries: PropTypes.instanceOf(Map),
+  countries: PropTypes.instanceOf(Map),
   // taxonomies: PropTypes.instanceOf(Map),
   // connectedTaxonomies: PropTypes.instanceOf(Map),
   // locationQuery: PropTypes.instanceOf(Map),

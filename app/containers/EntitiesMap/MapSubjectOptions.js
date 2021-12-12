@@ -6,6 +6,7 @@ import ButtonFactory from 'components/buttons/ButtonFactory';
 
 const Styled = styled.div`
   position: absolute;
+  z-index: 50;
   bottom: 20px;
   left: 20px;
   padding: 10px 0;
