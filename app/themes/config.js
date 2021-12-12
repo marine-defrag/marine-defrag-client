@@ -99,7 +99,7 @@ export const COLUMN_WIDTHS = {
 export const ENDPOINTS = {
   API: (
     NODE_ENV === 'production'
-      ? 'https://marine-defrag-api.herokuapp.com'
+      ? 'https://67vn6.hatchboxapp.com'
       : 'https://marine-defrag-api.herokuapp.com'
       // 'https://67vn6.hatchboxapp.com'
   ), // server API endpoint

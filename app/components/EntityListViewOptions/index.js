@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import ButtonFactory from 'components/buttons/ButtonFactory';
 
 const Styled = styled.div`
+  position: relative;
+  z-index: 20;
   margin-left: 10px;
   padding: 10px 0;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
