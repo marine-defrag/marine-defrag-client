@@ -8,7 +8,10 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { scaleLinear } from 'd3-scale';
 import L from 'leaflet';
+
+import qe from 'utils/quasi-equals';
 import Tooltip from './Tooltip';
+
 const Styled = styled.div`
   position: absolute;
   top: 0;
@@ -39,6 +42,18 @@ const DEFAULT_STYLE = {
   color: '#BBC3CD',
   fillOpacity: 1,
 };
+const TOOLTIP_STYLE = {
+  weight: 1,
+  fillOpacity: 0,
+  color: '#666666',
+  interactive: false,
+};
+const OVER_STYLE = {
+  weight: 1,
+  fillOpacity: 0,
+  color: '#AAAAAA',
+  interactive: false,
+};
 
 const NO_DATA_COLOR = '#E2E2E2';
 
@@ -52,9 +67,12 @@ export function MapContainer({
   onCountryClick,
 }) {
   const [tooltip, setTooltip] = useState(null);
+  const [featureOver, setFeatureOver] = useState(null);
   const ref = useRef(null);
   const mapRef = useRef(null);
   const countryLayerGroupRef = useRef(null);
+  const countryTooltipGroupRef = useRef(null);
+  const countryOverGroupRef = useRef(null);
   const mapEvents = {
     // resize: () => {
     //   // console.log('resize')
@@ -92,24 +110,29 @@ export function MapContainer({
       feature,
     });
   };
-  useEffect(() => {
-    /**
-     * Alert if clicked on outside of element
-     */
-    function handleClickOutside(event) {
-      // Do nothing if clicking ref's element or descendent elements
-      if (!ref.current || ref.current.contains(event.target)) {
-        return;
-      }
-      setTooltip();
-    }
-    // Bind the event listener
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [ref]);
+  const onFeatureOver = (e, feature) => {
+    L.DomEvent.stopPropagation(e);
+    setFeatureOver(feature.id);
+  };
+  // useEffect(() => {
+  //   /**
+  //    * Alert if clicked on outside of element
+  //    */
+  //   function handleClickOutside(event) {
+  //     console.log(event.target)
+  //     // Do nothing if clicking ref's element or descendent elements
+  //     if (!ref.current || ref.current.contains(event.target)) {
+  //       return;
+  //     }
+  //     setTooltip();
+  //   }
+  //   // Bind the event listener
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => {
+  //     // Unbind the event listener on clean up
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, [ref]);
 
   useEffect(() => {
     mapRef.current = L.map('ll-map', {
@@ -126,6 +149,10 @@ export function MapContainer({
     }).on(mapEvents);
     countryLayerGroupRef.current = L.layerGroup();
     countryLayerGroupRef.current.addTo(mapRef.current);
+    countryTooltipGroupRef.current = L.layerGroup();
+    countryTooltipGroupRef.current.addTo(mapRef.current);
+    countryOverGroupRef.current = L.layerGroup();
+    countryOverGroupRef.current.addTo(mapRef.current);
     //
     // mapRef.current.on('zoomend', () => {
     //   setZoom(mapRef.current.getZoom());
@@ -160,6 +187,7 @@ export function MapContainer({
           onEachFeature: (feature, layer) => {
             layer.on({
               click: (e) => onFeatureClick(e, feature),
+              mouseover: (e) => onFeatureOver(e, feature),
             });
           },
         },
@@ -167,6 +195,32 @@ export function MapContainer({
       countryLayerGroupRef.current.addLayer(jsonLayer);
     }
   }, [countryFeatures, indicator, tooltip]);
+  // add countryFeatures
+  useEffect(() => {
+    countryTooltipGroupRef.current.clearLayers();
+    if (tooltip && countryFeatures) {
+      const jsonLayer = L.geoJSON(
+        countryFeatures.filter((f) => qe(f.id, tooltip.feature.id)),
+        {
+          style: TOOLTIP_STYLE,
+        },
+      );
+      countryTooltipGroupRef.current.addLayer(jsonLayer);
+    }
+  }, [tooltip]);
+
+  useEffect(() => {
+    countryOverGroupRef.current.clearLayers();
+    if (featureOver && countryFeatures) {
+      const jsonLayer = L.geoJSON(
+        countryFeatures.filter((f) => qe(f.id, featureOver)),
+        {
+          style: OVER_STYLE,
+        },
+      );
+      countryOverGroupRef.current.addLayer(jsonLayer);
+    }
+  }, [featureOver]);
 
   return (
     <>
@@ -177,7 +231,8 @@ export function MapContainer({
           direction={tooltip.direction}
           feature={tooltip.feature}
           onClose={() => setTooltip(null)}
-          onFeatureClick={() => {
+          onFeatureClick={(evt) => {
+            if (evt !== undefined && evt.stopPropagation) evt.stopPropagation();
             setTooltip(null);
             if (tooltip.feature && tooltip.feature.attributes) {
               onCountryClick(tooltip.feature.id);

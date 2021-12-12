@@ -4,6 +4,7 @@
  *
  */
 import React from 'react';
+import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
@@ -29,7 +30,7 @@ import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
 
-// import appMessages from 'containers/App/messages';
+import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 import MapSubjectOptions from './MapSubjectOptions';
 import MapContainer from './MapContainer';
@@ -59,6 +60,7 @@ export function EntitiesMap({
   onSetMapSubject,
   countries,
   onEntityClick,
+  intl,
   // connections,
   // connectedTaxonomies,
   // locationQuery,
@@ -110,6 +112,13 @@ export function EntitiesMap({
                 ...feature,
                 id: entity.get('id'),
                 attributes: entity.get('attributes').toJS(),
+                tooltip: {
+                  title: entity.getIn(['attributes', 'title']),
+                  typeLabels: {
+                    plural: intl.formatMessage(appMessages.entities.actions.plural),
+                    single: intl.formatMessage(appMessages.entities.actions.single),
+                  },
+                },
                 values: {
                   actions: entity.get('actions')
                     ? entity.get('actions').size
@@ -190,10 +199,18 @@ export function EntitiesMap({
         const country = countries.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
         const cCounts = country && countryCounts.get(parseInt(country.get('id'), 10));
         if (country) {
+          const typeLabels = {
+            single: intl.formatMessage(appMessages.entities[`actions_${typeId}`].single),
+            plural: intl.formatMessage(appMessages.entities[`actions_${typeId}`].plural),
+          };
           return {
             ...feature,
             id: country.get('id'),
             attributes: country.get('attributes').toJS(),
+            tooltip: {
+              title: country.getIn(['attributes', 'title']),
+              typeLabels,
+            },
             values: {
               actions: (cCounts && cCounts.get('actions')) || 0,
               targetingActions: (cCounts && cCounts.get('targetingActions')) || 0,
@@ -250,10 +267,7 @@ EntitiesMap.propTypes = {
   mapSubject: PropTypes.string,
   onSetMapSubject: PropTypes.func,
   onEntityClick: PropTypes.func,
-};
-
-EntitiesMap.contextTypes = {
-  intl: PropTypes.object.isRequired,
+  intl: intlShape.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -268,4 +282,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EntitiesMap);
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(EntitiesMap));
