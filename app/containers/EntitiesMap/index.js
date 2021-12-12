@@ -76,10 +76,16 @@ export function EntitiesMap({
   let countryFeatures;
   let hasByTarget;
   let subjectOptions;
+  let typeLabels;
   let indicator = 'actions';
   // let cleanMapSubject = 'actors';
   if (dataReady) {
     if (config.types === 'actortypes') {
+      typeLabels = {
+        plural: intl.formatMessage(appMessages.entities.actions.plural),
+        single: intl.formatMessage(appMessages.entities.actions.single),
+      };
+
       type = actortypes.find((at) => qe(at.get('id'), typeId));
       hasByTarget = type.getIn(['attributes', 'is_target']);
       if (hasByTarget) {
@@ -114,10 +120,6 @@ export function EntitiesMap({
                 attributes: entity.get('attributes').toJS(),
                 tooltip: {
                   title: entity.getIn(['attributes', 'title']),
-                  typeLabels: {
-                    plural: intl.formatMessage(appMessages.entities.actions.plural),
-                    single: intl.formatMessage(appMessages.entities.actions.single),
-                  },
                 },
                 values: {
                   actions: entity.get('actions')
@@ -140,6 +142,10 @@ export function EntitiesMap({
         }
       }
     } else if (config.types === 'actiontypes') {
+      typeLabels = {
+        single: intl.formatMessage(appMessages.entities[`actions_${typeId}`].single),
+        plural: intl.formatMessage(appMessages.entities[`actions_${typeId}`].plural),
+      };
       type = actiontypes.find((at) => qe(at.get('id'), typeId));
       hasByTarget = type.getIn(['attributes', 'has_target']);
       if (hasByTarget) {
@@ -199,17 +205,12 @@ export function EntitiesMap({
         const country = countries.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
         const cCounts = country && countryCounts.get(parseInt(country.get('id'), 10));
         if (country) {
-          const typeLabels = {
-            single: intl.formatMessage(appMessages.entities[`actions_${typeId}`].single),
-            plural: intl.formatMessage(appMessages.entities[`actions_${typeId}`].plural),
-          };
           return {
             ...feature,
             id: country.get('id'),
             attributes: country.get('attributes').toJS(),
             tooltip: {
               title: country.getIn(['attributes', 'title']),
-              typeLabels,
             },
             values: {
               actions: (cCounts && cCounts.get('actions')) || 0,
@@ -230,6 +231,7 @@ export function EntitiesMap({
   return (
     <ContainerWrapper hasHeader noOverflow>
       <MapContainer
+        typeLabels={typeLabels}
         countryFeatures={countryFeatures}
         indicator={indicator}
         onCountryClick={(id) => onEntityClick(id, ROUTES.ACTOR)}

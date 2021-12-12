@@ -11,6 +11,7 @@ import L from 'leaflet';
 
 import qe from 'utils/quasi-equals';
 import Tooltip from './Tooltip';
+import Key from './Key';
 
 const Styled = styled.div`
   position: absolute;
@@ -56,15 +57,17 @@ const OVER_STYLE = {
 };
 
 const NO_DATA_COLOR = '#E2E2E2';
+const RANGE = ['#CAE0F7', '#164571'];
 
 const scaleColorCount = (max) => scaleLinear()
   .domain([1, max])
-  .range(['#CAE0F7', '#164571']);
+  .range(RANGE);
 
 export function MapContainer({
   countryFeatures,
   indicator,
   onCountryClick,
+  typeLabels,
 }) {
   const [tooltip, setTooltip] = useState(null);
   const [featureOver, setFeatureOver] = useState(null);
@@ -100,7 +103,7 @@ export function MapContainer({
     // },
   };
   const onFeatureClick = (e, feature) => {
-    L.DomEvent.stopPropagation(e);
+    if (e && L.DomEvent) L.DomEvent.stopPropagation(e);
     setTooltip({
       anchor: e.containerPoint,
       direction: {
@@ -111,8 +114,9 @@ export function MapContainer({
     });
   };
   const onFeatureOver = (e, feature) => {
-    L.DomEvent.stopPropagation(e);
-    setFeatureOver(feature.id);
+    if (e && L.DomEvent) L.DomEvent.stopPropagation(e);
+    if (!e || !feature || feature.id) setFeatureOver(null);
+    if (feature && feature.id) setFeatureOver(feature.id);
   };
   // useEffect(() => {
   //   /**
@@ -133,7 +137,13 @@ export function MapContainer({
   //     document.removeEventListener('mousedown', handleClickOutside);
   //   };
   // }, [ref]);
-
+  let maxValue;
+  if (countryFeatures) {
+    maxValue = countryFeatures.reduce((memo, f) => {
+      if (!memo) return f.values[indicator];
+      return Math.max(memo, f.values[indicator]);
+    }, null);
+  }
   useEffect(() => {
     mapRef.current = L.map('ll-map', {
       // center: MAP_OPTIONS.CENTER,
@@ -169,10 +179,6 @@ export function MapContainer({
   // add countryFeatures
   useEffect(() => {
     if (countryFeatures) {
-      const maxValue = countryFeatures.reduce((memo, f) => {
-        if (!memo) return f.values[indicator];
-        return Math.max(memo, f.values[indicator]);
-      }, null);
       const scale = scaleColorCount(maxValue);
       countryLayerGroupRef.current.clearLayers();
       const jsonLayer = L.geoJSON(
@@ -188,6 +194,7 @@ export function MapContainer({
             layer.on({
               click: (e) => onFeatureClick(e, feature),
               mouseover: (e) => onFeatureOver(e, feature),
+              mouseout: () => onFeatureOver(),
             });
           },
         },
@@ -225,12 +232,31 @@ export function MapContainer({
   return (
     <>
       <Styled id="ll-map" ref={ref} />
+      {countryFeatures && !!maxValue && (
+        <Key
+          config={{
+            title: typeLabels.plural,
+            range: [1, maxValue],
+            stops: [
+              {
+                value: 1,
+                color: RANGE[0],
+              },
+              {
+                value: maxValue,
+                color: RANGE[1],
+              },
+            ],
+          }}
+        />
+      )}
       {tooltip && (
         <Tooltip
           position={null}
           direction={tooltip.direction}
           feature={tooltip.feature}
           onClose={() => setTooltip(null)}
+          typeLabels={typeLabels}
           onFeatureClick={(evt) => {
             if (evt !== undefined && evt.stopPropagation) evt.stopPropagation();
             setTooltip(null);
@@ -245,6 +271,7 @@ export function MapContainer({
 }
 
 MapContainer.propTypes = {
+  typeLabels: PropTypes.object,
   countryFeatures: PropTypes.array,
   indicator: PropTypes.string,
   onCountryClick: PropTypes.func,

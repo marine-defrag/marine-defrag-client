@@ -96,6 +96,7 @@ const Tooltip = ({
   feature,
   onClose,
   onFeatureClick,
+  typeLabels,
 }) => (
   <Root position={position}>
     <Anchor dirLeft={direction.x === 'left'} w={WIDTH} xy={{ x: 0, y: 0 }}>
@@ -108,14 +109,14 @@ const Tooltip = ({
         </CloseWrap>
         <TTTitle>{feature.tooltip.title}</TTTitle>
         <Stats>
-          {typeof feature.values.actions !== 'undefined' && feature.tooltip.typeLabels && (
+          {typeof feature.values.actions !== 'undefined' && typeLabels && (
             <TTContent>
-              {`${feature.tooltip.typeLabels.plural}: ${feature.values.actions}`}
+              {`${typeLabels.plural}: ${feature.values.actions}`}
             </TTContent>
           )}
-          {typeof feature.values.targetingActions !== 'undefined' && feature.tooltip.typeLabels && (
+          {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
             <TTContent>
-              {`As target of ${feature.tooltip.typeLabels.plural}: ${feature.values.targetingActions}`}
+              {`As target of ${typeLabels.plural}: ${feature.values.targetingActions}`}
             </TTContent>
           )}
         </Stats>
@@ -143,6 +144,7 @@ Tooltip.propTypes = {
   feature: PropTypes.object,
   onClose: PropTypes.func,
   onFeatureClick: PropTypes.func,
+  typeLabels: PropTypes.object,
 };
 
 export default Tooltip;
