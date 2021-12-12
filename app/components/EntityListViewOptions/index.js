@@ -9,6 +9,7 @@ const Styled = styled.div`
   z-index: 20;
   margin-left: 10px;
   padding: 10px 0;
+  display: inline-block;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     padding: 20px 0;
   }

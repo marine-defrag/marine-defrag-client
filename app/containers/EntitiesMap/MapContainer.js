@@ -3,12 +3,12 @@
  * EntitiesMap
  *
  */
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { scaleLinear } from 'd3-scale';
 import L from 'leaflet';
-
+import Tooltip from './Tooltip';
 const Styled = styled.div`
   position: absolute;
   top: 0;
@@ -49,26 +49,28 @@ const scaleColorCount = (max) => scaleLinear()
 export function MapContainer({
   countryFeatures,
   indicator,
+  onCountryClick,
 }) {
+  const [tooltip, setTooltip] = useState(null);
   const mapRef = useRef(null);
   const countryLayerGroupRef = useRef(null);
   const mapEvents = {
-    // resize: () => {
-    //   // console.log('resize')
-    //   setTooltip(null);
-    // },
-    // click: () => {
-    //   // console.log('mapClick')
-    //   setTooltip(null);
-    // },
-    // zoomstart: () => {
-    //   // console.log('zoomstart')
-    //   setTooltip(null);
-    // },
-    // movestart: () => {
-    //   // console.log('movestart')
-    //   setTooltip(null);
-    // },
+    resize: () => {
+      // console.log('resize')
+      setTooltip(null);
+    },
+    click: () => {
+      // console.log('mapClick')
+      setTooltip(null);
+    },
+    zoomstart: () => {
+      // console.log('zoomstart')
+      setTooltip(null);
+    },
+    movestart: () => {
+      // console.log('movestart')
+      setTooltip(null);
+    },
     // layeradd: () => {
     //   // console.log('layerAdd', layer)
     //   // setTooltip(null)
@@ -82,7 +84,7 @@ export function MapContainer({
     mapRef.current = L.map('ll-map', {
       // center: MAP_OPTIONS.CENTER,
       // zoom: size === 'small' ? MAP_OPTIONS.ZOOM.MIN : MAP_OPTIONS.ZOOM.INIT,
-      zoomControl: false,
+      zoomControl: true,
       minZoom: MAP_OPTIONS.ZOOM.MIN,
       maxZoom: MAP_OPTIONS.ZOOM.MAX,
       maxBounds: [
@@ -104,6 +106,7 @@ export function MapContainer({
       MAP_OPTIONS.CENTER,
       MAP_OPTIONS.ZOOM.INIT,
     );
+    mapRef.current.zoomControl.setPosition('topright');
   }, []);
   // add countryFeatures
   useEffect(() => {
@@ -123,6 +126,21 @@ export function MapContainer({
               ? scale(f.values[indicator])
               : NO_DATA_COLOR,
           }),
+          onEachFeature: (feature, layer) => {
+            layer.on({
+              click: (e) => {
+                L.DomEvent.stopPropagation(e);
+                setTooltip({
+                  anchor: e.containerPoint,
+                  direction: {
+                    x: 'left',
+                    y: 'top',
+                  },
+                  feature,
+                });
+              },
+            });
+          },
         },
       );
       countryLayerGroupRef.current.addLayer(jsonLayer);
@@ -130,13 +148,30 @@ export function MapContainer({
   }, [countryFeatures, indicator]);
 
   return (
-    <Styled id="ll-map" />
+    <>
+      <Styled id="ll-map" />
+      {tooltip && (
+        <Tooltip
+          position={tooltip.anchor}
+          direction={tooltip.direction}
+          feature={tooltip.feature}
+          onClose={() => setTooltip(null)}
+          onFeatureClick={() => {
+            setTooltip(null);
+            if (tooltip.feature && tooltip.feature.attributes) {
+              onCountryClick(tooltip.feature.id);
+            }
+          }}
+        />
+      )}
+    </>
   );
 }
 
 MapContainer.propTypes = {
   countryFeatures: PropTypes.array,
   indicator: PropTypes.string,
+  onCountryClick: PropTypes.func,
 };
 
 export default MapContainer;

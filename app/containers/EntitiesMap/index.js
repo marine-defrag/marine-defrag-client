@@ -14,7 +14,7 @@ import * as topojson from 'topojson-client';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
 
-import { ACTORTYPES } from 'themes/config';
+import { ACTORTYPES, ROUTES } from 'themes/config';
 
 import {
   selectMapSubjectQuery,
@@ -58,6 +58,7 @@ export function EntitiesMap({
   mapSubject,
   onSetMapSubject,
   countries,
+  onEntityClick,
   // connections,
   // connectedTaxonomies,
   // locationQuery,
@@ -107,6 +108,8 @@ export function EntitiesMap({
             if (entity) {
               return {
                 ...feature,
+                id: entity.get('id'),
+                attributes: entity.get('attributes').toJS(),
                 values: {
                   actions: entity.get('actions')
                     ? entity.get('actions').size
@@ -189,6 +192,8 @@ export function EntitiesMap({
         if (country) {
           return {
             ...feature,
+            id: country.get('id'),
+            attributes: country.get('attributes').toJS(),
             values: {
               actions: (cCounts && cCounts.get('actions')) || 0,
               targetingActions: (cCounts && cCounts.get('targetingActions')) || 0,
@@ -207,7 +212,11 @@ export function EntitiesMap({
   }
   return (
     <ContainerWrapper hasHeader noOverflow>
-      <MapContainer countryFeatures={countryFeatures} indicator={indicator} />
+      <MapContainer
+        countryFeatures={countryFeatures}
+        indicator={indicator}
+        onCountryClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+      />
       {!dataReady && (
         <LoadingWrap>
           <Loading />
@@ -240,6 +249,7 @@ EntitiesMap.propTypes = {
   typeId: PropTypes.string,
   mapSubject: PropTypes.string,
   onSetMapSubject: PropTypes.func,
+  onEntityClick: PropTypes.func,
 };
 
 EntitiesMap.contextTypes = {
