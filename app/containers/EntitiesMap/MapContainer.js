@@ -52,25 +52,26 @@ export function MapContainer({
   onCountryClick,
 }) {
   const [tooltip, setTooltip] = useState(null);
+  const ref = useRef(null);
   const mapRef = useRef(null);
   const countryLayerGroupRef = useRef(null);
   const mapEvents = {
-    resize: () => {
-      // console.log('resize')
-      setTooltip(null);
-    },
+    // resize: () => {
+    //   // console.log('resize')
+    //   setTooltip(null);
+    // },
     click: () => {
       // console.log('mapClick')
       setTooltip(null);
     },
-    zoomstart: () => {
-      // console.log('zoomstart')
-      setTooltip(null);
-    },
-    movestart: () => {
-      // console.log('movestart')
-      setTooltip(null);
-    },
+    // zoomstart: () => {
+    //   // console.log('zoomstart')
+    //   setTooltip(null);
+    // },
+    // movestart: () => {
+    //   // console.log('movestart')
+    //   setTooltip(null);
+    // },
     // layeradd: () => {
     //   // console.log('layerAdd', layer)
     //   // setTooltip(null)
@@ -80,6 +81,36 @@ export function MapContainer({
     //   // setTooltip(null)
     // },
   };
+  const onFeatureClick = (e, feature) => {
+    L.DomEvent.stopPropagation(e);
+    setTooltip({
+      anchor: e.containerPoint,
+      direction: {
+        x: 'left',
+        y: 'top',
+      },
+      feature,
+    });
+  };
+  useEffect(() => {
+    /**
+     * Alert if clicked on outside of element
+     */
+    function handleClickOutside(event) {
+      // Do nothing if clicking ref's element or descendent elements
+      if (!ref.current || ref.current.contains(event.target)) {
+        return;
+      }
+      setTooltip();
+    }
+    // Bind the event listener
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [ref]);
+
   useEffect(() => {
     mapRef.current = L.map('ll-map', {
       // center: MAP_OPTIONS.CENTER,
@@ -106,7 +137,7 @@ export function MapContainer({
       MAP_OPTIONS.CENTER,
       MAP_OPTIONS.ZOOM.INIT,
     );
-    mapRef.current.zoomControl.setPosition('topright');
+    mapRef.current.zoomControl.setPosition('topleft');
   }, []);
   // add countryFeatures
   useEffect(() => {
@@ -128,31 +159,21 @@ export function MapContainer({
           }),
           onEachFeature: (feature, layer) => {
             layer.on({
-              click: (e) => {
-                L.DomEvent.stopPropagation(e);
-                setTooltip({
-                  anchor: e.containerPoint,
-                  direction: {
-                    x: 'left',
-                    y: 'top',
-                  },
-                  feature,
-                });
-              },
+              click: (e) => onFeatureClick(e, feature),
             });
           },
         },
       );
       countryLayerGroupRef.current.addLayer(jsonLayer);
     }
-  }, [countryFeatures, indicator]);
+  }, [countryFeatures, indicator, tooltip]);
 
   return (
     <>
-      <Styled id="ll-map" />
+      <Styled id="ll-map" ref={ref} />
       {tooltip && (
         <Tooltip
-          position={tooltip.anchor}
+          position={null}
           direction={tooltip.direction}
           feature={tooltip.feature}
           onClose={() => setTooltip(null)}

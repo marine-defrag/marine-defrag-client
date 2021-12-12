@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import ButtonSecondary from 'components/buttons/ButtonSecondary';
+import ButtonClose from 'components/buttons/ButtonClose';
 
 const Root = styled.div`
   position: absolute;
@@ -12,8 +13,9 @@ const Root = styled.div`
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     bottom: auto;
     right: auto;
-    top: ${({ position }) => position.y}px;
-    left: ${({ position }) => position.x}px;
+    top: ${({ position }) => position ? position.y : 10}px;
+    right: ${({ position }) => position ? 'auto' : '10px'};
+    left: ${({ position }) => position ? position.x : 'auto'};
   }
 `;
 
@@ -52,14 +54,16 @@ const Anchor = styled.div`
 // border-right-color: ${({ dirLeft }) => (!dirLeft ? 'white' : 'transparent')};
 
 const Stats = styled.div`
-  padding-bottom: 15px;
+  padding-bottom: 12px;
 `;
 const ButtonWrap = styled.div`
   margin-left: auto;
-  text-align: right;
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
 `;
 const Main = styled.div`
-  padding: 0 10px 10px;
+  padding: 20px;
   height: 235px;
   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2);
   display: block;
@@ -67,42 +71,50 @@ const Main = styled.div`
   width: 100%;
   overflow: auto;
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
-    min-height: 100px;
-    max-height: 350px;
+    min-height: 200px;
+    max-height: 80vH;
     height: auto;
     overflow: visible;
     position: absolute;
-    top: -40px;
+    top: ${({ position }) => position ? -40 : 0}px;
     left: ${({ dirLeft }) => (dirLeft ? -10 : 10)}px;
     width: ${({ w }) => w}px;
     pointer-events: all;
   }
 `;
-// const CloseWrap = styled.div`
-//   width: 30px;
-//   height: 30px;
-//   position: absolute;
-//   right: 12px;
-//   top: 10px;
-//   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
-//     right: -10px;
-//     top: -10px;
-//   }
-// `;
-//
+const CloseWrap = styled.div`
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+    right: -10px;
+    top: -10px;
+  }
+`;
+
+const TTContent = styled.div`
+  font-size: ${(props) => props.theme.sizes.text.small};
+`;
+
+const TTTitle = styled.h3`
+  margin-top: 0;
+`;
+
 // const CloseButton = styled.button`
 //   border-radius: 9999px;
 //   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2);
 //   background: black;
 // `;
 
-const WIDTH = 250;
+const WIDTH = 320;
 
 const Tooltip = ({
   position,
   direction,
   feature,
-  // onClose,
+  onClose,
   onFeatureClick,
 }) => (
   // const layer = layerOptions ? layerOptions.layer : null;
@@ -114,17 +126,20 @@ const Tooltip = ({
         dirLeft={direction.x === 'left'}
         w={WIDTH}
       >
-        <h5>{feature.attributes.title}</h5>
+        <CloseWrap>
+          <ButtonClose onClose={onClose} />
+        </CloseWrap>
+        <TTTitle>{feature.attributes.title}</TTTitle>
         <Stats>
           {typeof feature.values.actions !== 'undefined' && (
-            <div>
+            <TTContent>
               {`Activities: ${feature.values.actions}`}
-            </div>
+            </TTContent>
           )}
           {typeof feature.values.targetingActions !== 'undefined' && (
-            <div>
-              {`As targeted of activity: ${feature.values.targetingActions}`}
-            </div>
+            <TTContent>
+              {`As target of activity: ${feature.values.targetingActions}`}
+            </TTContent>
           )}
         </Stats>
         <ButtonWrap>
@@ -150,7 +165,7 @@ Tooltip.propTypes = {
   position: PropTypes.object,
   direction: PropTypes.object, // x, y
   feature: PropTypes.object,
-  // onClose: PropTypes.func,
+  onClose: PropTypes.func,
   onFeatureClick: PropTypes.func,
 };
 

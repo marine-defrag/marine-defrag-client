@@ -7,7 +7,7 @@ import ButtonFactory from 'components/buttons/ButtonFactory';
 const Styled = styled.div`
   position: relative;
   z-index: 20;
-  margin-left: 10px;
+  margin-left: 60px;
   padding: 10px 0;
   display: inline-block;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
