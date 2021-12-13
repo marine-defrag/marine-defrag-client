@@ -28,7 +28,7 @@ import EntityList from 'containers/EntityList';
 import { CONFIG, DEPENDENCIES } from './constants';
 import {
   selectConnections,
-  selectActions,
+  selectViewActions,
   selectConnectedTaxonomies,
 } from './selectors';
 
@@ -170,7 +170,7 @@ ActionList.contextTypes = {
 
 const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  entities: selectActions(state, { type: props.params.id }), // type
+  entities: selectViewActions(state, { type: props.params.id }), // type
   taxonomies: selectActiontypeTaxonomiesWithCats(state, { type: props.params.id }),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),

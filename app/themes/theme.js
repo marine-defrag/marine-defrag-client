@@ -133,6 +133,8 @@ theme.palette = {
   // maybe [#AA-Large compliant] 18pt/24px or 14pt/19px bold can suffice with AA com,pliant hover if agreed by customer
 
   // other entities
+  parents: ['#C75300'],
+  parentsHover: ['#ED7000'],
   actions: ['#C75300'],
   actionsHover: ['#ED7000'],
   actors: ['#033A89', '#6889B8'], // accepted, noted

@@ -90,6 +90,10 @@ export default defineMessages({
       id: 'app.components.EntityListHeader.filterGroupLabel.connections-member-associations',
       defaultMessage: 'By membership',
     },
+    'connections-action-parents': {
+      id: 'app.components.EntityListHeader.filterGroupLabel.connections-action-parents',
+      defaultMessage: 'By parent activity',
+    },
     connectedTaxonomies: {
       id: 'app.components.EntityListHeader.filterGroupLabel.connectedTaxonomies',
       defaultMessage: 'By connected category',

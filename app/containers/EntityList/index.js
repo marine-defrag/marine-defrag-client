@@ -268,6 +268,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       <div>
         {this.props.includeHeader && !printing && (
           <EntityListHeader
+            typeId={typeId}
             dataReady={dataReady}
             currentFilters={filters}
             onClearFilters={this.onClearFilters}

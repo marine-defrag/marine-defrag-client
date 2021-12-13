@@ -300,6 +300,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       onSelectType,
       typeOptions,
       dataReady,
+      typeId,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -324,6 +325,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         membertypes,
         associationtypes,
         activeFilterOption: activeOption,
+        typeId,
         messages: {
           attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.filterGroupLabel.taxonomies),
@@ -347,6 +349,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
           connectedTaxonomies,
           activeFilterOption: activeOption,
           contextIntl: intl,
+          typeId,
           messages: {
             titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
             without: intl.formatMessage(messages.filterFormWithoutPrefix),
@@ -564,6 +567,7 @@ EntityListHeader.propTypes = {
   dataReady: PropTypes.bool,
   typeOptions: PropTypes.array,
   onSelectType: PropTypes.func,
+  typeId: PropTypes.string,
 };
 
 EntityListHeader.contextTypes = {

@@ -282,6 +282,10 @@ export const selectConnectionQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('connected')
 );
+export const selectParentQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('parent')
+);
 export const selectTargetedQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('targeted')

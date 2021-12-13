@@ -117,6 +117,23 @@ export const CONFIG = {
       },
     ],
   },
+  parents: { // filter by associated entity
+    query: 'parent',
+    type: 'action-parents',
+    options: [
+      {
+        search: true,
+        message: 'entities.actions_{typeid}.plural',
+        path: API.ACTIONS,
+        query: API.ACTIONS,
+        entityType: 'parents',
+        clientPath: ROUTES.ACTION,
+        attribute: 'parent_id',
+        typeFilter: 'has_parent',
+        groupByType: true,
+      },
+    ],
+  },
   attributes: { // filter by attribute value
     options: [
       {
