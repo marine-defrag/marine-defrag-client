@@ -104,14 +104,16 @@ export function MapContainer({
   };
   const onFeatureClick = (e, feature) => {
     if (e && L.DomEvent) L.DomEvent.stopPropagation(e);
-    setTooltip({
-      anchor: e.containerPoint,
-      direction: {
-        x: 'left',
-        y: 'top',
-      },
-      feature,
-    });
+    if (e && e.containerPoint && feature && feature.tooltip) {
+      setTooltip({
+        anchor: e.containerPoint,
+        direction: {
+          x: 'left',
+          y: 'top',
+        },
+        feature,
+      });
+    }
   };
   const onFeatureOver = (e, feature) => {
     if (e && L.DomEvent) L.DomEvent.stopPropagation(e);
