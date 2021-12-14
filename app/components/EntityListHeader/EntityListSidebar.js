@@ -71,10 +71,10 @@ const STATE_INITIAL = {
     taxonomies_12: true,
     // connectedTaxonomies: true,
     connections: true,
-    targets: false,
-    members: false,
-    associations: false,
-    attributes: true,
+    targets: true,
+    members: true,
+    associations: true,
+    attributes: false,
   },
 };
 
