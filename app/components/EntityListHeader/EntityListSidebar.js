@@ -74,6 +74,7 @@ const STATE_INITIAL = {
     targets: true,
     members: true,
     associations: true,
+    parents: true,
     attributes: false,
   },
 };
