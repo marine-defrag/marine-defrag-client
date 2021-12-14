@@ -1,5 +1,5 @@
 import { find } from 'lodash/collection';
-import { toLower } from 'lodash/string';
+import { toLower, deburr } from 'lodash/string';
 import { getCategoryShortTitle } from 'utils/entities';
 import isNumber from 'utils/is-number';
 
@@ -48,7 +48,7 @@ const prepSortTarget = (value) => {
   // 1. replace symbols with white spaces
   const testValue = value.toString().replace(/[.,/|-]/g, ' ');
   // 2. split into chunks
-  return toLower(testValue).split(' ');
+  return toLower(deburr(testValue)).split(' ');
 };
 
 export const getEntitySortComparator = (valueA, valueB, sortOrder, type) => {
@@ -135,7 +135,7 @@ export const getEntitySortComparator = (valueA, valueB, sortOrder, type) => {
             }
           } else {
             // neither starting with number: compare stings
-            result = toLower(valueA) < toLower(valueB) ? -1 : 1;
+            result = prepSortTarget(valueA) < prepSortTarget(valueB) ? -1 : 1;
           }
         }
         break;
