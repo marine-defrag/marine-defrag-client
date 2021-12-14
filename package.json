@@ -85,6 +85,8 @@
     "leaflet": "^1.7.1",
     "lodash": "4.17.19",
     "minimist": "1.2.0",
+    "proj4": "^2.7.5",
+    "proj4leaflet": "^1.0.2",
     "prop-types": "^15.5.10",
     "querystring": "^0.2.0",
     "react": "^16.14.0",

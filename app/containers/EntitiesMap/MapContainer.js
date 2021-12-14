@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { scaleLinear } from 'd3-scale';
 import L from 'leaflet';
+import 'proj4leaflet';
 
 import qe from 'utils/quasi-equals';
 import Tooltip from './Tooltip';
@@ -26,16 +27,27 @@ const Styled = styled.div`
 const MAP_OPTIONS = {
   CENTER: [20, 0],
   ZOOM: {
-    INIT: 2,
-    MIN: 1,
-    MAX: 7,
+    INIT: 1,
+    MIN: 0,
+    MAX: 9,
   },
   BOUNDS: {
-    N: 85,
-    W: -270,
-    S: -85,
-    E: 540,
+    N: 90,
+    W: -3600,
+    S: -90,
+    E: 3600,
   },
+};
+
+const PROJ = {
+  name: 'Robinson',
+  crs: 'ESRI:54030',
+  proj4def: '+proj=robin +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs',
+  resolutions: [
+    65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 256, 128,
+  ],
+  origin: [0, 0],
+  bounds: [[90, -180], [-90, 180]], // [[N, W], [S, E]]
 };
 
 const DEFAULT_STYLE = {
@@ -148,6 +160,15 @@ export function MapContainer({
   }
   useEffect(() => {
     mapRef.current = L.map('ll-map', {
+      crs: new L.Proj.CRS(
+        PROJ.crs,
+        PROJ.proj4def,
+        {
+          resolutions: PROJ.resolutions,
+          origin: PROJ.origin,
+          bounds: PROJ.bounds,
+        },
+      ),
       // center: MAP_OPTIONS.CENTER,
       // zoom: size === 'small' ? MAP_OPTIONS.ZOOM.MIN : MAP_OPTIONS.ZOOM.INIT,
       zoomControl: true,
@@ -157,6 +178,8 @@ export function MapContainer({
         [MAP_OPTIONS.BOUNDS.N, MAP_OPTIONS.BOUNDS.W],
         [MAP_OPTIONS.BOUNDS.S, MAP_OPTIONS.BOUNDS.E],
       ],
+      continuousWorld: true,
+      worldCopyJump: false,
       attributionControl: false,
     }).on(mapEvents);
     countryLayerGroupRef.current = L.layerGroup();
