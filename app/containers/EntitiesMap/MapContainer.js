@@ -20,7 +20,7 @@ const Styled = styled.div`
   bottom: 0;
   right: 0;
   left: 0;
-  background: white;
+  background: #ffffff;
   z-index: 10;
 `;
 
@@ -49,6 +49,16 @@ const PROJ = {
   origin: [0, 0],
   bounds: [[90, -180], [-90, 180]], // [[N, W], [S, E]]
 };
+// const PROJ = {
+//   name: 'Custom',
+//   crs: 'ESRI:54030',
+//   proj4def: '+proj=robin +lon_0=11.7 +x_0=-11.7 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs',
+//   resolutions: [
+//     65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 256, 128,
+//   ],
+//   origin: [0, 11.7],
+//   bounds: [[90, -180], [-90, 180]], // [[N, W], [S, E]]
+// };
 
 const DEFAULT_STYLE = {
   weight: 1,
@@ -67,9 +77,53 @@ const OVER_STYLE = {
   color: '#AAAAAA',
   interactive: false,
 };
+const BBOX_STYLE = {
+  stroke: false,
+  fillColor: '#F1F3F3',
+  fillOpacity: 1,
+};
 
 const NO_DATA_COLOR = '#E2E2E2';
 const RANGE = ['#CAE0F7', '#164571'];
+
+const getBBox = (bounds, xLat = 0.5, xLon = 180) => {
+  const nw = bounds[0];
+  const se = bounds[1];
+  const n = nw[0]; // 90
+  const w = nw[1]; // -180
+  const s = se[0]; // -90
+  const e = se[1]; // 180
+  const coordinates = [];
+  // South: SE >> SW
+  for (let lon = e; lon >= w; lon -= xLon) {
+    coordinates.push([lon, s]);
+  }
+  // SW >> NW
+  for (let lat = s; lat <= n; lat += xLat) {
+    coordinates.push([w, lat]);
+  }
+  // NW >> NE
+  for (let lon = w; lon <= e; lon += xLon) {
+    coordinates.push([lon, n]);
+  }
+  // NE >> SE
+  for (let lat = n; lat >= s; lat -= xLat) {
+    coordinates.push([e, lat]);
+  }
+
+  return ({
+    type: 'FeatureCollection',
+    features: [
+      {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [coordinates],
+        },
+      },
+    ],
+  });
+};
 
 const scaleColorCount = (max) => scaleLinear()
   .domain([1, max])
@@ -182,6 +236,8 @@ export function MapContainer({
       worldCopyJump: false,
       attributionControl: false,
     }).on(mapEvents);
+    // create an orange rectangle
+    L.geoJSON(getBBox(PROJ.bounds), BBOX_STYLE).addTo(mapRef.current);
     countryLayerGroupRef.current = L.layerGroup();
     countryLayerGroupRef.current.addTo(mapRef.current);
     countryTooltipGroupRef.current = L.layerGroup();
