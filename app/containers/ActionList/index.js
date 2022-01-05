@@ -28,7 +28,7 @@ import EntityList from 'containers/EntityList';
 import { CONFIG, DEPENDENCIES } from './constants';
 import {
   selectConnections,
-  selectActions,
+  selectViewActions,
   selectConnectedTaxonomies,
 } from './selectors';
 
@@ -46,6 +46,15 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
     }
   }
 
+  prepareTypeOptions = (types, activeId) => {
+    const { intl } = this.context;
+    return Object.values(types.toJS()).map((type) => ({
+      value: type.id,
+      label: intl.formatMessage(appMessages.actiontypes[type.id]),
+      active: activeId === type.id,
+    }));
+  }
+
   render() {
     const {
       dataReady,
@@ -60,6 +69,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
       actiontypes,
       actortypes,
       targettypes,
+      onSelectType,
     } = this.props;
     const { intl } = this.context;
     const typeId = params.id;
@@ -126,6 +136,9 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
           actortypes={actortypes}
           actiontypes={actiontypes}
           targettypes={targettypes}
+          typeOptions={this.prepareTypeOptions(actiontypes, typeId)}
+          onSelectType={onSelectType}
+          typeId={typeId}
         />
       </div>
     );
@@ -136,6 +149,7 @@ ActionList.propTypes = {
   loadEntitiesIfNeeded: PropTypes.func,
   handleNew: PropTypes.func,
   handleImport: PropTypes.func,
+  onSelectType: PropTypes.func,
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   entities: PropTypes.instanceOf(List).isRequired,
@@ -156,7 +170,7 @@ ActionList.contextTypes = {
 
 const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  entities: selectActions(state, { type: props.params.id }), // type
+  entities: selectViewActions(state, { type: props.params.id }), // type
   taxonomies: selectActiontypeTaxonomiesWithCats(state, { type: props.params.id }),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
@@ -176,6 +190,13 @@ function mapDispatchToProps(dispatch) {
     },
     handleImport: () => {
       dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.IMPORT}`));
+    },
+    onSelectType: (typeId) => {
+      dispatch(updatePath(
+        typeId && typeId !== ''
+          ? `${ROUTES.ACTIONS}/${typeId}`
+          : ROUTES.ACTIONS
+      ));
     },
   };
 }

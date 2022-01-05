@@ -43,56 +43,48 @@ export const prepareTaxonomyGroups = (
   taxonomies, // OrderedMap
   activeId,
   onLink,
-  // actortypes,
+  types,
 ) => {
   const parentTaxonomies = taxonomies.filter((tax) => tax.getIn(['attributes', 'parent_id']) === ''
     || tax.getIn(['attributes', 'parent_id']) === null);
   const childTaxonomies = taxonomies.filter((tax) => !!tax.getIn(['attributes', 'parent_id']));
   const groups = [];
   //
-  // actortypes.forEach((actortype) => {
-  //   const actortypeTaxonomies = parentTaxonomies
-  //     .filter((tax) => {
-  //       const taxActortypeIds = tax.get('actortypeIds');
-  //       return tax.getIn(['attributes', 'tags_actors'])
-  //         && taxActortypeIds.size === 1
-  //         && taxActortypeIds.find((actortypeid) => qe(actortypeid, actortype.get('id')));
-  //     })
-  //     .map((tax) => mapTaxonomy(tax, childTaxonomies, activeId, onLink))
-  //     .toList()
-  //     .toJS();
-  //
-  //   if (actortypeTaxonomies && actortypeTaxonomies.length > 0) {
-  //     groups.push({
-  //       id: actortype.get('id'),
-  //       actortypeId: actortype.get('id'),
-  //       taxonomies: actortypeTaxonomies,
-  //     });
-  //   }
-  // });
-  // common actortypes
-  groups.push({
-    id: 'common',
-    taxonomies: parentTaxonomies
-      // .filter((tax) => tax.getIn(['attributes', 'tags_actors'])
-      //   && tax.get('actortypeIds').size > 1)
+  types.forEach((type) => {
+    const typeTaxonomies = parentTaxonomies
+      .filter((tax) => {
+        const taxTypeIds = tax.get('actortypeIds').size > 0 ? tax.get('actortypeIds') : tax.get('actiontypeIds');
+        return taxTypeIds.size === 1
+          && taxTypeIds.find((typeid) => qe(typeid, type.get('id')));
+      })
       .map((tax) => mapTaxonomy(tax, childTaxonomies, activeId, onLink))
       .toList()
-      .toJS(),
-  });
+      .toJS();
 
-  // const actionOnlyTaxonomies = parentTaxonomies
-  //   .filter((tax) => tax.getIn(['attributes', 'tags_actions'])
-  //     && !tax.getIn(['attributes', 'tags_actors']));
-  // if (actionOnlyTaxonomies && actionOnlyTaxonomies.size > 0) {
-  //   groups.push({
-  //     id: 'actions',
-  //     taxonomies: actionOnlyTaxonomies
-  //       .map((tax) => mapTaxonomy(tax, taxonomies, activeId, onLink))
-  //       .toList()
-  //       .toJS(),
-  //   });
-  // }
+    if (typeTaxonomies && typeTaxonomies.length > 0) {
+      groups.push({
+        id: type.get('id'),
+        typeId: type.get('id'),
+        taxonomies: typeTaxonomies,
+      });
+    }
+  });
+  const commonTaxonomies = parentTaxonomies
+    .filter(
+      (tax) => ((tax.get('actortypeIds').size > 1 && tax.get('actiontypeIds').size === 0)
+        || (tax.get('actiontypeIds').size > 1 && tax.get('actortypeIds').size === 0)
+      )
+    );
+  // common actortypes
+  if (commonTaxonomies && commonTaxonomies.size > 0) {
+    groups.push({
+      id: 'common',
+      taxonomies: commonTaxonomies
+        .map((tax) => mapTaxonomy(tax, childTaxonomies, activeId, onLink))
+        .toList()
+        .toJS(),
+    });
+  }
   return groups;
 };
 

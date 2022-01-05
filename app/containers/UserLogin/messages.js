@@ -30,6 +30,10 @@ export default defineMessages({
     id: 'app.containers.UserLogin.recoverPasswordLink',
     defaultMessage: 'I forgot my password',
   },
+  resetPasswordHint: {
+    id: 'app.containers.UserLogin.resetPasswordHint',
+    defaultMessage: 'If you forgot your password, please contact your team leader',
+  },
   submit: {
     id: 'app.containers.UserLogin.submit',
     defaultMessage: 'Sign in',

@@ -17,9 +17,11 @@ const Button = styled(ButtonFlat)`
   padding: ${(props) => props.inForm ? '0.7em 0.5em' : '0.25em 1.25em'};
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     padding: ${(props) => props.inForm ? '1em 1.2em' : '0.25em 1.25em'};
+    letter-spacing: 0;
   }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     min-height: 3em;
+    letter-spacing: 0;
   }
 `;
 

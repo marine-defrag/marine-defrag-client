@@ -11,14 +11,14 @@ import { FormattedMessage } from 'react-intl';
 
 import { jumpToComponent } from 'utils/scroll-to-component';
 import { lowerCase } from 'utils/string';
-import { qe } from 'utils/quasi-equals';
 
-import ContainerWithSidebar from 'components/styled/Container/ContainerWithSidebar';
+import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
 import Content from 'components/styled/Content';
 import Loading from 'components/Loading';
 import ContentHeader from 'components/ContentHeader';
-import TagSearch from 'components/TagSearch';
+import EntityListSearch from 'components/EntityListSearch';
+import EntityListViewOptions from 'components/EntityListViewOptions';
 import PrintOnly from 'components/styled/PrintOnly';
 
 import { CONTENT_LIST, PARAMS } from 'containers/App/constants';
@@ -27,13 +27,12 @@ import appMessages from 'containers/App/messages';
 import EntityListGroups from './EntityListGroups';
 
 import EntityListOptions from './EntityListOptions';
-import { currentFilters, currentFilterArgs } from './current-filters';
 import { getGroupOptions, getGroupValue } from './group-options';
 import { groupEntities } from './group-entities';
 
 import messages from './messages';
 
-const EntityListSearch = styled.div`
+const EntityListSearchWrapper = styled.div`
   padding-bottom: 1em;
   @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
     padding-bottom: 2em;
@@ -89,56 +88,30 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       onGroupSelect,
       onSubgroupSelect,
       onSearch,
-      onResetFilters,
-      onTagClick,
       taxonomies,
-      allTaxonomies,
       connections,
       connectedTaxonomies,
       locationQuery,
-      entityIcon,
       entities,
       errors,
       actortypes,
-      onDismissAllErrors,
+      hasHeader,
+      onClearFilters,
+      viewOptions,
     } = this.props;
     const { intl } = this.context;
 
     let groupSelectValue = locationQuery.get('group');
-    const groupforActortype = config.taxonomies
-      && config.taxonomies.defaultGroupsByActortype
-      && actortypes
-      && actortypes.size === 1;
     if (config.taxonomies && !groupSelectValue) {
-      if (groupforActortype) {
-        /* eslint-disable prefer-destructuring */
-        groupSelectValue = config.taxonomies.defaultGroupsByActortype[actortypes.first().get('id')][1];
-        /* eslint-enable prefer-destructuring */
-      } else {
-        groupSelectValue = getGroupValue(
-          taxonomies,
-          config.taxonomies.defaultGroupAttribute,
-          1,
-        );
-      }
+      groupSelectValue = getGroupValue(
+        taxonomies,
+        config.taxonomies.defaultGroupAttribute,
+        1,
+      );
     }
-
     let subgroupSelectValue;
     if (groupSelectValue && groupSelectValue !== PARAMS.GROUP_RESET) {
       subgroupSelectValue = locationQuery.get('subgroup');
-      if (
-        config.taxonomies
-        && !subgroupSelectValue
-        && groupforActortype
-        && qe(
-          groupSelectValue,
-          config.taxonomies.defaultGroupsByActortype[actortypes.first().get('id')][1],
-        )
-      ) {
-        /* eslint-disable prefer-destructuring */
-        subgroupSelectValue = config.taxonomies.defaultGroupsByActortype[actortypes.first().get('id')][2];
-        /* eslint-enable prefer-destructuring */
-      }
     }
 
     const headerTitle = entities && dataReady
@@ -184,17 +157,18 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
     }
     const headerActions = dataReady ? header.actions : [];
     return (
-      <ContainerWithSidebar ref={this.ScrollContainer}>
+      <ContainerWrapper hasHeader={hasHeader} ref={this.ScrollContainer}>
+        {dataReady && viewOptions && viewOptions.length > 1 && (
+          <EntityListViewOptions options={viewOptions} />
+        )}
         <Container ref={this.ScrollReference}>
           <Content>
             <ContentHeader
               type={CONTENT_LIST}
-              icon={header.icon}
-              supTitle={header.supTitle}
               title={headerTitle}
               subTitle={subtitle}
-              sortAttributes={config.sorting}
               buttons={headerActions}
+              hasViewOptions={viewOptions && viewOptions.length > 1}
             />
             {!dataReady && <Loading />}
             {dataReady && (
@@ -202,30 +176,13 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
                 <PrintHintKey>
                   <FormattedMessage {...messages.printHintKey} />
                 </PrintHintKey>
-                <EntityListSearch>
-                  <TagSearch
-                    filters={currentFilters(
-                      {
-                        config,
-                        entities,
-                        taxonomies: allTaxonomies,
-                        connections,
-                        locationQuery,
-                        onTagClick,
-                        errors,
-                        actortypes,
-                      },
-                      intl.formatMessage(messages.filterFormWithoutPrefix),
-                      intl.formatMessage(messages.filterFormError),
-                    )}
+                <EntityListSearchWrapper>
+                  <EntityListSearch
                     searchQuery={locationQuery.get('search') || ''}
                     onSearch={onSearch}
-                    onClear={() => {
-                      onResetFilters(currentFilterArgs(config, locationQuery));
-                      onDismissAllErrors();
-                    }}
+                    onClear={onClearFilters}
                   />
-                </EntityListSearch>
+                </EntityListSearchWrapper>
                 <EntityListOptions
                   groupOptions={getGroupOptions(taxonomies, intl)}
                   subgroupOptions={getGroupOptions(taxonomies, intl)}
@@ -249,7 +206,6 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
                     onEntityClick={this.props.onEntityClick}
                     entityTitle={entityTitle}
                     config={config}
-                    entityIcon={entityIcon}
                     isManager={isManager}
                     isAnalyst={isAnalyst}
                     onPageItemsSelect={(no) => {
@@ -270,7 +226,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
             )}
           </Content>
         </Container>
-      </ContainerWithSidebar>
+      </ContainerWrapper>
     );
   }
 }
@@ -278,7 +234,6 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
 EntityListMain.propTypes = {
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
-  allTaxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
@@ -288,28 +243,27 @@ EntityListMain.propTypes = {
   // object/arrays
   config: PropTypes.object,
   header: PropTypes.object,
+  viewOptions: PropTypes.array,
   entityTitle: PropTypes.object, // single/plural
   // primitive
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   isAnalyst: PropTypes.bool,
-  entityIcon: PropTypes.func,
   // functions
   onEntityClick: PropTypes.func.isRequired,
   onEntitySelect: PropTypes.func.isRequired,
   onEntitySelectAll: PropTypes.func.isRequired,
-  onTagClick: PropTypes.func.isRequired,
   onGroupSelect: PropTypes.func.isRequired,
   onSubgroupSelect: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
-  onResetFilters: PropTypes.func.isRequired,
   onPageSelect: PropTypes.func.isRequired,
   onPageItemsSelect: PropTypes.func.isRequired,
   onSortOrder: PropTypes.func.isRequired,
   onSortBy: PropTypes.func.isRequired,
   onDismissError: PropTypes.func.isRequired,
-  onDismissAllErrors: PropTypes.func.isRequired,
   listUpdating: PropTypes.bool,
+  hasHeader: PropTypes.bool,
+  onClearFilters: PropTypes.func.isRequired,
 };
 
 EntityListMain.contextTypes = {

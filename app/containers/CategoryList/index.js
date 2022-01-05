@@ -17,9 +17,10 @@ import {
   selectReady,
   selectIsUserManager,
   selectActortypes,
+  selectActiontypes,
 } from 'containers/App/selectors';
 import { CONTENT_LIST } from 'containers/App/constants';
-import { ROUTES } from 'themes/config';
+import { ROUTES, DEFAULT_TAXONOMY } from 'themes/config';
 import appMessages from 'containers/App/messages';
 
 // components
@@ -35,7 +36,7 @@ import EntityListSidebarLoading from 'components/EntityListSidebarLoading';
 
 // relative
 import messages from './messages';
-import { DEPENDENCIES, SORT_OPTIONS } from './constants';
+import { DEPENDENCIES, SORT_OPTION_DEFAULT } from './constants';
 import {
   selectTaxonomy,
   selectCategoryGroups,
@@ -53,7 +54,6 @@ const Description = styled.p`
     font-size: ${(props) => props.theme.sizes.print.default};
   }
 `;
-const DEFAULT_TAX = '1';
 
 export class CategoryList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   // make sure to load all data from server
@@ -61,7 +61,7 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
     this.props.loadEntitiesIfNeeded();
     // redirect to default taxonomy if needed
     if (this.props.dataReady && typeof this.props.taxonomy === 'undefined') {
-      this.props.redirectToDefaultTaxonomy(DEFAULT_TAX);
+      this.props.redirectToDefaultTaxonomy(DEFAULT_TAXONOMY);
     }
   }
 
@@ -72,7 +72,7 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
     }
     // redirect to default taxonomy if needed
     if (nextProps.dataReady && typeof nextProps.taxonomy === 'undefined') {
-      this.props.redirectToDefaultTaxonomy(DEFAULT_TAX);
+      this.props.redirectToDefaultTaxonomy(DEFAULT_TAXONOMY);
     }
   }
 
@@ -98,6 +98,7 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
       onPageLink,
       onTaxonomyLink,
       actortypes,
+      actiontypes,
     } = this.props;
     const reference = taxonomy && taxonomy.get('id');
     const contentTitle = (taxonomy && typeof reference !== 'undefined') ? this.getTaxTitle(reference) : '';
@@ -142,12 +143,13 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
         { !dataReady
           && <EntityListSidebarLoading responsiveSmall />
         }
-        { taxonomies && actortypes && typeof reference !== 'undefined'
+        { dataReady && typeof reference !== 'undefined'
           && (
             <TaxonomySidebar
               taxonomies={taxonomies}
               active={reference}
               actortypes={actortypes}
+              actiontypes={actiontypes}
               onTaxonomyLink={onTaxonomyLink}
             />
           )
@@ -172,11 +174,10 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
                 && (
                   <CategoryListItems
                     taxonomy={taxonomy}
-                    actortypes={actortypes}
                     categoryGroups={categoryGroups}
                     onPageLink={onPageLink}
                     onSort={this.props.onSort}
-                    sortOptions={SORT_OPTIONS}
+                    sortOptions={[SORT_OPTION_DEFAULT]}
                     sortBy={this.props.location.query && this.props.location.query.sort}
                     sortOrder={this.props.location.query && this.props.location.query.order}
                   />
@@ -193,11 +194,10 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
                 && (
                   <CategoryListItems
                     taxonomy={taxonomy}
-                    actortypes={actortypes}
                     categoryGroups={userOnlyCategoryGroups}
                     onPageLink={onPageLink}
                     onSort={this.props.onSort}
-                    sortOptions={SORT_OPTIONS}
+                    sortOptions={[SORT_OPTION_DEFAULT]}
                     sortBy="title"
                     sortOrder={this.props.location.query && this.props.location.query.order}
                     userOnly
@@ -226,6 +226,7 @@ CategoryList.propTypes = {
   isManager: PropTypes.bool,
   location: PropTypes.object,
   actortypes: PropTypes.object,
+  actiontypes: PropTypes.object,
 };
 
 CategoryList.contextTypes = {
@@ -234,6 +235,7 @@ CategoryList.contextTypes = {
 
 const mapStateToProps = (state, props) => ({
   actortypes: selectActortypes(state),
+  actiontypes: selectActiontypes(state),
   isManager: selectIsUserManager(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   taxonomies: selectTaxonomiesSorted(state),
@@ -241,13 +243,13 @@ const mapStateToProps = (state, props) => ({
   categoryGroups: selectCategoryGroups(
     state,
     {
-      id: typeof props.params.id !== 'undefined' ? props.params.id : DEFAULT_TAX,
+      id: typeof props.params.id !== 'undefined' ? props.params.id : DEFAULT_TAXONOMY,
     },
   ),
   userOnlyCategoryGroups: selectUserOnlyCategoryGroups(
     state,
     {
-      id: typeof props.params.id !== 'undefined' ? props.params.id : DEFAULT_TAX,
+      id: typeof props.params.id !== 'undefined' ? props.params.id : DEFAULT_TAXONOMY,
     },
   ),
 });

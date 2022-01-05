@@ -9,7 +9,7 @@ import { getSortOption } from 'utils/sort';
 import { getCategoryTitle } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
 
-// import EmptyHint from 'components/fields/EmptyHint';
+import EmptyHint from 'components/fields/EmptyHint';
 import CategoryListHeader from 'components/categoryList/CategoryListHeader';
 import CategoryListItem from 'components/categoryList/CategoryListItem';
 import { ROUTES, NO_PARENT_KEY } from 'themes/config';
@@ -59,88 +59,36 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
       )
     );
 
-  // getColumnKeys = (taxonomy, actortypes) => {
-  //   const { intl } = this.context;
-  //   // figure out if tagged directly or via child category
-  //   const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
-  //   return tagsActors && actortypes && taxonomy.get('actortypeIds').toArray().reduce(
-  //     (memo, actortypeid) => {
-  //       const actortype = actortypes.find((type) => qe(type.get('id'), actortypeid));
-  //       // TODO figure out multiple actortype with responses
-  //       if (actortype && actortype.getIn(['attributes', 'has_response'])) {
-  //         return [{
-  //           items: [
-  //             {
-  //               label: intl.formatMessage(appMessages.ui.acceptedStatuses.accepted),
-  //               palette: 'actors',
-  //               pIndex: 0,
-  //             },
-  //             {
-  //               label: intl.formatMessage(appMessages.ui.acceptedStatuses.noted),
-  //               palette: 'actors',
-  //               pIndex: 1,
-  //             },
-  //           ],
-  //         }];
-  //       }
-  //       return memo;
-  //     },
-  //     [],
-  //   );
-  // };
-
-  getHeaderAttributes = () => {
-  // getHeaderAttributes = (taxonomy, actortypeId) => {
-    // const { intl } = this.context;
-    // // figure out if tagged directly or via child category
-    // const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
-    // const tagsActions = this.getTagsTax(taxonomy, 'tags_actions');
-    // const isList = taxonomy.get('actortypeIds')
-    //   && taxonomy.get('actortypeIds').size > 1;
+  getHeaderAttributes = (taxonomy) => {
+    const { intl } = this.context;
     // const actortypeSet = actortypeId && actortypeId !== 'all';
     const attributes = [];
     // directly associated objectives/actors
-    // if (tagsActors) {
-    //   let actorLabel;
-    //   if (isList && !actortypeSet) {
-    //     actorLabel = `${intl.formatMessage(
-    //       appMessages.entities.actors.plural
-    //     )} (${intl.formatMessage(
-    //       appMessages.actortypes.all
-    //     )})`;
-    //   } else if (actortypeSet) {
-    //     actorLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeId}`].plural);
-    //   } else {
-    //     const actortypeIdLocal = taxonomy.get('actortypeIds').first();
-    //     actorLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeIdLocal}`].plural);
-    //   }
-    //   attributes.push({
-    //     query: 'actors',
-    //     label: actorLabel,
-    //     // keys: this.getColumnKeys(taxonomy, actortypes),
-    //   });
-    //   // indirectly associated/inferred actions
-    //   if (!tagsActions) {
-    //     attributes.push({
-    //       via: intl.formatMessage(appMessages.entities.connected),
-    //       query: 'actions',
-    //       label: intl.formatMessage(appMessages.entities.actions.plural),
-    //     });
-    //   }
-    // }
-    // // directly associated actions
-    // if (tagsActions) {
-    //   attributes.push({
-    //     query: 'actions',
-    //     label: intl.formatMessage(appMessages.entities.actions.plural),
-    //   });
-    // }
+    if (taxonomy.get('actiontypeIds') && taxonomy.get('actiontypeIds').size > 0) {
+      taxonomy.get('actiontypeIds').forEach((id) => {
+        attributes.push({
+          query: `actions_${id}`,
+          label: intl.formatMessage(appMessages.entities[`actions_${id}`].plural),
+          order: 'desc',
+          type: 'count',
+        });
+      });
+    }
+    if (taxonomy.get('actortypeIds') && taxonomy.get('actortypeIds').size > 0) {
+      taxonomy.get('actortypeIds').forEach((id) => {
+        attributes.push({
+          query: `actors_${id}`,
+          label: intl.formatMessage(appMessages.entities[`actors_${id}`].plural),
+          order: 'desc',
+          type: 'count',
+        });
+      });
+    }
     return attributes;
   }
 
   getListHeaderColumns = ({
     taxonomy,
-    // actortypeId,
     sortOptions,
     sortBy,
     sortOrder,
@@ -149,12 +97,13 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
     isGrouped,
   }) => {
     const { intl } = this.context;
-    const sortOptionActive = getSortOption(sortOptions, sortBy, 'query');
+    const headerAttributes = this.getHeaderAttributes(taxonomy);
+    const allSortOptions = sortOptions.concat(headerAttributes);
+    const sortOptionActive = getSortOption(allSortOptions, sortBy, 'query');
     const titleColumnSortOption = sortOptions.find((option) => option.query === 'title');
     const titleColumnActive = titleColumnSortOption.query === sortOptionActive.query;
     const titleColumnSortOrderOption = SORT_ORDER_OPTIONS.find((option) => (sortOrder || titleColumnSortOption.order) === option.value);
-    // const headerAttributes = this.getHeaderAttributes(taxonomy, actortypeId);
-    const headerAttributes = [];
+    // const headerAttributes = [];
     // category title column
     const columns = [
       {
@@ -187,15 +136,16 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
     return userOnly
       ? columns
       : columns.concat(headerAttributes.map((attribute) => {
-        const columnSortOption = sortOptions.find((option) => option.query === attribute.query);
+        const columnSortOption = attribute;
         const columnActive = columnSortOption.query === sortOptionActive.query;
         const columnSortOrderOption = SORT_ORDER_OPTIONS.find((option) => (sortOrder || columnSortOption.order) === option.value);
         return {
+          type: attribute.query,
+          isAssociated: true,
           header: attribute.label,
           via: attribute.via,
           active: columnActive,
           width: ((1 - TITLE_COL_RATIO) / headerAttributes.length) * 100,
-          keys: attribute.keys,
           sortIcon: columnActive && columnSortOrderOption
             ? columnSortOrderOption.icon
             : 'sorting',
@@ -212,60 +162,27 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
   };
 
   getCategoryMaxCount = (categoryGroups, attribute) => {
-    const isList = !!attribute.actortypeIds;
     const allCategories = categoryGroups.reduce((memo, group) => memo.concat(group.get('categories')),
       List(),);
     return allCategories.reduce(
-      (countsMemo, cat) => {
-        if (isList) {
-          const maxAttribute = cat.get(attribute.totalByActortype)
-            && cat.get(attribute.totalByActortype).reduce(
-              (memo, attr) => Math.max(attr, memo),
-              0,
-            );
-          return maxAttribute ? Math.max(maxAttribute, countsMemo) : countsMemo;
-        }
-        return cat.get(attribute.total) ? Math.max(cat.get(attribute.total), countsMemo) : countsMemo;
-      },
+      (countsMemo, cat) => cat.getIn(['counts', attribute.total])
+        ? Math.max(cat.getIn(['counts', attribute.total]), countsMemo)
+        : countsMemo,
       0,
     );
   };
 
-  getCountAttributes = (taxonomy) => {
-    // figure out if tagged directly or via child category
-    const tagsActors = this.getTagsTax(taxonomy, 'tags_actors');
-    const tagsActions = this.getTagsTax(taxonomy, 'tags_actions');
-
+  getCountAttributes = (taxonomy, headerColumns) => {
     const attributes = [];
-    if (tagsActors) {
-      attributes.push({
-        total: 'actorsPublicCount',
-        totalByActortype: 'actorsPublicCountByActortype',
-        accepted: 'actorsAcceptedCount',
-        acceptedByActortype: 'actorsAcceptedCountByActortype',
-        entity: 'actors',
-        actortypeIds:
-          taxonomy.get('actortypeIds')
-          && taxonomy.get('actortypeIds').toArray(),
-      });
-      if (!tagsActions) {
+    headerColumns.forEach((column) => {
+      if (column.isAssociated) {
         attributes.push({
-          total: 'actionsPublicCount',
-          totalByActortype: 'actionsPublicCountByActortype',
-          entity: 'actions',
-          actortypeIds:
-            taxonomy.get('actortypeIds')
-            && taxonomy.get('actortypeIds').toArray(),
+          total: column.type,
+          entity: 'actors',
+          width: column.width,
         });
       }
-    }
-    if (tagsActions) {
-      attributes.push({
-        total: 'actionsPublicCount',
-        totalByActortype: 'actionsPublicCountByActortype',
-        entity: 'actions',
-      });
-    }
+    });
     return attributes;
   }
 
@@ -273,8 +190,9 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
     taxonomy,
     categoryGroups,
     userOnly,
+    headerColumns,
   }) => {
-    const countAttributes = this.getCountAttributes(taxonomy);
+    const countAttributes = this.getCountAttributes(taxonomy, headerColumns);
     // category title column
     const columns = [
       {
@@ -288,7 +206,7 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
       : columns.concat(
         countAttributes.map((attribute) => ({
           type: 'count',
-          width: ((1 - TITLE_COL_RATIO) / countAttributes.length) * 100,
+          width: attribute.width,
           maxCount: this.getCategoryMaxCount(categoryGroups, attribute),
           attribute,
         }))
@@ -305,13 +223,9 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
       sortOrder,
       onSort,
       userOnly,
-      actortypes,
-      actortypeId,
     } = this.props;
-
     const headerColumns = this.getListHeaderColumns({
       taxonomy,
-      actortypeId,
       sortOptions,
       sortBy,
       sortOrder,
@@ -324,24 +238,24 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
       taxonomy,
       categoryGroups,
       userOnly,
+      headerColumns,
     });
-
     return (
       <Styled>
         <CategoryListHeader columns={headerColumns} />
         <CategoryListBody>
-          {categoryGroups.valueSeq().toArray().map((group) => {
-            if (group.get('categories') && group.get('categories').size > 0) {
+          {categoryGroups && categoryGroups.size > 0 && categoryGroups.valueSeq().toArray().map((group) => {
+            if (group.get('categories') && group.get('type') === 'categories') {
               return (
                 <span key={group.get('id')}>
-                  {group.get('type') === 'categories' && !qe(group.get('id'), NO_PARENT_KEY) && (
+                  {!qe(group.get('id'), NO_PARENT_KEY) && (
                     <GroupHeaderLink to={`${ROUTES.CATEGORY}/${group.get('id')}`}>
                       <GroupHeader>
                         {getCategoryTitle(group)}
                       </GroupHeader>
                     </GroupHeaderLink>
                   )}
-                  {group.get('type') === 'categories' && qe(group.get('id'), NO_PARENT_KEY) && (
+                  {qe(group.get('id'), NO_PARENT_KEY) && (
                     <GroupHeader empty>
                       <FormattedMessage {...appMessages.entities.categories.noParentsAssociated} />
                     </GroupHeader>
@@ -352,37 +266,57 @@ class CategoryListItems extends React.PureComponent { // eslint-disable-line rea
                       category={cat}
                       columns={columns}
                       onPageLink={onPageLink}
-                      actortypes={actortypes}
-                      actortypeId={actortypeId}
                     />
                   ))}
+                  {group.get('categories').size === 0 && (
+                    <EmptyHint>
+                      <FormattedMessage {...appMessages.entities.categories.noChildrenAssociated} />
+                    </EmptyHint>
+                  )}
+                </span>
+              );
+            }
+            if (group.get('categories') && group.get('type') !== 'categories') {
+              return (
+                <span key={group.get('id')}>
+                  {group.get('categories').map((cat) => (
+                    <CategoryListItem
+                      key={cat.get('id')}
+                      category={cat}
+                      columns={columns}
+                      onPageLink={onPageLink}
+                    />
+                  ))}
+                  {group.get('categories').size === 0 && (
+                    <EmptyHint>
+                      <FormattedMessage {...appMessages.entities.categories.empty} />
+                    </EmptyHint>
+                  )}
                 </span>
               );
             }
             return null;
           })}
+          {(!categoryGroups || categoryGroups.size === 0) && (
+            <EmptyHint>
+              <FormattedMessage {...appMessages.entities.categories.empty} />
+            </EmptyHint>
+          )}
         </CategoryListBody>
       </Styled>
     );
   }
 }
-// {group.get('categories').size === 0 && (
-//   <EmptyHint>
-//   <FormattedMessage {...appMessages.entities.categories.noChildrenAssociated} />
-//   </EmptyHint>
-// )}
 
 CategoryListItems.propTypes = {
   categoryGroups: PropTypes.object,
   taxonomy: PropTypes.object,
-  actortypes: PropTypes.object,
   onPageLink: PropTypes.func,
   onSort: PropTypes.func,
   sortOptions: PropTypes.array,
   sortBy: PropTypes.string,
   sortOrder: PropTypes.string,
   userOnly: PropTypes.bool,
-  actortypeId: PropTypes.string,
 };
 
 CategoryListItems.contextTypes = {

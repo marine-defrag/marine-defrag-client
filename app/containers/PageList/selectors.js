@@ -18,13 +18,13 @@ import { CONFIG } from './constants';
 export const selectPages = createSelector(
   (state, locationQuery) => selectEntitiesSearchQuery(state, {
     path: API.PAGES,
-    searchAttributes: CONFIG.search || ['title'],
+    searchAttributes: CONFIG.views.list.search || ['title'],
     locationQuery,
   }),
   selectSortByQuery,
   selectSortOrderQuery,
   (entities, sort, order) => {
-    const sortOption = getSortOption(CONFIG.sorting, sort);
+    const sortOption = getSortOption(CONFIG.views.list.sorting, sort);
     return sortEntities(
       entities,
       order || (sortOption ? sortOption.order : 'asc'),

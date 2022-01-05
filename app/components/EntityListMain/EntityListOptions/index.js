@@ -40,6 +40,10 @@ export class EntityListOptions extends React.Component { // eslint-disable-line 
       groupOptions,
       subgroupOptions,
     } = this.props;
+
+    const hasOptions = (groupOptions && groupOptions.size > 0)
+      || (subgroupOptions && subgroupOptions.size > 0);
+    if (!hasOptions) return null;
     return (
       <Styled>
         { groupOptions.size > 0

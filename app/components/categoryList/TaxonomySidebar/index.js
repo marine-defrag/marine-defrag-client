@@ -16,12 +16,14 @@ import ButtonDefault from 'components/buttons/ButtonDefault';
 
 import Component from 'components/styled/Component';
 import SidebarHeader from 'components/styled/SidebarHeader';
+import SidebarGroupLabel from 'components/styled/SidebarGroupLabel';
 import Sidebar from 'components/styled/Sidebar';
 import Scrollable from 'components/styled/Scrollable';
 import PrintHide from 'components/styled/PrintHide';
 
 import { prepareTaxonomyGroups } from 'utils/taxonomies';
 
+import appMessages from 'containers/App/messages';
 import messages from './messages';
 
 const ToggleShow = styled(ButtonDefault)`
@@ -109,12 +111,19 @@ class TaxonomySidebar extends React.PureComponent { // eslint-disable-line react
       active,
       onTaxonomyLink,
       actortypes,
+      actiontypes,
     } = this.props;
-    const taxonomyGroups = actortypes && taxonomies && prepareTaxonomyGroups(
-      taxonomies,
+    const actorTaxonomyGroups = actortypes && taxonomies && prepareTaxonomyGroups(
+      taxonomies.filter((tax) => tax.get('actortypeIds').size > 0),
       active,
       onTaxonomyLink,
       actortypes,
+    );
+    const actionTaxonomyGroups = actiontypes && taxonomies && prepareTaxonomyGroups(
+      taxonomies.filter((tax) => tax.get('actiontypeIds').size > 0),
+      active,
+      onTaxonomyLink,
+      actiontypes,
     );
     const { intl } = this.context;
     return (
@@ -131,8 +140,8 @@ class TaxonomySidebar extends React.PureComponent { // eslint-disable-line react
             <Sidebar responsiveSmall>
               <Scrollable>
                 <Component>
-                  <SidebarHeader responsiveSmall>
-                    <SupTitle title={intl.formatMessage(messages.title)} />
+                  <SidebarHeader responsiveSmall taxonomies>
+                    <SupTitle title={intl.formatMessage(messages.titleActions)} />
                     { this.state.viewport < VIEWPORTS.SMALL
                     && (
                       <ToggleHide onClick={this.onHideSidebar}>
@@ -141,8 +150,55 @@ class TaxonomySidebar extends React.PureComponent { // eslint-disable-line react
                     )
                     }
                   </SidebarHeader>
-                  {taxonomyGroups && map(taxonomyGroups, (group) => (
+                  {actionTaxonomyGroups && map(actionTaxonomyGroups, (group) => (
                     <div key={group.id}>
+                      <SidebarGroupLabel>
+                        {group.typeId && (
+                          <FormattedMessage
+                            {... appMessages.taxonomyGroups.actions}
+                            values={{
+                              type: intl.formatMessage(
+                                appMessages.entities[`actions_${group.typeId}`].plural
+                              ),
+                            }}
+                          />
+                        )}
+                        {!group.typeId && (
+                          <FormattedMessage {... appMessages.taxonomyGroups[group.id]} />
+                        )}
+                      </SidebarGroupLabel>
+                      <div>
+                        {map(group.taxonomies, (taxonomy) => (
+                          <div key={taxonomy.id}>
+                            <TaxonomySidebarItem taxonomy={taxonomy} onTaxonomyClick={this.onHideSidebar} />
+                            <div>
+                              { taxonomy.children && taxonomy.children.length > 0 && map(taxonomy.children, (child) => <TaxonomySidebarItem key={child.id} nested taxonomy={child} onTaxonomyClick={this.onHideSidebar} />)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  <SidebarHeader responsiveSmall taxonomies>
+                    <SupTitle title={intl.formatMessage(messages.titleActors)} />
+                  </SidebarHeader>
+                  {actorTaxonomyGroups && map(actorTaxonomyGroups, (group) => (
+                    <div key={group.id}>
+                      <SidebarGroupLabel>
+                        {group.typeId && (
+                          <FormattedMessage
+                            {... appMessages.taxonomyGroups.actors}
+                            values={{
+                              type: intl.formatMessage(
+                                appMessages.entities[`actors_${group.typeId}`].plural
+                              ),
+                            }}
+                          />
+                        )}
+                        {!group.typeId && (
+                          <FormattedMessage {... appMessages.taxonomyGroups[group.id]} />
+                        )}
+                      </SidebarGroupLabel>
                       <div>
                         {map(group.taxonomies, (taxonomy) => (
                           <div key={taxonomy.id}>
@@ -164,25 +220,11 @@ class TaxonomySidebar extends React.PureComponent { // eslint-disable-line react
     );
   }
 }
-// <SidebarGroupLabel>
-//   {group.actortypeId && (
-//     <FormattedMessage
-//       {... appMessages.taxonomyGroups.objectives}
-//       values={{
-//         type: intl.formatMessage(
-//           appMessages.entities[`actors_${group.actortypeId}`].pluralLong
-//         ),
-//       }}
-//     />
-//   )}
-//   {!group.actortypeId && (
-//     <FormattedMessage {... appMessages.taxonomyGroups[group.id]} />
-//   )}
-// </SidebarGroupLabel>
 
 TaxonomySidebar.propTypes = {
   taxonomies: PropTypes.object,
   actortypes: PropTypes.object,
+  actiontypes: PropTypes.object,
   onTaxonomyLink: PropTypes.func,
   active: PropTypes.string,
   theme: PropTypes.object,

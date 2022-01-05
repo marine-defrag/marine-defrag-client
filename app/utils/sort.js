@@ -1,17 +1,24 @@
 import { find } from 'lodash/collection';
+import { toLower, deburr } from 'lodash/string';
 import { getCategoryShortTitle } from 'utils/entities';
 import isNumber from 'utils/is-number';
 
-export const getSortOption = (sortOptions, sortBy, query = 'attribute') => find(sortOptions, (option) => option[query] === sortBy)
-  || find(sortOptions, (option) => option.default);
+export const getSortOption = (sortOptions, sortBy, query = 'attribute') => find(
+  sortOptions,
+  (option) => option[query] === sortBy
+) || find(sortOptions, (option) => option.default);
 
-const getEntitySortValueMapper = (entity, sortBy) => {
+const getEntitySortValueMapper = (entity, sortBy, type) => {
   if (!entity) {
     return 1;
+  }
+  if (type === 'count') {
+    return entity.getIn(['counts', sortBy]) || 0;
   }
   switch (sortBy) {
     case 'id':
       return entity.get('id');
+    case 'code':
     case 'reference':
       // use id field when reference not available
       return entity.getIn(['attributes', sortBy]) || entity.get('id');
@@ -31,6 +38,7 @@ const getEntitySortValueMapper = (entity, sortBy) => {
     case 'actors':
     case 'sortBy':
       return entity.get(sortBy) || 0;
+
     default:
       return entity.getIn(['attributes', sortBy]);
   }
@@ -40,7 +48,7 @@ const prepSortTarget = (value) => {
   // 1. replace symbols with white spaces
   const testValue = value.toString().replace(/[.,/|-]/g, ' ');
   // 2. split into chunks
-  return testValue.split(' ');
+  return toLower(deburr(testValue)).split(' ');
 };
 
 export const getEntitySortComparator = (valueA, valueB, sortOrder, type) => {
@@ -127,7 +135,7 @@ export const getEntitySortComparator = (valueA, valueB, sortOrder, type) => {
             }
           } else {
             // neither starting with number: compare stings
-            result = valueA < valueB ? -1 : 1;
+            result = prepSortTarget(valueA) < prepSortTarget(valueB) ? -1 : 1;
           }
         }
         break;
@@ -140,7 +148,7 @@ export const getEntitySortComparator = (valueA, valueB, sortOrder, type) => {
 
 export const sortEntities = (entities, sortOrder, sortBy, type, asList = true) => {
   const sorted = entities && entities.sortBy(
-    (entity) => getEntitySortValueMapper(entity, sortBy || 'id'),
+    (entity) => getEntitySortValueMapper(entity, sortBy || 'id', type),
     (a, b) => getEntitySortComparator(a, b, sortOrder || 'asc', type)
   );
   return asList ? sorted.toList() : sorted;

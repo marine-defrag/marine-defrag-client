@@ -282,6 +282,10 @@ export const selectConnectionQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('connected')
 );
+export const selectParentQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('parent')
+);
 export const selectTargetedQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('targeted')
@@ -336,6 +340,15 @@ export const selectActiontypeQuery = createSelector(
     : 'all'
 );
 
+export const selectViewQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && (locationQuery.get('view') || 'list')
+);
+export const selectMapSubjectQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && (locationQuery.get('ms') || 'actors')
+);
+
 // database ////////////////////////////////////////////////////////////////////////
 
 const selectEntitiesAll = (state) => state.getIn(['global', 'entities']);
@@ -359,7 +372,7 @@ export const selectEntity = createSelector(
 // all actions
 export const selectActions = createSelector(
   (state) => selectEntities(state, API.ACTIONS),
-  (entities) => entities
+  (entities) => sortEntities(entities, 'asc', 'title', null, false)
 );
 export const selectAction = createSelector(
   (state, id) => selectEntity(state, { id, path: API.ACTIONS }),
@@ -368,7 +381,7 @@ export const selectAction = createSelector(
 // all actors
 export const selectActors = createSelector(
   (state) => selectEntities(state, API.ACTORS),
-  (entities) => entities
+  (entities) => sortEntities(entities, 'asc', 'title', null, false)
 );
 export const selectActor = createSelector(
   (state, id) => selectEntity(state, { id, path: API.ACTORS }),

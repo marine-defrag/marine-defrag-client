@@ -10,9 +10,6 @@ export const getOptionSortValueMapper = (option) => {
   if (option.get('order')) {
     return option.get('order');
   }
-  if (option.get('reference')) {
-    return option.get('reference');
-  }
   return option.get('label');
 };
 export const getOptionSortCheckedValueMapper = (option) => {
@@ -51,7 +48,7 @@ export const prepareOptionSearchTarget = (option, fields, queryLength) => reduce
   fields,
   (target, field) => {
     if (option.get(field)) {
-      if (field === 'id' || field === 'reference' || field === 'value') {
+      if (field === 'id' || field === 'code' || field === 'value') {
         return `${target} ${option.get(field)}`;
       } if (queryLength > 1) {
         return `${target} ${cleanupSearchTarget(option.get(field))}`;
@@ -71,7 +68,7 @@ export const filterOptionsByKeywords = (options, query) => { // filter checkboxe
         option,
         (option.get('searchFields') && option.get('searchFields').size > 0)
           ? option.get('searchFields').toArray()
-          : ['id', 'reference', 'label', 'search'],
+          : ['id', 'code', 'label', 'search'],
         query.length
       )));
     } catch (e) {

@@ -38,4 +38,12 @@ export default defineMessages({
     id: 'app.containers.EntityList.type_delete',
     defaultMessage: 'deletion(s)',
   },
+  filterFormWithoutPrefix: {
+    id: 'app.containers.EntityList.filterFormWithoutPrefix',
+    defaultMessage: 'Without',
+  },
+  filterFormError: {
+    id: 'app.containers.EntityList.filterFormError',
+    defaultMessage: 'Errors',
+  },
 });

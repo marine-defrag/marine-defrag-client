@@ -34,14 +34,14 @@ export const currentFilterArgs = (config, locationQuery) => {
   if (config.associations && locationQuery.get(config.associations.query)) {
     args = args.concat(config.associations.query);
   }
+  if (config.parents && locationQuery.get(config.parents.query)) {
+    args = args.concat(config.parents.query);
+  }
   if (locationQuery.get('where')) {
     args = args.concat('where');
   }
   if (locationQuery.get('without')) {
     args = args.concat('without');
-  }
-  if (locationQuery.get('search')) {
-    args = args.concat('search');
   }
   return args;
 };
@@ -112,6 +112,15 @@ export const currentFilters = (
   if (config.associations && connections) {
     filterTags = filterTags.concat(getCurrentConnectionFilters(
       config.associations,
+      connections,
+      locationQuery,
+      onTagClick,
+      withoutLabel
+    ));
+  }
+  if (config.parents) {
+    filterTags = filterTags.concat(getCurrentConnectionFilters(
+      config.parents,
       connections,
       locationQuery,
       onTagClick,
@@ -306,6 +315,7 @@ const getCurrentConnectionFilters = (
   }
   return tags;
 };
+
 const getCurrentAttributeFilters = (entities, attributeFiltersOptions, locationQuery, onClick, withoutLabel) => {
   const tags = [];
   if (locationQuery.get('where')) {

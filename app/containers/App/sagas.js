@@ -37,6 +37,8 @@ import {
   CLOSE_ENTITY,
   DISMISS_QUERY_MESSAGES,
   SET_ACTIONTYPE,
+  SET_VIEW,
+  SET_MAPSUBJECT,
   OPEN_BOOKMARK,
 } from 'containers/App/constants';
 
@@ -45,6 +47,7 @@ import {
   ENDPOINTS,
   KEYS,
   API,
+  KEEP_FILTERS,
 } from 'themes/config';
 
 import {
@@ -572,11 +575,10 @@ const getNextQuery = (query, extend, location) => {
   // get old query or new query if not extending (replacing)
   const queryPrevious = extend
     ? location.get('query').toJS()
-    : location.get('query').filter((val, key) => key === 'actortype').toJS();
-
+    : location.get('query').filter((val, key) => key === 'view').toJS();
   // and figure out new query
-  return asArray(query).reduce((q, param) => {
-    const queryUpdated = q;
+  return asArray(query).reduce((memo, param) => {
+    const queryUpdated = memo;
     // if arg already set and not replacing
     if (queryUpdated[param.arg] && !param.replace) {
       // if multiple values set
@@ -603,6 +605,8 @@ const getNextQuery = (query, extend, location) => {
         delete queryUpdated[param.arg];
       }
     // if set and removing
+    } else if (queryUpdated[param.arg] && param.value && param.replace) {
+      queryUpdated[param.arg] = param.value;
     } else if (queryUpdated[param.arg] && param.remove) {
       delete queryUpdated[param.arg];
     // if not set or replacing with new value
@@ -649,6 +653,32 @@ export function* setActortypeSaga({ actortype }) {
 
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
+export function* setViewSaga({ view }) {
+  const location = yield select(selectLocation);
+  const queryNext = getNextQuery(
+    {
+      arg: 'view',
+      value: view,
+      replace: true,
+    },
+    true, // extend
+    location,
+  );
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
+export function* setMapSubjectSaga({ subject }) {
+  const location = yield select(selectLocation);
+  const queryNext = getNextQuery(
+    {
+      arg: 'ms',
+      value: subject,
+      replace: true,
+    },
+    true, // extend
+    location,
+  );
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
 
 export function* openBookmarkSaga({ bookmark }) {
   const path = bookmark.getIn(['attributes', 'view', 'path']);
@@ -677,6 +707,7 @@ export function* dismissQueryMessagesSaga() {
 export function* updatePathSaga({ path, args }) {
   const relativePath = path.startsWith('/') ? path : `/${path}`;
   const location = yield select(selectLocation);
+
   let queryNext = {};
   if (args && (args.query || args.keepQuery)) {
     if (args.query) {
@@ -686,8 +717,10 @@ export function* updatePathSaga({ path, args }) {
       queryNext = location.get('query').toJS();
     }
   } else {
-    // always keep "actortype filter"
-    queryNext = location.get('query').filter((val, key) => key === 'actortype').toJS();
+    // always keep "specific filters"
+    queryNext = location.get('query').filter(
+      (val, key) => KEEP_FILTERS.indexOf(key) > -1
+    ).toJS();
   }
   // convert to string
   const queryNextString = getNextQueryString(queryNext);
@@ -740,6 +773,8 @@ export default function* rootSaga() {
   yield takeEvery(UPDATE_ROUTE_QUERY, updateRouteQuerySaga);
   yield takeEvery(UPDATE_PATH, updatePathSaga);
   yield takeEvery(SET_ACTIONTYPE, setActortypeSaga);
+  yield takeEvery(SET_VIEW, setViewSaga);
+  yield takeEvery(SET_MAPSUBJECT, setMapSubjectSaga);
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);
   yield takeEvery(DISMISS_QUERY_MESSAGES, dismissQueryMessagesSaga);
 

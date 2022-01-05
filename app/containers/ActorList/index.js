@@ -49,6 +49,15 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
     }
   }
 
+  prepareTypeOptions = (types, activeId) => {
+    const { intl } = this.context;
+    return Object.values(types.toJS()).map((type) => ({
+      value: type.id,
+      label: intl.formatMessage(appMessages.actortypes[type.id]),
+      active: activeId === type.id,
+    }));
+  }
+
   render() {
     const { intl } = this.context;
     const {
@@ -66,6 +75,7 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
       actiontypesForTarget,
       membertypes,
       associationtypes,
+      onSelectType,
     } = this.props;
     const typeId = params.id;
     const type = `actors_${typeId}`;
@@ -133,6 +143,9 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
           actiontypesForTarget={actiontypesForTarget}
           membertypes={membertypes}
           associationtypes={associationtypes}
+          typeOptions={this.prepareTypeOptions(actortypes, typeId)}
+          onSelectType={onSelectType}
+          typeId={typeId}
         />
       </div>
     );
@@ -143,6 +156,7 @@ ActorList.propTypes = {
   loadEntitiesIfNeeded: PropTypes.func,
   handleNew: PropTypes.func,
   handleImport: PropTypes.func,
+  onSelectType: PropTypes.func,
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   entities: PropTypes.instanceOf(List).isRequired,
@@ -188,6 +202,13 @@ function mapDispatchToProps(dispatch) {
     },
     handleImport: () => {
       dispatch(updatePath(`${ROUTES.ACTORS}${ROUTES.IMPORT}`));
+    },
+    onSelectType: (typeId) => {
+      dispatch(updatePath(
+        typeId && typeId !== ''
+          ? `${ROUTES.ACTORS}/${typeId}`
+          : ROUTES.ACTORS
+      ));
     },
   };
 }

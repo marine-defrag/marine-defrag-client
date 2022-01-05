@@ -36,9 +36,9 @@ theme.breakpoints = {
 // 0: main colour, darker, used for links and navigation elements, hover
 // 1: main colour, used for links and navigation elements
 // 2: main colour, light
-// 3: main colour, lighter (UNUSED)
+// 3: main colour, background
 // 4: white
-const primary = coolorsToHex('https://coolors.co/0063b5-0070cc-0077d8-ffffff-ffffff');
+const primary = coolorsToHex('https://coolors.co/0063b5-0070cc-0077d8-f1f3f3-ffffff');
 // secondary color palette: dark to light
 // 0: dark header colour, darker
 // 1: dark header colour
@@ -104,6 +104,8 @@ theme.palette = {
     '#007c3a', // 10
     '#333333', // 11
     '#555555', // 12
+    '#555555', // 13
+    '#555555', // 14
   ],
   taxonomiesHover: [
     '#656F75', // default, not used
@@ -119,6 +121,8 @@ theme.palette = {
     '#007034', // 10
     '#111111', // 11
     '#444444', // 12
+    '#444444', // 13
+    '#444444', // 14
   ],
 
   // bg inactive, bg hover, icon
@@ -133,6 +137,8 @@ theme.palette = {
   // maybe [#AA-Large compliant] 18pt/24px or 14pt/19px bold can suffice with AA com,pliant hover if agreed by customer
 
   // other entities
+  parents: ['#C75300'],
+  parentsHover: ['#ED7000'],
   actions: ['#C75300'],
   actionsHover: ['#ED7000'],
   actors: ['#033A89', '#6889B8'], // accepted, noted
@@ -176,7 +182,7 @@ theme.palette = {
   headerBrandHover: [dark[1], dark[3]], // WARNING component sets opacity
 
   // headerNavPages: [ '#bg' ],
-  headerNavPages: [light[0]],
+  headerNavPages: ['white'],
   // headerNavPagesItem: [ '#color', '#colorActive', '#bg', '#bgActive' ],
   headerNavPagesItem: [dark[3], primary[4], 'transparent', primary[2]],
   headerNavPagesItemHover: [dark[2], primary[4], 'transparent', primary[0]],
@@ -202,8 +208,8 @@ theme.palette = {
 
   // CATEGORY SIDEBAR "PALETTES" //////////////////////////////////////////////////////////////
   // asideCatNavItem: ['#color', '#colorActive', '#bg', '#bgActive', '#border'],
-  asideCatNavItem: [dark[2], primary[4], primary[4], primary[2], light[0]],
-  asideCatNavItemHover: [dark[1], primary[4], light[0], primary[2], light[0]],
+  asideCatNavItem: [dark[2], primary[2], primary[4], primary[2], light[0]],
+  asideCatNavItemHover: [dark[1], primary[1], light[0], primary[2], light[0]],
 
   // ENTITYLIST SIDEBAR "PALETTES" //////////////////////////////////////////////////////////////
   // asideCatNavItem: ['#color', '#active', '#bg', '#bgactive', '#border'],
@@ -243,7 +249,7 @@ theme.palette = {
   // buttonSecondaryHover: [secondary[4], secondary[0]],
   // buttonToggleInactive: ['#color', '#bg'],
   buttonToggleInactive: [dark[2], light[1]], // list sidebar filter/edit toggle button
-  buttonToggleInactiveHover: [dark[2], light[0]],
+  buttonToggleInactiveHover: [dark[2], light[2]],
   // ButtonInverse: ['#color', '#bg'],
   buttonInverse: [primary[2], primary[4]], // used for taxonomy tags, background only
   buttonInverseHover: [primary[0], primary[4]],
@@ -303,19 +309,35 @@ theme.sizes = {
     paddingTop: 12,
     paddingBottom: 12,
   },
+  headerList: {
+    banner: {
+      height: 80,
+      heightMobile: 30,
+    },
+  },
+  headerExplore: {
+    banner: {
+      height: 120,
+      heightMobile: 60,
+    },
+    nav: {
+      height: 40,
+      heightMobile: 30,
+    },
+  },
   header: {
     banner: {
-      height: 60,
+      height: 40,
       heightMobile: 40,
     },
     nav: {
-      height: 50,
-      heightMobile: 40,
+      height: 30,
+      heightMobile: 30,
     },
     // px or em
     text: {
-      title: '30px',
-      titleMobile: '20px',
+      title: '24px',
+      titleMobile: '16px',
       claim: '12px',
       claimMobile: '9px',
     },
