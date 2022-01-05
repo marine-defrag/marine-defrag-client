@@ -3,14 +3,8 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import styled, { withTheme } from 'styled-components';
 import { palette } from 'styled-theme';
-import { filter } from 'lodash/collection';
 
-import {
-  SHOW_HEADER_TITLE,
-  SHOW_HEADER_PATTERN,
-  SHOW_BRAND_ON_HOME,
-  ROUTES,
-} from 'themes/config';
+import { SHOW_HEADER_TITLE, ROUTES } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
 import Icon from 'components/Icon';
@@ -27,8 +21,7 @@ import NavPages from './NavPages';
 import NavAdmin from './NavAdmin';
 import LinkPage from './LinkPage';
 import NavAccount from './NavAccount';
-import NavMain from './NavMain';
-import LinkMain from './LinkMain';
+
 import LinkAdmin from './LinkAdmin';
 
 
@@ -44,9 +37,6 @@ const Styled = styled.div`
   right: 0;
   height:${(props) => {
     if (props.hasBrand) {
-      if (props.hasNav) {
-        return props.theme.sizes.header.banner.heightMobile + props.theme.sizes.header.nav.heightMobile;
-      }
       return props.theme.sizes.header.banner.heightMobile;
     }
     return 0;
@@ -54,33 +44,21 @@ const Styled = styled.div`
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     height:${(props) => {
     if (props.hasBrand) {
-      if (props.hasNav) {
-        return props.theme.sizes.header.banner.height + props.theme.sizes.header.nav.height;
-      }
       return props.theme.sizes.header.banner.height;
     }
     return 0;
   }}px;
   }
   background-color: ${(props) => props.hasBackground ? palette('header', 0) : 'transparent'};
-  box-shadow: ${(props) => props.hasShadow ? '0px 0px 15px 0px rgba(0,0,0,0.5)' : 'none'};
+  box-shadow: ${(props) => props.hasShadow ? '0px 0px 5px 0px rgba(0,0,0,0.5)' : 'none'};
   z-index: 101;
   @media print {
-    display: ${({ isHome }) => isHome ? 'none' : 'block'};
+    display: block;
     height: ${({ theme }) => theme.sizes.header.banner.height}px;
     position: static;
     box-shadow: none;
     background: white;
   }
-`;
-const HomeNavWrap = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  z-index: 101;
-  color: ${palette('headerBrand', 0)};
 `;
 
 const NavSecondary = styled(PrintHide)`
@@ -124,37 +102,27 @@ const HideSecondaryWrap = styled.div`
 `;
 const HideSecondary = styled(Button)``;
 
-const LinkTitle = styled.div`
-  font-size: ${(props) => props.theme.sizes.text.small};
-  font-weight: bold;
-  color: ${(props) => props.active ? palette('headerNavMainItem', 1) : 'inherit'};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    font-size: ${(props) => props.theme.sizes.text.default};
-  }
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.default};
-  }
-`;
-const Search = styled(LinkMain)`
-  display: none;
-  color: ${(props) => props.active ? palette('headerNavMainItem', 1) : palette('headerNavMainItem', 0)};
-  &:hover {
-    color:${palette('headerNavMainItemHover', 0)};
-  }
-  padding: 2px ${(props) => props.theme.sizes.header.paddingLeft.mobile}px 1px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    display: inline-block;
-    min-width: auto;
-    padding: 15px ${(props) => props.theme.sizes.header.paddingLeft.small}px 0;
-    position: absolute;
-    right: 0;
-    border-left: none;
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-`;
+
+// const Search = styled(LinkMain)`
+//   display: none;
+//   color: ${(props) => props.active ? palette('headerNavMainItem', 1) : palette('headerNavMainItem', 0)};
+//   &:hover {
+//     color:${palette('headerNavMainItemHover', 0)};
+//   }
+//   padding: 2px ${(props) => props.theme.sizes.header.paddingLeft.mobile}px 1px;
+//   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+//     display: inline-block;
+//     min-width: auto;
+//     padding: 15px ${(props) => props.theme.sizes.header.paddingLeft.small}px 0;
+//     position: absolute;
+//     right: 0;
+//     border-left: none;
+//   }
+//   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
+//     padding-left: 24px;
+//     padding-right: 24px;
+//   }
+// `;
 
 const STATE_INITIAL = {
   showSecondary: false,
@@ -209,7 +177,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
     this.forceUpdate();
   };
 
-  renderSecondary = (navItemsAdmin) => (
+  renderSecondary = (navItems) => (
     <PrintHide>
       <ShowSecondary
         visible={!this.state.showSecondary}
@@ -247,10 +215,10 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
           }}
           currentPath={this.props.currentPath}
         />
-        { navItemsAdmin
+        { navItems
           && (
             <NavAdmin>
-              { navItemsAdmin.map((item, i) => (
+              { navItems.map((item, i) => (
                 <LinkAdmin
                   key={i}
                   href={item.path}
@@ -284,86 +252,38 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
   );
 
   render() {
-    const {
-      isHome,
-      search,
-      isAuth,
-    } = this.props;
+    const { isAuth, navItems } = this.props;
     const { intl } = this.context;
-    const navItems = filter(this.props.navItems, (item) => !item.isAdmin);
-    const navItemsAdmin = filter(this.props.navItems, (item) => item.isAdmin);
 
     const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
-
     return (
       <Styled
-        isHome={isHome}
-        fixed={isHome || isAuth}
-        sticky={!isHome && !isAuth}
-        hasBackground={!isHome && !isAuth}
-        hasShadow={!isHome && !isAuth}
-        hasNav={!isHome && !isAuth}
-        hasBrand={SHOW_BRAND_ON_HOME || !isHome}
+        fixed={isAuth}
+        sticky={!isAuth}
+        hasBackground={!isAuth}
+        hasShadow={!isAuth}
+        hasNav={!isAuth}
+        hasBrand
       >
-        { !SHOW_BRAND_ON_HOME && isHome
-          && (
-            <HomeNavWrap>
-              { this.renderSecondary(navItemsAdmin) }
-            </HomeNavWrap>
-          )
-        }
-        {(SHOW_BRAND_ON_HOME || !isHome) && (
-          <Banner
-            showPattern={(!isHome && SHOW_HEADER_PATTERN)}
+        <Banner>
+          <Brand
+            href="/"
+            onClick={(evt) => this.onClick(evt, '/')}
+            title={appTitle}
           >
-            <Brand
-              href="/"
-              onClick={(evt) => this.onClick(evt, '/')}
-              title={appTitle}
-            >
-              {SHOW_HEADER_TITLE && (
-                <BrandText>
-                  <BrandClaim>
-                    <FormattedMessage {...appMessages.app.claim} />
-                  </BrandClaim>
-                  <BrandTitle>
-                    <FormattedMessage {...appMessages.app.title} />
-                  </BrandTitle>
-                </BrandText>
-              )}
-            </Brand>
-            {this.renderSecondary(navItemsAdmin)}
-          </Banner>
-        )}
-        {!isHome && !isAuth && (
-          <NavMain hasBorder>
-            {navItems && navItems.map((item, i) => (
-              <LinkMain
-                key={i}
-                href={item.path}
-                active={item.active}
-                onClick={(evt) => this.onClick(evt, item.path)}
-              >
-                <LinkTitle active={item.active}>
-                  {item.title}
-                </LinkTitle>
-              </LinkMain>
-            ))}
-            {search && (
-              <Search
-                href={search.path}
-                active={search.active}
-                onClick={(evt) => this.onClick(evt, search.path)}
-                icon={search.icon}
-              >
-                {search.title}
-                {search.icon
-                && <Icon title={search.title} name={search.icon} text textRight size="1em" />
-                }
-              </Search>
+            {SHOW_HEADER_TITLE && (
+              <BrandText>
+                <BrandClaim>
+                  <FormattedMessage {...appMessages.app.claim} />
+                </BrandClaim>
+                <BrandTitle>
+                  <FormattedMessage {...appMessages.app.title} />
+                </BrandTitle>
+              </BrandText>
             )}
-          </NavMain>
-        )}
+          </Brand>
+          {this.renderSecondary(navItems)}
+        </Banner>
       </Styled>
     );
   }
@@ -380,14 +300,9 @@ Header.propTypes = {
   pages: PropTypes.array,
   navItems: PropTypes.array,
   onPageLink: PropTypes.func.isRequired,
-  isHome: PropTypes.bool, // not shown on home page
   isAuth: PropTypes.bool, // not shown on home page
   theme: PropTypes.object.isRequired,
   search: PropTypes.object,
-};
-
-Header.defaultProps = {
-  isHome: true,
 };
 
 export default withTheme(Header);

@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
@@ -7,11 +6,8 @@ import ItemStatus from 'components/ItemStatus';
 import Clear from 'components/styled/Clear';
 import { ROUTES } from 'themes/config';
 
-import { qe } from 'utils/quasi-equals';
-import appMessages from 'containers/App/messages';
-
 const Styled = styled.button`
-  width:100%;
+  width: 100%;
   cursor: pointer;
   text-align: left;
   color: ${palette('mainListItem', 0)};
@@ -45,15 +41,13 @@ const BarWrap = styled.div`
   width:100%;
   vertical-align: middle;
   font-size: 0px;
-  padding: ${({ multiple }) => multiple ? '4px 6px' : '10px 6px'};
+  padding: 4px 6px;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding-top: ${({ multiple }) => multiple ? 0 : 10}px;
-    padding-bottom: ${({ multiple }) => multiple ? 8 : 10}px;
     padding-right: ${({ secondary }) => secondary ? 36 : 18}px;
     padding-left: 40px;
   }
   @media print {
-    padding-top: ${({ multiple }) => multiple ? 0 : 4}px;
+    padding-top: 4px;
     padding-right: ${({ secondary }) => secondary ? 24 : 14}px;
     padding-bottom: 4px;
     padding-left: 24px;
@@ -131,11 +125,11 @@ const Title = styled.div`
   width: 100%;
   font-size: ${(props) => props.theme.sizes.text.smaller};
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding: 8px;
+    padding: 4px 8px;
     font-size: ${(props) => props.theme.sizes.text.default};
   }
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    padding: 18px;
+    padding: 8px 18px;
     font-size: ${(props) => props.theme.sizes.text.aaLargeBold};
   }
   @media print {
@@ -143,29 +137,8 @@ const Title = styled.div`
     padding: 0;
   }
 `;
-const ActortypeLabel = styled.div`
-  display: none;
-  font-size: ${(props) => props.theme.sizes.text.smaller};
-  color: ${palette('text', 1)};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding-left: 40px;
-    display: block;
-  }
-  @media print {
-    padding-left: 24px;
-    font-size: ${(props) => props.theme.sizes.print.smallest};
-  }
-`;
 const StatusWrap = styled.div`
   padding: 0 18px;
-`;
-const Reference = styled.span`
-  float: left;
-  padding-right: 5px;
-  color: ${palette('text', 1)};
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    padding-right: 8px;
-  }
 `;
 const WrapAcceptedBars = styled.span`
   height: ${({ multiple }) => multiple ? 10 : 15}px;
@@ -219,99 +192,18 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
     );
   };
 
-  renderCountColumn = (col, category, actortypes, actortypeId) => {
+  renderCountColumn = (col, category) => {
     if (!col.attribute) {
       return null;
     }
-    const actortypeSet = actortypeId && actortypeId !== 'all';
-    const countsByActortype = col.attribute.actortypeIds;
-    const connected = col.attribute.entity === 'actions';
-    if (countsByActortype) {
-      const total = category[col.attribute.totalByActortype];
-      const accepted = category[col.attribute.acceptedByActortype];
-      if (!actortypeSet) {
-        return (
-          <div>
-            {col.attribute.actortypeIds.map((id) => {
-              const actortype = actortypes.find((type) => qe(type.get('id'), id));
-              if (!actortype) {
-                return null;
-              }
-              const hasResponse = !connected && actortype.getIn(['attributes', 'has_response']);
-              const multipleActortypes = col.attribute.actortypeIds.length > 1;
-              const totalCount = (total && total[id]) || 0;
-              if (totalCount === 0) {
-                return null;
-              }
-              return (
-                <div key={id}>
-                  {multipleActortypes && (
-                    <ActortypeLabel>
-                      {connected && (<span>&nbsp;</span>)}
-                      {!connected && appMessages.entities[`actors_${id}`] && (
-                        <FormattedMessage {...appMessages.entities[`actors_${id}`].plural} />
-                      )}
-                    </ActortypeLabel>
-                  )}
-                  {hasResponse && (
-                    <BarWrap secondary multiple={multipleActortypes}>
-                      {this.renderAcceptedBar(
-                        col,
-                        totalCount,
-                        (accepted && accepted[id]) || 0,
-                        multipleActortypes, // multiple,
-                      )}
-                    </BarWrap>
-                  )}
-                  {!hasResponse && (
-                    <BarWrap multiple={multipleActortypes}>
-                      {this.renderSimpleBar(
-                        col,
-                        totalCount,
-                        multipleActortypes, // multiple,
-                      )}
-                    </BarWrap>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        );
-      } if (actortypeSet) {
-        const id = actortypeId;
-        const actortype = actortypes.find((at) => qe(at.get('id'), id));
-        if (!actortype || !total[id]) {
-          return null;
-        }
-        const hasResponse = !connected && actortype.getIn(['attributes', 'has_response']);
-        const totalCount = (total && total[id]) || 0;
-        if (totalCount === 0) {
-          return null;
-        }
-        return (
-          <div>
-            {hasResponse && (
-              <BarWrap secondary>
-                {this.renderAcceptedBar(
-                  col,
-                  totalCount,
-                  (accepted && accepted[id]) || 0
-                )}
-              </BarWrap>
-            )}
-            {!hasResponse && (
-              <BarWrap>
-                {this.renderSimpleBar(col, (total && total[id]) || 0)}
-              </BarWrap>
-            )}
-          </div>
-        );
-      }
+    if (!category.counts) {
+      return (
+        <BarWrap>
+          {this.renderSimpleBar(col, 0)}
+        </BarWrap>
+      );
     }
-    const total = category[col.attribute.total];
-    if (total === 0) {
-      return null;
-    }
+    const total = category.counts[col.attribute.total] || 0;
     return (
       <BarWrap>
         {this.renderSimpleBar(col, total)}
@@ -321,17 +213,10 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
   };
 
   render() {
-    const {
-      category, columns, onPageLink, actortypes, actortypeId,
-    } = this.props;
-    const reference = category.getIn(['attributes', 'reference'])
-      && category.getIn(['attributes', 'reference']).trim() !== ''
-      ? category.getIn(['attributes', 'reference'])
-      : null;
+    const { category, columns, onPageLink } = this.props;
     // return null;
     const catItem = {
       id: category.get('id'),
-      reference,
       title: category.getIn(['attributes', 'title']),
       draft: category.getIn(['attributes', 'draft']),
     };
@@ -360,14 +245,11 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
                 )}
                 {col.type === 'title' && (
                   <Title>
-                    { catItem.reference
-                      && <Reference>{catItem.reference}</Reference>
-                    }
                     {catItem.title}
                   </Title>
                 )}
                 {col.type === 'count'
-                  && this.renderCountColumn(col, category.toJS(), actortypes, actortypeId)
+                  && this.renderCountColumn(col, category.toJS())
                 }
               </Column>
             ))
@@ -377,14 +259,11 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
     );
   }
 }
-//           {this.renderColumnContent(col, category)}
 
 CategoryListItem.propTypes = {
   category: PropTypes.object,
-  actortypes: PropTypes.object,
   columns: PropTypes.array,
   onPageLink: PropTypes.func,
-  actortypeId: PropTypes.string,
 };
 
 CategoryListItem.contextTypes = {

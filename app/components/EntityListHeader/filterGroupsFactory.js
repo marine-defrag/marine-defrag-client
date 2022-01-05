@@ -1,6 +1,7 @@
 import { reduce } from 'lodash/collection';
 import { sortEntities } from 'utils/sort';
 import { startsWith } from 'utils/string';
+import qe from 'utils/quasi-equals';
 
 // figure out filter groups for filter panel
 export const makeFilterGroups = ({
@@ -15,6 +16,7 @@ export const makeFilterGroups = ({
   membertypes,
   associationtypes,
   messages,
+  typeId,
 }) => {
   const filterGroups = {};
 
@@ -215,6 +217,50 @@ export const makeFilterGroups = ({
             },
             optionsMemo,
           ),
+        [],
+      ),
+    };
+  }
+  if (config.parents) {
+    filterGroups.parents = {
+      id: 'parents', // filterGroupId
+      label: messages.connections(config.parents.type),
+      show: true,
+      options: reduce(
+        config.parents.options,
+        (optionsMemo, option) => {
+          const connectedTypes = actiontypes;
+          if (option.groupByType && connectedTypes) {
+            return connectedTypes
+              .filter(
+                (type) => qe(type.get('id'), typeId)
+                  && (!option.typeFilter || type.getIn(['attributes', option.typeFilter]))
+              )
+              .reduce(
+                (memo, type) => {
+                  const id = `${option.entityType}_${type.get('id')}`;
+                  return memo.concat({
+                    id, // filterOptionId
+                    label: option.label,
+                    message: (option.message && option.message.indexOf('{typeid}') > -1)
+                      ? option.message.replace('{typeid}', type.get('id'))
+                      : option.message,
+                    color: option.entityType,
+                    active: !!activeFilterOption
+                      && activeFilterOption.group === 'parents'
+                      && activeFilterOption.optionId === id,
+                  });
+                },
+                optionsMemo,
+              );
+          }
+          return optionsMemo.concat({
+            id: option.path, // filterOptionId
+            label: option.label,
+            message: option.message,
+            active: !!activeFilterOption && activeFilterOption.optionId === option.path,
+          });
+        },
         [],
       ),
     };

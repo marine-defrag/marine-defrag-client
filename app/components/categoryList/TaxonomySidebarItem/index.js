@@ -13,21 +13,21 @@ const Styled = styled(Button)`
   display: table;
   table-layout: fixed;
   width: 100%;
-  padding:  ${({ small }) => small ? '0.15em 8px 0.15em 32px' : '0.3em 8px 0.3em 12px'};
+  padding:  ${({ small }) => small ? '0.15em 8px 0.15em 24px' : '0.3em 8px 0.3em 12px'};
   text-align: left;
-  color:  ${(props) => props.active ? palette('asideCatNavItem', 1) : palette('asideCatNavItem', 0)};
-  background-color: ${(props) => props.active ? palette('taxonomies', props.paletteId) : palette('asideCatNavItem', 2)};
-  border-bottom: 1px solid ${palette('asideCatNavItem', 4)};
+  color:  ${(props) => props.active ? palette('asideListItem', 1) : palette('asideListItem', 0)};
+  background-color: ${(props) => props.active ? palette('asideListItem', 3) : palette('asideListItem', 2)};
+  border-bottom: 1px solid ${palette('asideListItem', 4)};
   &:hover {
-    color: ${palette('asideCatNavItemHover', 1)};
-    background-color: ${(props) => props.active ? palette('taxonomiesHover', props.paletteId) : palette('taxonomies', props.paletteId)};
-    border-bottom-color: ${palette('asideCatNavItemHover', 4)};
+    color: ${(props) => props.active ? palette('asideListItemHover', 1) : palette('asideListItemHover', 0)};
+    background-color: ${(props) => props.active ? palette('asideListItemHover', 3) : palette('asideListItemHover', 2)};
+    border-bottom-color: ${palette('asideListItemHover', 4)}
   }
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding:  ${({ small }) => small ? '0.15em 8px 0.15em 32px' : '0.3em 8px 0.3em 12px'};
+    padding:  ${({ small }) => small ? '0.15em 8px 0.15em 24px' : '0.3em 8px 0.3em 12px'};
   }
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    padding:  ${({ small }) => small ? '0.25em 8px 0.25em 68px' : '0.5em 8px 0.5em 16px'};
+    padding:  ${({ small }) => small ? '0.25em 8px 0.25em 32px' : '0.5em 8px 0.5em 16px'};
   }
 `;
 

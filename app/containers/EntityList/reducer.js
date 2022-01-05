@@ -33,7 +33,7 @@ import {
 } from './constants';
 
 const initialState = fromJS({
-  activePanel: FILTERS_PANEL,
+  activePanel: null,
   entitiesSelected: [],
   sending: {},
   success: {},

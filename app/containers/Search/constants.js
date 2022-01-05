@@ -46,7 +46,7 @@ export const CONFIG = {
         {
           path: API.ACTORS,
           clientPath: ROUTES.ACTORS,
-          search: ['title', 'description', 'response', 'reference'],
+          search: ['title', 'description', 'code'],
           groupByType: true,
           sorting: [
             {
@@ -54,11 +54,6 @@ export const CONFIG = {
               type: 'number',
               order: 'desc',
               default: true,
-            },
-            {
-              attribute: 'reference',
-              type: 'string',
-              order: 'asc',
             },
             {
               attribute: 'title',
@@ -83,15 +78,10 @@ export const CONFIG = {
       categorySearch: ['title', 'short_title', 'description', 'url', 'taxonomy'],
       sorting: [
         {
-          attribute: 'reference',
-          type: 'string',
-          order: 'asc',
-          default: true,
-        },
-        {
           attribute: 'title',
           type: 'string',
           order: 'asc',
+          default: true,
         },
         {
           attribute: 'updated_at',

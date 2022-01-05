@@ -47,7 +47,7 @@ export const SHOW_HEADER_PATTERN_HOME_GRAPHIC = false;
 // show footer logo section
 export const FOOTER = {
   PARTNERS: false,
-  LINK_TARGET_INTERNAL: true,
+  LINK_TARGET_INTERNAL: false,
   LINK_TARGET_INTERNAL_ID: 1,
 };
 
@@ -78,7 +78,7 @@ export const TEXT_TRUNCATE = {
   ENTITY_TAG: 7,
   CONNECTION_POPUP: 80,
   LINK_FIELD: 30,
-  ACTORTYPE_SELECT: 32,
+  TYPE_SELECT: 24,
   GRACE: 2,
   META_TITLE: 20,
 };
@@ -152,7 +152,7 @@ export const PUBLISH_STATUSES = [
 
 export const DEFAULT_ACTORTYPE = '1';
 export const DEFAULT_ACTIONTYPE = '1';
-export const DEFAULT_TAXONOMY = '1';
+export const DEFAULT_TAXONOMY = '11';
 export const NO_PARENT_KEY = 'parentUndefined';
 
 // client app routes **************************
@@ -516,6 +516,7 @@ export const ACTIONTYPE_ACTORTYPES = {
   ],
   [ACTIONTYPES.REGLSEAS]: [
     ACTORTYPES.COUNTRY,
+    ACTORTYPES.GROUP,
   ],
   [ACTIONTYPES.REGL]: [
     ACTORTYPES.COUNTRY,
@@ -559,3 +560,5 @@ export const ACTIONTYPE_TARGETTYPES = {
     ACTORTYPES.CLASS,
   ],
 };
+
+export const KEEP_FILTERS = ['view', 'ms'];

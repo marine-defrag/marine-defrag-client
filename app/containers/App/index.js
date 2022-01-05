@@ -44,7 +44,7 @@ const Main = styled.div`
   position: ${(props) => props.isHome ? 'relative' : 'absolute'};
   top: ${(props) => props.isHome
     ? 0
-    : props.theme.sizes.header.banner.heightMobile + props.theme.sizes.header.nav.heightMobile
+    : props.theme.sizes.header.banner.heightMobile
 }px;
   left: 0;
   right: 0;
@@ -55,7 +55,7 @@ const Main = styled.div`
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     top: ${(props) => props.isHome
     ? 0
-    : props.theme.sizes.header.banner.height + props.theme.sizes.header.nav.height
+    : props.theme.sizes.header.banner.height
 }px;
   }
   @media print {
@@ -96,24 +96,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
     currentPath,
   ) => {
     const { intl } = this.context;
-    let navItems = [
-      {
-        path: ROUTES.ACTIONS,
-        title: intl.formatMessage(messages.nav.actions),
-        active: currentPath.startsWith(ROUTES.ACTION),
-      },
-      {
-        path: ROUTES.ACTORS,
-        title: intl.formatMessage(messages.nav.actors),
-        active: currentPath.startsWith(ROUTES.ACTOR),
-      },
-      {
-        path: ROUTES.TAXONOMIES,
-        title: intl.formatMessage(messages.nav.taxonomies),
-        active: currentPath.startsWith(ROUTES.CATEGORY)
-          || currentPath.startsWith(ROUTES.TAXONOMIES),
-      },
-    ];
+    let navItems = [];
     if (isManager) {
       navItems = navItems.concat([
         {
@@ -121,6 +104,13 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           title: intl.formatMessage(messages.nav.pages),
           isAdmin: true,
           active: currentPath === ROUTES.PAGES,
+        },
+        {
+          path: ROUTES.TAXONOMIES,
+          title: intl.formatMessage(messages.nav.taxonomies),
+          isAdmin: true,
+          active: currentPath.startsWith(ROUTES.CATEGORY)
+          || currentPath.startsWith(ROUTES.TAXONOMIES),
         },
         {
           path: ROUTES.USERS,
@@ -157,38 +147,35 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
     } = this.props;
     const { intl } = this.context;
     const title = intl.formatMessage(messages.app.title);
-    const isHomeOrAuth = location.pathname === '/'
-      || location.pathname.startsWith(ROUTES.LOGIN)
+    const isHome = location.pathname === '/';
+    const isAuth = location.pathname.startsWith(ROUTES.LOGIN)
       || location.pathname.startsWith(ROUTES.REGISTER)
       || location.pathname.startsWith(ROUTES.LOGOUT)
       || location.pathname.startsWith(ROUTES.UNAUTHORISED);
+    const isHomeOrAuth = isHome || isAuth;
     return (
       <div>
         <Helmet titleTemplate={`${title} - %s`} defaultTitle={title} />
-        <Header
-          isSignedIn={isUserSignedIn}
-          user={user}
-          pages={pages && this.preparePageMenuPages(pages)}
-          navItems={this.prepareMainMenuItems(
-            isUserSignedIn && isManager,
-            isUserSignedIn && isAnalyst,
-            location.pathname,
-          )}
-          search={{
-            path: ROUTES.SEARCH,
-            title: intl.formatMessage(messages.nav.search),
-            active: location.pathname.startsWith(ROUTES.SEARCH),
-            icon: 'search',
-          }}
-          onPageLink={onPageLink}
-          isHome={location.pathname === '/'}
-          isAuth={
-            location.pathname.startsWith(ROUTES.LOGIN)
-            || location.pathname.startsWith(ROUTES.REGISTER)
-            || location.pathname.startsWith(ROUTES.LOGOUT)
-            || location.pathname.startsWith(ROUTES.UNAUTHORISED)
-          }
-        />
+        {!isHome && (
+          <Header
+            isSignedIn={isUserSignedIn}
+            user={user}
+            pages={pages && this.preparePageMenuPages(pages)}
+            navItems={this.prepareMainMenuItems(
+              isUserSignedIn && isManager,
+              isUserSignedIn && isAnalyst,
+              location.pathname,
+            )}
+            search={{
+              path: ROUTES.SEARCH,
+              title: intl.formatMessage(messages.nav.search),
+              active: location.pathname.startsWith(ROUTES.SEARCH),
+              icon: 'search',
+            }}
+            onPageLink={onPageLink}
+            isAuth={isAuth}
+          />
+        )}
         <Main isHome={isHomeOrAuth}>
           {React.Children.toArray(children)}
         </Main>

@@ -119,18 +119,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     return role ? parseInt(role.get('id'), 10) : USER_ROLES.DEFAULT.value;
   }
 
-  getReference = (entity) => {
-    const { intl } = this.context;
-    const reference = entity.getIn(['attributes', 'reference']) || entity.get('id');
-    const type = entity.get('type');
-    if (intl
-      && appMessages.entities[type]
-      && appMessages.entities[type].singleShort
-    ) {
-      return `${intl.formatMessage(appMessages.entities[type].singleShort)}: ${reference}`;
-    }
-    return reference;
-  }
+  getReference = (entity) => entity.getIn(['attributes', 'code']);
 
   mapToEntityListItem = ({
     config,

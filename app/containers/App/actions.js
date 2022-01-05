@@ -62,6 +62,8 @@ import {
   DISMISS_QUERY_MESSAGES,
   SET_ACTIONTYPE,
   OPEN_BOOKMARK,
+  SET_VIEW,
+  SET_MAPSUBJECT,
 } from './constants';
 
 export function submitInvalid(valid) {
@@ -445,6 +447,18 @@ export function setActortype(actortype) {
   return {
     type: SET_ACTIONTYPE,
     actortype,
+  };
+}
+export function setView(view) {
+  return {
+    type: SET_VIEW,
+    view,
+  };
+}
+export function setMapSubject(subject) {
+  return {
+    type: SET_MAPSUBJECT,
+    subject,
   };
 }
 export function openBookmark(bookmark) {

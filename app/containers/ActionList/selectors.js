@@ -8,9 +8,11 @@ import {
   selectConnectionQuery,
   selectCategoryQuery,
   selectTargetedQuery,
+  selectParentQuery,
   selectSortByQuery,
   selectSortOrderQuery,
   selectActors,
+  selectActions,
   selectActorTaxonomies,
   // selectActortypes,
   selectReady,
@@ -22,6 +24,7 @@ import {
 } from 'containers/App/selectors';
 
 import {
+  filterEntitiesByAttributes,
   filterEntitiesByConnection,
   filterEntitiesByCategories,
   // filterEntitiesByConnectedCategories,
@@ -41,17 +44,28 @@ export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActors,
   selectActorCategoriesGroupedByActor,
+  selectActions,
+  selectActionCategoriesGroupedByAction,
   selectCategories,
-  (ready, actors, associationsGrouped, categories) => {
+  (ready, actors, actorAssociationsGrouped, actions, actionAssociationsGrouped, categories) => {
     if (ready) {
-      return new Map().set(
-        API.ACTORS,
-        entitiesSetCategoryIds(
-          actors,
-          associationsGrouped,
-          categories,
-        )
-      );
+      return new Map()
+        .set(
+          API.ACTORS,
+          entitiesSetCategoryIds(
+            actors,
+            actorAssociationsGrouped,
+            categories,
+          ),
+        ).set(
+          // potential parents
+          'parents',
+          entitiesSetCategoryIds(
+            actions,
+            actionAssociationsGrouped,
+            categories,
+          ),
+        );
     }
     return new Map();
   }
@@ -128,7 +142,7 @@ export const selectConnectedTaxonomies = createSelector(
 const selectActionsWithCategories = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   (state, args) => selectActionsSearchQuery(state, {
-    searchAttributes: CONFIG.search || ['title'],
+    searchAttributes: CONFIG.views.list.search || ['title'],
     ...args,
   }),
   selectActionCategoriesGroupedByAction,
@@ -231,8 +245,19 @@ const selectActionsByTargets = createSelector(
     ? filterEntitiesByConnection(entities, query)
     : entities
 );
-const selectActionsByCategories = createSelector(
+const selectActionsByParent = createSelector(
   selectActionsByTargets,
+  selectParentQuery,
+  (entities, query) => {
+    if (!query) return entities;
+    const pathValue = query.split(':');
+    return (query && pathValue.length > 1)
+      ? filterEntitiesByAttributes(entities, { parent_id: parseInt(pathValue[1], 10) })
+      : entities;
+  }
+);
+const selectActionsByCategories = createSelector(
+  selectActionsByParent,
   selectCategoryQuery,
   (entities, query) => query
     ? filterEntitiesByCategories(entities, query)
@@ -254,12 +279,12 @@ const selectActionsByCategories = createSelector(
 // 5. selectActionsByConnections will filter by specific connection
 // 6. selectActionsByCategories will filter by specific categories
 // 7. selectActionsByCOnnectedCategories will filter by specific categories connected via connection
-export const selectActions = createSelector(
+export const selectViewActions = createSelector(
   selectActionsByCategories,
   selectSortByQuery,
   selectSortOrderQuery,
   (entities, sort, order) => {
-    const sortOption = getSortOption(CONFIG.sorting, sort);
+    const sortOption = getSortOption(CONFIG.views.list.sorting, sort);
     return sortEntities(
       entities,
       order || (sortOption ? sortOption.order : 'desc'),
