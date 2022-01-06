@@ -328,6 +328,8 @@ export const ACTION_FIELDS = {
     },
     comment: {
       optional: [
+        ACTIONTYPES.REGL,
+        ACTIONTYPES.NATL,
         ACTIONTYPES.DONOR,
         ACTIONTYPES.INIT,
       ],
@@ -336,6 +338,8 @@ export const ACTION_FIELDS = {
     url: {
       optional: [
         ACTIONTYPES.INTL,
+        ACTIONTYPES.REGL,
+        ACTIONTYPES.NATL,
         ACTIONTYPES.REGLSEAS,
         ACTIONTYPES.DONOR,
         ACTIONTYPES.INIT,
