@@ -104,6 +104,8 @@ theme.palette = {
     '#007c3a', // 10
     '#333333', // 11
     '#555555', // 12
+    '#555555', // 13
+    '#555555', // 14
   ],
   taxonomiesHover: [
     '#656F75', // default, not used
@@ -119,6 +121,8 @@ theme.palette = {
     '#007034', // 10
     '#111111', // 11
     '#444444', // 12
+    '#444444', // 13
+    '#444444', // 14
   ],
 
   // bg inactive, bg hover, icon
@@ -133,6 +137,8 @@ theme.palette = {
   // maybe [#AA-Large compliant] 18pt/24px or 14pt/19px bold can suffice with AA com,pliant hover if agreed by customer
 
   // other entities
+  parents: ['#C75300'],
+  parentsHover: ['#ED7000'],
   actions: ['#C75300'],
   actionsHover: ['#ED7000'],
   actors: ['#033A89', '#6889B8'], // accepted, noted
@@ -243,7 +249,7 @@ theme.palette = {
   // buttonSecondaryHover: [secondary[4], secondary[0]],
   // buttonToggleInactive: ['#color', '#bg'],
   buttonToggleInactive: [dark[2], light[1]], // list sidebar filter/edit toggle button
-  buttonToggleInactiveHover: [dark[2], light[0]],
+  buttonToggleInactiveHover: [dark[2], light[2]],
   // ButtonInverse: ['#color', '#bg'],
   buttonInverse: [primary[2], primary[4]], // used for taxonomy tags, background only
   buttonInverseHover: [primary[0], primary[4]],

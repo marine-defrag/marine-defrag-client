@@ -145,6 +145,7 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
           associationtypes={associationtypes}
           typeOptions={this.prepareTypeOptions(actortypes, typeId)}
           onSelectType={onSelectType}
+          typeId={typeId}
         />
       </div>
     );
@@ -203,7 +204,11 @@ function mapDispatchToProps(dispatch) {
       dispatch(updatePath(`${ROUTES.ACTORS}${ROUTES.IMPORT}`));
     },
     onSelectType: (typeId) => {
-      dispatch(updatePath(typeId ? `${ROUTES.ACTORS}/${typeId}` : ROUTES.ACTORS));
+      dispatch(updatePath(
+        typeId && typeId !== ''
+          ? `${ROUTES.ACTORS}/${typeId}`
+          : ROUTES.ACTORS
+      ));
     },
   };
 }

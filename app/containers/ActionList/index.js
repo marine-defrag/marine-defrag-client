@@ -28,7 +28,7 @@ import EntityList from 'containers/EntityList';
 import { CONFIG, DEPENDENCIES } from './constants';
 import {
   selectConnections,
-  selectActions,
+  selectViewActions,
   selectConnectedTaxonomies,
 } from './selectors';
 
@@ -138,6 +138,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
           targettypes={targettypes}
           typeOptions={this.prepareTypeOptions(actiontypes, typeId)}
           onSelectType={onSelectType}
+          typeId={typeId}
         />
       </div>
     );
@@ -169,7 +170,7 @@ ActionList.contextTypes = {
 
 const mapStateToProps = (state, props) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
-  entities: selectActions(state, { type: props.params.id }), // type
+  entities: selectViewActions(state, { type: props.params.id }), // type
   taxonomies: selectActiontypeTaxonomiesWithCats(state, { type: props.params.id }),
   connections: selectConnections(state),
   connectedTaxonomies: selectConnectedTaxonomies(state),
@@ -191,7 +192,11 @@ function mapDispatchToProps(dispatch) {
       dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.IMPORT}`));
     },
     onSelectType: (typeId) => {
-      dispatch(updatePath(typeId ? `${ROUTES.ACTIONS}/${typeId}` : ROUTES.ACTIONS));
+      dispatch(updatePath(
+        typeId && typeId !== ''
+          ? `${ROUTES.ACTIONS}/${typeId}`
+          : ROUTES.ACTIONS
+      ));
     },
   };
 }

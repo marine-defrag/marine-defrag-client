@@ -282,7 +282,6 @@ export class BookmarkList extends React.PureComponent { // eslint-disable-line r
             <Content>
               <ContentHeader
                 type={CONTENT_LIST}
-                supTitle={intl.formatMessage(messages.supTitle)}
                 title={intl.formatMessage(messages.pageTitle)}
                 icon="bookmark_active"
               />

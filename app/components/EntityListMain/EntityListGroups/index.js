@@ -219,7 +219,7 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
           allSelectedOnPage={entityIdsSelected.toSet().size === entityIdsOnPage.toSet().size}
           isManager={isManager}
           entityTitle={entityTitle}
-          sortOptions={config.sorting}
+          sortOptions={config.views.list.sorting}
           sortBy={locationQuery.get('sort')}
           sortOrder={locationQuery.get('order')}
           onSortBy={this.props.onSortBy}

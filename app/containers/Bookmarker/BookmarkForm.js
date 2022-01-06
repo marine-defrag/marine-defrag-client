@@ -37,6 +37,7 @@ const Styled = styled.div`
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     top: 100%;
     right: 0;
+    left: auto;
     width: 340px;
   }
 `;

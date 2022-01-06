@@ -11,7 +11,6 @@ import { FormattedMessage } from 'react-intl';
 
 import { jumpToComponent } from 'utils/scroll-to-component';
 import { lowerCase } from 'utils/string';
-import { qe } from 'utils/quasi-equals';
 
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
@@ -19,6 +18,7 @@ import Content from 'components/styled/Content';
 import Loading from 'components/Loading';
 import ContentHeader from 'components/ContentHeader';
 import EntityListSearch from 'components/EntityListSearch';
+import EntityListViewOptions from 'components/EntityListViewOptions';
 import PrintOnly from 'components/styled/PrintOnly';
 
 import { CONTENT_LIST, PARAMS } from 'containers/App/constants';
@@ -92,50 +92,26 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       connections,
       connectedTaxonomies,
       locationQuery,
-      entityIcon,
       entities,
       errors,
       actortypes,
       hasHeader,
       onClearFilters,
+      viewOptions,
     } = this.props;
     const { intl } = this.context;
 
     let groupSelectValue = locationQuery.get('group');
-    const groupforActortype = config.taxonomies
-      && config.taxonomies.defaultGroupsByActortype
-      && actortypes
-      && actortypes.size === 1;
     if (config.taxonomies && !groupSelectValue) {
-      if (groupforActortype) {
-        /* eslint-disable prefer-destructuring */
-        groupSelectValue = config.taxonomies.defaultGroupsByActortype[actortypes.first().get('id')][1];
-        /* eslint-enable prefer-destructuring */
-      } else {
-        groupSelectValue = getGroupValue(
-          taxonomies,
-          config.taxonomies.defaultGroupAttribute,
-          1,
-        );
-      }
+      groupSelectValue = getGroupValue(
+        taxonomies,
+        config.taxonomies.defaultGroupAttribute,
+        1,
+      );
     }
-
     let subgroupSelectValue;
     if (groupSelectValue && groupSelectValue !== PARAMS.GROUP_RESET) {
       subgroupSelectValue = locationQuery.get('subgroup');
-      if (
-        config.taxonomies
-        && !subgroupSelectValue
-        && groupforActortype
-        && qe(
-          groupSelectValue,
-          config.taxonomies.defaultGroupsByActortype[actortypes.first().get('id')][1],
-        )
-      ) {
-        /* eslint-disable prefer-destructuring */
-        subgroupSelectValue = config.taxonomies.defaultGroupsByActortype[actortypes.first().get('id')][2];
-        /* eslint-enable prefer-destructuring */
-      }
     }
 
     const headerTitle = entities && dataReady
@@ -182,16 +158,17 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
     const headerActions = dataReady ? header.actions : [];
     return (
       <ContainerWrapper hasHeader={hasHeader} ref={this.ScrollContainer}>
+        {dataReady && viewOptions && viewOptions.length > 1 && (
+          <EntityListViewOptions options={viewOptions} />
+        )}
         <Container ref={this.ScrollReference}>
           <Content>
             <ContentHeader
               type={CONTENT_LIST}
-              icon={header.icon}
-              supTitle={header.supTitle}
               title={headerTitle}
               subTitle={subtitle}
-              sortAttributes={config.sorting}
               buttons={headerActions}
+              hasViewOptions={viewOptions && viewOptions.length > 1}
             />
             {!dataReady && <Loading />}
             {dataReady && (
@@ -229,7 +206,6 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
                     onEntityClick={this.props.onEntityClick}
                     entityTitle={entityTitle}
                     config={config}
-                    entityIcon={entityIcon}
                     isManager={isManager}
                     isAnalyst={isAnalyst}
                     onPageItemsSelect={(no) => {
@@ -267,12 +243,12 @@ EntityListMain.propTypes = {
   // object/arrays
   config: PropTypes.object,
   header: PropTypes.object,
+  viewOptions: PropTypes.array,
   entityTitle: PropTypes.object, // single/plural
   // primitive
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   isAnalyst: PropTypes.bool,
-  entityIcon: PropTypes.func,
   // functions
   onEntityClick: PropTypes.func.isRequired,
   onEntitySelect: PropTypes.func.isRequired,

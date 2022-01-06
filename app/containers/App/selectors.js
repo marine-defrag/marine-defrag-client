@@ -282,6 +282,10 @@ export const selectConnectionQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('connected')
 );
+export const selectParentQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('parent')
+);
 export const selectTargetedQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('targeted')
@@ -334,6 +338,15 @@ export const selectActiontypeQuery = createSelector(
   (query) => (query && query.get('actiontype'))
     ? query.get('actiontype')
     : 'all'
+);
+
+export const selectViewQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && (locationQuery.get('view') || 'list')
+);
+export const selectMapSubjectQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && (locationQuery.get('ms') || 'actors')
 );
 
 // database ////////////////////////////////////////////////////////////////////////
