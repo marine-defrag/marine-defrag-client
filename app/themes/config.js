@@ -95,12 +95,13 @@ export const COLUMN_WIDTHS = {
  * */
 
 // General ********************
+const IS_DEV = true;
 
 export const ENDPOINTS = {
   API: (
-    NODE_ENV === 'production'
+    NODE_ENV === 'production' && !IS_DEV
       ? 'https://67vn6.hatchboxapp.com'
-      : 'https://67vn6.hatchboxapp.com'
+      : 'https://marine-defrag-api.herokuapp.com'
   ), // server API endpoint
   SIGN_IN: 'auth/sign_in',
   SIGN_OUT: 'auth/sign_out',
@@ -171,9 +172,11 @@ export const ROUTES = {
   UNAUTHORISED: '/unauthorised',
   USERS: '/users',
   ACTIONS: '/actions',
-  ACTORS: '/actors',
   ACTION: '/action',
+  ACTORS: '/actors',
   ACTOR: '/actor',
+  RESOURCES: '/resources',
+  RESOURCE: '/resource',
   TAXONOMIES: '/categories',
   CATEGORY: '/category',
   PAGES: '/pages',
@@ -181,6 +184,7 @@ export const ROUTES = {
 };
 
 // Server endpoints for database tables **************************
+// should match https://github.com/dumparkltd/marine-defrag-server/blob/master/config/routes.rb
 export const API = {
   ACTORS: 'actors',
   ACTIONS: 'measures', // actions/ACTIONS
@@ -193,9 +197,9 @@ export const API = {
   ACTORTYPE_TAXONOMIES: 'actortype_taxonomies', // action taxonomies
   ACTIONTYPE_TAXONOMIES: 'measuretype_taxonomies', // action taxonomies
   MEMBERSHIPS: 'memberships', // quasi: actor_actors
-  // RESOURCES: 'resources',
-  // ACTION_RESOURCES: 'measure_resources',
-  // RESOURCETYPES: 'resourcetypes', // resource types
+  RESOURCES: 'resources',
+  ACTION_RESOURCES: 'measure_resources',
+  RESOURCETYPES: 'resourcetypes', // resource types
   TAXONOMIES: 'taxonomies',
   CATEGORIES: 'categories',
   USERS: 'users',
@@ -220,6 +224,13 @@ export const ACTORTYPES = {
   CLASS: '3',
   REG: '4',
   GROUP: '5',
+};
+export const RESOURCETYPES = {
+  REF: '1',
+  WEB: '2',
+  DOC: '3',
+  AP: '4',
+  MLAP: '5',
 };
 
 export const ACTIONTYPE_GROUPS = {
@@ -255,6 +266,12 @@ export const ACTORTYPE_GROUPS = {
       ACTORTYPES.REG, // regions
       ACTORTYPES.CLASS, // classes
     ],
+  },
+};
+export const RESOURCETYPE_GROUPS = {
+  // temp: one group only for now
+  1: {
+    types: Object.values(RESOURCETYPES),
   },
 };
 
@@ -511,6 +528,65 @@ export const ACTOR_FIELDS = {
   },
 };
 
+export const RESOURCE_FIELDS = {
+  CONNECTIONS: {
+    actions: {
+      table: API.ACTIONS,
+      connection: API.ACTION_RESOURCES,
+      groupby: {
+        table: API.ACTIONTYPES,
+        on: 'measuretype_id',
+      },
+    },
+  },
+  ATTRIBUTES: {
+    resourcetype_id: {
+      defaultValue: '1',
+      required: Object.values(RESOURCETYPES), // all types
+      type: 'number',
+      table: API.RESOURCETYPES,
+    },
+    draft: {
+      defaultValue: true,
+      required: Object.values(RESOURCETYPES), // all types
+      type: 'bool',
+      skipImport: true,
+      // ui: 'dropdown',
+      // options: [
+      //   { value: true, message: 'ui.publishStatuses.draft' },
+      //   { value: false, message: 'ui.publishStatuses.public' },
+      // ],
+    },
+    title: {
+      required: Object.values(RESOURCETYPES), // all types
+      type: 'text',
+    },
+    description: {
+      optional: Object.values(RESOURCETYPES), // all types,
+      type: 'markdown',
+    },
+    status: {
+      optional: [
+        RESOURCETYPES.AP,
+        RESOURCETYPES.MLAP,
+      ],
+      type: 'markdown',
+    },
+    url: {
+      optional: Object.values(RESOURCETYPES), // all types,
+      type: 'url',
+    },
+    publication_date: {
+      optional: Object.values(RESOURCETYPES), // all types,
+      type: 'date',
+    },
+    access_date: {
+      optional: Object.values(RESOURCETYPES), // all types,
+      type: 'date',
+    },
+  },
+};
+
 // type compatibility: actors for actions
 export const ACTIONTYPE_ACTORTYPES = {
   [ACTIONTYPES.INTL]: [
@@ -562,6 +638,36 @@ export const ACTIONTYPE_TARGETTYPES = {
     ACTORTYPES.GROUP,
     ACTORTYPES.REG,
     ACTORTYPES.CLASS,
+  ],
+};
+
+export const ACTIONTYPE_RESOURCETYPES = {
+  [ACTIONTYPES.INTL]: [
+    RESOURCETYPES.REF,
+    RESOURCETYPES.WEB,
+    RESOURCETYPES.DOC,
+  ],
+  [ACTIONTYPES.REGLSEAS]: [
+    RESOURCETYPES.REF,
+    RESOURCETYPES.DOC,
+    RESOURCETYPES.AP,
+    RESOURCETYPES.MLAP,
+  ],
+  [ACTIONTYPES.REGL]: [
+    RESOURCETYPES.REF,
+    RESOURCETYPES.DOC,
+  ],
+  [ACTIONTYPES.NATL]: [
+    RESOURCETYPES.REF,
+    RESOURCETYPES.DOC,
+  ],
+  [ACTIONTYPES.DONOR]: [
+    RESOURCETYPES.REF,
+    RESOURCETYPES.DOC,
+  ],
+  [ACTIONTYPES.INIT]: [
+    RESOURCETYPES.REF,
+    RESOURCETYPES.WEB,
   ],
 };
 

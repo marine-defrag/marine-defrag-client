@@ -76,6 +76,11 @@ class HeaderExplore extends React.PureComponent { // eslint-disable-line react/p
         title: intl.formatMessage(appMessages.nav.actors),
         active: currentPath && currentPath.startsWith(ROUTES.ACTOR),
       },
+      {
+        path: ROUTES.RESOURCES,
+        title: intl.formatMessage(appMessages.nav.resources),
+        active: currentPath && currentPath.startsWith(ROUTES.RESOURCE),
+      },
     ];
     return (
       <Styled>

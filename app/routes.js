@@ -312,6 +312,23 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
+      path: `${ROUTES.ACTORS}`,
+      name: 'actortypes',
+      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/ActorsOverview'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([component]) => {
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
       path: `${ROUTES.ACTORS}${ROUTES.IMPORT}`,
       name: 'actorImport',
       onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
@@ -339,23 +356,6 @@ export default function createRoutes(store) {
       getComponent(nextState, cb) {
         const importModules = Promise.all([
           import('containers/ActorList'),
-        ]);
-
-        const renderRoute = loadModule(cb);
-
-        importModules.then(([component]) => {
-          renderRoute(component);
-        });
-
-        importModules.catch(errorLoading);
-      },
-    }, {
-      path: `${ROUTES.ACTORS}`,
-      name: 'actortypes',
-      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
-      getComponent(nextState, cb) {
-        const importModules = Promise.all([
-          import('containers/ActorsOverview'),
         ]);
 
         const renderRoute = loadModule(cb);
@@ -420,6 +420,40 @@ export default function createRoutes(store) {
         importModules.then(([reducer, sagas, component]) => {
           injectReducer('actorEdit', reducer.default);
           injectSagas(sagas.default);
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
+      path: ROUTES.RESOURCES,
+      name: 'resources',
+      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/ResourcesOverview'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([component]) => {
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
+      path: `${ROUTES.RESOURCES}${ROUTES.ID}`,
+      name: 'resourceListForType',
+      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/ResourceList'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([component]) => {
           renderRoute(component);
         });
 

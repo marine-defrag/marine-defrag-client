@@ -22,6 +22,7 @@ import {
   USER_ROLES,
   ACTIONTYPE_ACTORTYPES,
   ACTIONTYPE_TARGETTYPES,
+  ACTIONTYPE_RESOURCETYPES,
 } from 'themes/config';
 
 import {
@@ -387,6 +388,15 @@ export const selectActor = createSelector(
   (state, id) => selectEntity(state, { id, path: API.ACTORS }),
   (entity) => entity
 );
+// all resources
+export const selectResources = createSelector(
+  (state) => selectEntities(state, API.RESOURCES),
+  (entities) => sortEntities(entities, 'desc', 'id', null, false)
+);
+export const selectResource = createSelector(
+  (state, id) => selectEntity(state, { id, path: API.RESOURCES }),
+  (entity) => entity
+);
 // all action types
 export const selectActortypes = createSelector(
   (state) => selectEntities(state, API.ACTORTYPES),
@@ -395,6 +405,11 @@ export const selectActortypes = createSelector(
 // all action types
 export const selectActiontypes = createSelector(
   (state) => selectEntities(state, API.ACTIONTYPES),
+  (entities) => entities
+);
+// all resource types
+export const selectResourcetypes = createSelector(
+  (state) => selectEntities(state, API.RESOURCETYPES),
   (entities) => entities
 );
 export const selectActortypesForActiontype = createSelector(
@@ -416,6 +431,20 @@ export const selectActiontypesForActortype = createSelector(
     if (!actiontypes) return null;
     const validActiontypeIds = Object.keys(ACTIONTYPE_ACTORTYPES).filter((actiontypeId) => {
       const actortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
+      return actortypeIds && actortypeIds.indexOf(typeId) > -1;
+    });
+    return actiontypes.filter(
+      (type) => validActiontypeIds && validActiontypeIds.indexOf(type.get('id')) > -1
+    );
+  }
+);
+export const selectActiontypesForResourcetype = createSelector(
+  (state, { type }) => type,
+  selectActiontypes,
+  (typeId, actiontypes) => {
+    if (!actiontypes) return null;
+    const validActiontypeIds = Object.keys(ACTIONTYPE_RESOURCETYPES).filter((actiontypeId) => {
+      const actortypeIds = ACTIONTYPE_RESOURCETYPES[actiontypeId];
       return actortypeIds && actortypeIds.indexOf(typeId) > -1;
     });
     return actiontypes.filter(
@@ -530,6 +559,21 @@ export const selectActortypeActors = createSelector(
         (actor) => qe(
           type,
           actor.getIn(['attributes', 'actortype_id']),
+        )
+      );
+    }
+    return entities;
+  }
+);
+export const selectResourcetypeResources = createSelector(
+  selectResources,
+  (state, args) => args ? args.type : null,
+  (entities, type) => {
+    if (entities && type) {
+      return entities.filter(
+        (actor) => qe(
+          type,
+          actor.getIn(['attributes', 'resourcetype_id']),
         )
       );
     }
@@ -656,10 +700,26 @@ const selectActorsWhereQuery = createSelector(
     ? filterEntitiesByAttributes(entities, query)
     : entities
 );
+// filter entities by attributes, using locationQuery
+const selectResourcesWhereQuery = createSelector(
+  selectAttributeQuery,
+  selectResourcetypeResources, // type should be optional
+  (query, entities) => query
+    ? filterEntitiesByAttributes(entities, query)
+    : entities
+);
 
 // TODO: passing of location query likely not needed if selectSearchQuery changed
 export const selectActorsSearchQuery = createSelector(
   selectActorsWhereQuery,
+  selectSearchQuery,
+  (state, { searchAttributes }) => searchAttributes,
+  (entities, query, searchAttributes) => query
+    ? filterEntitiesByKeywords(entities, query, searchAttributes)
+    : entities // !search
+);
+export const selectResourcesSearchQuery = createSelector(
+  selectResourcesWhereQuery,
   selectSearchQuery,
   (state, { searchAttributes }) => searchAttributes,
   (entities, query, searchAttributes) => query
@@ -1052,6 +1112,17 @@ export const selectActionActorsGroupedByActor = createSelector(
   (entities) => entities
     && entities.groupBy(
       (entity) => entity.getIn(['attributes', 'actor_id'])
+    ).map(
+      (group) => group.map(
+        (entity) => entity.getIn(['attributes', 'measure_id'])
+      )
+    ),
+);
+export const selectActionResourcesGroupedByResource = createSelector(
+  (state) => selectEntities(state, API.ACTION_RESOURCES),
+  (entities) => entities
+    && entities.groupBy(
+      (entity) => entity.getIn(['attributes', 'resource_id'])
     ).map(
       (group) => group.map(
         (entity) => entity.getIn(['attributes', 'measure_id'])

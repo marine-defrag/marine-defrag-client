@@ -198,6 +198,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       || this.props.showEditOptions !== nextProps.showEditOptions
       || this.props.taxonomies !== nextProps.taxonomies
       || this.props.connections !== nextProps.connections
+      || this.props.typeOptions !== nextProps.typeOptions
       || !isEqual(this.state, nextState);
   }
 
@@ -284,6 +285,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       entityIdsSelected,
       actortypes,
       actiontypes,
+      // resourcetypes,
       targettypes,
       actiontypesForTarget,
       membertypes,
@@ -395,7 +397,6 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     }
     const hasTypeOptions = typeOptions && typeOptions.length > 0;
     const currentTypeOption = hasTypeOptions && typeOptions.find((option) => option.active);
-
     return (
       <Styled>
         <TheHeader>
@@ -541,6 +542,7 @@ EntityListHeader.propTypes = {
   entityIdsSelected: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
+  resourcetypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
   targettypes: PropTypes.instanceOf(Map),
   membertypes: PropTypes.instanceOf(Map),
