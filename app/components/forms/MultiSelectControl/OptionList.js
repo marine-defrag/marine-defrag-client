@@ -224,7 +224,7 @@ class OptionList extends React.PureComponent {
                         secondary={this.props.secondary}
                       >
                         <Option
-                          bold={option.get('labelBold') || checked}
+                          emphasis={option.get('labelEmphasis')}
                           reference={typeof option.get('reference') !== 'undefined' && option.get('reference') !== null ? option.get('reference').toString() : ''}
                           label={option.get('label')}
                           messagePrefix={option.get('messagePrefix')}

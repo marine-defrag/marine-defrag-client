@@ -58,7 +58,10 @@ export const makeFilterGroups = ({
           let connectedTypes;
           if (config.connections.type === 'action-actors') {
             connectedTypes = actortypes;
-          } else if (config.connections.type === 'actor-actions') {
+          } else if (
+            config.connections.type === 'actor-actions'
+            || config.connections.type === 'resource-actions'
+          ) {
             connectedTypes = actiontypes;
           }
 

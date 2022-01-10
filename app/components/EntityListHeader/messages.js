@@ -98,6 +98,10 @@ export default defineMessages({
       id: 'app.components.EntityListHeader.filterGroupLabel.connections-action-resources',
       defaultMessage: 'By resource',
     },
+    'connections-resource-actions': {
+      id: 'app.components.EntityListHeader.filterGroupLabel.connections-resource-actions',
+      defaultMessage: 'By activity',
+    },
     connectedTaxonomies: {
       id: 'app.components.EntityListHeader.filterGroupLabel.connectedTaxonomies',
       defaultMessage: 'By connected category',

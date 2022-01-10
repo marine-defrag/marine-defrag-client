@@ -49,7 +49,7 @@ export const CONFIG = {
   },
   connections: { // filter by associated entity
     query: 'connected',
-    type: 'action-resources',
+    type: 'resource-actions',
     options: [
       {
         search: true,

@@ -202,7 +202,7 @@ const makeConnectionEditOptions = (
       .get(connectionPath)
       .filter((c) => {
         if (!option.groupByType) return true;
-        if (type === 'target-actions' || type === 'actor-actions') {
+        if (type === 'target-actions' || type === 'actor-actions' || type === 'resource-actions') {
           return qe(typeid, c.getIn(['attributes', 'measuretype_id']));
         }
         if (type === 'action-resources') {
