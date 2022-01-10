@@ -516,6 +516,12 @@ export const selectActortype = createSelector(
   (state, id) => id, // type id
   (entities, id) => entities && entities.get(id.toString())
 );
+// single resource type
+export const selectResourcetype = createSelector(
+  (state) => selectEntities(state, API.RESOURCETYPES),
+  (state, id) => id, // type id
+  (entities, id) => entities && entities.get(id.toString())
+);
 
 // TODO check: likely not needed
 // export const selectActiveActortypes = createSelector(

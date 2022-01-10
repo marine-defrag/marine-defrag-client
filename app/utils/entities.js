@@ -4,6 +4,7 @@ import {
   TEXT_TRUNCATE,
   ACTION_FIELDS,
   ACTOR_FIELDS,
+  RESOURCE_FIELDS,
 } from 'themes/config';
 import { find, reduce, every } from 'lodash/collection';
 
@@ -701,4 +702,19 @@ export const checkActorRequired = (typeId, att) => ACTOR_FIELDS
     typeId,
     att,
     ACTOR_FIELDS.ATTRIBUTES,
+  );
+export const checkResourceAttribute = (typeId, att) => RESOURCE_FIELDS
+  && RESOURCE_FIELDS.ATTRIBUTES
+  && checkAttribute(
+    typeId,
+    att,
+    RESOURCE_FIELDS.ATTRIBUTES,
+  );
+
+export const checkResourceRequired = (typeId, att) => RESOURCE_FIELDS
+  && RESOURCE_FIELDS.ATTRIBUTES
+  && checkRequired(
+    typeId,
+    att,
+    RESOURCE_FIELDS.ATTRIBUTES,
   );

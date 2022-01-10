@@ -460,6 +460,65 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
+      path: `${ROUTES.RESOURCES}${ROUTES.ID}${ROUTES.NEW}`, // the type id
+      name: 'resourceNew',
+      onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/ResourceNew/reducer'),
+          import('containers/ResourceNew/sagas'),
+          import('containers/ResourceNew'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([reducer, sagas, component]) => {
+          injectReducer('resourceNew', reducer.default);
+          injectSagas(sagas.default);
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
+      path: `${ROUTES.RESOURCE}${ROUTES.ID}`,
+      name: 'resourceView',
+      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/ResourceView'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([component]) => {
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
+      path: `${ROUTES.RESOURCE}${ROUTES.EDIT}${ROUTES.ID}`,
+      name: 'resourceEdit',
+      onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/ResourceEdit/reducer'),
+          import('containers/ResourceEdit/sagas'),
+          import('containers/ResourceEdit'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([reducer, sagas, component]) => {
+          injectReducer('resourceEdit', reducer.default);
+          injectSagas(sagas.default);
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
       path: `${ROUTES.TAXONOMIES}`, // the taxonomy id
       name: 'categoryList',
       onEnter: redirect(`${ROUTES.TAXONOMIES}/${DEFAULT_TAXONOMY}`),
