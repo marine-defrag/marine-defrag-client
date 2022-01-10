@@ -456,7 +456,6 @@ export function* newEntitySaga({ data }, updateClient = true, multiple = false) 
     // update entity attributes
     // on the server
     const entityCreated = yield call(newEntityRequest, data.path, data.entity.attributes);
-
     if (!data.createAsGuest) {
       if (updateClient) {
         yield put(addEntity(data.path, entityCreated.data));
@@ -485,7 +484,7 @@ export function* newEntitySaga({ data }, updateClient = true, multiple = false) 
           yield call(createConnectionsSaga, {
             entityId: entityCreated.data.id,
             path: API.ACTION_RESOURCES,
-            updates: data.entity.actionRESOURCES,
+            updates: data.entity.actionResources,
             keyPair: ['resource_id', 'measure_id'],
           });
         }
@@ -544,7 +543,9 @@ export function* newEntitySaga({ data }, updateClient = true, multiple = false) 
       yield put(invalidateEntities(data.invalidateEntitiesOnSuccess));
     }
   } catch (err) {
-    err.response.json = yield err.response && err.response.json && err.response.json();
+    if (err.response) {
+      err.response.json = yield err.response.json && err.response.json();
+    }
     yield put(saveError(err, dataTS));
     if (updateClient) {
       yield put(invalidateEntities(data.path));
