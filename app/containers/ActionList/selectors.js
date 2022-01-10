@@ -11,6 +11,7 @@ import {
   selectParentQuery,
   selectSortByQuery,
   selectSortOrderQuery,
+  selectResourceQuery,
   selectActors,
   selectActions,
   selectActorTaxonomies,
@@ -21,6 +22,8 @@ import {
   selectActorActionsGroupedByAction, // active
   selectActionActorsGroupedByAction, // passive, as targets
   selectCategories,
+  selectActionResourcesGroupedByAction,
+  selectResources,
 } from 'containers/App/selectors';
 
 import {
@@ -46,8 +49,9 @@ export const selectConnections = createSelector(
   selectActorCategoriesGroupedByActor,
   selectActions,
   selectActionCategoriesGroupedByAction,
+  selectResources,
   selectCategories,
-  (ready, actors, actorAssociationsGrouped, actions, actionAssociationsGrouped, categories) => {
+  (ready, actors, actorAssociationsGrouped, actions, actionAssociationsGrouped, resources, categories) => {
     if (ready) {
       return new Map()
         .set(
@@ -57,6 +61,9 @@ export const selectConnections = createSelector(
             actorAssociationsGrouped,
             categories,
           ),
+        ).set(
+          API.RESOURCES,
+          resources,
         ).set(
           // potential parents
           'parents',
@@ -161,14 +168,15 @@ const selectActionsWithCategories = createSelector(
 
 // nest connected actor ids
 // nest connected actor ids by actortype
-const selectActionsWithActors = createSelector(
+const selectActionsWithConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActionsWithCategories,
   selectConnections,
   selectActorActionsGroupedByAction,
   selectActionActorsGroupedByAction,
-  (ready, entities, connections, actorAssociationsGrouped, targetAssociationsGrouped) => {
-    if (ready && connections.get('actors')) {
+  selectActionResourcesGroupedByAction,
+  (ready, entities, connections, actorAssociationsGrouped, targetAssociationsGrouped, resourceAssociationsGrouped) => {
+    if (ready && (connections.get('actors') || connections.get('resources') || connections.get(''))) {
       return entities.map(
         (entity) => {
           const entityActors = actorAssociationsGrouped.get(parseInt(entity.get('id'), 10));
@@ -190,15 +198,30 @@ const selectActionsWithActors = createSelector(
           // console.log('targetAssociationsGrouped', targetAssociationsGrouped && targetAssociationsGrouped.toJS())
           const entityTargetsByActortype = entityTargets && entityTargets.filter(
             (actorId) => connections.getIn([
-              'actors',
+              'targets',
               actorId.toString(),
             ])
           ).groupBy(
             (actorId) => connections.getIn([
-              'actors',
+              'targets',
               actorId.toString(),
               'attributes',
               'actortype_id',
+            ])
+          ).sortBy((val, key) => key);
+
+          const entityResources = resourceAssociationsGrouped.get(parseInt(entity.get('id'), 10));
+          const entityResourcesByResourcetype = entityResources && entityResources.filter(
+            (resourceId) => connections.getIn([
+              'resources',
+              resourceId.toString(),
+            ])
+          ).groupBy(
+            (resourceId) => connections.getIn([
+              'resources',
+              resourceId.toString(),
+              'attributes',
+              'resourcetype_id',
             ])
           ).sortBy((val, key) => key);
           // console.log(entityActorsByActortype && entityActorsByActortype.toJS());
@@ -215,6 +238,12 @@ const selectActionsWithActors = createSelector(
           ).set(
             'targetsByType',
             entityTargetsByActortype,
+          ).set(
+            'resources',
+            entityResources,
+          ).set(
+            'resourcesByType',
+            entityResourcesByResourcetype,
           );
         }
       );
@@ -224,7 +253,7 @@ const selectActionsWithActors = createSelector(
 );
 
 const selectActionsWithout = createSelector(
-  selectActionsWithActors,
+  selectActionsWithConnections,
   selectCategories,
   selectWithoutQuery,
   (entities, categories, query) => query
@@ -245,8 +274,15 @@ const selectActionsByTargets = createSelector(
     ? filterEntitiesByConnection(entities, query)
     : entities
 );
-const selectActionsByParent = createSelector(
+const selectActionsByResources = createSelector(
   selectActionsByTargets,
+  selectResourceQuery,
+  (entities, query) => query
+    ? filterEntitiesByConnection(entities, query)
+    : entities
+);
+const selectActionsByParent = createSelector(
+  selectActionsByResources,
   selectParentQuery,
   (entities, query) => {
     if (!query) return entities;

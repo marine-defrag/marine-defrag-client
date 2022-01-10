@@ -25,6 +25,7 @@ import {
   getActorConnectionField,
   getActionConnectionField,
   getTargetConnectionField,
+  getResourceConnectionField,
 } from 'utils/fields';
 
 // import { qe } from 'utils/quasi-equals';
@@ -48,6 +49,7 @@ import {
   selectIsUserManager,
   selectActorConnections,
   selectActionConnections,
+  selectResourceConnections,
   selectTaxonomiesWithCategories,
 } from 'containers/App/selectors';
 
@@ -59,6 +61,7 @@ import {
   selectViewTaxonomies,
   selectActorsByType,
   selectTargetsByType,
+  selectResourcesByType,
   selectChildActions,
   selectParentActions,
 } from './selectors';
@@ -122,9 +125,11 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
     entity,
     actorsByActortype,
     targetsByActortype,
+    resourcesByResourcetype,
     taxonomies,
     actorConnections,
     actionConnections,
+    resourceConnections,
     children,
     parents,
     onEntityClick,
@@ -248,6 +253,24 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
         fields: targetConnectionsLocal,
       });
     }
+    // // resurces
+    if (resourcesByResourcetype) {
+      const resourcesConnectionsLocal = [];
+      resourcesByResourcetype.forEach((resources, resourcetypeid) => {
+        resourcesConnectionsLocal.push(
+          getResourceConnectionField(
+            resources,
+            resourceConnections,
+            onEntityClick,
+            resourcetypeid,
+          ),
+        );
+      });
+      fields.push({
+        label: appMessages.nav.resources,
+        fields: resourcesConnectionsLocal,
+      });
+    }
     return fields;
   };
 
@@ -289,9 +312,11 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       viewTaxonomies,
       actorsByActortype,
       targetsByActortype,
+      resourcesByResourcetype,
       onEntityClick,
       actorConnections,
       actionConnections,
+      resourceConnections,
       children,
       parents,
     } = this.props;
@@ -365,9 +390,11 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
                       viewEntity,
                       actorsByActortype,
                       targetsByActortype,
+                      resourcesByResourcetype,
                       taxonomies,
                       actorConnections,
                       actionConnections,
+                      resourceConnections,
                       children,
                       parents,
                       onEntityClick,
@@ -396,8 +423,10 @@ ActionView.propTypes = {
   taxonomies: PropTypes.object,
   actorsByActortype: PropTypes.object,
   targetsByActortype: PropTypes.object,
+  resourcesByResourcetype: PropTypes.object,
   actorConnections: PropTypes.object,
   actionConnections: PropTypes.object,
+  resourceConnections: PropTypes.object,
   params: PropTypes.object,
   children: PropTypes.object,
   parents: PropTypes.object,
@@ -415,9 +444,11 @@ const mapStateToProps = (state, props) => ({
   viewTaxonomies: selectViewTaxonomies(state, props.params.id),
   taxonomies: selectTaxonomiesWithCategories(state),
   actorsByActortype: selectActorsByType(state, props.params.id),
+  resourcesByResourcetype: selectResourcesByType(state, props.params.id),
   targetsByActortype: selectTargetsByType(state, props.params.id),
   actorConnections: selectActorConnections(state),
   actionConnections: selectActionConnections(state),
+  resourceConnections: selectResourceConnections(state),
   children: selectChildActions(state, props.params.id),
   parents: selectParentActions(state, props.params.id),
 });

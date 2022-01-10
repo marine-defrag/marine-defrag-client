@@ -447,7 +447,7 @@ export default defineMessages({
     },
     measuretype_id: {
       id: 'app.containers.App.importFields.measuretype_id',
-      defaultMessage: 'Actortype id',
+      defaultMessage: 'Actiontype id',
     },
     resourcetype_id: {
       id: 'app.containers.App.importFields.resourcetype_id',
@@ -559,7 +559,7 @@ export default defineMessages({
     },
     resourcetype_id: {
       id: 'app.containers.App.attributes.resourcetype_id',
-      defaultMessage: 'Resourcetype id',
+      defaultMessage: 'Resource type',
     },
     draft: {
       id: 'app.containers.App.attributes.draft',

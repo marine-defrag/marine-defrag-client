@@ -285,7 +285,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       entityIdsSelected,
       actortypes,
       actiontypes,
-      // resourcetypes,
+      resourcetypes,
       targettypes,
       actiontypesForTarget,
       membertypes,
@@ -321,6 +321,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         connectedTaxonomies,
         hasUserRole,
         actortypes,
+        resourcetypes,
         actiontypes,
         targettypes,
         actiontypesForTarget,
@@ -331,12 +332,9 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         messages: {
           attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.filterGroupLabel.taxonomies),
-          actortypesGroup: intl.formatMessage(messages.filterGroupLabel.actortypes),
           connections: (type) => getFilterConnectionsMsg(intl, type),
           // connectedTaxonomies: intl.formatMessage(messages.filterGroupLabel.connectedTaxonomies),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
-          actortypes: intl.formatMessage(appMessages.actortypes.plural),
-          actiontypes: intl.formatMessage(appMessages.actiontypes.plural),
         },
       });
       if (activeOption) {
@@ -368,6 +366,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         actortypes,
         actiontypes,
         targettypes,
+        resourcetypes,
         actiontypesForTarget,
         membertypes,
         associationtypes,

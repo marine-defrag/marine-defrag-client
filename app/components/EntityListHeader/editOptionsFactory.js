@@ -71,6 +71,17 @@ export const makeActiveEditOptions = ({
         contextIntl,
         activeEditOption.group,
       );
+    case 'resources':
+      return makeConnectionEditOptions(
+        entities,
+        config.resources,
+        connections,
+        connectedTaxonomies,
+        activeEditOption,
+        messages,
+        contextIntl,
+        activeEditOption.group,
+      );
     case 'attributes':
       return makeAttributeEditOptions(entities, config, activeEditOption, messages);
     default:
@@ -193,6 +204,9 @@ const makeConnectionEditOptions = (
         if (!option.groupByType) return true;
         if (type === 'target-actions' || type === 'actor-actions') {
           return qe(typeid, c.getIn(['attributes', 'measuretype_id']));
+        }
+        if (type === 'action-resources') {
+          return qe(typeid, c.getIn(['attributes', 'resourcetype_id']));
         }
         if (
           type === 'action-targets' // targets

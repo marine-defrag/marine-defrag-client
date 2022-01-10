@@ -401,6 +401,28 @@ export const getAssociationConnectionField = getActorConnectionField;
 //   onEntityClick,
 // });
 
+export const getResourceConnectionField = (
+  entities,
+  connections,
+  onEntityClick,
+  resourcetypeid, // actortype id
+  skipLabel,
+) => getConnectionField({
+  entities: sortEntities(entities, 'asc', 'id'),
+  connections,
+  connectionOptions: [{
+    label: appMessages.entities.actions.plural,
+    groupByType: true,
+    path: 'measures',
+    clientPath: ROUTES.ACTION,
+    query: 'actions',
+  }],
+  entityType: resourcetypeid ? `resources_${resourcetypeid}` : 'actors',
+  entityPath: ROUTES.RESOURCE,
+  onEntityClick,
+  skipLabel,
+});
+
 const getConnectionGroupsField = ({
   entityGroups,
   groupedBy,

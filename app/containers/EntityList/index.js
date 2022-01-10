@@ -328,6 +328,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             taxonomies={this.props.taxonomies}
             actortypes={this.props.actortypes}
             actiontypes={this.props.actiontypes}
+            resourcetypes={this.props.resourcetypes}
             connections={this.props.connections}
             connectedTaxonomies={this.props.connectedTaxonomies}
             entityIdsSelected={entityIdsSelectedFiltered}
@@ -711,6 +712,7 @@ function mapDispatchToProps(dispatch, props) {
               case ('targets'):
               case ('members'):
               case ('associations'):
+              case ('resources'):
                 existingAssignments = entity.get(activeEditOption.connection);
                 break;
               default:

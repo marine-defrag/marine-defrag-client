@@ -94,6 +94,10 @@ export default defineMessages({
       id: 'app.components.EntityListHeader.filterGroupLabel.connections-action-parents',
       defaultMessage: 'By parent activity',
     },
+    'connections-action-resources': {
+      id: 'app.components.EntityListHeader.filterGroupLabel.connections-action-resources',
+      defaultMessage: 'By resource',
+    },
     connectedTaxonomies: {
       id: 'app.components.EntityListHeader.filterGroupLabel.connectedTaxonomies',
       defaultMessage: 'By connected category',
@@ -135,6 +139,10 @@ export default defineMessages({
     'connections-target-actions': {
       id: 'app.components.EntityListHeader.editGroupLabel.connections-target-actions',
       defaultMessage: 'Update activities',
+    },
+    'connections-action-resources': {
+      id: 'app.components.EntityListHeader.editGroupLabel.connections-action-resources',
+      defaultMessage: 'Update resources',
     },
   },
   filterFormTitlePrefix: {

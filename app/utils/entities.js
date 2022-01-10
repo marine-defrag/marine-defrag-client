@@ -96,7 +96,8 @@ export const filterEntitiesWithoutAssociation = (
 ) => entities && entities.filter(
   (entity) => asList(query).every(
     (pathOrTax) => {
-      if (isNumber(pathOrTax)) {
+      const isTax = isNumber(pathOrTax);
+      if (isTax) {
         return !testEntityTaxonomyAssociation(entity, categories, parseInt(pathOrTax, 10));
       }
       if (pathOrTax.indexOf('|') > -1) {

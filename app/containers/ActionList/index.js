@@ -19,6 +19,7 @@ import {
   selectActiontypes,
   selectActortypesForActiontype,
   selectTargettypesForActiontype,
+  selectResourcetypesForActiontype,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
@@ -69,6 +70,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
       actiontypes,
       actortypes,
       targettypes,
+      resourcetypes,
       onSelectType,
     } = this.props;
     const { intl } = this.context;
@@ -136,6 +138,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
           actortypes={actortypes}
           actiontypes={actiontypes}
           targettypes={targettypes}
+          resourcetypes={resourcetypes}
           typeOptions={this.prepareTypeOptions(actiontypes, typeId)}
           onSelectType={onSelectType}
           typeId={typeId}
@@ -159,6 +162,7 @@ ActionList.propTypes = {
   actortypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
   targettypes: PropTypes.instanceOf(Map),
+  resourcetypes: PropTypes.instanceOf(Map),
   location: PropTypes.object,
   isAnalyst: PropTypes.bool,
   params: PropTypes.object,
@@ -179,6 +183,7 @@ const mapStateToProps = (state, props) => ({
   actiontypes: selectActiontypes(state),
   actortypes: selectActortypesForActiontype(state, { type: props.params.id }),
   targettypes: selectTargettypesForActiontype(state, { type: props.params.id }),
+  resourcetypes: selectResourcetypesForActiontype(state, { type: props.params.id }),
 });
 function mapDispatchToProps(dispatch) {
   return {

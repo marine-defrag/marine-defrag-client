@@ -11,12 +11,16 @@ import {
   selectActionConnections,
   selectActions,
   selectActors,
+  selectResources,
   selectActionActorsGroupedByAction,
   selectActorActionsGroupedByActor,
   // selectActionActorsGroupedByActor,
   selectActorActionsGroupedByAction,
   selectActorCategoriesGroupedByActor,
   selectActionCategoriesGroupedByAction,
+  selectActionResourcesGroupedByAction,
+  selectResourceConnections,
+  selectActionResourcesGroupedByResource,
 } from 'containers/App/selectors';
 
 import {
@@ -192,6 +196,13 @@ const selectTargetAssociations = createSelector(
     parseInt(actionId, 10)
   )
 );
+const selectResourceAssociations = createSelector(
+  (state, id) => id,
+  selectActionResourcesGroupedByAction,
+  (actionId, associationsByAction) => associationsByAction.get(
+    parseInt(actionId, 10)
+  )
+);
 const selectActorsAssociated = createSelector(
   selectActors,
   selectActorAssociations,
@@ -208,6 +219,20 @@ const selectActorsAssociated = createSelector(
 const selectTargetsAssociated = createSelector(
   selectActors,
   selectTargetAssociations,
+  (actors, associations) => actors && associations && associations.reduce(
+    (memo, id) => {
+      const entity = actors.get(id.toString());
+      return entity
+        ? memo.set(id, entity)
+        : memo;
+    },
+    Map(),
+  )
+);
+
+const selectResourcesAssociated = createSelector(
+  selectResources,
+  selectResourceAssociations,
   (actors, associations) => actors && associations && associations.reduce(
     (memo, id) => {
       const entity = actors.get(id.toString());
@@ -328,6 +353,52 @@ export const selectTargetsByType = createSelector(
       }
     ).groupBy(
       (r) => r.getIn(['attributes', 'actortype_id'])
+    ).sortBy((val, key) => key);
+  }
+);
+
+// get associated actors with associoted actions and categories
+// - group by actortype
+export const selectResourcesByType = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectResourcesAssociated,
+  selectResourceConnections,
+  selectActionResourcesGroupedByResource,
+  (
+    ready,
+    resources,
+    connections,
+    resourceActions,
+  ) => {
+    if (!ready) return Map();
+    return resources && resources.map(
+      (resource) => {
+        const entityActions = resourceActions.get(parseInt(resource.get('id'), 10));
+        const entityActionsByActiontype = entityActions
+          && connections.get('actions')
+          && entityActions.filter(
+            (actionId) => connections.getIn([
+              'actions',
+              actionId.toString(),
+            ])
+          ).groupBy(
+            (actionId) => connections.getIn([
+              'actions',
+              actionId.toString(),
+              'attributes',
+              'measuretype_id',
+            ]).toString()
+          ).sortBy((val, key) => key);
+        return resource.set(
+          'actions',
+          entityActions,
+        ).set(
+          'actionsByType',
+          entityActionsByActiontype,
+        );
+      }
+    ).groupBy(
+      (r) => r.getIn(['attributes', 'resourcetype_id'])
     ).sortBy((val, key) => key);
   }
 );

@@ -106,6 +106,18 @@ export const makeActiveFilterOptions = ({
         activeFilterOption.group,
         typeId,
       );
+    case 'resources':
+      return makeConnectionFilterOptions(
+        entities,
+        config.resources,
+        connections,
+        connectedTaxonomies,
+        activeFilterOption.optionId,
+        locationQuery,
+        messages,
+        contextIntl,
+        activeFilterOption.group,
+      );
     case 'attributes':
       return makeAttributeFilterOptions(
         entities,
@@ -365,13 +377,11 @@ export const makeConnectionFilterOptions = (
       ? startsWith(activeOptionId, o.entityType)
       : o.entityType === activeOptionId,
   );
-
   // if option active
   if (option) {
     const typeid = option.groupByType
       && activeOptionId.indexOf('_') > -1
       && parseInt(activeOptionId.split('_')[1], 10);
-
     // the option path
     const path = activeOptionId;
     filterOptions.messagePrefix = messages.titlePrefix;

@@ -57,7 +57,7 @@ export const CONFIG = {
         path: API.ACTIONS, // filter by actor connection
         entityType: 'actions', // filter by actor connection
         clientPath: ROUTES.ACTION,
-        connectPath: API.ACTION_RESOURCS, // filter by actor connection
+        connectPath: API.ACTION_RESOURCES, // filter by actor connection
         key: 'measure_id',
         ownKey: 'resource_id',
         groupByType: true,

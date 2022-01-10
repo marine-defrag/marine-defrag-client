@@ -307,6 +307,10 @@ export const selectConnectedCategoryQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('catx')
 );
+export const selectResourceQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('resources')
+);
 export const selectSearchQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('search')
@@ -420,6 +424,17 @@ export const selectActortypesForActiontype = createSelector(
     const validActortypeIds = ACTIONTYPE_ACTORTYPES[typeId];
     return actortypes.filter(
       (type) => validActortypeIds && validActortypeIds.indexOf(type.get('id')) > -1
+    );
+  }
+);
+export const selectResourcetypesForActiontype = createSelector(
+  (state, { type }) => type,
+  selectResourcetypes,
+  (typeId, types) => {
+    if (!types) return null;
+    const validTypeIds = ACTIONTYPE_RESOURCETYPES[typeId];
+    return types.filter(
+      (type) => validTypeIds && validTypeIds.indexOf(type.get('id')) > -1
     );
   }
 );
@@ -1058,6 +1073,11 @@ export const selectActorConnections = createSelector(
   (actions) => Map()
     .set('actions', actions)
 );
+export const selectResourceConnections = createSelector(
+  selectActiontypeActions,
+  (actions) => Map()
+    .set('actions', actions)
+);
 
 export const selectActionConnections = createSelector(
   selectActortypeActors,
@@ -1132,6 +1152,17 @@ export const selectActionResourcesGroupedByResource = createSelector(
     ).map(
       (group) => group.map(
         (entity) => entity.getIn(['attributes', 'measure_id'])
+      )
+    ),
+);
+export const selectActionResourcesGroupedByAction = createSelector(
+  (state) => selectEntities(state, API.ACTION_RESOURCES),
+  (entities) => entities
+    && entities.groupBy(
+      (entity) => entity.getIn(['attributes', 'measure_id'])
+    ).map(
+      (group) => group.map(
+        (entity) => entity.getIn(['attributes', 'resource_id'])
       )
     ),
 );

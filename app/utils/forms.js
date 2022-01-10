@@ -310,6 +310,33 @@ export const renderActionsAsTargetByActiontypeControl = (
   ).sort((a, b) => a.id > b.id ? 1 : -1)
   : null;
 
+// actors grouped by actortype
+export const renderResourcesByResourcetypeControl = (
+  entitiesByResourcetype,
+  onCreateOption,
+  contextIntl,
+) => entitiesByResourcetype
+  ? entitiesByResourcetype.reduce(
+    (controls, entities, typeid) => controls.concat({
+      id: `resources.${typeid}`,
+      model: `.associatedResourcesByResourcetype.${typeid}`,
+      dataPath: ['associatedResourcesByResourcetype', typeid],
+      label: contextIntl.formatMessage(appMessages.entities[`resources_${typeid}`].plural),
+      controlType: 'multiselect',
+      options: entityOptions(entities),
+      advanced: true,
+      selectAll: true,
+      onCreate: onCreateOption
+        ? () => onCreateOption({
+          path: API.RESOURCES,
+          attributes: { resourcetype_id: typeid },
+        })
+        : null,
+    }),
+    [],
+  ).sort((a, b) => a.id > b.id ? 1 : -1)
+  : null;
+
 // taxonomies with categories "embedded"
 export const renderTaxonomyControl = (
   taxonomies,
@@ -806,6 +833,35 @@ const getActionFields = (formatMessage) => ({
     }],
   },
 });
+const getResourceFields = (formatMessage) => ({
+  header: {
+    main: [{ // fieldGroup
+      fields: [
+        getTitleFormField(formatMessage),
+      ],
+    }],
+    aside: [{ // fieldGroup
+      fields: [
+        getStatusField(formatMessage),
+      ],
+    }],
+  },
+  body: {
+    main: [{
+      fields: [
+        getLinkFormField(formatMessage),
+        getMarkdownFormField(formatMessage),
+      ],
+    }],
+    aside: [{ // fieldGroup
+      fields: [
+        getDateField(formatMessage, 'access_date'),
+        getDateField(formatMessage, 'publication_date'),
+        // getTextareaField(formatMessage, 'target_date_comment'),
+      ],
+    }],
+  },
+});
 
 export const getEntityAttributeFields = (path, args, contextIntl) => {
   switch (path) {
@@ -815,6 +871,8 @@ export const getEntityAttributeFields = (path, args, contextIntl) => {
       return getActionFields(contextIntl.formatMessage);
     case API.ACTORS:
       return getActorFields(contextIntl.formatMessage);
+    case API.RESOURCES:
+      return getResourceFields(contextIntl.formatMessage);
     default:
       return {};
   }

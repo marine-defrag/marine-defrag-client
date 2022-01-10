@@ -142,7 +142,7 @@ export class ResourceView extends React.PureComponent { // eslint-disable-line r
     fields.push(
       {
         fields: [
-          checkResourceAttribute(typeId, 'publication_date') && getDateField(entity, 'publication_date', true),
+          checkResourceAttribute(typeId, 'publication_date') && getDateField(entity, 'publication_date'),
           checkResourceAttribute(typeId, 'access_date') && getDateField(entity, 'access_date'),
         ],
       },

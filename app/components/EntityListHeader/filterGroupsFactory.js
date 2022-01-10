@@ -11,6 +11,7 @@ export const makeFilterGroups = ({
   actortypes,
   actiontypes,
   targettypes,
+  resourcetypes,
   actiontypesForTarget,
   activeFilterOption,
   membertypes,
@@ -221,6 +222,47 @@ export const makeFilterGroups = ({
       ),
     };
   }
+  // connections option group
+  if (config.resources && resourcetypes) {
+    // first prepare taxonomy options
+    filterGroups.resources = {
+      id: 'resources', // filterGroupId
+      label: messages.connections(config.associations.type),
+      show: true,
+      options: reduce(
+        config.resources.options,
+        (optionsMemo, option) => {
+          if (option.groupByType && resourcetypes) {
+            return resourcetypes
+              .reduce(
+                (memo, type) => {
+                  const id = `${option.entityType}_${type.get('id')}`;
+                  return memo.concat({
+                    id, // filterOptionId
+                    label: option.label,
+                    message: (option.message && option.message.indexOf('{typeid}') > -1)
+                      ? option.message.replace('{typeid}', type.get('id'))
+                      : option.message,
+                    color: option.entityType,
+                    active: !!activeFilterOption
+                      && activeFilterOption.group === 'resources'
+                      && activeFilterOption.optionId === id,
+                  });
+                },
+                optionsMemo,
+              );
+          }
+          return optionsMemo.concat({
+            id: option.entityType, // filterOptionId
+            label: option.label,
+            message: option.message,
+            active: !!activeFilterOption && activeFilterOption.optionId === option.entityType,
+          });
+        },
+        [],
+      ),
+    };
+  }
   if (config.parents) {
     filterGroups.parents = {
       id: 'parents', // filterGroupId
@@ -290,6 +332,5 @@ export const makeFilterGroups = ({
       ),
     };
   }
-
   return filterGroups;
 };

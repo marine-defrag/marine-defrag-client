@@ -1,5 +1,7 @@
 import { createSelector } from 'reselect';
-import { API, ACTIONTYPE_ACTORTYPES, ACTIONTYPE_TARGETTYPES } from 'themes/config';
+import {
+  API, ACTIONTYPE_ACTORTYPES, ACTIONTYPE_TARGETTYPES, ACTIONTYPE_RESOURCETYPES,
+} from 'themes/config';
 import { qe } from 'utils/quasi-equals';
 
 import {
@@ -16,6 +18,9 @@ import {
   selectReady,
   selectActions,
   selectActiontypes,
+  selectResources,
+  selectActionResourcesGroupedByAction,
+  selectResourcetypes,
 } from 'containers/App/selectors';
 
 import {
@@ -173,6 +178,37 @@ export const selectTargetsByActortype = createSelector(
         (actor) => qe(
           type.get('id'),
           actor.getIn(['attributes', 'actortype_id']),
+        )
+      );
+      return entitiesSetAssociated(
+        filtered,
+        associations,
+        action.get('id'),
+      );
+    });
+  }
+);
+
+export const selectResourcesByResourcetype = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectViewEntity,
+  selectResources,
+  selectActionResourcesGroupedByAction,
+  selectResourcetypes,
+  (ready, action, resources, associations, resourcetypes) => {
+    if (!action || !ready) return null;
+    const actiontypeId = action.getIn(['attributes', 'measuretype_id']).toString();
+    const validResourcetypeIds = ACTIONTYPE_RESOURCETYPES[actiontypeId];
+    if (!validResourcetypeIds || validResourcetypeIds.length === 0) {
+      return null;
+    }
+    return resourcetypes.filter(
+      (type) => validResourcetypeIds && validResourcetypeIds.indexOf(type.get('id')) > -1
+    ).map((type) => {
+      const filtered = resources.filter(
+        (actor) => qe(
+          type.get('id'),
+          actor.getIn(['attributes', 'resourcetype_id']),
         )
       );
       return entitiesSetAssociated(

@@ -30,6 +30,7 @@ import {
   getConnectionUpdatesFromFormData,
   renderActorsByActortypeControl,
   renderTargetsByActortypeControl,
+  renderResourcesByResourcetypeControl,
   renderParentActionControl,
   parentActionOptions,
 } from 'utils/forms';
@@ -81,6 +82,7 @@ import {
   selectTaxonomyOptions,
   selectActorsByActortype,
   selectTargetsByActortype,
+  selectResourcesByResourcetype,
   selectConnectedTaxonomies,
 } from './selectors';
 
@@ -126,6 +128,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       taxonomies,
       actorsByActortype,
       targetsByActortype,
+      resourcesByResourcetype,
       parentOptions,
     } = props;
     // console.log(FORM_INITIAL.get('attributes') && FORM_INITIAL.get('attributes').toJS())
@@ -142,6 +145,9 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
           : Map(),
         associatedTargetsByActortype: targetsByActortype
           ? targetsByActortype.map((targets) => entityOptions(targets, true))
+          : Map(),
+        associatedResourcesByResourcetype: resourcesByResourcetype
+          ? resourcesByResourcetype.map((resources) => entityOptions(resources, true))
           : Map(),
         associatedParent: parentActionOptions(
           parentOptions,
@@ -204,6 +210,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     connectedTaxonomies,
     actorsByActortype,
     targetsByActortype,
+    resourcesByResourcetype,
     parentOptions,
     onCreateOption,
   ) => {
@@ -306,6 +313,21 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
         );
       }
     }
+    if (resourcesByResourcetype) {
+      const resourceConnections = renderResourcesByResourcetypeControl(
+        resourcesByResourcetype,
+        onCreateOption,
+        intl,
+      );
+      if (resourceConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.resources),
+            fields: resourceConnections,
+          },
+        );
+      }
+    }
     return groups;
   };
 
@@ -369,6 +391,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       connectedTaxonomies,
       actorsByActortype,
       targetsByActortype,
+      resourcesByResourcetype,
       onCreateOption,
       parentOptions,
     } = this.props;
@@ -452,6 +475,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
                   taxonomies,
                   actorsByActortype,
                   targetsByActortype,
+                  resourcesByResourcetype,
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={this.props.handleCancel}
@@ -472,6 +496,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
                       connectedTaxonomies,
                       actorsByActortype,
                       targetsByActortype,
+                      resourcesByResourcetype,
                       parentOptions,
                       onCreateOption,
                     ),
@@ -512,6 +537,7 @@ ActionEdit.propTypes = {
   connectedTaxonomies: PropTypes.object,
   actorsByActortype: PropTypes.object,
   targetsByActortype: PropTypes.object,
+  resourcesByResourcetype: PropTypes.object,
   onCreateOption: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
@@ -531,6 +557,7 @@ const mapStateToProps = (state, props) => ({
   connectedTaxonomies: selectConnectedTaxonomies(state),
   actorsByActortype: selectActorsByActortype(state, props.params.id),
   targetsByActortype: selectTargetsByActortype(state, props.params.id),
+  resourcesByResourcetype: selectResourcesByResourcetype(state, props.params.id),
   parentOptions: selectParentOptions(state, props.params.id),
 });
 
@@ -558,7 +585,7 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, taxonomies, actorsByActortype, targetsByActortype) => {
+    handleSubmit: (formData, taxonomies, actorsByActortype, targetsByActortype, resourcesByResourcetype) => {
       let saveData = formData.set(
         'actionCategories',
         getCategoryUpdatesFromFormData({
@@ -602,6 +629,32 @@ function mapDispatchToProps(dispatch, props) {
               connections: targets,
               connectionAttribute: ['associatedTargetsByActortype', actortypeid.toString()],
               createConnectionKey: 'actor_id',
+              createKey: 'measure_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo
+                  .set('delete', deletes)
+                  .set('create', creates);
+              },
+              fromJS({
+                delete: [],
+                create: [],
+              }),
+            )
+        );
+      }
+      if (resourcesByResourcetype) {
+        saveData = saveData.set(
+          'actionResources', // targets
+          resourcesByResourcetype
+            .map((resources, resourcetypeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: resources,
+              connectionAttribute: ['associatedResourcesByResourcetype', resourcetypeid.toString()],
+              createConnectionKey: 'resource_id',
               createKey: 'measure_id',
             }))
             .reduce(
