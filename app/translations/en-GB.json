@@ -233,6 +233,7 @@
   "app.containers.App.import.url": "url (e.g. https://example.org)",
   "app.containers.App.importFields.actortype_id": "Type: 1 - Country; 2 - Organisation; 3 - Class; 4 - Region; 5 - Group",
   "app.containers.App.importFields.measuretype_id": "Type: 1 - Int. Conv.; 2 - Reg. Seas Conv.; 3 - Reg. Strategy; 4 - Nat. Strategy; 5 - Donor Activity; 6 - Initiative",
+  "app.containers.App.importFields.resourcetype_id": "Type: 1 - References; 2 - Web sites; 3 - Documents; 4 - APs; 5 - MLAPs",
   "app.containers.App.placeholders.title": "Enter title",
   "app.containers.App.placeholders.name": "Enter full name",
   "app.containers.App.placeholders.email": "Email address",

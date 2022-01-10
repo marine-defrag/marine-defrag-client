@@ -426,6 +426,27 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
+      path: `${ROUTES.RESOURCES}${ROUTES.IMPORT}`,
+      name: 'resourceImport',
+      onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value),
+      getComponent(nextState, cb) {
+        const importModules = Promise.all([
+          import('containers/ResourceImport/reducer'),
+          import('containers/ResourceImport/sagas'),
+          import('containers/ResourceImport'),
+        ]);
+
+        const renderRoute = loadModule(cb);
+
+        importModules.then(([reducer, sagas, component]) => {
+          injectReducer('resourceImport', reducer.default);
+          injectSagas(sagas.default);
+          renderRoute(component);
+        });
+
+        importModules.catch(errorLoading);
+      },
+    }, {
       path: ROUTES.RESOURCES,
       name: 'resources',
       onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
