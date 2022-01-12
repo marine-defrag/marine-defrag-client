@@ -230,7 +230,7 @@ export const makeFilterGroups = ({
     // first prepare taxonomy options
     filterGroups.resources = {
       id: 'resources', // filterGroupId
-      label: messages.connections(config.associations.type),
+      label: messages.connections(config.resources.type),
       show: true,
       options: reduce(
         config.resources.options,
