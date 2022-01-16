@@ -95,7 +95,7 @@ export const COLUMN_WIDTHS = {
  * */
 
 // General ********************
-const IS_DEV = true;
+const IS_DEV = false;
 
 export const ENDPOINTS = {
   API: (
