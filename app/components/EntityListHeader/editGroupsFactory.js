@@ -15,6 +15,7 @@ export const makeEditGroups = ({
   actiontypesForTarget,
   membertypes,
   associationtypes,
+  resourcetypes,
 }) => {
   const editGroups = {};
   // const selectedActortypes = actortypes && actortypes.filter(
@@ -73,7 +74,10 @@ export const makeEditGroups = ({
           let connectedTypes;
           if (config.connections.type === 'action-actors') {
             connectedTypes = actortypes;
-          } else if (config.connections.type === 'actor-actions') {
+          } else if (
+            config.connections.type === 'actor-actions'
+            || config.connections.type === 'resource-actions'
+          ) {
             connectedTypes = actiontypes;
           }
           if (option.groupByType && connectedTypes) {
@@ -281,6 +285,66 @@ export const makeEditGroups = ({
       ),
     };
   }
+
+  // resources option group
+  if (config.resources) {
+    // first prepare taxonomy options
+    editGroups.resources = {
+      id: 'resources', // filterGroupId
+      label: messages.connections(config.resources.type),
+      show: true,
+      options: reduce(
+        config.resources.options,
+        (optionsMemo, option) => {
+          // const connectionPath = option.connectionPath || option.entityType;
+          if (option.groupByType && resourcetypes) {
+            return resourcetypes
+              .filter((type) => !option.typeFilter || type.getIn(['attributes', option.typeFilter]))
+              .reduce(
+                (memo, type) => {
+                  const id = `${option.entityType}_${type.get('id')}`;
+                  return memo.concat({
+                    id, // filterOptionId
+                    label: option.label,
+                    message: (option.message && option.message.indexOf('{typeid}') > -1)
+                      ? option.message.replace('{typeid}', type.get('id'))
+                      : option.message,
+                    path: option.connectPath,
+                    connection: option.entityType,
+                    key: option.key,
+                    ownKey: option.ownKey,
+                    active: !!activeEditOption && activeEditOption.optionId === id,
+                    create: {
+                      path: option.path,
+                      attributes: { resourcetype_id: type.get('id') },
+                    },
+                    color: option.entityType,
+                  });
+                },
+                optionsMemo,
+              );
+          }
+          return typeof option.edit === 'undefined' || option.edit
+            ? optionsMemo.concat({
+              id: option.entityType, // filterOptionId
+              label: option.label,
+              message: option.message,
+              path: option.connectPath,
+              connection: option.entityType,
+              key: option.key,
+              ownKey: option.ownKey,
+              active: !!activeEditOption && activeEditOption.optionId === option.entityType,
+              create: {
+                path: option.path,
+              },
+            })
+            : optionsMemo;
+        },
+        [],
+      ),
+    };
+  }
+
   // attributes
   if (config.attributes) {
     // first prepare taxonomy options

@@ -34,6 +34,9 @@ export const currentFilterArgs = (config, locationQuery) => {
   if (config.associations && locationQuery.get(config.associations.query)) {
     args = args.concat(config.associations.query);
   }
+  if (config.resources && locationQuery.get(config.resources.query)) {
+    args = args.concat(config.resources.query);
+  }
   if (config.parents && locationQuery.get(config.parents.query)) {
     args = args.concat(config.parents.query);
   }
@@ -121,6 +124,15 @@ export const currentFilters = (
   if (config.parents) {
     filterTags = filterTags.concat(getCurrentConnectionFilters(
       config.parents,
+      connections,
+      locationQuery,
+      onTagClick,
+      withoutLabel
+    ));
+  }
+  if (config.resources && connections) {
+    filterTags = filterTags.concat(getCurrentConnectionFilters(
+      config.resources,
       connections,
       locationQuery,
       onTagClick,

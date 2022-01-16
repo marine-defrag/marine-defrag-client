@@ -145,6 +145,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       user,
       children,
     } = this.props;
+
     const { intl } = this.context;
     const title = intl.formatMessage(messages.app.title);
     const isHome = location.pathname === '/';
@@ -154,7 +155,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       || location.pathname.startsWith(ROUTES.UNAUTHORISED);
     const isHomeOrAuth = isHome || isAuth;
     return (
-      <div>
+      <div id="app">
         <Helmet titleTemplate={`${title} - %s`} defaultTitle={title} />
         {!isHome && (
           <Header
@@ -190,6 +191,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
               style={{
                 overlay: { zIndex: 99999999 },
               }}
+              appElement={document.getElementById('app')}
             >
               <EntityNew
                 path={newEntityModal.get('path')}

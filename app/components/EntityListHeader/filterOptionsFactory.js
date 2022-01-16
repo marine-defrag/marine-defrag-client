@@ -106,6 +106,18 @@ export const makeActiveFilterOptions = ({
         activeFilterOption.group,
         typeId,
       );
+    case 'resources':
+      return makeConnectionFilterOptions(
+        entities,
+        config.resources,
+        connections,
+        connectedTaxonomies,
+        activeFilterOption.optionId,
+        locationQuery,
+        messages,
+        contextIntl,
+        activeFilterOption.group,
+      );
     case 'attributes':
       return makeAttributeFilterOptions(
         entities,
@@ -200,7 +212,7 @@ export const makeAttributeFilterOptions = (entities, config, activeOptionId, loc
               messagePrefix: messages.without,
               message: option.message,
               showCount: true,
-              labelBold: true,
+              labelEmphasis: true,
               value: queryValue,
               count: 1,
               query: 'where',
@@ -275,7 +287,7 @@ export const makeTaxonomyFilterOptions = (
             filterOptions.options[value] = {
               label: `${messages.without} ${lowerCase(getTaxTitle(parseInt(taxonomy.get('id'), 10), contextIntl))}`,
               showCount: true,
-              labelBold: true,
+              labelEmphasis: true,
               value,
               count: 0,
               query: 'without',
@@ -320,7 +332,7 @@ export const makeTaxonomyFilterOptions = (
             filterOptions.options.without = {
               label: `${messages.without} ${lowerCase(getTaxTitle(parseInt(taxonomy.get('id'), 10), contextIntl))}`,
               showCount: true,
-              labelBold: true,
+              labelEmphasis: true,
               value: taxonomy.get('id'),
               count: 1,
               query: 'without',
@@ -365,13 +377,11 @@ export const makeConnectionFilterOptions = (
       ? startsWith(activeOptionId, o.entityType)
       : o.entityType === activeOptionId,
   );
-
   // if option active
   if (option) {
     const typeid = option.groupByType
       && activeOptionId.indexOf('_') > -1
       && parseInt(activeOptionId.split('_')[1], 10);
-
     // the option path
     const path = activeOptionId;
     filterOptions.messagePrefix = messages.titlePrefix;
@@ -416,7 +426,7 @@ export const makeConnectionFilterOptions = (
               label: option.label,
               message: option.message,
               showCount: true,
-              labelBold: true,
+              labelEmphasis: true,
               value: queryValue,
               count: 0,
               query: 'without',
@@ -487,7 +497,7 @@ export const makeConnectionFilterOptions = (
               label: option.label,
               message,
               showCount: true,
-              labelBold: true,
+              labelEmphasis: true,
               value: path,
               count: 1,
               query: 'without',
@@ -576,7 +586,7 @@ export const makeSimpleConnectionFilterOptions = (
               label: option.label,
               message: option.message,
               showCount: true,
-              labelBold: true,
+              labelEmphasis: true,
               value: queryValue,
               count: 0,
               query: 'without',
@@ -642,7 +652,7 @@ export const makeSimpleConnectionFilterOptions = (
         //       label: option.label,
         //       message,
         //       showCount: true,
-        //       labelBold: true,
+        //       labelEmphasis: true,
         //       value: path,
         //       count: 1,
         //       query: 'without',

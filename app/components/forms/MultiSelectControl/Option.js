@@ -11,8 +11,9 @@ import ItemStatus from 'components/ItemStatus';
 
 import messages from './messages';
 
+// font-weight: ${(props) => props.bold ? 500 : 'normal'};
 const Label = styled.div`
-  font-weight: ${(props) => props.bold ? 500 : 'normal'};
+  font-style: ${({ emphasis }) => emphasis ? 'italic' : 'normal'};
   position: relative;
 `;
 const New = styled.span`
@@ -43,7 +44,7 @@ class Option extends React.Component { // eslint-disable-line react/prefer-state
   render() {
     const { intl } = this.context;
     const {
-      draft, reference, message, label, messagePrefix, isNew,
+      draft, reference, message, label, messagePrefix, isNew, emphasis = false,
     } = this.props;
 
     let optionLabel;
@@ -57,7 +58,7 @@ class Option extends React.Component { // eslint-disable-line react/prefer-state
 
 
     return (
-      <Label bold={false}>
+      <Label emphasis={emphasis}>
         {draft
           && <ItemStatus draft top />
         }
@@ -87,6 +88,7 @@ Option.propTypes = {
   reference: PropTypes.string,
   draft: PropTypes.bool,
   isNew: PropTypes.bool,
+  emphasis: PropTypes.bool,
 };
 
 Option.contextTypes = {

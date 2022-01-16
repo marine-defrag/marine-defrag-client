@@ -50,16 +50,6 @@ export default defineMessages({
       defaultMessage: 'Actortype 5',
     },
   },
-  actortypeGroups: {
-    1: {
-      id: 'app.containers.App.actortypeGroups.1',
-      defaultMessage: 'Countries',
-    },
-    2: {
-      id: 'app.containers.App.actortypeGroups.2',
-      defaultMessage: 'Other actors and activity targets',
-    },
-  },
   actortypes_short: {
     common: {
       id: 'app.containers.App.actortypes_short.common',
@@ -84,6 +74,82 @@ export default defineMessages({
     5: {
       id: 'app.containers.App.actortypes_short.5',
       defaultMessage: 'Actortype 5',
+    },
+  },
+  actortypeGroups: {
+    1: {
+      id: 'app.containers.App.actortypeGroups.1',
+      defaultMessage: 'Countries',
+    },
+    2: {
+      id: 'app.containers.App.actortypeGroups.2',
+      defaultMessage: 'Other actors and activity targets',
+    },
+  },
+  resourcetypes: {
+    single: {
+      id: 'app.containers.App.resourcetypes.single',
+      defaultMessage: 'Resource type',
+    },
+    plural: {
+      id: 'app.containers.App.resourcetypes.plural',
+      defaultMessage: 'Resource types',
+    },
+    all: {
+      id: 'app.containers.App.resourcetypes.all',
+      defaultMessage: 'All resource types',
+    },
+    1: {
+      id: 'app.containers.App.resourcetypes.1',
+      defaultMessage: 'References',
+    },
+    2: {
+      id: 'app.containers.App.resourcetypes.2',
+      defaultMessage: 'Websites',
+    },
+    3: {
+      id: 'app.containers.App.resourcetypes.3',
+      defaultMessage: 'Documents',
+    },
+    4: {
+      id: 'app.containers.App.resourcetypes.4',
+      defaultMessage: 'Action Plans',
+    },
+    5: {
+      id: 'app.containers.App.resourcetypes.5',
+      defaultMessage: 'Marine Litter Action Plans',
+    },
+  },
+  resourcetypes_short: {
+    common: {
+      id: 'app.containers.App.resourcetypes_short.common',
+      defaultMessage: 'multiple',
+    },
+    1: {
+      id: 'app.containers.App.resourcetypes_short.1',
+      defaultMessage: 'Refs',
+    },
+    2: {
+      id: 'app.containers.App.resourcetypes_short.2',
+      defaultMessage: 'Web',
+    },
+    3: {
+      id: 'app.containers.App.resourcetypes_short.3',
+      defaultMessage: 'Docs',
+    },
+    4: {
+      id: 'app.containers.App.resourcetypes_short.4',
+      defaultMessage: 'APs',
+    },
+    5: {
+      id: 'app.containers.App.resourcetypes_short.5',
+      defaultMessage: 'MLAPs',
+    },
+  },
+  resourcetypeGroups: {
+    1: {
+      id: 'app.containers.App.resourcetypeGroups.1',
+      defaultMessage: 'All resources',
     },
   },
   actiontypes: {
@@ -124,80 +190,6 @@ export default defineMessages({
       defaultMessage: 'Actortype 6',
     },
   },
-  actiontypeGroups: {
-    1: {
-      id: 'app.containers.App.actiontypeGroups.1',
-      defaultMessage: 'Donor activities',
-    },
-    2: {
-      id: 'app.containers.App.actiontypeGroups.2',
-      defaultMessage: 'Frameworks, actions and policies',
-    },
-    3: {
-      id: 'app.containers.App.actiontypeGroups.3',
-      defaultMessage: 'Initiatives',
-    },
-  },
-  actiontypeActors: {
-    all: {
-      id: 'app.containers.App.actiontypeActors.all',
-      defaultMessage: 'All actortypes',
-    },
-    1: {
-      id: 'app.containers.App.actiontypeActors.1',
-      defaultMessage: 'Human Rights Actors',
-    },
-    2: {
-      id: 'app.containers.App.actiontypeActors.2',
-      defaultMessage: 'SDG Targets',
-    },
-    3: {
-      id: 'app.containers.App.actiontypeActors.3',
-      defaultMessage: 'Actortype 3',
-    },
-    4: {
-      id: 'app.containers.App.actortypeActors.4',
-      defaultMessage: 'Actortype 4',
-    },
-    5: {
-      id: 'app.containers.App.actiontypeActors.5',
-      defaultMessage: 'Actortype 5',
-    },
-    6: {
-      id: 'app.containers.App.actiontypeActors.6',
-      defaultMessage: 'Actortype 6',
-    },
-  },
-  actiontypeActorsShort: {
-    all: {
-      id: 'app.containers.App.actiontypeActorsShort.all',
-      defaultMessage: 'All Actortypes',
-    },
-    1: {
-      id: 'app.containers.App.actiontypeActorsShort.1',
-      defaultMessage: 'HR Actors',
-    },
-    2: {
-      id: 'app.containers.App.actiontypeActorsShort.2',
-      defaultMessage: 'SDG Targets',
-    },
-    3: {
-      id: 'app.containers.App.actiontypeActorsShort.3',
-      defaultMessage: 'Actortype 3',
-    },
-    4: {
-      id: 'app.containers.App.actiontypeActorsShort.4',
-      defaultMessage: 'Actortype 4',
-    },
-    5: {
-      id: 'app.containers.App.actiontypeActorsShort.5',
-      defaultMessage: 'Actortype 5',
-    },
-    6: {
-      id: 'app.containers.App.actiontypeActorsShort.6',
-      defaultMessage: 'Actortype 6',
-    },
-  },
   actiontypes_short: {
     common: {
       id: 'app.containers.App.actiontypes_short.common',
@@ -226,6 +218,20 @@ export default defineMessages({
     6: {
       id: 'app.containers.App.actiontypes_short.6',
       defaultMessage: 'Actortype 6',
+    },
+  },
+  actiontypeGroups: {
+    1: {
+      id: 'app.containers.App.actiontypeGroups.1',
+      defaultMessage: 'Donor activities',
+    },
+    2: {
+      id: 'app.containers.App.actiontypeGroups.2',
+      defaultMessage: 'Frameworks, actions and policies',
+    },
+    3: {
+      id: 'app.containers.App.actiontypeGroups.3',
+      defaultMessage: 'Initiatives',
     },
   },
   taxonomyGroups: {
@@ -441,7 +447,11 @@ export default defineMessages({
     },
     measuretype_id: {
       id: 'app.containers.App.importFields.measuretype_id',
-      defaultMessage: 'Actortype id',
+      defaultMessage: 'Actiontype id',
+    },
+    resourcetype_id: {
+      id: 'app.containers.App.importFields.resourcetype_id',
+      defaultMessage: 'Resourcetype id',
     },
     title: {
       id: 'app.containers.App.importFields.title',
@@ -546,6 +556,10 @@ export default defineMessages({
     measuretype_id: {
       id: 'app.containers.App.attributes.measuretype_id',
       defaultMessage: 'Actortype id',
+    },
+    resourcetype_id: {
+      id: 'app.containers.App.attributes.resourcetype_id',
+      defaultMessage: 'Resource type',
     },
     draft: {
       id: 'app.containers.App.attributes.draft',
@@ -695,6 +709,18 @@ export default defineMessages({
         defaultMessage: 'Created',
       },
     },
+    publication_date: {
+      id: 'app.containers.App.attributes.publication_date',
+      defaultMessage: 'Publication date',
+    },
+    access_date: {
+      id: 'app.containers.App.attributes.access_date',
+      defaultMessage: 'Access date',
+    },
+    status: {
+      id: 'app.containers.App.attributes.status',
+      defaultMessage: 'Status',
+    },
   },
   nav: {
     overview: {
@@ -720,6 +746,10 @@ export default defineMessages({
     actors: {
       id: 'app.containers.App.nav.actors',
       defaultMessage: 'Actors',
+    },
+    resources: {
+      id: 'app.containers.App.nav.resources',
+      defaultMessage: 'Resources',
     },
     targets: {
       id: 'app.containers.App.nav.targets',
@@ -1171,6 +1201,186 @@ export default defineMessages({
       empty: {
         id: 'app.containers.App.entities.actions_6.empty',
         defaultMessage: 'No actors yet',
+      },
+    },
+    resources: {
+      single: {
+        id: 'app.containers.App.entities.resources.single',
+        defaultMessage: 'resource',
+      },
+      plural: {
+        id: 'app.containers.App.entities.resources.plural',
+        defaultMessage: 'resources',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.resources.singleLong',
+        defaultMessage: 'resource',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.resources.pluralLong',
+        defaultMessage: 'resources',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.resources.singleShort',
+        defaultMessage: 'resource',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.resources.pluralShort',
+        defaultMessage: 'resources',
+      },
+      empty: {
+        id: 'app.containers.App.entities.resources.empty',
+        defaultMessage: 'No resources yet',
+      },
+    },
+    resources_1: {
+      single: {
+        id: 'app.containers.App.entities.resources_1.single',
+        defaultMessage: 'resource',
+      },
+      plural: {
+        id: 'app.containers.App.entities.resources_1.plural',
+        defaultMessage: 'resources',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.resources_1.singleLong',
+        defaultMessage: 'resource',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.resources_1.pluralLong',
+        defaultMessage: 'resources',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.resources_1.singleShort',
+        defaultMessage: 'resource',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.resources_1.pluralShort',
+        defaultMessage: 'resources',
+      },
+      empty: {
+        id: 'app.containers.App.entities.resources_1.empty',
+        defaultMessage: 'No resources yet',
+      },
+    },
+    resources_2: {
+      single: {
+        id: 'app.containers.App.entities.resources_2.single',
+        defaultMessage: 'resource',
+      },
+      plural: {
+        id: 'app.containers.App.entities.resources_2.plural',
+        defaultMessage: 'resources',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.resources_2.singleLong',
+        defaultMessage: 'resource',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.resources_2.pluralLong',
+        defaultMessage: 'resources',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.resources_2.singleShort',
+        defaultMessage: 'resource',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.resources_2.pluralShort',
+        defaultMessage: 'resources',
+      },
+      empty: {
+        id: 'app.containers.App.entities.resources_2.empty',
+        defaultMessage: 'No resources yet',
+      },
+    },
+    resources_3: {
+      single: {
+        id: 'app.containers.App.entities.resources_3.single',
+        defaultMessage: 'resource',
+      },
+      plural: {
+        id: 'app.containers.App.entities.resources_3.plural',
+        defaultMessage: 'resources',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.resources_3.singleLong',
+        defaultMessage: 'resource',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.resources_3.pluralLong',
+        defaultMessage: 'resources',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.resources_3.singleShort',
+        defaultMessage: 'resource',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.resources_3.pluralShort',
+        defaultMessage: 'resources',
+      },
+      empty: {
+        id: 'app.containers.App.entities.resources_3.empty',
+        defaultMessage: 'No resources yet',
+      },
+    },
+    resources_4: {
+      single: {
+        id: 'app.containers.App.entities.resources_4.single',
+        defaultMessage: 'resource',
+      },
+      plural: {
+        id: 'app.containers.App.entities.resources_4.plural',
+        defaultMessage: 'resources',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.resources_4.singleLong',
+        defaultMessage: 'resource',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.resources_4.pluralLong',
+        defaultMessage: 'resources',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.resources_4.singleShort',
+        defaultMessage: 'resource',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.resources_4.pluralShort',
+        defaultMessage: 'resources',
+      },
+      empty: {
+        id: 'app.containers.App.entities.resources_4.empty',
+        defaultMessage: 'No resources yet',
+      },
+    },
+    resources_5: {
+      single: {
+        id: 'app.containers.App.entities.resources_5.single',
+        defaultMessage: 'resource',
+      },
+      plural: {
+        id: 'app.containers.App.entities.resources_5.plural',
+        defaultMessage: 'resources',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.resources_5.singleLong',
+        defaultMessage: 'resource',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.resources_5.pluralLong',
+        defaultMessage: 'resources',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.resources_5.singleShort',
+        defaultMessage: 'resource',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.resources_5.pluralShort',
+        defaultMessage: 'resources',
+      },
+      empty: {
+        id: 'app.containers.App.entities.resources_5.empty',
+        defaultMessage: 'No resources yet',
       },
     },
     pages: {

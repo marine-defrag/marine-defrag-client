@@ -21,6 +21,7 @@ import {
   getCodeFormField,
   renderActorsByActortypeControl,
   renderTargetsByActortypeControl,
+  renderResourcesByResourcetypeControl,
   getDateField,
   getTextareaField,
   renderTaxonomyControl,
@@ -72,6 +73,7 @@ import {
   selectConnectedTaxonomies,
   selectActorsByActortype,
   selectTargetsByActortype,
+  selectResourcesByResourcetype,
 } from './selectors';
 
 import messages from './messages';
@@ -160,6 +162,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
     connectedTaxonomies,
     actorsByActortype,
     targetsByActortype,
+    resourcesByResourcetype,
     parentOptions,
     onCreateOption,
   ) => {
@@ -261,6 +264,21 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
         );
       }
     }
+    if (resourcesByResourcetype) {
+      const resourceConnections = renderResourcesByResourcetypeControl(
+        resourcesByResourcetype,
+        onCreateOption,
+        intl,
+      );
+      if (resourceConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.nav.resources),
+            fields: resourceConnections,
+          },
+        );
+      }
+    }
     return groups;
   };
 
@@ -321,6 +339,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
       viewDomain,
       actorsByActortype,
       targetsByActortype,
+      resourcesByResourcetype,
       connectedTaxonomies,
       taxonomies,
       onCreateOption,
@@ -390,6 +409,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                   actiontype,
                   actorsByActortype,
                   targetsByActortype,
+                  resourcesByResourcetype,
                 )}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={() => this.props.handleCancel(typeId)}
@@ -408,6 +428,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
                       connectedTaxonomies,
                       actorsByActortype,
                       targetsByActortype,
+                      resourcesByResourcetype,
                       parentOptions,
                       onCreateOption,
                     ),
@@ -442,6 +463,7 @@ ActionNew.propTypes = {
   authReady: PropTypes.bool,
   actorsByActortype: PropTypes.object,
   targetsByActortype: PropTypes.object,
+  resourcesByResourcetype: PropTypes.object,
   initialiseForm: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
@@ -472,6 +494,7 @@ const mapStateToProps = (state, { params }) => ({
   actiontype: selectActiontype(state, params.id),
   actorsByActortype: selectActorsByActortype(state, params.id),
   targetsByActortype: selectTargetsByActortype(state, params.id),
+  resourcesByResourcetype: selectResourcesByResourcetype(state, params.id),
   parentOptions: selectParentOptions(state, params.id),
 });
 
@@ -499,7 +522,7 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, actiontype, actorsByActortype, targetsByActortype) => {
+    handleSubmit: (formData, actiontype, actorsByActortype, targetsByActortype, resourcesByResourcetype) => {
       let saveData = formData.setIn(['attributes', 'measuretype_id'], actiontype.get('id'));
       // actionCategories
       if (formData.get('associatedTaxonomies')) {
@@ -549,6 +572,28 @@ function mapDispatchToProps(dispatch) {
               connections: targets,
               connectionAttribute: ['associatedTargetsByActortype', actortypeid.toString()],
               createConnectionKey: 'actor_id',
+              createKey: 'measure_id',
+            }))
+            .reduce(
+              (memo, deleteCreateLists) => {
+                const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                return memo.set('create', creates);
+              },
+              fromJS({
+                create: [],
+              }),
+            )
+        );
+      }
+      if (formData.get('associatedResourcesByResourcetype') && resourcesByResourcetype) {
+        saveData = saveData.set(
+          'actionResources',
+          resourcesByResourcetype
+            .map((resources, resourcetypeid) => getConnectionUpdatesFromFormData({
+              formData,
+              connections: resources,
+              connectionAttribute: ['associatedResourcesByResourcetype', resourcetypeid.toString()],
+              createConnectionKey: 'resource_id',
               createKey: 'measure_id',
             }))
             .reduce(

@@ -24,7 +24,9 @@ import { selectEntity } from 'containers/App/selectors';
 import { selectParentOptions, selectParentTaxonomy } from 'containers/CategoryNew/selectors';
 
 
-import { API, DEFAULT_ACTIONTYPE, DEFAULT_ACTORTYPE } from 'themes/config';
+import {
+  API, DEFAULT_ACTIONTYPE, DEFAULT_ACTORTYPE, DEFAULT_RESOURCETYPE,
+} from 'themes/config';
 import { CONTENT_MODAL } from 'containers/App/constants';
 import appMessages from 'containers/App/messages';
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
@@ -73,6 +75,11 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
       return attributes && attributes.get('measuretype_id')
         ? Map(FORM_INITIAL.set('attributes', attributes))
         : Map(FORM_INITIAL.setIn(['attributes', 'measuretype_id'], DEFAULT_ACTIONTYPE));
+    }
+    if (path === API.RESOURCES) {
+      return attributes && attributes.get('resourcetype_id')
+        ? Map(FORM_INITIAL.set('attributes', attributes))
+        : Map(FORM_INITIAL.setIn(['attributes', 'resourcetype_id'], DEFAULT_RESOURCETYPE));
     }
     return Map(FORM_INITIAL);
   }
@@ -131,6 +138,22 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
         {
           type: intl.formatMessage(
             appMessages.entities[`actions_${currentTypeId}`].single
+          ),
+        }
+      );
+      icon = `${path}_${currentTypeId}`;
+    } else if (path === API.RESOURCES) {
+      // figure out actortype id from form if not set
+      const currentTypeId = (type && type.get('id'))
+        || viewDomain.getIn(['form', 'data', 'attributes', 'resourcetype_id'])
+        || DEFAULT_RESOURCETYPE;
+      // check if single actortype set
+      // figure out title and icon
+      pageTitle = intl.formatMessage(
+        messages.resources.pageTitle,
+        {
+          type: intl.formatMessage(
+            appMessages.entities[`resources_${currentTypeId}`].single
           ),
         }
       );
@@ -243,6 +266,9 @@ const mapStateToProps = (state, { path, attributes }) => {
   }
   if (path === API.ACTIONS && attributes && attributes.get('measuretype_id')) {
     type = selectEntity(state, { path: API.ACTIONTYPES, id: attributes.get('measuretype_id') });
+  }
+  if (path === API.RESOURCES && attributes && attributes.get('resourcetype_id')) {
+    type = selectEntity(state, { path: API.RESOURCETYPES, id: attributes.get('resourcetype_id') });
   }
   return {
     viewDomain: selectDomain(state),

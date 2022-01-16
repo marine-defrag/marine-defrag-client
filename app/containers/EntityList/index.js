@@ -199,7 +199,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       view,
       onEntitySelectAll,
       dataReady,
+      resourcetypes,
     } = this.props;
+
     // detect print to avoid expensive rendering
     const printing = !!(
       typeof window !== 'undefined'
@@ -263,7 +265,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         },
       ];
     }
-
     return (
       <div>
         {this.props.includeHeader && !printing && (
@@ -277,6 +278,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             entityIdsSelected={entityIdsSelected}
             taxonomies={this.props.taxonomies}
             actortypes={actortypes}
+            resourcetypes={resourcetypes}
             actiontypes={actiontypes}
             targettypes={this.props.targettypes}
             actiontypesForTarget={this.props.actiontypesForTarget}
@@ -326,6 +328,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             taxonomies={this.props.taxonomies}
             actortypes={this.props.actortypes}
             actiontypes={this.props.actiontypes}
+            resourcetypes={this.props.resourcetypes}
             connections={this.props.connections}
             connectedTaxonomies={this.props.connectedTaxonomies}
             entityIdsSelected={entityIdsSelectedFiltered}
@@ -372,6 +375,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onSortBy={this.props.onSortBy}
             onSortOrder={this.props.onSortOrder}
             onDismissError={this.props.onDismissError}
+            typeId={typeId}
           />
         )}
         {showMap && (
@@ -479,6 +483,7 @@ EntityList.propTypes = {
   taxonomies: PropTypes.instanceOf(Map),
   allTaxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
+  resourcetypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
   targettypes: PropTypes.instanceOf(Map),
   actiontypesForTarget: PropTypes.instanceOf(Map),
@@ -707,6 +712,7 @@ function mapDispatchToProps(dispatch, props) {
               case ('targets'):
               case ('members'):
               case ('associations'):
+              case ('resources'):
                 existingAssignments = entity.get(activeEditOption.connection);
                 break;
               default:
