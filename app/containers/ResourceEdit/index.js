@@ -440,7 +440,7 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(save(saveData.toJS()));
     },
     handleCancel: () => {
-      dispatch(updatePath(`${ROUTES.RESOURCES}/${props.params.id}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.RESOURCE}/${props.params.id}`, { replace: true }));
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));
