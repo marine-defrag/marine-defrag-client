@@ -143,6 +143,8 @@ theme.palette = {
   actionsHover: ['#ED7000'],
   actors: ['#033A89', '#6889B8'], // accepted, noted
   actorsHover: ['#023066', '#426BA6'],
+  resources: ['#033A89', '#6889B8'], // accepted, noted
+  resourcesHover: ['#023066', '#426BA6'],
   attributesHover: [dark[2]],
   attributes: [dark[3]],
   rolesHover: [dark[2]],

@@ -28,4 +28,10 @@ export default defineMessages({
       defaultMessage: 'New { type }',
     },
   },
+  resources: {
+    pageTitle: {
+      id: 'app.containers.EntityNew.resources.pageTitle',
+      defaultMessage: 'New { type }',
+    },
+  },
 });

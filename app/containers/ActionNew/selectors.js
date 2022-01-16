@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { ACTIONTYPE_ACTORTYPES, ACTIONTYPE_TARGETTYPES } from 'themes/config';
+import { ACTIONTYPE_ACTORTYPES, ACTIONTYPE_TARGETTYPES, ACTIONTYPE_RESOURCETYPES } from 'themes/config';
 import { qe } from 'utils/quasi-equals';
 
 import {
@@ -9,7 +9,8 @@ import {
   selectActiontypes,
   selectActorTaxonomies,
   selectActorsCategorised,
-  selectActorActionsGroupedByAction,
+  selectResources,
+  selectResourcetypes,
 } from 'containers/App/selectors';
 
 import { prepareTaxonomies } from 'utils/entities';
@@ -53,9 +54,8 @@ export const selectConnectedTaxonomies = createSelector(
 export const selectActorsByActortype = createSelector(
   (state, id) => id,
   selectActorsCategorised,
-  selectActorActionsGroupedByAction,
   selectActortypes,
-  (actiontypeId, actors, associations, actortypes) => {
+  (actiontypeId, actors, actortypes) => {
     // compare App/selectors/selectActortypesForActiontype
     const validActortypeIds = ACTIONTYPE_ACTORTYPES[actiontypeId];
     if (!validActortypeIds || validActortypeIds.length === 0) {
@@ -76,9 +76,8 @@ export const selectActorsByActortype = createSelector(
 export const selectTargetsByActortype = createSelector(
   (state, id) => id,
   selectActorsCategorised,
-  selectActorActionsGroupedByAction,
   selectActortypes,
-  (actiontypeId, actors, associations, actortypes) => {
+  (actiontypeId, actors, actortypes) => {
     // compare App/selectors/selectActortypesForActiontype
     const validActortypeIds = ACTIONTYPE_TARGETTYPES[actiontypeId];
     if (!validActortypeIds || validActortypeIds.length === 0) {
@@ -92,6 +91,26 @@ export const selectTargetsByActortype = createSelector(
       (actor) => qe(
         type.get('id'),
         actor.getIn(['attributes', 'actortype_id']),
+      )
+    ));
+  }
+);
+export const selectResourcesByResourcetype = createSelector(
+  (state, id) => id,
+  selectResources,
+  selectResourcetypes,
+  (actiontypeId, resources, resourcetypes) => {
+    // compare App/selectors/selectActortypesForActiontype
+    const validResourcetypeIds = ACTIONTYPE_RESOURCETYPES[actiontypeId];
+    if (!validResourcetypeIds || validResourcetypeIds.length === 0) {
+      return null;
+    }
+    return resourcetypes.filter(
+      (type) => validResourcetypeIds && validResourcetypeIds.indexOf(type.get('id')) > -1
+    ).map((type) => resources.filter(
+      (actor) => qe(
+        type.get('id'),
+        actor.getIn(['attributes', 'resourcetype_id']),
       )
     ));
   }

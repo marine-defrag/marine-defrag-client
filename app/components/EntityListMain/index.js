@@ -66,6 +66,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       || this.props.entityIdsSelected !== nextProps.entityIdsSelected
       || this.props.dataReady !== nextProps.dataReady
       || this.props.locationQuery !== nextProps.locationQuery
+      || this.props.typeId !== nextProps.typeId
       || this.props.errors !== nextProps.errors;
   }
 
@@ -264,6 +265,7 @@ EntityListMain.propTypes = {
   listUpdating: PropTypes.bool,
   hasHeader: PropTypes.bool,
   onClearFilters: PropTypes.func.isRequired,
+  typeId: PropTypes.string,
 };
 
 EntityListMain.contextTypes = {

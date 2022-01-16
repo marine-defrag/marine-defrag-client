@@ -117,18 +117,6 @@ const PopupContent = styled.div`
   overflow: auto;
 `;
 
-const Id = styled.span`
-  color: ${palette('text', 1)};
-  font-size: 0.8em;
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.smaller};
-  }
-`;
-const IdSpacer = styled.span`
-  padding-left: 0.25em;
-  padding-right: 0.25em;
-  color: ${palette('text', 1)};
-`;
 const ItemContent = styled.span``;
 
 const ListItem = styled.div`
@@ -225,26 +213,21 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
                   {
                     sortEntities(entities, 'asc', 'title')
                       .toList()
-                      .map((entity, i) => {
-                        const ref = entity.getIn(['attributes', 'code']);
-                        return (
-                          <ListItem
-                            key={i}
-                            ref={(node) => i < 3 && this.setState({ [`listItem_${i}`]: node })}
-                          >
-                            <ListItemLink to={`${option.clientPath}/${entity.get('id')}`}>
-                              { entity.getIn(['attributes', 'draft'])
-                            && <ItemStatus draft />
-                              }
-                              {ref && <Id>{ref}</Id>}
-                              {ref && <IdSpacer />}
-                              <ItemContent>
-                                {truncateText(entity.getIn(['attributes', 'title']), TEXT_TRUNCATE.CONNECTION_POPUP - ref.length)}
-                              </ItemContent>
-                            </ListItemLink>
-                          </ListItem>
-                        );
-                      })
+                      .map((entity, i) => (
+                        <ListItem
+                          key={i}
+                          ref={(node) => i < 3 && this.setState({ [`listItem_${i}`]: node })}
+                        >
+                          <ListItemLink to={`${option.clientPath}/${entity.get('id')}`}>
+                            { entity.getIn(['attributes', 'draft'])
+                          && <ItemStatus draft />
+                            }
+                            <ItemContent>
+                              {truncateText(entity.getIn(['attributes', 'title']), TEXT_TRUNCATE.CONNECTION_POPUP)}
+                            </ItemContent>
+                          </ListItemLink>
+                        </ListItem>
+                      ))
                   }
                 </PopupContent>
               </PopupInner>
