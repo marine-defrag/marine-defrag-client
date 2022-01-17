@@ -13,8 +13,6 @@ import appMessages from 'containers/App/messages';
 import { ROUTES, RESOURCETYPE_GROUPS } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import { selectReady } from 'containers/App/selectors';
-
-import HeaderExplore from 'containers/HeaderExplore';
 import Container from 'components/styled/Container';
 import Content from 'components/styled/Content';
 
@@ -41,7 +39,6 @@ export function ResourcesOverview({ onLoadData, types, onUpdatePath }) {
 
   return (
     <div>
-      <HeaderExplore />
       <Container>
         <Content>
           {Object.keys(RESOURCETYPE_GROUPS).map((key) => (

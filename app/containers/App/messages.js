@@ -151,6 +151,14 @@ export default defineMessages({
       id: 'app.containers.App.resourcetypeGroups.1',
       defaultMessage: 'All resources',
     },
+    2: {
+      id: 'app.containers.App.resourcetypeGroups.2',
+      defaultMessage: 'All resources',
+    },
+    3: {
+      id: 'app.containers.App.resourcetypeGroups.3',
+      defaultMessage: 'All resources',
+    },
   },
   actiontypes: {
     single: {
