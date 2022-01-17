@@ -125,7 +125,6 @@ export class EntityNew extends React.PureComponent { // eslint-disable-line reac
           ),
         }
       );
-      icon = `${path}_${currentTypeId}`;
     } else if (path === API.ACTIONS) {
       // figure out actortype id from form if not set
       const currentTypeId = (type && type.get('id'))

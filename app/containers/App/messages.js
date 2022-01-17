@@ -76,6 +76,50 @@ export default defineMessages({
       defaultMessage: 'Actortype 5',
     },
   },
+  actortypes_long: {
+    1: {
+      id: 'app.containers.App.actortypes_long.1',
+      defaultMessage: 'HR',
+    },
+    2: {
+      id: 'app.containers.App.actortypes_long.2',
+      defaultMessage: 'SDGs',
+    },
+    3: {
+      id: 'app.containers.App.actortypes_long.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actortypes_long.4',
+      defaultMessage: 'Actortype 4',
+    },
+    5: {
+      id: 'app.containers.App.actortypes_long.5',
+      defaultMessage: 'Actortype 5',
+    },
+  },
+  actortypes_about: {
+    1: {
+      id: 'app.containers.App.actortypes_about.1',
+      defaultMessage: 'HR',
+    },
+    2: {
+      id: 'app.containers.App.actortypes_about.2',
+      defaultMessage: 'SDGs',
+    },
+    3: {
+      id: 'app.containers.App.actortypes_about.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actortypes_about.4',
+      defaultMessage: 'Actortype 4',
+    },
+    5: {
+      id: 'app.containers.App.actortypes_about.5',
+      defaultMessage: 'Actortype 5',
+    },
+  },
   actortypeGroups: {
     1: {
       id: 'app.containers.App.actortypeGroups.1',
@@ -143,6 +187,50 @@ export default defineMessages({
     },
     5: {
       id: 'app.containers.App.resourcetypes_short.5',
+      defaultMessage: 'MLAPs',
+    },
+  },
+  resourcetypes_long: {
+    1: {
+      id: 'app.containers.App.resourcetypes_long.1',
+      defaultMessage: 'Refs',
+    },
+    2: {
+      id: 'app.containers.App.resourcetypes_long.2',
+      defaultMessage: 'Web',
+    },
+    3: {
+      id: 'app.containers.App.resourcetypes_long.3',
+      defaultMessage: 'Docs',
+    },
+    4: {
+      id: 'app.containers.App.resourcetypes_long.4',
+      defaultMessage: 'APs',
+    },
+    5: {
+      id: 'app.containers.App.resourcetypes_long.5',
+      defaultMessage: 'MLAPs',
+    },
+  },
+  resourcetypes_about: {
+    1: {
+      id: 'app.containers.App.resourcetypes_about.1',
+      defaultMessage: 'Refs',
+    },
+    2: {
+      id: 'app.containers.App.resourcetypes_about.2',
+      defaultMessage: 'Web',
+    },
+    3: {
+      id: 'app.containers.App.resourcetypes_about.3',
+      defaultMessage: 'Docs',
+    },
+    4: {
+      id: 'app.containers.App.resourcetypes_about.4',
+      defaultMessage: 'APs',
+    },
+    5: {
+      id: 'app.containers.App.resourcetypes_about.5',
       defaultMessage: 'MLAPs',
     },
   },
@@ -225,6 +313,58 @@ export default defineMessages({
     },
     6: {
       id: 'app.containers.App.actiontypes_short.6',
+      defaultMessage: 'Actortype 6',
+    },
+  },
+  actiontypes_long: {
+    1: {
+      id: 'app.containers.App.actiontypes_long.1',
+      defaultMessage: 'HR',
+    },
+    2: {
+      id: 'app.containers.App.actiontypes_long.2',
+      defaultMessage: 'SDGs',
+    },
+    3: {
+      id: 'app.containers.App.actiontypes_long.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actiontypes_long.4',
+      defaultMessage: 'Actortype 4',
+    },
+    5: {
+      id: 'app.containers.App.actiontypes_long.5',
+      defaultMessage: 'Actortype 5',
+    },
+    6: {
+      id: 'app.containers.App.actiontypes_long.6',
+      defaultMessage: 'Actortype 6',
+    },
+  },
+  actiontypes_about: {
+    1: {
+      id: 'app.containers.App.actiontypes_about.1',
+      defaultMessage: 'HR',
+    },
+    2: {
+      id: 'app.containers.App.actiontypes_about.2',
+      defaultMessage: 'SDGs',
+    },
+    3: {
+      id: 'app.containers.App.actiontypes_about.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actiontypes_about.4',
+      defaultMessage: 'Actortype 4',
+    },
+    5: {
+      id: 'app.containers.App.actiontypes_about.5',
+      defaultMessage: 'Actortype 5',
+    },
+    6: {
+      id: 'app.containers.App.actiontypes_about.6',
       defaultMessage: 'Actortype 6',
     },
   },

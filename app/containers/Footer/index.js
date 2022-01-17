@@ -112,80 +112,78 @@ class Footer extends React.PureComponent { // eslint-disable-line react/prefer-s
     const { intl } = this.context;
     const { theme } = this.props;
     return (
-      <div>
-        <FooterMain>
-          <Container noPaddingBottom>
-            <TableWrapper>
-              <Table>
-                <TableCell>
-                  <FormattedMessage {...messages.disclaimer} />
-                  <FooterLink
+      <FooterMain>
+        <Container noPaddingBottom>
+          <TableWrapper>
+            <Table>
+              <TableCell>
+                <FormattedMessage {...messages.disclaimer} />
+                <FooterLink
+                  target="_blank"
+                  href={`mailto:${intl.formatMessage(messages.contact.email)}`}
+                  title={intl.formatMessage(messages.contact.anchor)}
+                >
+                  <FormattedMessage {...messages.contact.anchor} />
+                </FooterLink>
+              </TableCell>
+              <TableCellSmall>
+                { FOOTER.LINK_TARGET_INTERNAL
+                  && (
+                    <FormattedMessage
+                      {...messages.responsible.textWithInternalLink}
+                      values={{
+                        internalLink: (
+                          <FooterLink
+                            onClick={(evt) => {
+                              if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                              this.props.onPageLink(`${ROUTES.PAGES}/${FOOTER.LINK_TARGET_INTERNAL_ID}`);
+                            }}
+                            href={`${ROUTES.PAGES}/${FOOTER.LINK_TARGET_INTERNAL_ID}`}
+                            title={intl.formatMessage(messages.responsible.anchor)}
+                          >
+                            <FormattedMessage {...messages.responsible.anchor} />
+                          </FooterLink>
+                        ),
+                      }}
+                    />
+                  )
+                }
+                { !FOOTER.LINK_TARGET_INTERNAL
+                  && <FormattedMessage {...messages.responsible.text} />
+                }
+                { !FOOTER.LINK_TARGET_INTERNAL
+                  && (
+                    <div>
+                      <FooterLink
+                        target="_blank"
+                        href={intl.formatMessage(messages.responsible.url)}
+                        title={intl.formatMessage(messages.responsible.anchor)}
+                      >
+                        <FormattedMessage {...messages.responsible.anchor} />
+                      </FooterLink>
+                    </div>
+                  )
+                }
+              </TableCellSmall>
+              <TableCellSmall>
+                <FormattedMessage {...messages.project.text} />
+                <div>
+                  <ImpactLink
                     target="_blank"
-                    href={`mailto:${intl.formatMessage(messages.contact.email)}`}
-                    title={intl.formatMessage(messages.contact.anchor)}
+                    href={intl.formatMessage(messages.project.url)}
+                    title={intl.formatMessage(messages.project.anchor)}
                   >
-                    <FormattedMessage {...messages.contact.anchor} />
-                  </FooterLink>
-                </TableCell>
-                <TableCellSmall>
-                  { FOOTER.LINK_TARGET_INTERNAL
-                    && (
-                      <FormattedMessage
-                        {...messages.responsible.textWithInternalLink}
-                        values={{
-                          internalLink: (
-                            <FooterLink
-                              onClick={(evt) => {
-                                if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                                this.props.onPageLink(`${ROUTES.PAGES}/${FOOTER.LINK_TARGET_INTERNAL_ID}`);
-                              }}
-                              href={`${ROUTES.PAGES}/${FOOTER.LINK_TARGET_INTERNAL_ID}`}
-                              title={intl.formatMessage(messages.responsible.anchor)}
-                            >
-                              <FormattedMessage {...messages.responsible.anchor} />
-                            </FooterLink>
-                          ),
-                        }}
-                      />
-                    )
-                  }
-                  { !FOOTER.LINK_TARGET_INTERNAL
-                    && <FormattedMessage {...messages.responsible.text} />
-                  }
-                  { !FOOTER.LINK_TARGET_INTERNAL
-                    && (
-                      <div>
-                        <FooterLink
-                          target="_blank"
-                          href={intl.formatMessage(messages.responsible.url)}
-                          title={intl.formatMessage(messages.responsible.anchor)}
-                        >
-                          <FormattedMessage {...messages.responsible.anchor} />
-                        </FooterLink>
-                      </div>
-                    )
-                  }
-                </TableCellSmall>
-                <TableCellSmall>
-                  <FormattedMessage {...messages.project.text} />
-                  <div>
-                    <ImpactLink
-                      target="_blank"
-                      href={intl.formatMessage(messages.project.url)}
-                      title={intl.formatMessage(messages.project.anchor)}
-                    >
-                      <div>
-                        <FormattedMessage {...messages.project.anchor} />
-                      </div>
-                      <ImpactLogo src={theme.media.impactossLogo} alt={intl.formatMessage(messages.project.anchor)} />
-                    </ImpactLink>
-                  </div>
-                </TableCellSmall>
-              </Table>
-            </TableWrapper>
-          </Container>
-        </FooterMain>
-      </div>
+                    <div>
+                      <FormattedMessage {...messages.project.anchor} />
+                    </div>
+                    <ImpactLogo src={theme.media.impactossLogo} alt={intl.formatMessage(messages.project.anchor)} />
+                  </ImpactLink>
+                </div>
+              </TableCellSmall>
+            </Table>
+          </TableWrapper>
+        </Container>
+      </FooterMain>
     );
   }
 }

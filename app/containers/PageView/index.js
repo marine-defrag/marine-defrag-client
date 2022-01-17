@@ -49,7 +49,7 @@ const Styled = styled(ContainerWrapper)`
 `;
 
 const ViewContainer = styled(Container)`
-  min-height: 100vH;
+  min-height: 85vH;
   @media print {
     min-height: 50vH;
   }

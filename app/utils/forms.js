@@ -502,16 +502,6 @@ export const getStatusField = (formatMessage) => ({
   label: formatMessage(appMessages.attributes.draft),
   options: PUBLISH_STATUSES,
 });
-export const getActortypeFormField = (formatMessage, actortypeOptions) => ({
-  id: 'actortype',
-  controlType: 'select',
-  model: '.attributes.actortype_id',
-  label: formatMessage(appMessages.attributes.actortype_id),
-  options: Object.values(actortypeOptions.toJS()).map((actortype) => ({
-    value: actortype.id,
-    message: `actortypes.${actortype.id}`,
-  })),
-});
 
 export const getTitleFormField = (formatMessage, controlType = 'title', attribute = 'title', required) => getFormField({
   formatMessage,
