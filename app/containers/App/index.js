@@ -118,6 +118,11 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           isAdmin: true,
           active: currentPath === ROUTES.USERS,
         },
+        {
+          path: ROUTES.RESOURCES,
+          title: intl.formatMessage(messages.nav.resources),
+          active: currentPath && currentPath.startsWith(ROUTES.RESOURCE),
+        },
       ]);
     }
     if (isAnalyst) {

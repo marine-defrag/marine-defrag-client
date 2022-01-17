@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Map } from 'immutable';
+import { Box } from 'grommet';
 
 import styled from 'styled-components';
 
@@ -13,76 +14,85 @@ import appMessages from 'containers/App/messages';
 import { ROUTES, RESOURCETYPE_GROUPS } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import { selectReady } from 'containers/App/selectors';
-
-import HeaderExplore from 'containers/HeaderExplore';
+import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
 import Content from 'components/styled/Content';
+import CardTeaser from 'components/CardTeaser';
+import Footer from 'containers/Footer';
 
 import { selectResourcetypesWithResourceCount } from './selectors';
 import { DEPENDENCIES } from './constants';
 
 
-const Group = styled.div``;
+const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
 const GroupTitle = styled.h5`
   font-size: 14px;
 `;
-const TypeButton = styled.a``;
-const TypeTitle = styled.h6``;
-const TypeCount = styled.span`
-  margin-right: 5px;
+const ViewContainer = styled(Container)`
+  min-height: 85vH;
+  @media print {
+    min-height: 50vH;
+  }
 `;
-const TypeTitleInner = styled.span``;
-
-export function ResourcesOverview({ onLoadData, types, onUpdatePath }) {
+export function ResourcesOverview({
+  onLoadData, types, onUpdatePath, intl, dataReady,
+}) {
   useEffect(() => {
     // kick off loading of data
     onLoadData();
   }, []);
 
   return (
-    <div>
-      <HeaderExplore />
-      <Container>
+    <ContainerWrapper hasFooter>
+      <ViewContainer>
         <Content>
           {Object.keys(RESOURCETYPE_GROUPS).map((key) => (
             <Group key={key}>
               <GroupTitle>
                 <FormattedMessage {...appMessages.resourcetypeGroups[key]} />
               </GroupTitle>
-              {RESOURCETYPE_GROUPS[key].types.map((typeId) => {
-                const path = `${ROUTES.RESOURCES}/${typeId}`;
-                return (
-                  <TypeButton
-                    key={typeId}
-                    primary={RESOURCETYPE_GROUPS[key].primary}
-                    href={`${path}`}
-                    onClick={(evt) => {
-                      if (evt && evt.preventDefault) evt.preventDefault();
-                      onUpdatePath(path);
-                    }}
-                  >
-                    <TypeTitle>
-                      <TypeCount>{types.getIn([typeId, 'count']) || '0'}</TypeCount>
-                      <TypeTitleInner>
-                        <FormattedMessage {...appMessages.entities[`resources_${typeId}`].plural} />
-                      </TypeTitleInner>
-                    </TypeTitle>
-                  </TypeButton>
-                );
-              })}
+              <Box direction="row" gap="small">
+                {RESOURCETYPE_GROUPS[key].types.map((typeId) => {
+                  const path = `${ROUTES.RESOURCES}/${typeId}`;
+                  const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
+                  const { primary } = RESOURCETYPE_GROUPS[key];
+                  return (
+                    <CardTeaser
+                      key={typeId}
+                      basis={primary ? '1/2' : '1/4'}
+                      primary={primary}
+                      path={path}
+                      onClick={(evt) => {
+                        if (evt && evt.preventDefault) evt.preventDefault();
+                        onUpdatePath(path);
+                      }}
+                      dataReady={dataReady}
+                      count={count}
+                      title={
+                        intl.formatMessage(appMessages.resourcetypes_long[typeId])
+                      }
+                      description={
+                        intl.formatMessage(appMessages.resourcetypes_about[typeId])
+                      }
+                    />
+                  );
+                })}
+              </Box>
             </Group>
           ))}
         </Content>
-      </Container>
-    </div>
+      </ViewContainer>
+      <Footer />
+    </ContainerWrapper>
   );
 }
 
 ResourcesOverview.propTypes = {
-  // intl: intlShape.isRequired,
+  intl: intlShape.isRequired,
   onLoadData: PropTypes.func.isRequired,
   onUpdatePath: PropTypes.func.isRequired,
   types: PropTypes.instanceOf(Map),
+  dataReady: PropTypes.bool,
 };
 
 const mapStateToProps = createStructuredSelector({

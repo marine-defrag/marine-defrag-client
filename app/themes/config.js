@@ -258,6 +258,7 @@ export const ACTORTYPE_GROUPS = {
   // countries
   1: {
     types: [ACTORTYPES.COUNTRY],
+    primary: true,
   },
   // policies etc
   2: {
@@ -272,7 +273,20 @@ export const ACTORTYPE_GROUPS = {
 export const RESOURCETYPE_GROUPS = {
   // temp: one group only for now
   1: {
-    types: Object.values(RESOURCETYPES),
+    types: [RESOURCETYPES.REF],
+    primary: true,
+  },
+  2: {
+    types: [
+      RESOURCETYPES.WEB,
+      RESOURCETYPES.DOC,
+    ],
+  },
+  3: {
+    types: [
+      RESOURCETYPES.AP,
+      RESOURCETYPES.MLAP,
+    ],
   },
 };
 

@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Map } from 'immutable';
+import { Box } from 'grommet';
 
 import styled from 'styled-components';
 
@@ -15,71 +16,83 @@ import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import { selectReady } from 'containers/App/selectors';
 
 import HeaderExplore from 'containers/HeaderExplore';
+import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
 import Content from 'components/styled/Content';
+import CardTeaser from 'components/CardTeaser';
+import Footer from 'containers/Footer';
 
 import { selectActiontypesWithActionCount } from './selectors';
 import { DEPENDENCIES } from './constants';
 
 
-const Group = styled.div``;
+const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
 const GroupTitle = styled.h5`
   font-size: 14px;
 `;
-const TypeButton = styled.a``;
-const TypeTitle = styled.h6``;
-const TypeCount = styled.span`
-  margin-right: 5px;
+const ViewContainer = styled(Container)`
+  min-height: 70vH;
+  @media print {
+    min-height: 50vH;
+  }
 `;
-const TypeTitleInner = styled.span``;
-
-export function ActionsOverview({ onLoadData, types, onUpdatePath }) {
+export function ActionsOverview({
+  onLoadData, types, onUpdatePath, intl, dataReady,
+}) {
   useEffect(() => {
     // kick off loading of data
     onLoadData();
   }, []);
 
   return (
-    <div>
+    <ContainerWrapper>
       <HeaderExplore />
-      <Container>
+      <ViewContainer>
         <Content>
           {Object.keys(ACTIONTYPE_GROUPS).map((key) => (
             <Group key={key}>
               <GroupTitle>
                 <FormattedMessage {...appMessages.actiontypeGroups[key]} />
               </GroupTitle>
-              {ACTIONTYPE_GROUPS[key].types.map((typeId) => {
-                const path = `${ROUTES.ACTIONS}/${typeId}`;
-                return (
-                  <TypeButton
-                    key={typeId}
-                    primary={ACTIONTYPE_GROUPS[key].primary}
-                    href={`${path}`}
-                    onClick={(evt) => {
-                      if (evt && evt.preventDefault) evt.preventDefault();
-                      onUpdatePath(path);
-                    }}
-                  >
-                    <TypeTitle>
-                      <TypeCount>{types.getIn([typeId, 'count']) || '0'}</TypeCount>
-                      <TypeTitleInner>
-                        <FormattedMessage {...appMessages.entities[`actions_${typeId}`].plural} />
-                      </TypeTitleInner>
-                    </TypeTitle>
-                  </TypeButton>
-                );
-              })}
+              <Box direction="row" gap="small">
+                {ACTIONTYPE_GROUPS[key].types.map((typeId) => {
+                  const path = `${ROUTES.ACTIONS}/${typeId}`;
+                  const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
+                  const { primary } = ACTIONTYPE_GROUPS[key];
+                  return (
+                    <CardTeaser
+                      key={typeId}
+                      basis={primary ? 'full' : '1/4'}
+                      primary={primary}
+                      path={path}
+                      onClick={(evt) => {
+                        if (evt && evt.preventDefault) evt.preventDefault();
+                        onUpdatePath(path);
+                      }}
+                      dataReady={dataReady}
+                      count={count}
+                      title={
+                        intl.formatMessage(appMessages.actiontypes_long[typeId])
+                      }
+                      description={
+                        intl.formatMessage(appMessages.actiontypes_about[typeId])
+                      }
+                    />
+                  );
+                })}
+              </Box>
             </Group>
           ))}
         </Content>
-      </Container>
-    </div>
+      </ViewContainer>
+      <Footer />
+    </ContainerWrapper>
   );
 }
 
 ActionsOverview.propTypes = {
-  // intl: intlShape.isRequired,
+  intl: intlShape.isRequired,
+  dataReady: PropTypes.bool,
   onLoadData: PropTypes.func.isRequired,
   onUpdatePath: PropTypes.func.isRequired,
   types: PropTypes.instanceOf(Map),
