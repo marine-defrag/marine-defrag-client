@@ -43,11 +43,11 @@ export function KeyGradient({
           x2="100%"
           y2="0"
         >
-          {cleanStops.map((stop) => (
+          {cleanStops.map((stop, stopNo) => (
             <stop
               offset={`${(stop.value / maxValue) * 100}%`}
               stopColor={stop.color}
-              key={stop.value}
+              key={stopNo}
             />
           ))}
         </linearGradient>
