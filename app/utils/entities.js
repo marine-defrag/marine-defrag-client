@@ -719,3 +719,7 @@ export const checkResourceRequired = (typeId, att) => RESOURCE_FIELDS
     att,
     RESOURCE_FIELDS.ATTRIBUTES,
   );
+
+export const hasGroupActors = (actortypesForActiontype) => actortypesForActiontype && actortypesForActiontype.some(
+  (type) => type.getIn(['attributes', 'has_members'])
+);

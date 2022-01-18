@@ -20,10 +20,14 @@ import { ACTORTYPES, ROUTES } from 'themes/config';
 import {
   selectMapSubjectQuery,
   selectActortypeActors,
+  selectIncludeActorMembersQuery,
+  selectIncludeTargetMembersQuery,
 } from 'containers/App/selectors';
 
 import {
   setMapSubject,
+  setIncludeActorMembers,
+  setIncludeTargetMembers,
 } from 'containers/App/actions';
 
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
@@ -32,8 +36,9 @@ import EntityListViewOptions from 'components/EntityListViewOptions';
 
 import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
-import MapSubjectOptions from './MapSubjectOptions';
+import { hasGroupActors } from 'utils/entities';
 import MapContainer from './MapContainer';
+import MapInfoOptions from './MapInfoOptions';
 // import messages from './messages';
 
 const LoadingWrap = styled.div`
@@ -55,9 +60,14 @@ export function EntitiesMap({
   entities,
   actortypes,
   actiontypes,
+  targettypes,
   typeId,
   mapSubject,
   onSetMapSubject,
+  onSetIncludeActorMembers,
+  onSetIncludeTargetMembers,
+  includeActorMembers,
+  includeTargetMembers,
   countries,
   onEntityClick,
   intl,
@@ -76,6 +86,7 @@ export function EntitiesMap({
   let countryFeatures;
   let hasByTarget;
   let subjectOptions;
+  let memberOption;
   let typeLabels;
   let indicator = 'actions';
   // let cleanMapSubject = 'actors';
@@ -109,6 +120,20 @@ export function EntitiesMap({
             disabled: mapSubject === 'targets',
           },
         ];
+        if (mapSubject === 'targets') {
+          // note this should always be true!
+          memberOption = {
+            active: includeTargetMembers,
+            onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
+            label: 'Include members of targeted regions, groups, classes',
+          };
+        } else if (hasGroupActors(actortypes)) {
+          memberOption = {
+            active: includeActorMembers,
+            onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+            label: 'Include members of acting groups',
+          };
+        }
         if (typeId === ACTORTYPES.COUNTRY) {
           // entities are filtered countries
           countryFeatures = countriesJSON.features.map((feature) => {
@@ -170,6 +195,22 @@ export function EntitiesMap({
           },
         ];
       }
+      if (mapSubject === 'targets') {
+        // note this should always be true!
+        if (hasGroupActors(targettypes)) {
+          memberOption = {
+            active: includeTargetMembers,
+            onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
+            label: 'Include members of targeted regions, groups, classes',
+          };
+        }
+      } else if (hasGroupActors(actortypes)) {
+        memberOption = {
+          active: includeActorMembers,
+          onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+          label: 'Include members of acting groups',
+        };
+      }
       // entities are filtered actions
       const countryCounts = entities.reduce((memo, action) => {
         let updated = memo;
@@ -228,6 +269,13 @@ export function EntitiesMap({
       });
     }
   }
+  let maxValue;
+  if (countryFeatures) {
+    maxValue = countryFeatures.reduce((memo, f) => {
+      if (!memo) return f.values[indicator];
+      return Math.max(memo, f.values[indicator]);
+    }, null);
+  }
   return (
     <ContainerWrapper hasHeader noOverflow>
       <MapContainer
@@ -235,6 +283,9 @@ export function EntitiesMap({
         countryFeatures={countryFeatures}
         indicator={indicator}
         onCountryClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+        maxValue={maxValue}
+        includeActorMembers={includeActorMembers}
+        includeTargetMembers={includeTargetMembers}
       />
       {!dataReady && (
         <LoadingWrap>
@@ -244,8 +295,15 @@ export function EntitiesMap({
       {viewOptions && viewOptions.length > 1 && (
         <EntityListViewOptions options={viewOptions} />
       )}
-      {hasByTarget && (
-        <MapSubjectOptions options={subjectOptions} />
+      {dataReady && (
+        <MapInfoOptions
+          config={{
+            title: typeLabels.plural,
+            subjectOptions: hasByTarget && subjectOptions,
+            memberOption,
+            maxValue,
+          }}
+        />
       )}
     </ContainerWrapper>
   );
@@ -257,6 +315,7 @@ EntitiesMap.propTypes = {
   // connections: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
+  targettypes: PropTypes.instanceOf(Map),
   countries: PropTypes.instanceOf(Map),
   // taxonomies: PropTypes.instanceOf(Map),
   // connectedTaxonomies: PropTypes.instanceOf(Map),
@@ -268,6 +327,10 @@ EntitiesMap.propTypes = {
   typeId: PropTypes.string,
   mapSubject: PropTypes.string,
   onSetMapSubject: PropTypes.func,
+  onSetIncludeActorMembers: PropTypes.func,
+  onSetIncludeTargetMembers: PropTypes.func,
+  includeActorMembers: PropTypes.bool,
+  includeTargetMembers: PropTypes.bool,
   onEntityClick: PropTypes.func,
   intl: intlShape.isRequired,
 };
@@ -275,11 +338,19 @@ EntitiesMap.propTypes = {
 const mapStateToProps = (state) => ({
   mapSubject: selectMapSubjectQuery(state),
   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
+  includeActorMembers: selectIncludeActorMembersQuery(state),
+  includeTargetMembers: selectIncludeTargetMembersQuery(state),
 });
 function mapDispatchToProps(dispatch) {
   return {
     onSetMapSubject: (subject) => {
       dispatch(setMapSubject(subject));
+    },
+    onSetIncludeTargetMembers: (active) => {
+      dispatch(setIncludeTargetMembers(active));
+    },
+    onSetIncludeActorMembers: (active) => {
+      dispatch(setIncludeActorMembers(active));
     },
   };
 }

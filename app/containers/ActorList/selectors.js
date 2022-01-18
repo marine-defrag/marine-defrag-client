@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 import {
   selectEntities,
   selectActorsSearchQuery,
@@ -22,6 +22,8 @@ import {
   selectActionTaxonomies,
   selectMemberQuery,
   selectAssociationQuery,
+  selectIncludeActorMembersQuery,
+  selectIncludeTargetMembersQuery,
   // selectActorConnections,
   // selectActortypeTaxonomies,
   // selectActortypeQuery,
@@ -178,30 +180,58 @@ const selectActorsWithActions = createSelector(
   selectActionActorsGroupedByActor, // as targets
   selectMembershipsGroupedByAssociation,
   selectMembershipsGroupedByMember,
+  selectIncludeActorMembersQuery,
+  selectIncludeTargetMembersQuery,
   (
     ready,
-    entities,
+    actors,
     connections,
-    actorAssociationsGrouped,
-    targetAssociationsGrouped,
+    actionsAsActorGrouped,
+    actionsAsTargetGrouped,
     memberAssociationsGrouped,
     associationAssociationsGrouped,
+    includeActorMembers,
+    includeTargetMembers,
   ) => {
     if (ready) {
-      return entities.map(
-        (entity) => {
-          const entityActions = actorAssociationsGrouped.get(parseInt(entity.get('id'), 10));
-          const targetActions = targetAssociationsGrouped.get(parseInt(entity.get('id'), 10));
-          const entityMembers = memberAssociationsGrouped.get(parseInt(entity.get('id'), 10));
-          const entityAssociations = associationAssociationsGrouped.get(parseInt(entity.get('id'), 10));
+      return actors.map(
+        (actor) => {
+          let actorActions = actionsAsActorGrouped.get(parseInt(actor.get('id'), 10)) || List();
+          let targetActions = actionsAsTargetGrouped.get(parseInt(actor.get('id'), 10)) || List();
+          const actorMembers = memberAssociationsGrouped.get(parseInt(actor.get('id'), 10));
+          const actorAssociations = associationAssociationsGrouped.get(parseInt(actor.get('id'), 10));
           // console.log(entityActorsByActortype && entityActorsByActortype.toJS());
           // currently requires both for filtering & display
-          return entity.set(
+          if (includeActorMembers && actorAssociations && actorAssociations.size > 0) {
+            const actorActionsAsMember = actorAssociations.reduce((memo, associationId) => {
+              const associationActions = actionsAsActorGrouped.get(parseInt(associationId, 10));
+              if (associationActions) {
+                return memo.concat(associationActions);
+              }
+              return memo;
+            }, List());
+            if (actorActionsAsMember && actorActionsAsMember.size > 0) {
+              actorActions = actorActions.concat(actorActionsAsMember);
+            }
+          }
+          if (includeTargetMembers && actorAssociations && actorAssociations.size > 0) {
+            const targetActionsAsMember = actorAssociations.reduce((memo, associationId) => {
+              const associationActionsAsTarget = actionsAsTargetGrouped.get(parseInt(associationId, 10));
+              if (associationActionsAsTarget) {
+                return memo.concat(associationActionsAsTarget);
+              }
+              return memo;
+            }, List());
+            if (targetActionsAsMember && targetActionsAsMember.size > 0) {
+              targetActions = targetActions.concat(targetActionsAsMember);
+            }
+          }
+          return actor.set(
             'actions',
-            entityActions
+            actorActions
           ).set(
             'actionsByType',
-            entityActions && connections.get('actions') && entityActions.filter(
+            actorActions && connections.get('actions') && actorActions.filter(
               (id) => connections.getIn([
                 'actions',
                 id.toString(),
@@ -234,10 +264,10 @@ const selectActorsWithActions = createSelector(
             ).sortBy((val, key) => key),
           ).set(
             'members',
-            entityMembers,
+            actorMembers,
           ).set(
             'membersByType',
-            entityMembers && connections.get('actors') && entityMembers.filter(
+            actorMembers && connections.get('actors') && actorMembers.filter(
               (id) => connections.getIn([
                 'actors',
                 id.toString(),
@@ -252,10 +282,10 @@ const selectActorsWithActions = createSelector(
             ).sortBy((val, key) => key),
           ).set(
             'associations',
-            entityAssociations,
+            actorAssociations,
           ).set(
             'associationsByType',
-            entityAssociations && connections.get('actors') && entityAssociations.filter(
+            actorAssociations && connections.get('actors') && actorAssociations.filter(
               (id) => connections.getIn([
                 'actors',
                 id.toString(),
@@ -272,7 +302,7 @@ const selectActorsWithActions = createSelector(
         }
       );
     }
-    return entities;
+    return actors;
   }
 );
 

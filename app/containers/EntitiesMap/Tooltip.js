@@ -46,7 +46,7 @@ const ButtonWrap = styled.div`
   right: 20px;
 `;
 const Main = styled.div`
-  padding: 20px;
+  padding: 20px 20px 40px;
   height: 235px;
   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2);
   display: block;
@@ -75,10 +75,17 @@ const CloseWrap = styled.div`
 `;
 
 const TTContent = styled.div`
-  font-size: ${(props) => props.theme.sizes.text.small};
+  font-size: ${({ theme }) => theme.sizes.text.default};
+  margin-top: 5px;
+`;
+const TTContentSecondary = styled.div`
+  font-size: ${({ theme }) => theme.sizes.text.smaller};
+  font-style: italic;
+  line-height: 1.1;
+  opacity: 0.8;
 `;
 
-const TTTitle = styled.h3`
+const TTTitle = styled.h4`
   margin-top: 0;
 `;
 
@@ -97,6 +104,8 @@ const Tooltip = ({
   onClose,
   onFeatureClick,
   typeLabels,
+  includeActorMembers,
+  includeTargetMembers,
 }) => (
   <Root position={position}>
     <Anchor dirLeft={direction.x === 'left'} w={WIDTH} xy={{ x: 0, y: 0 }}>
@@ -114,10 +123,20 @@ const Tooltip = ({
               {`${typeLabels.plural}: ${feature.values.actions}`}
             </TTContent>
           )}
+          {typeof feature.values.actions !== 'undefined' && typeLabels && (
+            <TTContentSecondary>
+              {includeActorMembers && (<span>Including actions as member of group</span>)}
+            </TTContentSecondary>
+          )}
           {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
             <TTContent>
               {`As target of ${typeLabels.plural}: ${feature.values.targetingActions}`}
             </TTContent>
+          )}
+          {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
+            <TTContentSecondary>
+              {includeTargetMembers && (<span>Including actions as member of targeted region, group, class</span>)}
+            </TTContentSecondary>
           )}
         </Stats>
         <ButtonWrap>
@@ -145,6 +164,8 @@ Tooltip.propTypes = {
   onClose: PropTypes.func,
   onFeatureClick: PropTypes.func,
   typeLabels: PropTypes.object,
+  includeActorMembers: PropTypes.bool,
+  includeTargetMembers: PropTypes.bool,
 };
 
 export default Tooltip;

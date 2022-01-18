@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 
@@ -142,7 +142,7 @@ class EntityListItemMainTaxonomies extends React.PureComponent { // eslint-disab
 }
 
 EntityListItemMainTaxonomies.propTypes = {
-  categories: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
+  categories: PropTypes.instanceOf(List), // eslint-disable-line react/no-unused-prop-types
   taxonomies: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
   onEntityClick: PropTypes.func,
 };

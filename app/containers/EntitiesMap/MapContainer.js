@@ -10,9 +10,10 @@ import { scaleLinear } from 'd3-scale';
 import L from 'leaflet';
 import 'proj4leaflet';
 
+import { MAP_OPTIONS } from 'themes/config';
+
 import qe from 'utils/quasi-equals';
 import Tooltip from './Tooltip';
-import Key from './Key';
 
 const Styled = styled.div`
   position: absolute;
@@ -24,31 +25,6 @@ const Styled = styled.div`
   z-index: 10;
 `;
 
-const MAP_OPTIONS = {
-  CENTER: [20, 0],
-  ZOOM: {
-    INIT: 1,
-    MIN: 0,
-    MAX: 9,
-  },
-  BOUNDS: {
-    N: 90,
-    W: -3600,
-    S: -90,
-    E: 3600,
-  },
-};
-
-const PROJ = {
-  name: 'Robinson',
-  crs: 'ESRI:54030',
-  proj4def: '+proj=robin +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs',
-  resolutions: [
-    65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 256, 128,
-  ],
-  origin: [0, 0],
-  bounds: [[90, -180], [-90, 180]], // [[N, W], [S, E]]
-};
 // const PROJ = {
 //   name: 'Custom',
 //   crs: 'ESRI:54030',
@@ -59,32 +35,6 @@ const PROJ = {
 //   origin: [0, 11.7],
 //   bounds: [[90, -180], [-90, 180]], // [[N, W], [S, E]]
 // };
-
-const DEFAULT_STYLE = {
-  weight: 1,
-  color: '#BBC3CD',
-  fillOpacity: 1,
-};
-const TOOLTIP_STYLE = {
-  weight: 1,
-  fillOpacity: 0,
-  color: '#666666',
-  interactive: false,
-};
-const OVER_STYLE = {
-  weight: 1,
-  fillOpacity: 0,
-  color: '#AAAAAA',
-  interactive: false,
-};
-const BBOX_STYLE = {
-  stroke: false,
-  fillColor: '#F1F3F3',
-  fillOpacity: 1,
-};
-
-const NO_DATA_COLOR = '#E2E2E2';
-const RANGE = ['#CAE0F7', '#164571'];
 
 const getBBox = (bounds, xLat = 0.5, xLon = 180) => {
   const nw = bounds[0];
@@ -127,13 +77,16 @@ const getBBox = (bounds, xLat = 0.5, xLon = 180) => {
 
 const scaleColorCount = (max) => scaleLinear()
   .domain([1, max])
-  .range(RANGE);
+  .range(MAP_OPTIONS.RANGE);
 
 export function MapContainer({
   countryFeatures,
   indicator,
   onCountryClick,
   typeLabels,
+  maxValue,
+  includeActorMembers,
+  includeTargetMembers,
 }) {
   const [tooltip, setTooltip] = useState(null);
   const [featureOver, setFeatureOver] = useState(null);
@@ -205,22 +158,15 @@ export function MapContainer({
   //     document.removeEventListener('mousedown', handleClickOutside);
   //   };
   // }, [ref]);
-  let maxValue;
-  if (countryFeatures) {
-    maxValue = countryFeatures.reduce((memo, f) => {
-      if (!memo) return f.values[indicator];
-      return Math.max(memo, f.values[indicator]);
-    }, null);
-  }
   useEffect(() => {
     mapRef.current = L.map('ll-map', {
       crs: new L.Proj.CRS(
-        PROJ.crs,
-        PROJ.proj4def,
+        MAP_OPTIONS.PROJ.crs,
+        MAP_OPTIONS.PROJ.proj4def,
         {
-          resolutions: PROJ.resolutions,
-          origin: PROJ.origin,
-          bounds: PROJ.bounds,
+          resolutions: MAP_OPTIONS.PROJ.resolutions,
+          origin: MAP_OPTIONS.PROJ.origin,
+          bounds: MAP_OPTIONS.PROJ.bounds,
         },
       ),
       // center: MAP_OPTIONS.CENTER,
@@ -237,7 +183,7 @@ export function MapContainer({
       attributionControl: false,
     }).on(mapEvents);
     // create an orange rectangle
-    L.geoJSON(getBBox(PROJ.bounds), BBOX_STYLE).addTo(mapRef.current);
+    L.geoJSON(getBBox(MAP_OPTIONS.PROJ.bounds), MAP_OPTIONS.BBOX_STYLE).addTo(mapRef.current);
     countryLayerGroupRef.current = L.layerGroup();
     countryLayerGroupRef.current.addTo(mapRef.current);
     countryTooltipGroupRef.current = L.layerGroup();
@@ -266,10 +212,10 @@ export function MapContainer({
         countryFeatures,
         {
           style: (f) => ({
-            ...DEFAULT_STYLE,
+            ...MAP_OPTIONS.DEFAULT_STYLE,
             fillColor: f.values && f.values[indicator] && f.values[indicator] > 0
               ? scale(f.values[indicator])
-              : NO_DATA_COLOR,
+              : MAP_OPTIONS.NO_DATA_COLOR,
           }),
           onEachFeature: (feature, layer) => {
             layer.on({
@@ -290,12 +236,18 @@ export function MapContainer({
       const jsonLayer = L.geoJSON(
         countryFeatures.filter((f) => qe(f.id, tooltip.feature.id)),
         {
-          style: TOOLTIP_STYLE,
+          style: MAP_OPTIONS.TOOLTIP_STYLE,
         },
       );
       countryTooltipGroupRef.current.addLayer(jsonLayer);
     }
   }, [tooltip]);
+  useEffect(() => {
+    countryTooltipGroupRef.current.clearLayers();
+    if (tooltip && countryFeatures) {
+      setTooltip(null);
+    }
+  }, [countryFeatures]);
 
   useEffect(() => {
     countryOverGroupRef.current.clearLayers();
@@ -303,7 +255,7 @@ export function MapContainer({
       const jsonLayer = L.geoJSON(
         countryFeatures.filter((f) => qe(f.id, featureOver)),
         {
-          style: OVER_STYLE,
+          style: MAP_OPTIONS.OVER_STYLE,
         },
       );
       countryOverGroupRef.current.addLayer(jsonLayer);
@@ -313,24 +265,6 @@ export function MapContainer({
   return (
     <>
       <Styled id="ll-map" ref={ref} />
-      {countryFeatures && !!maxValue && (
-        <Key
-          config={{
-            title: typeLabels.plural,
-            range: [1, maxValue],
-            stops: [
-              {
-                value: 1,
-                color: RANGE[0],
-              },
-              {
-                value: maxValue,
-                color: RANGE[1],
-              },
-            ],
-          }}
-        />
-      )}
       {tooltip && (
         <Tooltip
           position={null}
@@ -345,6 +279,8 @@ export function MapContainer({
               onCountryClick(tooltip.feature.id);
             }
           }}
+          includeActorMembers={includeActorMembers}
+          includeTargetMembers={includeTargetMembers}
         />
       )}
     </>
@@ -356,6 +292,9 @@ MapContainer.propTypes = {
   countryFeatures: PropTypes.array,
   indicator: PropTypes.string,
   onCountryClick: PropTypes.func,
+  maxValue: PropTypes.number,
+  includeActorMembers: PropTypes.bool,
+  includeTargetMembers: PropTypes.bool,
 };
 
 export default MapContainer;

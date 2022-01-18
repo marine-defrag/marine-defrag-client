@@ -681,3 +681,52 @@ export const DEFAULT_ACTIONTYPE = '1';
 export const DEFAULT_RESOURCETYPE = '1';
 export const DEFAULT_TAXONOMY = '11';
 export const NO_PARENT_KEY = 'parentUndefined';
+
+export const MAP_OPTIONS = {
+  RANGE: ['#CAE0F7', '#164571'],
+  NO_DATA_COLOR: '#E2E2E2',
+  DEFAULT_STYLE: {
+    weight: 1,
+    color: '#BBC3CD',
+    fillOpacity: 1,
+  },
+  TOOLTIP_STYLE: {
+    weight: 1,
+    fillOpacity: 0,
+    color: '#666666',
+    interactive: false,
+  },
+  OVER_STYLE: {
+    weight: 1,
+    fillOpacity: 0,
+    color: '#AAAAAA',
+    interactive: false,
+  },
+  BBOX_STYLE: {
+    stroke: false,
+    fillColor: '#F1F3F3',
+    fillOpacity: 1,
+  },
+  CENTER: [20, 0],
+  ZOOM: {
+    INIT: 1,
+    MIN: 0,
+    MAX: 9,
+  },
+  BOUNDS: {
+    N: 90,
+    W: -3600,
+    S: -90,
+    E: 3600,
+  },
+  PROJ: {
+    name: 'Robinson',
+    crs: 'ESRI:54030',
+    proj4def: '+proj=robin +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs',
+    resolutions: [
+      65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 256, 128,
+    ],
+    origin: [0, 0],
+    bounds: [[90, -180], [-90, 180]], // [[N, W], [S, E]]
+  },
+};

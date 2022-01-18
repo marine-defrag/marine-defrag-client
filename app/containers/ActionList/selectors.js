@@ -19,8 +19,8 @@ import {
   selectReady,
   selectActorCategoriesGroupedByActor,
   selectActionCategoriesGroupedByAction,
-  selectActorActionsGroupedByAction, // active
-  selectActionActorsGroupedByAction, // passive, as targets
+  selectActorActionsWithMembersGroupedByAction, // active
+  selectActionActorsWithMembersGroupedByAction, // passive, as targets
   selectCategories,
   selectActionResourcesGroupedByAction,
   selectResources,
@@ -172,11 +172,18 @@ const selectActionsWithConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActionsWithCategories,
   selectConnections,
-  selectActorActionsGroupedByAction,
-  selectActionActorsGroupedByAction,
+  selectActorActionsWithMembersGroupedByAction,
+  selectActionActorsWithMembersGroupedByAction,
   selectActionResourcesGroupedByAction,
-  (ready, entities, connections, actorAssociationsGrouped, targetAssociationsGrouped, resourceAssociationsGrouped) => {
-    if (ready && (connections.get('actors') || connections.get('resources') || connections.get(''))) {
+  (
+    ready,
+    entities,
+    connections,
+    actorAssociationsGrouped,
+    targetAssociationsGrouped,
+    resourceAssociationsGrouped,
+  ) => {
+    if (ready && (connections.get('actors') || connections.get('resources'))) {
       return entities.map(
         (entity) => {
           const entityActors = actorAssociationsGrouped.get(parseInt(entity.get('id'), 10));
@@ -198,18 +205,18 @@ const selectActionsWithConnections = createSelector(
           // console.log('targetAssociationsGrouped', targetAssociationsGrouped && targetAssociationsGrouped.toJS())
           const entityTargetsByActortype = entityTargets && entityTargets.filter(
             (actorId) => connections.getIn([
-              'targets',
+              'actors',
               actorId.toString(),
             ])
           ).groupBy(
             (actorId) => connections.getIn([
-              'targets',
+              'actors',
               actorId.toString(),
               'attributes',
               'actortype_id',
             ])
           ).sortBy((val, key) => key);
-
+          // resources
           const entityResources = resourceAssociationsGrouped.get(parseInt(entity.get('id'), 10));
           const entityResourcesByResourcetype = entityResources && entityResources.filter(
             (resourceId) => connections.getIn([
