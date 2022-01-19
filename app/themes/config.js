@@ -9,92 +9,9 @@
  *
  */
 
-// Language and date settings ********************
-// Note: you may also set the locales in i18n.js
-
-// default language locale
-export const DEFAULT_LOCALE = 'en-GB';
-// date format - change to format according to locale, only used for form error message
-export const DATE_FORMAT = 'dd/MM/yyyy';
+// General ********************
 export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
-// UI settings ************************
-
-// show app title and claim in header when not included in graphic
-// set in translations/[LOCALE].js
-// - app.containers.App.app.title
-// - app.containers.App.app.claim
-export const SHOW_HEADER_TITLE = true;
-
-// show header pattern
-// specified in themes/[theme].js: theme.backgroundImages.header
-export const SHOW_HEADER_PATTERN = true;
-export const HEADER_PATTERN_HEIGHT = 254;
-
-// show header pattern
-// specified in themes/[theme].js: theme.backgroundImages.sidebarHeader
-export const SHOW_SIDEBAR_HEADER_PATTERN = false;
-
-// show app title and claim in home when not included in graphic
-// set in translations/[LOCALE].js
-// - app.containers.App.app.title
-// - app.containers.App.app.claim
-export const SHOW_HOME_TITLE = true;
-
-export const SHOW_BRAND_ON_HOME = true;
-export const SHOW_HEADER_PATTERN_HOME_GRAPHIC = false;
-
-// show footer logo section
-export const FOOTER = {
-  PARTNERS: false,
-  LINK_TARGET_INTERNAL: false,
-  LINK_TARGET_INTERNAL_ID: 1,
-};
-
-// entitylists items-per-page options
-// export const PAGE_ITEM_OPTIONS = [10, 20, 50, 100, 'all'];
-export const PAGE_ITEM_OPTIONS = [
-  {
-    value: 10,
-  },
-  {
-    value: 20,
-  },
-  {
-    value: 50,
-  },
-  {
-    value: 100,
-  },
-  {
-    value: 'all',
-    message: 'ui.pageItemOptions.all',
-  },
-];
-
-export const TEXT_TRUNCATE = {
-  CONNECTION_TAG: 20,
-  ATTRIBUTE_TAG: 10,
-  ENTITY_TAG: 7,
-  CONNECTION_POPUP: 80,
-  LINK_FIELD: 30,
-  TYPE_SELECT: 24,
-  GRACE: 2,
-  META_TITLE: 20,
-};
-
-export const COLUMN_WIDTHS = {
-  FULL: 1,
-  HALF: 0.5,
-  MAIN: 0.72,
-  OTHER: 0.28,
-};
-
-/**
- * Server settings
- * */
-
-// General ********************
 const IS_DEV = false;
 
 export const ENDPOINTS = {
@@ -108,54 +25,6 @@ export const ENDPOINTS = {
   PASSWORD: 'auth/password',
   VALIDATE_TOKEN: 'auth/validate_token',
 };
-
-// API request Authentification keys
-export const KEYS = {
-  ACCESS_TOKEN: 'access-token',
-  TOKEN_TYPE: 'token-type',
-  CLIENT: 'client',
-  EXPIRY: 'expiry',
-  UID: 'uid',
-  // RESET_PASSWORD: 'reset_password',
-};
-
-// database date format
-export const API_DATE_FORMAT = 'yyyy-MM-dd';
-
-
-// Map server messages *********************************
-
-// Map server error messages to allow client-side translation
-export const SERVER_ERRORS = {
-  RECORD_OUTDATED: 'Record outdated',
-  EMAIL_FORMAT: 'Email: is not an email',
-  PASSWORD_MISMATCH: 'Password confirmation doesn\'t match Password',
-  PASSWORD_SHORT: 'Password is too short (minimum is 6 characters)',
-  PASSWORD_INVALID: 'Current password is invalid',
-  TITLE_REQUIRED: 'Title: can\'t be blank',
-  REFERENCE_REQUIRED: 'Reference: can\'t be blank',
-};
-
-// Map server attribute values **************************
-
-// user roles
-export const USER_ROLES = {
-  ADMIN: { value: 1, message: 'ui.userRoles.admin' },
-  MANAGER: { value: 2, message: 'ui.userRoles.manager' },
-  ANALYST: { value: 3, message: 'ui.userRoles.analyst' },
-  DEFAULT: { value: 9999, message: 'ui.userRoles.default' }, // note: client side only - no role assigned on server
-};
-// Entity publish statuses
-export const PUBLISH_STATUSES = [
-  { value: true, message: 'ui.publishStatuses.draft' },
-  { value: false, message: 'ui.publishStatuses.public' },
-];
-
-export const DEFAULT_ACTORTYPE = '1';
-export const DEFAULT_ACTIONTYPE = '1';
-export const DEFAULT_RESOURCETYPE = '1';
-export const DEFAULT_TAXONOMY = '11';
-export const NO_PARENT_KEY = 'parentUndefined';
 
 // client app routes **************************
 export const ROUTES = {
@@ -687,3 +556,177 @@ export const ACTIONTYPE_RESOURCETYPES = {
 };
 
 export const KEEP_FILTERS = ['view', 'ms'];
+
+// Language and date settings ********************
+// Note: you may also set the locales in i18n.js
+
+// default language locale
+export const DEFAULT_LOCALE = 'en-GB';
+// date format - change to format according to locale, only used for form error message
+export const DATE_FORMAT = 'dd/MM/yyyy';
+
+// UI settings ************************
+
+// show app title and claim in header when not included in graphic
+// set in translations/[LOCALE].js
+// - app.containers.App.app.title
+// - app.containers.App.app.claim
+export const SHOW_HEADER_TITLE = true;
+
+// show header pattern
+// specified in themes/[theme].js: theme.backgroundImages.header
+export const SHOW_HEADER_PATTERN = true;
+export const HEADER_PATTERN_HEIGHT = 254;
+
+// show header pattern
+// specified in themes/[theme].js: theme.backgroundImages.sidebarHeader
+export const SHOW_SIDEBAR_HEADER_PATTERN = false;
+
+// show app title and claim in home when not included in graphic
+// set in translations/[LOCALE].js
+// - app.containers.App.app.title
+// - app.containers.App.app.claim
+export const SHOW_HOME_TITLE = true;
+
+export const SHOW_BRAND_ON_HOME = true;
+export const SHOW_HEADER_PATTERN_HOME_GRAPHIC = false;
+
+// show footer logo section
+export const FOOTER = {
+  PARTNERS: false,
+  LINK_TARGET_INTERNAL: false,
+  LINK_TARGET_INTERNAL_ID: 1,
+};
+
+// entitylists items-per-page options
+// export const PAGE_ITEM_OPTIONS = [10, 20, 50, 100, 'all'];
+export const PAGE_ITEM_OPTIONS = [
+  { value: 10 },
+  { value: 20 },
+  { value: 50 },
+  { value: 100 },
+  {
+    value: 'all',
+    message: 'ui.pageItemOptions.all',
+  },
+];
+
+export const TEXT_TRUNCATE = {
+  CONNECTION_TAG: 20,
+  ATTRIBUTE_TAG: 10,
+  ENTITY_TAG: 7,
+  CONNECTION_POPUP: 80,
+  LINK_FIELD: 30,
+  TYPE_SELECT: 24,
+  GRACE: 2,
+  META_TITLE: 20,
+};
+
+export const COLUMN_WIDTHS = {
+  FULL: 1,
+  HALF: 0.5,
+  MAIN: 0.72,
+  OTHER: 0.28,
+};
+
+
+/**
+ * Server settings
+ * */
+
+// API request Authentification keys
+export const KEYS = {
+  ACCESS_TOKEN: 'access-token',
+  TOKEN_TYPE: 'token-type',
+  CLIENT: 'client',
+  EXPIRY: 'expiry',
+  UID: 'uid',
+  // RESET_PASSWORD: 'reset_password',
+};
+
+// database date format
+export const API_DATE_FORMAT = 'yyyy-MM-dd';
+
+
+// Map server messages *********************************
+
+// Map server error messages to allow client-side translation
+export const SERVER_ERRORS = {
+  RECORD_OUTDATED: 'Record outdated',
+  EMAIL_FORMAT: 'Email: is not an email',
+  PASSWORD_MISMATCH: 'Password confirmation doesn\'t match Password',
+  PASSWORD_SHORT: 'Password is too short (minimum is 6 characters)',
+  PASSWORD_INVALID: 'Current password is invalid',
+  TITLE_REQUIRED: 'Title: can\'t be blank',
+  REFERENCE_REQUIRED: 'Reference: can\'t be blank',
+};
+
+// Map server attribute values **************************
+
+// user roles
+export const USER_ROLES = {
+  ADMIN: { value: 1, message: 'ui.userRoles.admin' },
+  MANAGER: { value: 2, message: 'ui.userRoles.manager' },
+  ANALYST: { value: 3, message: 'ui.userRoles.analyst' },
+  DEFAULT: { value: 9999, message: 'ui.userRoles.default' }, // note: client side only - no role assigned on server
+};
+// Entity publish statuses
+export const PUBLISH_STATUSES = [
+  { value: true, message: 'ui.publishStatuses.draft' },
+  { value: false, message: 'ui.publishStatuses.public' },
+];
+
+export const DEFAULT_ACTORTYPE = '1';
+export const DEFAULT_ACTIONTYPE = '1';
+export const DEFAULT_RESOURCETYPE = '1';
+export const DEFAULT_TAXONOMY = '11';
+export const NO_PARENT_KEY = 'parentUndefined';
+
+export const MAP_OPTIONS = {
+  RANGE: ['#CAE0F7', '#164571'],
+  NO_DATA_COLOR: '#E2E2E2',
+  DEFAULT_STYLE: {
+    weight: 1,
+    color: '#BBC3CD',
+    fillOpacity: 1,
+  },
+  TOOLTIP_STYLE: {
+    weight: 1,
+    fillOpacity: 0,
+    color: '#666666',
+    interactive: false,
+  },
+  OVER_STYLE: {
+    weight: 1,
+    fillOpacity: 0,
+    color: '#AAAAAA',
+    interactive: false,
+  },
+  BBOX_STYLE: {
+    stroke: false,
+    fillColor: '#F1F3F3',
+    fillOpacity: 1,
+  },
+  CENTER: [20, 0],
+  ZOOM: {
+    INIT: 1,
+    MIN: 0,
+    MAX: 9,
+  },
+  BOUNDS: {
+    N: 90,
+    W: -3600,
+    S: -90,
+    E: 3600,
+  },
+  PROJ: {
+    name: 'Robinson',
+    crs: 'ESRI:54030',
+    proj4def: '+proj=robin +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs',
+    resolutions: [
+      65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 256, 128,
+    ],
+    origin: [0, 0],
+    bounds: [[90, -180], [-90, 180]], // [[N, W], [S, E]]
+  },
+};

@@ -71,6 +71,8 @@ export const DISMISS_QUERY_MESSAGES = 'impactoss/App/DISMISS_QUERY_MESSAGES';
 export const SET_ACTIONTYPE = 'impactoss/App/SET_ACTIONTYPE';
 export const SET_VIEW = 'impactoss/App/SET_VIEW';
 export const SET_MAPSUBJECT = 'impactoss/App/SET_MAPSUBJECT';
+export const SET_INCLUDE_ACTOR_MEMBERS = 'impactoss/App/SET_INCLUDE_ACTOR_MEMBERS';
+export const SET_INCLUDE_TARGET_MEMBERS = 'impactoss/App/SET_INCLUDE_TARGET_MEMBERS';
 
 export const FILTERS_PANEL = 'filters';
 export const EDIT_PANEL = 'edit';

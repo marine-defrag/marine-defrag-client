@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 
 import Component from 'components/styled/Component';
 
@@ -57,7 +57,7 @@ class EntityListItemMainBottom extends React.PureComponent { // eslint-disable-l
 EntityListItemMainBottom.propTypes = {
   connections: PropTypes.array,
   wrapper: PropTypes.object,
-  categories: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
+  categories: PropTypes.instanceOf(List), // eslint-disable-line react/no-unused-prop-types
   taxonomies: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
   onEntityClick: PropTypes.func,
 };

@@ -64,6 +64,8 @@ import {
   OPEN_BOOKMARK,
   SET_VIEW,
   SET_MAPSUBJECT,
+  SET_INCLUDE_ACTOR_MEMBERS,
+  SET_INCLUDE_TARGET_MEMBERS,
 } from './constants';
 
 export function submitInvalid(valid) {
@@ -459,6 +461,18 @@ export function setMapSubject(subject) {
   return {
     type: SET_MAPSUBJECT,
     subject,
+  };
+}
+export function setIncludeActorMembers(value) {
+  return {
+    type: SET_INCLUDE_ACTOR_MEMBERS,
+    value,
+  };
+}
+export function setIncludeTargetMembers(value) {
+  return {
+    type: SET_INCLUDE_TARGET_MEMBERS,
+    value,
   };
 }
 export function openBookmark(bookmark) {

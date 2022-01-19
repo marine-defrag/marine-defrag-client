@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 import {
   selectEntities,
   selectActorsSearchQuery,
@@ -22,10 +22,6 @@ import {
   selectActionTaxonomies,
   selectMemberQuery,
   selectAssociationQuery,
-  // selectActorConnections,
-  // selectActortypeTaxonomies,
-  // selectActortypeQuery,
-  // selectActortypeListQuery,
 } from 'containers/App/selectors';
 
 import {
@@ -170,6 +166,26 @@ const selectActorsWithCategories = createSelector(
 //     return entities;
 //   }
 // );
+const actionsByType = (actorActions, actions) => actorActions && actions && actorActions.filter(
+  (id) => actions.get(id.toString())
+).groupBy(
+  (actionId) => actions.getIn([
+    actionId.toString(),
+    'attributes',
+    'measuretype_id',
+  ])
+).sortBy((val, key) => key);
+
+const actorsByType = (actorActors, actors) => actorActors && actors && actorActors.filter(
+  (id) => actors.get(id.toString())
+).groupBy(
+  (actionId) => actors.getIn([
+    actionId.toString(),
+    'attributes',
+    'actortype_id',
+  ])
+).sortBy((val, key) => key);
+
 const selectActorsWithActions = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActorsWithCategories,
@@ -180,99 +196,69 @@ const selectActorsWithActions = createSelector(
   selectMembershipsGroupedByMember,
   (
     ready,
-    entities,
+    actors,
     connections,
-    actorAssociationsGrouped,
-    targetAssociationsGrouped,
+    actionsAsActorGrouped,
+    actionsAsTargetGrouped,
     memberAssociationsGrouped,
     associationAssociationsGrouped,
   ) => {
     if (ready) {
-      return entities.map(
-        (entity) => {
-          const entityActions = actorAssociationsGrouped.get(parseInt(entity.get('id'), 10));
-          const targetActions = targetAssociationsGrouped.get(parseInt(entity.get('id'), 10));
-          const entityMembers = memberAssociationsGrouped.get(parseInt(entity.get('id'), 10));
-          const entityAssociations = associationAssociationsGrouped.get(parseInt(entity.get('id'), 10));
-          // console.log(entityActorsByActortype && entityActorsByActortype.toJS());
-          // currently requires both for filtering & display
-          return entity.set(
-            'actions',
-            entityActions
-          ).set(
-            'actionsByType',
-            entityActions && connections.get('actions') && entityActions.filter(
-              (id) => connections.getIn([
-                'actions',
-                id.toString(),
-              ])
-            ).groupBy(
-              (actionId) => connections.getIn([
-                'actions',
-                actionId.toString(),
-                'attributes',
-                'measuretype_id',
-              ])
-            ).sortBy((val, key) => key),
-          ).set(
-            'targetingActions',
-            targetActions,
-          ).set(
-            'targetingActionsByType',
-            targetActions && connections.get('actions') && targetActions.filter(
-              (id) => connections.getIn([
-                'actions',
-                id.toString(),
-              ])
-            ).groupBy(
-              (actionId) => connections.getIn([
-                'actions',
-                actionId.toString(),
-                'attributes',
-                'measuretype_id',
-              ])
-            ).sortBy((val, key) => key),
-          ).set(
-            'members',
-            entityMembers,
-          ).set(
-            'membersByType',
-            entityMembers && connections.get('actors') && entityMembers.filter(
-              (id) => connections.getIn([
-                'actors',
-                id.toString(),
-              ])
-            ).groupBy(
-              (actionId) => connections.getIn([
-                'actors',
-                actionId.toString(),
-                'attributes',
-                'actortype_id',
-              ])
-            ).sortBy((val, key) => key),
-          ).set(
-            'associations',
-            entityAssociations,
-          ).set(
-            'associationsByType',
-            entityAssociations && connections.get('actors') && entityAssociations.filter(
-              (id) => connections.getIn([
-                'actors',
-                id.toString(),
-              ])
-            ).groupBy(
-              (actionId) => connections.getIn([
-                'actors',
-                actionId.toString(),
-                'attributes',
-                'actortype_id',
-              ])
-            ).sortBy((val, key) => key),
-          );
+      return actors.map(
+        (actor) => {
+          // actors
+          const actorActions = actionsAsActorGrouped.get(parseInt(actor.get('id'), 10)) || List();
+          const actorActionsByType = actionsByType(actorActions, connections.get('actions'));
+
+          // targets
+          const targetActions = actionsAsTargetGrouped.get(parseInt(actor.get('id'), 10)) || List();
+          const targetingActionsByType = actionsByType(targetActions, connections.get('actions'));
+
+          // members
+          const actorMembers = memberAssociationsGrouped.get(parseInt(actor.get('id'), 10));
+          const actorMembersByType = actorsByType(actorMembers, connections.get('actors'));
+
+          // memberships
+          const actorAssociations = associationAssociationsGrouped.get(parseInt(actor.get('id'), 10));
+          const actorAssociationsByType = actorsByType(actorAssociations, connections.get('actors'));
+
+          // actions as member of group
+          const actorActionsAsMember = actorAssociations && actorAssociations.size > 0 && actorAssociations.reduce((memo, associationId) => {
+            const associationActions = actionsAsActorGrouped.get(parseInt(associationId, 10));
+            if (associationActions) {
+              return memo.concat(associationActions);
+            }
+            return memo;
+          }, List());
+          const actorActionsAsMemberByType = actorActionsAsMember && actionsByType(actorActionsAsMember, connections.get('actions'));
+
+          // targeted by actions as member of group
+          const targetActionsAsMember = actorAssociations && actorAssociations.size > 0 && actorAssociations.reduce((memo, associationId) => {
+            const associationActionsAsTarget = actionsAsTargetGrouped.get(parseInt(associationId, 10));
+            if (associationActionsAsTarget) {
+              return memo.concat(associationActionsAsTarget);
+            }
+            return memo;
+          }, List());
+          const targetActionsAsMemberByType = targetActionsAsMember && actionsByType(targetActionsAsMember, connections.get('actions'));
+
+          return actor
+            .set('actions', actorActions)
+            .set('actionsByType', actorActionsByType)
+            .set('actionsAsMembers', actorActionsAsMember)
+            .set('actionsAsMembersByType', actorActionsAsMemberByType)
+            .set('targetingActions', targetActions)
+            .set('targetingActionsByType', targetingActionsByType)
+            .set('targetingActionsAsMember', targetActionsAsMember)
+            .set('targetingActionsAsMemberByType', targetActionsAsMemberByType)
+            .set('members', actorMembers)
+            .set('membersByType', actorMembersByType)
+            .set('associations', actorAssociations)
+            .set('associationsByType', actorAssociationsByType);
         }
       );
     }
-    return entities;
+    return actors;
   }
 );
 

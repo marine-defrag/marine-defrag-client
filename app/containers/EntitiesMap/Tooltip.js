@@ -46,7 +46,7 @@ const ButtonWrap = styled.div`
   right: 20px;
 `;
 const Main = styled.div`
-  padding: 20px;
+  padding: 20px 20px 40px;
   height: 235px;
   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2);
   display: block;
@@ -75,11 +75,22 @@ const CloseWrap = styled.div`
 `;
 
 const TTContent = styled.div`
-  font-size: ${(props) => props.theme.sizes.text.small};
+  font-size: ${({ theme }) => theme.sizes.text.small};
 `;
-
-const TTTitle = styled.h3`
-  margin-top: 0;
+const TTFootnote = styled.div`
+  font-size: ${({ theme }) => theme.sizes.text.small};
+  margin-top: 15px;
+  font-style: italic;
+  position: absolute;
+  bottom: 10px;
+  left: 20px;
+`;
+const TTTitle = styled.h4`
+  margin: 0 0 5px;
+`;
+const TTSectionTitle = styled.div`
+  margin: 15px 0 3px;
+  font-size: ${({ theme }) => theme.sizes.text.default};
 `;
 
 // const CloseButton = styled.button`
@@ -88,7 +99,7 @@ const TTTitle = styled.h3`
 //   background: black;
 // `;
 
-const WIDTH = 320;
+const WIDTH = 350;
 
 const Tooltip = ({
   position,
@@ -97,6 +108,9 @@ const Tooltip = ({
   onClose,
   onFeatureClick,
   typeLabels,
+  includeActorMembers,
+  includeTargetMembers,
+  mapSubject,
 }) => (
   <Root position={position}>
     <Anchor dirLeft={direction.x === 'left'} w={WIDTH} xy={{ x: 0, y: 0 }}>
@@ -110,15 +124,58 @@ const Tooltip = ({
         <TTTitle>{feature.tooltip.title}</TTTitle>
         <Stats>
           {typeof feature.values.actions !== 'undefined' && typeLabels && (
+            <TTSectionTitle>
+              {`${typeLabels.plural}`}
+            </TTSectionTitle>
+          )}
+          {typeof feature.values.actions !== 'undefined' && typeLabels && (
             <TTContent>
-              {`${typeLabels.plural}: ${feature.values.actions}`}
+              {`${feature.values.actions}: as direct actor`}
+              {mapSubject === 'actors' && (
+                <span>
+                  {' *'}
+                </span>
+              )}
+            </TTContent>
+          )}
+          {typeof feature.values.actionsMembers !== 'undefined' && typeLabels && (
+            <TTContent>
+              {`${feature.values.actionsMembers}: as member of group actor`}
+              {mapSubject === 'actors' && includeActorMembers && (
+                <span>
+                  {' *'}
+                </span>
+              )}
             </TTContent>
           )}
           {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
+            <TTSectionTitle>
+              {`Target of ${typeLabels.plural}`}
+            </TTSectionTitle>
+          )}
+          {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
             <TTContent>
-              {`As target of ${typeLabels.plural}: ${feature.values.targetingActions}`}
+              {`${feature.values.targetingActions}: as direct target`}
+              {mapSubject === 'targets' && (
+                <span>
+                  {' *'}
+                </span>
+              )}
             </TTContent>
           )}
+          {typeof feature.values.targetingActionsMembers !== 'undefined' && typeLabels && (
+            <TTContent>
+              {`${feature.values.targetingActionsMembers}: as member of targeted region, group or class`}
+              {mapSubject === 'targets' && includeTargetMembers && (
+                <span>
+                  {' *'}
+                </span>
+              )}
+            </TTContent>
+          )}
+          <TTFootnote>
+            {'* visualised on map'}
+          </TTFootnote>
         </Stats>
         <ButtonWrap>
           <ButtonSecondary onClick={onFeatureClick}>
@@ -145,6 +202,9 @@ Tooltip.propTypes = {
   onClose: PropTypes.func,
   onFeatureClick: PropTypes.func,
   typeLabels: PropTypes.object,
+  includeActorMembers: PropTypes.bool,
+  includeTargetMembers: PropTypes.bool,
+  mapSubject: PropTypes.string,
 };
 
 export default Tooltip;
