@@ -87,6 +87,7 @@ export function MapContainer({
   maxValue,
   includeActorMembers,
   includeTargetMembers,
+  mapSubject,
 }) {
   const [tooltip, setTooltip] = useState(null);
   const [featureOver, setFeatureOver] = useState(null);
@@ -241,13 +242,13 @@ export function MapContainer({
       );
       countryTooltipGroupRef.current.addLayer(jsonLayer);
     }
-  }, [tooltip]);
-  useEffect(() => {
-    countryTooltipGroupRef.current.clearLayers();
-    if (tooltip && countryFeatures) {
-      setTooltip(null);
-    }
-  }, [countryFeatures]);
+  }, [tooltip, mapSubject, includeActorMembers, includeTargetMembers]);
+  // useEffect(() => {
+  //   countryTooltipGroupRef.current.clearLayers();
+  //   if (tooltip && countryFeatures) {
+  //     setTooltip(null);
+  //   }
+  // }, [countryFeatures]);
 
   useEffect(() => {
     countryOverGroupRef.current.clearLayers();
@@ -281,6 +282,7 @@ export function MapContainer({
           }}
           includeActorMembers={includeActorMembers}
           includeTargetMembers={includeTargetMembers}
+          mapSubject={mapSubject}
         />
       )}
     </>
@@ -295,6 +297,8 @@ MapContainer.propTypes = {
   maxValue: PropTypes.number,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
+  mapSubject: PropTypes.string,
+  // onSetMapSubject: PropTypes.func,
 };
 
 export default MapContainer;

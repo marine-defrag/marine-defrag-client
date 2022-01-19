@@ -19,8 +19,10 @@ import {
   selectReady,
   selectActorCategoriesGroupedByActor,
   selectActionCategoriesGroupedByAction,
-  selectActorActionsWithMembersGroupedByAction, // active
-  selectActionActorsWithMembersGroupedByAction, // passive, as targets
+  selectActorActionsGroupedByAction, // active
+  selectActorActionsMembersGroupedByAction,
+  selectActionActorsGroupedByAction, // passive, as targets
+  selectActionActorsMembersGroupedByAction, // passive, as targets
   selectCategories,
   selectActionResourcesGroupedByAction,
   selectResources,
@@ -172,20 +174,25 @@ const selectActionsWithConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActionsWithCategories,
   selectConnections,
-  selectActorActionsWithMembersGroupedByAction,
-  selectActionActorsWithMembersGroupedByAction,
+  selectActorActionsGroupedByAction,
+  selectActorActionsMembersGroupedByAction,
+  selectActionActorsGroupedByAction,
+  selectActionActorsMembersGroupedByAction,
   selectActionResourcesGroupedByAction,
   (
     ready,
     entities,
     connections,
     actorAssociationsGrouped,
+    actorMemberAssociationsGrouped,
     targetAssociationsGrouped,
+    targetMemberAssociationsGrouped,
     resourceAssociationsGrouped,
   ) => {
     if (ready && (connections.get('actors') || connections.get('resources'))) {
       return entities.map(
         (entity) => {
+          // actors
           const entityActors = actorAssociationsGrouped.get(parseInt(entity.get('id'), 10));
           const entityActorsByActortype = entityActors && entityActors.filter(
             (actorId) => connections.getIn([
@@ -200,10 +207,46 @@ const selectActionsWithConnections = createSelector(
               'actortype_id',
             ])
           ).sortBy((val, key) => key);
+
+          // actors as mambers
+          const entityActorsMembers = actorMemberAssociationsGrouped.get(parseInt(entity.get('id'), 10));
+          const entityActorsMembersByActortype = entityActorsMembers && entityActorsMembers.filter(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
+            ])
+          ).groupBy(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
+              'attributes',
+              'actortype_id',
+            ])
+          ).sortBy((val, key) => key);
+
+          // targets
           const entityTargets = targetAssociationsGrouped.get(parseInt(entity.get('id'), 10));
           // console.log('actorAssociationsGrouped', actorAssociationsGrouped && actorAssociationsGrouped.toJS())
           // console.log('targetAssociationsGrouped', targetAssociationsGrouped && targetAssociationsGrouped.toJS())
           const entityTargetsByActortype = entityTargets && entityTargets.filter(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
+            ])
+          ).groupBy(
+            (actorId) => connections.getIn([
+              'actors',
+              actorId.toString(),
+              'attributes',
+              'actortype_id',
+            ])
+          ).sortBy((val, key) => key);
+
+          // targets as members
+          const entityTargetsMembers = targetMemberAssociationsGrouped.get(parseInt(entity.get('id'), 10));
+          // console.log('actorAssociationsGrouped', actorAssociationsGrouped && actorAssociationsGrouped.toJS())
+          // console.log('targetAssociationsGrouped', targetAssociationsGrouped && targetAssociationsGrouped.toJS())
+          const entityTargetsMembersByActortype = entityTargetsMembers && entityTargetsMembers.filter(
             (actorId) => connections.getIn([
               'actors',
               actorId.toString(),
@@ -233,25 +276,17 @@ const selectActionsWithConnections = createSelector(
           ).sortBy((val, key) => key);
           // console.log(entityActorsByActortype && entityActorsByActortype.toJS());
           // currently requires both for filtering & display
-          return entity.set(
-            'actors',
-            entityActors,
-          ).set(
-            'actorsByType',
-            entityActorsByActortype,
-          ).set(
-            'targets',
-            entityTargets,
-          ).set(
-            'targetsByType',
-            entityTargetsByActortype,
-          ).set(
-            'resources',
-            entityResources,
-          ).set(
-            'resourcesByType',
-            entityResourcesByResourcetype,
-          );
+          return entity
+            .set('actors', entityActors)
+            .set('actorsByType', entityActorsByActortype)
+            .set('actorsMembers', entityActorsMembers)
+            .set('actorsMembersByType', entityActorsMembersByActortype)
+            .set('targets', entityTargets)
+            .set('targetsByType', entityTargetsByActortype)
+            .set('targetsMembers', entityTargetsMembers)
+            .set('targetsMembersByType', entityTargetsMembersByActortype)
+            .set('resources', entityResources)
+            .set('resourcesByType', entityResourcesByResourcetype);
         }
       );
     }

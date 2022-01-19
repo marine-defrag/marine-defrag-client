@@ -75,18 +75,22 @@ const CloseWrap = styled.div`
 `;
 
 const TTContent = styled.div`
-  font-size: ${({ theme }) => theme.sizes.text.default};
-  margin-top: 5px;
+  font-size: ${({ theme }) => theme.sizes.text.small};
 `;
-const TTContentSecondary = styled.div`
-  font-size: ${({ theme }) => theme.sizes.text.smaller};
+const TTFootnote = styled.div`
+  font-size: ${({ theme }) => theme.sizes.text.small};
+  margin-top: 15px;
   font-style: italic;
-  line-height: 1.1;
-  opacity: 0.8;
+  position: absolute;
+  bottom: 10px;
+  left: 20px;
 `;
-
 const TTTitle = styled.h4`
-  margin-top: 0;
+  margin: 0 0 5px;
+`;
+const TTSectionTitle = styled.div`
+  margin: 15px 0 3px;
+  font-size: ${({ theme }) => theme.sizes.text.default};
 `;
 
 // const CloseButton = styled.button`
@@ -95,7 +99,7 @@ const TTTitle = styled.h4`
 //   background: black;
 // `;
 
-const WIDTH = 320;
+const WIDTH = 350;
 
 const Tooltip = ({
   position,
@@ -106,6 +110,7 @@ const Tooltip = ({
   typeLabels,
   includeActorMembers,
   includeTargetMembers,
+  mapSubject,
 }) => (
   <Root position={position}>
     <Anchor dirLeft={direction.x === 'left'} w={WIDTH} xy={{ x: 0, y: 0 }}>
@@ -119,25 +124,58 @@ const Tooltip = ({
         <TTTitle>{feature.tooltip.title}</TTTitle>
         <Stats>
           {typeof feature.values.actions !== 'undefined' && typeLabels && (
-            <TTContent>
-              {`${typeLabels.plural}: ${feature.values.actions}`}
-            </TTContent>
+            <TTSectionTitle>
+              {`${typeLabels.plural}`}
+            </TTSectionTitle>
           )}
           {typeof feature.values.actions !== 'undefined' && typeLabels && (
-            <TTContentSecondary>
-              {includeActorMembers && (<span>Including actions as member of group</span>)}
-            </TTContentSecondary>
-          )}
-          {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
             <TTContent>
-              {`As target of ${typeLabels.plural}: ${feature.values.targetingActions}`}
+              {`${feature.values.actions}: as direct actor`}
+              {mapSubject === 'actors' && (
+                <span>
+                  {' *'}
+                </span>
+              )}
+            </TTContent>
+          )}
+          {typeof feature.values.actionsMembers !== 'undefined' && typeLabels && (
+            <TTContent>
+              {`${feature.values.actionsMembers}: as member of group actor`}
+              {mapSubject === 'actors' && includeActorMembers && (
+                <span>
+                  {' *'}
+                </span>
+              )}
             </TTContent>
           )}
           {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
-            <TTContentSecondary>
-              {includeTargetMembers && (<span>Including actions as member of targeted region, group, class</span>)}
-            </TTContentSecondary>
+            <TTSectionTitle>
+              {`Target of ${typeLabels.plural}`}
+            </TTSectionTitle>
           )}
+          {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
+            <TTContent>
+              {`${feature.values.targetingActions}: as direct target`}
+              {mapSubject === 'targets' && (
+                <span>
+                  {' *'}
+                </span>
+              )}
+            </TTContent>
+          )}
+          {typeof feature.values.targetingActionsMembers !== 'undefined' && typeLabels && (
+            <TTContent>
+              {`${feature.values.targetingActionsMembers}: as member of targeted region, group or class`}
+              {mapSubject === 'targets' && includeTargetMembers && (
+                <span>
+                  {' *'}
+                </span>
+              )}
+            </TTContent>
+          )}
+          <TTFootnote>
+            {'* visualised on map'}
+          </TTFootnote>
         </Stats>
         <ButtonWrap>
           <ButtonSecondary onClick={onFeatureClick}>
@@ -166,6 +204,7 @@ Tooltip.propTypes = {
   typeLabels: PropTypes.object,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
+  mapSubject: PropTypes.string,
 };
 
 export default Tooltip;

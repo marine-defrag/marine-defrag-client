@@ -9,6 +9,23 @@
  *
  */
 
+// General ********************
+export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
+
+const IS_DEV = true;
+
+export const ENDPOINTS = {
+  API: (
+    NODE_ENV === 'production' && !IS_DEV
+      ? 'https://67vn6.hatchboxapp.com'
+      : 'https://marine-defrag-api.herokuapp.com'
+  ), // server API endpoint
+  SIGN_IN: 'auth/sign_in',
+  SIGN_OUT: 'auth/sign_out',
+  PASSWORD: 'auth/password',
+  VALIDATE_TOKEN: 'auth/validate_token',
+};
+
 // client app routes **************************
 export const ROUTES = {
   ID: '/:id',
@@ -540,8 +557,6 @@ export const ACTIONTYPE_RESOURCETYPES = {
 
 export const KEEP_FILTERS = ['view', 'ms'];
 
-export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
-
 // Language and date settings ********************
 // Note: you may also set the locales in i18n.js
 
@@ -618,21 +633,6 @@ export const COLUMN_WIDTHS = {
 /**
  * Server settings
  * */
-
-// General ********************
-const IS_DEV = true;
-
-export const ENDPOINTS = {
-  API: (
-    NODE_ENV === 'production' && !IS_DEV
-      ? 'https://67vn6.hatchboxapp.com'
-      : 'https://marine-defrag-api.herokuapp.com'
-  ), // server API endpoint
-  SIGN_IN: 'auth/sign_in',
-  SIGN_OUT: 'auth/sign_out',
-  PASSWORD: 'auth/password',
-  VALIDATE_TOKEN: 'auth/validate_token',
-};
 
 // API request Authentification keys
 export const KEYS = {
