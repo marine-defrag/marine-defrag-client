@@ -132,7 +132,7 @@ const Tooltip = ({
             <>
               {typeof feature.values.actions !== 'undefined' && typeLabels && (
                 <TTContent>
-                  {`${feature.values.actions}: as direct actor`}
+                  {`As direct actor: ${feature.values.actions}`}
                   {mapSubject === 'actors' && (
                     <span>
                       {' *'}
@@ -142,7 +142,7 @@ const Tooltip = ({
               )}
               {typeof feature.values.actionsMembers !== 'undefined' && typeLabels && (
                 <TTContent>
-                  {`${feature.values.actionsMembers}: as member of group actor`}
+                  {`As member of group actor: ${feature.values.actionsMembers}`}
                   {mapSubject === 'actors' && includeActorMembers && (
                     <span>
                       {' *'}
@@ -161,7 +161,7 @@ const Tooltip = ({
             <>
               {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
                 <TTContent>
-                  {`${feature.values.targetingActions}: as direct target`}
+                  {`As direct target: ${feature.values.targetingActions}`}
                   {mapSubject === 'targets' && (
                     <span>
                       {' *'}
@@ -171,7 +171,7 @@ const Tooltip = ({
               )}
               {typeof feature.values.targetingActionsMembers !== 'undefined' && typeLabels && (
                 <TTContent>
-                  {`${feature.values.targetingActionsMembers}: as member of targeted region, group or class`}
+                  {`As member of targeted region, group or class: ${feature.values.targetingActionsMembers}: `}
                   {mapSubject === 'targets' && includeTargetMembers && (
                     <span>
                       {' *'}
