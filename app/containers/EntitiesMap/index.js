@@ -138,19 +138,19 @@ export function EntitiesMap({
           // entities are filtered countries
           countryFeatures = countriesJSON.features.map((feature) => {
             const country = entities.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
-            const countActions = country && country.get('actions')
-              ? country.get('actions').size
-              : 0;
-            const countActionsMembers = country && country.get('actionsAsMembers')
-              ? country.get('actionsAsMembers').size
-              : 0;
-            const countTargetingActions = country && country.get('targetingActions')
-              ? country.get('targetingActions').size
-              : 0;
-            const countTargetingActionsMembers = country && country.get('targetingActionsAsMember')
-              ? country.get('targetingActionsAsMember').size
-              : 0;
             if (country) {
+              const countActions = country.get('actions')
+                ? country.get('actions').size
+                : 0;
+              const countActionsMembers = country.get('actionsAsMembers')
+                ? country.get('actionsAsMembers').filter((actionId) => !country.get('actions').includes(actionId)).size
+                : 0;
+              const countTargetingActions = country.get('targetingActions')
+                ? country.get('targetingActions').size
+                : 0;
+              const countTargetingActionsMembers = country.get('targetingActionsAsMember')
+                ? country.get('targetingActionsAsMember').filter((actionId) => !country.get('targetingActions').includes(actionId)).size
+                : 0;
               return {
                 ...feature,
                 id: country.get('id'),
@@ -245,13 +245,15 @@ export function EntitiesMap({
         const actionCountriesMembers = action.get('actorsMembersByType')
           && action.getIn(['actorsMembersByType', parseInt(ACTORTYPES.COUNTRY, 10)]);
         if (actionCountriesMembers) {
-          actionCountriesMembers.forEach((cid) => {
-            if (memo.get(cid) && memo.getIn([cid, 'actionsMembers'])) {
-              updated = updated.setIn([cid, 'actionsMembers'], memo.getIn([cid, 'actionsMembers']) + 1);
-            } else {
-              updated = updated.setIn([cid, 'actionsMembers'], 1);
-            }
-          });
+          actionCountriesMembers
+            .filter((cid) => !actionCountries || !actionCountries.includes(cid))
+            .forEach((cid) => {
+              if (memo.get(cid) && memo.getIn([cid, 'actionsMembers'])) {
+                updated = updated.setIn([cid, 'actionsMembers'], memo.getIn([cid, 'actionsMembers']) + 1);
+              } else {
+                updated = updated.setIn([cid, 'actionsMembers'], 1);
+              }
+            });
         }
         if (hasByTarget) {
           const actionCountriesAsTargets = action.get('targetsByType')
@@ -268,13 +270,15 @@ export function EntitiesMap({
           const actionCountriesAsTargetsMembers = action.get('targetsMembersByType')
             && action.getIn(['targetsMembersByType', parseInt(ACTORTYPES.COUNTRY, 10)]);
           if (actionCountriesAsTargetsMembers) {
-            actionCountriesAsTargetsMembers.forEach((cid) => {
-              if (memo.get(cid) && memo.getIn([cid, 'targetingActionsMembers'])) {
-                updated = updated.setIn([cid, 'targetingActionsMembers'], memo.getIn([cid, 'targetingActionsMembers']) + 1);
-              } else {
-                updated = updated.setIn([cid, 'targetingActionsMembers'], 1);
-              }
-            });
+            actionCountriesAsTargetsMembers
+              .filter((cid) => !actionCountriesAsTargets || !actionCountriesAsTargets.includes(cid))
+              .forEach((cid) => {
+                if (memo.get(cid) && memo.getIn([cid, 'targetingActionsMembers'])) {
+                  updated = updated.setIn([cid, 'targetingActionsMembers'], memo.getIn([cid, 'targetingActionsMembers']) + 1);
+                } else {
+                  updated = updated.setIn([cid, 'targetingActionsMembers'], 1);
+                }
+              });
           }
         }
         return updated;
