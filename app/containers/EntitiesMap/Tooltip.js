@@ -125,57 +125,72 @@ const Tooltip = ({
         <Stats>
           {typeof feature.values.actions !== 'undefined' && typeLabels && (
             <TTSectionTitle>
-              {`${typeLabels.plural}`}
+              {`${typeLabels.plural}: ${feature.values.actionsTotal}`}
             </TTSectionTitle>
           )}
-          {typeof feature.values.actions !== 'undefined' && typeLabels && (
-            <TTContent>
-              {`${feature.values.actions}: as direct actor`}
-              {mapSubject === 'actors' && (
-                <span>
-                  {' *'}
-                </span>
+          {feature.values.actionsTotal !== 'undefined' && feature.values.actionsTotal > 0 && (
+            <>
+              {typeof feature.values.actions !== 'undefined' && typeLabels && (
+                <TTContent>
+                  {`${feature.values.actions}: as direct actor`}
+                  {mapSubject === 'actors' && (
+                    <span>
+                      {' *'}
+                    </span>
+                  )}
+                </TTContent>
               )}
-            </TTContent>
-          )}
-          {typeof feature.values.actionsMembers !== 'undefined' && typeLabels && (
-            <TTContent>
-              {`${feature.values.actionsMembers}: as member of group actor`}
-              {mapSubject === 'actors' && includeActorMembers && (
-                <span>
-                  {' *'}
-                </span>
+              {typeof feature.values.actionsMembers !== 'undefined' && typeLabels && (
+                <TTContent>
+                  {`${feature.values.actionsMembers}: as member of group actor`}
+                  {mapSubject === 'actors' && includeActorMembers && (
+                    <span>
+                      {' *'}
+                    </span>
+                  )}
+                </TTContent>
               )}
-            </TTContent>
+            </>
           )}
           {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
             <TTSectionTitle>
-              {`Target of ${typeLabels.plural}`}
+              {`${typeLabels.plural} as target: ${feature.values.targetingActionsTotal}`}
             </TTSectionTitle>
           )}
-          {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
-            <TTContent>
-              {`${feature.values.targetingActions}: as direct target`}
-              {mapSubject === 'targets' && (
-                <span>
-                  {' *'}
-                </span>
+          {feature.values.targetingActionsTotal !== 'undefined' && feature.values.targetingActionsTotal > 0 && (
+            <>
+              {typeof feature.values.targetingActions !== 'undefined' && typeLabels && (
+                <TTContent>
+                  {`${feature.values.targetingActions}: as direct target`}
+                  {mapSubject === 'targets' && (
+                    <span>
+                      {' *'}
+                    </span>
+                  )}
+                </TTContent>
               )}
-            </TTContent>
-          )}
-          {typeof feature.values.targetingActionsMembers !== 'undefined' && typeLabels && (
-            <TTContent>
-              {`${feature.values.targetingActionsMembers}: as member of targeted region, group or class`}
-              {mapSubject === 'targets' && includeTargetMembers && (
-                <span>
-                  {' *'}
-                </span>
+              {typeof feature.values.targetingActionsMembers !== 'undefined' && typeLabels && (
+                <TTContent>
+                  {`${feature.values.targetingActionsMembers}: as member of targeted region, group or class`}
+                  {mapSubject === 'targets' && includeTargetMembers && (
+                    <span>
+                      {' *'}
+                    </span>
+                  )}
+                </TTContent>
               )}
-            </TTContent>
+            </>
           )}
-          <TTFootnote>
-            {'* visualised on map'}
-          </TTFootnote>
+          {
+            (
+              (feature.values.targetingActionsTotal !== 'undefined' && feature.values.targetingActionsTotal > 0)
+              || (feature.values.actionsTotal !== 'undefined' && feature.values.actionsTotal > 0)
+            ) && (
+              <TTFootnote>
+                {'* visualised on map'}
+              </TTFootnote>
+            )
+          }
         </Stats>
         <ButtonWrap>
           <ButtonSecondary onClick={onFeatureClick}>
@@ -186,14 +201,6 @@ const Tooltip = ({
     </Anchor>
   </Root>
 );
-// <CloseWrap>
-// <CloseButton
-// onClick={() => onClose()}
-// style={{
-//   textAlign: 'center',
-// }}
-// />
-// </CloseWrap>
 
 Tooltip.propTypes = {
   position: PropTypes.object,

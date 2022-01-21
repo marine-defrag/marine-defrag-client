@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { Map, List } from 'immutable';
+import { Map } from 'immutable';
 import {
   selectEntities,
   selectActorsSearchQuery,
@@ -207,11 +207,11 @@ const selectActorsWithActions = createSelector(
       return actors.map(
         (actor) => {
           // actors
-          const actorActions = actionsAsActorGrouped.get(parseInt(actor.get('id'), 10)) || List();
+          const actorActions = actionsAsActorGrouped.get(parseInt(actor.get('id'), 10)) || Map();
           const actorActionsByType = actionsByType(actorActions, connections.get('actions'));
 
           // targets
-          const targetActions = actionsAsTargetGrouped.get(parseInt(actor.get('id'), 10)) || List();
+          const targetActions = actionsAsTargetGrouped.get(parseInt(actor.get('id'), 10)) || Map();
           const targetingActionsByType = actionsByType(targetActions, connections.get('actions'));
 
           // members
@@ -229,7 +229,7 @@ const selectActorsWithActions = createSelector(
               return memo.concat(associationActions);
             }
             return memo;
-          }, List());
+          }, Map());
           const actorActionsAsMemberByType = actorActionsAsMember && actionsByType(actorActionsAsMember, connections.get('actions'));
 
           // targeted by actions as member of group
@@ -239,9 +239,8 @@ const selectActorsWithActions = createSelector(
               return memo.concat(associationActionsAsTarget);
             }
             return memo;
-          }, List());
+          }, Map());
           const targetActionsAsMemberByType = targetActionsAsMember && actionsByType(targetActionsAsMember, connections.get('actions'));
-
           return actor
             .set('actions', actorActions)
             .set('actionsByType', actorActionsByType)

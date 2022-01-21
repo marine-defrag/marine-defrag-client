@@ -12,7 +12,7 @@
 // General ********************
 export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
-const IS_DEV = false;
+const IS_DEV = true;
 
 export const ENDPOINTS = {
   API: (
@@ -540,6 +540,8 @@ export const ACTIONTYPE_RESOURCETYPES = {
   [ACTIONTYPES.REGL]: [
     RESOURCETYPES.REF,
     RESOURCETYPES.DOC,
+    RESOURCETYPES.AP,
+    RESOURCETYPES.MLAP,
   ],
   [ACTIONTYPES.NATL]: [
     RESOURCETYPES.REF,
