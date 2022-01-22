@@ -170,7 +170,7 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
         );
       });
       fields.push({
-        label: appMessages.nav.actionsAsTarget,
+        label: appMessages.nav.targetingActions,
         fields: actionAsTargetConnectionsLocal,
       });
     }

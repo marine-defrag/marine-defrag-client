@@ -5,7 +5,7 @@ import {
   selectEntities,
   selectActionsSearchQuery,
   selectWithoutQuery,
-  selectConnectionQuery,
+  selectActorQuery,
   selectCategoryQuery,
   selectTargetedQuery,
   selectParentQuery,
@@ -304,23 +304,23 @@ const selectActionsWithout = createSelector(
 );
 const selectActionsByConnections = createSelector(
   selectActionsWithout,
-  selectConnectionQuery,
+  selectActorQuery,
   (entities, query) => query
-    ? filterEntitiesByConnection(entities, query)
+    ? filterEntitiesByConnection(entities, query, 'actors')
     : entities
 );
 const selectActionsByTargets = createSelector(
   selectActionsByConnections,
   selectTargetedQuery,
   (entities, query) => query
-    ? filterEntitiesByConnection(entities, query)
+    ? filterEntitiesByConnection(entities, query, 'targets')
     : entities
 );
 const selectActionsByResources = createSelector(
   selectActionsByTargets,
   selectResourceQuery,
   (entities, query) => query
-    ? filterEntitiesByConnection(entities, query)
+    ? filterEntitiesByConnection(entities, query, 'resources')
     : entities
 );
 const selectActionsByParent = createSelector(
@@ -328,9 +328,9 @@ const selectActionsByParent = createSelector(
   selectParentQuery,
   (entities, query) => {
     if (!query) return entities;
-    const pathValue = query.split(':');
-    return (query && pathValue.length > 1)
-      ? filterEntitiesByAttributes(entities, { parent_id: parseInt(pathValue[1], 10) })
+    const [, value] = query.split(':');
+    return (query && value.length > 1)
+      ? filterEntitiesByAttributes(entities, { parent_id: parseInt(value, 10) })
       : entities;
   }
 );

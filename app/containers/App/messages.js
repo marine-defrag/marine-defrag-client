@@ -887,8 +887,8 @@ export default defineMessages({
       id: 'app.containers.App.nav.actions',
       defaultMessage: 'Actions',
     },
-    actionsAsTarget: {
-      id: 'app.containers.App.nav.actionsAsTarget',
+    targetingActions: {
+      id: 'app.containers.App.nav.targetingActions',
       defaultMessage: 'Targeted by',
     },
     actors: {

@@ -2,89 +2,52 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
+import { Box } from 'grommet';
 
 import ConnectionPopup from './ConnectionPopup';
 
-const ConnectionWrap = styled.span`
-  display: inline-block;
-  margin-right: 12px;
-  margin-left: 0px;
-  &:last-child {
-    margin-right: 0;
-  }
-  &:first-child {
-    margin-left: 0;
-  }
-`;
-const ConnectionLabel = styled.span`
+const ConnectionGroupLabel = styled.span`
   color: ${palette('text', 1)};
-  font-size: ${(props) => props.theme.sizes && props.theme.sizes.text.listItemBottom};
+  font-size: ${(props) => props.theme.sizes && props.theme.sizes.text.smaller};
   padding-top: 2px;
   @media print {
-    font-size: ${(props) => props.theme.sizes.print.listItemBottom};
+    font-size: ${(props) => props.theme.sizes.print.smaller};
   }
 `;
-const Styled = styled.div`
-  width: 100%;
-  display: block;
-  border-top: 1px solid ${palette('light', 1)};
-  margin-top: 8px;
-  margin-bottom: 5px;
-  padding-top: 5px;
-  @media print {
-    border-top: none;
-    margin-top: 3px;
-    margin-bottom: 2px;
-  }
-`;
+const Styled = styled((p) => <Box direction="row" wrap gap="medium" {...p} />)``;
 
-export default class EntityListItemMainConnections extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  static propTypes = {
-    connections: PropTypes.array.isRequired,
-    wrapper: PropTypes.object,
-  };
-
-  render() {
-    return (
-      <Styled>
-        {
-          this.props.connections.map((connection, i) => {
-            const publicEntities = connection.entities.filter(
-              (entity) => entity && !entity.getIn(['attributes', 'draft'])
-            );
-            const draftEntities = connection.entities.filter(
-              (entity) => entity && entity.getIn(['attributes', 'draft'])
-            );
-            const entitiesTotal = connection.entities ? connection.entities.size : 0;
-            return (
-              <ConnectionWrap key={i}>
-                { publicEntities.size > 0
-                  && (
-                    <ConnectionPopup
-                      entities={publicEntities}
-                      option={connection.option}
-                      wrapper={this.props.wrapper}
-                    />
-                  )
-                }
-                { draftEntities.size > 0
-                  && (
-                    <ConnectionPopup
-                      entities={draftEntities}
-                      option={connection.option}
-                      wrapper={this.props.wrapper}
-                      draft
-                    />
-                  )
-                }
-                <ConnectionLabel>
-                  {connection.option.label(entitiesTotal)}
-                </ConnectionLabel>
-              </ConnectionWrap>
-            );
-          })
-        }
-      </Styled>
-    );
-  }
+export function EntityListItemMainConnections({ connections, wrapper }) {
+  return (
+    <Styled>
+      {connections.map((connection, i) => (
+        <Box direction="row" gap="hair" key={i}>
+          <ConnectionGroupLabel>
+            {`${connection.groupLabel}: `}
+          </ConnectionGroupLabel>
+          <Box direction="row" gap="xsmall">
+            {connection.connectionsByType.map((type, j) => {
+              const entitiesTotal = type.entities ? type.entities.length : 0;
+              return entitiesTotal > 0 && (
+                <ConnectionPopup
+                  key={j}
+                  entities={type.entities}
+                  label={type.option.label(entitiesTotal)}
+                  option={type.option}
+                  wrapper={wrapper}
+                  draft
+                />
+              );
+            })}
+          </Box>
+        </Box>
+      ))}
+    </Styled>
+  );
 }
+
+EntityListItemMainConnections.propTypes = {
+  connections: PropTypes.array.isRequired,
+  wrapper: PropTypes.object,
+};
+
+export default EntityListItemMainConnections;

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const EntityListItemMainTitle = styled.div`
+const EntityListItemMainTitle = styled.span`
   font-weight: normal;
   font-size: ${(props) => props.theme.sizes && props.theme.sizes.text.nestedListItem};
   @media (min-width: ${(props) => props.theme.breakpoints ? props.theme.breakpoints.medium : '993px'}) {

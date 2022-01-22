@@ -83,78 +83,67 @@ export const CONFIG = {
   //   ],
   // },
   connections: { // filter by associated entity
-    query: 'connected',
-    type: 'action-actors',
-    options: [
-      {
-        search: true,
-        message: 'entities.actors_{typeid}.plural',
-        path: API.ACTORS,
-        query: API.ACTORS,
-        entityType: 'actors',
-        clientPath: ROUTES.ACTOR,
-        connectPath: API.ACTOR_ACTIONS, // filter by actor connection
-        key: 'actor_id',
-        ownKey: 'measure_id',
-        groupByType: true,
-        typeFilter: 'is_active',
-      },
-    ],
-  },
-  targets: { // filter by associated entity
-    query: 'targeted',
-    type: 'action-targets',
-    options: [
-      {
-        search: true,
-        message: 'entities.actors_{typeid}.plural',
-        path: API.ACTORS,
-        query: API.ACTORS,
-        entityType: 'targets',
-        connectionPath: 'actors',
-        clientPath: ROUTES.ACTOR,
-        connectPath: API.ACTION_ACTORS, // filter by actor connection
-        key: 'actor_id',
-        ownKey: 'measure_id',
-        groupByType: true,
-        typeFilter: 'is_target',
-      },
-    ],
-  },
-  parents: { // filter by associated entity
-    query: 'parent',
-    type: 'action-parents',
-    options: [
-      {
-        search: true,
-        message: 'entities.actions_{typeid}.plural',
-        path: API.ACTIONS,
-        query: API.ACTIONS,
-        entityType: 'parents',
-        clientPath: ROUTES.ACTION,
-        attribute: 'parent_id',
-        typeFilter: 'has_parent',
-        groupByType: true,
-      },
-    ],
-  },
-  resources: { // filter by associated entity
-    query: 'resources',
-    type: 'action-resources',
-    options: [
-      {
-        search: true,
-        message: 'entities.resources_{typeid}.plural',
-        path: API.RESOURCES,
-        query: API.RESOURCES,
-        entityType: 'resources',
-        clientPath: ROUTES.RESOURCE,
-        connectPath: API.ACTION_RESOURCES, // filter by actor connection
-        key: 'resource_id',
-        ownKey: 'measure_id',
-        groupByType: true,
-      },
-    ],
+    // filter by associated actor
+    actors: {
+      query: 'actor',
+      type: 'action-actors',
+      search: true,
+      message: 'entities.actors_{typeid}.plural',
+      path: API.ACTORS,
+      entityType: 'actors',
+      clientPath: ROUTES.ACTOR,
+      connectPath: API.ACTOR_ACTIONS, // filter by actor connection
+      key: 'actor_id',
+      ownKey: 'measure_id',
+      groupByType: true,
+      typeFilter: 'is_active',
+    },
+    // filter by associated target
+    targets: {
+      query: 'targeted',
+      type: 'action-targets',
+      search: true,
+      message: 'entities.actors_{typeid}.plural',
+      path: API.ACTORS,
+      entityType: 'actors',
+      entityTypeAs: 'targets',
+      clientPath: ROUTES.ACTOR,
+      connectPath: API.ACTION_ACTORS, // filter by actor connection
+      key: 'actor_id',
+      ownKey: 'measure_id',
+      groupByType: true,
+      typeFilter: 'is_target',
+    },
+    // filter by associated parent
+    parents: {
+      query: 'parent',
+      type: 'action-parents',
+      search: true,
+      message: 'entities.actions_{typeid}.plural',
+      path: API.ACTIONS,
+      entityType: 'actors',
+      entityTypeAs: 'parents',
+      clientPath: ROUTES.ACTION,
+      attribute: 'parent_id',
+      typeFilter: 'has_parent',
+      groupByType: true,
+      listItemHide: true,
+    },
+    // filter by associated entity
+    resources: {
+      query: 'resources',
+      type: 'action-resources',
+      search: true,
+      message: 'entities.resources_{typeid}.plural',
+      path: API.RESOURCES,
+      entityType: 'resources',
+      clientPath: ROUTES.RESOURCE,
+      connectPath: API.ACTION_RESOURCES, // filter by actor connection
+      key: 'resource_id',
+      ownKey: 'measure_id',
+      groupByType: true,
+      listItemHide: true,
+    },
   },
   attributes: { // filter by attribute value
     options: [

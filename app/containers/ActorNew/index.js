@@ -203,7 +203,7 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
       if (actionConnections) {
         groups.push(
           {
-            label: intl.formatMessage(appMessages.nav.actionsAsTarget),
+            label: intl.formatMessage(appMessages.nav.targetingActions),
             fields: actionConnections,
           },
         );

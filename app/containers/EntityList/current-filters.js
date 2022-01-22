@@ -22,23 +22,13 @@ export const currentFilterArgs = (config, locationQuery) => {
   // if (config.connectedTaxonomies && locationQuery.get(config.connectedTaxonomies.query)) {
   //   args = args.concat(config.connectedTaxonomies.query);
   // }
-  if (config.connections && locationQuery.get(config.connections.query)) {
-    args = args.concat(config.connections.query);
-  }
-  if (config.targets && locationQuery.get(config.targets.query)) {
-    args = args.concat(config.targets.query);
-  }
-  if (config.members && locationQuery.get(config.members.query)) {
-    args = args.concat(config.members.query);
-  }
-  if (config.associations && locationQuery.get(config.associations.query)) {
-    args = args.concat(config.associations.query);
-  }
-  if (config.resources && locationQuery.get(config.resources.query)) {
-    args = args.concat(config.resources.query);
-  }
-  if (config.parents && locationQuery.get(config.parents.query)) {
-    args = args.concat(config.parents.query);
+  if (config.connections) {
+    Object.keys(config.connections).forEach((connectionKey) => {
+      const connectionConfig = config.connections[connectionKey];
+      if (locationQuery.get(connectionConfig.query)) {
+        args = args.concat(connectionConfig.query);
+      }
+    });
   }
   if (locationQuery.get('where')) {
     args = args.concat('where');
@@ -85,59 +75,70 @@ export const currentFilters = (
       withoutLabel
     ));
   }
-  if (config.connections && connections) {
-    filterTags = filterTags.concat(getCurrentConnectionFilters(
-      config.connections,
-      connections,
-      locationQuery,
-      onTagClick,
-      withoutLabel
-    ));
-  }
-  if (config.targets && connections) {
-    filterTags = filterTags.concat(getCurrentConnectionFilters(
-      config.targets,
-      connections,
-      locationQuery,
-      onTagClick,
-      withoutLabel
-    ));
-  }
-  if (config.members && connections) {
-    filterTags = filterTags.concat(getCurrentConnectionFilters(
-      config.members,
-      connections,
-      locationQuery,
-      onTagClick,
-      withoutLabel
-    ));
-  }
-  if (config.associations && connections) {
-    filterTags = filterTags.concat(getCurrentConnectionFilters(
-      config.associations,
-      connections,
-      locationQuery,
-      onTagClick,
-      withoutLabel
-    ));
-  }
-  if (config.parents) {
-    filterTags = filterTags.concat(getCurrentConnectionFilters(
-      config.parents,
-      connections,
-      locationQuery,
-      onTagClick,
-      withoutLabel
-    ));
-  }
-  if (config.resources && connections) {
-    filterTags = filterTags.concat(getCurrentConnectionFilters(
-      config.resources,
-      connections,
-      locationQuery,
-      onTagClick,
-      withoutLabel
-    ));
+  if (connections && config.connections) {
+    if (config.connections.actors) {
+      filterTags = filterTags.concat(getCurrentConnectionFilters(
+        config.connections.actors,
+        connections,
+        locationQuery,
+        onTagClick,
+        withoutLabel
+      ));
+    }
+    if (config.connections.actions && connections) {
+      filterTags = filterTags.concat(getCurrentConnectionFilters(
+        config.connections.actions,
+        connections,
+        locationQuery,
+        onTagClick,
+        withoutLabel
+      ));
+    }
+    if (config.connections.targets && connections) {
+      filterTags = filterTags.concat(getCurrentConnectionFilters(
+        config.connections.targets,
+        connections,
+        locationQuery,
+        onTagClick,
+        withoutLabel
+      ));
+    }
+    if (config.connections.members && connections) {
+      filterTags = filterTags.concat(getCurrentConnectionFilters(
+        config.connections.members,
+        connections,
+        locationQuery,
+        onTagClick,
+        withoutLabel
+      ));
+    }
+    if (config.connections.associations && connections) {
+      filterTags = filterTags.concat(getCurrentConnectionFilters(
+        config.connections.associations,
+        connections,
+        locationQuery,
+        onTagClick,
+        withoutLabel
+      ));
+    }
+    if (config.connections.parents) {
+      filterTags = filterTags.concat(getCurrentConnectionFilters(
+        config.connections.parents,
+        connections,
+        locationQuery,
+        onTagClick,
+        withoutLabel
+      ));
+    }
+    if (config.connections.resources && connections) {
+      filterTags = filterTags.concat(getCurrentConnectionFilters(
+        config.connections.resources,
+        connections,
+        locationQuery,
+        onTagClick,
+        withoutLabel
+      ));
+    }
   }
   if (config.attributes) {
     filterTags = filterTags.concat(getCurrentAttributeFilters(
@@ -254,75 +255,70 @@ const getCurrentActortypeFilter = (
 };
 
 const getCurrentConnectionFilters = (
-  config,
+  option,
   connections,
   locationQuery,
   onClick,
   withoutLabel,
 ) => {
   const tags = [];
-  const { options, query } = config;
-  forEach(options, (option) => {
-    const connectionPath = option.connectionPath || option.entityType;
-    if (locationQuery.get(query) && connections.get(connectionPath)) {
-      const locationQueryValue = locationQuery.get(query);
-      asList(locationQueryValue).forEach((queryValue) => {
-        const valueSplit = queryValue.split(':');
-        if (valueSplit.length > 0) {
-          if (option.entityType === valueSplit[0].split('_')[0]) {
-            const value = valueSplit[1].toString();
-            const connection = connections.getIn([connectionPath, value]);
-            if (connection) {
-              tags.push({
-                label: getConnectionLabel(connection, value),
-                type: option.connectionPath || option.entityType,
-                inverse: connection.getIn(['attributes', 'draft']),
-                onClick: () => onClick({
-                  value: queryValue,
-                  query,
-                  checked: false,
-                }),
-              });
-            }
+  const { query } = option;
+  const connectionPath = option.connectionPath || option.entityType;
+  if (locationQuery.get(query) && connections.get(connectionPath)) {
+    const locationQueryValue = locationQuery.get(query);
+    asList(locationQueryValue).forEach((queryValue) => {
+      const valueSplit = queryValue.split(':');
+      if (valueSplit.length > 0) {
+        if (option.entityType === valueSplit[0].split('_')[0]) {
+          const value = valueSplit[1].toString();
+          const connection = connections.getIn([connectionPath, value]);
+          if (connection) {
+            tags.push({
+              label: getConnectionLabel(connection, value),
+              type: option.connectionPath || option.entityType,
+              inverse: connection.getIn(['attributes', 'draft']),
+              onClick: () => onClick({
+                value: queryValue,
+                query,
+                checked: false,
+              }),
+            });
           }
         }
-      });
-    }
-  });
+      }
+    });
+  }
 
   if (locationQuery.get('without')) {
     const locationQueryValue = locationQuery.get('without');
-    forEach(options, (option) => {
-      asList(locationQueryValue).forEach((queryValue) => {
-        const valueType = queryValue.split('_');
-        const typeid = valueType.length > 1 && valueType[1];
-        // numeric means taxonomy
-        if (option.entityType === valueType[0]) {
-          tags.push({
-            labels: [
-              { label: withoutLabel },
-              {
-                appMessage: true,
-                label: (
-                  option.groupByType
-                  && option.message
-                  && option.message.indexOf('{typeid}') > -1
-                )
-                  ? option.message.replace('{typeid}', typeid)
-                  : option.message,
-                lowerCase: true,
-              },
-              { label: option.label },
-            ],
-            type: option.connectionPath || option.entityType,
-            onClick: () => onClick({
-              value: queryValue,
-              query: 'without',
-              checked: false,
-            }),
-          });
-        }
-      });
+    asList(locationQueryValue).forEach((queryValue) => {
+      const [entityType, typeId] = queryValue.split('_');
+      // numeric means taxonomy
+      if (entityType === (option.entityTypeAs || option.entityType)) {
+        tags.push({
+          labels: [
+            { label: withoutLabel },
+            {
+              appMessage: true,
+              label: (
+                option.groupByType
+                && option.message
+                && option.message.indexOf('{typeid}') > -1
+              )
+                ? option.message.replace('{typeid}', typeId)
+                : option.message,
+              lowerCase: true,
+            },
+            { label: option.label },
+          ],
+          type: option.connectionPath || option.entityType,
+          onClick: () => onClick({
+            value: queryValue,
+            query: 'without',
+            checked: false,
+          }),
+        });
+      }
     });
   }
   return tags;

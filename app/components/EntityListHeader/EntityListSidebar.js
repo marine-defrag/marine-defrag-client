@@ -55,7 +55,6 @@ const SidebarWrapper = styled.div`
 
 const STATE_INITIAL = {
   expandedGroups: {
-    actortypes: true,
     taxonomies: true,
     taxonomies_1: true,
     taxonomies_2: true,
@@ -70,12 +69,13 @@ const STATE_INITIAL = {
     taxonomies_11: true,
     taxonomies_12: true,
     // connectedTaxonomies: true,
-    connections: true,
+    actors: true,
+    actions: true,
     targets: true,
-    members: true,
-    associations: true,
-    resources: true,
-    parents: true,
+    members: false,
+    associations: false,
+    resources: false,
+    parents: false,
     attributes: false,
   },
 };

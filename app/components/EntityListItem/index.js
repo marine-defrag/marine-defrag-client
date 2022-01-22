@@ -3,47 +3,23 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { Map, List } from 'immutable';
+import { Box } from 'grommet';
 
 import Messages from 'components/Messages';
-import Component from 'components/styled/Component';
 
 import EntityListItemMain from './EntityListItemMain';
 import EntityListItemSelect from './EntityListItemSelect';
 
 // import messages from './messages';
 
-const Styled = styled.span`
-  display: inline-block;
-  vertical-align: top;
-  width: 100%;
-`;
-const Item = styled(Component)`
-  display: table;
-  width: 100%;
+const Styled = styled((p) => <Box {...p} />)``;
+const Item = styled((p) => <Box direction="row" align="start" {...p} />)`
   color: ${palette('mainListItem', 0)};
   background-color: ${palette('mainListItem', 1)};
   border-bottom: ${(props) => props.error ? '1px solid' : 0};
   border-left: ${(props) => props.error ? '1px solid' : 0};
   border-right: ${(props) => props.error ? '1px solid' : 0};
   border-color: ${palette('error', 0)};
-`;
-const MainWrapper = styled(Component)`
-  width:100%;
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
-    display: table-cell;
-    width: 100%;
-    border-right: 0;
-    border-right-color: ${palette('background', 1)};
-  }
-  @media print {
-    border: none;
-    display: table-cell;
-    width: 100%
-  }
-`;
-const MainInnerWrapper = styled(Component)`
-  display: table;
-  width: 100%;
 `;
 
 class EntityListItem extends React.Component { // eslint-disable-line react/prefer-stateless-function
@@ -55,21 +31,6 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
   }
 
   transformMessage = (type, msg) => msg;
-  // transformMessage = (type, msg) => {
-  //   // const { intl } = this.context;
-  //   // if (type === 'delete') {
-  //   //   return intl
-  //   //     ? intl.formatMessage(messages.associationNotExistent)
-  //   //     : msg;
-  //   // }
-  //   // if (type === 'new') {
-  //   //   // return intl
-  //   //   //   ? intl.formatMessage(messages.associationAlreadyPresent)
-  //   //   //   : msg;
-  //   //   return msg;
-  //   // }
-  //   return msg;
-  // }
 
   render() {
     const {
@@ -106,25 +67,21 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
           />
         ))}
         <Item error={error}>
-          <MainWrapper>
-            <MainInnerWrapper>
-              {isManager
-                && <EntityListItemSelect checked={isSelected} onSelect={onSelect} />
-              }
-              <EntityListItemMain
-                entity={entity}
-                taxonomies={taxonomies}
-                connections={connections}
-                entityIcon={entityIcon}
-                config={config}
-                entityPath={entityPath}
-                onEntityClick={onEntityClick}
-                wrapper={this.props.wrapper}
-                isManager={isManager}
-                isConnection={isConnection}
-              />
-            </MainInnerWrapper>
-          </MainWrapper>
+          {isManager && (
+            <EntityListItemSelect checked={isSelected} onSelect={onSelect} />
+          )}
+          <EntityListItemMain
+            entity={entity}
+            taxonomies={taxonomies}
+            connections={connections}
+            entityIcon={entityIcon}
+            config={config}
+            entityPath={entityPath}
+            onEntityClick={onEntityClick}
+            wrapper={this.props.wrapper}
+            isManager={isManager}
+            isConnection={isConnection}
+          />
         </Item>
       </Styled>
     );

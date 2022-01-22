@@ -9,8 +9,6 @@ import { find } from 'lodash/collection';
 import { USER_ROLES } from 'themes/config';
 
 const Role = styled(Label)`
-  float: right;
-  padding-left: 1em;
   font-size: ${(props) => props.theme.sizes.text.smaller};
   @media print {
     font-size: ${(props) => props.theme.sizes.print.smaller};

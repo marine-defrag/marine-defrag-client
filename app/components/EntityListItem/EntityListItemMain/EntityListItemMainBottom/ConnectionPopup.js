@@ -6,35 +6,18 @@ import { palette } from 'styled-theme';
 
 import { TEXT_TRUNCATE } from 'themes/config';
 
-import { sortEntities } from 'utils/sort';
 import { truncateText } from 'utils/string';
 
-import messages from 'components/ItemStatus/messages';
+// import messages from 'components/ItemStatus/messages';
 import ItemStatus from 'components/ItemStatus';
 
 import Link from 'containers/Link';
 
 const POPUP_WIDTH = 330;
 
-const Count = styled.span`
-  display: inline-block;
-  position: relative;
-  top: 0;
-  border-radius: 999px;
-  font-size: 0.7em;
-  background-color: ${(props) => props.draft ? palette('buttonInverse', 1) : palette(props.pIndex, 0)};
-  color: ${(props) => props.draft ? palette(props.pIndex, 0) : palette('buttonDefault', 0)};
-  border: 1px solid ${(props) => palette(props.pIndex, 0)};
-  height: 1.8em;
-  min-width: 1.8em;
-  text-align: center;
-  line-height: 1.7;
-  padding: 0 0.25em;
-  @media print {
-    color: ${palette('text', 1)};
-    background: transparent;
-  }
-`;
+// const Count = styled.span`
+//   padding: 0 0.25em;
+// `;
 
 const PopupWrapper = styled.div`
   display: inline-block;
@@ -42,7 +25,6 @@ const PopupWrapper = styled.div`
   font-size: 1em;
   touch-action: manipulation;
   position: relative;
-  margin-right: 5px;
   text-align: left;
   @media print {
     font-size: ${(props) => props.theme.sizes.print.default};
@@ -131,6 +113,16 @@ const ListItemLink = styled(Link)`
   }
 `;
 
+const ConnectionLabel = styled.span`
+  color: ${palette('text', 1)};
+  text-decoration: underline;
+  font-size: ${(props) => props.theme.sizes && props.theme.sizes.text.small};
+  padding-top: 2px;
+  @media print {
+    font-size: ${(props) => props.theme.sizes.print.small};
+  }
+`;
+
 export class ConnectionPopup extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   constructor(props) {
     super(props);
@@ -173,8 +165,7 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
     const {
       entities, option, wrapper, draft,
     } = this.props;
-    const { intl } = this.context;
-    const entitiesTotal = entities ? entities.size : 0;
+    const entitiesTotal = entities ? entities.length : 0;
 
     return (
       <PopupWrapper
@@ -189,7 +180,9 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
           }
         }}
       >
-        <Count pIndex={option.style} draft={draft}>{entitiesTotal}</Count>
+        <ConnectionLabel pIndex={option.style} draft={draft}>
+          {`${entitiesTotal} ${option.label(entitiesTotal, true)}`}
+        </ConnectionLabel>
         {this.state.popupOpen
           && (
             <Popup
@@ -201,34 +194,23 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
                   <PopupHeaderMain>
                     {`${entitiesTotal} ${option.label(entitiesTotal)}`}
                   </PopupHeaderMain>
-                  { draft
-                  && (
-                    <PopupHeaderMain>
-                      {` (${intl && intl.formatMessage(messages.draft)})`}
-                    </PopupHeaderMain>
-                  )
-                  }
                 </PopupHeader>
                 <PopupContent height={this.calcHeight()}>
-                  {
-                    sortEntities(entities, 'asc', 'title')
-                      .toList()
-                      .map((entity, i) => (
-                        <ListItem
-                          key={i}
-                          ref={(node) => i < 3 && this.setState({ [`listItem_${i}`]: node })}
-                        >
-                          <ListItemLink to={`${option.clientPath}/${entity.get('id')}`}>
-                            { entity.getIn(['attributes', 'draft'])
-                          && <ItemStatus draft />
-                            }
-                            <ItemContent>
-                              {truncateText(entity.getIn(['attributes', 'title']), TEXT_TRUNCATE.CONNECTION_POPUP)}
-                            </ItemContent>
-                          </ListItemLink>
-                        </ListItem>
-                      ))
-                  }
+                  {entities.map((entity, i) => (
+                    <ListItem
+                      key={i}
+                      ref={(node) => i < 3 && this.setState({ [`listItem_${i}`]: node })}
+                    >
+                      <ListItemLink to={`${option.clientPath}/${entity.get('id')}`}>
+                        { entity.getIn(['attributes', 'draft'])
+                      && <ItemStatus draft />
+                        }
+                        <ItemContent>
+                          {truncateText(entity.getIn(['attributes', 'title']), TEXT_TRUNCATE.CONNECTION_POPUP)}
+                        </ItemContent>
+                      </ListItemLink>
+                    </ListItem>
+                  ))}
                 </PopupContent>
               </PopupInner>
               <TriangleBottom align={this.getPopupAlign(wrapper, this.state.popupRef)} />
@@ -241,7 +223,7 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
 }
 
 ConnectionPopup.propTypes = {
-  entities: PropTypes.object,
+  entities: PropTypes.array,
   option: PropTypes.object,
   wrapper: PropTypes.object,
   draft: PropTypes.bool,

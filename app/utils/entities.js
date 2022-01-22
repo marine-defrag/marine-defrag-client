@@ -100,10 +100,6 @@ export const filterEntitiesWithoutAssociation = (
       if (isTax) {
         return !testEntityTaxonomyAssociation(entity, categories, parseInt(pathOrTax, 10));
       }
-      if (pathOrTax.indexOf('|') > -1) {
-        const [group, path] = pathOrTax.split('|');
-        return !testEntityAssociation(entity, path, group);
-      }
       return !testEntityAssociation(entity, pathOrTax);
     }
   )
@@ -156,14 +152,14 @@ export const filterEntitiesByConnectedCategories = (
 export const filterEntitiesByConnection = (
   entities,
   query,
+  path,
 ) => entities && entities.filter(
   // consider replacing with .every()
   (entity) => asList(query).every(
     (queryArg) => {
-      const pathValue = queryArg.split(':');
-      const path = pathValue[0].split('_')[0];
+      const [, value] = queryArg.split(':');
       return entity.get(path)
-        && testEntityEntityAssociation(entity, path, pathValue[1]);
+        && testEntityEntityAssociation(entity, path, value);
     },
   )
 );

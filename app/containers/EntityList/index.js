@@ -709,7 +709,8 @@ function mapDispatchToProps(dispatch, props) {
               case ('taxonomies'):
                 existingAssignments = entity.get('categories');
                 break;
-              case ('connections'):
+              case ('actions'):
+              case ('actors'):
               case ('targets'):
               case ('members'):
               case ('associations'):

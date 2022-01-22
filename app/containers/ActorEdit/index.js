@@ -243,7 +243,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
       if (actionConnections) {
         groups.push(
           {
-            label: intl.formatMessage(appMessages.nav.actionsAsTarget),
+            label: intl.formatMessage(appMessages.nav.targetingActions),
             fields: actionConnections,
           },
         );

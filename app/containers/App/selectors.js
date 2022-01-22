@@ -283,6 +283,14 @@ export const selectConnectionQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('connected')
 );
+export const selectActionQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('action')
+);
+export const selectActorQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('actor')
+);
 export const selectParentQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('parent')

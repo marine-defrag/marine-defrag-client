@@ -3,31 +3,29 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 // import { isEqual } from 'lodash/lang';
-import { reduce } from 'lodash/collection';
 import { Map } from 'immutable';
-import Component from 'components/styled/Component';
-import Clear from 'components/styled/Clear';
 import { USER_ROLES } from 'themes/config';
 import appMessages from 'containers/App/messages';
+import { Box } from 'grommet';
 
+import ItemStatus from 'components/ItemStatus';
 import EntityListItemMainTop from './EntityListItemMainTop';
 import EntityListItemMainTitle from './EntityListItemMainTitle';
 import EntityListItemMainBottom from './EntityListItemMainBottom';
+import EntityListItemMainTopReference from './EntityListItemMainTopReference';
 
 
-const Styled = styled(Component)`
+const Styled = styled((p) => <Box fill="horizontal" gap="small" {...p} />)`
   padding-right: 6px;
-  padding-top: 4px;
   padding-bottom: 6px;
   padding-left: ${(props) => props.isManager ? 0 : 6}px;
+  padding-top: ${(props) => props.theme.sizes && props.theme.sizes.mainListItem.paddingTop}px;
   box-shadow: ${({ isConnection }) => isConnection ? '0px 0px 6px 0px rgba(0,0,0,0.2)' : 'none'};
   @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
     padding-right: ${(props) => (!props.theme.sizes)
     ? 0
     : props.theme.sizes.mainListItem.paddingHorizontal
 }px;
-    padding-top: ${(props) => props.theme.sizes && props.theme.sizes.mainListItem.paddingTop}px;
-    padding-bottom: ${(props) => props.theme.sizes && props.theme.sizes.mainListItem.paddingBottom}px;
     padding-left: ${(props) => (!props.theme.sizes || props.isManager)
     ? 0
     : props.theme.sizes.mainListItem.paddingHorizontal
@@ -43,7 +41,7 @@ const Styled = styled(Component)`
 const EntityListItemMainTitleWrap = styled.a`
   text-decoration: none;
   display: block;
-  padding: 6px 15px 8px 0;
+  padding: 0 15px 0 0;
   color: ${palette('mainListItem', 0)};
   &:hover {
     color: ${palette('mainListItemHover', 0)};
@@ -56,60 +54,39 @@ const EntityListItemMainTitleWrap = styled.a`
 class EntityListItemMain extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   getConnections = (entity, connectionOptions, connections) => {
     const { intl } = this.context;
-    return reduce(connectionOptions, (memo, option) => {
-      // console.log(memo, option, entity.toJS())
-      let memoX = memo;
-      if ((option.popover !== false)
-        && entity.get(option.query)
-        && connections.get(option.query)
-        && entity.get(option.query).size > 0
-      ) {
-        if (option.groupByType) {
-          const entitiesByType = entity.get(`${option.query}ByType`);
-          // console.log(entity, entity.toJS())
-          if (entitiesByType) {
-            entitiesByType.forEach((typeentities, typeid) => {
-              if (typeentities.size > 0) {
-                const connectedEntities = typeentities.map(
-                  (connectionId) => connections.getIn([option.query, connectionId.toString()])
-                );
-                const path = `${option.query}_${typeid}`;
-                memoX = memoX.concat([{
-                  option: {
-                    label: (size) => intl
-                      && intl.formatMessage(
-                        size === 1
-                          ? appMessages.entities[path].single
-                          : appMessages.entities[path].plural
-                      ),
-                    style: option.query,
-                    clientPath: option.clientPath,
-                  },
-                  entities: connectedEntities,
-                }]);
-              }
-            });
-          }
-        } else {
-          const connectedEntities = entity
-            .get(option.query)
-            .map(
-              (connectionId) => connections.getIn([option.query, connectionId.toString()])
-            );
-          memoX = memoX.concat([{
-            option: {
-              label: (size) => intl && intl.formatMessage(
-                size === 1 ? appMessages.entities[option.query].single : appMessages.entities[option.query].plural
-              ),
-              style: option.query,
-              clientPath: option.clientPath,
-            },
-            entities: connectedEntities,
-          }]);
-        }
-      }
-      return memoX;
-    }, []);
+    return Object.values(connectionOptions)
+      .filter((option) => !option.listItemHide
+        && connections.get(option.entityType)
+        && entity.get(`${option.entityTypeAs || option.entityType}ByType`)
+        && entity.get(`${option.entityTypeAs || option.entityType}ByType`).size > 0)
+      .map((option) => {
+        const connectionsByType = entity.get(`${option.entityTypeAs || option.entityType}ByType`).toJS();
+        return ({
+          groupLabel: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
+          connectionsByType: Object.keys(connectionsByType)
+            .filter((typeId) => Object.keys(connectionsByType[typeId]).length > 0)
+            .map((typeId) => {
+              const typeentities = connectionsByType[typeId];
+              const connectedEntities = Object.values(typeentities).map(
+                (connectionId) => connections.getIn([option.entityType, connectionId.toString()])
+              );
+              const path = `${option.entityType}_${typeId}`;
+              return ({
+                option: {
+                  label: (size, short) => intl
+                    && intl.formatMessage(
+                      size === 1
+                        ? appMessages.entities[path][short ? 'singleShort' : 'single']
+                        : appMessages.entities[path][short ? 'pluralShort' : 'plural']
+                    ),
+                  style: option.entityType,
+                  clientPath: option.clientPath,
+                },
+                entities: connectedEntities,
+              });
+            }),
+        });
+      });
   };
 
   getRole = (entityRoles, roles) => {
@@ -130,6 +107,9 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     // taxonomies,
   }) => {
     const { intl } = this.context;
+    const connectedCounts = config && config.connections
+      ? this.getConnections(entity, config.connections, connections)
+      : [];
     return ({
       id: entity.get('id'),
       title: entity.getIn(['attributes', 'name']) || entity.getIn(['attributes', 'title']),
@@ -139,9 +119,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
       path: entityPath || config.clientPath,
       entityIcon: entityIcon && entityIcon(entity),
       categories: entity.get('categories'),
-      connectedCounts: config && config.connections
-        ? this.getConnections(entity, config.connections.options, connections)
-        : [],
+      connectedCounts,
       assignedUser: entity.get('manager') && ({ name: entity.getIn(['manager', 'attributes', 'name']) }),
       targetDate: entity.getIn(['attributes', 'target_date'])
         && intl
@@ -152,35 +130,50 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
   render() {
     const { onEntityClick, taxonomies } = this.props;
     const entity = this.mapToEntityListItem(this.props);
-
-    const bottomTaxonomies = taxonomies;
-
+    const hasTop = entity.role;
+    const hasBottom = ((entity.categories && entity.categories.size > 0)
+      || (this.props.wrapper && entity.connectedCounts && entity.connectedCounts.length > 0));
     return (
-      <Styled isManager={this.props.isManager} isConnection={this.props.isConnection}>
-        <EntityListItemMainTop entity={entity} />
-        <Clear />
-        <EntityListItemMainTitleWrap
-          onClick={(evt) => {
-            evt.preventDefault();
-            onEntityClick(entity.id, entity.path);
-          }}
-          href={`${entity.path}/${entity.id}`}
-        >
-          <EntityListItemMainTitle>
-            {entity.title}
-          </EntityListItemMainTitle>
-        </EntityListItemMainTitleWrap>
-        { (entity.categories || (entity.connectedCounts && this.props.wrapper))
-          && (
-            <EntityListItemMainBottom
-              connections={entity.connectedCounts}
-              wrapper={this.props.wrapper}
-              categories={entity.categories}
-              taxonomies={bottomTaxonomies}
-              onEntityClick={onEntityClick}
-            />
-          )
-        }
+      <Styled isManager={this.props.isManager}>
+        {hasTop && (
+          <EntityListItemMainTop
+            entity={entity}
+          />
+        )}
+        <Box direction="row" justify="between">
+          <Box>
+            <EntityListItemMainTitleWrap
+              onClick={(evt) => {
+                evt.preventDefault();
+                onEntityClick(entity.id, entity.path);
+              }}
+              href={`${entity.path}/${entity.id}`}
+            >
+              {entity.reference && (
+                <EntityListItemMainTopReference>
+                  {entity.reference}
+                </EntityListItemMainTopReference>
+              )}
+              <EntityListItemMainTitle>
+                {entity.title}
+              </EntityListItemMainTitle>
+            </EntityListItemMainTitleWrap>
+          </Box>
+          {entity.draft && (
+            <Box flex={{ shrink: 0 }}>
+              <ItemStatus draft={entity.draft} float="none" />
+            </Box>
+          )}
+        </Box>
+        {hasBottom && (
+          <EntityListItemMainBottom
+            connections={entity.connectedCounts}
+            wrapper={this.props.wrapper}
+            taxonomies={taxonomies}
+            categories={entity.categories}
+            onEntityClick={onEntityClick}
+          />
+        )}
       </Styled>
     );
   }
@@ -196,7 +189,6 @@ EntityListItemMain.propTypes = {
   isManager: PropTypes.bool,
   wrapper: PropTypes.object,
   onEntityClick: PropTypes.func,
-  isConnection: PropTypes.bool,
 };
 EntityListItemMain.contextTypes = {
   intl: PropTypes.object,
