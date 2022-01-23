@@ -5,54 +5,50 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+// import { FormattedMessage } from 'react-intl';
 
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
-import { reduce } from 'lodash/collection';
+import { reduce, groupBy } from 'lodash/collection';
+import { Box } from 'grommet';
+
 import appMessage from 'utils/app-message';
 import { lowerCase } from 'utils/string';
 
 import Icon from 'components/Icon';
 import Button from 'components/buttons/Button';
 import ButtonTagFilter from 'components/buttons/ButtonTagFilter';
-import ButtonTagFilterInverse from 'components/buttons/ButtonTagFilterInverse';
-import PrintOnly from 'components/styled/PrintOnly';
+// import PrintOnly from 'components/styled/PrintOnly';
 
-import messages from './messages';
+// import messages from './messages';
 
-const Styled = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  position: relative;
-  @media print {
-    border: none;
-    box-shadow: none;
-    padding: 0;
-    display: ${({ hidePrint }) => hidePrint ? 'none' : 'block'};
-  }
-`;
+const Styled = styled((p) => <Box direction="row" align="end" justify="end" {...p} />)``;
 
-const Tags = styled.div`
-  margin-top: -2px;
-  margin-bottom: -2px;
-`;
+const Tags = styled((p) => <Box direction="row" {...p} />)``;
 
 const Clear = styled(Button)`
-  padding: ${(props) => props.small ? '4px 6px' : '8px 6px'};
   background-color: ${palette('background', 4)};
+  padding: 1px 6px;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding: ${(props) => props.small ? '4px 6px' : '8px 6px'};
+    padding: 1px 6px;
   }
   @media print {
     display: none;
   }
 `;
 
-const LabelPrint = styled(PrintOnly)`
-  margin-top: 10px;
-  font-size: ${(props) => props.theme.sizes.print.smaller};
+// const LabelPrint = styled(PrintOnly)`
+//   margin-top: 10px;
+//   font-size: ${(props) => props.theme.sizes.print.smaller};
+// `;
+
+const ConnectionGroupLabel = styled.span`
+  color: ${palette('text', 1)};
+  font-size: ${(props) => props.theme.sizes && props.theme.sizes.text.smaller};
+  padding-top: 2px;
+  @media print {
+    font-size: ${(props) => props.theme.sizes.print.smaller};
+  }
 `;
 
 export class TagList extends React.Component { // eslint-disable-line react/prefer-stateless-function
@@ -78,51 +74,38 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
   render() {
     const { filters } = this.props;
     const hasFilters = filters.length > 0;
+    const groupedFilters = groupBy(filters, 'group');
     return (
       <Styled hidePrint={!hasFilters}>
         {hasFilters && (
-          <LabelPrint>
-            <FormattedMessage {...messages.labelPrintFilters} />
-          </LabelPrint>
-        )}
-        { hasFilters && (
           <Tags>
-            {
-              filters.map((filter, i) => filter.inverse
-                ? (
-                  <ButtonTagFilterInverse
-                    key={i}
-                    onClick={filter.onClick}
-                    palette={filter.type || 'attributes'}
-                    paletteHover={`${filter.type || 'attributes'}Hover`}
-                    pIndex={parseInt(filter.id, 10) || 0}
-                    disabled={!filter.onClick}
-                  >
-                    {this.getFilterLabel(filter)}
-                    { filter.onClick
-                    && <Icon name="removeSmall" text textRight hidePrint />
-                    }
-                  </ButtonTagFilterInverse>
-                )
-                : (
-                  <ButtonTagFilter
-                    key={i}
-                    onClick={filter.onClick}
-                    palette={filter.type || 'attributes'}
-                    paletteHover={`${filter.type || 'attributes'}Hover`}
-                    pIndex={parseInt(filter.id, 10) || 0}
-                    disabled={!filter.onClick}
-                  >
-                    {this.getFilterLabel(filter)}
-                    { filter.onClick
-                    && <Icon name="removeSmall" text textRight hidePrint />
-                    }
-                  </ButtonTagFilter>
-                ))
-            }
+            {Object.keys(groupedFilters).map((group, i) => (
+              <Box key={i}>
+                <ConnectionGroupLabel>
+                  {group}
+                </ConnectionGroupLabel>
+                <Box direction="row">
+                  {groupedFilters[group].map((filter, j) => (
+                    <ButtonTagFilter
+                      key={j}
+                      onClick={filter.onClick}
+                      palette={filter.type || 'attributes'}
+                      paletteHover={`${filter.type || 'attributes'}Hover`}
+                      pIndex={parseInt(filter.id, 10) || 0}
+                      disabled={!filter.onClick}
+                    >
+                      {this.getFilterLabel(filter)}
+                      { filter.onClick
+                      && <Icon name="removeSmall" text textRight hidePrint />
+                      }
+                    </ButtonTagFilter>
+                  ))}
+                </Box>
+              </Box>
+            ))}
           </Tags>
         )}
-        { hasFilters && filters.length > 1 && (
+        {hasFilters && filters.length > 1 && (
           <Clear
             onClick={this.props.onClear}
           >
@@ -136,7 +119,6 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
 
 TagList.propTypes = {
   filters: PropTypes.array,
-  placeholder: PropTypes.string,
   onClear: PropTypes.func,
 };
 

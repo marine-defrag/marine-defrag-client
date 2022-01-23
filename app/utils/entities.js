@@ -8,7 +8,12 @@ import {
 } from 'themes/config';
 import { find, reduce, every } from 'lodash/collection';
 
-import { cleanupSearchTarget, regExMultipleWords, truncateText } from 'utils/string';
+import {
+  cleanupSearchTarget,
+  regExMultipleWords,
+  truncateText,
+  startsWith,
+} from 'utils/string';
 import asList from 'utils/as-list';
 import isNumber from 'utils/is-number';
 import appMessage from 'utils/app-message';
@@ -95,12 +100,17 @@ export const filterEntitiesWithoutAssociation = (
   query,
 ) => entities && entities.filter(
   (entity) => asList(query).every(
-    (pathOrTax) => {
-      const isTax = isNumber(pathOrTax);
+    (queryValue) => {
+      const isTax = isNumber(queryValue);
       if (isTax) {
-        return !testEntityTaxonomyAssociation(entity, categories, parseInt(pathOrTax, 10));
+        return !testEntityTaxonomyAssociation(entity, categories, parseInt(queryValue, 10));
       }
-      return !testEntityAssociation(entity, pathOrTax);
+      const isAttribute = startsWith(queryValue, 'att:');
+      if (isAttribute) {
+        const [, attribute] = queryValue.split(':');
+        return !entity.getIn(['attributes', attribute]);
+      }
+      return !testEntityAssociation(entity, queryValue);
     }
   )
 );

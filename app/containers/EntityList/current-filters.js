@@ -6,10 +6,11 @@ import { TEXT_TRUNCATE } from 'themes/config';
 import { getCategoryShortTitle } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
 
-import { truncateText } from 'utils/string';
+import { truncateText, startsWith } from 'utils/string';
 import isNumber from 'utils/is-number';
 import asList from 'utils/as-list';
 
+import appMessages from 'containers/App/messages';
 
 export const currentFilterArgs = (config, locationQuery) => {
   let args = [];
@@ -49,7 +50,8 @@ export const currentFilters = (
     locationQuery,
     onTagClick,
     errors,
-    actortypes,
+    // actortypes,
+    intl,
   },
   withoutLabel,
   errorLabel,
@@ -58,87 +60,35 @@ export const currentFilters = (
   if (errors && errors.size > 0) {
     filterTags.push(getErrorTag(errorLabel));
   }
-  if (config.actortypes && actortypes && actortypes.size > 1) {
-    filterTags = filterTags.concat(getCurrentActortypeFilter(
-      config.actortypes,
-      actortypes,
-      locationQuery,
-      onTagClick
-    ));
-  }
+  // if (config.actortypes && actortypes && actortypes.size > 1) {
+  //   filterTags = filterTags.concat(getCurrentActortypeFilter(
+  //     config.actortypes,
+  //     actortypes,
+  //     locationQuery,
+  //     onTagClick
+  //   ));
+  // }
   if (config.taxonomies && taxonomies) {
     filterTags = filterTags.concat(getCurrentTaxonomyFilters(
       config.taxonomies,
       taxonomies,
       locationQuery,
       onTagClick,
-      withoutLabel
+      withoutLabel,
+      intl,
     ));
   }
   if (connections && config.connections) {
-    if (config.connections.actors) {
+    Object.values(config.connections).forEach((connectionOption) => {
       filterTags = filterTags.concat(getCurrentConnectionFilters(
-        config.connections.actors,
+        connectionOption,
         connections,
         locationQuery,
         onTagClick,
-        withoutLabel
+        withoutLabel,
+        intl,
       ));
-    }
-    if (config.connections.actions && connections) {
-      filterTags = filterTags.concat(getCurrentConnectionFilters(
-        config.connections.actions,
-        connections,
-        locationQuery,
-        onTagClick,
-        withoutLabel
-      ));
-    }
-    if (config.connections.targets && connections) {
-      filterTags = filterTags.concat(getCurrentConnectionFilters(
-        config.connections.targets,
-        connections,
-        locationQuery,
-        onTagClick,
-        withoutLabel
-      ));
-    }
-    if (config.connections.members && connections) {
-      filterTags = filterTags.concat(getCurrentConnectionFilters(
-        config.connections.members,
-        connections,
-        locationQuery,
-        onTagClick,
-        withoutLabel
-      ));
-    }
-    if (config.connections.associations && connections) {
-      filterTags = filterTags.concat(getCurrentConnectionFilters(
-        config.connections.associations,
-        connections,
-        locationQuery,
-        onTagClick,
-        withoutLabel
-      ));
-    }
-    if (config.connections.parents) {
-      filterTags = filterTags.concat(getCurrentConnectionFilters(
-        config.connections.parents,
-        connections,
-        locationQuery,
-        onTagClick,
-        withoutLabel
-      ));
-    }
-    if (config.connections.resources && connections) {
-      filterTags = filterTags.concat(getCurrentConnectionFilters(
-        config.connections.resources,
-        connections,
-        locationQuery,
-        onTagClick,
-        withoutLabel
-      ));
-    }
+    });
   }
   if (config.attributes) {
     filterTags = filterTags.concat(getCurrentAttributeFilters(
@@ -146,7 +96,8 @@ export const currentFilters = (
       config.attributes.options,
       locationQuery,
       onTagClick,
-      withoutLabel
+      withoutLabel,
+      intl,
     ));
   }
   return filterTags;
@@ -170,7 +121,8 @@ const getCurrentTaxonomyFilters = (
   taxonomies,
   locationQuery,
   onClick,
-  withoutLabel
+  withoutLabel,
+  intl,
 ) => {
   const tags = [];
   if (locationQuery.get(taxonomyFilters.query)) {
@@ -185,7 +137,8 @@ const getCurrentTaxonomyFilters = (
               label: getCategoryLabel(category),
               type: 'taxonomies',
               id: taxonomy.get('id'),
-              inverse: category.getIn(['attributes', 'draft']),
+              group: intl.formatMessage(appMessages.nav.taxonomies),
+              inverse: true,
               onClick: () => onClick({
                 value,
                 query: taxonomyFilters.query,
@@ -214,6 +167,7 @@ const getCurrentTaxonomyFilters = (
               },
             ],
             type: 'taxonomies',
+            group: intl.formatMessage(appMessages.nav.taxonomies),
             id: taxonomy.get('id'),
             onClick: () => onClick({
               value,
@@ -228,31 +182,31 @@ const getCurrentTaxonomyFilters = (
   return tags;
 };
 
-const getCurrentActortypeFilter = (
-  config,
-  actortypes,
-  locationQuery,
-  onClick,
-) => {
-  const tags = [];
-  if (locationQuery.get(config.query)) {
-    const locationQueryValue = locationQuery.get(config.query);
-    const actortype = actortypes.find((type) => qe(type.get('id'), locationQueryValue));
-    if (actortype) {
-      tags.push({
-        message: `actortypes_short.${actortype.get('id')}`,
-        type: 'actors',
-        id: 0,
-        onClick: () => onClick({
-          value: actortype.get('id'),
-          query: config.query,
-          checked: false,
-        }),
-      });
-    }
-  }
-  return tags;
-};
+// const getCurrentActortypeFilter = (
+//   config,
+//   actortypes,
+//   locationQuery,
+//   onClick,
+// ) => {
+//   const tags = [];
+//   if (locationQuery.get(config.query)) {
+//     const locationQueryValue = locationQuery.get(config.query);
+//     const actortype = actortypes.find((type) => qe(type.get('id'), locationQueryValue));
+//     if (actortype) {
+//       tags.push({
+//         message: `actortypes_short.${actortype.get('id')}`,
+//         type: 'actors',
+//         id: 0,
+//         onClick: () => onClick({
+//           value: actortype.get('id'),
+//           query: config.query,
+//           checked: false,
+//         }),
+//       });
+//     }
+//   }
+//   return tags;
+// };
 
 const getCurrentConnectionFilters = (
   option,
@@ -260,30 +214,28 @@ const getCurrentConnectionFilters = (
   locationQuery,
   onClick,
   withoutLabel,
+  intl,
 ) => {
   const tags = [];
-  const { query } = option;
-  const connectionPath = option.connectionPath || option.entityType;
-  if (locationQuery.get(query) && connections.get(connectionPath)) {
+  const { query, path } = option;
+  if (locationQuery.get(query) && connections.get(path)) {
     const locationQueryValue = locationQuery.get(query);
     asList(locationQueryValue).forEach((queryValue) => {
-      const valueSplit = queryValue.split(':');
-      if (valueSplit.length > 0) {
-        if (option.entityType === valueSplit[0].split('_')[0]) {
-          const value = valueSplit[1].toString();
-          const connection = connections.getIn([connectionPath, value]);
-          if (connection) {
-            tags.push({
-              label: getConnectionLabel(connection, value),
-              type: option.connectionPath || option.entityType,
-              inverse: connection.getIn(['attributes', 'draft']),
-              onClick: () => onClick({
-                value: queryValue,
-                query,
-                checked: false,
-              }),
-            });
-          }
+      // const valueSplit = queryValue.split(':');
+      const [, value] = queryValue.split(':');
+      if (value) {
+        const connection = connections.getIn([path, value]);
+        if (connection) {
+          tags.push({
+            label: getConnectionLabel(connection, value),
+            type: option.entityType,
+            group: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
+            onClick: () => onClick({
+              value: queryValue,
+              query,
+              checked: false,
+            }),
+          });
         }
       }
     });
@@ -292,39 +244,59 @@ const getCurrentConnectionFilters = (
   if (locationQuery.get('without')) {
     const locationQueryValue = locationQuery.get('without');
     asList(locationQueryValue).forEach((queryValue) => {
-      const [entityType, typeId] = queryValue.split('_');
-      // numeric means taxonomy
-      if (entityType === (option.entityTypeAs || option.entityType)) {
+      if (option.attribute && startsWith(queryValue, 'att')) {
         tags.push({
           labels: [
             { label: withoutLabel },
             {
               appMessage: true,
-              label: (
-                option.groupByType
-                && option.message
-                && option.message.indexOf('{typeid}') > -1
-              )
-                ? option.message.replace('{typeid}', typeId)
-                : option.message,
+              label: option.message,
               lowerCase: true,
             },
             { label: option.label },
           ],
-          type: option.connectionPath || option.entityType,
+          type: option.entityType,
+          group: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
           onClick: () => onClick({
             value: queryValue,
             query: 'without',
             checked: false,
           }),
         });
+      } else {
+        const [entityType, typeId] = queryValue.split('_');
+        if (entityType === (option.entityTypeAs || option.entityType)) {
+          tags.push({
+            labels: [
+              { label: withoutLabel },
+              {
+                appMessage: true,
+                label: (
+                  option.groupByType
+                  && option.message
+                  && option.message.indexOf('{typeid}') > -1
+                )
+                  ? option.message.replace('{typeid}', typeId)
+                  : option.message,
+                lowerCase: true,
+              },
+              { label: option.label },
+            ],
+            type: option.entityType,
+            onClick: () => onClick({
+              value: queryValue,
+              query: 'without',
+              checked: false,
+            }),
+          });
+        }
       }
     });
   }
   return tags;
 };
 
-const getCurrentAttributeFilters = (entities, attributeFiltersOptions, locationQuery, onClick, withoutLabel) => {
+const getCurrentAttributeFilters = (entities, attributeFiltersOptions, locationQuery, onClick, withoutLabel, intl) => {
   const tags = [];
   if (locationQuery.get('where')) {
     const locationQueryValue = locationQuery.get('where');
@@ -343,6 +315,7 @@ const getCurrentAttributeFilters = (entities, attributeFiltersOptions, locationQ
                     { appMessage: !!option.message, label: option.message || option.label, lowerCase: true },
                   ],
                   type: 'attributes',
+                  group: intl.formatMessage(appMessages.nav.attributes),
                   onClick: () => onClick({
                     value: queryValue,
                     query: 'where',
@@ -360,6 +333,7 @@ const getCurrentAttributeFilters = (entities, attributeFiltersOptions, locationQ
                       { label: value },
                     ],
                   type: 'attributes',
+                  group: intl.formatMessage(appMessages.nav.attributes),
                   onClick: () => onClick({
                     value: queryValue,
                     query: 'where',
@@ -377,6 +351,7 @@ const getCurrentAttributeFilters = (entities, attributeFiltersOptions, locationQ
                   label,
                 }],
                 type: 'attributes',
+                group: intl.formatMessage(appMessages.nav.attributes),
                 onClick: () => onClick({
                   value: queryValue,
                   query: 'where',

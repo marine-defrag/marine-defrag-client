@@ -56,7 +56,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     const { intl } = this.context;
     return Object.values(connectionOptions)
       .filter((option) => !option.listItemHide
-        && connections.get(option.entityType)
+        && connections.get(option.path)
         && entity.get(`${option.entityTypeAs || option.entityType}ByType`)
         && entity.get(`${option.entityTypeAs || option.entityType}ByType`).size > 0)
       .map((option) => {
@@ -68,7 +68,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
             .map((typeId) => {
               const typeentities = connectionsByType[typeId];
               const connectedEntities = Object.values(typeentities).map(
-                (connectionId) => connections.getIn([option.entityType, connectionId.toString()])
+                (connectionId) => connections.getIn([option.path, connectionId.toString()])
               );
               const path = `${option.entityType}_${typeId}`;
               return ({

@@ -1,5 +1,4 @@
 import { find, forEach } from 'lodash/collection';
-import { startsWith } from 'utils/string';
 
 import {
   testEntityEntityAssociation,
@@ -27,57 +26,18 @@ export const makeActiveEditOptions = ({
   switch (activeEditOption.group) {
     case 'taxonomies':
       return makeTaxonomyEditOptions(entities, taxonomies, activeEditOption, messages);
-    case 'connections':
+    case 'actions':
+    case 'actors':
+    case 'targets':
+    case 'members':
+    case 'associations':
+    case 'resources':
       return makeConnectionEditOptions(
         entities,
         config.connections,
         connections,
         connectedTaxonomies,
-        activeEditOption,
-        messages,
-        contextIntl,
-        activeEditOption.group,
-      );
-    case 'targets':
-      return makeConnectionEditOptions(
-        entities,
-        config.targets,
-        connections,
-        connectedTaxonomies,
-        activeEditOption,
-        messages,
-        contextIntl,
-        activeEditOption.group,
-      );
-    case 'members':
-      return makeConnectionEditOptions(
-        entities,
-        config.members,
-        connections,
-        connectedTaxonomies,
-        activeEditOption,
-        messages,
-        contextIntl,
-        activeEditOption.group,
-      );
-    case 'associations':
-      return makeConnectionEditOptions(
-        entities,
-        config.associations,
-        connections,
-        connectedTaxonomies,
-        activeEditOption,
-        messages,
-        contextIntl,
-        activeEditOption.group,
-      );
-    case 'resources':
-      return makeConnectionEditOptions(
-        entities,
-        config.resources,
-        connections,
-        connectedTaxonomies,
-        activeEditOption,
+        activeEditOption.optionId,
         messages,
         contextIntl,
         activeEditOption.group,
@@ -167,22 +127,18 @@ const makeConnectionEditOptions = (
   config,
   connections,
   connectedTaxonomies,
-  activeEditOption,
+  activeOptionId,
   messages,
   contextIntl,
-  // optionGroup,
+  group,
 ) => {
-  const { type } = config;
   // const option = find(config.connections.options, (o) => o.path === activeEditOption.optionId);
   // get the active option
-  const option = find(
-    config.options,
-    (o) => o.groupByType
-      ? startsWith(activeEditOption.optionId, o.entityType)
-      : o.entityType === activeEditOption.optionId,
-  );
+  const typeId = activeOptionId;
+  const option = config[group];
+  const { type } = option;
   const editOptions = {
-    groupId: activeEditOption.group,
+    groupId: group,
     search: true,
     options: {},
     selectedCount: entities.size,
@@ -193,20 +149,18 @@ const makeConnectionEditOptions = (
     tagFilterGroups: option && makeTagFilterGroups(connectedTaxonomies, contextIntl),
   };
   if (option) {
-    const typeid = option.groupByType && activeEditOption.optionId.split('_')[1];
     editOptions.title = messages.title;
     editOptions.path = option.connectPath;
     editOptions.search = option.search;
-    const connectionPath = option.connectionPath || option.entityType;
+    const connectionPath = option.path;
     connections
       .get(connectionPath)
       .filter((c) => {
-        if (!option.groupByType) return true;
         if (type === 'target-actions' || type === 'actor-actions' || type === 'resource-actions') {
-          return qe(typeid, c.getIn(['attributes', 'measuretype_id']));
+          return qe(typeId, c.getIn(['attributes', 'measuretype_id']));
         }
         if (type === 'action-resources') {
-          return qe(typeid, c.getIn(['attributes', 'resourcetype_id']));
+          return qe(typeId, c.getIn(['attributes', 'resourcetype_id']));
         }
         if (
           type === 'action-targets' // targets
@@ -214,7 +168,7 @@ const makeConnectionEditOptions = (
           || type === 'member-associations' // associations
           || type === 'association-members' // members
         ) {
-          return qe(typeid, c.getIn(['attributes', 'actortype_id']));
+          return qe(typeId, c.getIn(['attributes', 'actortype_id']));
         }
         return true;
       })
@@ -222,7 +176,7 @@ const makeConnectionEditOptions = (
         const count = entities.reduce(
           (counter, entity) => testEntityEntityAssociation(
             entity,
-            option.entityType,
+            option.entityTypeAs || option.entityType,
             connection.get('id')
           ) ? counter + 1 : counter,
           0, // initial value

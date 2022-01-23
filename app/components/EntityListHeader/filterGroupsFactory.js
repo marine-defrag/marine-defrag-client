@@ -57,6 +57,8 @@ export const makeFilterGroups = ({
         types = actiontypesForTarget;
       } else if (option.type === 'actor-actions') {
         types = actiontypes;
+      } else if (option.type === 'resource-actions') {
+        types = actiontypes;
       } else if (option.type === 'action-parents') {
         types = actiontypes;
       } else if (option.type === 'association-members') {

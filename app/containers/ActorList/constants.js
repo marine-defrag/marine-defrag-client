@@ -77,7 +77,7 @@ export const CONFIG = {
   },
   connections: { // filter by associated entity
     actions: {
-      query: 'actions',
+      query: 'action',
       type: 'actor-actions',
       search: true,
       message: 'entities.actions_{typeid}.plural',

@@ -74,7 +74,7 @@ class ColumnSelect extends React.PureComponent { // eslint-disable-line react/pr
     const nextSortOrderOption = sortOrderOption && this.props.sortOrderOptions.find((option) => sortOrderOption.nextValue === option.value);
 
     return (
-      <Styled colWidth={width * 100}>
+      <Styled colWidth={width * 100} hasSelectAll={isSelect}>
         <Wrapper>
           {isSelect
             && (

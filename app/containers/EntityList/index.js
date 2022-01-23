@@ -232,6 +232,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         onTagClick,
         errors,
         actortypes,
+        intl,
       },
       intl.formatMessage(messages.filterFormWithoutPrefix),
       intl.formatMessage(messages.filterFormError),

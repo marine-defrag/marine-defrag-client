@@ -114,21 +114,6 @@ export const CONFIG = {
       groupByType: true,
       typeFilter: 'is_target',
     },
-    // filter by associated parent
-    parents: {
-      query: 'parent',
-      type: 'action-parents',
-      search: true,
-      message: 'entities.actions_{typeid}.plural',
-      path: API.ACTIONS,
-      entityType: 'actors',
-      entityTypeAs: 'parents',
-      clientPath: ROUTES.ACTION,
-      attribute: 'parent_id',
-      typeFilter: 'has_parent',
-      groupByType: true,
-      listItemHide: true,
-    },
     // filter by associated entity
     resources: {
       query: 'resources',
@@ -141,6 +126,21 @@ export const CONFIG = {
       connectPath: API.ACTION_RESOURCES, // filter by actor connection
       key: 'resource_id',
       ownKey: 'measure_id',
+      groupByType: true,
+      listItemHide: true,
+    },
+    // filter by associated parent
+    parents: {
+      query: 'parent',
+      type: 'action-parents',
+      search: true,
+      message: 'attributes.parent_id',
+      path: API.ACTIONS,
+      entityType: 'actions',
+      entityTypeAs: 'parent',
+      clientPath: ROUTES.ACTION,
+      attribute: 'parent_id',
+      typeFilter: 'has_parent',
       groupByType: true,
       listItemHide: true,
     },
