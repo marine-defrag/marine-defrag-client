@@ -12,11 +12,13 @@ import {
   selectActionResourcesGroupedByResource,
   selectActionCategoriesGroupedByAction,
   selectActorActionsGroupedByAction,
+  selectActionActorsGroupedByAction,
+  selectActionResourcesGroupedByAction,
 } from 'containers/App/selectors';
 
 import {
   entitySetUser,
-  getEntityCategories,
+  setActionConnections,
 } from 'utils/entities';
 
 import { DEPENDENCIES } from './constants';
@@ -56,52 +58,32 @@ export const selectActionsByType = createSelector(
   selectActionsAssociated,
   selectActionConnections,
   selectActorActionsGroupedByAction,
+  selectActionActorsGroupedByAction,
+  selectActionResourcesGroupedByAction,
   selectActionCategoriesGroupedByAction,
   selectCategories,
   (
     ready,
     actions,
-    connections,
+    actionConnections,
     actorActions,
+    actionActors,
+    actionResources,
     actionCategories,
     categories,
   ) => {
     if (!ready) return Map();
-    return actions && actions.map(
-      (action) => {
-        const entityActors = actorActions.get(parseInt(action.get('id'), 10));
-        const entityActorsByActortype = entityActors
-          && connections.get('actors')
-          && entityActors.filter(
-            (actorId) => connections.getIn([
-              'actors',
-              actorId.toString(),
-            ])
-          ).groupBy(
-            (actorId) => connections.getIn([
-              'actors',
-              actorId.toString(),
-              'attributes',
-              'actortype_id',
-            ]).toString()
-          ).sortBy((val, key) => key);
-        return action.set(
-          'categories',
-          getEntityCategories(
-            action.get('id'),
-            actionCategories,
-            categories,
-          )
-        ).set(
-          'actors',
-          entityActors,
-        ).set(
-          'actorsByType',
-          entityActorsByActortype,
-        );
-      }
-    ).groupBy(
-      (r) => r.getIn(['attributes', 'measuretype_id'])
-    ).sortBy((val, key) => key);
+    return actions && actions
+      .map((action) => setActionConnections({
+        action,
+        actionConnections,
+        actorActions,
+        actionActors,
+        actionResources,
+        categories,
+        actionCategories,
+      }))
+      .groupBy((r) => r.getIn(['attributes', 'measuretype_id']))
+      .sortBy((val, key) => key);
   }
 );

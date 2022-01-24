@@ -50,9 +50,13 @@ function EntityListItemMainBottom({
   const entityTags = categories && categories.size > 0 && getEntityTags(categories, taxonomies, onEntityClick);
   return (
     <Styled>
-      {entityTags && entityTags.map((tag) => (
-        <EntityListItemMainTag tag={tag} key={tag.id} />
-      ))}
+      {entityTags && (
+        <Box direction="row" gap="hair" wrap>
+          {entityTags && entityTags.map((tag) => (
+            <EntityListItemMainTag tag={tag} key={tag.id} />
+          ))}
+        </Box>
+      )}
       {connections && connections.length > 0 && connections.map((connection, i) => (
         <EntityListItemMainConnection
           key={i}

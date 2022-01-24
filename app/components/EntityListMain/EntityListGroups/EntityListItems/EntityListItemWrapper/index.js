@@ -42,7 +42,7 @@ export class EntityListItemWrapper extends React.Component { // eslint-disable-l
       onEntityClick,
       entity,
       entityPath,
-      isConnection,
+      inSingleView,
     } = this.props;
     return (
       <ItemWrapper
@@ -60,7 +60,7 @@ export class EntityListItemWrapper extends React.Component { // eslint-disable-l
                 error={this.props.errors ? this.props.errors.get(entity.get('id')) : null}
                 onDismissError={this.props.onDismissError}
                 isManager={isManager}
-                isConnection={isConnection}
+                inSingleView={inSingleView}
                 isSelected={isManager && entityIdsSelected.includes(entity.get('id'))}
                 onSelect={(checked) => onEntitySelect(entity.get('id'), checked)}
                 entityIcon={entityIcon}
@@ -92,7 +92,7 @@ EntityListItemWrapper.propTypes = {
   onDismissError: PropTypes.func,
   entityPath: PropTypes.string,
   entityIcon: PropTypes.func,
-  isConnection: PropTypes.bool,
+  inSingleView: PropTypes.bool,
 };
 
 export default EntityListItemWrapper;

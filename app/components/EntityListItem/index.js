@@ -42,12 +42,10 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
       config,
       taxonomies,
       onEntityClick,
-      entityPath,
       connections,
       error,
-      isConnection,
+      inSingleView,
     } = this.props;
-
     return (
       <Styled>
         { error && error.map((updateError, i) => (
@@ -76,11 +74,10 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
             connections={connections}
             entityIcon={entityIcon}
             config={config}
-            entityPath={entityPath}
             onEntityClick={onEntityClick}
             wrapper={this.props.wrapper}
             isManager={isManager}
-            isConnection={isConnection}
+            inSingleView={inSingleView}
           />
         </Item>
       </Styled>
@@ -95,10 +92,9 @@ EntityListItem.propTypes = {
   error: PropTypes.instanceOf(List),
   isManager: PropTypes.bool,
   isSelected: PropTypes.bool,
-  isConnection: PropTypes.bool,
+  inSingleView: PropTypes.bool,
   onSelect: PropTypes.func,
   entityIcon: PropTypes.func,
-  entityPath: PropTypes.string,
   config: PropTypes.object,
   onEntityClick: PropTypes.func,
   onDismissError: PropTypes.func,

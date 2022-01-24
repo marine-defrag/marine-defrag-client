@@ -1095,20 +1095,26 @@ export const selectUserConnections = createSelector(
 );
 
 export const selectActorConnections = createSelector(
-  selectActiontypeActions,
-  (actions) => Map()
-    .set('actions', actions)
+  selectActions,
+  selectActors,
+  (actions, actors) => Map()
+    .set(API.ACTIONS, actions)
+    .set(API.ACTORS, actors)
 );
 export const selectResourceConnections = createSelector(
   selectActiontypeActions,
   (actions) => Map()
-    .set('actions', actions)
+    .set(API.ACTIONS, actions)
 );
 
 export const selectActionConnections = createSelector(
-  selectActortypeActors,
-  (actors) => Map()
-    .set('actors', actors)
+  selectActors,
+  selectActions,
+  selectResources,
+  (actors, actions, resources) => Map()
+    .set(API.ACTORS, actors)
+    .set(API.ACTIONS, actions)
+    .set(API.RESOURCES, resources)
 );
 
 // grouped JOIN tables /////////////////////////////////////////////////////////////////

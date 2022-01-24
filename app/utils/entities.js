@@ -5,6 +5,7 @@ import {
   ACTION_FIELDS,
   ACTOR_FIELDS,
   RESOURCE_FIELDS,
+  API,
 } from 'themes/config';
 import { find, reduce, every } from 'lodash/collection';
 
@@ -729,3 +730,105 @@ export const checkResourceRequired = (typeId, att) => RESOURCE_FIELDS
 export const hasGroupActors = (actortypesForActiontype) => actortypesForActiontype && actortypesForActiontype.some(
   (type) => type.getIn(['attributes', 'has_members'])
 );
+
+
+export const setActionConnections = ({
+  action,
+  actionConnections,
+  actorActions,
+  actionActors,
+  actionResources,
+  categories,
+  actionCategories,
+}) => {
+  // actors
+  const entityActors = actorActions.get(parseInt(action.get('id'), 10));
+  const entityActorsByActortype = entityActors
+    && actionConnections.get(API.ACTORS)
+    && entityActors
+      .filter((actorId) => actionConnections.getIn([API.ACTORS, actorId.toString()]))
+      .groupBy((actorId) => actionConnections.getIn([API.ACTORS, actorId.toString(), 'attributes', 'actortype_id']).toString())
+      .sortBy((val, key) => key);
+  // actors
+  const entityTargets = actionActors.get(parseInt(action.get('id'), 10));
+  const entityTargetsByActortype = entityTargets
+    && actionConnections.get(API.ACTORS)
+    && entityTargets
+      .filter((actorId) => actionConnections.getIn([API.ACTORS, actorId.toString()]))
+      .groupBy((actorId) => actionConnections.getIn([API.ACTORS, actorId.toString(), 'attributes', 'actortype_id']).toString())
+      .sortBy((val, key) => key);
+  // resources
+  const entityResources = actionResources.get(parseInt(action.get('id'), 10));
+  const entityResourcesByResourcetype = entityResources
+    && actionConnections.get(API.RESOURCES)
+    && entityResources
+      .filter((resId) => actionConnections.getIn([API.RESOURCES, resId.toString()]))
+      .groupBy((resId) => actionConnections.getIn([API.RESOURCES, resId.toString(), 'attributes', 'resourcetype_id']).toString())
+      .sortBy((val, key) => key);
+
+  // categories
+  const entityCategories = getEntityCategories(
+    action.get('id'),
+    actionCategories,
+    categories,
+  );
+  return action
+    .set('categories', entityCategories)
+    .set('actorsByType', entityActorsByActortype)
+    .set('targetsByType', entityTargetsByActortype)
+    .set('resourcesByType', entityResourcesByResourcetype);
+};
+
+export const setActorConnections = ({
+  actor,
+  actorConnections,
+  actorActions,
+  actionActors,
+  categories,
+  actorCategories,
+}) => {
+  // actors
+  const entityActions = actorActions.get(parseInt(actor.get('id'), 10));
+  const entityActionsByActiontype = entityActions
+    && actorConnections.get(API.ACTIONS)
+    && entityActions
+      .filter((actionId) => actorConnections.getIn([API.ACTIONS, actionId.toString()]))
+      .groupBy((actionId) => actorConnections.getIn([API.ACTIONS, actionId.toString(), 'attributes', 'measuretype_id']).toString())
+      .sortBy((val, key) => key);
+
+  const entityTargetingActions = actionActors.get(parseInt(actor.get('id'), 10));
+  const entityTargetingActionsByType = entityTargetingActions
+    && actorConnections.get(API.ACTIONS)
+    && entityTargetingActions
+      .filter((actionId) => actorConnections.getIn([API.ACTIONS, actionId.toString()]))
+      .groupBy((actionId) => actorConnections.getIn([API.ACTIONS, actionId.toString(), 'attributes', 'measuretype_id']).toString())
+      .sortBy((val, key) => key);
+
+  // categories
+  const entityCategories = getEntityCategories(
+    actor.get('id'),
+    actorCategories,
+    categories,
+  );
+  return actor
+    .set('categories', entityCategories)
+    .set('actionsByType', entityActionsByActiontype)
+    .set('targetingActionsByType', entityTargetingActionsByType);
+};
+
+export const setResourceConnections = ({
+  resource,
+  resourceConnections,
+  actionResources,
+}) => {
+  // actors
+  const entityActions = actionResources.get(parseInt(resource.get('id'), 10));
+  const entityActionsByActiontype = entityActions
+    && resourceConnections.get(API.ACTIONS)
+    && entityActions
+      .filter((actionId) => resourceConnections.getIn([API.ACTIONS, actionId.toString()]))
+      .groupBy((actionId) => resourceConnections.getIn([API.ACTIONS, actionId.toString(), 'attributes', 'measuretype_id']).toString())
+      .sortBy((val, key) => key);
+
+  return resource.set('actionsByType', entityActionsByActiontype);
+};

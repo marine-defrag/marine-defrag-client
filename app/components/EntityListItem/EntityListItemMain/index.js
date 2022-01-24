@@ -17,18 +17,18 @@ import EntityListItemMainTopReference from './EntityListItemMainTopReference';
 
 const Styled = styled((p) => <Box fill="horizontal" gap="small" {...p} />)`
   padding-right: 6px;
-  padding-bottom: 6px;
-  padding-left: ${(props) => props.isManager ? 0 : 6}px;
-  padding-top: ${(props) => props.theme.sizes && props.theme.sizes.mainListItem.paddingTop}px;
-  box-shadow: ${({ isConnection }) => isConnection ? '0px 0px 6px 0px rgba(0,0,0,0.2)' : 'none'};
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
-    padding-right: ${(props) => (!props.theme.sizes)
+  padding-bottom: ${({ inSingleView }) => inSingleView ? 10 : 6}px;
+  padding-left: ${({ isManager }) => isManager ? 0 : 6}px;
+  padding-top: ${({ theme }) => theme.sizes && theme.sizes.mainListItem.paddingTop}px;
+  box-shadow: ${({ inSingleView }) => inSingleView ? '0px 0px 6px 0px rgba(0,0,0,0.1)' : 'none'};
+  @media (min-width: ${({ theme }) => theme && theme.breakpoints ? theme.breakpoints.small : '769px'}) {
+    padding-right: ${({ theme }) => (!theme.sizes)
     ? 0
-    : props.theme.sizes.mainListItem.paddingHorizontal
+    : theme.sizes.mainListItem.paddingHorizontal
 }px;
-    padding-left: ${(props) => (!props.theme.sizes || props.isManager)
+    padding-left: ${({ theme, isManager }) => (!theme.sizes || isManager)
     ? 0
-    : props.theme.sizes.mainListItem.paddingHorizontal
+    : theme.sizes.mainListItem.paddingHorizontal
 }px;
   }
   @media print {
@@ -101,7 +101,6 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
   mapToEntityListItem = ({
     config,
     entity,
-    entityPath,
     connections,
     entityIcon,
     // taxonomies,
@@ -116,7 +115,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
       reference: this.getReference(entity, config),
       draft: entity.getIn(['attributes', 'draft']),
       role: entity.get('roles') && connections.get('roles') && this.getRole(entity.get('roles'), connections.get('roles')),
-      path: entityPath || config.clientPath,
+      path: config.clientPath,
       entityIcon: entityIcon && entityIcon(entity),
       categories: entity.get('categories'),
       connectedCounts,
@@ -128,13 +127,13 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
   }
 
   render() {
-    const { onEntityClick, taxonomies } = this.props;
+    const { onEntityClick, taxonomies, inSingleView } = this.props;
     const entity = this.mapToEntityListItem(this.props);
     const hasTop = entity.role;
     const hasBottom = ((entity.categories && entity.categories.size > 0)
       || (this.props.wrapper && entity.connectedCounts && entity.connectedCounts.length > 0));
     return (
-      <Styled isManager={this.props.isManager}>
+      <Styled isManager={this.props.isManager} inSingleView={inSingleView}>
         {hasTop && (
           <EntityListItemMainTop
             entity={entity}
@@ -185,10 +184,10 @@ EntityListItemMain.propTypes = {
   connections: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
   config: PropTypes.object, // eslint-disable-line react/no-unused-prop-types
   entityIcon: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
-  entityPath: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
   isManager: PropTypes.bool,
   wrapper: PropTypes.object,
   onEntityClick: PropTypes.func,
+  inSingleView: PropTypes.bool,
 };
 EntityListItemMain.contextTypes = {
   intl: PropTypes.object,

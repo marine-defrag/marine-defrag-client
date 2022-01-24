@@ -24,7 +24,6 @@ import {
   hasTaxonomyCategories,
   getActorConnectionField,
   getActionConnectionField,
-  getTargetConnectionField,
   getResourceConnectionField,
 } from 'utils/fields';
 
@@ -188,14 +187,14 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       fields.push({
         label: appMessages.entities.actions.parent,
         fields: [
-          getActionConnectionField(
-            parents,
+          getActionConnectionField({
+            actions: parents.toList(),
             taxonomies,
-            actionConnections,
             onEntityClick,
-            typeId,
-            true // skip type title
-          ),
+            connections: actionConnections,
+            typeid: typeId,
+            skipLabel: true,
+          }),
         ],
       });
     }
@@ -203,30 +202,30 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       fields.push({
         label: appMessages.entities.actions.children,
         fields: [
-          getActionConnectionField(
-            children,
+          getActionConnectionField({
+            actions: children.toList(),
             taxonomies,
-            actionConnections,
             onEntityClick,
-            typeId,
-            true // skip type title
-          ),
+            connections: actionConnections,
+            typeid: typeId,
+            skipLabel: true,
+          }),
         ],
       });
     }
 
-    // // actors
+    // actors
     if (actorsByActortype) {
       const actorConnectionsLocal = [];
       actorsByActortype.forEach((actors, actortypeid) => {
         actorConnectionsLocal.push(
-          getActorConnectionField(
+          getActorConnectionField({
             actors,
             taxonomies,
-            actorConnections,
             onEntityClick,
-            actortypeid,
-          ),
+            connections: actorConnections,
+            typeid: actortypeid,
+          }),
         );
       });
       fields.push({
@@ -239,13 +238,13 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       const targetConnectionsLocal = [];
       targetsByActortype.forEach((targets, actortypeid) => {
         targetConnectionsLocal.push(
-          getTargetConnectionField(
-            targets,
+          getActorConnectionField({
+            actors: targets,
             taxonomies,
-            actorConnections,
             onEntityClick,
-            actortypeid,
-          ),
+            connections: actorConnections,
+            typeid: actortypeid,
+          }),
         );
       });
       fields.push({
@@ -258,12 +257,12 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
       const resourcesConnectionsLocal = [];
       resourcesByResourcetype.forEach((resources, resourcetypeid) => {
         resourcesConnectionsLocal.push(
-          getResourceConnectionField(
+          getResourceConnectionField({
             resources,
-            resourceConnections,
             onEntityClick,
-            resourcetypeid,
-          ),
+            connections: resourceConnections,
+            typeid: resourcetypeid,
+          }),
         );
       });
       fields.push({

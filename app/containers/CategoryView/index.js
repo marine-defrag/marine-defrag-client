@@ -165,13 +165,13 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
       if (childActorsByActortype && childActorsByActortype.size > 0) {
         childActorsByActortype.forEach((actors, actortypeid) => {
           actorConnectionsLocal.push(
-            getActorConnectionField(
+            getActorConnectionField({
               actors,
               taxonomies,
-              actorConnections,
               onEntityClick,
-              actortypeid,
-            ),
+              connections: actorConnections,
+              typeid: actortypeid,
+            }),
           );
         });
       // show actors of category
@@ -179,13 +179,13 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
       } else if (actorsByActortype) {
         actorsByActortype.forEach((actors, actortypeid) => {
           actorConnectionsLocal.push(
-            getActorConnectionField(
+            getActorConnectionField({
               actors,
               taxonomies,
-              actorConnections,
               onEntityClick,
-              actortypeid,
-            ),
+              connections: actorConnections,
+              typeid: actortypeid,
+            }),
           );
         });
       }
@@ -199,26 +199,26 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
       if (childActionsByActiontype && childActionsByActiontype.size > 0) {
         childActionsByActiontype.forEach((actions, actiontypeid) => {
           actionConnectionsLocal.push(
-            getActionConnectionField(
+            getActionConnectionField({
               actions,
               taxonomies,
-              actionConnections,
               onEntityClick,
-              actiontypeid,
-            ),
+              connections: actionConnections,
+              typeid: actiontypeid,
+            }),
           );
         });
       // show actors of category
       } else if (actionsByActiontype) {
         actionsByActiontype.forEach((actions, actiontypeid) => {
           actionConnectionsLocal.push(
-            getActionConnectionField(
+            getActionConnectionField({
               actions,
               taxonomies,
-              actionConnections,
               onEntityClick,
-              actiontypeid,
-            ),
+              connections: actionConnections,
+              typeid: actiontypeid,
+            }),
           );
         });
       }
