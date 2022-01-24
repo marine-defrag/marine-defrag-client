@@ -321,6 +321,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         associationtypes,
         activeFilterOption: activeOption,
         typeId,
+        intl,
         messages: {
           attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.filterGroupLabel.taxonomies),

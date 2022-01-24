@@ -1,7 +1,7 @@
 import { reduce } from 'lodash/collection';
 import { sortEntities } from 'utils/sort';
 import { startsWith } from 'utils/string';
-
+import appMessages from 'containers/App/messages';
 // figure out filter groups for filter panel
 export const makeFilterGroups = ({
   config,
@@ -17,6 +17,7 @@ export const makeFilterGroups = ({
   associationtypes,
   messages,
   typeId,
+  intl,
 }) => {
   const filterGroups = {};
   // taxonomy option group
@@ -34,6 +35,7 @@ export const makeFilterGroups = ({
               {
                 id: taxonomy.get('id'), // filterOptionId
                 label: messages.taxonomies(taxonomy.get('id')),
+                info: intl.formatMessage(appMessages.entities.taxonomies[taxonomy.get('id')].description),
                 active: !!activeFilterOption
                   && activeFilterOption.group === 'taxonomies'
                   && activeFilterOption.optionId === taxonomy.get('id'),
@@ -50,24 +52,33 @@ export const makeFilterGroups = ({
     Object.keys(config.connections).forEach((connectionKey) => {
       const option = config.connections[connectionKey];
       let types;
+      let typeAbout;
       if (option.type === 'action-actors') {
         types = actortypes;
+        typeAbout = 'actortypes_about';
       } else if (option.type === 'action-targets') {
         types = targettypes;
+        typeAbout = 'actortypes_about';
       } else if (option.type === 'target-actions') {
         types = actiontypesForTarget;
+        typeAbout = 'actiontypes_about';
       } else if (option.type === 'actor-actions') {
         types = actiontypes;
+        typeAbout = 'actiontypes_about';
       } else if (option.type === 'resource-actions') {
         types = actiontypes;
+        typeAbout = 'actiontypes_about';
       } else if (option.type === 'action-parents') {
         types = actiontypes;
       } else if (option.type === 'association-members') {
         types = membertypes;
+        typeAbout = 'actortypes_about';
       } else if (option.type === 'member-associations') {
         types = associationtypes;
+        typeAbout = 'actortypes_about';
       } else if (option.type === 'action-resources') {
         types = resourcetypes;
+        typeAbout = 'resourcetypes_about';
       }
       filterGroups[connectionKey] = {
         id: connectionKey, // filterGroupId
@@ -96,6 +107,10 @@ export const makeFilterGroups = ({
             return memo.concat({
               id, // filterOptionId
               label: option.label,
+              info: typeAbout
+                && appMessages[typeAbout]
+                && appMessages[typeAbout][type.get('id')]
+                && intl.formatMessage(appMessages[typeAbout][type.get('id')]),
               message: (option.message && option.message.indexOf('{typeid}') > -1)
                 ? option.message.replace('{typeid}', type.get('id'))
                 : option.message,

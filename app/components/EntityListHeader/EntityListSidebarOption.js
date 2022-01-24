@@ -4,64 +4,66 @@
  *
  */
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
+import { injectIntl, intlShape } from 'react-intl';
+import {
+  Box, Button, Drop, Text,
+} from 'grommet';
+import { CircleQuestion } from 'grommet-icons';
 
 import appMessage from 'utils/app-message';
-
-import Button from 'components/buttons/Button';
-import Icon from 'components/Icon';
 
 import messages from './messages';
 
 // TODO compare TaxonomySidebarItem
-const Styled = styled(Button)`
-  display: table;
-  width: 100%;
-  font-weight: bold;
-  padding: ${(props) => props.small ? '0.5em 8px 0.5em 36px' : '0.75em 8px 0.75em 16px'};
-  text-align: left;
-  color:  ${(props) => props.active ? palette('asideListItem', 1) : palette('asideListItem', 0)};
-  background-color: ${(props) => props.active ? palette('asideListItem', 3) : palette('asideListItem', 2)};
+const Styled = styled((p) => (
+  <Box
+    direction="row"
+    fill="horizontal"
+    align="center"
+    {...p}
+  />
+))`
   border-bottom: 1px solid ${palette('asideListItem', 4)};
-  &:hover {
-    color: ${(props) => props.active ? palette('asideListItemHover', 1) : palette('asideListItemHover', 0)};
-    background-color: ${(props) => props.active ? palette('asideListItemHover', 3) : palette('asideListItemHover', 2)};
-    border-bottom-color: ${palette('asideListItemHover', 4)}
-  }
-  &:last-child {
-    border-bottom: 0;
-  }
+  background-color: ${(props) => props.active ? palette('asideListItem', 3) : palette('asideListItem', 2)};
+  color:  ${(props) => props.active ? palette('asideListItem', 1) : palette('asideListItem', 0)};
+`;
+
+const StyledButton = styled((p) => <Button plain fill="horizontal" focusIndicator={false} {...p} />)`
+  padding: ${(props) => props.small ? '0.5em 8px 0.5em 36px' : '0.75em 8px 0.75em 16px'};
+  font-weight: bold;
+  text-align: left;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     padding: ${(props) => props.small ? '0.5em 8px 0.5em 36px' : '0.75em 8px 0.75em 16px'};
   }
 `;
-const Label = styled.div`
-  vertical-align: middle;
-  display: table-cell;
-  width: 99%;
-`;
-const IconWrapper = styled.div`
-  color: ${palette('light', 3)};
-  vertical-align: middle;
-  padding: 0 5px;
-  display: table-cell;
-  width: 35px;
+
+const Label = styled.div``;
+
+const DropContent = styled((p) => (
+  <Box
+    pad="small"
+    background="light-1"
+    {...p}
+  />
+))`
+  max-width: 280px;
 `;
 
-class EntityListSidebarOption extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  render() {
-    const {
-      option, onShowForm, groupId, groupType,
-    } = this.props;
-    const { intl } = this.context;
-    return (
-      <Styled
-        active={option.get('active')}
-        small={option.get('nested')}
+
+function EntityListSidebarOption({
+  option, onShowForm, groupId, groupType, intl,
+}) {
+  const infoRef = useRef(null);
+  const [info, showInfo] = useState(false);
+  return (
+    <Styled active={option.get('active')}>
+      <StyledButton
+        plain
         onClick={() => onShowForm({
           group: groupType || groupId,
           optionId: option.get('id'),
@@ -77,21 +79,42 @@ class EntityListSidebarOption extends React.PureComponent { // eslint-disable-li
         )}
       >
         <Label>
-          { option.get('message')
+          {option.get('message')
             ? appMessage(intl, option.get('message'))
             : option.get('label')
           }
         </Label>
-        { option.get('icon')
-          && (
-            <IconWrapper>
-              <Icon name={option.get('icon')} />
-            </IconWrapper>
-          )
-        }
-      </Styled>
-    );
-  }
+      </StyledButton>
+      {option.get('info') && (
+        <Box
+          fill={false}
+          pad={{ horizontal: 'small' }}
+          ref={infoRef}
+        >
+          <Button
+            plain
+            icon={<CircleQuestion color={option.get('active') ? 'white' : 'dark-2'} />}
+            fill={false}
+            onMouseOver={() => showInfo(true)}
+            onMouseLeave={() => showInfo(false)}
+            onFocus={() => showInfo(true)}
+            onBlur={() => null}
+            onClick={() => showInfo(!info)}
+          />
+        </Box>
+      )}
+      {option.get('info') && info && infoRef && (
+        <Drop
+          align={{ top: 'top', right: 'left' }}
+          target={infoRef.current}
+        >
+          <DropContent>
+            <Text size="small">{option.get('info')}</Text>
+          </DropContent>
+        </Drop>
+      )}
+    </Styled>
+  );
 }
 
 EntityListSidebarOption.propTypes = {
@@ -99,11 +122,7 @@ EntityListSidebarOption.propTypes = {
   groupId: PropTypes.string.isRequired,
   groupType: PropTypes.string,
   onShowForm: PropTypes.func.isRequired,
+  intl: intlShape.isRequired,
 };
 
-
-EntityListSidebarOption.contextTypes = {
-  intl: PropTypes.object.isRequired,
-};
-
-export default EntityListSidebarOption;
+export default injectIntl(EntityListSidebarOption);

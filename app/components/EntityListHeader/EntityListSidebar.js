@@ -50,7 +50,7 @@ const SidebarWrapper = styled.div`
   top: 0;
   bottom: 0;
   right: 0;
-  z-index: 98;
+  z-index: 100;
 `;
 
 const STATE_INITIAL = {

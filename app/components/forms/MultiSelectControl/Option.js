@@ -7,8 +7,6 @@ import { FormattedMessage } from 'react-intl';
 import { lowerCase } from 'utils/string';
 import appMessage from 'utils/app-message';
 
-import ItemStatus from 'components/ItemStatus';
-
 import messages from './messages';
 
 // font-weight: ${(props) => props.bold ? 500 : 'normal'};
@@ -44,7 +42,7 @@ class Option extends React.Component { // eslint-disable-line react/prefer-state
   render() {
     const { intl } = this.context;
     const {
-      draft, reference, message, label, messagePrefix, isNew, emphasis = false,
+      reference, message, label, messagePrefix, isNew, emphasis = false,
     } = this.props;
 
     let optionLabel;
@@ -56,12 +54,8 @@ class Option extends React.Component { // eslint-disable-line react/prefer-state
       optionLabel = label;
     }
 
-
     return (
       <Label emphasis={emphasis}>
-        {draft
-          && <ItemStatus draft top />
-        }
         {reference
           && <Id>{reference}</Id>
         }
@@ -86,7 +80,8 @@ Option.propTypes = {
   message: PropTypes.string,
   messagePrefix: PropTypes.string,
   reference: PropTypes.string,
-  draft: PropTypes.bool,
+  info: PropTypes.string,
+  // draft: PropTypes.bool,
   isNew: PropTypes.bool,
   emphasis: PropTypes.bool,
 };

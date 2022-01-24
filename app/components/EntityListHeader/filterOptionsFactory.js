@@ -211,6 +211,7 @@ export const makeTaxonomyFilterOptions = (
             filterOptions.options[value] = {
               reference: getEntityReference(category, false),
               label: getEntityTitle(category),
+              info: category.getIn(['attributes', 'description']),
               group: parent && getEntityParentId(category),
               showCount: true,
               value,
@@ -258,6 +259,7 @@ export const makeTaxonomyFilterOptions = (
                 filterOptions.options[catId] = {
                   reference: getEntityReference(category, false),
                   label: getEntityTitle(category),
+                  info: category.getIn(['attributes', 'description']),
                   group: parent && getEntityParentId(category),
                   showCount: true,
                   value: catId,
@@ -340,6 +342,7 @@ export const makeConnectionFilterOptions = (
               filterOptions.options[value] = {
                 reference: connection ? getEntityReference(connection) : '',
                 label: connection ? getEntityTitle(connection, option.labels, contextIntl) : upperFirst(value),
+                info: connection.getIn(['attributes', 'description']),
                 showCount: true,
                 value: `${typeId}:${value}`,
                 count: 0,
@@ -390,8 +393,9 @@ export const makeConnectionFilterOptions = (
                 const reference = getEntityReference(connection);
                 const label = getEntityTitle(connection, option.labels, contextIntl);
                 filterOptions.options[connectedAttributeId] = {
-                  label,
                   reference,
+                  label,
+                  info: connection.getIn(['attributes', 'description']),
                   showCount: true,
                   value: `${typeId}:${connectedAttributeId}`,
                   count: 1,
@@ -450,8 +454,9 @@ export const makeConnectionFilterOptions = (
                   const reference = getEntityReference(connection);
                   const label = getEntityTitle(connection, option.labels, contextIntl);
                   filterOptions.options[connectedId] = {
-                    label,
                     reference,
+                    label,
+                    info: connection.getIn(['attributes', 'description']),
                     showCount: true,
                     value: `${typeId}:${connectedId}`,
                     count: 1,

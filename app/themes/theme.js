@@ -302,8 +302,8 @@ theme.sizes = {
       height: 90,
     },
     width: {
-      small: 250,
-      large: 300,
+      small: 300,
+      large: 340,
     },
   },
   mainListItem: {
@@ -388,5 +388,13 @@ theme.transitions = {
 // };
 
 theme.backgroundImages = {};
+
+
+// grommet
+theme.global = {
+  drop: {
+    zIndex: 200,
+  },
+};
 
 export default theme;
