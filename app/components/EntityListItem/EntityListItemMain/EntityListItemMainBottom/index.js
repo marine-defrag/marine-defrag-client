@@ -5,32 +5,61 @@ import { Map } from 'immutable';
 import { Box } from 'grommet';
 import { palette } from 'styled-theme';
 
-import EntityListItemMainConnections from './EntityListItemMainConnections';
-import EntityListItemMainTaxonomies from './EntityListItemMainTaxonomies';
+import { truncateText } from 'utils/string';
+import { TEXT_TRUNCATE } from 'themes/config';
 
-const Styled = styled((p) => <Box direction="row" gap="small" {...p} />)`
+import EntityListItemMainConnection from './EntityListItemMainConnection';
+import EntityListItemMainTag from './EntityListItemMainTag';
+
+const Styled = styled((p) => <Box direction="row" gap="small" wrap {...p} />)`
   border-top: 1px solid ${palette('light', 1)};
   padding-top: 3px;
 `;
 
+const getEntityTags = (categories, taxonomies, onClick) => {
+  const tags = [];
+  if (categories) {
+    taxonomies
+      .filter((tax) => !tax.getIn(['attributes', 'is_smart']))
+      .forEach((tax) => {
+        tax
+          .get('categories')
+          .sortBy((category) => category.getIn(['attributes', 'draft']))
+          .forEach((category, catId) => {
+            if (categories.includes(parseInt(catId, 10))) {
+              const label = (category.getIn(['attributes', 'short_title']) && category.getIn(['attributes', 'short_title']).trim().length > 0
+                ? category.getIn(['attributes', 'short_title'])
+                : category.getIn(['attributes', 'title']));
+              tags.push({
+                id: `${catId}-${tax.get('id')}`,
+                taxId: tax.get('id'),
+                title: category.getIn(['attributes', 'title']),
+                label: truncateText(label, TEXT_TRUNCATE.ENTITY_TAG, categories.size < 5),
+                onClick: () => onClick(catId, 'category'),
+              });
+            }
+          });
+      });
+  }
+  return tags;
+};
+
 function EntityListItemMainBottom({
   connections, wrapper, categories, taxonomies, onEntityClick,
 }) {
+  const entityTags = categories && categories.size > 0 && getEntityTags(categories, taxonomies, onEntityClick);
   return (
     <Styled>
-      {categories && categories.size > 0 && (
-        <EntityListItemMainTaxonomies
-          categories={categories}
-          taxonomies={taxonomies}
-          onEntityClick={onEntityClick}
-        />
-      )}
-      {connections && connections.length > 0 && (
-        <EntityListItemMainConnections
-          connections={connections}
+      {entityTags && entityTags.map((tag) => (
+        <EntityListItemMainTag tag={tag} key={tag.id} />
+      ))}
+      {connections && connections.length > 0 && connections.map((connection, i) => (
+        <EntityListItemMainConnection
+          key={i}
+          connection={connection}
           wrapper={wrapper}
         />
-      )}
+      ))}
     </Styled>
   );
 }

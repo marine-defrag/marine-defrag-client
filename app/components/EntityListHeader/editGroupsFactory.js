@@ -51,7 +51,9 @@ export const makeEditGroups = ({
                 path: config.taxonomies.connectPath,
                 key: config.taxonomies.key,
                 ownKey: config.taxonomies.ownKey,
-                active: !!activeEditOption && activeEditOption.optionId === taxonomy.get('id'),
+                active: !!activeEditOption
+                  && activeEditOption.group === 'taxonomies'
+                  && activeEditOption.optionId === taxonomy.get('id'),
                 create: {
                   path: API.CATEGORIES,
                   attributes: { taxonomy_id: taxonomy.get('id') },
@@ -163,7 +165,9 @@ export const makeEditGroups = ({
               id: option.attribute, // filterOptionId
               label: option.label,
               message: option.message,
-              active: !!activeEditOption && activeEditOption.optionId === option.attribute,
+              active: !!activeEditOption
+                && activeEditOption.group === 'attributes'
+                && activeEditOption.optionId === option.attribute,
             });
           }
           return optionsMemo;

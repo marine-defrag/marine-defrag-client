@@ -502,7 +502,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         {activeOption && formOptions && (
           <EntityListForm
             model={formModel}
-            activeOptionId={activeOption.optionId}
+            activeOptionId={`${activeOption.group}-${activeOption.optionId}`}
             formOptions={formOptions}
             buttons={showEditOptions
               ? this.getFormButtons(activeOption)

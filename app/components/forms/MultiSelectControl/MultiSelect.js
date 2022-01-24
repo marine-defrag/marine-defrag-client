@@ -243,9 +243,12 @@ class MultiSelect extends React.Component {
     const isNew = !optionsInitial.includes(option);
     const isIndeterminateInitial = threeState && this.isOptionIndeterminate(option);
     const isCheckedIntitial = option.get('checked');
-    const optionUpdated = option.withMutations((o) => o.set('isNew', isNew)
-      .set('initialChecked', isCheckedIntitial)
-      .set('isIndeterminate', isIndeterminateInitial));
+    const optionUpdated = option.withMutations(
+      (o) => o
+        .set('isNew', isNew)
+        .set('initialChecked', isCheckedIntitial)
+        .set('isIndeterminate', isIndeterminateInitial)
+    );
     return value
       ? optionUpdated.withMutations((o) => o.set('checked', value.get('checked'))
         .set('changedToChecked', value.get('checked') && !isCheckedIntitial)

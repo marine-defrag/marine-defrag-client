@@ -19,7 +19,6 @@ export const makeFilterGroups = ({
   typeId,
 }) => {
   const filterGroups = {};
-
   // taxonomy option group
   if (config.taxonomies && taxonomies) {
     // first prepare taxonomy options
@@ -35,7 +34,9 @@ export const makeFilterGroups = ({
               {
                 id: taxonomy.get('id'), // filterOptionId
                 label: messages.taxonomies(taxonomy.get('id')),
-                active: !!activeFilterOption && activeFilterOption.optionId === taxonomy.get('id'),
+                active: !!activeFilterOption
+                  && activeFilterOption.group === 'taxonomies'
+                  && activeFilterOption.optionId === taxonomy.get('id'),
                 nested: taxonomy.getIn(['attributes', 'parent_id']),
               },
             ]),
@@ -125,7 +126,9 @@ export const makeFilterGroups = ({
             id: option.attribute, // filterOptionId
             label: option.label,
             message: option.message,
-            active: !!activeFilterOption && activeFilterOption.optionId === option.attribute,
+            active: !!activeFilterOption
+              && activeFilterOption.group === 'attributes'
+              && activeFilterOption.optionId === option.attribute,
           }])
           : memo,
         [],

@@ -216,7 +216,7 @@ const selectActorsWithActions = createSelector(
 
           // members
           const actorMembers = memberAssociationsGrouped.get(parseInt(actor.get('id'), 10));
-          const actorMembersByType = actorsByType(actorMembers, connections.get(API.ACTIONS));
+          const actorMembersByType = actorsByType(actorMembers, connections.get(API.ACTORS));
 
           // memberships
           const actorAssociations = associationAssociationsGrouped.get(parseInt(actor.get('id'), 10));
@@ -304,14 +304,14 @@ const selectActorsByMembers = createSelector(
   selectActorsByTargeted,
   selectMemberQuery,
   (entities, query) => query
-    ? filterEntitiesByConnection(entities, query, 'by-member')
+    ? filterEntitiesByConnection(entities, query, 'members')
     : entities
 );
 const selectActorsByAssociations = createSelector(
   selectActorsByMembers,
   selectAssociationQuery,
   (entities, query) => query
-    ? filterEntitiesByConnection(entities, query, 'by-association')
+    ? filterEntitiesByConnection(entities, query, 'associations')
     : entities
 );
 const selectActorsByCategories = createSelector(
