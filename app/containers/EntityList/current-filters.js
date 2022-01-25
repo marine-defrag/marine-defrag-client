@@ -282,6 +282,7 @@ const getCurrentConnectionFilters = (
               },
               { label: option.label },
             ],
+            group: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
             type: option.entityType,
             onClick: () => onClick({
               value: queryValue,

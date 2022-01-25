@@ -78,7 +78,7 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
     return (
       <Styled hidePrint={!hasFilters}>
         {hasFilters && (
-          <Tags>
+          <Tags gap="xsmall">
             {Object.keys(groupedFilters).map((group, i) => (
               <Box key={i}>
                 <ConnectionGroupLabel>
