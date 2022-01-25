@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
+import ReactMarkdown from 'react-markdown';
 
 // containers
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
@@ -47,13 +48,20 @@ import { updateSort } from './actions';
 const UsersOnly = styled.h4`
   margin-top: 4em;
 `;
-const Description = styled.p`
+const Description = styled.div`
   margin-bottom: 2em;
-  font-size: 1em;
+`;
+
+const Markdown = styled(ReactMarkdown)`
+  font-size: ${(props) => props.theme.sizes.text.markdownMobile};
+  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+    font-size: ${(props) => props.theme.sizes.text.markdown};
+  }
   @media print {
-    font-size: ${(props) => props.theme.sizes.print.default};
+    font-size: ${(props) => props.theme.sizes.print.markdown};
   }
 `;
+
 
 export class CategoryList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   // make sure to load all data from server
@@ -164,9 +172,11 @@ export class CategoryList extends React.PureComponent { // eslint-disable-line r
                 title={contentTitle}
                 buttons={buttons}
               />
-              { contentDescription
-                && <Description>{contentDescription}</Description>
-              }
+              { contentDescription && (
+                <Description>
+                  <Markdown source={contentDescription} className="react-markdown" />
+                </Description>
+              )}
               { !dataReady
                 && <Loading />
               }

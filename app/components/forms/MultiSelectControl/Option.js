@@ -1,16 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
-import {
-  Box, Button, Drop, Text,
-} from 'grommet';
-import { CircleQuestion } from 'grommet-icons';
+import { Box } from 'grommet';
 
-import { lowerCase, truncateText } from 'utils/string';
+import { lowerCase } from 'utils/string';
 import appMessage from 'utils/app-message';
 import IndeterminateCheckbox from 'components/forms/IndeterminateCheckbox';
+import InfoOverlay from 'components/InfoOverlay';
 
 import messages from './messages';
 
@@ -50,16 +48,6 @@ const OptionLabel = styled((p) => <Box pad={{ vertical: 'small' }} fill as="labe
   border-right-color: ${palette('buttonDefault', 1)};
 `;
 
-const DropContent = styled((p) => (
-  <Box
-    pad="small"
-    background="light-1"
-    {...p}
-  />
-))`
-  max-width: 280px;
-`;
-
 // font-weight: ${(props) => props.bold ? 500 : 'normal'};
 const Label = styled.div`
   font-style: ${({ emphasis }) => emphasis ? 'italic' : 'normal'};
@@ -96,9 +84,6 @@ function Option({
   intl,
   secondary,
 }) {
-  const [showInfo, setShowInfo] = useState(false);
-  const infoRef = useRef(null);
-
   const emphasis = option.get('labelEmphasis');
   const reference = typeof option.get('reference') !== 'undefined' && option.get('reference') !== null ? option.get('reference').toString() : '';
   const label = option.get('label');
@@ -175,33 +160,10 @@ function Option({
         </Label>
       </OptionLabel>
       {optionInfo && (
-        <Box
-          fill={false}
-          pad={{ horizontal: 'small' }}
-          ref={infoRef}
-          flex={{ shrink: 0 }}
-        >
-          <Button
-            plain
-            icon={<CircleQuestion color={option.get('active') ? 'white' : 'dark-2'} />}
-            fill={false}
-            onMouseOver={() => setShowInfo(true)}
-            onMouseLeave={() => setShowInfo(false)}
-            onFocus={() => setShowInfo(true)}
-            onBlur={() => null}
-            onClick={() => setShowInfo(!showInfo)}
-          />
-        </Box>
-      )}
-      {optionInfo && showInfo && infoRef && (
-        <Drop
-          align={{ top: 'top', right: 'left' }}
-          target={infoRef.current}
-        >
-          <DropContent>
-            <Text size="small">{truncateText(optionInfo, 600, true)}</Text>
-          </DropContent>
-        </Drop>
+        <InfoOverlay
+          title={optionLabel}
+          content={optionInfo}
+        />
       )}
     </Styled>
   );

@@ -396,5 +396,11 @@ theme.global = {
     zIndex: 200,
   },
 };
+theme.layer = {
+  zIndex: 201,
+  overlay: {
+    background: 'rgba(0, 0, 0, 0.80)',
+  },
+};
 
 export default theme;

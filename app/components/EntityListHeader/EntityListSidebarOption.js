@@ -4,18 +4,16 @@
  *
  */
 
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { injectIntl, intlShape } from 'react-intl';
-import {
-  Box, Button, Drop, Text,
-} from 'grommet';
-import { CircleQuestion } from 'grommet-icons';
+import { Box, Button } from 'grommet';
 
 import appMessage from 'utils/app-message';
+import InfoOverlay from 'components/InfoOverlay';
 
 import messages from './messages';
 
@@ -44,22 +42,12 @@ const StyledButton = styled((p) => <Button plain fill="horizontal" focusIndicato
 
 const Label = styled.div``;
 
-const DropContent = styled((p) => (
-  <Box
-    pad="small"
-    background="light-1"
-    {...p}
-  />
-))`
-  max-width: 280px;
-`;
-
-
 function EntityListSidebarOption({
   option, onShowForm, groupId, groupType, intl,
 }) {
-  const infoRef = useRef(null);
-  const [info, showInfo] = useState(false);
+  const label = option.get('message')
+    ? appMessage(intl, option.get('message'))
+    : option.get('label');
   return (
     <Styled active={option.get('active')}>
       <StyledButton
@@ -78,40 +66,14 @@ function EntityListSidebarOption({
           option.get('active') ? messages.groupOptionSelect.hide : messages.groupOptionSelect.show
         )}
       >
-        <Label>
-          {option.get('message')
-            ? appMessage(intl, option.get('message'))
-            : option.get('label')
-          }
-        </Label>
+        <Label>{label}</Label>
       </StyledButton>
       {option.get('info') && (
-        <Box
-          fill={false}
-          pad={{ horizontal: 'small' }}
-          ref={infoRef}
-        >
-          <Button
-            plain
-            icon={<CircleQuestion color={option.get('active') ? 'white' : 'dark-2'} />}
-            fill={false}
-            onMouseOver={() => showInfo(true)}
-            onMouseLeave={() => showInfo(false)}
-            onFocus={() => showInfo(true)}
-            onBlur={() => null}
-            onClick={() => showInfo(!info)}
-          />
-        </Box>
-      )}
-      {option.get('info') && info && infoRef && (
-        <Drop
-          align={{ top: 'top', right: 'left' }}
-          target={infoRef.current}
-        >
-          <DropContent>
-            <Text size="small">{option.get('info')}</Text>
-          </DropContent>
-        </Drop>
+        <InfoOverlay
+          title={label}
+          content={option.get('info')}
+          dark={option.get('active')}
+        />
       )}
     </Styled>
   );
