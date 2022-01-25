@@ -43,6 +43,7 @@ export class EntityListItemWrapper extends React.Component { // eslint-disable-l
       entity,
       entityPath,
       inSingleView,
+      url,
     } = this.props;
     return (
       <ItemWrapper
@@ -69,6 +70,7 @@ export class EntityListItemWrapper extends React.Component { // eslint-disable-l
                 config={config}
                 onEntityClick={onEntityClick}
                 entityPath={entityPath}
+                url={url}
                 wrapper={this.state.wrapper}
               />
             </div>
@@ -91,6 +93,7 @@ EntityListItemWrapper.propTypes = {
   onEntitySelect: PropTypes.func,
   onDismissError: PropTypes.func,
   entityPath: PropTypes.string,
+  url: PropTypes.string,
   entityIcon: PropTypes.func,
   inSingleView: PropTypes.bool,
 };

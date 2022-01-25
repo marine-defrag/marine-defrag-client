@@ -102,7 +102,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     config,
     entity,
     connections,
-    entityIcon,
+    entityPath,
     // taxonomies,
   }) => {
     const { intl } = this.context;
@@ -115,8 +115,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
       reference: this.getReference(entity, config),
       draft: entity.getIn(['attributes', 'draft']),
       role: entity.get('roles') && connections.get('roles') && this.getRole(entity.get('roles'), connections.get('roles')),
-      path: config.clientPath,
-      entityIcon: entityIcon && entityIcon(entity),
+      path: (config && config.clientPath) || entityPath,
       categories: entity.get('categories'),
       connectedCounts,
       assignedUser: entity.get('manager') && ({ name: entity.getIn(['manager', 'attributes', 'name']) }),
@@ -127,7 +126,9 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
   }
 
   render() {
-    const { onEntityClick, taxonomies, inSingleView } = this.props;
+    const {
+      onEntityClick, taxonomies, inSingleView, url,
+    } = this.props;
     const entity = this.mapToEntityListItem(this.props);
     const hasTop = entity.role;
     const hasBottom = ((entity.categories && entity.categories.size > 0)
@@ -146,7 +147,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
                 evt.preventDefault();
                 onEntityClick(entity.id, entity.path);
               }}
-              href={`${entity.path}/${entity.id}`}
+              href={url || `${entity.path}/${entity.id}`}
             >
               {entity.reference && (
                 <EntityListItemMainTopReference>
@@ -183,7 +184,8 @@ EntityListItemMain.propTypes = {
   taxonomies: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
   connections: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
   config: PropTypes.object, // eslint-disable-line react/no-unused-prop-types
-  entityIcon: PropTypes.func, // eslint-disable-line react/no-unused-prop-types
+  entityPath: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+  url: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
   isManager: PropTypes.bool,
   wrapper: PropTypes.object,
   onEntityClick: PropTypes.func,

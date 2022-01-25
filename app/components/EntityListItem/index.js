@@ -45,6 +45,8 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
       connections,
       error,
       inSingleView,
+      entityPath,
+      url,
     } = this.props;
     return (
       <Styled>
@@ -78,6 +80,8 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
             wrapper={this.props.wrapper}
             isManager={isManager}
             inSingleView={inSingleView}
+            entityPath={entityPath}
+            url={url}
           />
         </Item>
       </Styled>
@@ -99,6 +103,8 @@ EntityListItem.propTypes = {
   onEntityClick: PropTypes.func,
   onDismissError: PropTypes.func,
   wrapper: PropTypes.object,
+  entityPath: PropTypes.string,
+  url: PropTypes.string,
 };
 
 EntityListItem.defaultProps = {
