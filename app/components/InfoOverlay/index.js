@@ -77,6 +77,7 @@ function InfoOverlay({
         fill={false}
         pad={{ horizontal: 'small' }}
         ref={infoRef}
+        flex={{ grow: 0, shrink: 0 }}
       >
         <Button
           plain
@@ -120,7 +121,7 @@ function InfoOverlay({
             </LayerHeader>
             <LayerContent flex={{ grow: 1 }}>
               <div>
-                <Markdown source={content} className="react-markdown" />
+                <Markdown source={content} className="react-markdown" linkTarget="_blank" />
               </div>
             </LayerContent>
           </LayerWrap>
