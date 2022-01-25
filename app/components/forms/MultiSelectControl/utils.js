@@ -68,7 +68,7 @@ export const filterOptionsByKeywords = (options, query) => { // filter checkboxe
         option,
         (option.get('searchFields') && option.get('searchFields').size > 0)
           ? option.get('searchFields').toArray()
-          : ['id', 'code', 'label', 'search'],
+          : ['id', 'code', 'label', 'search', 'reference'],
         query.length
       )));
     } catch (e) {

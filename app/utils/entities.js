@@ -559,7 +559,7 @@ export const getEntityReference = (entity, defaultToId = false) => defaultToId
     || entity.getIn(['attributes', 'number'])
     || entity.get('id')
   )
-  : (entity.getIn(['attributes', 'reference']) || null);
+  : (entity.getIn(['attributes', 'reference']) || entity.getIn(['attributes', 'code']) || null);
 
 export const getCategoryShortTitle = (category) => truncateText(
   category.getIn(['attributes', 'short_title'])
