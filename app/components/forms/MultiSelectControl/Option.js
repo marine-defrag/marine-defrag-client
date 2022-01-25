@@ -38,7 +38,7 @@ const CheckboxWrapper = styled((p) => (
   width: 40px;
 `;
 
-const OptionLabel = styled((p) => <Box pad={{ vertical: 'small' }} fill as="label" {...p} />)`
+const OptionLabel = styled((p) => <Box pad={{ vertical: 'small', right: 'xsmall' }} fill as="label" {...p} />)`
   vertical-align: middle;
   cursor: pointer;
   border-right: ${(props) => (props.changedToChecked || props.changedToUnchecked)

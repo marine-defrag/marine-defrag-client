@@ -16,7 +16,7 @@ import {
   Layer,
   Text,
 } from 'grommet';
-import { CircleQuestion, FormClose } from 'grommet-icons';
+import { CircleInformation, FormClose } from 'grommet-icons';
 const DropContent = styled((p) => (
   <Box
     pad="small"
@@ -67,7 +67,7 @@ const Markdown = styled(ReactMarkdown)`
 `;
 
 function InfoOverlay({
-  dark, content, tooltip, title,
+  dark, content, tooltip, title, padButton, colorButton,
 }) {
   const infoRef = useRef(null);
   const [info, showInfo] = useState(false);
@@ -75,13 +75,18 @@ function InfoOverlay({
     <>
       <Box
         fill={false}
-        pad={{ horizontal: 'small' }}
+        pad={padButton || { horizontal: 'small' }}
         ref={infoRef}
         flex={{ grow: 0, shrink: 0 }}
       >
         <Button
           plain
-          icon={<CircleQuestion color={dark ? 'white' : 'dark-2'} />}
+          icon={(
+            <CircleInformation
+              color={colorButton || (dark ? 'light-5' : 'dark-5')}
+              size="21px"
+            />
+          )}
           fill={false}
           onMouseOver={() => tooltip && showInfo(true)}
           onMouseLeave={() => tooltip && showInfo(false)}
@@ -136,6 +141,11 @@ InfoOverlay.propTypes = {
   tooltip: PropTypes.bool,
   content: PropTypes.string,
   title: PropTypes.string,
+  colorButton: PropTypes.string,
+  padButton: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.string,
+  ]),
 };
 
 export default InfoOverlay;

@@ -197,22 +197,7 @@ const mapCategoryOptions = (categories, taxId) => categories
   ? sortCategories(categories, taxId)
     .map((cat) => ({
       label: cat.getIn(['attributes', 'title']),
-      reference: cat.getIn(['attributes', 'reference']) || null,
-      draft: cat.getIn(['attributes', 'draft']) || null,
-      linkTo: `${ROUTES.CATEGORY}/${cat.get('id')}`,
-    }))
-    .valueSeq().toArray()
-  : [];
-
-const mapSmartCategoryOptions = (categories) => categories
-  ? sortEntities(
-    categories,
-    'asc',
-    'title',
-  )
-    .map((cat) => ({
-      label: cat.getIn(['attributes', 'title']),
-      isSmart: cat.get('associated') && cat.get('associated').size > 0,
+      info: cat.getIn(['attributes', 'description']),
       reference: cat.getIn(['attributes', 'reference']) || null,
       draft: cat.getIn(['attributes', 'draft']) || null,
       linkTo: `${ROUTES.CATEGORY}/${cat.get('id')}`,
@@ -229,18 +214,12 @@ export const getTaxonomyFields = (taxonomies) => taxonomies
     (taxonomy) => ({
       type: 'taxonomy',
       label: appMessages.entities.taxonomies[taxonomy.get('id')].plural,
+      info: appMessages.entities.taxonomies[taxonomy.get('id')].description,
       entityType: 'taxonomies',
       id: taxonomy.get('id'),
       values: mapCategoryOptions(taxonomy.get('categories'), taxonomy.get('id')),
     })
   ).valueSeq().toArray();
-
-export const getSmartTaxonomyField = (taxonomy) => ({
-  type: 'smartTaxonomy',
-  entityType: 'taxonomies',
-  id: taxonomy.get('id'),
-  values: mapSmartCategoryOptions(taxonomy.get('categories')),
-});
 
 export const hasTaxonomyCategories = (taxonomies) => taxonomies
   ? taxonomies.reduce((memo, taxonomy) => memo || (taxonomy.get('categories') && taxonomy.get('categories').size > 0), false)

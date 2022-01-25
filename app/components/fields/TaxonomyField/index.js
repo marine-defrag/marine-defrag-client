@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import styled from 'styled-components';
-import { palette } from 'styled-theme';
+import { Box } from 'grommet';
 
 import FieldWrap from 'components/fields/FieldWrap';
 import ListItem from 'components/fields/ListItem';
@@ -10,89 +10,76 @@ import ListLabel from 'components/fields/ListLabel';
 import ListLabelWrap from 'components/fields/ListLabelWrap';
 import ListLink from 'components/fields/ListLink';
 import EmptyHint from 'components/fields/EmptyHint';
-import Dot from 'components/fields/Dot';
-import DotWrapper from 'components/fields/DotWrapper';
-import ItemStatus from 'components/ItemStatus';
-
-const Reference = styled.div`
-  color: ${palette('text', 1)};
-  font-size: ${(props) => props.theme.sizes.text.small};
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.small};
-  }
-`;
+import InfoOverlay from 'components/InfoOverlay';
 
 const StyledFieldWrap = styled(FieldWrap)`
   padding-top: 15px;
 `;
 
-class TaxonomyField extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  render() {
-    const { field } = this.props;
-    return (
-      <StyledFieldWrap>
-        <ListLabelWrap>
+function TaxonomyField({ field, intl }) {
+  return (
+    <StyledFieldWrap>
+      <ListLabelWrap>
+        <Box>
           <ListLabel>
             <FormattedMessage {...field.label} />
           </ListLabel>
-          {field.entityType
-            && (
-              <DotWrapper>
-                <Dot palette={field.entityType} pIndex={parseInt(field.id, 10)} />
-              </DotWrapper>
-            )
-          }
-        </ListLabelWrap>
-        {field.values.map((value, i) => (
-          <ListItem key={i}>
+        </Box>
+        {field.info && (
+          <InfoOverlay
+            title={intl.formatMessage(field.label)}
+            content={intl.formatMessage(field.info)}
+            padButton="none"
+            colorButton="dark-5"
+          />
+        )}
+      </ListLabelWrap>
+      {field.values.map((value, i) => (
+        <ListItem key={i}>
+          <Box
+            direction="row"
+            fill="horizontal"
+            align="center"
+            justify="between"
+            flex={{ grow: 0, shrink: 0 }}
+          >
             {value.linkTo
               ? (
                 <ListLink to={value.linkTo}>
-                  {value.draft
-                  && <ItemStatus draft />
-                  }
-                  {value.reference
-                  && (
-                    <Reference>
-                      {value.reference}
-                    </Reference>
-                  )
-                  }
                   {value.label}
                 </ListLink>
               )
               : (
                 <div>
-                  {value.draft
-                  && <ItemStatus draft />
-                  }
-                  {value.reference
-                  && (
-                    <Reference>
-                      {value.reference}
-                    </Reference>
-                  )
-                  }
                   {value.label}
                 </div>
               )
             }
-          </ListItem>
-        ))}
-        { field.showEmpty && (!field.values || field.values.length === 0)
-          && (
-            <EmptyHint>
-              <FormattedMessage {...field.showEmpty} />
-            </EmptyHint>
-          )
-        }
-      </StyledFieldWrap>
-    );
-  }
+            {value.info && (
+              <InfoOverlay
+                title={value.label}
+                content={value.info}
+                padButton="none"
+                colorButton="dark-5"
+              />
+            )}
+          </Box>
+        </ListItem>
+      ))}
+      { field.showEmpty && (!field.values || field.values.length === 0)
+        && (
+          <EmptyHint>
+            <FormattedMessage {...field.showEmpty} />
+          </EmptyHint>
+        )
+      }
+    </StyledFieldWrap>
+  );
 }
 
 TaxonomyField.propTypes = {
   field: PropTypes.object.isRequired,
+  intl: intlShape.isRequired,
 };
 
-export default TaxonomyField;
+export default injectIntl(TaxonomyField);
