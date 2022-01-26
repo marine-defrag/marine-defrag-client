@@ -683,10 +683,14 @@ export const NO_PARENT_KEY = 'parentUndefined';
 
 export const MAP_OPTIONS = {
   RANGE: ['#CAE0F7', '#164571'],
-  NO_DATA_COLOR: '#E2E2E2',
+  GRADIENT: {
+    actors: ['#fafa6e', '#72d07d', '#009a8a', '#006076', '#052b43'],
+    targets: ['#fafa6e', '#faad4a', '#dd654b', '#a52752', '#59004d'],
+  },
+  NO_DATA_COLOR: '#EDEFF0',
   DEFAULT_STYLE: {
     weight: 1,
-    color: '#BBC3CD',
+    color: '#CFD3D7',
     fillOpacity: 1,
   },
   TOOLTIP_STYLE: {
@@ -698,13 +702,14 @@ export const MAP_OPTIONS = {
   OVER_STYLE: {
     weight: 1,
     fillOpacity: 0,
-    color: '#AAAAAA',
+    color: '#ADB4B9',
     interactive: false,
   },
   BBOX_STYLE: {
-    stroke: false,
-    fillColor: '#F1F3F3',
+    fillColor: '#F9F9FA',
     fillOpacity: 1,
+    weight: 0.5,
+    color: '#DEE1E3',
   },
   CENTER: [20, 0],
   ZOOM: {

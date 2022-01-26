@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { MAP_OPTIONS } from 'themes/config';
 
 import Gradient from './Gradient';
+import Bins from './Bins';
 import MapSubjectOptions from './MapSubjectOptions';
 import MapMemberOption from './MapMemberOption';
 
@@ -24,10 +25,13 @@ const Styled = styled.div`
   padding: 15px 20px 5px;
 `;
 
-export function MapInfoOptions({ config }) {
+export function MapInfoOptions({ config, mapSubject }) {
   const {
     title, maxValue, subjectOptions, memberOption,
   } = config;
+  const stops = MAP_OPTIONS.GRADIENT[mapSubject];
+  const noStops = stops.length;
+  const maxFactor = maxValue / (noStops - 1);
   return (
     <Styled>
       {title && (
@@ -35,22 +39,19 @@ export function MapInfoOptions({ config }) {
           {title}
         </Title>
       )}
-      {!!maxValue && (
+      {!!maxValue && maxValue > 16 && (
         <Gradient
           config={{
             range: [1, maxValue],
-            stops: [
-              {
-                value: 1,
-                color: MAP_OPTIONS.RANGE[0],
-              },
-              {
-                value: maxValue,
-                color: MAP_OPTIONS.RANGE[1],
-              },
-            ],
+            stops: stops.map((color, i) => ({
+              value: i * maxFactor,
+              color,
+            })),
           }}
         />
+      )}
+      {!!maxValue && maxValue <= 16 && maxValue > 0 && (
+        <Bins config={{ range: [1, maxValue], maxValue, stops }} />
       )}
       {subjectOptions && (
         <MapSubjectOptions options={subjectOptions} />
@@ -64,6 +65,7 @@ export function MapInfoOptions({ config }) {
 
 MapInfoOptions.propTypes = {
   config: PropTypes.object,
+  mapSubject: PropTypes.string,
 };
 
 export default MapInfoOptions;
