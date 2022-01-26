@@ -829,6 +829,10 @@ export default defineMessages({
       id: 'app.containers.App.attributes.user_only',
       defaultMessage: 'Users only',
     },
+    parent_id: {
+      id: 'app.containers.App.attributes.parent_id',
+      defaultMessage: 'Predecessor',
+    },
     manager_id: {
       categories: {
         id: 'app.containers.App.attributes.manager_id.categories',
@@ -887,8 +891,8 @@ export default defineMessages({
       id: 'app.containers.App.nav.actions',
       defaultMessage: 'Actions',
     },
-    actionsAsTarget: {
-      id: 'app.containers.App.nav.actionsAsTarget',
+    targetingActions: {
+      id: 'app.containers.App.nav.targetingActions',
       defaultMessage: 'Targeted by',
     },
     actors: {
@@ -906,6 +910,14 @@ export default defineMessages({
     members: {
       id: 'app.containers.App.nav.members',
       defaultMessage: 'Members',
+    },
+    parent: {
+      id: 'app.containers.App.nav.parent',
+      defaultMessage: 'Parent',
+    },
+    attributes: {
+      id: 'app.containers.App.nav.attributes',
+      defaultMessage: 'Attributes',
     },
     associations: {
       id: 'app.containers.App.nav.associations',
@@ -1136,7 +1148,7 @@ export default defineMessages({
     actions: {
       parent: {
         id: 'app.containers.App.entities.actions.parent',
-        defaultMessage: 'Parent/predecessor activity',
+        defaultMessage: 'Predecessor activity',
       },
       children: {
         id: 'app.containers.App.entities.actions.children',

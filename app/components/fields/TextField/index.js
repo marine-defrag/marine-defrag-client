@@ -11,9 +11,11 @@ class TextField extends React.PureComponent { // eslint-disable-line react/prefe
     const { field } = this.props;
     return (
       <FieldWrap>
-        <Label>
-          <FormattedMessage {...field.label} />
-        </Label>
+        {field.label && (
+          <Label>
+            <FormattedMessage {...field.label} />
+          </Label>
+        )}
         { !!field.value && (<p>{field.value}</p>)}
         { !field.value
           && field.showEmpty

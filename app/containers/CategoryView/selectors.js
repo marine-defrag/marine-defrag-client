@@ -19,11 +19,16 @@ import {
   selectActionCategoriesGroupedByAction,
   selectActorActionsGroupedByActor,
   selectActorActionsGroupedByAction,
+  selectActionActorsGroupedByAction,
+  selectActionActorsGroupedByActor,
+  selectActionResourcesGroupedByAction,
 } from 'containers/App/selectors';
 
 import {
   entitySetSingles,
   getEntityCategories,
+  setActionConnections,
+  setActorConnections,
 } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
 
@@ -221,55 +226,33 @@ export const selectActionsByType = createSelector(
   selectActionsAssociated,
   selectActionConnections,
   selectActorActionsGroupedByAction,
+  selectActionActorsGroupedByAction,
+  selectActionResourcesGroupedByAction,
   selectActionCategoriesGroupedByAction,
   selectCategories,
   (
     ready,
     actions,
-    connections,
+    actionConnections,
+    actorActions,
     actionActors,
+    actionResources,
     actionCategories,
     categories,
   ) => {
     if (!ready) return Map();
-    return actions && actions.map(
-      (action) => {
-        const entityActors = actionActors.get(parseInt(action.get('id'), 10));
-        const entityActorsByActortype = entityActors
-          && connections.get('actors')
-          && entityActors.filter(
-            (actorId) => connections.getIn([
-              'actors',
-              actorId.toString(),
-            ])
-          ).groupBy(
-            (actorId) => connections.getIn([
-              'actors',
-              actorId.toString(),
-              'attributes',
-              'actortype_id',
-            ]).toString()
-          );
-        return action.set(
-          'categories',
-          getEntityCategories(
-            action.get('id'),
-            actionCategories,
-            categories,
-          )
-        // currently needs both
-        ).set(
-          'actors',
-          entityActors,
-        // nest connected actor ids byactortype
-        ).set(
-          'actorsByActortype',
-          entityActorsByActortype,
-        );
-      }
-    ).groupBy(
-      (r) => r.getIn(['attributes', 'measuretype_id'])
-    ).sortBy((val, key) => key);
+    return actions && actions
+      .map((action) => setActionConnections({
+        action,
+        actionConnections,
+        actorActions,
+        actionActors,
+        actionResources,
+        categories,
+        actionCategories,
+      }))
+      .groupBy((r) => r.getIn(['attributes', 'measuretype_id']))
+      .sortBy((val, key) => key);
   }
 );
 
@@ -280,53 +263,30 @@ export const selectActorsByType = createSelector(
   selectActorsAssociated,
   selectActorConnections,
   selectActorActionsGroupedByActor,
+  selectActionActorsGroupedByActor,
   selectActorCategoriesGroupedByActor,
   selectCategories,
   (
     ready,
     actors,
-    connections,
+    actorConnections,
     actorActions,
+    actionActors,
     actorCategories,
     categories,
   ) => {
     if (!ready) return Map();
-    return actors && actors.map(
-      (actor) => {
-        const entityActions = actorActions.get(parseInt(actor.get('id'), 10));
-        const entityActionsByActiontype = entityActions
-          && connections.get('actions')
-          && entityActions.filter(
-            (actionId) => connections.getIn([
-              'actions',
-              actionId.toString(),
-            ])
-          ).groupBy(
-            (actionId) => connections.getIn([
-              'actions',
-              actionId.toString(),
-              'attributes',
-              'measuretype_id',
-            ]).toString()
-          );
-        return actor.set(
-          'categories',
-          getEntityCategories(
-            actor.get('id'),
-            actorCategories,
-            categories,
-          )
-        ).set(
-          'actions',
-          entityActions,
-        ).set(
-          'actorsByActortype',
-          entityActionsByActiontype,
-        );
-      }
-    ).groupBy(
-      (r) => r.getIn(['attributes', 'actortype_id'])
-    ).sortBy((val, key) => key);
+    return actors && actors
+      .map((actor) => setActorConnections({
+        actor,
+        actorConnections,
+        actorActions,
+        actionActors,
+        categories,
+        actorCategories,
+      }))
+      .groupBy((r) => r.getIn(['attributes', 'actortype_id']))
+      .sortBy((val, key) => key);
   }
 );
 

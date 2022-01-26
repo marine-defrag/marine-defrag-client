@@ -232,6 +232,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         onTagClick,
         errors,
         actortypes,
+        intl,
       },
       intl.formatMessage(messages.filterFormWithoutPrefix),
       intl.formatMessage(messages.filterFormError),
@@ -709,7 +710,8 @@ function mapDispatchToProps(dispatch, props) {
               case ('taxonomies'):
                 existingAssignments = entity.get('categories');
                 break;
-              case ('connections'):
+              case ('actions'):
+              case ('actors'):
               case ('targets'):
               case ('members'):
               case ('associations'):

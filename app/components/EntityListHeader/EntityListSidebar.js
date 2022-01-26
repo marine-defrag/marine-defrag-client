@@ -50,12 +50,11 @@ const SidebarWrapper = styled.div`
   top: 0;
   bottom: 0;
   right: 0;
-  z-index: 98;
+  z-index: 100;
 `;
 
 const STATE_INITIAL = {
   expandedGroups: {
-    actortypes: true,
     taxonomies: true,
     taxonomies_1: true,
     taxonomies_2: true,
@@ -70,12 +69,13 @@ const STATE_INITIAL = {
     taxonomies_11: true,
     taxonomies_12: true,
     // connectedTaxonomies: true,
-    connections: true,
+    actors: true,
+    actions: true,
     targets: true,
-    members: true,
-    associations: true,
-    resources: true,
-    parents: true,
+    members: false,
+    associations: false,
+    resources: false,
+    parents: false,
     attributes: false,
   },
 };

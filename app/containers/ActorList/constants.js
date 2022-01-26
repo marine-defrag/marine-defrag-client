@@ -76,79 +76,65 @@ export const CONFIG = {
     // editForActortypes: true,
   },
   connections: { // filter by associated entity
-    query: 'connected',
-    type: 'actor-actions',
-    options: [
-      {
-        search: true,
-        message: 'entities.actions_{typeid}.plural',
-        path: API.ACTIONS, // filter by actor connection
-        entityType: 'actions', // filter by actor connection
-        clientPath: ROUTES.ACTION,
-        connectPath: API.ACTOR_ACTIONS, // filter by actor connection
-        key: 'measure_id',
-        ownKey: 'actor_id',
-        groupByType: true,
-      },
-    ],
-  },
-  targets: { // filter by associated entity
-    query: 'targeting',
-    type: 'target-actions',
-    options: [
-      {
-        search: true,
-        message: 'entities.actions_{typeid}.plural',
-        path: API.ACTIONS, // filter by actor connection
-        entityType: 'targetingActions', // filter by actor connection
-        connectionPath: 'actions',
-        clientPath: ROUTES.ACTION,
-        connectPath: API.ACTION_ACTORS, // filter by actor connection
-        key: 'measure_id',
-        ownKey: 'actor_id',
-        groupByType: true,
-        typeFilter: 'has_target',
-      },
-    ],
-  },
-  members: { // filter by associated entity
-    query: 'by-member',
-    type: 'association-members',
-    options: [
-      {
-        search: true,
-        message: 'entities.actors_{typeid}.plural',
-        path: API.ACTORS, // filter by actor connection
-        entityType: 'members', // filter by actor connection
-        connectionPath: 'actors',
-        clientPath: ROUTES.ACTOR,
-        connectPath: API.MEMBERSHIPS, // filter by actor connection
-        key: 'member_id',
-        ownKey: 'memberof_id',
-        groupByType: true,
-        typeFilter: 'has_members',
-        typeFilterPass: 'reverse',
-      },
-    ],
-  },
-  associations: { // filter by associated entity
-    query: 'by-association',
-    type: 'member-associations',
-    options: [
-      {
-        search: true,
-        message: 'entities.actors_{typeid}.plural',
-        path: API.ACTORS, // filter by actor connection
-        entityType: 'associations', // filter by actor connection
-        connectionPath: 'actors',
-        clientPath: ROUTES.ACTOR,
-        connectPath: API.MEMBERSHIPS, // filter by actor connection
-        key: 'memberof_id',
-        ownKey: 'member_id',
-        groupByType: true,
-        typeFilter: 'has_members',
-      },
-    ],
+    actions: {
+      query: 'action',
+      type: 'actor-actions',
+      search: true,
+      message: 'entities.actions_{typeid}.plural',
+      path: API.ACTIONS, // filter by actor connection
+      entityType: 'actions', // filter by actor connection
+      clientPath: ROUTES.ACTION,
+      connectPath: API.ACTOR_ACTIONS, // filter by actor connection
+      key: 'measure_id',
+      ownKey: 'actor_id',
+      groupByType: true,
+    },
+    targets: { // filter by associated entity
+      query: 'targeting',
+      type: 'target-actions',
+      search: true,
+      message: 'entities.actions_{typeid}.plural',
+      path: API.ACTIONS, // filter by actor connection
+      entityType: 'actions', // filter by actor connection
+      entityTypeAs: 'targetingActions',
+      clientPath: ROUTES.ACTION,
+      connectPath: API.ACTION_ACTORS, // filter by actor connection
+      key: 'measure_id',
+      ownKey: 'actor_id',
+      groupByType: true,
+      typeFilter: 'has_target',
+    },
+    members: { // filter by associated entity
+      query: 'by-member',
+      type: 'association-members',
+      search: true,
+      message: 'entities.actors_{typeid}.plural',
+      path: API.ACTORS, // filter by actor connection
+      entityTypeAs: 'members', // filter by actor connection
+      entityType: 'actors',
+      clientPath: ROUTES.ACTOR,
+      connectPath: API.MEMBERSHIPS, // filter by actor connection
+      key: 'member_id',
+      ownKey: 'memberof_id',
+      groupByType: true,
+      typeFilter: 'has_members',
+      typeFilterPass: 'reverse',
+    },
+    associations: { // filter by associated entity
+      query: 'by-association',
+      type: 'member-associations',
+      search: true,
+      message: 'entities.actors_{typeid}.plural',
+      path: API.ACTORS, // filter by actor connection
+      entityType: 'actors',
+      entityTypeAs: 'associations', // filter by actor connection
+      clientPath: ROUTES.ACTOR,
+      connectPath: API.MEMBERSHIPS, // filter by actor connection
+      key: 'memberof_id',
+      ownKey: 'member_id',
+      groupByType: true,
+      typeFilter: 'has_members',
+    },
   },
   attributes: { // filter by attribute value
     options: [

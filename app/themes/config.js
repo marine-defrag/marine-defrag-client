@@ -142,16 +142,13 @@ export const ACTORTYPE_GROUPS = {
 export const RESOURCETYPE_GROUPS = {
   // temp: one group only for now
   1: {
-    types: [RESOURCETYPES.REF],
-    primary: true,
-  },
-  2: {
     types: [
+      RESOURCETYPES.REF,
       RESOURCETYPES.WEB,
       RESOURCETYPES.DOC,
     ],
   },
-  3: {
+  2: {
     types: [
       RESOURCETYPES.AP,
       RESOURCETYPES.MLAP,

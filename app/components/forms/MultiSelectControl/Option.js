@@ -2,14 +2,51 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { Box } from 'grommet';
 
 import { lowerCase } from 'utils/string';
 import appMessage from 'utils/app-message';
-
-import ItemStatus from 'components/ItemStatus';
+import IndeterminateCheckbox from 'components/forms/IndeterminateCheckbox';
+import InfoOverlay from 'components/InfoOverlay';
 
 import messages from './messages';
+
+const Styled = styled((p) => (
+  <Box fill="horizontal" direction="row" align="center" {...p} />
+))`
+  width: 100%;
+  line-height: 1.3;
+  font-size: 0.8em;
+  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+    border-bottom: 1px solid ${palette('light', 1)};
+    font-size: 1em;
+  }
+  @media print {
+    font-size: ${(props) => props.theme.sizes.print.default};
+  }
+`;
+
+const CheckboxWrapper = styled((p) => (
+  <Box
+    fill="vertical"
+    flex={{ shrink: 0 }}
+    align="center"
+    {...p}
+  />
+))`
+  width: 40px;
+`;
+
+const OptionLabel = styled((p) => <Box pad={{ vertical: 'small', right: 'xsmall' }} fill as="label" {...p} />)`
+  vertical-align: middle;
+  cursor: pointer;
+  border-right: ${(props) => (props.changedToChecked || props.changedToUnchecked)
+    ? '0.5em solid'
+    : 'none'
+};
+  border-right-color: ${palette('buttonDefault', 1)};
+`;
 
 // font-weight: ${(props) => props.bold ? 500 : 'normal'};
 const Label = styled.div`
@@ -40,59 +77,104 @@ const IdSpacer = styled.span`
   color: ${palette('text', 1)};
 `;
 // <Label bold={props.bold} italic={props.isNew}>
-class Option extends React.Component { // eslint-disable-line react/prefer-stateless-function
-  render() {
-    const { intl } = this.context;
-    const {
-      draft, reference, message, label, messagePrefix, isNew, emphasis = false,
-    } = this.props;
+function Option({
+  option,
+  onCheckboxChange,
+  optionId,
+  intl,
+  secondary,
+}) {
+  const emphasis = option.get('labelEmphasis');
+  const reference = typeof option.get('reference') !== 'undefined' && option.get('reference') !== null ? option.get('reference').toString() : '';
+  const label = option.get('label');
+  const optionInfo = option.get('info');
+  const messagePrefix = option.get('messagePrefix');
+  const message = option.get('message');
+  const isNew = option.get('isNew');
+  // const draft = option.get('draft');
+  const checked = option.get('checked');
+  const isIndeterminate = option.get('isIndeterminate');
 
-    let optionLabel;
-    if (message) {
-      optionLabel = messagePrefix
-        ? `${messagePrefix} ${lowerCase(appMessage(intl, message))}`
-        : appMessage(intl, message);
-    } else {
-      optionLabel = label;
-    }
+  let optionLabel;
+  if (message) {
+    optionLabel = messagePrefix
+      ? `${messagePrefix} ${lowerCase(appMessage(intl, message))}`
+      : appMessage(intl, message);
+  } else {
+    optionLabel = label;
+  }
 
-
-    return (
-      <Label emphasis={emphasis}>
-        {draft
-          && <ItemStatus draft top />
-        }
-        {reference
-          && <Id>{reference}</Id>
-        }
-        {reference
-          && <IdSpacer />
-        }
-        { optionLabel }
-        {isNew
+  return (
+    <Styled
+      changedToChecked={option.get('changedToChecked')}
+      changedToUnchecked={option.get('changedToUnchecked')}
+      secondary={secondary}
+    >
+      <CheckboxWrapper>
+        { isIndeterminate
           && (
-            <New>
-              <FormattedMessage {...messages.new} />
-            </New>
+            <IndeterminateCheckbox
+              id={optionId}
+              checked={checked}
+              onChange={(checkedState) => {
+                onCheckboxChange(checkedState, option);
+              }}
+            />
           )
         }
-      </Label>
-    );
-  }
+        { !isIndeterminate
+          && (
+            <input
+              id={optionId}
+              type="checkbox"
+              checked={checked}
+              onChange={(evt) => {
+                evt.stopPropagation();
+                onCheckboxChange(evt.target.checked, option);
+              }}
+            />
+          )
+        }
+      </CheckboxWrapper>
+      <OptionLabel
+        htmlFor={optionId}
+        changedToChecked={option.get('changedToChecked')}
+        changedToUnchecked={option.get('changedToUnchecked')}
+        secondary={secondary}
+      >
+        <Label emphasis={emphasis}>
+          {reference
+            && <Id>{reference}</Id>
+          }
+          {reference
+            && <IdSpacer />
+          }
+          { optionLabel }
+          {isNew
+            && (
+              <New>
+                <FormattedMessage {...messages.new} />
+              </New>
+            )
+          }
+        </Label>
+      </OptionLabel>
+      {optionInfo && (
+        <InfoOverlay
+          title={optionLabel}
+          content={optionInfo}
+        />
+      )}
+    </Styled>
+  );
 }
 
 Option.propTypes = {
-  label: PropTypes.string,
-  message: PropTypes.string,
-  messagePrefix: PropTypes.string,
-  reference: PropTypes.string,
-  draft: PropTypes.bool,
-  isNew: PropTypes.bool,
-  emphasis: PropTypes.bool,
+  optionId: PropTypes.string,
+  option: PropTypes.object,
+  secondary: PropTypes.bool,
+  onCheckboxChange: PropTypes.func,
+  intl: intlShape.isRequired,
 };
 
-Option.contextTypes = {
-  intl: PropTypes.object.isRequired,
-};
-
-export default Option;
+export default injectIntl(Option);

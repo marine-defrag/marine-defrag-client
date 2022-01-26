@@ -3,7 +3,7 @@ import { Map } from 'immutable';
 import {
   selectResourcesSearchQuery,
   selectWithoutQuery,
-  selectConnectionQuery,
+  selectActionQuery,
   selectSortByQuery,
   selectSortOrderQuery,
   selectActions,
@@ -22,7 +22,7 @@ import {
 // import { qe } from 'utils/quasi-equals';
 
 import { sortEntities, getSortOption } from 'utils/sort';
-
+import { API } from 'themes/config';
 import { CONFIG, DEPENDENCIES } from './constants';
 
 export const selectConnections = createSelector(
@@ -38,7 +38,7 @@ export const selectConnections = createSelector(
   ) => {
     if (ready) {
       return new Map().set(
-        'actions',
+        API.ACTIONS,
         entitiesSetCategoryIds(
           actions,
           actionAssociationsGrouped,
@@ -119,14 +119,14 @@ const selectResourcesWithActions = createSelector(
             entityActions
           ).set(
             'actionsByType',
-            entityActions && connections.get('actions') && entityActions.filter(
+            entityActions && connections.get(API.ACTIONS) && entityActions.filter(
               (id) => connections.getIn([
-                'actions',
+                API.ACTIONS,
                 id.toString(),
               ])
             ).groupBy(
               (actionId) => connections.getIn([
-                'actions',
+                API.ACTIONS,
                 actionId.toString(),
                 'attributes',
                 'measuretype_id',
@@ -150,9 +150,9 @@ const selectResourcesWithout = createSelector(
 );
 const selectResourcesByConnections = createSelector(
   selectResourcesWithout,
-  selectConnectionQuery,
+  selectActionQuery,
   (entities, query) => query
-    ? filterEntitiesByConnection(entities, query)
+    ? filterEntitiesByConnection(entities, query, 'actions')
     : entities
 );
 

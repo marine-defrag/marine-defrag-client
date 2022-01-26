@@ -17,6 +17,7 @@ import { qe } from 'utils/quasi-equals';
 
 import { loadEntitiesIfNeeded, openBookmark } from 'containers/App/actions';
 import { selectReady, selectEntities } from 'containers/App/selectors';
+import { getNextQueryString } from 'containers/App/sagas';
 import { CONTENT_LIST, VIEWPORTS } from 'containers/App/constants';
 import { API, ROUTES } from 'themes/config';
 
@@ -332,15 +333,20 @@ export class BookmarkList extends React.PureComponent { // eslint-disable-line r
                           onSortOrder={onSortOrder}
                         />
                         <ListEntitiesMain>
-                          { bookmarksFiltered.map((entity, key) => {
-                            const type = entity.getIn(['attributes', 'view', 'type']);
+                          { bookmarksFiltered.map((bookmark, key) => {
+                            const type = bookmark.getIn(['attributes', 'view', 'type']);
                             const label = getTypeLabel(type, intl.formatMessage, false);
+                            const path = bookmark.getIn(['attributes', 'view', 'path']);
+                            const queryString = getNextQueryString(
+                              bookmark.getIn(['attributes', 'view', 'query']).toJS(),
+                            );
                             return (
                               <EntityListItemWrapper
                                 key={key}
-                                entity={entity.setIn(['attributes', 'reference'], label)}
-                                entityPath={entity.getIn(['attributes', 'view', 'path'])}
-                                onEntityClick={() => onOpenBookmark(entity)}
+                                entity={bookmark.setIn(['attributes', 'reference'], label)}
+                                entityPath={bookmark.getIn(['attributes', 'view', 'path'])}
+                                onEntityClick={() => onOpenBookmark(bookmark)}
+                                url={`${path}?${queryString}`}
                               />
                             );
                           })}

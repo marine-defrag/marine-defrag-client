@@ -1,4 +1,4 @@
-import { toLower as loCase } from 'lodash/string';
+import { toLower as loCase, deburr } from 'lodash/string';
 import { reduce } from 'lodash/collection';
 import { TEXT_TRUNCATE } from 'themes/config';
 
@@ -15,13 +15,7 @@ export const getPathFromUrl = (url) => url.split(/[?#]/)[0];
 
 export const getFilenameFromUrl = (url) => url.split('/').pop();
 
-export const cleanupSearchTarget = (str) => loCase(str)
-  .replace(/[’]/, '\'')
-  .replace(/[ā]/, 'a')
-  .replace(/[ē]/, 'e')
-  .replace(/[ī]/, 'i')
-  .replace(/[ō]/, 'o')
-  .replace(/[ū]/, 'u');
+export const cleanupSearchTarget = (str) => deburr(loCase(str));
 
 // adapted from
 // https://stackoverflow.com/questions/19793221/javascript-text-between-double-quotes

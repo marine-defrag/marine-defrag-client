@@ -9,6 +9,7 @@ import { FormattedMessage } from 'react-intl';
 import styled, { withTheme } from 'styled-components';
 import { Map, List } from 'immutable';
 import { palette } from 'styled-theme';
+import { Box } from 'grommet';
 
 import { isEqual } from 'lodash/lang';
 import { truncateText } from 'utils/string';
@@ -37,37 +38,31 @@ import messages from './messages';
 
 const Styled = styled(PrintHide)``;
 
-const TheHeader = styled.div`
+const TheHeader = styled((p) => <Box direction="row" {...p} />)`
   height: ${({ theme }) => theme.sizes.headerList.banner.height}px;
   padding: 0 15px;
   background-color: ${palette('primary', 3)};
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
   position: relative;
   z-index: 96;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
 `;
-const HeaderSection = styled.div`
+const HeaderSection = styled((p) => <Box direction="row" {...p} />)`
   position: relative;
   border-right: 1px solid ${({ noBorder }) => noBorder ? 'transparent' : palette('light', 4)};
   padding: 2px 10px;
   height: 100%;
   flex: ${({ grow }) => grow ? '1' : '0'} ${({ shrink = '1' }) => shrink ? '1' : '0'} auto;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
 `;
-const HeaderSectionType = styled(HeaderSection)`
+const HeaderSectionType = styled((p) => <Box direction="column" {...p} />)`
+  position: relative;
+  border-right: 1px solid ${({ noBorder }) => noBorder ? 'transparent' : palette('light', 4)};
   width: 240px;
-  padding: 2px 5px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding-top: 18px;
+  padding: 18px 5px 2px;
+  height: 100%;
 `;
 const SelectType = styled(Button)`
   display: none;
+  text-align: left;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     display: block;
     padding-left: 2px;
@@ -75,10 +70,7 @@ const SelectType = styled(Button)`
     max-width: 100%;
   }
 `;
-const EntityListSearch = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
+const EntityListSearch = styled((p) => <Box direction="row" gap="medium" {...p} />)``;
 
 const ButtonOptions = styled((p) => <ButtonFlatWithIcon iconRight iconSize="20px" small {...p} />)`
   position: relative;
@@ -329,6 +321,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         associationtypes,
         activeFilterOption: activeOption,
         typeId,
+        intl,
         messages: {
           attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.filterGroupLabel.taxonomies),
@@ -370,6 +363,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         actiontypesForTarget,
         membertypes,
         associationtypes,
+        typeId,
         messages: {
           attributes: intl.formatMessage(messages.editGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.editGroupLabel.taxonomies),
@@ -379,7 +373,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         // selectedActortypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'actortype_id'])).keySeq(),
         // selectedActiontypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'measuretype_id'])).keySeq(),
       });
-      if (activeOption) {
+      if (activeOption && connections) {
         formOptions = makeActiveEditOptions({
           entities: entitiesSelected,
           config,
@@ -396,9 +390,10 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     }
     const hasTypeOptions = typeOptions && typeOptions.length > 0;
     const currentTypeOption = hasTypeOptions && typeOptions.find((option) => option.active);
+
     return (
       <Styled>
-        <TheHeader>
+        <TheHeader align="center">
           {config.types && typeOptions && (
             <HeaderSection noBorder>
               <ButtonFlatIconOnly onClick={() => onSelectType()}>
@@ -407,7 +402,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             </HeaderSection>
           )}
           {config.types && typeOptions && (
-            <HeaderSectionType>
+            <HeaderSectionType justify="start">
               {config.types && (
                 <Label>
                   <FormattedMessage
@@ -460,7 +455,13 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
               )}
             </HeaderSectionType>
           )}
-          <HeaderSection grow noBorder={!canEdit}>
+          <HeaderSection grow noBorder={!canEdit} align="center" gap="medium">
+            <ButtonOptions
+              onClick={onShowFilters}
+              disabled={showFilters}
+              icon="filter"
+              title={intl.formatMessage(messages.listOptions.showFilter)}
+            />
             {dataReady && (
               <EntityListSearch>
                 <TagList
@@ -469,12 +470,6 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                 />
               </EntityListSearch>
             )}
-            <ButtonOptions
-              onClick={onShowFilters}
-              disabled={showFilters}
-              icon="filter"
-              title={intl.formatMessage(messages.listOptions.showFilter)}
-            />
           </HeaderSection>
           {canEdit && (
             <HeaderSection noBorder>
@@ -508,7 +503,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         {activeOption && formOptions && (
           <EntityListForm
             model={formModel}
-            activeOptionId={activeOption.optionId}
+            activeOptionId={`${activeOption.group}-${activeOption.optionId}`}
             formOptions={formOptions}
             buttons={showEditOptions
               ? this.getFormButtons(activeOption)

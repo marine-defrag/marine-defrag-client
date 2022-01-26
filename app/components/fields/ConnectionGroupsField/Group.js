@@ -64,7 +64,7 @@ class Group extends React.PureComponent { // eslint-disable-line react/prefer-st
           entityIcon={field.entityIcon}
           onEntityClick={field.onEntityClick}
           entityPath={field.entityPath}
-          isConnection
+          inSingleView
         />
         { size > CONNECTIONMAX
           && (

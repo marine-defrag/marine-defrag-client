@@ -22,9 +22,7 @@ import {
   getTaxonomyFields,
   hasTaxonomyCategories,
   getActionConnectionField,
-  getActionAsTargetConnectionField,
-  getMemberConnectionField,
-  getAssociationConnectionField,
+  getActorConnectionField,
 } from 'utils/fields';
 // import { qe } from 'utils/quasi-equals';
 import { getEntityTitleTruncated, checkActorAttribute } from 'utils/entities';
@@ -137,18 +135,18 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
         ],
       },
     );
-
+    // connected actions
     if (actionsByActiontype) {
       const actionConnectionsLocal = [];
       actionsByActiontype.forEach((actions, actiontypeid) => {
         actionConnectionsLocal.push(
-          getActionConnectionField(
+          getActionConnectionField({
             actions,
             taxonomies,
-            actionConnections,
             onEntityClick,
-            actiontypeid,
-          ),
+            connections: actionConnections,
+            typeid: actiontypeid,
+          }),
         );
       });
       fields.push({
@@ -156,35 +154,37 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
         fields: actionConnectionsLocal,
       });
     }
+    // connected targets (actions)
     if (actionsAsTargetByActiontype) {
       const actionAsTargetConnectionsLocal = [];
       actionsAsTargetByActiontype.forEach((actions, actiontypeid) => {
         actionAsTargetConnectionsLocal.push(
-          getActionAsTargetConnectionField(
+          getActionConnectionField({
             actions,
             taxonomies,
-            actionConnections,
             onEntityClick,
-            actiontypeid,
-          ),
+            connections: actionConnections,
+            typeid: actiontypeid,
+          }),
         );
       });
       fields.push({
-        label: appMessages.nav.actionsAsTarget,
+        label: appMessages.nav.targetingActions,
         fields: actionAsTargetConnectionsLocal,
       });
     }
+    // // connected members (actors)
     if (membersByType) {
       const memberConnectionsLocal = [];
-      membersByType.forEach((member, typeid) => {
+      membersByType.forEach((actors, typeid) => {
         memberConnectionsLocal.push(
-          getMemberConnectionField(
-            member,
+          getActorConnectionField({
+            actors,
             taxonomies,
-            actionConnections,
             onEntityClick,
+            connections: actionConnections,
             typeid,
-          ),
+          }),
         );
       });
       fields.push({
@@ -192,17 +192,18 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
         fields: memberConnectionsLocal,
       });
     }
+    // // connected associations (actors)
     if (associationsByType) {
       const associationConnectionsLocal = [];
-      associationsByType.forEach((association, typeid) => {
+      associationsByType.forEach((actors, typeid) => {
         associationConnectionsLocal.push(
-          getAssociationConnectionField(
-            association,
+          getActorConnectionField({
+            actors,
             taxonomies,
-            actionConnections,
             onEntityClick,
+            connections: actionConnections,
             typeid,
-          ),
+          }),
         );
       });
       fields.push({

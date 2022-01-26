@@ -5,7 +5,6 @@ import { palette } from 'styled-theme';
 import PrintHide from 'components/styled/PrintHide';
 
 const Select = styled(PrintHide)`
-  display: table-cell;
   width: 20px;
   background-color: ${palette('mainListItem', 1)};
   padding-top: ${(props) => props.theme.sizes && props.theme.sizes.mainListItem.paddingTop}px;

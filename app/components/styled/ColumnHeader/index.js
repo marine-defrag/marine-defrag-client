@@ -3,7 +3,7 @@ import { palette } from 'styled-theme';
 
 const ColumnHeader = styled.div`
   font-size: 0.75em;
-  padding: 4px;
+  padding: ${({ hasSelectAll }) => hasSelectAll ? '4px 4px 4px 0' : '4px'};
   word-break: break-word;
   width: ${(props) => props.colWidth}%;
   position: relative;
@@ -16,7 +16,7 @@ const ColumnHeader = styled.div`
   @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
     padding-top: 8px;
     padding-bottom: 8px;
-    padding-left: 8px;
+    padding-left: ${({ hasSelectAll }) => hasSelectAll ? 1 : 8}px;
     padding-right: 4px;
   }
   @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.medium : '993px'}) {

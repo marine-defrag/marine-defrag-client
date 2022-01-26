@@ -34,6 +34,7 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
   render() {
     const { field } = this.props;
     const { intl } = this.context;
+
     const label = field.skipLabel
       ? null
       : `${field.values.size} ${intl.formatMessage(
@@ -41,7 +42,6 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
           ? appMessages.entities[field.entityType].single
           : appMessages.entities[field.entityType].plural
       )}`;
-
     return (
       <StyledFieldWrap>
         {label && (
@@ -69,16 +69,17 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
             <EntityListItems
               taxonomies={field.taxonomies}
               connections={field.connections}
-              config={{ connections: { options: field.connectionOptions } }}
+              config={{
+                connections: field.connectionOptions,
+                clientPath: field.entityPath,
+              }}
               entities={
                 this.state.showAllConnections
                   ? field.values
                   : (field.values.slice(0, CONNECTIONMAX))
               }
-              entityIcon={field.entityIcon}
               onEntityClick={field.onEntityClick}
-              entityPath={field.entityPath}
-              isConnection
+              inSingleView
             />
             {field.values.size > CONNECTIONMAX && (
               <ToggleAllItems

@@ -6,6 +6,7 @@ import { Map, List, fromJS } from 'immutable';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { FormattedMessage } from 'react-intl';
+import { Box } from 'grommet';
 
 import ButtonFactory from 'components/buttons/ButtonFactory';
 import TagSearch from 'components/TagSearch';
@@ -81,36 +82,34 @@ const Search = styled.div`
   }
 `;
 
-const SelectAll = styled.div`
+const SelectAll = styled((p) => (
+  <Box fill="horizontal" direction="row" align="center" {...p} />
+))`
   padding: 0.5em 1em 0.5em 0;
   background-color: ${palette('background', 1)};
-  display: table;
   width: 100%;
   line-height: 1.1;
 `;
 
-const LabelWrap = styled.div`
-  display: table-cell;
-  padding-left: 0.5em;
-  padding-right: 1em;
+const LabelWrap = styled((p) => <Box pad={{ vertical: 'small' }} fill {...p} />)`
   font-size: 0.8em;
-  vertical-align: middle;
   @media print {
     font-size: ${(props) => props.theme.sizes.print.smaller};
   }
 `;
-const CheckboxWrap = styled.div`
-  text-align: center;
-  display: table-cell;
-  width: 10px;
-  vertical-align: middle;
-  padding-left: 0.75em;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding-right: 0.5em;
-    padding-left: 1em;
-  }
 
+const CheckboxWrap = styled((p) => (
+  <Box
+    fill="vertical"
+    flex={{ shrink: 0 }}
+    align="center"
+    {...p}
+  />
+))`
+  width: 40px;
 `;
+
+
 const Checkbox = styled(IndeterminateCheckbox)`
   vertical-align: middle;
 `;
@@ -243,9 +242,12 @@ class MultiSelect extends React.Component {
     const isNew = !optionsInitial.includes(option);
     const isIndeterminateInitial = threeState && this.isOptionIndeterminate(option);
     const isCheckedIntitial = option.get('checked');
-    const optionUpdated = option.withMutations((o) => o.set('isNew', isNew)
-      .set('initialChecked', isCheckedIntitial)
-      .set('isIndeterminate', isIndeterminateInitial));
+    const optionUpdated = option.withMutations(
+      (o) => o
+        .set('isNew', isNew)
+        .set('initialChecked', isCheckedIntitial)
+        .set('isIndeterminate', isIndeterminateInitial)
+    );
     return value
       ? optionUpdated.withMutations((o) => o.set('checked', value.get('checked'))
         .set('changedToChecked', value.get('checked') && !isCheckedIntitial)

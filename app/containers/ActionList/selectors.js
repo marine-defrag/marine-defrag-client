@@ -5,7 +5,7 @@ import {
   selectEntities,
   selectActionsSearchQuery,
   selectWithoutQuery,
-  selectConnectionQuery,
+  selectActorQuery,
   selectCategoryQuery,
   selectTargetedQuery,
   selectParentQuery,
@@ -68,7 +68,7 @@ export const selectConnections = createSelector(
           resources,
         ).set(
           // potential parents
-          'parents',
+          API.ACTIONS,
           entitiesSetCategoryIds(
             actions,
             actionAssociationsGrouped,
@@ -111,7 +111,7 @@ export const selectConnectedTaxonomies = createSelector(
     // ).filter(
     //   (taxonomy) => actortypeTaxonomies.some(
     //     (actortypet) => actionActortypes.some(
-    //       (actortype) => qe(
+    //       (actortype) => qe(API.ACTORSconnections
     //         actortype.get('id'),
     //         actortypet.getIn(['attributes', 'actortype_id']),
     //       ),
@@ -189,19 +189,19 @@ const selectActionsWithConnections = createSelector(
     targetMemberAssociationsGrouped,
     resourceAssociationsGrouped,
   ) => {
-    if (ready && (connections.get('actors') || connections.get('resources'))) {
+    if (ready && (connections.get(API.ACTORS) || connections.get(API.RESOURCES))) {
       return entities.map(
         (entity) => {
           // actors
           const entityActors = actorAssociationsGrouped.get(parseInt(entity.get('id'), 10));
           const entityActorsByActortype = entityActors && entityActors.filter(
             (actorId) => connections.getIn([
-              'actors',
+              API.ACTORS,
               actorId.toString(),
             ])
           ).groupBy(
             (actorId) => connections.getIn([
-              'actors',
+              API.ACTORS,
               actorId.toString(),
               'attributes',
               'actortype_id',
@@ -212,12 +212,12 @@ const selectActionsWithConnections = createSelector(
           const entityActorsMembers = actorMemberAssociationsGrouped.get(parseInt(entity.get('id'), 10));
           const entityActorsMembersByActortype = entityActorsMembers && entityActorsMembers.filter(
             (actorId) => connections.getIn([
-              'actors',
+              API.ACTORS,
               actorId.toString(),
             ])
           ).groupBy(
             (actorId) => connections.getIn([
-              'actors',
+              API.ACTORS,
               actorId.toString(),
               'attributes',
               'actortype_id',
@@ -230,12 +230,12 @@ const selectActionsWithConnections = createSelector(
           // console.log('targetAssociationsGrouped', targetAssociationsGrouped && targetAssociationsGrouped.toJS())
           const entityTargetsByActortype = entityTargets && entityTargets.filter(
             (actorId) => connections.getIn([
-              'actors',
+              API.ACTORS,
               actorId.toString(),
             ])
           ).groupBy(
             (actorId) => connections.getIn([
-              'actors',
+              API.ACTORS,
               actorId.toString(),
               'attributes',
               'actortype_id',
@@ -253,7 +253,7 @@ const selectActionsWithConnections = createSelector(
             ])
           ).groupBy(
             (actorId) => connections.getIn([
-              'actors',
+              API.ACTORS,
               actorId.toString(),
               'attributes',
               'actortype_id',
@@ -263,12 +263,12 @@ const selectActionsWithConnections = createSelector(
           const entityResources = resourceAssociationsGrouped.get(parseInt(entity.get('id'), 10));
           const entityResourcesByResourcetype = entityResources && entityResources.filter(
             (resourceId) => connections.getIn([
-              'resources',
+              API.RESOURCES,
               resourceId.toString(),
             ])
           ).groupBy(
             (resourceId) => connections.getIn([
-              'resources',
+              API.RESOURCES,
               resourceId.toString(),
               'attributes',
               'resourcetype_id',
@@ -302,25 +302,25 @@ const selectActionsWithout = createSelector(
     ? filterEntitiesWithoutAssociation(entities, categories, query)
     : entities
 );
-const selectActionsByConnections = createSelector(
+const selectActionsByActors = createSelector(
   selectActionsWithout,
-  selectConnectionQuery,
+  selectActorQuery,
   (entities, query) => query
-    ? filterEntitiesByConnection(entities, query)
+    ? filterEntitiesByConnection(entities, query, 'actors')
     : entities
 );
 const selectActionsByTargets = createSelector(
-  selectActionsByConnections,
+  selectActionsByActors,
   selectTargetedQuery,
   (entities, query) => query
-    ? filterEntitiesByConnection(entities, query)
+    ? filterEntitiesByConnection(entities, query, 'targets')
     : entities
 );
 const selectActionsByResources = createSelector(
   selectActionsByTargets,
   selectResourceQuery,
   (entities, query) => query
-    ? filterEntitiesByConnection(entities, query)
+    ? filterEntitiesByConnection(entities, query, 'resources')
     : entities
 );
 const selectActionsByParent = createSelector(
@@ -328,9 +328,9 @@ const selectActionsByParent = createSelector(
   selectParentQuery,
   (entities, query) => {
     if (!query) return entities;
-    const pathValue = query.split(':');
-    return (query && pathValue.length > 1)
-      ? filterEntitiesByAttributes(entities, { parent_id: parseInt(pathValue[1], 10) })
+    const [, value] = query.split(':');
+    return (value)
+      ? filterEntitiesByAttributes(entities, { parent_id: parseInt(value, 10) })
       : entities;
   }
 );

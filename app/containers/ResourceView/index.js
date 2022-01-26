@@ -119,13 +119,13 @@ export class ResourceView extends React.PureComponent { // eslint-disable-line r
       const actionConnectionsLocal = [];
       actionsByActiontype.forEach((actions, actiontypeid) => {
         actionConnectionsLocal.push(
-          getActionConnectionField(
+          getActionConnectionField({
             actions,
             taxonomies,
-            actionConnections,
             onEntityClick,
-            actiontypeid,
-          ),
+            connections: actionConnections,
+            typeid: actiontypeid,
+          }),
         );
       });
       fields.push({

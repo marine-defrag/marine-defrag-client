@@ -2,7 +2,7 @@ import { truncateText } from 'utils/string';
 import { sortEntities, sortCategories } from 'utils/sort';
 import { filterTaxonomies } from 'utils/entities';
 import {
-  USER_ROLES, TEXT_TRUNCATE, ROUTES,
+  USER_ROLES, TEXT_TRUNCATE, ROUTES, API,
 } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
@@ -197,22 +197,7 @@ const mapCategoryOptions = (categories, taxId) => categories
   ? sortCategories(categories, taxId)
     .map((cat) => ({
       label: cat.getIn(['attributes', 'title']),
-      reference: cat.getIn(['attributes', 'reference']) || null,
-      draft: cat.getIn(['attributes', 'draft']) || null,
-      linkTo: `${ROUTES.CATEGORY}/${cat.get('id')}`,
-    }))
-    .valueSeq().toArray()
-  : [];
-
-const mapSmartCategoryOptions = (categories) => categories
-  ? sortEntities(
-    categories,
-    'asc',
-    'title',
-  )
-    .map((cat) => ({
-      label: cat.getIn(['attributes', 'title']),
-      isSmart: cat.get('associated') && cat.get('associated').size > 0,
+      info: cat.getIn(['attributes', 'description']),
       reference: cat.getIn(['attributes', 'reference']) || null,
       draft: cat.getIn(['attributes', 'draft']) || null,
       linkTo: `${ROUTES.CATEGORY}/${cat.get('id')}`,
@@ -229,18 +214,12 @@ export const getTaxonomyFields = (taxonomies) => taxonomies
     (taxonomy) => ({
       type: 'taxonomy',
       label: appMessages.entities.taxonomies[taxonomy.get('id')].plural,
+      info: appMessages.entities.taxonomies[taxonomy.get('id')].description,
       entityType: 'taxonomies',
       id: taxonomy.get('id'),
       values: mapCategoryOptions(taxonomy.get('categories'), taxonomy.get('id')),
     })
   ).valueSeq().toArray();
-
-export const getSmartTaxonomyField = (taxonomy) => ({
-  type: 'smartTaxonomy',
-  entityType: 'taxonomies',
-  id: taxonomy.get('id'),
-  values: mapSmartCategoryOptions(taxonomy.get('categories')),
-});
 
 export const hasTaxonomyCategories = (taxonomies) => taxonomies
   ? taxonomies.reduce((memo, taxonomy) => memo || (taxonomy.get('categories') && taxonomy.get('categories').size > 0), false)
@@ -287,137 +266,97 @@ const getConnectionField = ({
   skipLabel,
 });
 
-export const getActorConnectionField = (
-  entities,
+export const getActorConnectionField = ({
+  actors,
   taxonomies,
   connections,
   onEntityClick,
-  actortypeid, // actortype id
+  typeid, // actortype id
   skipLabel,
-) => getConnectionField({
-  entities: sortEntities(entities, 'asc', 'id'),
-  taxonomies: filterTaxonomies(taxonomies, 'tags_actors'),
+  connectionOptions,
+}) => getConnectionField({
+  entities: sortEntities(actors, 'asc', 'id'),
+  taxonomies,
   connections,
-  connectionOptions: [{
-    label: appMessages.entities.actions.plural,
-    groupByType: true,
-    path: 'measures',
-    clientPath: ROUTES.ACTION,
-    query: 'actions',
-  }],
-  entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
+  connectionOptions: connectionOptions || {
+    actions: {
+      message: 'entities.actions_{typeid}.plural',
+      entityType: 'actions',
+      path: API.ACTIONS,
+      clientPath: ROUTES.ACTION,
+    },
+    targets: {
+      message: 'entities.actions_{typeid}.plural',
+      entityType: 'actions',
+      entityTypeAs: 'targetingActions',
+      path: API.ACTIONS,
+      clientPath: ROUTES.ACTION,
+    },
+  },
+  entityType: typeid ? `actors_${typeid}` : 'actors',
   entityPath: ROUTES.ACTOR,
   onEntityClick,
   skipLabel,
 });
-export const getTargetConnectionField = getActorConnectionField;
-// (
-//   entities,
-//   taxonomies,
-//   connections,
-//   onEntityClick,
-//   actortypeid, // actortype id
-// ) => getConnectionField({
-//   entities: sortEntities(entities, 'asc', 'id'),
-//   taxonomies: filterTaxonomies(taxonomies, 'tags_actors'),
-//   connections,
-//   connectionOptions: [{
-//     label: appMessages.entities.actions.plural,
-//     groupByType: true,
-//     path: 'measures',
-//     clientPath: ROUTES.ACTION,
-//     query: 'actions',
-//   }],
-//   entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
-//   entityPath: ROUTES.ACTOR,
-//   onEntityClick,
-// });
-export const getActionConnectionField = (
-  entities,
+
+export const getActionConnectionField = ({
+  actions,
   taxonomies,
   connections,
   onEntityClick,
-  actiontypeid, // actortype id
+  typeid, // actortype id
   skipLabel,
-) => getConnectionField({
-  entities: sortEntities(entities, 'asc', 'id'),
-  taxonomies: filterTaxonomies(taxonomies, 'tags_actions'),
+  connectionOptions,
+}) => getConnectionField({
+  entities: sortEntities(actions, 'asc', 'id'),
+  taxonomies,
   connections,
-  connectionOptions: [{
-    label: appMessages.entities.actors.plural,
-    groupByType: true,
-    path: 'actors',
-    clientPath: ROUTES.ACTOR,
-    query: 'actors',
-  }],
-  entityType: actiontypeid ? `actions_${actiontypeid}` : 'actions',
+  connectionOptions: connectionOptions || {
+    actors: {
+      message: 'entities.actors_{typeid}.plural',
+      entityType: 'actors',
+      path: API.ACTORS,
+      clientPath: ROUTES.ACTOR,
+    },
+    targets: {
+      message: 'entities.actors_{typeid}.plural',
+      entityType: 'actors',
+      entityTypeAs: 'targets',
+      path: API.ACTORS,
+      clientPath: ROUTES.ACTOR,
+    },
+    resources: {
+      message: 'entities.resources_{typeid}.plural',
+      entityType: 'resources',
+      path: API.RESOURCES,
+      clientPath: ROUTES.RESOURCE,
+    },
+  },
+  entityType: typeid ? `actions_${typeid}` : 'actions',
   entityPath: ROUTES.ACTION,
   onEntityClick,
   skipLabel,
 });
-export const getActionAsTargetConnectionField = (
-  entities,
-  taxonomies,
-  connections,
-  onEntityClick,
-  actiontypeid, // actortype id
-) => getConnectionField({
-  entities: sortEntities(entities, 'asc', 'id'),
-  taxonomies: filterTaxonomies(taxonomies, 'tags_actions'),
-  connections,
-  connectionOptions: [{
-    label: appMessages.entities.actors.plural,
-    groupByType: true,
-    path: 'actors',
-    clientPath: ROUTES.ACTOR,
-    query: 'actors',
-  }],
-  entityType: actiontypeid ? `actions_${actiontypeid}` : 'actions',
-  entityPath: ROUTES.ACTION,
-  onEntityClick,
-});
 
-export const getMemberConnectionField = getActorConnectionField;
-export const getAssociationConnectionField = getActorConnectionField;
-// (
-//   entities,
-//   taxonomies,
-//   connections,
-//   onEntityClick,
-//   actortypeid, // actortype id
-// ) => getConnectionField({
-//   entities: sortEntities(entities, 'asc', 'id'),
-//   taxonomies: filterTaxonomies(taxonomies, 'tags_actors'),
-//   connections,
-//   connectionOptions: [{
-//     label: appMessages.entities.actions.plural,
-//     groupByType: true,
-//     path: 'measures',
-//     clientPath: ROUTES.ACTION,
-//     query: 'actions',
-//   }],
-//   entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
-//   entityPath: ROUTES.ACTOR,
-//   onEntityClick,
-// });
-
-export const getResourceConnectionField = (
-  entities,
+export const getResourceConnectionField = ({
+  resources,
   connections,
   onEntityClick,
-  resourcetypeid, // actortype id
+  typeid, // actortype id
   skipLabel,
-) => getConnectionField({
-  entities: sortEntities(entities, 'asc', 'id'),
+  connectionOptions,
+}) => getConnectionField({
+  entities: sortEntities(resources, 'asc', 'id'),
   connections,
-  connectionOptions: [{
-    label: appMessages.entities.actions.plural,
-    groupByType: true,
-    path: 'measures',
-    clientPath: ROUTES.ACTION,
-    query: 'actions',
-  }],
-  entityType: resourcetypeid ? `resources_${resourcetypeid}` : 'actors',
+  connectionOptions: connectionOptions || {
+    actions: {
+      message: 'entities.actions_{typeid}.plural',
+      entityType: 'actions',
+      path: API.ACTIONS,
+      clientPath: ROUTES.ACTION,
+    },
+  },
+  entityType: typeid ? `resources_${typeid}` : 'resources',
   entityPath: ROUTES.RESOURCE,
   onEntityClick,
   skipLabel,

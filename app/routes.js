@@ -546,7 +546,7 @@ export default function createRoutes(store) {
     }, {
       path: `${ROUTES.TAXONOMIES}${ROUTES.ID}`, // the taxonomy id
       name: 'categoryList',
-      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
+      onEnter: redirectIfNotPermitted(USER_ROLES.MANAGER.value, ROUTES.ACTIONS),
       getComponent(nextState, cb) {
         const importModules = Promise.all([
           import('containers/CategoryList/sagas'),
