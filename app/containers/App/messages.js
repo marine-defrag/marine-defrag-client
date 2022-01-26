@@ -1934,7 +1934,7 @@ export default defineMessages({
           defaultMessage: 'Taxonomy 13',
         },
         description: {
-          id: 'app.containers.App.entities.taxonomies.12.description',
+          id: 'app.containers.App.entities.taxonomies.13.description',
           defaultMessage: 'About tax 13',
         },
       },

@@ -121,7 +121,6 @@ export class PageView extends React.PureComponent { // eslint-disable-line react
           <ViewContainer isNarrow={!isAnalyst}>
             <ContentHeader
               title={page ? page.getIn(['attributes', 'title']) : ''}
-              supTitle={page ? page.getIn(['attributes', 'menu_title']) : ''}
               type={CONTENT_PAGE}
               buttons={buttons}
             />

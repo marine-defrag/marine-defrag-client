@@ -99,6 +99,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       hasHeader,
       onClearFilters,
       viewOptions,
+      hasFilters,
     } = this.props;
     const { intl } = this.context;
 
@@ -115,9 +116,12 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       subgroupSelectValue = locationQuery.get('subgroup');
     }
 
-    const headerTitle = entities && dataReady
+    let headerTitle = entities && dataReady
       ? `${entities.size} ${entities.size === 1 ? entityTitle.single : entityTitle.plural}`
       : entityTitle.plural;
+    if (hasFilters) {
+      headerTitle = `${headerTitle} (filtered)`;
+    }
 
     // group all entities, regardless of page items
     const entityGroups = groupSelectValue
@@ -264,6 +268,7 @@ EntityListMain.propTypes = {
   onDismissError: PropTypes.func.isRequired,
   listUpdating: PropTypes.bool,
   hasHeader: PropTypes.bool,
+  hasFilters: PropTypes.bool,
   onClearFilters: PropTypes.func.isRequired,
   typeId: PropTypes.string,
 };
