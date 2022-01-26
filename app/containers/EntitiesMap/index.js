@@ -71,6 +71,7 @@ export function EntitiesMap({
   countries,
   onEntityClick,
   intl,
+  hasFilters,
   // connections,
   // connectedTaxonomies,
   // locationQuery,
@@ -88,13 +89,24 @@ export function EntitiesMap({
   let subjectOptions;
   let memberOption;
   let typeLabels;
+  let typeLabelsFor;
   let indicator = includeActorMembers ? 'actionsTotal' : 'actions';
+  let actionsTotalShowing;
+  let infoTitle;
+  let infoSubTitle;
+  let mapSubjectClean = mapSubject;
   // let cleanMapSubject = 'actors';
   if (dataReady) {
-    if (config.types === 'actortypes') {
+    if (config.types === 'actortypes' && typeId === ACTORTYPES.COUNTRY) {
+      // entities are filtered countries
+      // actions are stored with each country
       typeLabels = {
         plural: intl.formatMessage(appMessages.entities.actions.plural),
         single: intl.formatMessage(appMessages.entities.actions.single),
+      };
+      typeLabelsFor = {
+        single: intl.formatMessage(appMessages.entities[`actors_${typeId}`].single),
+        plural: intl.formatMessage(appMessages.entities[`actors_${typeId}`].plural),
       };
 
       type = actortypes.find((at) => qe(at.get('id'), typeId));
@@ -134,54 +146,55 @@ export function EntitiesMap({
             label: 'Include members of groups actors',
           };
         }
-        if (typeId === ACTORTYPES.COUNTRY) {
-          // entities are filtered countries
-          countryFeatures = countriesJSON.features.map((feature) => {
-            const country = entities.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
-            if (country) {
-              const countActions = country.get('actions')
-                ? country.get('actions').size
-                : 0;
-              const countActionsMembers = country.get('actionsAsMembers')
-                ? country.get('actionsAsMembers').filter((actionId) => !country.get('actions').includes(actionId)).size
-                : 0;
-              const countTargetingActions = country.get('targetingActions')
-                ? country.get('targetingActions').size
-                : 0;
-              const countTargetingActionsMembers = country.get('targetingActionsAsMember')
-                ? country.get('targetingActionsAsMember').filter((actionId) => !country.get('targetingActions').includes(actionId)).size
-                : 0;
-              return {
-                ...feature,
-                id: country.get('id'),
-                attributes: country.get('attributes').toJS(),
-                tooltip: {
-                  title: country.getIn(['attributes', 'title']),
-                },
-                values: {
-                  actions: countActions,
-                  actionsMembers: countActionsMembers,
-                  actionsTotal: countActions + countActionsMembers,
-                  targetingActions: countTargetingActions,
-                  targetingActionsMembers: countTargetingActionsMembers,
-                  targetingActionsTotal: countTargetingActions + countTargetingActionsMembers,
-                },
-              };
-            }
+        // entities are filtered countries
+        countryFeatures = countriesJSON.features.map((feature) => {
+          const country = entities.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
+          if (country) {
+            const countActions = country.get('actions')
+              ? country.get('actions').size
+              : 0;
+            const countActionsMembers = country.get('actionsAsMembers')
+              ? country.get('actionsAsMembers').filter((actionId) => !country.get('actions').includes(actionId)).size
+              : 0;
+            const countTargetingActions = country.get('targetingActions')
+              ? country.get('targetingActions').size
+              : 0;
+            const countTargetingActionsMembers = country.get('targetingActionsAsMember')
+              ? country.get('targetingActionsAsMember').filter((actionId) => !country.get('targetingActions').includes(actionId)).size
+              : 0;
             return {
               ...feature,
+              id: country.get('id'),
+              attributes: country.get('attributes').toJS(),
+              tooltip: {
+                title: country.getIn(['attributes', 'title']),
+              },
               values: {
-                actions: 0,
-                actionsMembers: 0,
-                actionsTotal: 0,
-                targetingActions: 0,
-                targetingActionsMembers: 0,
-                targetingActionsTotal: 0,
+                actions: countActions,
+                actionsMembers: countActionsMembers,
+                actionsTotal: countActions + countActionsMembers,
+                targetingActions: countTargetingActions,
+                targetingActionsMembers: countTargetingActionsMembers,
+                targetingActionsTotal: countTargetingActions + countTargetingActionsMembers,
               },
             };
-          });
-        }
+          }
+          return {
+            ...feature,
+            values: {
+              actions: 0,
+              actionsMembers: 0,
+              actionsTotal: 0,
+              targetingActions: 0,
+              targetingActionsMembers: 0,
+              targetingActionsTotal: 0,
+            },
+          };
+        });
       }
+      const countriesTotal = entities ? entities.size : 0;
+      infoTitle = typeLabels.plural;
+      infoSubTitle = `for ${countriesTotal} ${typeLabelsFor[countriesTotal === 1 ? 'single' : 'plural']}${hasFilters ? ' (filtered)' : ''}`;
     } else if (config.types === 'actiontypes') {
       typeLabels = {
         single: intl.formatMessage(appMessages.entities[`actions_${typeId}`].single),
@@ -210,26 +223,30 @@ export function EntitiesMap({
             disabled: mapSubject === 'targets',
           },
         ];
+      } else {
+        mapSubjectClean = 'actors';
       }
-      if (mapSubject === 'targets') {
+      if (mapSubjectClean === 'targets') {
         // note this should always be true!
         if (hasGroupActors(targettypes)) {
           memberOption = {
             active: includeTargetMembers,
             onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
-            label: 'Include members of targeted regions, groups, classes',
+            label: 'Include member countries of targeted regions, groups, classes',
           };
         }
       } else if (hasGroupActors(actortypes)) {
         memberOption = {
           active: includeActorMembers,
           onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-          label: 'Include members of group actors',
+          label: 'Include member countries of group actors',
         };
       }
       // entities are filtered actions
-      const countryCounts = entities.reduce((memo, action) => {
+      let countryCounts = null;
+      [countryCounts, actionsTotalShowing] = entities.reduce(([memo, memo2], action) => {
         let updated = memo;
+        let total = memo2;
         // get countries
         const actionCountries = action.get('actorsByType')
           && action.getIn(['actorsByType', parseInt(ACTORTYPES.COUNTRY, 10)]);
@@ -241,6 +258,9 @@ export function EntitiesMap({
               updated = updated.setIn([cid, 'actions'], 1);
             }
           });
+          if (mapSubjectClean === 'actors') {
+            total += 1;
+          }
         }
         const actionCountriesMembers = action.get('actorsMembersByType')
           && action.getIn(['actorsMembersByType', parseInt(ACTORTYPES.COUNTRY, 10)]);
@@ -254,6 +274,9 @@ export function EntitiesMap({
                 updated = updated.setIn([cid, 'actionsMembers'], 1);
               }
             });
+          if (mapSubjectClean === 'actors' && includeActorMembers && total === memo2) {
+            total += 1;
+          }
         }
         if (hasByTarget) {
           const actionCountriesAsTargets = action.get('targetsByType')
@@ -266,6 +289,9 @@ export function EntitiesMap({
                 updated = updated.setIn([cid, 'targetingActions'], 1);
               }
             });
+            if (mapSubjectClean === 'targets') {
+              total += 1;
+            }
           }
           const actionCountriesAsTargetsMembers = action.get('targetsMembersByType')
             && action.getIn(['targetsMembersByType', parseInt(ACTORTYPES.COUNTRY, 10)]);
@@ -279,10 +305,13 @@ export function EntitiesMap({
                   updated = updated.setIn([cid, 'targetingActionsMembers'], 1);
                 }
               });
+            if (mapSubjectClean === 'targets' && includeTargetMembers && total === memo2) {
+              total += 1;
+            }
           }
         }
-        return updated;
-      }, Map());
+        return [updated, total];
+      }, [Map(), 0]);
       // console.log('countryCounts', countryCounts && countryCounts.toJS())
       countryFeatures = countriesJSON.features.map((feature) => {
         const country = countries.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
@@ -321,15 +350,18 @@ export function EntitiesMap({
           },
         };
       });
+      infoTitle = `No. of ${typeLabels[actionsTotalShowing === 1 ? 'single' : 'plural']} by Country`;
+      infoSubTitle = `Showing ${actionsTotalShowing} of ${entities ? entities.size : 0} activities total${hasFilters ? ' (filtered)' : ''}`;
     }
   }
   let maxValue;
   if (countryFeatures) {
-    maxValue = countryFeatures.reduce((memo, f) => {
-      if (!memo) return f.values[indicator];
-      return Math.max(memo, f.values[indicator]);
-    }, null);
+    maxValue = countryFeatures.reduce(
+      (max, f) => max ? Math.max(max, f.values[indicator]) : f.values[indicator],
+      null,
+    );
   }
+
   return (
     <ContainerWrapper hasHeader noOverflow>
       <MapContainer
@@ -340,7 +372,7 @@ export function EntitiesMap({
         maxValue={maxValue}
         includeActorMembers={includeActorMembers}
         includeTargetMembers={includeTargetMembers}
-        mapSubject={hasByTarget ? mapSubject : 'actors'}
+        mapSubject={hasByTarget ? mapSubjectClean : 'actors'}
       />
       {!dataReady && (
         <LoadingWrap>
@@ -353,12 +385,13 @@ export function EntitiesMap({
       {dataReady && (
         <MapInfoOptions
           config={{
-            title: typeLabels.plural,
+            title: infoTitle,
+            subTitle: infoSubTitle,
             subjectOptions: hasByTarget && subjectOptions,
             memberOption,
             maxValue,
           }}
-          mapSubject={hasByTarget ? mapSubject : 'actors'}
+          mapSubject={hasByTarget ? mapSubjectClean : 'actors'}
         />
       )}
     </ContainerWrapper>
@@ -387,6 +420,7 @@ EntitiesMap.propTypes = {
   onSetIncludeTargetMembers: PropTypes.func,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
+  hasFilters: PropTypes.bool,
   onEntityClick: PropTypes.func,
   intl: intlShape.isRequired,
 };
