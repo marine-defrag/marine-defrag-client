@@ -340,7 +340,7 @@ export function EntitiesMap({
         maxValue={maxValue}
         includeActorMembers={includeActorMembers}
         includeTargetMembers={includeTargetMembers}
-        mapSubject={mapSubject}
+        mapSubject={hasByTarget ? mapSubject : 'actors'}
       />
       {!dataReady && (
         <LoadingWrap>
@@ -358,6 +358,7 @@ export function EntitiesMap({
             memberOption,
             maxValue,
           }}
+          mapSubject={hasByTarget ? mapSubject : 'actors'}
         />
       )}
     </ContainerWrapper>
