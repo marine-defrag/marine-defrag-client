@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 // import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
-
+import { Box, Text } from 'grommet';
 import { MAP_OPTIONS } from 'themes/config';
 
 import Gradient from './Gradient';
@@ -10,35 +10,47 @@ import Bins from './Bins';
 import MapSubjectOptions from './MapSubjectOptions';
 import MapMemberOption from './MapMemberOption';
 
-const Title = styled.div`
-  margin-bottom: 15px;
-  font-weight: 600;
-`;
-const Styled = styled.div`
+const Title = styled((p) => <Text weight={600} {...p} />)``;
+const SubTitle = styled((p) => <Text size="small" {...p} />)``;
+
+const Styled = styled((p) => (
+  <Box
+    elevation="small"
+    background="white"
+    pad={{
+      horizontal: 'small',
+      bottom: 'large',
+    }}
+    {...p}
+  />
+))`
   position: absolute;
   left: 10px;
   bottom: 50px;
-  background: white;
   width: 350px;
   z-index: 50;
-  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2);
   padding: 15px 20px 5px;
 `;
 
-export function MapInfoOptions({ config, mapSubject }) {
+export function MapInfoOptions({
+  config, mapSubject,
+}) {
   const {
-    title, maxValue, subjectOptions, memberOption,
+    title, maxValue, subjectOptions, memberOption, subTitle,
   } = config;
   const stops = MAP_OPTIONS.GRADIENT[mapSubject];
   const noStops = stops.length;
   const maxFactor = maxValue / (noStops - 1);
   return (
     <Styled>
-      {title && (
-        <Title>
-          {title}
-        </Title>
-      )}
+      <Box gap="xsmall" margin={{ bottom: 'small' }}>
+        {title && (
+          <Title>{title}</Title>
+        )}
+        {subTitle && (
+          <SubTitle>{subTitle}</SubTitle>
+        )}
+      </Box>
       {!!maxValue && maxValue > 16 && (
         <Gradient
           config={{

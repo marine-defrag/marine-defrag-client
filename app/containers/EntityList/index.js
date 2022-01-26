@@ -311,6 +311,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               onSelectType(type);
             }}
             typeOptions={typeOptions}
+            hasFilters={filters && filters.length > 0}
           />
         )}
         {showList && (
@@ -377,6 +378,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onSortOrder={this.props.onSortOrder}
             onDismissError={this.props.onDismissError}
             typeId={typeId}
+            hasFilters={filters && filters.length > 0}
           />
         )}
         {showMap && (
@@ -396,6 +398,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               id, path, viewDomain.get('errors')
             )}
             typeId={typeId}
+            hasFilters={filters && filters.length > 0}
           />
         )}
         {hasList && dataReady && config.taxonomies && (
