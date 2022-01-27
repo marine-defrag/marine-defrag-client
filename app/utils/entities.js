@@ -662,8 +662,15 @@ export const getTaxonomyCategories = (
 };
 
 
-const checkAttribute = (typeId, att, attributes) => {
+const checkAttribute = (typeId, att, attributes, isManager) => {
   if (typeId && attributes && attributes[att]) {
+    console.log(typeId, attributes[att], isManager);
+    if (attributes[att].hideAnalyst
+      && attributes[att].hideAnalyst.indexOf(typeId.toString()) > -1
+      && !isManager
+    ) {
+      return false;
+    }
     if (attributes[att].optional) {
       return attributes[att].optional.indexOf(typeId.toString()) > -1;
     }
@@ -680,12 +687,13 @@ const checkRequired = (typeId, att, attributes) => {
   }
   return false;
 };
-export const checkActionAttribute = (typeId, att) => ACTION_FIELDS
+export const checkActionAttribute = (typeId, att, isManager) => ACTION_FIELDS
   && ACTION_FIELDS.ATTRIBUTES
   && checkAttribute(
     typeId,
     att,
     ACTION_FIELDS.ATTRIBUTES,
+    isManager,
   );
 
 export const checkActionRequired = (typeId, att) => ACTION_FIELDS
@@ -696,12 +704,13 @@ export const checkActionRequired = (typeId, att) => ACTION_FIELDS
     ACTION_FIELDS.ATTRIBUTES,
   );
 
-export const checkActorAttribute = (typeId, att) => ACTOR_FIELDS
+export const checkActorAttribute = (typeId, att, isManager) => ACTOR_FIELDS
   && ACTOR_FIELDS.ATTRIBUTES
   && checkAttribute(
     typeId,
     att,
     ACTOR_FIELDS.ATTRIBUTES,
+    isManager,
   );
 
 export const checkActorRequired = (typeId, att) => ACTOR_FIELDS

@@ -200,6 +200,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onEntitySelectAll,
       dataReady,
       resourcetypes,
+      showCode,
     } = this.props;
 
     // detect print to avoid expensive rendering
@@ -379,6 +380,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onDismissError={this.props.onDismissError}
             typeId={typeId}
             hasFilters={filters && filters.length > 0}
+            showCode={showCode}
           />
         )}
         {showMap && (
@@ -531,6 +533,7 @@ EntityList.propTypes = {
   onDismissAllErrors: PropTypes.func.isRequired,
   canEdit: PropTypes.bool,
   includeHeader: PropTypes.bool,
+  showCode: PropTypes.bool,
   typeOptions: PropTypes.array,
   onSelectType: PropTypes.func,
   onSetView: PropTypes.func,

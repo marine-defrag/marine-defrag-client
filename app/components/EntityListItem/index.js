@@ -47,6 +47,7 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
       inSingleView,
       entityPath,
       url,
+      showCode,
     } = this.props;
     return (
       <Styled>
@@ -82,6 +83,7 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
             inSingleView={inSingleView}
             entityPath={entityPath}
             url={url}
+            showCode={showCode}
           />
         </Item>
       </Styled>
@@ -105,6 +107,7 @@ EntityListItem.propTypes = {
   wrapper: PropTypes.object,
   entityPath: PropTypes.string,
   url: PropTypes.string,
+  showCode: PropTypes.bool,
 };
 
 EntityListItem.defaultProps = {

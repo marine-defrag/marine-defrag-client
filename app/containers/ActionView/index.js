@@ -79,9 +79,10 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
     }
   }
 
-  getHeaderMainFields = (entity) => {
+  getHeaderMainFields = (entity, isManager) => {
     const { intl } = this.context;
     const typeId = entity.getIn(['attributes', 'measuretype_id']);
+
     return ([ // fieldGroups
       { // fieldGroup
         fields: [
@@ -90,7 +91,7 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
             intl.formatMessage(appMessages.actiontypes[typeId]),
             true // large
           ), // required
-          checkActionAttribute(typeId, 'code') && getInfoField(
+          checkActionAttribute(typeId, 'code', isManager) && getInfoField(
             'code',
             entity.getIn(['attributes', 'code']),
           ),
@@ -381,8 +382,8 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
               <EntityView
                 fields={{
                   header: {
-                    main: this.getHeaderMainFields(viewEntity),
-                    aside: this.getHeaderAsideFields(viewEntity, viewTaxonomies),
+                    main: this.getHeaderMainFields(viewEntity, isManager),
+                    aside: this.getHeaderAsideFields(viewEntity, viewTaxonomies, isManager),
                   },
                   body: {
                     main: this.getBodyMainFields(
@@ -397,8 +398,9 @@ export class ActionView extends React.PureComponent { // eslint-disable-line rea
                       children,
                       parents,
                       onEntityClick,
+                      isManager,
                     ),
-                    aside: this.getBodyAsideFields(viewEntity),
+                    aside: this.getBodyAsideFields(viewEntity, isManager),
                   },
                 }}
               />

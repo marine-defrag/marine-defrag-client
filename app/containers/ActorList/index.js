@@ -23,6 +23,8 @@ import {
   selectAssociationtypesForActortype,
 } from 'containers/App/selectors';
 
+import { checkActionAttribute } from 'utils/entities';
+
 import appMessages from 'containers/App/messages';
 import { ROUTES } from 'themes/config';
 
@@ -146,6 +148,7 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
           typeOptions={this.prepareTypeOptions(actortypes, typeId)}
           onSelectType={onSelectType}
           typeId={typeId}
+          showCode={checkActionAttribute(typeId, 'code', isManager)}
         />
       </div>
     );

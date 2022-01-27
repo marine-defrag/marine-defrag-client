@@ -12,7 +12,7 @@
 // General ********************
 export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
-const IS_DEV = true;
+const IS_DEV = false;
 
 export const ENDPOINTS = {
   API: (
@@ -203,6 +203,11 @@ export const ACTION_FIELDS = {
     },
     code: {
       optional: Object.values(ACTIONTYPES), // all types
+      hideAnalyst: [
+        ACTIONTYPES.NATL,
+        ACTIONTYPES.DONOR,
+        ACTIONTYPES.INIT,
+      ],
       type: 'text',
     },
     title: {
@@ -368,6 +373,10 @@ export const ACTOR_FIELDS = {
     },
     code: {
       optional: Object.values(ACTORTYPES), // all types
+      hideAnalyst: [
+        ACTORTYPES.CLASS,
+        ACTORTYPES.REG,
+      ],
       type: 'text',
     },
     title: {

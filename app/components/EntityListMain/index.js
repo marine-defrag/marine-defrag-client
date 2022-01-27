@@ -100,6 +100,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       onClearFilters,
       viewOptions,
       hasFilters,
+      showCode,
     } = this.props;
     const { intl } = this.context;
 
@@ -225,6 +226,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
                     onEntitySelectAll={this.props.onEntitySelectAll}
                     onSortBy={this.props.onSortBy}
                     onSortOrder={this.props.onSortOrder}
+                    showCode={showCode}
                   />
                 </ListWrapper>
               </ListEntities>
@@ -271,6 +273,7 @@ EntityListMain.propTypes = {
   hasFilters: PropTypes.bool,
   onClearFilters: PropTypes.func.isRequired,
   typeId: PropTypes.string,
+  showCode: PropTypes.bool,
 };
 
 EntityListMain.contextTypes = {

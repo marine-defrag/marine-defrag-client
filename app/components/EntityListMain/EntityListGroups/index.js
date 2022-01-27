@@ -149,6 +149,7 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
       entities,
       errors,
       entityGroups,
+      showCode,
     } = this.props;
     const { intl } = this.context;
     let pageSize = PAGE_SIZE_MAX;
@@ -304,6 +305,7 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
                             isAnalyst={isAnalyst}
                             onEntitySelect={onEntitySelect}
                             onDismissError={this.props.onDismissError}
+                            showCode={showCode}
                           />
                         </ListEntitiesSubGroup>
                       ))
@@ -323,6 +325,7 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
                           isAnalyst={isAnalyst}
                           onEntitySelect={onEntitySelect}
                           onDismissError={this.props.onDismissError}
+                          showCode={showCode}
                         />
                       )
                       }
@@ -371,6 +374,7 @@ EntityListGroups.propTypes = {
   onDismissError: PropTypes.func.isRequired,
   groupSelectValue: PropTypes.string,
   subgroupSelectValue: PropTypes.string,
+  showCode: PropTypes.bool,
 };
 
 EntityListGroups.contextTypes = {
