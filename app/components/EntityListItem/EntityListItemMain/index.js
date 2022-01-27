@@ -127,7 +127,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
 
   render() {
     const {
-      onEntityClick, taxonomies, inSingleView, url,
+      onEntityClick, taxonomies, inSingleView, url, showCode,
     } = this.props;
     const entity = this.mapToEntityListItem(this.props);
     const hasTop = entity.role;
@@ -149,7 +149,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
               }}
               href={url || `${entity.path}/${entity.id}`}
             >
-              {entity.reference && (
+              {entity.reference && showCode && (
                 <EntityListItemMainTopReference>
                   {entity.reference}
                 </EntityListItemMainTopReference>
@@ -190,6 +190,7 @@ EntityListItemMain.propTypes = {
   wrapper: PropTypes.object,
   onEntityClick: PropTypes.func,
   inSingleView: PropTypes.bool,
+  showCode: PropTypes.bool,
 };
 EntityListItemMain.contextTypes = {
   intl: PropTypes.object,

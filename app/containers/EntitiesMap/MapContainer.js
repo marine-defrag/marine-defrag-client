@@ -6,7 +6,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { scaleLinear } from 'd3-scale';
 import L from 'leaflet';
 import 'proj4leaflet';
 
@@ -14,6 +13,7 @@ import { MAP_OPTIONS } from 'themes/config';
 
 import qe from 'utils/quasi-equals';
 import Tooltip from './Tooltip';
+import { scaleColorCount } from './utils';
 
 const Styled = styled.div`
   position: absolute;
@@ -21,7 +21,7 @@ const Styled = styled.div`
   bottom: 0;
   right: 0;
   left: 0;
-  background: #ffffff;
+  background: #fff;
   z-index: 10;
 `;
 
@@ -74,10 +74,6 @@ const getBBox = (bounds, xLat = 0.5, xLon = 180) => {
     ],
   });
 };
-
-const scaleColorCount = (max) => scaleLinear()
-  .domain([1, max])
-  .range(MAP_OPTIONS.RANGE);
 
 export function MapContainer({
   countryFeatures,
@@ -207,7 +203,7 @@ export function MapContainer({
   // add countryFeatures
   useEffect(() => {
     if (countryFeatures) {
-      const scale = scaleColorCount(maxValue);
+      const scale = scaleColorCount(maxValue, MAP_OPTIONS.GRADIENT[mapSubject]);
       countryLayerGroupRef.current.clearLayers();
       const jsonLayer = L.geoJSON(
         countryFeatures,
@@ -229,7 +225,7 @@ export function MapContainer({
       );
       countryLayerGroupRef.current.addLayer(jsonLayer);
     }
-  }, [countryFeatures, indicator, tooltip]);
+  }, [countryFeatures, indicator, tooltip, mapSubject]);
   // add countryFeatures
   useEffect(() => {
     countryTooltipGroupRef.current.clearLayers();

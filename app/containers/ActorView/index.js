@@ -71,7 +71,7 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
     }
   }
 
-  getHeaderMainFields = (entity) => {
+  getHeaderMainFields = (entity, isManager) => {
     const { intl } = this.context;
     const typeId = entity.getIn(['attributes', 'actortype_id']);
     return ([ // fieldGroups
@@ -82,7 +82,7 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
             intl.formatMessage(appMessages.actortypes[typeId]),
             true // large
           ), // required
-          checkActorAttribute(typeId, 'code') && getInfoField(
+          checkActorAttribute(typeId, 'code', isManager) && getInfoField(
             'code',
             entity.getIn(['attributes', 'code']),
           ),
@@ -311,8 +311,8 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
               <EntityView
                 fields={{
                   header: {
-                    main: this.getHeaderMainFields(viewEntity),
-                    aside: this.getHeaderAsideFields(viewEntity, viewTaxonomies),
+                    main: this.getHeaderMainFields(viewEntity, isManager),
+                    aside: this.getHeaderAsideFields(viewEntity, viewTaxonomies, isManager),
                   },
                   body: {
                     main: this.getBodyMainFields(
@@ -324,8 +324,9 @@ export class ActorView extends React.PureComponent { // eslint-disable-line reac
                       taxonomies,
                       actionConnections,
                       onEntityClick,
+                      isManager,
                     ),
-                    aside: this.getBodyAsideFields(viewEntity),
+                    aside: this.getBodyAsideFields(viewEntity, isManager),
                   },
                 }}
               />

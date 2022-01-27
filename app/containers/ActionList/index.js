@@ -23,6 +23,9 @@ import {
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
+
+import { checkActionAttribute } from 'utils/entities';
+
 import { ROUTES } from 'themes/config';
 
 import EntityList from 'containers/EntityList';
@@ -142,6 +145,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
           typeOptions={this.prepareTypeOptions(actiontypes, typeId)}
           onSelectType={onSelectType}
           typeId={typeId}
+          showCode={checkActionAttribute(typeId, 'code', isManager)}
         />
       </div>
     );
