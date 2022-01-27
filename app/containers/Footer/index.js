@@ -7,10 +7,10 @@ import { palette } from 'styled-theme';
 
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 
-import NormalImg from 'components/Img';
+// import NormalImg from 'components/Img';
 import Container from 'components/styled/Container';
 
-import { ROUTES, FOOTER, API } from 'themes/config';
+import { API } from 'themes/config';
 
 import messages from './messages';
 
@@ -18,6 +18,7 @@ const FooterMain = styled.div`
   background-color: ${palette('footer', 1)};
   color: ${palette('footer', 0)};
   padding: 0;
+  min-height: 150px;
   @media print {
     color: ${palette('text', 0)};
     background: transparent;
@@ -31,24 +32,25 @@ const FooterLink = styled.a`
     color: ${palette('footerLinksHover', 0)};
   }
 `;
-const ImpactLink = styled.a`
-  font-weight:bold;
-  color: ${palette('footerLinks', 0)};
-  &:hover {
-    color: ${palette('footerLinksHover', 0)};
-    opacity: 0.8;
-  }
-  @media print {
-    color: ${palette('text', 0)};
-    text-decoration: underline;
-  }
-`;
-
-const ImpactLogo = styled(NormalImg)`
-  height: 90px;
-`;
+// const ImpactLink = styled.a`
+//   font-weight:bold;
+//   color: ${palette('footerLinks', 0)};
+//   &:hover {
+//     color: ${palette('footerLinksHover', 0)};
+//     opacity: 0.8;
+//   }
+//   @media print {
+//     color: ${palette('text', 0)};
+//     text-decoration: underline;
+//   }
+// `;
+//
+// const ImpactLogo = styled(NormalImg)`
+//   height: 90px;
+// `;
 
 const TableWrapper = styled.div`
+  min-height: 150px;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     margin-left: -15px;
     margin-right: -15px;
@@ -60,6 +62,7 @@ const TableWrapper = styled.div`
 `;
 const Table = styled.div`
   font-size: 0.8em;
+  min-height: 150px;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     display: table;
     width: 100%;
@@ -97,11 +100,11 @@ const TableCell = styled.div`
     padding-bottom: 1.6em;
   }
 `;
-const TableCellSmall = styled(TableCell)`
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    width: 25%;
-  }
-`;
+// const TableCellSmall = styled(TableCell)`
+//   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+//     width: 25%;
+//   }
+// `;
 
 class Footer extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   UNSAFE_componentWillMount() {
@@ -110,7 +113,7 @@ class Footer extends React.PureComponent { // eslint-disable-line react/prefer-s
 
   render() {
     const { intl } = this.context;
-    const { theme } = this.props;
+    // const { theme } = this.props;
     return (
       <FooterMain>
         <Container noPaddingBottom>
@@ -118,68 +121,32 @@ class Footer extends React.PureComponent { // eslint-disable-line react/prefer-s
             <Table>
               <TableCell>
                 <FormattedMessage {...messages.disclaimer} />
-                <FooterLink
-                  target="_blank"
-                  href={`mailto:${intl.formatMessage(messages.contact.email)}`}
-                  title={intl.formatMessage(messages.contact.anchor)}
-                >
-                  <FormattedMessage {...messages.contact.anchor} />
-                </FooterLink>
               </TableCell>
-              <TableCellSmall>
-                { FOOTER.LINK_TARGET_INTERNAL
-                  && (
-                    <FormattedMessage
-                      {...messages.responsible.textWithInternalLink}
-                      values={{
-                        internalLink: (
-                          <FooterLink
-                            onClick={(evt) => {
-                              if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                              this.props.onPageLink(`${ROUTES.PAGES}/${FOOTER.LINK_TARGET_INTERNAL_ID}`);
-                            }}
-                            href={`${ROUTES.PAGES}/${FOOTER.LINK_TARGET_INTERNAL_ID}`}
-                            title={intl.formatMessage(messages.responsible.anchor)}
-                          >
-                            <FormattedMessage {...messages.responsible.anchor} />
-                          </FooterLink>
-                        ),
-                      }}
-                    />
-                  )
-                }
-                { !FOOTER.LINK_TARGET_INTERNAL
-                  && <FormattedMessage {...messages.responsible.text} />
-                }
-                { !FOOTER.LINK_TARGET_INTERNAL
-                  && (
-                    <div>
+              <TableCell>
+                <FormattedMessage
+                  {...messages.disclaimer2}
+                  values={{
+                    contact1: (
                       <FooterLink
                         target="_blank"
-                        href={intl.formatMessage(messages.responsible.url)}
-                        title={intl.formatMessage(messages.responsible.anchor)}
+                        href={`mailto:${intl.formatMessage(messages.contact.email)}`}
+                        title={intl.formatMessage(messages.contact.anchor)}
                       >
-                        <FormattedMessage {...messages.responsible.anchor} />
+                        <FormattedMessage {...messages.contact.anchor} />
                       </FooterLink>
-                    </div>
-                  )
-                }
-              </TableCellSmall>
-              <TableCellSmall>
-                <FormattedMessage {...messages.project.text} />
-                <div>
-                  <ImpactLink
-                    target="_blank"
-                    href={intl.formatMessage(messages.project.url)}
-                    title={intl.formatMessage(messages.project.anchor)}
-                  >
-                    <div>
-                      <FormattedMessage {...messages.project.anchor} />
-                    </div>
-                    <ImpactLogo src={theme.media.impactossLogo} alt={intl.formatMessage(messages.project.anchor)} />
-                  </ImpactLink>
-                </div>
-              </TableCellSmall>
+                    ),
+                    contact2: (
+                      <FooterLink
+                        target="_blank"
+                        href={`mailto:${intl.formatMessage(messages.contact2.email)}`}
+                        title={intl.formatMessage(messages.contact2.anchor)}
+                      >
+                        <FormattedMessage {...messages.contact2.anchor} />
+                      </FooterLink>
+                    ),
+                  }}
+                />
+              </TableCell>
             </Table>
           </TableWrapper>
         </Container>
