@@ -143,7 +143,7 @@ export function EntitiesMap({
           memberOption = {
             active: includeActorMembers,
             onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-            label: 'Include members of groups actors',
+            label: 'Include members of group actors',
           };
         }
         // entities are filtered countries

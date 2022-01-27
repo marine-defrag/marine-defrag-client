@@ -203,6 +203,11 @@ export const ACTION_FIELDS = {
     },
     code: {
       optional: Object.values(ACTIONTYPES), // all types
+      hideAnalyst: [
+        ACTIONTYPES.NATL,
+        ACTIONTYPES.DONOR,
+        ACTIONTYPES.INIT,
+      ],
       type: 'text',
     },
     title: {
@@ -368,6 +373,10 @@ export const ACTOR_FIELDS = {
     },
     code: {
       optional: Object.values(ACTORTYPES), // all types
+      hideAnalyst: [
+        ACTORTYPES.CLASS,
+        ACTORTYPES.REG,
+      ],
       type: 'text',
     },
     title: {
