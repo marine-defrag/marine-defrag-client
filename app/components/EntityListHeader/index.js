@@ -295,6 +295,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       typeOptions,
       dataReady,
       typeId,
+      isManager,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -343,6 +344,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
           activeFilterOption: activeOption,
           contextIntl: intl,
           typeId,
+          isManager,
           messages: {
             titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
             without: intl.formatMessage(messages.filterFormWithoutPrefix),
@@ -561,6 +563,7 @@ EntityListHeader.propTypes = {
   onShowEditOptions: PropTypes.func,
   canEdit: PropTypes.bool,
   dataReady: PropTypes.bool,
+  isManager: PropTypes.bool,
   typeOptions: PropTypes.array,
   onSelectType: PropTypes.func,
   typeId: PropTypes.string,

@@ -13,6 +13,8 @@ import {
   getEntityTitle,
   getEntityReference,
   getEntityParentId,
+  checkActionAttribute,
+  checkActorAttribute,
 } from 'utils/entities';
 
 import { makeTagFilterGroups } from 'utils/forms';
@@ -32,6 +34,7 @@ export const makeActiveFilterOptions = ({
   activeFilterOption,
   contextIntl,
   messages,
+  isManager,
 }) => {
   // create filterOptions
   switch (activeFilterOption.group) {
@@ -62,6 +65,7 @@ export const makeActiveFilterOptions = ({
         messages,
         contextIntl,
         activeFilterOption.group,
+        isManager,
       );
     case 'attributes':
       return makeAttributeFilterOptions(
@@ -293,6 +297,16 @@ export const makeTaxonomyFilterOptions = (
   return filterOptions;
 };
 
+
+const getShowEntityReference = (entityType, typeId, isManager) => {
+  if (entityType === 'actions') {
+    return checkActionAttribute(typeId, 'code', isManager);
+  }
+  if (entityType === 'actors') {
+    return checkActorAttribute(typeId, 'code', isManager);
+  }
+  return true;
+};
 //
 //
 //
@@ -306,6 +320,7 @@ export const makeConnectionFilterOptions = (
   messages,
   contextIntl,
   group,
+  isManager,
 ) => {
   const filterOptions = {
     groupId: group,
@@ -323,6 +338,7 @@ export const makeConnectionFilterOptions = (
   if (option) {
     // the option path
     const { query, path } = option;
+    const showEntityReference = getShowEntityReference(option.entityType, typeId, isManager);
     const entityType = option.entityTypeAs || option.entityType;
     filterOptions.messagePrefix = messages.titlePrefix;
     filterOptions.message = (typeId && option.message && option.message.indexOf('{typeid}') > -1)
@@ -339,8 +355,9 @@ export const makeConnectionFilterOptions = (
             if (typeId === locationQueryValueConnection[0]) {
               const value = locationQueryValueConnection[1];
               const connection = connections.get(path) && connections.getIn([path, value]);
+              const reference = showEntityReference && connection && getEntityReference(connection);
               filterOptions.options[value] = {
-                reference: connection ? getEntityReference(connection) : '',
+                reference,
                 label: connection ? getEntityTitle(connection, option.labels, contextIntl) : upperFirst(value),
                 info: connection.getIn(['attributes', 'description']),
                 showCount: true,
@@ -390,7 +407,7 @@ export const makeConnectionFilterOptions = (
                 filterOptions.options[connectedAttributeId].count += 1;
               } else {
                 const value = `${typeId}:${connectedAttributeId}`;
-                const reference = getEntityReference(connection);
+                const reference = showEntityReference && getEntityReference(connection);
                 const label = getEntityTitle(connection, option.labels, contextIntl);
                 filterOptions.options[connectedAttributeId] = {
                   reference,
@@ -451,7 +468,7 @@ export const makeConnectionFilterOptions = (
                   filterOptions.options[connectedId].count += 1;
                 } else {
                   const value = `${typeId}:${connectedId}`;
-                  const reference = getEntityReference(connection);
+                  const reference = showEntityReference && getEntityReference(connection);
                   const label = getEntityTitle(connection, option.labels, contextIntl);
                   filterOptions.options[connectedId] = {
                     reference,
