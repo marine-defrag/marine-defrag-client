@@ -85,7 +85,7 @@ function Option({
   secondary,
 }) {
   const emphasis = option.get('labelEmphasis');
-  const reference = typeof option.get('reference') !== 'undefined' && option.get('reference') !== null ? option.get('reference').toString() : '';
+  const reference = typeof option.get('reference') !== 'undefined' && option.get('reference') ? option.get('reference').toString() : '';
   const label = option.get('label');
   const optionInfo = option.get('info');
   const messagePrefix = option.get('messagePrefix');

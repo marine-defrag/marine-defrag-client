@@ -664,7 +664,6 @@ export const getTaxonomyCategories = (
 
 const checkAttribute = (typeId, att, attributes, isManager) => {
   if (typeId && attributes && attributes[att]) {
-    console.log(typeId, attributes[att], isManager);
     if (attributes[att].hideAnalyst
       && attributes[att].hideAnalyst.indexOf(typeId.toString()) > -1
       && !isManager
