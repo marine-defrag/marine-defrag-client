@@ -291,6 +291,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             config={config}
             locationQuery={locationQuery}
             canEdit={isManager && showList}
+            isManager={isManager}
             hasUserRole={this.props.hasUserRole}
             onCreateOption={this.props.onCreateOption}
             onUpdate={

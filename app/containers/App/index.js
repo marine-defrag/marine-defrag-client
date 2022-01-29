@@ -118,15 +118,15 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           isAdmin: true,
           active: currentPath === ROUTES.USERS,
         },
+      ]);
+    }
+    if (isAnalyst) {
+      navItems = navItems.concat([
         {
           path: ROUTES.RESOURCES,
           title: intl.formatMessage(messages.nav.resources),
           active: currentPath && currentPath.startsWith(ROUTES.RESOURCE),
         },
-      ]);
-    }
-    if (isAnalyst) {
-      navItems = navItems.concat([
         {
           path: ROUTES.BOOKMARKS,
           title: intl.formatMessage(messages.nav.bookmarks),
