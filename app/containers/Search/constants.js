@@ -6,8 +6,12 @@ export const DEPENDENCIES = [
   API.TAXONOMIES,
   API.ACTIONS,
   API.ACTORS,
-  API.ACTORTYPE_TAXONOMIES,
-  API.ACTOR_ACTIONS,
+  API.RESOURCES,
+  API.ACTORTYPES,
+  API.ACTIONTYPES,
+  API.RESOURCETYPES,
+  // API.ACTORTYPE_TAXONOMIES,
+  // API.ACTOR_ACTIONS,
 ];
 
 export const UPDATE_QUERY = 'impactoss/Search/UPDATE_QUERY';
@@ -18,12 +22,16 @@ export const SORTORDER_CHANGE = 'impactoss/Search/SORTORDER_CHANGE';
 export const CONFIG = {
   search: [
     {
-      group: 'entities',
+      group: 'actions',
       targets: [
         {
           path: API.ACTIONS,
+          optionPath: 'actions',
+          typePath: API.ACTIONTYPES,
+          typeAttribute: 'measuretype_id',
           clientPath: ROUTES.ACTIONS,
-          search: ['title', 'description', 'outcome'],
+          search: ['code', 'title', 'description', 'comment', 'url'],
+          groupByType: true,
           sorting: [
             {
               attribute: 'id', // proxy for created at
@@ -43,10 +51,17 @@ export const CONFIG = {
             },
           ],
         },
+      ],
+    },
+    {
+      group: 'actors',
+      targets: [
         {
           path: API.ACTORS,
+          typePath: API.ACTORTYPES,
+          typeAttribute: 'actortype_id',
           clientPath: ROUTES.ACTORS,
-          search: ['title', 'description', 'code'],
+          search: ['code', 'title', 'description', 'activity_summary', 'url'],
           groupByType: true,
           sorting: [
             {

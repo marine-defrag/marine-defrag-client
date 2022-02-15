@@ -3,12 +3,13 @@ import { Map, List, fromJS } from 'immutable';
 // import { reduce } from 'lodash/collection';
 
 import {
-  selectActortypeEntitiesAll,
+  selectEntitiesAll,
   selectSearchQuery,
   selectSortByQuery,
   selectSortOrderQuery,
-  selectActortypeTaxonomies,
-  selectActortypes,
+  selectTaxonomies,
+  selectReady,
+  selectLocationQuery,
 } from 'containers/App/selectors';
 
 import { filterEntitiesByKeywords } from 'utils/entities';
@@ -16,24 +17,25 @@ import { qe } from 'utils/quasi-equals';
 
 import { sortEntities, getSortOption } from 'utils/sort';
 
-import { CONFIG } from './constants';
+import { CONFIG, DEPENDENCIES } from './constants';
 
 
 const selectPathQuery = createSelector(
-  (state, locationQuery) => locationQuery,
+  selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('path')
 );
 
 // kicks off series of cascading selectors
 export const selectEntitiesByQuery = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
   selectSearchQuery,
-  selectActortypeEntitiesAll,
-  selectActortypeTaxonomies,
-  selectActortypes,
+  selectEntitiesAll,
+  selectTaxonomies,
   selectPathQuery,
   selectSortByQuery,
   selectSortOrderQuery,
-  (searchQuery, allEntities, taxonomies, actortypes, path, sort, order) => {
+  (ready, searchQuery, allEntities, taxonomies, path, sort, order) => {
+    if (!ready) return null;
     let active = false;// || CONFIG.search[0].targets[0].path;
     return fromJS(CONFIG.search).map((group) => {
       if (group.get('group') === 'taxonomies') {
@@ -56,6 +58,7 @@ export const selectEntitiesByQuery = createSelector(
             const sortOption = getSortOption(group.get('sorting') && group.get('sorting').toJS(), sort);
             return Map()
               .set('path', `taxonomies-${tax.get('id')}`)
+              .set('optionPath', `taxonomies-${tax.get('id')}`)
               // .set('icon', `taxonomy_${tax.get('id')}`)
               .set('clientPath', 'category')
               .set('taxId', tax.get('id'))
@@ -68,6 +71,7 @@ export const selectEntitiesByQuery = createSelector(
           }
           return Map()
             .set('path', `taxonomies-${tax.get('id')}`)
+            .set('optionPath', `taxonomies-${tax.get('id')}`)
             .set('clientPath', 'category')
             .set('taxId', tax.get('id'))
             .set('results', filteredCategories);
@@ -80,31 +84,33 @@ export const selectEntitiesByQuery = createSelector(
           .reduce(
             (memo, target) => {
               const targetEntties = allEntities.get(target.get('path'));
-              // target by actortype
-              if (actortypes && target.get('groupByType')) {
-                return actortypes.reduce((innerMemo, actortype) => {
-                  const actortypeEntities = targetEntties
+              // targets grouped by type
+              if (target.get('groupByType') && target.get('typeAttribute') && target.get('typePath')) {
+                const types = allEntities.get(target.get('typePath'));
+                return types.reduce((innerMemo, type) => {
+                  const typeEntities = targetEntties
                     .filter(
                       (entity) => qe(
-                        entity.getIn(['attributes', 'actortype_id']),
-                        actortype.get('id'),
+                        entity.getIn(['attributes', target.get('typeAttribute')]),
+                        type.get('id'),
                       )
                     );
                   const filteredEntities = searchQuery
                     ? filterEntitiesByKeywords(
-                      actortypeEntities,
+                      typeEntities,
                       searchQuery,
                       target.get('search').valueSeq().toArray()
                     )
-                    : actortypeEntities;
-                  const actortypeTargetPath = `${target.get('path')}_${actortype.get('id')}`;
-                  const actortypeTarget = target
-                    .set('clientPath', target.get('path'))
-                    .set('path', actortypeTargetPath);
+                    : typeEntities;
+                  const typeTargetPath = `${target.get('optionPath') || target.get('path')}_${type.get('id')}`;
+                  const typeTarget = target
+                    .set('clientPath', target.get('clientPath'))
+                    .set('optionPath', typeTargetPath)
+                    .set('path', target.get('path'));
 
                   // if filtered by path
                   if (
-                    path === actortypeTargetPath
+                    path === typeTargetPath
                   || (
                     !path
                     && !active
@@ -113,9 +119,9 @@ export const selectEntitiesByQuery = createSelector(
                   ) {
                     active = true;
                     // only sort the active entities that will be displayed
-                    const sortOption = getSortOption(actortypeTarget.get('sorting') && actortypeTarget.get('sorting').toJS(), sort);
+                    const sortOption = getSortOption(typeTarget.get('sorting') && typeTarget.get('sorting').toJS(), sort);
                     return innerMemo.push(
-                      actortypeTarget
+                      typeTarget
                         .set('active', searchQuery && true)
                         .set('results', sortEntities(
                           filteredEntities,
@@ -125,9 +131,10 @@ export const selectEntitiesByQuery = createSelector(
                         ))
                     );
                   }
-                  return innerMemo.push(actortypeTarget.set('results', filteredEntities));
+                  return innerMemo.push(typeTarget.set('results', filteredEntities));
                 }, memo);
               }
+
               // regular target
               const filteredEntities = searchQuery
                 ? filterEntitiesByKeywords(
@@ -152,6 +159,7 @@ export const selectEntitiesByQuery = createSelector(
                 return memo.push(
                   target
                     .set('active', searchQuery && true)
+                    .set('optionPath', target.get('path'))
                     .set('results', sortEntities(
                       filteredEntities,
                       order || (sortOption ? sortOption.order : 'desc'),
@@ -160,7 +168,11 @@ export const selectEntitiesByQuery = createSelector(
                     ))
                 );
               }
-              return memo.push(target.set('results', filteredEntities));
+              return memo.push(
+                target
+                  .set('results', filteredEntities)
+                  .set('optionPath', target.get('path'))
+              );
             },
             List(),
           )

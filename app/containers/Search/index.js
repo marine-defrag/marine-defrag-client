@@ -195,7 +195,7 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
     if (startsWith(target.get('path'), 'taxonomies')) {
       return appMessages.entities.taxonomies[target.get('taxId')];
     }
-    return appMessages.entities[target.get('path')];
+    return appMessages.entities[target.get('optionPath') || target.get('path')];
   }
 
   resize = () => {
@@ -217,45 +217,53 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
     this.setState({ viewport });
   }
 
-  renderSearchTargets = (includeEmpty = true) => {
+  renderSearchTargets = (includeEmpty) => {
     const { intl } = this.context;
     return (
       <div>
-        { this.props.entities && this.props.entities.map((group) => (
-          <Group key={group.get('group')} hasBorder={includeEmpty}>
-            { includeEmpty
-              && (
-                <SidebarGroupLabel>
-                  <FormattedMessage {...messages.groups[group.get('group')]} />
-                </SidebarGroupLabel>
-              )
-            }
-            <div>
-              {
-                group.get('targets') && group.get('targets').entrySeq().map(([i, target]) => (includeEmpty || target.get('results').size > 0 || target.get('active')) && (
-                  <Target
-                    key={i}
-                    onClick={(evt) => {
-                      if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                      this.props.onTargetSelect(target.get('path'));
-                    }}
-                    active={target.get('active')}
-                    disabled={target.get('results').size === 0}
-                  >
-                    <TargetTitle>
-                      {this.getTargetTitle(target) && intl.formatMessage(this.getTargetTitle(target).pluralLong || this.getTargetTitle(target).plural)}
-                    </TargetTitle>
-                    <TargetCount>
-                      <Count active={target.get('active')} disabled={target.get('results').size === 0}>
-                        {target.get('results').size}
-                      </Count>
-                    </TargetCount>
-                  </Target>
-                ))
+        { this.props.entities && this.props.entities.map((group) => {
+          const groupTargets = group.get('targets') && group.get('targets').filter(
+            (target) => (
+              includeEmpty || target.get('results').size > 0 || target.get('active')
+            )
+          );
+          const hasTargets = groupTargets && groupTargets.size > 0;
+          return (
+            <Group key={group.get('group')} hasBorder={hasTargets}>
+              { hasTargets
+                && (
+                  <SidebarGroupLabel>
+                    <FormattedMessage {...messages.groups[group.get('group')]} />
+                  </SidebarGroupLabel>
+                )
               }
-            </div>
-          </Group>
-        ))}
+              <div>
+                {groupTargets.entrySeq().map(
+                  ([, target]) => (
+                    <Target
+                      key={target.get('optionPath')}
+                      onClick={(evt) => {
+                        if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                        this.props.onTargetSelect(target.get('optionPath'));
+                      }}
+                      active={target.get('active')}
+                      disabled={target.get('results').size === 0}
+                    >
+                      <TargetTitle>
+                        {this.getTargetTitle(target) && intl.formatMessage(this.getTargetTitle(target).pluralLong || this.getTargetTitle(target).plural)}
+                      </TargetTitle>
+                      <TargetCount>
+                        <Count active={target.get('active')} disabled={target.get('results').size === 0}>
+                          {target.get('results').size}
+                        </Count>
+                      </TargetCount>
+                    </Target>
+                  )
+                )}
+              </div>
+            </Group>
+          );
+        })}
       </div>
     );
   };
@@ -272,14 +280,20 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
       onSortOrder,
       onSortBy,
     } = this.props;
-    const activeTarget = entities.reduce((memo, group) => group.get('targets').find((target) => target.get('active')) || memo,
-      Map());
+    const activeTarget = dataReady && entities.reduce(
+      (memo, group) => group.get('targets').find(
+        (target) => target.get('active')
+      ) || memo,
+      Map()
+    );
 
-    const hasResults = location.query.search
+    const hasResults = dataReady
+      && location.query.search
       && activeTarget.get('results')
       && activeTarget.get('results').size > 0;
 
-    const noResults = location.query.search
+    const noResults = dataReady
+      && location.query.search
       && (!activeTarget.get('results') || activeTarget.get('results').size === 0);
 
     const noResultsNoAlternative = noResults
@@ -316,7 +330,7 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
                       <SupTitle title={intl.formatMessage(messages.sidebarTitle)} />
                     </SidebarHeader>
                     {
-                      this.renderSearchTargets(true)
+                      this.renderSearchTargets()
                     }
                   </Component>
                 </ScrollableWrapper>
@@ -382,7 +396,7 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
                           )
                           }
                           {
-                            this.renderSearchTargets(false)
+                            this.renderSearchTargets()
                           }
                         </TargetsMobile>
                       )

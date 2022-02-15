@@ -6,13 +6,13 @@ export default styled.a`
   text-align: left;
   cursor:${(props) => props.disabled ? 'default' : 'pointer'};
   display: inline-flex;
-  padding: 8px 0.75em;
+  padding: 8px 0.5em;
   text-decoration: none;
   -webkit-font-smoothing: antialiased;
   -webkit-touch-callout: none;
   user-select: none;
   outline: 0;
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    padding: 8px 1em;
+    padding: 8px 0.7em;
   }
 `;

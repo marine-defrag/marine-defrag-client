@@ -382,7 +382,7 @@ export const selectIncludeTargetMembers = createSelector(
 
 // database ////////////////////////////////////////////////////////////////////////
 
-const selectEntitiesAll = (state) => state.getIn(['global', 'entities']);
+export const selectEntitiesAll = (state) => state.getIn(['global', 'entities']);
 
 export const selectEntities = createSelector(
   selectEntitiesAll,
