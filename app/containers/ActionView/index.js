@@ -260,22 +260,22 @@ export function ActionView(props) {
                     }}
                   />
                   <Box>
-                    {hasTarget && (
-                      <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
-                        <SubjectButton
-                          onClick={() => onSetSubject('actors')}
-                          active={viewSubject === 'actors'}
-                        >
-                          <Text size="large">Actors</Text>
-                        </SubjectButton>
+                    <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
+                      <SubjectButton
+                        onClick={() => onSetSubject('actors')}
+                        active={viewSubject === 'actors'}
+                      >
+                        <Text size="large">Actors</Text>
+                      </SubjectButton>
+                      {hasTarget && (
                         <SubjectButton
                           onClick={() => onSetSubject('targets')}
                           active={viewSubject === 'targets'}
                         >
                           <Text size="large">Targets</Text>
                         </SubjectButton>
-                      </Box>
-                    )}
+                      )}
+                    </Box>
                     {(!actortypesForSubject || actortypesForSubject.size === 0) && (
                       <Box margin={{ vertical: 'small', horizontal: 'medium' }}>
                         {viewSubject === 'actors' && (

@@ -59,6 +59,7 @@ import {
   selectActionConnections,
   selectSubjectQuery,
   selectActiontypeQuery,
+  selectActortypes,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
@@ -116,6 +117,7 @@ export function ActorView(props) {
     actionsByActiontype,
     actionsAsTargetByActiontype,
     membersByType,
+    actortypes,
   } = props;
 
   useEffect(() => {
@@ -124,6 +126,7 @@ export function ActorView(props) {
   }, []);
 
   const typeId = viewEntity && viewEntity.getIn(['attributes', 'actortype_id']);
+  const viewActortype = actortypes && actortypes.find((type) => qe(type.get('id'), typeId));
   let buttons = [];
   if (dataReady) {
     buttons.push({
@@ -156,7 +159,18 @@ export function ActorView(props) {
     ? `${pageTitle}: ${getEntityTitleTruncated(viewEntity)}`
     : `${pageTitle}: ${params.id}`;
 
-  const actiontypesForSubject = subject === 'actors'
+  const isTarget = viewActortype && viewActortype.getIn(['attributes', 'is_target']);
+  const isActive = viewActortype && viewActortype.getIn(['attributes', 'is_active']);
+
+  let viewSubject = subject;
+  if (!isTarget) {
+    viewSubject = 'actors';
+  }
+  if (!isActive) {
+    viewSubject = 'targets';
+  }
+
+  const actiontypesForSubject = viewSubject === 'actors'
     ? actionsByActiontype
     : actionsAsTargetByActiontype;
   const activeActiontypeId = (!actiontypesForSubject || actiontypesForSubject.get(parseInt(viewActiontypeId, 10)))
@@ -233,27 +247,31 @@ export function ActorView(props) {
                   />
                   <Box>
                     <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
-                      <SubjectButton
-                        onClick={() => onSetSubject('actors')}
-                        active={subject === 'actors'}
-                      >
-                        <Text size="large">Activities</Text>
-                      </SubjectButton>
-                      <SubjectButton
-                        onClick={() => onSetSubject('targets')}
-                        active={subject === 'targets'}
-                      >
-                        <Text size="large">Targeted by</Text>
-                      </SubjectButton>
+                      {isActive && (
+                        <SubjectButton
+                          onClick={() => onSetSubject('actors')}
+                          active={viewSubject === 'actors'}
+                        >
+                          <Text size="large">Activities</Text>
+                        </SubjectButton>
+                      )}
+                      {isTarget && (
+                        <SubjectButton
+                          onClick={() => onSetSubject('targets')}
+                          active={viewSubject === 'targets'}
+                        >
+                          <Text size="large">Targeted by</Text>
+                        </SubjectButton>
+                      )}
                     </Box>
                     {(!actiontypesForSubject || actiontypesForSubject.size === 0) && (
                       <Box margin={{ vertical: 'small', horizontal: 'medium' }}>
-                        {subject === 'actors' && (
+                        {viewSubject === 'actors' && (
                           <Text>
                             No activities for actor in database
                           </Text>
                         )}
-                        {subject === 'targets' && (
+                        {viewSubject === 'targets' && (
                           <Text>
                             Actor not target of any activities in database
                           </Text>
@@ -395,6 +413,7 @@ ActorView.propTypes = {
   viewActiontypeId: PropTypes.string,
   onSetSubject: PropTypes.func,
   onSetActiontype: PropTypes.func,
+  actortypes: PropTypes.object,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -410,6 +429,7 @@ const mapStateToProps = (state, props) => ({
   associationsByType: selectAssociationsByType(state, props.params.id),
   subject: selectSubjectQuery(state),
   viewActiontypeId: selectActiontypeQuery(state),
+  actortypes: selectActortypes(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
