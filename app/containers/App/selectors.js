@@ -23,6 +23,8 @@ import {
   ACTIONTYPE_ACTORTYPES,
   ACTIONTYPE_TARGETTYPES,
   ACTIONTYPE_RESOURCETYPES,
+  DEFAULT_ACTIONTYPE,
+  DEFAULT_ACTORTYPE,
 } from 'themes/config';
 
 import {
@@ -344,22 +346,22 @@ export const selectActortypeQuery = createSelector(
   selectLocationQuery,
   (query) => (query && query.get('actortype'))
     ? query.get('actortype')
-    : 'all'
+    : DEFAULT_ACTORTYPE
 );
 export const selectActiontypeQuery = createSelector(
   selectLocationQuery,
   (query) => (query && query.get('actiontype'))
     ? query.get('actiontype')
-    : 'all'
+    : DEFAULT_ACTIONTYPE
 );
 
 export const selectViewQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && (locationQuery.get('view') || 'list')
 );
-export const selectMapSubjectQuery = createSelector(
+export const selectSubjectQuery = createSelector(
   selectLocationQuery,
-  (locationQuery) => locationQuery && (locationQuery.get('ms') || 'actors')
+  (locationQuery) => locationQuery && (locationQuery.get('subj') || 'actors')
 );
 export const selectIncludeActorMembers = createSelector(
   selectLocationQuery,
