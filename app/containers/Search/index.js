@@ -151,7 +151,7 @@ const Count = styled.div`
 
 const ListHint = styled.div`
   color:  ${palette('dark', 3)};
-  padding-bottom: 10px;
+  margin-bottom: 50px;
 `;
 const ListWrapper = styled.div``;
 const ListEntitiesMain = styled.div`
@@ -244,7 +244,11 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
                       key={target.get('optionPath')}
                       onClick={(evt) => {
                         if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                        this.props.onTargetSelect(target.get('optionPath'));
+                        if (target.get('active')) {
+                          this.props.onTargetSelect('');
+                        } else {
+                          this.props.onTargetSelect(target.get('optionPath'));
+                        }
                       }}
                       active={target.get('active')}
                       disabled={target.get('results').size === 0}
@@ -288,7 +292,8 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
     );
 
     const hasResults = dataReady
-      && location.query.search
+      // && location.query.search
+      && activeTarget
       && activeTarget.get('results')
       && activeTarget.get('results').size > 0;
 

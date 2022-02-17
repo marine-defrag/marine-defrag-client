@@ -35,6 +35,10 @@ export default defineMessages({
       id: 'app.containers.Search.groups.actors',
       defaultMessage: 'Actors',
     },
+    resources: {
+      id: 'app.containers.Search.groups.resources',
+      defaultMessage: 'Resources',
+    },
     taxonomies: {
       id: 'app.containers.Search.groups.taxonomies',
       defaultMessage: 'Category groups',

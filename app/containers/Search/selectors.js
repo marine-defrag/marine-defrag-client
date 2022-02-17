@@ -36,15 +36,24 @@ export const selectEntitiesByQuery = createSelector(
   selectSortOrderQuery,
   (ready, searchQuery, allEntities, taxonomies, path, sort, order) => {
     if (!ready) return null;
-    let active = false;// || CONFIG.search[0].targets[0].path;
+    // let active = false;// || CONFIG.search[0].targets[0].path;
     return fromJS(CONFIG.search).map((group) => {
       if (group.get('group') === 'taxonomies') {
         return group.set('targets', taxonomies.map((tax) => {
           const categories = allEntities
             .get('categories')
-            .filter((cat) => qe(tax.get('id'), cat.getIn(['attributes', 'taxonomy_id'])))
-            .map((cat) => group.get('search').reduce((memo, attribute) => memo.setIn(['attributes', attribute.get('as')], tax.getIn(['attributes', attribute.get('attribute')])),
-              cat));
+            .filter(
+              (cat) => qe(tax.get('id'), cat.getIn(['attributes', 'taxonomy_id']))
+            )
+            .map(
+              (cat) => group.get('search').reduce(
+                (memo, attribute) => memo.setIn(
+                  ['attributes', attribute.get('as')],
+                  tax.getIn(['attributes', attribute.get('attribute')])
+                ),
+                cat
+              )
+            );
 
           const filteredCategories = searchQuery
             ? filterEntitiesByKeywords(
@@ -53,8 +62,10 @@ export const selectEntitiesByQuery = createSelector(
               group.get('categorySearch').valueSeq().toArray()
             )
             : categories;
-          if (path === `taxonomies-${tax.get('id')}` || (!path && !active && filteredCategories.size > 0)) {
-            active = true;
+          if (
+            path === `taxonomies-${tax.get('id')}`
+            // || (!path && !active && filteredCategories.size > 0)
+          ) {
             const sortOption = getSortOption(group.get('sorting') && group.get('sorting').toJS(), sort);
             return Map()
               .set('path', `taxonomies-${tax.get('id')}`)
@@ -62,7 +73,7 @@ export const selectEntitiesByQuery = createSelector(
               // .set('icon', `taxonomy_${tax.get('id')}`)
               .set('clientPath', 'category')
               .set('taxId', tax.get('id'))
-              .set('active', searchQuery && true)
+              .set('active', true)
               .set('sorting', group.get('sorting'))
               .set('results', sortEntities(filteredCategories,
                 order || (sortOption ? sortOption.order : 'desc'),
@@ -111,18 +122,17 @@ export const selectEntitiesByQuery = createSelector(
                   // if filtered by path
                   if (
                     path === typeTargetPath
-                  || (
-                    !path
-                    && !active
-                    && filteredEntities.size > 0
-                  )
+                  // || (
+                  //   !path
+                  //   && !active
+                  //   && filteredEntities.size > 0
+                  // )
                   ) {
-                    active = true;
                     // only sort the active entities that will be displayed
                     const sortOption = getSortOption(typeTarget.get('sorting') && typeTarget.get('sorting').toJS(), sort);
                     return innerMemo.push(
                       typeTarget
-                        .set('active', searchQuery && true)
+                        .set('active', true)
                         .set('results', sortEntities(
                           filteredEntities,
                           order || (sortOption ? sortOption.order : 'desc'),
@@ -147,18 +157,17 @@ export const selectEntitiesByQuery = createSelector(
               // if filtered by path
               if (
                 path === target.get('path')
-              || (
-                !path
-                && !active
-                && filteredEntities.size > 0
-              )
+              // || (
+              //   !path
+              //   && !active
+              //   && filteredEntities.size > 0
+              // )
               ) {
-                active = true;
                 // only sort the active entities that will be displayed
                 const sortOption = getSortOption(target.get('sorting') && target.get('sorting').toJS(), sort);
                 return memo.push(
                   target
-                    .set('active', searchQuery && true)
+                    .set('active', true)
                     .set('optionPath', target.get('path'))
                     .set('results', sortEntities(
                       filteredEntities,
