@@ -106,7 +106,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     // taxonomies,
   }) => {
     const { intl } = this.context;
-    const connectedCounts = config && config.connections
+    const connectedCounts = config && config.connections && connections
       ? this.getConnections(entity, config.connections, connections)
       : [];
     return ({
@@ -131,8 +131,11 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     } = this.props;
     const entity = this.mapToEntityListItem(this.props);
     const hasTop = entity.role;
-    const hasBottom = ((entity.categories && entity.categories.size > 0)
-      || (this.props.wrapper && entity.connectedCounts && entity.connectedCounts.length > 0));
+    const hasBottom = taxonomies
+      && (
+        (entity.categories && entity.categories.size > 0)
+        || (this.props.wrapper && entity.connectedCounts && entity.connectedCounts.length > 0)
+      );
     return (
       <Styled isManager={this.props.isManager} inSingleView={inSingleView}>
         {hasTop && (

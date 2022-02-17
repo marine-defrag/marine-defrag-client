@@ -18,14 +18,14 @@ import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
 import { ACTORTYPES, ROUTES } from 'themes/config';
 
 import {
-  selectMapSubjectQuery,
+  selectSubjectQuery,
   selectActortypeActors,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
 } from 'containers/App/selectors';
 
 import {
-  setMapSubject,
+  setSubject,
   setIncludeActorMembers,
   setIncludeTargetMembers,
 } from 'containers/App/actions';
@@ -426,7 +426,7 @@ EntitiesMap.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  mapSubject: selectMapSubjectQuery(state),
+  mapSubject: selectSubjectQuery(state),
   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
@@ -434,7 +434,7 @@ const mapStateToProps = (state) => ({
 function mapDispatchToProps(dispatch) {
   return {
     onSetMapSubject: (subject) => {
-      dispatch(setMapSubject(subject));
+      dispatch(setSubject(subject));
     },
     onSetIncludeTargetMembers: (active) => {
       dispatch(setIncludeTargetMembers(active));

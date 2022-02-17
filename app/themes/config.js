@@ -88,6 +88,7 @@ export const ACTIONTYPES = {
   DONOR: '5',
   INIT: '6',
 };
+export const DEFAULT_ACTIONTYPE = ACTIONTYPES.DONOR;
 export const ACTORTYPES = {
   COUNTRY: '1',
   ORG: '2',
@@ -95,6 +96,7 @@ export const ACTORTYPES = {
   REG: '4',
   GROUP: '5',
 };
+export const DEFAULT_ACTORTYPE = ACTORTYPES.COUNTRY;
 export const RESOURCETYPES = {
   REF: '1',
   WEB: '2',
@@ -102,6 +104,8 @@ export const RESOURCETYPES = {
   AP: '4',
   MLAP: '5',
 };
+export const DEFAULT_RESOURCETYPE = RESOURCETYPES.REF;
+export const DEFAULT_TAXONOMY = '11';
 
 export const ACTIONTYPE_GROUPS = {
   // donor activities
@@ -563,7 +567,7 @@ export const ACTIONTYPE_RESOURCETYPES = {
   ],
 };
 
-export const KEEP_FILTERS = ['view', 'ms'];
+export const KEEP_FILTERS = ['view', 'subj'];
 
 // Language and date settings ********************
 // Note: you may also set the locales in i18n.js
@@ -684,10 +688,6 @@ export const PUBLISH_STATUSES = [
   { value: false, message: 'ui.publishStatuses.public' },
 ];
 
-export const DEFAULT_ACTORTYPE = '1';
-export const DEFAULT_ACTIONTYPE = '1';
-export const DEFAULT_RESOURCETYPE = '1';
-export const DEFAULT_TAXONOMY = '11';
 export const NO_PARENT_KEY = 'parentUndefined';
 
 export const MAP_OPTIONS = {

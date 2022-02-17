@@ -37,8 +37,9 @@ import {
   CLOSE_ENTITY,
   DISMISS_QUERY_MESSAGES,
   SET_ACTIONTYPE,
+  SET_ACTORTYPE,
   SET_VIEW,
-  SET_MAPSUBJECT,
+  SET_SUBJECT,
   OPEN_BOOKMARK,
   SET_INCLUDE_ACTOR_MEMBERS,
   SET_INCLUDE_TARGET_MEMBERS,
@@ -667,11 +668,25 @@ export function* setActortypeSaga({ actortype }) {
     {
       arg: 'actortype',
       value: actortype,
+      replace: true,
     },
     true, // extend
     location,
   );
 
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
+export function* setActiontypeSaga({ actiontype }) {
+  const location = yield select(selectLocation);
+  const queryNext = getNextQuery(
+    {
+      arg: 'actiontype',
+      value: actiontype,
+      replace: true,
+    },
+    true, // extend
+    location,
+  );
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
 export function* setViewSaga({ view }) {
@@ -687,11 +702,11 @@ export function* setViewSaga({ view }) {
   );
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
-export function* setMapSubjectSaga({ subject }) {
+export function* setSubjectSaga({ subject }) {
   const location = yield select(selectLocation);
   const queryNext = getNextQuery(
     {
-      arg: 'ms',
+      arg: 'subj',
       value: subject,
       replace: true,
     },
@@ -819,9 +834,10 @@ export default function* rootSaga() {
   yield takeLatest(REDIRECT_IF_NOT_PERMITTED, checkRoleSaga);
   yield takeEvery(UPDATE_ROUTE_QUERY, updateRouteQuerySaga);
   yield takeEvery(UPDATE_PATH, updatePathSaga);
-  yield takeEvery(SET_ACTIONTYPE, setActortypeSaga);
+  yield takeEvery(SET_ACTORTYPE, setActortypeSaga);
+  yield takeEvery(SET_ACTIONTYPE, setActiontypeSaga);
   yield takeEvery(SET_VIEW, setViewSaga);
-  yield takeEvery(SET_MAPSUBJECT, setMapSubjectSaga);
+  yield takeEvery(SET_SUBJECT, setSubjectSaga);
   yield takeEvery(SET_INCLUDE_ACTOR_MEMBERS, setIncludeActorMembersSaga);
   yield takeEvery(SET_INCLUDE_TARGET_MEMBERS, setIncludeTargetMembersSaga);
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);

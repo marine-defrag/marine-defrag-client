@@ -23,6 +23,7 @@ import LinkPage from './LinkPage';
 import NavAccount from './NavAccount';
 
 import LinkAdmin from './LinkAdmin';
+// import Link from './Link';
 
 
 const Styled = styled.div`
@@ -103,26 +104,12 @@ const HideSecondaryWrap = styled.div`
 const HideSecondary = styled(Button)``;
 
 
-// const Search = styled(LinkMain)`
-//   display: none;
-//   color: ${(props) => props.active ? palette('headerNavMainItem', 1) : palette('headerNavMainItem', 0)};
-//   &:hover {
-//     color:${palette('headerNavMainItemHover', 0)};
-//   }
-//   padding: 2px ${(props) => props.theme.sizes.header.paddingLeft.mobile}px 1px;
-//   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-//     display: inline-block;
-//     min-width: auto;
-//     padding: 15px ${(props) => props.theme.sizes.header.paddingLeft.small}px 0;
-//     position: absolute;
-//     right: 0;
-//     border-left: none;
-//   }
-//   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-//     padding-left: 24px;
-//     padding-right: 24px;
-//   }
-// `;
+const Search = styled(LinkPage)`
+  display: none;
+  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+    display: inline-block;
+  }
+`;
 
 const STATE_INITIAL = {
   showSecondary: false,
@@ -177,7 +164,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
     this.forceUpdate();
   };
 
-  renderSecondary = (navItems) => (
+  renderSecondary = (navItems, search) => (
     <PrintHide>
       <ShowSecondary
         visible={!this.state.showSecondary}
@@ -205,6 +192,21 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
             <Icon name="close" size="30px" />
           </HideSecondary>
         </HideSecondaryWrap>
+        {search && (
+          <NavPages>
+            <Search
+              href={search.path}
+              active={search.active}
+              onClick={(evt) => this.onClick(evt, search.path)}
+              icon={search.icon}
+            >
+              {search.title}
+              {search.icon
+              && <Icon title={search.title} name={search.icon} text textRight size="1em" />
+              }
+            </Search>
+          </NavPages>
+        )}
         <NavAccount
           isSignedIn={this.props.isSignedIn}
           user={this.props.user}
@@ -252,7 +254,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
   );
 
   render() {
-    const { isAuth, navItems } = this.props;
+    const { isAuth, navItems, search } = this.props;
     const { intl } = this.context;
 
     const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
@@ -282,7 +284,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
               </BrandText>
             )}
           </Brand>
-          {this.renderSecondary(navItems)}
+          {this.renderSecondary(navItems, search)}
         </Banner>
       </Styled>
     );

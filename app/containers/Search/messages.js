@@ -27,9 +27,17 @@ export default defineMessages({
     defaultMessage: 'Search database by keyword',
   },
   groups: {
-    entities: {
-      id: 'app.containers.Search.groups.entities',
-      defaultMessage: 'Subjects',
+    actions: {
+      id: 'app.containers.Search.groups.actions',
+      defaultMessage: 'Activities',
+    },
+    actors: {
+      id: 'app.containers.Search.groups.actors',
+      defaultMessage: 'Actors',
+    },
+    resources: {
+      id: 'app.containers.Search.groups.resources',
+      defaultMessage: 'Resources',
     },
     taxonomies: {
       id: 'app.containers.Search.groups.taxonomies',
