@@ -36,7 +36,7 @@ export const selectEntitiesByQuery = createSelector(
   selectSortOrderQuery,
   (ready, searchQuery, allEntities, taxonomies, path, sort, order) => {
     if (!ready) return null;
-    // let active = false;// || CONFIG.search[0].targets[0].path;
+    let active = false;// || CONFIG.search[0].targets[0].path;
     return fromJS(CONFIG.search).map((group) => {
       if (group.get('group') === 'taxonomies') {
         return group.set('targets', taxonomies.map((tax) => {
@@ -64,8 +64,9 @@ export const selectEntitiesByQuery = createSelector(
             : categories;
           if (
             path === `taxonomies-${tax.get('id')}`
-            // || (!path && !active && filteredCategories.size > 0)
+            || (!path && !active && filteredCategories.size > 0 && searchQuery)
           ) {
+            active = true;
             const sortOption = getSortOption(group.get('sorting') && group.get('sorting').toJS(), sort);
             return Map()
               .set('path', `taxonomies-${tax.get('id')}`)
@@ -122,12 +123,14 @@ export const selectEntitiesByQuery = createSelector(
                   // if filtered by path
                   if (
                     path === typeTargetPath
-                  // || (
-                  //   !path
-                  //   && !active
-                  //   && filteredEntities.size > 0
-                  // )
+                  || (
+                    !path
+                    && !active
+                    && filteredEntities.size > 0
+                    && searchQuery
+                  )
                   ) {
+                    active = true;
                     // only sort the active entities that will be displayed
                     const sortOption = getSortOption(typeTarget.get('sorting') && typeTarget.get('sorting').toJS(), sort);
                     return innerMemo.push(
@@ -157,12 +160,14 @@ export const selectEntitiesByQuery = createSelector(
               // if filtered by path
               if (
                 path === target.get('path')
-              // || (
-              //   !path
-              //   && !active
-              //   && filteredEntities.size > 0
-              // )
+              || (
+                !path
+                && !active
+                && filteredEntities.size > 0
+                && searchQuery
+              )
               ) {
+                active = true;
                 // only sort the active entities that will be displayed
                 const sortOption = getSortOption(target.get('sorting') && target.get('sorting').toJS(), sort);
                 return memo.push(

@@ -115,5 +115,59 @@ export const CONFIG = {
         },
       ],
     },
+    {
+      group: 'taxonomies',
+      search: [{
+        attribute: 'title',
+        as: 'taxonomy',
+      }],
+      categorySearch: ['title', 'short_title', 'description', 'url', 'taxonomy'],
+      sorting: [
+        {
+          attribute: 'title',
+          type: 'string',
+          order: 'asc',
+          default: true,
+        },
+        {
+          attribute: 'updated_at',
+          type: 'date',
+          order: 'desc',
+        },
+      ],
+    },
+    {
+      group: 'content',
+      targets: [
+        {
+          path: API.PAGES,
+          clientPath: ROUTES.PAGES,
+          search: ['title', 'content', 'menu_title'],
+          sorting: [
+            {
+              attribute: 'title',
+              type: 'string',
+              order: 'asc',
+              default: true,
+            },
+            {
+              attribute: 'order',
+              type: 'number',
+              order: 'asc',
+            },
+            {
+              attribute: 'id', // proxy for created at
+              type: 'number',
+              order: 'desc',
+            },
+            {
+              attribute: 'updated_at',
+              type: 'date',
+              order: 'desc',
+            },
+          ],
+        },
+      ],
+    },
   ],
 };
