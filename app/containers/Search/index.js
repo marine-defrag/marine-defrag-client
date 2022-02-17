@@ -300,12 +300,12 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
     const noResults = dataReady
       && location.query.search
       && (!activeTarget.get('results') || activeTarget.get('results').size === 0);
-
     const noResultsNoAlternative = noResults
       && !entities.reduce((memo, group) => group.get('targets').find((target) => target.get('results') && target.get('results').size > 0) || memo,
         false);
+    const noEntry = !location.query.search && (!activeTarget || !activeTarget.get('results'));
 
-    const noEntry = !location.query.search;
+    const noQuery = !location.query.search && activeTarget && activeTarget.get('results');
 
     const headerButtons = [{
       type: 'icon',
@@ -373,6 +373,13 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
                         noEntry && (
                           <ListHint>
                             <FormattedMessage {...messages.hints.noEntry} />
+                          </ListHint>
+                        )
+                      }
+                      {
+                        noQuery && (
+                          <ListHint>
+                            <FormattedMessage {...messages.hints.noQuery} />
                           </ListHint>
                         )
                       }
