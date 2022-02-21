@@ -21,6 +21,8 @@ import {
   selectActionResourcesGroupedByAction,
   selectResourceConnections,
   selectActionResourcesGroupedByResource,
+  selectMembershipsGroupedByMember,
+  selectMembershipsGroupedByAssociation,
 } from 'containers/App/selectors';
 
 import {
@@ -173,6 +175,8 @@ export const selectActorsByType = createSelector(
   selectActorConnections,
   selectActorActionsGroupedByActor,
   selectActionActorsGroupedByActor,
+  selectMembershipsGroupedByMember,
+  selectMembershipsGroupedByAssociation,
   selectActorCategoriesGroupedByActor,
   selectCategories,
   (
@@ -181,6 +185,8 @@ export const selectActorsByType = createSelector(
     actorConnections,
     actorActions,
     actionActors,
+    memberships,
+    associations,
     actorCategories,
     categories,
   ) => {
@@ -193,6 +199,8 @@ export const selectActorsByType = createSelector(
         actionActors,
         categories,
         actorCategories,
+        memberships,
+        associations,
       }))
       .groupBy((r) => r.getIn(['attributes', 'actortype_id']))
       .sortBy((val, key) => key);
@@ -229,6 +237,8 @@ export const selectTargetsByType = createSelector(
   selectActorConnections,
   selectActorActionsGroupedByActor,
   selectActionActorsGroupedByActor,
+  selectMembershipsGroupedByMember,
+  selectMembershipsGroupedByAssociation,
   selectActorCategoriesGroupedByActor,
   selectCategories,
   (
@@ -237,6 +247,8 @@ export const selectTargetsByType = createSelector(
     actorConnections,
     actorActions,
     actionActors,
+    memberships,
+    associations,
     actorCategories,
     categories,
   ) => {
@@ -249,6 +261,8 @@ export const selectTargetsByType = createSelector(
         actionActors,
         categories,
         actorCategories,
+        memberships,
+        associations,
       }))
       .groupBy((r) => r.getIn(['attributes', 'actortype_id']))
       .sortBy((val, key) => key);
