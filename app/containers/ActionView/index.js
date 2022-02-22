@@ -59,7 +59,6 @@ import {
   selectReady,
   selectIsUserManager,
   selectActorConnections,
-  selectActionConnections,
   selectResourceConnections,
   selectTaxonomiesWithCategories,
   selectSubjectQuery,
@@ -100,7 +99,6 @@ export function ActionView(props) {
     resourcesByResourcetype,
     onEntityClick,
     actorConnections,
-    actionConnections,
     resourceConnections,
     children,
     parents,
@@ -392,7 +390,6 @@ export function ActionView(props) {
                           getActionConnectionField({
                             actions: parents.toList(),
                             onEntityClick,
-                            connections: actionConnections,
                             typeid: typeId,
                             skipLabel: true,
                           }),
@@ -404,12 +401,11 @@ export function ActionView(props) {
                     <FieldGroup
                       aside
                       group={{
-                        label: appMessages.nav.members,
+                        label: appMessages.entities.actions.children,
                         fields: [
                           getActionConnectionField({
                             actions: children.toList(),
                             onEntityClick,
-                            connections: actionConnections,
                             typeid: typeId,
                             skipLabel: true,
                           }),
@@ -441,7 +437,6 @@ ActionView.propTypes = {
   targetsByActortype: PropTypes.object,
   resourcesByResourcetype: PropTypes.object,
   actorConnections: PropTypes.object,
-  actionConnections: PropTypes.object,
   resourceConnections: PropTypes.object,
   activitytypes: PropTypes.object,
   params: PropTypes.object,
@@ -467,7 +462,6 @@ const mapStateToProps = (state, props) => ({
   resourcesByResourcetype: selectResourcesByType(state, props.params.id),
   targetsByActortype: selectTargetsByType(state, props.params.id),
   actorConnections: selectActorConnections(state),
-  actionConnections: selectActionConnections(state),
   resourceConnections: selectResourceConnections(state),
   children: selectChildActions(state, props.params.id),
   parents: selectParentActions(state, props.params.id),

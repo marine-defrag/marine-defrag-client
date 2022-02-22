@@ -798,7 +798,7 @@ export const setActorConnections = ({
   associations,
 }) => {
   const actorId = parseInt(actor.get('id'), 10);
-
+  if (!actorConnections) return actor;
   // actors
   const entityActions = actorActions && actorActions.get(actorId);
   const entityActionsByActiontype = entityActions
@@ -841,12 +841,13 @@ export const setActorConnections = ({
     actorCategories,
     categories,
   );
+
   return actor
     .set('categories', entityCategories)
     .set('actionsByType', entityActionsByActiontype)
+    .set('targetingActionsByType', entityTargetingActionsByType)
     .set('membersByType', entityMembersByActortype)
-    .set('associationsByType', entityAssociationsByActortype)
-    .set('targetingActionsByType', entityTargetingActionsByType);
+    .set('associationsByType', entityAssociationsByActortype);
 };
 
 export const setResourceConnections = ({

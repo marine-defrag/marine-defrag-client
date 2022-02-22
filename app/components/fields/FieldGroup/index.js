@@ -45,6 +45,13 @@ class FieldGroup extends React.PureComponent { // eslint-disable-line react/pref
             )}
           </FieldGroupLabel>
         )}
+        {group.title && (
+          <FieldGroupLabel>
+            <GroupLabel>
+              {group.title}
+            </GroupLabel>
+          </FieldGroupLabel>
+        )}
         {group.fields.map(
           (field, i) => field
             ? (

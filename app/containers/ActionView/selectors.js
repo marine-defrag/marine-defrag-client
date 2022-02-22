@@ -29,7 +29,6 @@ import {
   entitySetSingles,
   prepareTaxonomiesIsAssociated,
   setActorConnections,
-  setActionConnections,
   setResourceConnections,
 } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
@@ -81,68 +80,30 @@ export const selectChildActions = createSelector(
     ready,
     actionId,
     actions,
-    actionConnections,
-    actorActions,
-    actionActors,
-    actionResources,
-    actionCategories,
-    categories,
   ) => {
     if (!ready) return null;
     const children = actions.filter((action) => qe(
       action.getIn(['attributes', 'parent_id']),
       actionId,
     ));
-    if (!children || children.size === 0) return null;
-    return children && children
-      .map((action) => setActionConnections({
-        action,
-        actionConnections,
-        actorActions,
-        actionActors,
-        actionResources,
-        categories,
-        actionCategories,
-      }));
+    return children && children.size > 0 ? children : null;
   }
 );
 export const selectParentActions = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectViewEntity,
   selectActions,
-  selectActionConnections,
-  selectActorActionsGroupedByAction,
-  selectActionActorsGroupedByAction,
-  selectActionResourcesGroupedByAction,
-  selectActionCategoriesGroupedByAction,
-  selectCategories,
   (
     ready,
     viewAction,
     actions,
-    actionConnections,
-    actorActions,
-    actionActors,
-    actionResources,
-    actionCategories,
-    categories,
   ) => {
     if (!ready) return null;
     const parents = actions.filter((action) => qe(
       viewAction.getIn(['attributes', 'parent_id']),
       action.get('id'),
     ));
-    if (!parents || parents.size === 0) return null;
-    return parents && parents
-      .map((action) => setActionConnections({
-        action,
-        actionConnections,
-        actorActions,
-        actionActors,
-        actionResources,
-        categories,
-        actionCategories,
-      }));
+    return parents && parents.size > 0 ? parents : null;
   }
 );
 

@@ -192,21 +192,6 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
             <Icon name="close" size="30px" />
           </HideSecondary>
         </HideSecondaryWrap>
-        {search && (
-          <NavPages>
-            <Search
-              href={search.path}
-              active={search.active}
-              onClick={(evt) => this.onClick(evt, search.path)}
-              icon={search.icon}
-            >
-              {search.title}
-              {search.icon
-              && <Icon title={search.title} name={search.icon} text textRight size="1em" />
-              }
-            </Search>
-          </NavPages>
-        )}
         <NavAccount
           isSignedIn={this.props.isSignedIn}
           user={this.props.user}
@@ -249,6 +234,21 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
             </LinkPage>
           ))}
         </NavPages>
+        {search && (
+          <NavPages>
+            <Search
+              href={search.path}
+              active={search.active}
+              onClick={(evt) => this.onClick(evt, search.path)}
+              icon={search.icon}
+            >
+              {search.title}
+              {search.icon
+              && <Icon title={search.title} name={search.icon} text textRight size="1em" />
+              }
+            </Search>
+          </NavPages>
+        )}
       </NavSecondary>
     </PrintHide>
   );
