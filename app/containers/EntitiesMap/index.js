@@ -18,14 +18,14 @@ import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
 import { ACTORTYPES, ROUTES } from 'themes/config';
 
 import {
-  selectSubjectQuery,
+  selectMapSubjectQuery,
   selectActortypeActors,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
 } from 'containers/App/selectors';
 
 import {
-  setSubject,
+  setMapSubject,
   setIncludeActorMembers,
   setIncludeTargetMembers,
 } from 'containers/App/actions';
@@ -84,7 +84,7 @@ export function EntitiesMap({
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
   );
-  let countryFeatures;
+  let countryData;
   let hasByTarget;
   let subjectOptions;
   let memberOption;
@@ -147,7 +147,7 @@ export function EntitiesMap({
           };
         }
         // entities are filtered countries
-        countryFeatures = countriesJSON.features.map((feature) => {
+        countryData = countriesJSON.features.map((feature) => {
           const country = entities.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
           if (country) {
             const countActions = country.get('actions')
@@ -313,7 +313,7 @@ export function EntitiesMap({
         return [updated, total];
       }, [Map(), 0]);
       // console.log('countryCounts', countryCounts && countryCounts.toJS())
-      countryFeatures = countriesJSON.features.map((feature) => {
+      countryData = countriesJSON.features.map((feature) => {
         const country = countries.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
         if (country) {
           const cCounts = countryCounts.get(parseInt(country.get('id'), 10));
@@ -355,8 +355,8 @@ export function EntitiesMap({
     }
   }
   let maxValue;
-  if (countryFeatures) {
-    maxValue = countryFeatures.reduce(
+  if (countryData) {
+    maxValue = countryData.reduce(
       (max, f) => max ? Math.max(max, f.values[indicator]) : f.values[indicator],
       null,
     );
@@ -366,7 +366,8 @@ export function EntitiesMap({
     <ContainerWrapper hasHeader noOverflow>
       <MapContainer
         typeLabels={typeLabels}
-        countryFeatures={countryFeatures}
+        countryFeatures={countriesJSON.features}
+        countryData={countryData}
         indicator={indicator}
         onCountryClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
         maxValue={maxValue}
@@ -426,7 +427,7 @@ EntitiesMap.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  mapSubject: selectSubjectQuery(state),
+  mapSubject: selectMapSubjectQuery(state),
   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
@@ -434,7 +435,7 @@ const mapStateToProps = (state) => ({
 function mapDispatchToProps(dispatch) {
   return {
     onSetMapSubject: (subject) => {
-      dispatch(setSubject(subject));
+      dispatch(setMapSubject(subject));
     },
     onSetIncludeTargetMembers: (active) => {
       dispatch(setIncludeTargetMembers(active));

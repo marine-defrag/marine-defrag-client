@@ -47,14 +47,14 @@ const ButtonWrap = styled.div`
 `;
 const Main = styled.div`
   padding: 20px 20px 40px;
-  height: 235px;
+  min-height: 100px;
   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2);
   display: block;
   background: white;
   width: 100%;
   overflow: auto;
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
-    min-height: 200px;
+    min-height: 100px;
     max-height: 80vH;
     height: auto;
     overflow: visible;
@@ -87,6 +87,7 @@ const TTFootnote = styled.div`
 `;
 const TTTitle = styled.h4`
   margin: 0 0 5px;
+  font-size: ${({ theme }) => theme.sizes.text.default};
 `;
 const TTSectionTitle = styled.div`
   margin: 15px 0 3px;
@@ -99,7 +100,7 @@ const TTSectionTitle = styled.div`
 //   background: black;
 // `;
 
-const WIDTH = 350;
+const WIDTH = 300;
 
 const Tooltip = ({
   position,

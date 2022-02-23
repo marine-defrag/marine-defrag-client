@@ -77,6 +77,7 @@ const getBBox = (bounds, xLat = 0.5, xLon = 180) => {
 
 export function MapContainer({
   countryFeatures,
+  countryData,
   indicator,
   onCountryClick,
   typeLabels,
@@ -84,12 +85,14 @@ export function MapContainer({
   includeActorMembers,
   includeTargetMembers,
   mapSubject,
+  fitBounds,
 }) {
   const [tooltip, setTooltip] = useState(null);
   const [featureOver, setFeatureOver] = useState(null);
   const ref = useRef(null);
   const mapRef = useRef(null);
   const countryLayerGroupRef = useRef(null);
+  const countryOverlayGroupRef = useRef(null);
   const countryTooltipGroupRef = useRef(null);
   const countryOverGroupRef = useRef(null);
   const mapEvents = {
@@ -183,6 +186,8 @@ export function MapContainer({
     L.geoJSON(getBBox(MAP_OPTIONS.PROJ.bounds), MAP_OPTIONS.BBOX_STYLE).addTo(mapRef.current);
     countryLayerGroupRef.current = L.layerGroup();
     countryLayerGroupRef.current.addTo(mapRef.current);
+    countryOverlayGroupRef.current = L.layerGroup();
+    countryOverlayGroupRef.current.addTo(mapRef.current);
     countryTooltipGroupRef.current = L.layerGroup();
     countryTooltipGroupRef.current.addTo(mapRef.current);
     countryOverGroupRef.current = L.layerGroup();
@@ -203,35 +208,56 @@ export function MapContainer({
   // add countryFeatures
   useEffect(() => {
     if (countryFeatures) {
-      const scale = scaleColorCount(maxValue, MAP_OPTIONS.GRADIENT[mapSubject]);
       countryLayerGroupRef.current.clearLayers();
       const jsonLayer = L.geoJSON(
         countryFeatures,
         {
-          style: (f) => ({
+          style: () => ({
             ...MAP_OPTIONS.DEFAULT_STYLE,
-            fillColor: f.values && f.values[indicator] && f.values[indicator] > 0
-              ? scale(f.values[indicator])
-              : MAP_OPTIONS.NO_DATA_COLOR,
           }),
-          onEachFeature: (feature, layer) => {
-            layer.on({
-              click: (e) => onFeatureClick(e, feature),
-              mouseover: (e) => onFeatureOver(e, feature),
-              mouseout: () => onFeatureOver(),
-            });
-          },
         },
       );
       countryLayerGroupRef.current.addLayer(jsonLayer);
     }
-  }, [countryFeatures, indicator, tooltip, mapSubject]);
+  }, [countryFeatures]);
+  // add countryData
+  useEffect(() => {
+    if (countryData) {
+      countryOverlayGroupRef.current.clearLayers();
+      if (countryData.length > 0) {
+        const scale = scaleColorCount(maxValue, MAP_OPTIONS.GRADIENT[mapSubject]);
+        const jsonLayer = L.geoJSON(
+          countryData,
+          {
+            style: (f) => ({
+              ...MAP_OPTIONS.DEFAULT_STYLE,
+              fillColor: f.values && f.values[indicator] && f.values[indicator] > 0
+                ? scale(f.values[indicator])
+                : MAP_OPTIONS.NO_DATA_COLOR,
+              ...f.style,
+            }),
+            onEachFeature: (feature, layer) => {
+              layer.on({
+                click: (e) => onFeatureClick(e, feature),
+                mouseover: (e) => onFeatureOver(e, feature),
+                mouseout: () => onFeatureOver(),
+              });
+            },
+          },
+        );
+        countryOverlayGroupRef.current.addLayer(jsonLayer);
+        if (fitBounds) {
+          mapRef.current.fitBounds(jsonLayer.getBounds());
+        }
+      }
+    }
+  }, [countryData, indicator, tooltip, mapSubject]);
   // add countryFeatures
   useEffect(() => {
     countryTooltipGroupRef.current.clearLayers();
-    if (tooltip && countryFeatures) {
+    if (tooltip && countryData) {
       const jsonLayer = L.geoJSON(
-        countryFeatures.filter((f) => qe(f.id, tooltip.feature.id)),
+        countryData.filter((f) => qe(f.id, tooltip.feature.id)),
         {
           style: MAP_OPTIONS.TOOLTIP_STYLE,
         },
@@ -248,9 +274,9 @@ export function MapContainer({
 
   useEffect(() => {
     countryOverGroupRef.current.clearLayers();
-    if (featureOver && countryFeatures) {
+    if (featureOver && countryData) {
       const jsonLayer = L.geoJSON(
-        countryFeatures.filter((f) => qe(f.id, featureOver)),
+        countryData.filter((f) => qe(f.id, featureOver)),
         {
           style: MAP_OPTIONS.OVER_STYLE,
         },
@@ -288,11 +314,13 @@ export function MapContainer({
 MapContainer.propTypes = {
   typeLabels: PropTypes.object,
   countryFeatures: PropTypes.array,
+  countryData: PropTypes.array,
   indicator: PropTypes.string,
   onCountryClick: PropTypes.func,
   maxValue: PropTypes.number,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
+  fitBounds: PropTypes.bool,
   mapSubject: PropTypes.string,
   // onSetMapSubject: PropTypes.func,
 };

@@ -12,7 +12,7 @@
 // General ********************
 export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
-const IS_DEV = false;
+const IS_DEV = true;
 
 export const ENDPOINTS = {
   API: (
@@ -701,6 +701,7 @@ export const MAP_OPTIONS = {
     weight: 1,
     color: '#CFD3D7',
     fillOpacity: 1,
+    fillColor: '#EDEFF0',
   },
   TOOLTIP_STYLE: {
     weight: 1,

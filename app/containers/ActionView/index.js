@@ -43,7 +43,7 @@ import {
 } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES } from 'themes/config';
+import { ROUTES, ACTIONTYPES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -68,6 +68,7 @@ import {
 import appMessages from 'containers/App/messages';
 import messages from './messages';
 
+import ActionMap from './ActionMap';
 import {
   selectViewEntity,
   selectViewTaxonomies,
@@ -152,12 +153,14 @@ export function ActionView(props) {
     : `${pageTitle}: ${params.id}`;
 
   const hasTarget = viewActivitytype && viewActivitytype.getIn(['attributes', 'has_target']);
+  const hasMemberOption = typeId && !qe(typeId, ACTIONTYPES.NATL);
+  const hasMap = typeId && !qe(typeId, ACTIONTYPES.NATL);
   const viewSubject = hasTarget ? subject : 'actors';
 
-  const actortypesForSubject = !hasTarget
-    || viewSubject === 'actors'
+  const actortypesForSubject = !hasTarget || viewSubject === 'actors'
     ? actorsByActortype
     : targetsByActortype;
+
   let hasLandbasedValue;
   if (viewEntity && checkActionAttribute(typeId, 'has_reference_landbased_ml')) {
     if (
@@ -171,7 +174,6 @@ export function ActionView(props) {
       );
     }
   }
-
   return (
     <div>
       <Helmet
@@ -290,6 +292,15 @@ export function ActionView(props) {
                       </Box>
                     )}
                     <Box>
+                      {dataReady && actortypesForSubject && hasMap && (
+                        <ActionMap
+                          entities={actortypesForSubject}
+                          mapSubject={viewSubject}
+                          dataReady={dataReady}
+                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          hasMemberOption={hasMemberOption}
+                        />
+                      )}
                       {viewSubject === 'targets' && hasTarget && (
                         <FieldGroup
                           group={{

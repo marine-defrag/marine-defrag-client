@@ -40,6 +40,7 @@ import {
   SET_ACTORTYPE,
   SET_VIEW,
   SET_SUBJECT,
+  SET_MAP_SUBJECT,
   OPEN_BOOKMARK,
   SET_INCLUDE_ACTOR_MEMBERS,
   SET_INCLUDE_TARGET_MEMBERS,
@@ -715,6 +716,19 @@ export function* setSubjectSaga({ subject }) {
   );
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
+export function* setMapSubjectSaga({ subject }) {
+  const location = yield select(selectLocation);
+  const queryNext = getNextQuery(
+    {
+      arg: 'msubj',
+      value: subject,
+      replace: true,
+    },
+    true, // extend
+    location,
+  );
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
 export function* setIncludeActorMembersSaga({ value }) {
   const location = yield select(selectLocation);
   const queryNext = getNextQuery(
@@ -838,6 +852,7 @@ export default function* rootSaga() {
   yield takeEvery(SET_ACTIONTYPE, setActiontypeSaga);
   yield takeEvery(SET_VIEW, setViewSaga);
   yield takeEvery(SET_SUBJECT, setSubjectSaga);
+  yield takeEvery(SET_MAP_SUBJECT, setMapSubjectSaga);
   yield takeEvery(SET_INCLUDE_ACTOR_MEMBERS, setIncludeActorMembersSaga);
   yield takeEvery(SET_INCLUDE_TARGET_MEMBERS, setIncludeTargetMembersSaga);
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);

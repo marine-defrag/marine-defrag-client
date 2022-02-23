@@ -38,9 +38,9 @@ export function MapInfoOptions({
   const {
     title, maxValue, subjectOptions, memberOption, subTitle,
   } = config;
-  const stops = MAP_OPTIONS.GRADIENT[mapSubject];
-  const noStops = stops.length;
-  const maxFactor = maxValue / (noStops - 1);
+  const stops = maxValue && MAP_OPTIONS.GRADIENT[mapSubject];
+  const noStops = maxValue && stops.length;
+  const maxFactor = maxValue && maxValue / (noStops - 1);
   return (
     <Styled>
       <Box gap="xsmall" margin={{ bottom: 'small' }}>
