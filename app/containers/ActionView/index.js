@@ -153,8 +153,8 @@ export function ActionView(props) {
     : `${pageTitle}: ${params.id}`;
 
   const hasTarget = viewActivitytype && viewActivitytype.getIn(['attributes', 'has_target']);
-  const hasMemberOption = typeId && !qe(typeId, ACTIONTYPES.NATL);
-  const hasMap = typeId && !qe(typeId, ACTIONTYPES.NATL);
+  const hasMemberOption = !!typeId && !qe(typeId, ACTIONTYPES.NATL);
+  const hasMap = !!typeId; // && !qe(typeId, ACTIONTYPES.NATL);
   const viewSubject = hasTarget ? subject : 'actors';
 
   const actortypesForSubject = !hasTarget || viewSubject === 'actors'
@@ -296,7 +296,6 @@ export function ActionView(props) {
                         <ActionMap
                           entities={actortypesForSubject}
                           mapSubject={viewSubject}
-                          dataReady={dataReady}
                           onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
                           hasMemberOption={hasMemberOption}
                         />

@@ -40,7 +40,7 @@ import {
 } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, ACTIONTYPES } from 'themes/config';
+import { ROUTES, ACTIONTYPES, ACTORTYPES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -61,10 +61,12 @@ import {
   selectSubjectQuery,
   selectActiontypeQuery,
   selectActortypes,
+  selectActiontypes,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
 import messages from './messages';
+import ActorMap from './ActorMap';
 
 import {
   selectViewEntity,
@@ -121,6 +123,7 @@ export function ActorView(props) {
     actionsAsTargetByActiontype,
     membersByType,
     actortypes,
+    actiontypes,
     actionsAsMemberByActortype,
     actionsAsTargetAsMemberByActortype,
   } = props;
@@ -184,12 +187,12 @@ export function ActorView(props) {
   if (!isActive) {
     viewSubject = 'targets';
   }
+  // figure out connected action types ##################################################
 
   // direct actions by type for selected subject
   const actiontypesForSubject = viewSubject === 'actors'
     ? actionsByActiontype
     : actionsAsTargetByActiontype;
-
   // direct && indirect actiontypeids for selected subject
   let actiontypeIdsForSubjectOptions = actiontypesForSubject && actiontypesForSubject.entrySeq().map(([id]) => id.toString());
 
@@ -202,6 +205,7 @@ export function ActorView(props) {
     actiontypesAsMemberByActortypeForSubject = viewSubject === 'actors'
       ? actionsAsMemberByActortype
       : actionsAsTargetAsMemberByActortype;
+
     // indirect actiontypeids for selected subject
     actiontypeIdsAsMemberForSubject = viewSubject === 'actors'
       ? actiontypesAsMemberByActortypeForSubject.reduce(
@@ -222,17 +226,27 @@ export function ActorView(props) {
         ),
         List(),
       ).toSet();
-    // concat w/ active types for available tabs
+  }
+
+  // concat w/ active types for available tabs
+  if (actiontypeIdsAsMemberForSubject) {
     actiontypeIdsForSubjectOptions = actiontypeIdsForSubjectOptions
       ? actiontypeIdsForSubjectOptions.concat(
         actiontypeIdsAsMemberForSubject
       ).toSet()
       : (actiontypeIdsAsMemberForSubject && actiontypeIdsAsMemberForSubject.toSet());
   }
+
+  // figure out active action type #################################################
+
   // selected actiontype (or first in list when not in list)
-  const activeActiontypeId = (!actiontypeIdsForSubjectOptions || actiontypeIdsForSubjectOptions.includes(viewActiontypeId.toString()))
-    ? viewActiontypeId
-    : (actiontypesForSubject && actiontypesForSubject.keySeq().first());
+  let activeActiontypeId = viewActiontypeId;
+  if (!actiontypeIdsForSubjectOptions.includes(viewActiontypeId.toString())) {
+    activeActiontypeId = actiontypeIdsForSubjectOptions.first();
+  }
+
+  // figure out actions for active action type #################################################
+
   // direct actions for selected subject and type
   const activeActiontypeActions = actiontypesForSubject && actiontypesForSubject.get(parseInt(activeActiontypeId, 10));
   if (canBeMember) {
@@ -267,6 +281,33 @@ export function ActorView(props) {
         Map(),
       );
   }
+  // figure out if we have a map and what to show #################################################
+
+  // we have the option to include actions for
+  //    actors that can be members (i.e. countries)
+  const hasMemberOption = !!typeId && qe(typeId, ACTORTYPES.COUNTRY);
+  // we can have
+  // let mapSubject = false;
+  // let hasActivityMap = typeId && qe(typeId, ACTORTYPES.COUNTRY);
+  let mapSubject = false;
+  let hasActivityMap = typeId && qe(typeId, ACTORTYPES.COUNTRY);
+  const activeActionType = actiontypes && activeActiontypeId && actiontypes.get(activeActiontypeId.toString());
+  if (viewSubject === 'actors') {
+    if (hasActivityMap) {
+      const hasTarget = activeActionType && activeActionType.getIn(['attributes', 'has_target']);
+      mapSubject = hasTarget ? 'targets' : 'actors';
+      // only show target maps
+      // hasActivityMap = !qe(activeActiontypeId, ACTIONTYPES.NATL);
+    }
+  } else if (viewSubject === 'targets') {
+    if (hasActivityMap) {
+      mapSubject = 'actors';
+    } else {
+      // only show actors maps
+      hasActivityMap = false;
+    }
+  }
+
   return (
     <div>
       <Helmet
@@ -388,6 +429,21 @@ export function ActorView(props) {
                         )}
                       </TypeSelectBox>
                     )}
+                    <Box>
+                      {dataReady && viewEntity && hasActivityMap && (
+                        <ActorMap
+                          actor={viewEntity}
+                          actions={activeActiontypeActions}
+                          actionsAsMember={actiontypesAsMemberForSubject}
+                          hasMemberOption={hasMemberOption}
+                          viewSubject={viewSubject}
+                          mapSubject={mapSubject}
+                          dataReady={dataReady}
+                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          actiontypeId={activeActiontypeId}
+                        />
+                      )}
+                    </Box>
                     {actiontypesForSubject && activeActiontypeActions && actiontypesForSubject.size > 0 && (
                       <Box>
                         <FieldGroup
@@ -530,6 +586,7 @@ ActorView.propTypes = {
   onSetSubject: PropTypes.func,
   onSetActiontype: PropTypes.func,
   actortypes: PropTypes.instanceOf(Map),
+  actiontypes: PropTypes.instanceOf(Map),
   actionsAsMemberByActortype: PropTypes.instanceOf(Map),
   actionsAsTargetAsMemberByActortype: PropTypes.instanceOf(Map),
 };
@@ -550,6 +607,7 @@ const mapStateToProps = (state, props) => ({
   subject: selectSubjectQuery(state),
   viewActiontypeId: selectActiontypeQuery(state),
   actortypes: selectActortypes(state),
+  actiontypes: selectActiontypes(state),
 });
 
 function mapDispatchToProps(dispatch, props) {

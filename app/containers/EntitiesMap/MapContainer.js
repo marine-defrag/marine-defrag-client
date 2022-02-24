@@ -247,7 +247,13 @@ export function MapContainer({
         );
         countryOverlayGroupRef.current.addLayer(jsonLayer);
         if (fitBounds) {
-          mapRef.current.fitBounds(jsonLayer.getBounds());
+          mapRef.current.fitBounds(
+            jsonLayer.getBounds(),
+            {
+              maxZoom: 7,
+              padding: [20, 20],
+            },
+          );
         }
       }
     }
