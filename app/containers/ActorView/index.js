@@ -307,7 +307,7 @@ export function ActorView(props) {
       hasActivityMap = false;
     }
   }
-
+  // console.log('actiontypesAsMemberForSubject', actiontypesAsMemberForSubject && actiontypesAsMemberForSubject.toJS())
   return (
     <div>
       <Helmet

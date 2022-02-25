@@ -15,7 +15,7 @@ import * as topojson from 'topojson-client';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
 
-import { ACTORTYPES } from 'themes/config';
+import { ACTORTYPES, ACTIONTYPES } from 'themes/config';
 
 import {
   selectActortypeActors,
@@ -89,9 +89,9 @@ export function ActorMap({
         return action.getIn(['targetsByType', ACTORTYPES.COUNTRY]).reduce(
           (memo2, countryId) => {
             if (memo2.get(countryId)) {
-              return memo2.set(countryId, memo2.get(countryId) + 1);
+              return memo2.set(countryId, memo2.get(countryId).push(action.get('id')));
             }
-            return memo2.set(countryId, 1);
+            return memo2.set(countryId, List([action.get('id')]));
           },
           memo,
         );
@@ -122,9 +122,12 @@ export function ActorMap({
           return action.getIn(['targetsByType', ACTORTYPES.COUNTRY]).reduce(
             (memo2, countryId) => {
               if (memo2.get(countryId)) {
-                return memo2.set(countryId, memo2.get(countryId) + 1);
+                if (!memo2.get(countryId).includes(action.get('id'))) {
+                  return memo2.set(countryId, memo2.get(countryId).push(action.get('id')));
+                }
+                return memo2;
               }
-              return memo2.set(countryId, 1);
+              return memo2.set(countryId, List([action.get('id')]));
             },
             memo,
           );
@@ -155,9 +158,9 @@ export function ActorMap({
         return action.getIn(['actorsByType', ACTORTYPES.COUNTRY]).reduce(
           (memo2, countryId) => {
             if (memo2.get(countryId)) {
-              return memo2.set(countryId, memo2.get(countryId) + 1);
+              return memo2.set(countryId, memo2.get(countryId).push(action.get('id')));
             }
-            return memo2.set(countryId, 1);
+            return memo2.set(countryId, List([action.get('id')]));
           },
           memo,
         );
@@ -172,23 +175,26 @@ export function ActorMap({
       // TODO consider prepping in index
       countriesActionCount = actionsAsMember && actionsAsMember.flatten(1).reduce(
         (memo, groupActor) => {
-          if (groupActor.getIn(['actionsByType', actiontypeId])) {
-            return memo.concat(groupActor.getIn(['actionsByType', actiontypeId]).toList());
+          if (groupActor.getIn(['targetingActionsByType', actiontypeId])) {
+            return memo.concat(groupActor.getIn(['targetingActionsByType', actiontypeId]).toList());
           }
           return memo;
         },
         List()
       ).reduce(
         (memo, action) => {
-          if (!action.getIn(['targetsByType', ACTORTYPES.COUNTRY])) {
+          if (!action.getIn(['actorsByType', ACTORTYPES.COUNTRY])) {
             return memo;
           }
-          return action.getIn(['targetsByType', ACTORTYPES.COUNTRY]).reduce(
+          return action.getIn(['actorsByType', ACTORTYPES.COUNTRY]).reduce(
             (memo2, countryId) => {
               if (memo2.get(countryId)) {
-                return memo2.set(countryId, memo2.get(countryId) + 1);
+                if (!memo2.get(countryId).includes(action.get('id'))) {
+                  return memo2.set(countryId, memo2.get(countryId).push(action.get('id')));
+                }
+                return memo2;
               }
-              return memo2.set(countryId, 1);
+              return memo2.set(countryId, List([action.get('id')]));
             },
             memo,
           );
@@ -211,8 +217,10 @@ export function ActorMap({
         (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
       );
       if (country) {
-        const countryCount = countriesActionCount && countriesActionCount.get(parseInt(country.get('id'), 10));
-        if (countryCount) {
+        const actionCount = countriesActionCount
+          && countriesActionCount.get(parseInt(country.get('id'), 10))
+          && countriesActionCount.get(parseInt(country.get('id'), 10)).size;
+        if (actionCount) {
           return [
             ...memo,
             {
@@ -223,7 +231,7 @@ export function ActorMap({
                 title: country.getIn(['attributes', 'title']),
               },
               values: {
-                actions: countryCount || 0,
+                actions: actionCount || 0,
               },
             },
           ];
@@ -237,39 +245,45 @@ export function ActorMap({
   const actorName = actor.getIn(['attributes', 'title']);
   let memberOption;
   let memberTargetOption;
+  let mapTitle;
   if (hasMemberOption) {
     if (mapSubject === 'targets' && viewSubject === 'actors') {
+      mapTitle = `Who (else) is targeted by activities of ${actorName}?`;
       memberOption = {
         active: includeActorMembers,
         onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-        label: `Include activities of groups ${actorName} belongs to`,
+        label: `Include activities of groups ${actorName} is/are member of`,
         key: 'am',
       };
-      memberTargetOption = {
-        active: includeTargetMembers,
-        onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
-        label: `Show member countries of regions, groups, classes targeted by ${actorName}`,
-        key: 'tm',
-      };
+      // memberTargetOption = {
+      //   active: includeTargetMembers,
+      //   onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
+      //   label: `Show member countries of regions, groups, classes targeted by ${actorName}`,
+      //   key: 'tm',
+      // };
     }
     if (mapSubject === 'actors' && viewSubject === 'actors') {
-      memberOption = {
-        active: includeActorMembers,
-        onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-        label: `Include activities of related groups ${actorName}`,
-      };
+      if (!qe(actiontypeId, ACTIONTYPES.NATL)) {
+        mapTitle = 'Who is participating?'; // '${actorName}`; // regional strategies, intl frameworks
+        memberOption = {
+          active: includeActorMembers,
+          onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+          label: `Include activities of groups ${actorName} is/are member of`,
+        };
+      }
     }
     if (viewSubject === 'targets') {
-      memberOption = {
-        active: includeActorMembers,
-        onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-        label: `Show member countries of groups targeting ${actorName}`,
-        key: 'am',
-      };
+      mapTitle = `Who is responsible for activities targeting ${actorName}?`;
+      // memberOption = {
+      //   active: includeActorMembers,
+      //   onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+      //   label: `Show member countries of groups targeting ${actorName}`,
+      //   key: 'am',
+      // };
       memberTargetOption = {
         active: includeTargetMembers,
         onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
-        label: `Include activities targeting regions, groups and classes ${actor.getIn(['attributes', 'title'])} belongs to`,
+        label: `Include activities targeting ${actorName} indirectly via a region, group or class`,
         key: 'tm',
       };
       // memberTargetOption = {
@@ -280,8 +294,9 @@ export function ActorMap({
       // };
     }
   }
+
   const maxValue = countriesActionCount && countriesActionCount.reduce(
-    (max, val) => Math.max(max, val),
+    (max, actionList) => Math.max(max, actionList.size),
     0,
   );
   return (
@@ -299,8 +314,11 @@ export function ActorMap({
           fitBounds
         />
       </MapWrapper>
-      {(memberOption || memberTargetOption) && (
+      {(mapTitle || memberOption || memberTargetOption) && (
         <MapOptions>
+          <Box>
+            <strong>{mapTitle}</strong>
+          </Box>
           {memberOption && (
             <MapMemberOption option={memberOption} />
           )}
