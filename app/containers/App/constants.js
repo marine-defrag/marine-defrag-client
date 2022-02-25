@@ -72,6 +72,7 @@ export const SET_ACTIONTYPE = 'impactoss/App/SET_ACTIONTYPE';
 export const SET_ACTORTYPE = 'impactoss/App/SET_ACTORTYPE';
 export const SET_VIEW = 'impactoss/App/SET_VIEW';
 export const SET_SUBJECT = 'impactoss/App/SET_SUBJECT';
+export const SET_MAP_SUBJECT = 'impactoss/App/SET_MAP_SUBJECT';
 export const SET_INCLUDE_ACTOR_MEMBERS = 'impactoss/App/SET_INCLUDE_ACTOR_MEMBERS';
 export const SET_INCLUDE_TARGET_MEMBERS = 'impactoss/App/SET_INCLUDE_TARGET_MEMBERS';
 

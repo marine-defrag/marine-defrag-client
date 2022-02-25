@@ -12,16 +12,18 @@ const Styled = styled((p) => <Box direction="row" align="center" gap="small" {..
 `;
 
 export function MapMemberOption({ option }) {
-  const { active, onClick, label } = option;
+  const {
+    active, onClick, label, key = 0,
+  } = option;
   return (
     <Styled>
       <input
-        id="map-member"
+        id={`map-member-${key}`}
         type="checkbox"
         checked={active}
         onChange={onClick}
       />
-      <Text as="label" htmlFor="map-member" size="small">{label}</Text>
+      <Text as="label" htmlFor={`map-member-${key}`} size="small">{label}</Text>
     </Styled>
   );
 }

@@ -43,7 +43,7 @@ import {
 } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES } from 'themes/config';
+import { ROUTES, ACTIONTYPES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -59,7 +59,6 @@ import {
   selectReady,
   selectIsUserManager,
   selectActorConnections,
-  selectActionConnections,
   selectResourceConnections,
   selectTaxonomiesWithCategories,
   selectSubjectQuery,
@@ -69,6 +68,7 @@ import {
 import appMessages from 'containers/App/messages';
 import messages from './messages';
 
+import ActionMap from './ActionMap';
 import {
   selectViewEntity,
   selectViewTaxonomies,
@@ -100,7 +100,6 @@ export function ActionView(props) {
     resourcesByResourcetype,
     onEntityClick,
     actorConnections,
-    actionConnections,
     resourceConnections,
     children,
     parents,
@@ -154,12 +153,14 @@ export function ActionView(props) {
     : `${pageTitle}: ${params.id}`;
 
   const hasTarget = viewActivitytype && viewActivitytype.getIn(['attributes', 'has_target']);
+  const hasMemberOption = !!typeId && !qe(typeId, ACTIONTYPES.NATL);
+  const hasMap = !!typeId; // && !qe(typeId, ACTIONTYPES.NATL);
   const viewSubject = hasTarget ? subject : 'actors';
 
-  const actortypesForSubject = !hasTarget
-    || viewSubject === 'actors'
+  const actortypesForSubject = !hasTarget || viewSubject === 'actors'
     ? actorsByActortype
     : targetsByActortype;
+
   let hasLandbasedValue;
   if (viewEntity && checkActionAttribute(typeId, 'has_reference_landbased_ml')) {
     if (
@@ -291,6 +292,14 @@ export function ActionView(props) {
                       </Box>
                     )}
                     <Box>
+                      {dataReady && actortypesForSubject && hasMap && (
+                        <ActionMap
+                          entities={actortypesForSubject}
+                          mapSubject={viewSubject}
+                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          hasMemberOption={hasMemberOption}
+                        />
+                      )}
                       {viewSubject === 'targets' && hasTarget && (
                         <FieldGroup
                           group={{
@@ -391,7 +400,6 @@ export function ActionView(props) {
                           getActionConnectionField({
                             actions: parents.toList(),
                             onEntityClick,
-                            connections: actionConnections,
                             typeid: typeId,
                             skipLabel: true,
                           }),
@@ -403,12 +411,11 @@ export function ActionView(props) {
                     <FieldGroup
                       aside
                       group={{
-                        label: appMessages.nav.members,
+                        label: appMessages.entities.actions.children,
                         fields: [
                           getActionConnectionField({
                             actions: children.toList(),
                             onEntityClick,
-                            connections: actionConnections,
                             typeid: typeId,
                             skipLabel: true,
                           }),
@@ -440,7 +447,6 @@ ActionView.propTypes = {
   targetsByActortype: PropTypes.object,
   resourcesByResourcetype: PropTypes.object,
   actorConnections: PropTypes.object,
-  actionConnections: PropTypes.object,
   resourceConnections: PropTypes.object,
   activitytypes: PropTypes.object,
   params: PropTypes.object,
@@ -466,7 +472,6 @@ const mapStateToProps = (state, props) => ({
   resourcesByResourcetype: selectResourcesByType(state, props.params.id),
   targetsByActortype: selectTargetsByType(state, props.params.id),
   actorConnections: selectActorConnections(state),
-  actionConnections: selectActionConnections(state),
   resourceConnections: selectResourceConnections(state),
   children: selectChildActions(state, props.params.id),
   parents: selectParentActions(state, props.params.id),

@@ -363,6 +363,10 @@ export const selectSubjectQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && (locationQuery.get('subj') || 'actors')
 );
+export const selectMapSubjectQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && (locationQuery.get('msubj') || 'actors')
+);
 export const selectIncludeActorMembers = createSelector(
   selectLocationQuery,
   (locationQuery) => {

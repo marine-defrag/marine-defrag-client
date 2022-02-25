@@ -241,6 +241,7 @@ const selectActorsWithActions = createSelector(
             return memo;
           }, Map());
           const targetActionsAsMemberByType = targetActionsAsMember && actionsByType(targetActionsAsMember, connections.get(API.ACTIONS));
+
           return actor
             .set('actions', actorActions)
             .set('actionsByType', actorActionsByType)
