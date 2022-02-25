@@ -96,7 +96,7 @@ export function ActorMap({
           memo,
         );
       },
-      Map(),
+      countriesActionCount || Map(),
     );
     if (includeActorMembers) {
       // explicit targets indirectly targeted by actor
@@ -132,7 +132,7 @@ export function ActorMap({
             memo,
           );
         },
-        countriesActionCount,
+        countriesActionCount || Map(),
       );
     }
 
@@ -165,7 +165,7 @@ export function ActorMap({
           memo,
         );
       },
-      Map(),
+      countriesActionCount || Map(),
     );
     if (includeTargetMembers) {
       // countries directly targeting actor via actor's membership in group, class, region
@@ -173,34 +173,36 @@ export function ActorMap({
       // direct/indirect
       // grouped by actortype (>> flatten) and group actor
       // TODO consider prepping in index
-      countriesActionCount = actionsAsMember && actionsAsMember.flatten(1).reduce(
-        (memo, groupActor) => {
-          if (groupActor.getIn(['targetingActionsByType', actiontypeId])) {
-            return memo.concat(groupActor.getIn(['targetingActionsByType', actiontypeId]).toList());
-          }
-          return memo;
-        },
-        List()
-      ).reduce(
-        (memo, action) => {
-          if (!action.getIn(['actorsByType', ACTORTYPES.COUNTRY])) {
+      if (actionsAsMember) {
+        countriesActionCount = actionsAsMember && actionsAsMember.flatten(1).reduce(
+          (memo, groupActor) => {
+            if (groupActor.getIn(['targetingActionsByType', actiontypeId])) {
+              return memo.concat(groupActor.getIn(['targetingActionsByType', actiontypeId]).toList());
+            }
             return memo;
-          }
-          return action.getIn(['actorsByType', ACTORTYPES.COUNTRY]).reduce(
-            (memo2, countryId) => {
-              if (memo2.get(countryId)) {
-                if (!memo2.get(countryId).includes(action.get('id'))) {
-                  return memo2.set(countryId, memo2.get(countryId).push(action.get('id')));
+          },
+          List()
+        ).reduce(
+          (memo, action) => {
+            if (!action.getIn(['actorsByType', ACTORTYPES.COUNTRY])) {
+              return memo;
+            }
+            return action.getIn(['actorsByType', ACTORTYPES.COUNTRY]).reduce(
+              (memo2, countryId) => {
+                if (memo2.get(countryId)) {
+                  if (!memo2.get(countryId).includes(action.get('id'))) {
+                    return memo2.set(countryId, memo2.get(countryId).push(action.get('id')));
+                  }
+                  return memo2;
                 }
-                return memo2;
-              }
-              return memo2.set(countryId, List([action.get('id')]));
-            },
-            memo,
-          );
-        },
-        countriesActionCount,
-      );
+                return memo2.set(countryId, List([action.get('id')]));
+              },
+              memo,
+            );
+          },
+          countriesActionCount || Map(),
+        );
+      }
     }
     // countries indirectly targeting actor explicitly (via countries' groups)
     // stored in actions
