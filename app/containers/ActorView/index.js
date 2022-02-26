@@ -127,14 +127,6 @@ export function ActorView(props) {
     actionsAsMemberByActortype,
     actionsAsTargetAsMemberByActortype,
   } = props;
-  // console.log(
-  //   'actionsAsMemberByActortype',
-  //   actionsAsMemberByActortype && actionsAsMemberByActortype.toJS(),
-  // )
-  // console.log(
-  //   'actionsAsTargetAsMemberByActortype',
-  //   actionsAsTargetAsMemberByActortype && actionsAsTargetAsMemberByActortype.toJS(),
-  // )
 
   useEffect(() => {
     // kick off loading of data
@@ -285,28 +277,41 @@ export function ActorView(props) {
 
   // we have the option to include actions for
   //    actors that can be members (i.e. countries)
-  const hasMemberOption = !!typeId && qe(typeId, ACTORTYPES.COUNTRY);
   // we can have
   // let mapSubject = false;
   // let hasActivityMap = typeId && qe(typeId, ACTORTYPES.COUNTRY);
   let mapSubject = false;
-  let hasActivityMap = typeId && qe(typeId, ACTORTYPES.COUNTRY);
+  const hasMemberOption = activeActiontypeId && !qe(activeActiontypeId, ACTIONTYPES.NATL);
+  const hasActivityMap = typeId && qe(typeId, ACTORTYPES.COUNTRY);
+  let hasTarget;
   const activeActionType = actiontypes && activeActiontypeId && actiontypes.get(activeActiontypeId.toString());
-  if (viewSubject === 'actors') {
-    if (hasActivityMap) {
-      const hasTarget = activeActionType && activeActionType.getIn(['attributes', 'has_target']);
-      mapSubject = hasTarget ? 'targets' : 'actors';
+  if (hasActivityMap) {
+    if (viewSubject === 'actors') {
+      mapSubject = 'targets';
+      hasTarget = activeActionType && activeActionType.getIn(['attributes', 'has_target']);
       // only show target maps
       // hasActivityMap = !qe(activeActiontypeId, ACTIONTYPES.NATL);
-    }
-  } else if (viewSubject === 'targets') {
-    if (hasActivityMap) {
+    } else if (viewSubject === 'targets') {
       mapSubject = 'actors';
-    } else {
-      // only show actors maps
-      hasActivityMap = false;
     }
   }
+
+  // console.log(
+  //   'actionsByActiontype',
+  //   actionsByActiontype && actionsByActiontype.toJS(),
+  // )
+  // console.log(
+  //   'actionsAsTargetByActiontype',
+  //   actionsAsTargetByActiontype && actionsAsTargetByActiontype.toJS(),
+  // )
+  // console.log(
+  //   'actionsAsMemberByActortype',
+  //   actionsAsMemberByActortype && actionsAsMemberByActortype.toJS(),
+  // )
+  // console.log(
+  //   'actionsAsTargetAsMemberByActortype',
+  //   actionsAsTargetAsMemberByActortype && actionsAsTargetAsMemberByActortype.toJS(),
+  // )
   // console.log('actiontypesAsMemberForSubject', actiontypesAsMemberForSubject && actiontypesAsMemberForSubject.toJS())
   return (
     <div>
@@ -438,6 +443,7 @@ export function ActorView(props) {
                           hasMemberOption={hasMemberOption}
                           viewSubject={viewSubject}
                           mapSubject={mapSubject}
+                          actiontypeHasTarget={hasTarget}
                           dataReady={dataReady}
                           onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
                           actiontypeId={activeActiontypeId}
