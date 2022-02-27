@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { Box } from 'grommet';
+import { Box, Text } from 'grommet';
 
 import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
@@ -21,6 +21,7 @@ import {
   selectActortypeActors,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
+  selectMembershipsGroupedByAssociation,
 } from 'containers/App/selectors';
 
 import {
@@ -34,10 +35,15 @@ import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
 import MapContainer from 'containers/EntitiesMap/MapContainer';
 import MapMemberOption from 'containers/EntitiesMap/MapInfoOptions/MapMemberOption';
+import MapKey from 'containers/EntitiesMap/MapInfoOptions/MapKey';
 // import messages from './messages';
 
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
+`;
+const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
+const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
+  max-width: 400px;
 `;
 const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)``;
 const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
@@ -58,55 +64,90 @@ export function ActorMap({
   countries,
   hasMemberOption,
   actiontypeId,
-  viewSubject,
+  actiontypeHasTarget,
+  memberships,
+  actorCanBeMember,
   // intl,
 }) {
+  // console.log('actions', actions && actions.toJS())
+  // console.log('actionsAsMember', actionsAsMember && actionsAsMember.toJS())
+  // console.log('actiontypeHasTarget', actiontypeHasTarget)
+  // console.log('hasMemberOption', hasMemberOption)
   // const { intl } = this.context;
   // let type;
   const countriesJSON = topojson.feature(
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
   );
-  // console.log('viewSubject', viewSubject)
-  // console.log('mapSubject', mapSubject)
-  // console.log('hasMemberOption', hasMemberOption)
-  // console.log('actions', actions && actions.toJS())
-  // console.log('actionsAsMember', actionsAsMember && actionsAsMember.toJS());
   let countriesActionCount;
-  // showing targets (actor is acting)
-  if (mapSubject === 'targets') {
-    // explicit targets directly targeted by actor
-    // stored in actions
-    // direct/direct
-    // Map({
-    //  [countryId]: count
-    // })
-    countriesActionCount = actions && actions.reduce(
-      (memo, action) => {
-        if (!action.getIn(['targetsByType', ACTORTYPES.COUNTRY])) {
+  const actorName = actor.getIn(['attributes', 'title']);
+  let memberOption;
+  let memberTargetOption;
+  let mapTitle;
+  let keyTitle;
+  // show targets for actor's activities (real targets)
+  // > donations / initiatives / regional seas conventions
+  if (mapSubject === 'targets' && actiontypeHasTarget) {
+    if (actions) {
+      countriesActionCount = actions.reduce(
+        (memo, action) => {
+          if (action.get('targetsByType')) {
+            return action.get('targetsByType').reduce(
+              (memo2, targettypeTargets, targettypeId) => {
+                if (qe(targettypeId, ACTORTYPES.COUNTRY)) {
+                  return targettypeTargets.reduce(
+                    (memo3, countryId) => {
+                      if (memo3.get(countryId)) {
+                        if (!memo3.get(countryId).includes(action.get('id'))) {
+                          return memo3.set(countryId, memo3.get(countryId).push(action.get('id')));
+                        }
+                        return memo3;
+                      }
+                      return memo3.set(countryId, List([action.get('id')]));
+                    },
+                    memo2,
+                  );
+                }
+                // TODO check actortype if it can have members
+                if (includeTargetMembers && !qe(targettypeId, ACTORTYPES.ORG)) {
+                  return targettypeTargets.reduce(
+                    (memo3, groupId) => {
+                      const groupMembers = memberships.get(groupId);
+                      if (groupMembers) {
+                        return groupMembers.reduce(
+                          (memo4, memberId) => {
+                            const country = countries.get(memberId.toString());
+                            if (country) {
+                              if (memo4.get(memberId)) {
+                                if (!memo4.get(memberId).includes(action.get('id'))) {
+                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
+                                }
+                                return memo4;
+                              }
+                              return memo4.set(memberId, List([action.get('id')]));
+                            }
+                            return memo4;
+                          },
+                          memo3,
+                        );
+                      }
+                      return memo3;
+                    },
+                    memo2,
+                  );
+                }
+                return memo2;
+              },
+              memo,
+            );
+          }
           return memo;
-        }
-        return action.getIn(['targetsByType', ACTORTYPES.COUNTRY]).reduce(
-          (memo2, countryId) => {
-            if (memo2.get(countryId)) {
-              return memo2.set(countryId, memo2.get(countryId).push(action.get('id')));
-            }
-            return memo2.set(countryId, List([action.get('id')]));
-          },
-          memo,
-        );
-      },
-      countriesActionCount || Map(),
-    );
-    if (includeActorMembers) {
-      // explicit targets indirectly targeted by actor
-      // stored in actionsAsMember
-      // direct/indirect
-      // xTargetCountriesAsMember = null;
-      // grouped by actortype (>> flatten) and group actor
-      // TODO consider prepping in index
-      // TODO make sure activities are not counted double!!!
-      countriesActionCount = actionsAsMember && actionsAsMember.flatten(1).reduce(
+        },
+        countriesActionCount || Map(),
+      );
+    }
+    if (includeActorMembers && actionsAsMember) {
+      countriesActionCount = actionsAsMember.flatten(1).reduce(
         (memo, groupActor) => {
           if (groupActor.getIn(['actionsByType', actiontypeId])) {
             return memo.concat(groupActor.getIn(['actionsByType', actiontypeId]).toList());
@@ -116,101 +157,361 @@ export function ActorMap({
         List()
       ).reduce(
         (memo, action) => {
-          if (!action.getIn(['targetsByType', ACTORTYPES.COUNTRY])) {
-            return memo;
-          }
-          return action.getIn(['targetsByType', ACTORTYPES.COUNTRY]).reduce(
-            (memo2, countryId) => {
-              if (memo2.get(countryId)) {
-                if (!memo2.get(countryId).includes(action.get('id'))) {
-                  return memo2.set(countryId, memo2.get(countryId).push(action.get('id')));
+          if (action.get('targetsByType')) {
+            return action.get('targetsByType').reduce(
+              (memo2, targettypeTargets, targettypeId) => {
+                if (qe(targettypeId, ACTORTYPES.COUNTRY)) {
+                  return targettypeTargets.reduce(
+                    (memo3, countryId) => {
+                      if (memo3.get(countryId)) {
+                        if (!memo3.get(countryId).includes(action.get('id'))) {
+                          return memo3.set(countryId, memo3.get(countryId).push(action.get('id')));
+                        }
+                        return memo3;
+                      }
+                      return memo3.set(countryId, List([action.get('id')]));
+                    },
+                    memo2,
+                  );
+                }
+                // TODO check actortype if it can have members
+                if (includeTargetMembers && !qe(targettypeId, ACTORTYPES.ORG)) {
+                  return targettypeTargets.reduce(
+                    (memo3, groupId) => {
+                      const groupMembers = memberships.get(groupId);
+                      if (groupMembers) {
+                        return groupMembers.reduce(
+                          (memo4, memberId) => {
+                            const country = countries.get(memberId.toString());
+                            if (country) {
+                              if (memo4.get(memberId)) {
+                                if (!memo4.get(memberId).includes(action.get('id'))) {
+                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
+                                }
+                                return memo4;
+                              }
+                              return memo4.set(memberId, List([action.get('id')]));
+                            }
+                            return memo4;
+                          },
+                          memo3,
+                        );
+                      }
+                      return memo3;
+                    },
+                    memo2,
+                  );
                 }
                 return memo2;
-              }
-              return memo2.set(countryId, List([action.get('id')]));
-            },
-            memo,
-          );
+              },
+              memo,
+            );
+          }
+          return memo;
         },
         countriesActionCount || Map(),
       );
     }
-
-    // indirect targets directly targeted by actor
-    // stored in actions
-    // indirect/direct
-
-    // indirect targets indirectly targeted by actor
-    // stored in actionsAsMember
-    // indirect/indirect
   }
-  if (mapSubject === 'actors') {
-    // showing actors (actor is target or responsible for actions without target)
-    // countries directly targeting actor explicitly
-    // stored in actions
-    // direct/direct
-    // xCountries = null;
-    countriesActionCount = actions && actions.reduce(
-      (memo, action) => {
-        if (!action.getIn(['actorsByType', ACTORTYPES.COUNTRY])) {
-          return memo;
-        }
-        return action.getIn(['actorsByType', ACTORTYPES.COUNTRY]).reduce(
-          (memo2, countryId) => {
-            if (memo2.get(countryId)) {
-              return memo2.set(countryId, memo2.get(countryId).push(action.get('id')));
-            }
-            return memo2.set(countryId, List([action.get('id')]));
-          },
-          memo,
-        );
-      },
-      countriesActionCount || Map(),
-    );
-    if (includeTargetMembers) {
-      // countries directly targeting actor via actor's membership in group, class, region
-      // stored in actionsAsMember
-      // direct/indirect
-      // grouped by actortype (>> flatten) and group actor
-      // TODO consider prepping in index
-      if (actionsAsMember) {
-        countriesActionCount = actionsAsMember && actionsAsMember.flatten(1).reduce(
-          (memo, groupActor) => {
-            if (groupActor.getIn(['targetingActionsByType', actiontypeId])) {
-              return memo.concat(groupActor.getIn(['targetingActionsByType', actiontypeId]).toList());
-            }
-            return memo;
-          },
-          List()
-        ).reduce(
-          (memo, action) => {
-            if (!action.getIn(['actorsByType', ACTORTYPES.COUNTRY])) {
-              return memo;
-            }
-            return action.getIn(['actorsByType', ACTORTYPES.COUNTRY]).reduce(
-              (memo2, countryId) => {
-                if (memo2.get(countryId)) {
-                  if (!memo2.get(countryId).includes(action.get('id'))) {
-                    return memo2.set(countryId, memo2.get(countryId).push(action.get('id')));
-                  }
-                  return memo2;
+
+  // show targets for actor's activities (targets are actually actors)
+  // > intl frameworks / regional strategies / national strategies
+  if (mapSubject === 'targets' && !actiontypeHasTarget) {
+    if (actions) {
+      countriesActionCount = actions.reduce(
+        (memo, action) => {
+          if (action.get('actorsByType')) {
+            return action.get('actorsByType').reduce(
+              (memo2, actortypeActors, actortypeId) => {
+                if (qe(actortypeId, ACTORTYPES.COUNTRY)) {
+                  return actortypeActors.reduce(
+                    (memo3, countryId) => {
+                      if (memo3.get(countryId)) {
+                        if (!memo3.get(countryId).includes(action.get('id'))) {
+                          return memo3.set(countryId, memo3.get(countryId).push(action.get('id')));
+                        }
+                        return memo3;
+                      }
+                      return memo3.set(countryId, List([action.get('id')]));
+                    },
+                    memo2,
+                  );
                 }
-                return memo2.set(countryId, List([action.get('id')]));
+                if (!actorCanBeMember && qe(actortypeId, ACTORTYPES.GROUP)) {
+                  return actortypeActors.reduce(
+                    (memo3, groupId) => {
+                      const groupMembers = memberships.get(groupId);
+                      if (groupMembers) {
+                        return groupMembers.reduce(
+                          (memo4, memberId) => {
+                            const country = countries.get(memberId.toString());
+                            if (country) {
+                              if (memo4.get(memberId)) {
+                                if (!memo4.get(memberId).includes(action.get('id'))) {
+                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
+                                }
+                                return memo4;
+                              }
+                              return memo4.set(memberId, List([action.get('id')]));
+                            }
+                            return memo4;
+                          },
+                          memo3,
+                        );
+                      }
+                      return memo3;
+                    },
+                    memo2,
+                  );
+                }
+                return memo2;
               },
               memo,
             );
-          },
-          countriesActionCount || Map(),
-        );
+          }
+          return memo;
+        },
+        countriesActionCount || Map(),
+      );
+    }
+    if (includeActorMembers && actionsAsMember) {
+      countriesActionCount = actionsAsMember.flatten(1).reduce(
+        (memo, groupActor) => {
+          if (groupActor.getIn(['actionsByType', actiontypeId])) {
+            return memo.concat(groupActor.getIn(['actionsByType', actiontypeId]).toList());
+          }
+          return memo;
+        },
+        List()
+      ).reduce(
+        (memo, action) => {
+          if (action.get('actorsByType')) {
+            return action.get('actorsByType').reduce(
+              (memo2, actortypeActors, actortypeId) => {
+                if (!qe(actortypeId, ACTORTYPES.ORG)) {
+                  return actortypeActors.reduce(
+                    (memo3, groupId) => {
+                      const groupMembers = memberships.get(groupId);
+                      if (groupMembers) {
+                        return groupMembers.reduce(
+                          (memo4, memberId) => {
+                            const country = countries.get(memberId.toString());
+                            if (country) {
+                              if (memo4.get(memberId)) {
+                                if (!memo4.get(memberId).includes(action.get('id'))) {
+                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
+                                }
+                                return memo4;
+                              }
+                              return memo4.set(memberId, List([action.get('id')]));
+                            }
+                            return memo4;
+                          },
+                          memo3,
+                        );
+                      }
+                      return memo3;
+                    },
+                    memo2,
+                  );
+                }
+                return memo2;
+              },
+              memo,
+            );
+          }
+          return memo;
+        },
+        countriesActionCount || Map(),
+      );
+    }
+  }
+
+  // show actors for activities targeting actor
+  // > donations / reg strategies / initiatives
+  if (mapSubject === 'actors') {
+    if (actions) {
+      countriesActionCount = actions && actions.reduce(
+        (memo, action) => {
+          if (action.get('actorsByType')) {
+            return action.get('actorsByType').reduce(
+              (memo2, actortypeActors, actortypeId) => {
+                if (qe(actortypeId, ACTORTYPES.COUNTRY)) {
+                  return actortypeActors.reduce(
+                    (memo3, countryId) => {
+                      if (memo3.get(countryId)) {
+                        if (!memo3.get(countryId).includes(action.get('id'))) {
+                          return memo3.set(countryId, memo3.get(countryId).push(action.get('id')));
+                        }
+                        return memo3;
+                      }
+                      return memo3.set(countryId, List([action.get('id')]));
+                    },
+                    memo2,
+                  );
+                }
+                // TODO check actortype if it can have members
+                if (includeActorMembers && !qe(actortypeId, ACTORTYPES.ORG)) {
+                  return actortypeActors.reduce(
+                    (memo3, groupId) => {
+                      const groupMembers = memberships.get(groupId);
+                      if (groupMembers) {
+                        return groupMembers.reduce(
+                          (memo4, memberId) => {
+                            const country = countries.get(memberId.toString());
+                            if (country) {
+                              if (memo4.get(memberId)) {
+                                if (!memo4.get(memberId).includes(action.get('id'))) {
+                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
+                                }
+                                return memo4;
+                              }
+                              return memo4.set(memberId, List([action.get('id')]));
+                            }
+                            return memo4;
+                          },
+                          memo3,
+                        );
+                      }
+                      return memo3;
+                    },
+                    memo2,
+                  );
+                }
+                return memo2;
+              },
+              memo,
+            );
+          }
+          return memo;
+        },
+        countriesActionCount || Map(),
+      );
+    }
+    if (includeTargetMembers && actionsAsMember) {
+      countriesActionCount = actionsAsMember.flatten(1).reduce(
+        (memo, groupActor) => {
+          if (groupActor.getIn(['targetingActionsByType', actiontypeId])) {
+            return memo.concat(groupActor.getIn(['targetingActionsByType', actiontypeId]).toList());
+          }
+          return memo;
+        },
+        List()
+      ).reduce(
+        (memo, action) => {
+          if (action.get('actorsByType')) {
+            return action.get('actorsByType').reduce(
+              (memo2, actortypeActors, actortypeId) => {
+                if (qe(actortypeId, ACTORTYPES.COUNTRY)) {
+                  return actortypeActors.reduce(
+                    (memo3, countryId) => {
+                      if (memo3.get(countryId)) {
+                        if (!memo3.get(countryId).includes(action.get('id'))) {
+                          return memo3.set(countryId, memo3.get(countryId).push(action.get('id')));
+                        }
+                        return memo3;
+                      }
+                      return memo3.set(countryId, List([action.get('id')]));
+                    },
+                    memo2,
+                  );
+                }
+                // TODO check actortype if it can have members
+                if (includeActorMembers && !qe(actortypeId, ACTORTYPES.ORG)) {
+                  return actortypeActors.reduce(
+                    (memo3, groupId) => {
+                      const groupMembers = memberships.get(groupId);
+                      if (groupMembers) {
+                        return groupMembers.reduce(
+                          (memo4, memberId) => {
+                            const country = countries.get(memberId.toString());
+                            if (country) {
+                              if (memo4.get(memberId)) {
+                                if (!memo4.get(memberId).includes(action.get('id'))) {
+                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
+                                }
+                                return memo4;
+                              }
+                              return memo4.set(memberId, List([action.get('id')]));
+                            }
+                            return memo4;
+                          },
+                          memo3,
+                        );
+                      }
+                      return memo3;
+                    },
+                    memo2,
+                  );
+                }
+                return memo2;
+              },
+              memo,
+            );
+          }
+          return memo;
+        },
+        countriesActionCount || Map(),
+      );
+    }
+  }
+  const countryCount = countriesActionCount && countriesActionCount.size;
+  // also figure out map options
+  if (mapSubject === 'targets' && actiontypeHasTarget) {
+    mapTitle = `${countryCount} ${countryCount === 1 ? 'country' : 'countries'} targeted by activities of '${actorName}'`;
+    keyTitle = 'No of activities targeting each country';
+    if (hasMemberOption) {
+      if (actorCanBeMember) {
+        memberOption = {
+          active: includeActorMembers,
+          onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+          label: `Include activities of groups '${actorName}' belongs to`,
+          key: 'am',
+        };
+      }
+      memberTargetOption = {
+        active: includeTargetMembers,
+        onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
+        label: `Include regions, groups, classes targeted by activities of '${actorName}'`,
+        key: 'tm',
+      };
+    }
+  }
+
+  // show targets for actor's activities (targets are actually actors)
+  // > intl frameworks / regional strategies / national strategies
+  if (mapSubject === 'targets' && !actiontypeHasTarget) {
+    mapTitle = `${countryCount} ${countryCount === 1 ? 'country' : 'countries'} targeted by activities of '${actorName}'`; // '${actorName}`; // regional strategies, intl frameworks
+    keyTitle = 'No of activities targeting each country';
+    if (hasMemberOption && !qe(actiontypeId, ACTIONTYPES.NATL) && actorCanBeMember) {
+      memberOption = {
+        active: includeActorMembers,
+        onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+        label: `Include activities of groups '${actorName}' belongs to`,
+      };
+    }
+  }
+  // show actors for activities targeting actor
+  // > donations / reg strategies / initiatives
+  if (mapSubject === 'actors') {
+    mapTitle = `${countryCount} ${countryCount === 1 ? 'country' : 'countries'} with activities targeting '${actorName}'`;
+    keyTitle = 'No of activities per country';
+    if (hasMemberOption) {
+      memberOption = {
+        active: includeActorMembers,
+        onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+        label: `Include member countries of groups targeting '${actorName}'`,
+        key: 'am',
+      };
+      if (actorCanBeMember) {
+        memberTargetOption = {
+          active: includeTargetMembers,
+          onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
+          label: `Include countries with activities targeting '${actorName}' indirectly via a region, group or class`,
+          key: 'tm',
+        };
       }
     }
-    // countries indirectly targeting actor explicitly (via countries' groups)
-    // stored in actions
-    // indirect/direct
-
-    // countries indirectly targeting actor via actor's membership in group, class, region (via countries' groups)
-    // stored in actionsAsMember
-    // indirect/indirect
   }
 
   const countryData = countriesJSON.features.reduce(
@@ -243,66 +544,17 @@ export function ActorMap({
     },
     [],
   );
-  //
-  const actorName = actor.getIn(['attributes', 'title']);
-  let memberOption;
-  let memberTargetOption;
-  let mapTitle;
-  if (hasMemberOption) {
-    if (mapSubject === 'targets' && viewSubject === 'actors') {
-      mapTitle = `Who (else) is targeted by activities of ${actorName}?`;
-      memberOption = {
-        active: includeActorMembers,
-        onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-        label: `Include activities of groups ${actorName} is/are member of`,
-        key: 'am',
-      };
-      // memberTargetOption = {
-      //   active: includeTargetMembers,
-      //   onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
-      //   label: `Show member countries of regions, groups, classes targeted by ${actorName}`,
-      //   key: 'tm',
-      // };
-    }
-    if (mapSubject === 'actors' && viewSubject === 'actors') {
-      if (!qe(actiontypeId, ACTIONTYPES.NATL)) {
-        mapTitle = 'Who is participating?'; // '${actorName}`; // regional strategies, intl frameworks
-        memberOption = {
-          active: includeActorMembers,
-          onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-          label: `Include activities of groups ${actorName} is/are member of`,
-        };
-      }
-    }
-    if (viewSubject === 'targets') {
-      mapTitle = `Who is responsible for activities targeting ${actorName}?`;
-      // memberOption = {
-      //   active: includeActorMembers,
-      //   onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-      //   label: `Show member countries of groups targeting ${actorName}`,
-      //   key: 'am',
-      // };
-      memberTargetOption = {
-        active: includeTargetMembers,
-        onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
-        label: `Include activities targeting ${actorName} indirectly via a region, group or class`,
-        key: 'tm',
-      };
-      // memberTargetOption = {
-      //   active: includeTargetMembers,
-      //   onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
-      //   label: 'Include members of targeted regions, groups, classes',
-      //   key: 'tm',
-      // };
-    }
-  }
-
   const maxValue = countriesActionCount && countriesActionCount.reduce(
     (max, actionList) => Math.max(max, actionList.size),
     0,
   );
   return (
     <Styled hasHeader noOverflow>
+      {mapTitle && (
+        <MapTitle>
+          <Text weight={600}>{mapTitle}</Text>
+        </MapTitle>
+      )}
       <MapWrapper>
         <MapContainer
           countryData={countryData}
@@ -314,18 +566,22 @@ export function ActorMap({
           includeTargetMembers={includeTargetMembers}
           mapSubject={mapSubject}
           fitBounds
+          projection="gall-peters"
         />
       </MapWrapper>
-      {(mapTitle || memberOption || memberTargetOption) && (
+      {maxValue > 1 && (
+        <MapKeyWrapper>
+          <Text size="small">{keyTitle}</Text>
+          <MapKey mapSubject={mapSubject} maxValue={maxValue} maxBinValue={0} />
+        </MapKeyWrapper>
+      )}
+      {(memberOption || memberTargetOption) && (
         <MapOptions>
-          <Box>
-            <strong>{mapTitle}</strong>
-          </Box>
-          {memberOption && (
-            <MapMemberOption option={memberOption} />
-          )}
           {memberTargetOption && (
             <MapMemberOption option={memberTargetOption} />
+          )}
+          {memberOption && (
+            <MapMemberOption option={memberOption} />
           )}
         </MapOptions>
       )}
@@ -338,14 +594,16 @@ ActorMap.propTypes = {
   actions: PropTypes.instanceOf(Map), // the current actor (ie country)
   actionsAsMember: PropTypes.instanceOf(Map), // the current actor (ie country)
   countries: PropTypes.instanceOf(Map), // all countries needed for indirect connections
+  memberships: PropTypes.instanceOf(Map), // all countries needed for indirect connections
   onSetIncludeActorMembers: PropTypes.func,
   onSetIncludeTargetMembers: PropTypes.func,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
   hasMemberOption: PropTypes.bool,
+  actiontypeHasTarget: PropTypes.bool,
+  actorCanBeMember: PropTypes.bool,
   onEntityClick: PropTypes.func,
   mapSubject: PropTypes.string,
-  viewSubject: PropTypes.string,
   actiontypeId: PropTypes.string,
 };
 
@@ -353,6 +611,7 @@ const mapStateToProps = (state) => ({
   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
+  memberships: selectMembershipsGroupedByAssociation(state),
 });
 function mapDispatchToProps(dispatch) {
   return {

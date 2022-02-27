@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { Box } from 'grommet';
+import { Box, Text } from 'grommet';
 
 import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
@@ -34,11 +34,13 @@ import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
 import MapContainer from 'containers/EntitiesMap/MapContainer';
 import MapMemberOption from 'containers/EntitiesMap/MapInfoOptions/MapMemberOption';
+
 // import messages from './messages';
 
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
 `;
+const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
 const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)``;
 const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
@@ -129,15 +131,21 @@ export function ActionMap({
   );
 
   let memberOption;
-  if (hasMemberOption && hasAssociations) {
-    if (mapSubject === 'targets') {
-      // note this should always be true!
+  let mapTitle;
+  if (mapSubject === 'targets') {
+    mapTitle = 'Countries targeted by activity';
+    // note this should always be true!
+    if (hasMemberOption && hasAssociations) {
       memberOption = {
         active: includeTargetMembers,
         onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
         label: 'Include members of targeted regions, groups, classes',
       };
-    } else {
+    }
+  }
+  if (mapSubject === 'actors') {
+    mapTitle = 'Countries responsible for activity';
+    if (hasMemberOption && hasAssociations) {
       memberOption = {
         active: includeActorMembers,
         onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
@@ -148,6 +156,11 @@ export function ActionMap({
 
   return (
     <Styled hasHeader noOverflow>
+      {mapTitle && (
+        <MapTitle>
+          <Text weight={600}>{mapTitle}</Text>
+        </MapTitle>
+      )}
       <MapWrapper>
         <MapContainer
           countryData={countryData}
@@ -159,11 +172,17 @@ export function ActionMap({
           includeTargetMembers={includeTargetMembers}
           mapSubject={mapSubject}
           fitBounds
+          projection="gall-peters"
         />
       </MapWrapper>
       {memberOption && (
         <MapOptions>
-          <MapMemberOption option={memberOption} />
+          <Box>
+            <Text weight={600}>{mapTitle}</Text>
+          </Box>
+          {memberOption && (
+            <MapMemberOption option={memberOption} />
+          )}
         </MapOptions>
       )}
     </Styled>
