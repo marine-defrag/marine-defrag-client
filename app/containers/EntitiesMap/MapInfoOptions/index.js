@@ -3,10 +3,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 // import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import { Box, Text } from 'grommet';
-import { MAP_OPTIONS } from 'themes/config';
 
-import Gradient from './Gradient';
-import Bins from './Bins';
+import MapKey from './MapKey';
 import MapSubjectOptions from './MapSubjectOptions';
 import MapMemberOption from './MapMemberOption';
 
@@ -38,9 +36,6 @@ export function MapInfoOptions({
   const {
     title, maxValue, subjectOptions, memberOption, subTitle,
   } = config;
-  const stops = maxValue && MAP_OPTIONS.GRADIENT[mapSubject];
-  const noStops = maxValue && stops.length;
-  const maxFactor = maxValue && maxValue / (noStops - 1);
   return (
     <Styled>
       <Box gap="xsmall" margin={{ bottom: 'small' }}>
@@ -51,20 +46,7 @@ export function MapInfoOptions({
           <SubTitle>{subTitle}</SubTitle>
         )}
       </Box>
-      {!!maxValue && maxValue > 16 && (
-        <Gradient
-          config={{
-            range: [1, maxValue],
-            stops: stops.map((color, i) => ({
-              value: i * maxFactor,
-              color,
-            })),
-          }}
-        />
-      )}
-      {!!maxValue && maxValue <= 16 && maxValue > 0 && (
-        <Bins config={{ range: [1, maxValue], maxValue, stops }} />
-      )}
+      <MapKey maxValue={maxValue} mapSubject={mapSubject} />
       {subjectOptions && (
         <MapSubjectOptions options={subjectOptions} />
       )}

@@ -40,7 +40,7 @@ import {
 } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, ACTIONTYPES, ACTORTYPES } from 'themes/config';
+import { ROUTES, ACTIONTYPES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -233,7 +233,7 @@ export function ActorView(props) {
 
   // selected actiontype (or first in list when not in list)
   let activeActiontypeId = viewActiontypeId;
-  if (!actiontypeIdsForSubjectOptions.includes(viewActiontypeId.toString())) {
+  if (actiontypeIdsForSubjectOptions && !actiontypeIdsForSubjectOptions.includes(viewActiontypeId.toString())) {
     activeActiontypeId = actiontypeIdsForSubjectOptions.first();
   }
 
@@ -282,7 +282,7 @@ export function ActorView(props) {
   // let hasActivityMap = typeId && qe(typeId, ACTORTYPES.COUNTRY);
   let mapSubject = false;
   const hasMemberOption = activeActiontypeId && !qe(activeActiontypeId, ACTIONTYPES.NATL);
-  const hasActivityMap = typeId && qe(typeId, ACTORTYPES.COUNTRY);
+  const hasActivityMap = true; // typeId && qe(typeId, ACTORTYPES.COUNTRY);
   let hasTarget;
   const activeActionType = actiontypes && activeActiontypeId && actiontypes.get(activeActiontypeId.toString());
   if (hasActivityMap) {
@@ -434,22 +434,25 @@ export function ActorView(props) {
                         )}
                       </TypeSelectBox>
                     )}
-                    <Box>
-                      {dataReady && viewEntity && hasActivityMap && (
-                        <ActorMap
-                          actor={viewEntity}
-                          actions={activeActiontypeActions}
-                          actionsAsMember={actiontypesAsMemberForSubject}
-                          hasMemberOption={hasMemberOption}
-                          viewSubject={viewSubject}
-                          mapSubject={mapSubject}
-                          actiontypeHasTarget={hasTarget}
-                          dataReady={dataReady}
-                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
-                          actiontypeId={activeActiontypeId}
-                        />
-                      )}
-                    </Box>
+                    {actiontypeIdsForSubjectOptions && actiontypeIdsForSubjectOptions.size > 0 && (
+                      <Box>
+                        {dataReady && viewEntity && hasActivityMap && (
+                          <ActorMap
+                            actor={viewEntity}
+                            actions={activeActiontypeActions}
+                            actionsAsMember={actiontypesAsMemberForSubject}
+                            hasMemberOption={hasMemberOption}
+                            viewSubject={viewSubject}
+                            mapSubject={mapSubject}
+                            actiontypeHasTarget={hasTarget}
+                            dataReady={dataReady}
+                            onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                            actiontypeId={activeActiontypeId}
+                            actorCanBeMember={canBeMember}
+                          />
+                        )}
+                      </Box>
+                    )}
                     {actiontypesForSubject && activeActiontypeActions && actiontypesForSubject.size > 0 && (
                       <Box>
                         <FieldGroup

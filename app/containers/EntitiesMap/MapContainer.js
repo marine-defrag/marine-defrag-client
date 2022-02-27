@@ -9,6 +9,8 @@ import styled from 'styled-components';
 import L from 'leaflet';
 import 'proj4leaflet';
 
+import { merge } from 'lodash/object';
+
 import { MAP_OPTIONS } from 'themes/config';
 
 import qe from 'utils/quasi-equals';
@@ -25,7 +27,7 @@ const Styled = styled.div`
   z-index: 10;
 `;
 
-// const PROJ = {
+// const PROJ[projection] = {
 //   name: 'Custom',
 //   crs: 'ESRI:54030',
 //   proj4def: '+proj=robin +lon_0=11.7 +x_0=-11.7 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs',
@@ -86,7 +88,45 @@ export function MapContainer({
   includeTargetMembers,
   mapSubject,
   fitBounds,
+  options = {},
+  projection = 'robin',
 }) {
+  const mapOptions = merge({}, options, MAP_OPTIONS);
+  const customMapProjection = mapOptions.PROJ[projection];
+  const leafletOptions = customMapProjection
+    ? {
+      crs: new L.Proj.CRS(
+        customMapProjection.crs,
+        customMapProjection.proj4def,
+        {
+          resolutions: customMapProjection.resolutions,
+          origin: customMapProjection.origin,
+          bounds: customMapProjection.bounds,
+        },
+      ),
+      // center: mapOptions.CENTER,
+      // zoom: size === 'small' ? mapOptions.ZOOM.MIN : mapOptions.ZOOM.INIT,
+      zoomControl: true,
+      minZoom: mapOptions.ZOOM.MIN,
+      maxZoom: mapOptions.ZOOM.MAX,
+      maxBounds: [
+        [mapOptions.BOUNDS.N, mapOptions.BOUNDS.W],
+        [mapOptions.BOUNDS.S, mapOptions.BOUNDS.E],
+      ],
+      continuousWorld: customMapProjection.continuousWorld || false,
+      worldCopyJump: false,
+      attributionControl: false,
+    }
+    : {
+      // center: mapOptions.CENTER,
+      // zoom: size === 'small' ? mapOptions.ZOOM.MIN : mapOptions.ZOOM.INIT,
+      zoomControl: true,
+      minZoom: mapOptions.ZOOM.MIN,
+      maxZoom: mapOptions.ZOOM.MAX,
+      continuousWorld: true,
+      worldCopyJump: false,
+      attributionControl: false,
+    };
   const [tooltip, setTooltip] = useState(null);
   const [featureOver, setFeatureOver] = useState(null);
   const ref = useRef(null);
@@ -104,6 +144,12 @@ export function MapContainer({
       // console.log('mapClick')
       setTooltip(null);
     },
+    // mouseover: (a, b, c) => {
+    //   console.log('mouseOver', a, b, c)
+    // },
+    // mousemove: (a, b, c) => {
+    //   console.log('mousemove', a, b, c)
+    // },
     // zoomstart: () => {
     //   // console.log('zoomstart')
     //   setTooltip(null);
@@ -159,31 +205,11 @@ export function MapContainer({
   //   };
   // }, [ref]);
   useEffect(() => {
-    mapRef.current = L.map('ll-map', {
-      crs: new L.Proj.CRS(
-        MAP_OPTIONS.PROJ.crs,
-        MAP_OPTIONS.PROJ.proj4def,
-        {
-          resolutions: MAP_OPTIONS.PROJ.resolutions,
-          origin: MAP_OPTIONS.PROJ.origin,
-          bounds: MAP_OPTIONS.PROJ.bounds,
-        },
-      ),
-      // center: MAP_OPTIONS.CENTER,
-      // zoom: size === 'small' ? MAP_OPTIONS.ZOOM.MIN : MAP_OPTIONS.ZOOM.INIT,
-      zoomControl: true,
-      minZoom: MAP_OPTIONS.ZOOM.MIN,
-      maxZoom: MAP_OPTIONS.ZOOM.MAX,
-      maxBounds: [
-        [MAP_OPTIONS.BOUNDS.N, MAP_OPTIONS.BOUNDS.W],
-        [MAP_OPTIONS.BOUNDS.S, MAP_OPTIONS.BOUNDS.E],
-      ],
-      continuousWorld: true,
-      worldCopyJump: false,
-      attributionControl: false,
-    }).on(mapEvents);
+    mapRef.current = L.map('ll-map', leafletOptions).on(mapEvents);
     // create an orange rectangle
-    L.geoJSON(getBBox(MAP_OPTIONS.PROJ.bounds), MAP_OPTIONS.BBOX_STYLE).addTo(mapRef.current);
+    if (customMapProjection && customMapProjection.addBBox) {
+      L.geoJSON(getBBox(customMapProjection.bounds), mapOptions.BBOX_STYLE).addTo(mapRef.current);
+    }
     countryLayerGroupRef.current = L.layerGroup();
     countryLayerGroupRef.current.addTo(mapRef.current);
     countryOverlayGroupRef.current = L.layerGroup();
@@ -200,11 +226,12 @@ export function MapContainer({
     //   onMapMove(getNWSE(mapRef.current));
     // });
     mapRef.current.setView(
-      MAP_OPTIONS.CENTER,
-      MAP_OPTIONS.ZOOM.INIT,
+      mapOptions.CENTER,
+      mapOptions.ZOOM.INIT,
     );
     mapRef.current.zoomControl.setPosition('topleft');
   }, []);
+
   // add countryFeatures
   useEffect(() => {
     if (countryFeatures) {
@@ -213,33 +240,34 @@ export function MapContainer({
         countryFeatures,
         {
           style: () => ({
-            ...MAP_OPTIONS.DEFAULT_STYLE,
+            ...mapOptions.DEFAULT_STYLE,
           }),
         },
       );
       countryLayerGroupRef.current.addLayer(jsonLayer);
     }
   }, [countryFeatures]);
+
   // add countryData
   useEffect(() => {
     if (countryData) {
       countryOverlayGroupRef.current.clearLayers();
       if (countryData.length > 0) {
-        const scale = scaleColorCount(maxValue, MAP_OPTIONS.GRADIENT[mapSubject]);
+        const scale = scaleColorCount(maxValue, mapOptions.GRADIENT[mapSubject]);
         const jsonLayer = L.geoJSON(
           countryData,
           {
             style: (f) => ({
-              ...MAP_OPTIONS.DEFAULT_STYLE,
+              ...mapOptions.DEFAULT_STYLE,
               fillColor: f.values && f.values[indicator] && f.values[indicator] > 0
                 ? scale(f.values[indicator])
-                : MAP_OPTIONS.NO_DATA_COLOR,
+                : mapOptions.NO_DATA_COLOR,
               ...f.style,
             }),
             onEachFeature: (feature, layer) => {
               layer.on({
                 click: (e) => onFeatureClick(e, feature),
-                mouseover: (e) => onFeatureOver(e, feature),
+                // mouseover: (e) => onFeatureOver(e, feature),
                 mouseout: () => onFeatureOver(),
               });
             },
@@ -247,17 +275,33 @@ export function MapContainer({
         );
         countryOverlayGroupRef.current.addLayer(jsonLayer);
         if (fitBounds) {
-          mapRef.current.fitBounds(
+          const boundsZoom = mapRef.current.getBoundsZoom(
             jsonLayer.getBounds(),
+            false, // inside,
+            [20, 20], // padding in px
+          );
+          const boundsCenter = jsonLayer.getBounds().getCenter();
+          // add zoom level to account for custom proj issue
+          const ZOOM_OFFSET = 0;
+          const MAX_ZOOM = 7;
+          mapRef.current.setView(
+            boundsCenter,
+            Math.min(
+              Math.max(
+                boundsZoom - ZOOM_OFFSET,
+                0,
+              ),
+              MAX_ZOOM,
+            ),
             {
-              maxZoom: 7,
-              padding: [20, 20],
+              animate: false,
             },
           );
         }
       }
     }
   }, [countryData, indicator, tooltip, mapSubject]);
+
   // add countryFeatures
   useEffect(() => {
     countryTooltipGroupRef.current.clearLayers();
@@ -265,18 +309,12 @@ export function MapContainer({
       const jsonLayer = L.geoJSON(
         countryData.filter((f) => qe(f.id, tooltip.feature.id)),
         {
-          style: MAP_OPTIONS.TOOLTIP_STYLE,
+          style: mapOptions.TOOLTIP_STYLE,
         },
       );
       countryTooltipGroupRef.current.addLayer(jsonLayer);
     }
   }, [tooltip, mapSubject, includeActorMembers, includeTargetMembers]);
-  // useEffect(() => {
-  //   countryTooltipGroupRef.current.clearLayers();
-  //   if (tooltip && countryFeatures) {
-  //     setTooltip(null);
-  //   }
-  // }, [countryFeatures]);
 
   useEffect(() => {
     countryOverGroupRef.current.clearLayers();
@@ -284,7 +322,7 @@ export function MapContainer({
       const jsonLayer = L.geoJSON(
         countryData.filter((f) => qe(f.id, featureOver)),
         {
-          style: MAP_OPTIONS.OVER_STYLE,
+          style: mapOptions.OVER_STYLE,
         },
       );
       countryOverGroupRef.current.addLayer(jsonLayer);
@@ -328,6 +366,8 @@ MapContainer.propTypes = {
   includeTargetMembers: PropTypes.bool,
   fitBounds: PropTypes.bool,
   mapSubject: PropTypes.string,
+  projection: PropTypes.string,
+  options: PropTypes.object,
   // onSetMapSubject: PropTypes.func,
 };
 
