@@ -20,7 +20,7 @@ import { ROUTES, ACTIONTYPES } from 'themes/config';
 import FieldGroup from 'components/fields/FieldGroup';
 
 import appMessages from 'containers/App/messages';
-import ActorMap from './ActorMap';
+import ActorActivitiesMap from './ActorActivitiesMap';
 
 const TypeSelectBox = styled((p) => <Box {...p} />)`
   background: ${({ theme }) => theme.palette.light[0]};
@@ -219,7 +219,7 @@ export function Activities(props) {
       {actiontypeIdsForSubjectOptions && actiontypeIdsForSubjectOptions.size > 0 && (
         <Box>
           {viewEntity && hasActivityMap && (
-            <ActorMap
+            <ActorActivitiesMap
               actor={viewEntity}
               actions={activeActiontypeActions}
               actionsAsMember={actiontypesAsMemberForSubject}

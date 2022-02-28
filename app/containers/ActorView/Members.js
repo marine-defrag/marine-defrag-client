@@ -80,9 +80,6 @@ export function Members(props) {
             values: {
               actions: 1,
             },
-            style: {
-              fillOpacity: 0.3,
-            },
           },
         ];
       }
@@ -112,9 +109,8 @@ export function Members(props) {
               <MapContainer
                 countryData={countryData}
                 countryFeatures={countriesJSON.features}
-                indicator="actions"
+                styleType="members"
                 onCountryClick={(id) => onEntityClick(id)}
-                mapSubject="actors"
                 fitBounds
                 projection="gall-peters"
               />

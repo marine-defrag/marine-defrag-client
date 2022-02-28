@@ -9,6 +9,7 @@ import FieldGroupWrapper from 'components/fields/FieldGroupWrapper';
 import FieldGroupLabel from 'components/fields/FieldGroupLabel';
 import GroupIcon from 'components/fields/GroupIcon';
 import GroupLabel from 'components/fields/GroupLabel';
+import Field from 'components/fields/Field';
 
 class FieldGroup extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
@@ -19,51 +20,55 @@ class FieldGroup extends React.PureComponent { // eslint-disable-line react/pref
       bottom,
     } = this.props;
     // skip group if no group or fields are present
-    if (
-      !group
-      || !group.fields
-      || !group.fields.reduce((memo, field) => memo || field, false)
-    ) {
-      return null;
+    const hasFields = group
+      && group.fields
+      && group.fields.reduce((memo, field) => memo || field, false);
+    if (group && (hasFields || group.custom)) {
+      return (
+        <FieldGroupWrapper
+          groupType={group.type}
+          seamless={seamless}
+          aside={aside}
+          bottom={bottom}
+        >
+          {group.label && (
+            <FieldGroupLabel basic={group.type === 'smartTaxonomy'}>
+              <GroupLabel>
+                <FormattedMessage {...group.label} />
+              </GroupLabel>
+              {group.icon && (
+                <GroupIcon>
+                  <Icon name={group.icon} />
+                </GroupIcon>
+              )}
+            </FieldGroupLabel>
+          )}
+          {group.title && (
+            <FieldGroupLabel>
+              <GroupLabel>
+                {group.title}
+              </GroupLabel>
+            </FieldGroupLabel>
+          )}
+          {group.fields && group.fields.map(
+            (field, i) => field
+              ? (
+                <FieldFactory
+                  key={i}
+                  field={Object.assign({}, field, { aside: this.props.aside })}
+                />
+              )
+              : null
+          )}
+          {group.custom && (
+            <Field>
+              {group.custom}
+            </Field>
+          )}
+        </FieldGroupWrapper>
+      );
     }
-    return (
-      <FieldGroupWrapper
-        groupType={group.type}
-        seamless={seamless}
-        aside={aside}
-        bottom={bottom}
-      >
-        {group.label && (
-          <FieldGroupLabel basic={group.type === 'smartTaxonomy'}>
-            <GroupLabel>
-              <FormattedMessage {...group.label} />
-            </GroupLabel>
-            {group.icon && (
-              <GroupIcon>
-                <Icon name={group.icon} />
-              </GroupIcon>
-            )}
-          </FieldGroupLabel>
-        )}
-        {group.title && (
-          <FieldGroupLabel>
-            <GroupLabel>
-              {group.title}
-            </GroupLabel>
-          </FieldGroupLabel>
-        )}
-        {group.fields.map(
-          (field, i) => field
-            ? (
-              <FieldFactory
-                key={i}
-                field={Object.assign({}, field, { aside: this.props.aside })}
-              />
-            )
-            : null
-        )}
-      </FieldGroupWrapper>
-    );
+    return null;
   }
 }
 FieldGroup.propTypes = {

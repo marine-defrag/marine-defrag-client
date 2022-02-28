@@ -39,7 +39,7 @@ import {
 } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES } from 'themes/config';
+import { ROUTES, ACTORTYPES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -68,6 +68,7 @@ import appMessages from 'containers/App/messages';
 import messages from './messages';
 import Activities from './Activities';
 import Members from './Members';
+import CountryMap from './CountryMap';
 
 import {
   selectViewEntity,
@@ -161,6 +162,7 @@ export function ActorView(props) {
   const isTarget = viewActortype && viewActortype.getIn(['attributes', 'is_target']);
   const isActive = viewActortype && viewActortype.getIn(['attributes', 'is_active']);
   const hasMembers = viewActortype && viewActortype.getIn(['attributes', 'has_members']);
+  const isCountry = qe(typeId, ACTORTYPES.COUNTRY);
 
   let viewSubject = subject;
   const validViewSubjects = [];
@@ -204,7 +206,7 @@ export function ActorView(props) {
           <ViewWrapper>
             <ViewPanel>
               <ViewPanelInside>
-                <Main hasAside>
+                <Main hasAside={isManager}>
                   <FieldGroup
                     group={{ // fieldGroup
                       fields: [
@@ -217,17 +219,19 @@ export function ActorView(props) {
                     }}
                   />
                 </Main>
-                <Aside>
-                  <FieldGroup
-                    group={{
-                      fields: [
-                        getStatusField(viewEntity),
-                        getMetaField(viewEntity),
-                      ],
-                    }}
-                    aside
-                  />
-                </Aside>
+                {isManager && (
+                  <Aside>
+                    <FieldGroup
+                      group={{
+                        fields: [
+                          getStatusField(viewEntity),
+                          getMetaField(viewEntity),
+                        ],
+                      }}
+                      aside
+                    />
+                  </Aside>
+                )}
               </ViewPanelInside>
             </ViewPanel>
             <ViewPanel>
@@ -299,19 +303,14 @@ export function ActorView(props) {
                   </Box>
                 </Main>
                 <Aside bottom>
+                  {isCountry && (
+                    <CountryMap actor={viewEntity} />
+                  )}
                   <FieldGroup
                     aside
                     group={{
                       fields: [
                         checkActorAttribute(typeId, 'url') && getLinkField(viewEntity),
-                      ],
-                    }}
-                  />
-                  <FieldGroup
-                    aside
-                    group={{
-                      type: 'dark',
-                      fields: [
                         checkActorAttribute(typeId, 'gdp') && getAmountField(viewEntity, 'gdp', true),
                         checkActorAttribute(typeId, 'population') && getTextField(viewEntity, 'population'),
                       ],

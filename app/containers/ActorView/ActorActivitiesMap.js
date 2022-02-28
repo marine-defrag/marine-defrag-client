@@ -1,6 +1,6 @@
 /*
  *
- * ActorMap
+ * ActorActivitiesMap
  *
  */
 import React from 'react';
@@ -109,7 +109,7 @@ const addAllCountryActionIdsToList = (
   countryList,
 );
 
-export function ActorMap({
+export function ActorActivitiesMap({
   actor,
   actions,
   actionsAsMember,
@@ -289,7 +289,8 @@ export function ActorMap({
       );
     }
   }
-  const countryCount = countryActionIds && countryActionIds.size;
+  const countryCount = countryActionIds ? countryActionIds.size : 0;
+  const hasRelated = countryCount > 0;
   // also figure out map options
   if (mapSubject === 'targets' && actiontypeHasTarget) {
     mapTitle = `${countryCount} ${countryCount === 1 ? 'country' : 'countries'} targeted by activities of '${actorName}'`;
@@ -348,36 +349,60 @@ export function ActorMap({
     }
   }
 
-  const countryData = countriesJSON.features.reduce(
-    (memo, feature) => {
-      const country = countries && countries.find(
-        (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-      );
-      if (country) {
-        const actionCount = countryActionIds
-          && countryActionIds.get(parseInt(country.get('id'), 10))
-          && countryActionIds.get(parseInt(country.get('id'), 10)).size;
-        if (actionCount) {
-          return [
-            ...memo,
-            {
-              ...feature,
-              id: country.get('id'),
-              attributes: country.get('attributes').toJS(),
-              tooltip: {
-                title: country.getIn(['attributes', 'title']),
+  const countryData = !hasRelated
+    ? countriesJSON.features
+    : countriesJSON.features.reduce(
+      (memo, feature) => {
+        const country = countries && countries.find(
+          (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+        );
+        if (country) {
+          const isActive = qe(country.get('id'), actor.get('id'));
+          const actionCount = countryActionIds
+            && countryActionIds.get(parseInt(country.get('id'), 10))
+            && countryActionIds.get(parseInt(country.get('id'), 10)).size;
+          if (actionCount) {
+            return [
+              ...memo,
+              {
+                ...feature,
+                id: country.get('id'),
+                attributes: country.get('attributes').toJS(),
+                tooltip: {
+                  title: country.getIn(['attributes', 'title']),
+                },
+                isActive,
+                values: {
+                  actions: actionCount || 0,
+                },
               },
-              values: {
-                actions: actionCount || 0,
+            ];
+          }
+          if (isActive) {
+            return [
+              ...memo,
+              {
+                ...feature,
+                id: country.get('id'),
+                attributes: country.get('attributes').toJS(),
+                tooltip: {
+                  title: country.getIn(['attributes', 'title']),
+                },
+                isActive,
               },
-            },
-          ];
+            ];
+          }
         }
-      }
-      return memo;
-    },
-    [],
-  );
+        return memo;
+      },
+      [],
+    ).sort(
+      (a, b) => {
+        if (a.isActive) return 1;
+        if (b.isActive) return -1;
+        return -1;
+      },
+    );
   const maxValue = countryActionIds && countryActionIds.reduce(
     (max, actionList) => Math.max(max, actionList.size),
     0,
@@ -423,7 +448,7 @@ export function ActorMap({
   );
 }
 
-ActorMap.propTypes = {
+ActorActivitiesMap.propTypes = {
   actor: PropTypes.instanceOf(Map), // the current actor (ie country)
   actions: PropTypes.instanceOf(Map), // the current actor (ie country)
   actionsAsMember: PropTypes.instanceOf(Map), // the current actor (ie country)
@@ -458,4 +483,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActorMap);
+export default connect(mapStateToProps, mapDispatchToProps)(ActorActivitiesMap);
