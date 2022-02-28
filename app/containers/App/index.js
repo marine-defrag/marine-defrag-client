@@ -172,12 +172,15 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
               isUserSignedIn && isAnalyst,
               location.pathname,
             )}
-            search={isUserSignedIn && {
-              path: ROUTES.SEARCH,
-              title: intl.formatMessage(messages.nav.search),
-              active: location.pathname.startsWith(ROUTES.SEARCH),
-              icon: 'search',
-            }}
+            search={!isUserSignedIn
+              ? null
+              : {
+                path: ROUTES.SEARCH,
+                title: intl.formatMessage(messages.nav.search),
+                active: location.pathname.startsWith(ROUTES.SEARCH),
+                icon: 'search',
+              }
+            }
             onPageLink={onPageLink}
             isAuth={isAuth}
           />
