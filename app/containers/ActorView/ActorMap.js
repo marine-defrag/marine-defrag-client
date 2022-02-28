@@ -51,6 +51,64 @@ const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
   height: 400px;
 `;
 
+const addToList = (list, countryId, actionId) => {
+  // if already present, add action id to country key
+  if (list.get(countryId)) {
+    return !list.get(countryId).includes(actionId)
+      ? list.set(countryId, list.get(countryId).push(actionId))
+      : list;
+  }
+  // else add country with action id as first entry
+  return list.set(countryId, List([actionId]));
+};
+const addCountryActionIdsToList = (
+  countryList, actorsByType, actionId,
+) => actorsByType.reduce(
+  (memo, countryId) => addToList(memo, countryId, actionId),
+  countryList,
+);
+const addMemberCountryActionIdsToList = (
+  countryList, actorsByType, actionId, memberships, countries,
+) => actorsByType.reduce(
+  (countryListMemo, groupId) => memberships.get(groupId)
+    ? memberships.get(groupId).reduce(
+      // only add if country exists
+      (memo, memberId) => countries.get(memberId.toString())
+        ? addToList(memo, memberId, actionId)
+        : memo,
+      countryListMemo,
+    )
+    : countryListMemo,
+  countryList,
+);
+
+const addAllCountryActionIdsToList = (
+  countryList,
+  actionId,
+  actorsByType,
+  memberships,
+  countries,
+  includeMembers,
+) => actorsByType.reduce(
+  (memo, actortypeActors, actortypeId) => {
+    if (qe(actortypeId, ACTORTYPES.COUNTRY)) {
+      return addCountryActionIdsToList(memo, actortypeActors, actionId);
+    }
+    // TODO check actortype if it can have members
+    if (includeMembers && !qe(actortypeId, ACTORTYPES.ORG)) {
+      return addMemberCountryActionIdsToList(
+        memo,
+        actortypeActors,
+        actionId,
+        memberships,
+        countries,
+      );
+    }
+    return memo;
+  },
+  countryList,
+);
+
 export function ActorMap({
   actor,
   actions,
@@ -79,7 +137,7 @@ export function ActorMap({
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
   );
-  let countriesActionCount;
+  let countryActionIds;
   const actorName = actor.getIn(['attributes', 'title']);
   let memberOption;
   let memberTargetOption;
@@ -89,65 +147,25 @@ export function ActorMap({
   // > donations / initiatives / regional seas conventions
   if (mapSubject === 'targets' && actiontypeHasTarget) {
     if (actions) {
-      countriesActionCount = actions.reduce(
+      countryActionIds = actions.reduce(
         (memo, action) => {
           if (action.get('targetsByType')) {
-            return action.get('targetsByType').reduce(
-              (memo2, targettypeTargets, targettypeId) => {
-                if (qe(targettypeId, ACTORTYPES.COUNTRY)) {
-                  return targettypeTargets.reduce(
-                    (memo3, countryId) => {
-                      if (memo3.get(countryId)) {
-                        if (!memo3.get(countryId).includes(action.get('id'))) {
-                          return memo3.set(countryId, memo3.get(countryId).push(action.get('id')));
-                        }
-                        return memo3;
-                      }
-                      return memo3.set(countryId, List([action.get('id')]));
-                    },
-                    memo2,
-                  );
-                }
-                // TODO check actortype if it can have members
-                if (includeTargetMembers && !qe(targettypeId, ACTORTYPES.ORG)) {
-                  return targettypeTargets.reduce(
-                    (memo3, groupId) => {
-                      const groupMembers = memberships.get(groupId);
-                      if (groupMembers) {
-                        return groupMembers.reduce(
-                          (memo4, memberId) => {
-                            const country = countries.get(memberId.toString());
-                            if (country) {
-                              if (memo4.get(memberId)) {
-                                if (!memo4.get(memberId).includes(action.get('id'))) {
-                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
-                                }
-                                return memo4;
-                              }
-                              return memo4.set(memberId, List([action.get('id')]));
-                            }
-                            return memo4;
-                          },
-                          memo3,
-                        );
-                      }
-                      return memo3;
-                    },
-                    memo2,
-                  );
-                }
-                return memo2;
-              },
+            return addAllCountryActionIdsToList(
               memo,
+              action.get('id'),
+              action.get('targetsByType'),
+              memberships,
+              countries,
+              includeTargetMembers,
             );
           }
           return memo;
         },
-        countriesActionCount || Map(),
+        countryActionIds || Map(),
       );
     }
     if (includeActorMembers && actionsAsMember) {
-      countriesActionCount = actionsAsMember.flatten(1).reduce(
+      countryActionIds = actionsAsMember.flatten(1).reduce(
         (memo, groupActor) => {
           if (groupActor.getIn(['actionsByType', actiontypeId])) {
             return memo.concat(groupActor.getIn(['actionsByType', actiontypeId]).toList());
@@ -158,58 +176,18 @@ export function ActorMap({
       ).reduce(
         (memo, action) => {
           if (action.get('targetsByType')) {
-            return action.get('targetsByType').reduce(
-              (memo2, targettypeTargets, targettypeId) => {
-                if (qe(targettypeId, ACTORTYPES.COUNTRY)) {
-                  return targettypeTargets.reduce(
-                    (memo3, countryId) => {
-                      if (memo3.get(countryId)) {
-                        if (!memo3.get(countryId).includes(action.get('id'))) {
-                          return memo3.set(countryId, memo3.get(countryId).push(action.get('id')));
-                        }
-                        return memo3;
-                      }
-                      return memo3.set(countryId, List([action.get('id')]));
-                    },
-                    memo2,
-                  );
-                }
-                // TODO check actortype if it can have members
-                if (includeTargetMembers && !qe(targettypeId, ACTORTYPES.ORG)) {
-                  return targettypeTargets.reduce(
-                    (memo3, groupId) => {
-                      const groupMembers = memberships.get(groupId);
-                      if (groupMembers) {
-                        return groupMembers.reduce(
-                          (memo4, memberId) => {
-                            const country = countries.get(memberId.toString());
-                            if (country) {
-                              if (memo4.get(memberId)) {
-                                if (!memo4.get(memberId).includes(action.get('id'))) {
-                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
-                                }
-                                return memo4;
-                              }
-                              return memo4.set(memberId, List([action.get('id')]));
-                            }
-                            return memo4;
-                          },
-                          memo3,
-                        );
-                      }
-                      return memo3;
-                    },
-                    memo2,
-                  );
-                }
-                return memo2;
-              },
+            return addAllCountryActionIdsToList(
               memo,
+              action.get('id'),
+              action.get('targetsByType'),
+              memberships,
+              countries,
+              includeTargetMembers,
             );
           }
           return memo;
         },
-        countriesActionCount || Map(),
+        countryActionIds || Map(),
       );
     }
   }
@@ -218,64 +196,25 @@ export function ActorMap({
   // > intl frameworks / regional strategies / national strategies
   if (mapSubject === 'targets' && !actiontypeHasTarget) {
     if (actions) {
-      countriesActionCount = actions.reduce(
+      countryActionIds = actions.reduce(
         (memo, action) => {
           if (action.get('actorsByType')) {
-            return action.get('actorsByType').reduce(
-              (memo2, actortypeActors, actortypeId) => {
-                if (qe(actortypeId, ACTORTYPES.COUNTRY)) {
-                  return actortypeActors.reduce(
-                    (memo3, countryId) => {
-                      if (memo3.get(countryId)) {
-                        if (!memo3.get(countryId).includes(action.get('id'))) {
-                          return memo3.set(countryId, memo3.get(countryId).push(action.get('id')));
-                        }
-                        return memo3;
-                      }
-                      return memo3.set(countryId, List([action.get('id')]));
-                    },
-                    memo2,
-                  );
-                }
-                if (!actorCanBeMember && qe(actortypeId, ACTORTYPES.GROUP)) {
-                  return actortypeActors.reduce(
-                    (memo3, groupId) => {
-                      const groupMembers = memberships.get(groupId);
-                      if (groupMembers) {
-                        return groupMembers.reduce(
-                          (memo4, memberId) => {
-                            const country = countries.get(memberId.toString());
-                            if (country) {
-                              if (memo4.get(memberId)) {
-                                if (!memo4.get(memberId).includes(action.get('id'))) {
-                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
-                                }
-                                return memo4;
-                              }
-                              return memo4.set(memberId, List([action.get('id')]));
-                            }
-                            return memo4;
-                          },
-                          memo3,
-                        );
-                      }
-                      return memo3;
-                    },
-                    memo2,
-                  );
-                }
-                return memo2;
-              },
+            return addAllCountryActionIdsToList(
               memo,
+              action.get('id'),
+              action.get('actorsByType'),
+              memberships,
+              countries,
+              includeActorMembers,
             );
           }
           return memo;
         },
-        countriesActionCount || Map(),
+        countryActionIds || Map(),
       );
     }
     if (includeActorMembers && actionsAsMember) {
-      countriesActionCount = actionsAsMember.flatten(1).reduce(
+      countryActionIds = actionsAsMember.flatten(1).reduce(
         (memo, groupActor) => {
           if (groupActor.getIn(['actionsByType', actiontypeId])) {
             return memo.concat(groupActor.getIn(['actionsByType', actiontypeId]).toList());
@@ -286,43 +225,18 @@ export function ActorMap({
       ).reduce(
         (memo, action) => {
           if (action.get('actorsByType')) {
-            return action.get('actorsByType').reduce(
-              (memo2, actortypeActors, actortypeId) => {
-                if (!qe(actortypeId, ACTORTYPES.ORG)) {
-                  return actortypeActors.reduce(
-                    (memo3, groupId) => {
-                      const groupMembers = memberships.get(groupId);
-                      if (groupMembers) {
-                        return groupMembers.reduce(
-                          (memo4, memberId) => {
-                            const country = countries.get(memberId.toString());
-                            if (country) {
-                              if (memo4.get(memberId)) {
-                                if (!memo4.get(memberId).includes(action.get('id'))) {
-                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
-                                }
-                                return memo4;
-                              }
-                              return memo4.set(memberId, List([action.get('id')]));
-                            }
-                            return memo4;
-                          },
-                          memo3,
-                        );
-                      }
-                      return memo3;
-                    },
-                    memo2,
-                  );
-                }
-                return memo2;
-              },
+            return addAllCountryActionIdsToList(
               memo,
+              action.get('id'),
+              action.get('actorsByType'),
+              memberships,
+              countries,
+              includeActorMembers, // always true
             );
           }
           return memo;
         },
-        countriesActionCount || Map(),
+        countryActionIds || Map(),
       );
     }
   }
@@ -331,65 +245,25 @@ export function ActorMap({
   // > donations / reg strategies / initiatives
   if (mapSubject === 'actors') {
     if (actions) {
-      countriesActionCount = actions && actions.reduce(
+      countryActionIds = actions && actions.reduce(
         (memo, action) => {
           if (action.get('actorsByType')) {
-            return action.get('actorsByType').reduce(
-              (memo2, actortypeActors, actortypeId) => {
-                if (qe(actortypeId, ACTORTYPES.COUNTRY)) {
-                  return actortypeActors.reduce(
-                    (memo3, countryId) => {
-                      if (memo3.get(countryId)) {
-                        if (!memo3.get(countryId).includes(action.get('id'))) {
-                          return memo3.set(countryId, memo3.get(countryId).push(action.get('id')));
-                        }
-                        return memo3;
-                      }
-                      return memo3.set(countryId, List([action.get('id')]));
-                    },
-                    memo2,
-                  );
-                }
-                // TODO check actortype if it can have members
-                if (includeActorMembers && !qe(actortypeId, ACTORTYPES.ORG)) {
-                  return actortypeActors.reduce(
-                    (memo3, groupId) => {
-                      const groupMembers = memberships.get(groupId);
-                      if (groupMembers) {
-                        return groupMembers.reduce(
-                          (memo4, memberId) => {
-                            const country = countries.get(memberId.toString());
-                            if (country) {
-                              if (memo4.get(memberId)) {
-                                if (!memo4.get(memberId).includes(action.get('id'))) {
-                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
-                                }
-                                return memo4;
-                              }
-                              return memo4.set(memberId, List([action.get('id')]));
-                            }
-                            return memo4;
-                          },
-                          memo3,
-                        );
-                      }
-                      return memo3;
-                    },
-                    memo2,
-                  );
-                }
-                return memo2;
-              },
+            return addAllCountryActionIdsToList(
               memo,
+              action.get('id'),
+              action.get('actorsByType'),
+              memberships,
+              countries,
+              includeActorMembers,
             );
           }
           return memo;
         },
-        countriesActionCount || Map(),
+        countryActionIds || Map(),
       );
     }
     if (includeTargetMembers && actionsAsMember) {
-      countriesActionCount = actionsAsMember.flatten(1).reduce(
+      countryActionIds = actionsAsMember.flatten(1).reduce(
         (memo, groupActor) => {
           if (groupActor.getIn(['targetingActionsByType', actiontypeId])) {
             return memo.concat(groupActor.getIn(['targetingActionsByType', actiontypeId]).toList());
@@ -400,62 +274,22 @@ export function ActorMap({
       ).reduce(
         (memo, action) => {
           if (action.get('actorsByType')) {
-            return action.get('actorsByType').reduce(
-              (memo2, actortypeActors, actortypeId) => {
-                if (qe(actortypeId, ACTORTYPES.COUNTRY)) {
-                  return actortypeActors.reduce(
-                    (memo3, countryId) => {
-                      if (memo3.get(countryId)) {
-                        if (!memo3.get(countryId).includes(action.get('id'))) {
-                          return memo3.set(countryId, memo3.get(countryId).push(action.get('id')));
-                        }
-                        return memo3;
-                      }
-                      return memo3.set(countryId, List([action.get('id')]));
-                    },
-                    memo2,
-                  );
-                }
-                // TODO check actortype if it can have members
-                if (includeActorMembers && !qe(actortypeId, ACTORTYPES.ORG)) {
-                  return actortypeActors.reduce(
-                    (memo3, groupId) => {
-                      const groupMembers = memberships.get(groupId);
-                      if (groupMembers) {
-                        return groupMembers.reduce(
-                          (memo4, memberId) => {
-                            const country = countries.get(memberId.toString());
-                            if (country) {
-                              if (memo4.get(memberId)) {
-                                if (!memo4.get(memberId).includes(action.get('id'))) {
-                                  return memo4.set(memberId, memo4.get(memberId).push(action.get('id')));
-                                }
-                                return memo4;
-                              }
-                              return memo4.set(memberId, List([action.get('id')]));
-                            }
-                            return memo4;
-                          },
-                          memo3,
-                        );
-                      }
-                      return memo3;
-                    },
-                    memo2,
-                  );
-                }
-                return memo2;
-              },
+            return addAllCountryActionIdsToList(
               memo,
+              action.get('id'),
+              action.get('actorsByType'),
+              memberships,
+              countries,
+              includeActorMembers,
             );
           }
           return memo;
         },
-        countriesActionCount || Map(),
+        countryActionIds || Map(),
       );
     }
   }
-  const countryCount = countriesActionCount && countriesActionCount.size;
+  const countryCount = countryActionIds && countryActionIds.size;
   // also figure out map options
   if (mapSubject === 'targets' && actiontypeHasTarget) {
     mapTitle = `${countryCount} ${countryCount === 1 ? 'country' : 'countries'} targeted by activities of '${actorName}'`;
@@ -520,9 +354,9 @@ export function ActorMap({
         (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
       );
       if (country) {
-        const actionCount = countriesActionCount
-          && countriesActionCount.get(parseInt(country.get('id'), 10))
-          && countriesActionCount.get(parseInt(country.get('id'), 10)).size;
+        const actionCount = countryActionIds
+          && countryActionIds.get(parseInt(country.get('id'), 10))
+          && countryActionIds.get(parseInt(country.get('id'), 10)).size;
         if (actionCount) {
           return [
             ...memo,
@@ -544,7 +378,7 @@ export function ActorMap({
     },
     [],
   );
-  const maxValue = countriesActionCount && countriesActionCount.reduce(
+  const maxValue = countryActionIds && countryActionIds.reduce(
     (max, actionList) => Math.max(max, actionList.size),
     0,
   );
