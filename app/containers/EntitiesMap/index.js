@@ -22,6 +22,7 @@ import {
   selectActortypeActors,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
+  selectActionActorsGroupedByAction,
 } from 'containers/App/selectors';
 
 import {
@@ -39,6 +40,7 @@ import qe from 'utils/quasi-equals';
 import { hasGroupActors } from 'utils/entities';
 import MapContainer from './MapContainer';
 import MapInfoOptions from './MapInfoOptions';
+import { addToList } from './utils';
 // import messages from './messages';
 
 const LoadingWrap = styled.div`
@@ -76,6 +78,7 @@ export function EntitiesMap({
   onEntityClick,
   intl,
   hasFilters,
+  actionActorsByAction,
   // connections,
   // connectedTaxonomies,
   // locationQuery,
@@ -90,6 +93,7 @@ export function EntitiesMap({
   );
   let countryData;
   let hasByTarget;
+  let hasActions;
   let subjectOptions;
   let memberOption;
   let typeLabels;
@@ -99,44 +103,35 @@ export function EntitiesMap({
   let infoTitle;
   let infoSubTitle;
   let mapSubjectClean = mapSubject;
+  const entitiesTotal = entities ? entities.size : 0;
   // let cleanMapSubject = 'actors';
   if (dataReady) {
-    if (config.types === 'actortypes' && typeId === ACTORTYPES.COUNTRY) {
-      // entities are filtered countries
-      // actions are stored with each country
-      typeLabels = {
-        plural: intl.formatMessage(appMessages.entities.actions.plural),
-        single: intl.formatMessage(appMessages.entities.actions.single),
-      };
-      typeLabelsFor = {
-        single: intl.formatMessage(appMessages.entities[`actors_${typeId}`].single),
-        plural: intl.formatMessage(appMessages.entities[`actors_${typeId}`].plural),
-      };
-
+    if (config.types === 'actortypes') {
       type = actortypes.find((at) => qe(at.get('id'), typeId));
       hasByTarget = type.getIn(['attributes', 'is_target']);
-      if (hasByTarget) {
-        if (mapSubject === 'targets') {
+      hasActions = type.getIn(['attributes', 'is_active']);
+      if (hasByTarget && hasActions) { // ie countries & groups
+        mapSubjectClean = mapSubject;
+        if (mapSubjectClean === 'targets') {
           indicator = includeTargetMembers ? 'targetingActionsTotal' : 'targetingActions';
         }
-        // cleanMapSubject = mapSubject;
         subjectOptions = [
           {
             type: 'secondary',
             title: 'As actors',
             onClick: () => onSetMapSubject('actors'),
-            active: mapSubject === 'actors',
-            disabled: mapSubject === 'actors',
+            active: mapSubjectClean === 'actors',
+            disabled: mapSubjectClean === 'actors',
           },
           {
             type: 'secondary',
             title: 'As targets',
             onClick: () => onSetMapSubject('targets'),
-            active: mapSubject === 'targets',
-            disabled: mapSubject === 'targets',
+            active: mapSubjectClean === 'targets',
+            disabled: mapSubjectClean === 'targets',
           },
         ];
-        if (mapSubject === 'targets') {
+        if (mapSubjectClean === 'targets') {
           // note this should always be true!
           memberOption = {
             active: includeTargetMembers,
@@ -150,7 +145,35 @@ export function EntitiesMap({
             label: 'Include activities of intergovernmental organisations (countries belong to)',
           };
         }
+      } else if (hasActions && !hasByTarget) { // i.e. institutions
+        // showing targeted countries
+        mapSubjectClean = 'targets';
+        memberOption = {
+          active: includeTargetMembers,
+          onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
+          label: 'Include activities targeting regions, intergovernmental organisations and classes (countries belong to)',
+        };
+      } else if (!hasActions && hasByTarget) { // i.e. regions, classes
+        mapSubjectClean = 'targets';
+        memberOption = {
+          active: includeActorMembers,
+          onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+          label: 'Include activities of intergovernmental organisations (countries belong to)',
+        };
+      }
+
+      // entities are filtered countries
+      if (qe(typeId, ACTORTYPES.COUNTRY)) {
         // entities are filtered countries
+        // actions are stored with each country
+        typeLabels = {
+          plural: intl.formatMessage(appMessages.entities.actions.plural),
+          single: intl.formatMessage(appMessages.entities.actions.single),
+        };
+        typeLabelsFor = {
+          single: intl.formatMessage(appMessages.entities[`actors_${typeId}`].single),
+          plural: intl.formatMessage(appMessages.entities[`actors_${typeId}`].plural),
+        };
         countryData = countriesJSON.features.map((feature) => {
           const country = entities.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
           if (country) {
@@ -195,10 +218,78 @@ export function EntitiesMap({
             },
           };
         });
+        infoTitle = typeLabels.plural;
+        infoSubTitle = `for ${entitiesTotal} ${typeLabelsFor[entitiesTotal === 1 ? 'single' : 'plural']}${hasFilters ? ' (filtered)' : ''}`;
+      } else if (hasActions && qe(typeId, ACTORTYPES.ORG)) {
+        // entities are orgs
+        // figure out action ids for each country
+        let countryActionIds = Map();
+        countryActionIds = actionActorsByAction && entities.reduce(
+          (memo, actor) => {
+            if (actor.get('actions')) {
+              return actor.get('actions').reduce(
+                (memo2, actionId) => {
+                  const actorIds = actionActorsByAction.get(actionId);
+                  if (actorIds) {
+                    return actorIds.reduce(
+                      (memo3, actorId) => {
+                        const country = countries.get(actorId.toString());
+                        if (country) {
+                          return addToList(memo3, actorId, actionId);
+                        }
+                        // TODO include countries via group-actors
+                        return memo3;
+                      },
+                      memo2,
+                    );
+                  }
+                  return memo2;
+                },
+                memo,
+              );
+            }
+            return memo;
+          },
+          countryActionIds,
+        );
+        countryData = countriesJSON.features.map((feature) => {
+          const country = countries.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
+          if (country) {
+            const countTargetingActions = countryActionIds && countryActionIds.get(parseInt(country.get('id'), 10))
+              ? countryActionIds.get(parseInt(country.get('id'), 10)).size
+              : 0;
+            return {
+              ...feature,
+              id: country.get('id'),
+              attributes: country.get('attributes').toJS(),
+              tooltip: {
+                title: country.getIn(['attributes', 'title']),
+              },
+              values: {
+                targetingActions: countTargetingActions,
+              },
+            };
+          }
+          return {
+            ...feature,
+            values: {
+              targetingActions: 0,
+            },
+          };
+        });
+        indicator = 'targetingActions';
+        const countriesTotal = countryActionIds ? countryActionIds.size : 0;
+        typeLabels = {
+          plural: `${intl.formatMessage(appMessages.entities.actions.plural)} of ${entitiesTotal} ${intl.formatMessage(appMessages.entities[`actors_${typeId}`].plural)}`,
+          single: `${intl.formatMessage(appMessages.entities.actions.single)} of ${entitiesTotal} ${intl.formatMessage(appMessages.entities[`actors_${typeId}`].plural)}`,
+        };
+        typeLabelsFor = {
+          single: intl.formatMessage(appMessages.entities[`actors_${ACTORTYPES.COUNTRY}`].single),
+          plural: intl.formatMessage(appMessages.entities[`actors_${ACTORTYPES.COUNTRY}`].plural),
+        };
+        infoTitle = `${typeLabels.plural}${hasFilters ? ' (filtered)' : ''}`;
+        infoSubTitle = `targeting ${countriesTotal} ${typeLabelsFor[countriesTotal === 1 ? 'single' : 'plural']}`;
       }
-      const countriesTotal = entities ? entities.size : 0;
-      infoTitle = typeLabels.plural;
-      infoSubTitle = `for ${countriesTotal} ${typeLabelsFor[countriesTotal === 1 ? 'single' : 'plural']}${hasFilters ? ' (filtered)' : ''}`;
     } else if (config.types === 'actiontypes') {
       typeLabels = {
         single: intl.formatMessage(appMessages.entities[`actions_${typeId}`].single),
@@ -412,6 +503,7 @@ EntitiesMap.propTypes = {
   actiontypes: PropTypes.instanceOf(Map),
   targettypes: PropTypes.instanceOf(Map),
   countries: PropTypes.instanceOf(Map),
+  actionActorsByAction: PropTypes.instanceOf(Map),
   // taxonomies: PropTypes.instanceOf(Map),
   // connectedTaxonomies: PropTypes.instanceOf(Map),
   // locationQuery: PropTypes.instanceOf(Map),
@@ -434,6 +526,7 @@ EntitiesMap.propTypes = {
 const mapStateToProps = (state) => ({
   mapSubject: selectMapSubjectQuery(state),
   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
+  actionActorsByAction: selectActionActorsGroupedByAction(state), // for figuring out targeted countries
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
 });
