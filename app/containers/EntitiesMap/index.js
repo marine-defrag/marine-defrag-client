@@ -374,6 +374,7 @@ export function EntitiesMap({
         includeActorMembers={includeActorMembers}
         includeTargetMembers={includeTargetMembers}
         mapSubject={hasByTarget ? mapSubjectClean : 'actors'}
+        scrollWheelZoom
       />
       {!dataReady && (
         <LoadingWrap>
