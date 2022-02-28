@@ -89,7 +89,7 @@ export function MapContainer({
   mapSubject,
   fitBounds,
   options = {},
-  projection = 'robin',
+  projection = 'robinson',
   styleType,
   mapId = 'll-map',
   interactive = true,
