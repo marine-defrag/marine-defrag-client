@@ -141,13 +141,13 @@ export function EntitiesMap({
           memberOption = {
             active: includeTargetMembers,
             onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
-            label: 'Include members of targeted regions, groups, classes',
+            label: 'Include activities targeting regions, intergovernmental organisations and classes (countries belong to)',
           };
         } else if (hasGroupActors(actortypes)) {
           memberOption = {
             active: includeActorMembers,
             onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-            label: 'Include members of group actors',
+            label: 'Include activities of intergovernmental organisations (countries belong to)',
           };
         }
         // entities are filtered countries
@@ -236,14 +236,14 @@ export function EntitiesMap({
           memberOption = {
             active: includeTargetMembers,
             onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
-            label: 'Include member countries of targeted regions, groups, classes',
+            label: 'Include activities targeting regions, intergovernmental organisations and classes (countries belong to)',
           };
         }
       } else if (hasGroupActors(actortypes)) {
         memberOption = {
           active: includeActorMembers,
           onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-          label: 'Include member countries of group actors',
+          label: 'Include activities of intergovernmental organisations (countries belong to)',
         };
       }
       // entities are filtered actions

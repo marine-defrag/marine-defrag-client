@@ -143,7 +143,7 @@ const Tooltip = ({
               )}
               {typeof feature.values.actionsMembers !== 'undefined' && typeLabels && (
                 <TTContent>
-                  {`As member of group actor: ${feature.values.actionsMembers}`}
+                  {`As member of intergovernmental organisation: ${feature.values.actionsMembers}`}
                   {mapSubject === 'actors' && includeActorMembers && (
                     <span>
                       {' *'}
@@ -172,7 +172,7 @@ const Tooltip = ({
               )}
               {typeof feature.values.targetingActionsMembers !== 'undefined' && typeLabels && (
                 <TTContent>
-                  {`As member of targeted region, group or class: ${feature.values.targetingActionsMembers}: `}
+                  {`As member of targeted region, intergovernmental organisation or class: ${feature.values.targetingActionsMembers}: `}
                   {mapSubject === 'targets' && includeTargetMembers && (
                     <span>
                       {' *'}
