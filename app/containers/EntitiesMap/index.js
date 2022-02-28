@@ -53,6 +53,10 @@ const LoadingWrap = styled.div`
   background: none;
 `;
 
+const Styled = styled(ContainerWrapper)`
+  background: white;
+`;
+
 export function EntitiesMap({
   dataReady,
   viewOptions,
@@ -363,7 +367,7 @@ export function EntitiesMap({
   }
 
   return (
-    <ContainerWrapper hasHeader noOverflow>
+    <Styled hasHeader noOverflow>
       <MapContainer
         typeLabels={typeLabels}
         countryFeatures={countriesJSON.features}
@@ -396,7 +400,7 @@ export function EntitiesMap({
           mapSubject={hasByTarget ? mapSubjectClean : 'actors'}
         />
       )}
-    </ContainerWrapper>
+    </Styled>
   );
 }
 

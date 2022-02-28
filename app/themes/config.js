@@ -748,13 +748,16 @@ export const MAP_OPTIONS = {
     E: 3600,
   },
   PROJ: {
-    name: 'Robinson',
-    crs: 'ESRI:54030',
-    proj4def: '+proj=robin +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs',
-    resolutions: [
-      65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 256, 128,
-    ],
-    origin: [0, 0],
-    bounds: [[90, -180], [-90, 180]], // [[N, W], [S, E]]
+    robinson: {
+      name: 'Robinson',
+      crs: 'ESRI:54030',
+      proj4def: '+proj=robin +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs',
+      resolutions: [
+        65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 256, 128,
+      ],
+      origin: [0, 0],
+      bounds: [[90, -180], [-90, 180]], // [[N, W], [S, E]]
+      addBBox: true,
+    },
   },
 };
