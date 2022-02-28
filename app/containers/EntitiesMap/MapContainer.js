@@ -23,7 +23,7 @@ const Styled = styled.div`
   bottom: 0;
   right: 0;
   left: 0;
-  background: #fff;
+  background: transparent;
   z-index: 10;
 `;
 
@@ -90,6 +90,9 @@ export function MapContainer({
   fitBounds,
   options = {},
   projection = 'robin',
+  styleType,
+  mapId = 'll-map',
+  interactive = true,
 }) {
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
@@ -106,7 +109,10 @@ export function MapContainer({
       ),
       // center: mapOptions.CENTER,
       // zoom: size === 'small' ? mapOptions.ZOOM.MIN : mapOptions.ZOOM.INIT,
-      zoomControl: true,
+      zoomControl: interactive,
+      dragging: interactive,
+      doubleClickZoom: interactive,
+      scrollWheelZoom: interactive,
       minZoom: mapOptions.ZOOM.MIN,
       maxZoom: mapOptions.ZOOM.MAX,
       maxBounds: [
@@ -120,7 +126,10 @@ export function MapContainer({
     : {
       // center: mapOptions.CENTER,
       // zoom: size === 'small' ? mapOptions.ZOOM.MIN : mapOptions.ZOOM.INIT,
-      zoomControl: true,
+      zoomControl: interactive,
+      dragging: interactive,
+      doubleClickZoom: interactive,
+      scrollWheelZoom: interactive,
       minZoom: mapOptions.ZOOM.MIN,
       maxZoom: mapOptions.ZOOM.MAX,
       continuousWorld: true,
@@ -205,7 +214,7 @@ export function MapContainer({
   //   };
   // }, [ref]);
   useEffect(() => {
-    mapRef.current = L.map('ll-map', leafletOptions).on(mapEvents);
+    mapRef.current = L.map(mapId, leafletOptions).on(mapEvents);
     // create an orange rectangle
     if (customMapProjection && customMapProjection.addBBox) {
       L.geoJSON(getBBox(customMapProjection.bounds), mapOptions.BBOX_STYLE).addTo(mapRef.current);
@@ -229,7 +238,9 @@ export function MapContainer({
       mapOptions.CENTER,
       mapOptions.ZOOM.INIT,
     );
-    mapRef.current.zoomControl.setPosition('topleft');
+    if (mapRef.current.zoomControl) {
+      mapRef.current.zoomControl.setPosition('topleft');
+    }
   }, []);
 
   // add countryFeatures
@@ -253,17 +264,42 @@ export function MapContainer({
     if (countryData) {
       countryOverlayGroupRef.current.clearLayers();
       if (countryData.length > 0) {
-        const scale = scaleColorCount(maxValue, mapOptions.GRADIENT[mapSubject]);
+        const scale = mapSubject && scaleColorCount(maxValue, mapOptions.GRADIENT[mapSubject]);
         const jsonLayer = L.geoJSON(
           countryData,
           {
-            style: (f) => ({
-              ...mapOptions.DEFAULT_STYLE,
-              fillColor: f.values && f.values[indicator] && f.values[indicator] > 0
-                ? scale(f.values[indicator])
-                : mapOptions.NO_DATA_COLOR,
-              ...f.style,
-            }),
+            style: (f) => {
+              const defaultStyle = styleType && mapOptions.STYLE[styleType]
+                ? {
+                  ...mapOptions.DEFAULT_STYLE,
+                  ...mapOptions.STYLE[styleType],
+                }
+                : mapOptions.DEFAULT_STYLE;
+              const fstyle = f.isActive
+                ? {
+                  ...defaultStyle,
+                  ...mapOptions.STYLE.active,
+                }
+                : defaultStyle;
+              if (mapSubject) {
+                if (f.values && f.values[indicator] && f.values[indicator] > 0) {
+                  return {
+                    ...fstyle,
+                    fillColor: scale(f.values[indicator]),
+                    ...f.style,
+                  };
+                }
+                return {
+                  ...fstyle,
+                  fillColor: mapOptions.NO_DATA_COLOR,
+                  ...f.style,
+                };
+              }
+              return {
+                ...fstyle,
+                ...f.style,
+              };
+            },
             onEachFeature: (feature, layer) => {
               layer.on({
                 click: (e) => onFeatureClick(e, feature),
@@ -331,7 +367,7 @@ export function MapContainer({
 
   return (
     <>
-      <Styled id="ll-map" ref={ref} />
+      <Styled id={mapId} ref={ref} styleType={styleType} />
       {tooltip && (
         <Tooltip
           position={null}
@@ -365,8 +401,11 @@ MapContainer.propTypes = {
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
   fitBounds: PropTypes.bool,
+  interactive: PropTypes.bool,
   mapSubject: PropTypes.string,
   projection: PropTypes.string,
+  styleType: PropTypes.string,
+  mapId: PropTypes.string,
   options: PropTypes.object,
   // onSetMapSubject: PropTypes.func,
 };

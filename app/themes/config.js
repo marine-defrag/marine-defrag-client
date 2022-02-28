@@ -703,6 +703,20 @@ export const MAP_OPTIONS = {
     fillOpacity: 1,
     fillColor: '#EDEFF0',
   },
+  STYLE: {
+    active: {
+      weight: 2,
+      color: '#000000',
+    },
+    members: {
+      fillColor: '#aaa',
+    },
+    country: {
+      fillColor: '#0063b5',
+      weight: 1.5,
+      color: '#333333',
+    },
+  },
   TOOLTIP_STYLE: {
     weight: 1,
     fillOpacity: 0,

@@ -20,6 +20,7 @@ import {
   selectMembershipsGroupedByMember,
   selectMembershipsGroupedByAssociation,
   selectActors,
+  selectActorCategoriesGroupedByActor,
 } from 'containers/App/selectors';
 
 import {
@@ -191,6 +192,47 @@ const selectMembersJoined = createSelector(
     Map(),
   )
 );
+
+// get associated actors with associoted actions and categories
+// - group by actortype
+export const selectMembersByType = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectMembersJoined,
+  selectActorConnections,
+  selectActorActionsGroupedByActor,
+  selectActionActorsGroupedByActor,
+  selectMembershipsGroupedByMember,
+  selectMembershipsGroupedByAssociation,
+  selectActorCategoriesGroupedByActor,
+  selectCategories,
+  (
+    ready,
+    actors,
+    actorConnections,
+    actorActions,
+    actionActors,
+    memberships,
+    associations,
+    actorCategories,
+    categories,
+  ) => {
+    if (!ready) return Map();
+    return actors && actors
+      .map((actor) => setActorConnections({
+        actor,
+        actorConnections,
+        actorActions,
+        actionActors,
+        categories,
+        actorCategories,
+        memberships,
+        associations,
+      }))
+      .groupBy((r) => r.getIn(['attributes', 'actortype_id']))
+      .sortBy((val, key) => key);
+  }
+);
+
 const selectAssociationJoins = createSelector(
   (state, id) => id,
   selectMembershipsGroupedByMember,
@@ -210,22 +252,6 @@ const selectAssociationsJoined = createSelector(
     },
     Map(),
   )
-);
-
-// get associated actors with associoted actions and categories
-// - group by actortype
-export const selectMembersByType = createSelector(
-  (state) => selectReady(state, { path: DEPENDENCIES }),
-  selectMembersJoined,
-  (
-    ready,
-    actors,
-  ) => {
-    if (!ready) return Map();
-    return actors && actors
-      .groupBy((r) => r.getIn(['attributes', 'actortype_id']))
-      .sortBy((val, key) => key);
-  }
 );
 // get associated actors with associoted actions and categories
 // - group by actortype
