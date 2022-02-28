@@ -42,8 +42,8 @@ export function Members(props) {
     onEntityClick,
     membersByType,
     // actiontypes,
-    // taxonomies,
-    // actionConnections,
+    taxonomies,
+    actorConnections,
     // onSetActiontype,
     // viewActiontypeId,
     // actionsByActiontype,
@@ -59,7 +59,10 @@ export function Members(props) {
     Object.values(countriesTopo.objects)[0],
   );
   const countries = membersByType && membersByType.get(parseInt(ACTORTYPES.COUNTRY, 10));
-  const countryData = countriesJSON.features.reduce(
+  const otherMembers = membersByType && membersByType.filter(
+    (type, typeId) => !qe(typeId, ACTORTYPES.COUNTRY),
+  );
+  const countryData = countries && countries.size > 0 && countriesJSON.features.reduce(
     (memo, feature) => {
       const country = countries && countries.find(
         (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
@@ -78,7 +81,7 @@ export function Members(props) {
               actions: 1,
             },
             style: {
-              fillOpacity: 0.6,
+              fillOpacity: 0.3,
             },
           },
         ];
@@ -87,7 +90,7 @@ export function Members(props) {
     },
     [],
   );
-  const mapTitle = 'Member countries';
+
   return (
     <Box>
       {(!membersByType || membersByType.size === 0) && (
@@ -97,14 +100,14 @@ export function Members(props) {
           </Text>
         </Box>
       )}
-      {membersByType && membersByType.size > 0 && (
+      {countries && countries.size > 0 && (
         <Box>
           <MapOuterWrapper hasHeader noOverflow>
-            {mapTitle && (
-              <MapTitle>
-                <Text weight={600}>{mapTitle}</Text>
-              </MapTitle>
-            )}
+            <MapTitle>
+              <Text weight={600}>
+                {`${countries.size} countries`}
+              </Text>
+            </MapTitle>
             <MapWrapper>
               <MapContainer
                 countryData={countryData}
@@ -117,9 +120,24 @@ export function Members(props) {
               />
             </MapWrapper>
           </MapOuterWrapper>
+          <FieldGroup
+            aside
+            group={{
+              fields: [
+                getActorConnectionField({
+                  actors: countries,
+                  onEntityClick,
+                  typeid: ACTORTYPES.COUNTRY,
+                  taxonomies,
+                  connections: actorConnections,
+                  skipLabel: true,
+                }),
+              ],
+            }}
+          />
         </Box>
       )}
-      {membersByType && membersByType.size > 0 && (
+      {otherMembers && otherMembers.size > 0 && (
         <Box>
           <FieldGroup
             aside
@@ -130,6 +148,8 @@ export function Members(props) {
                     actors,
                     onEntityClick,
                     typeid,
+                    taxonomies,
+                    connections: actorConnections,
                   }),
                 ]),
                 [],
@@ -145,6 +165,8 @@ export function Members(props) {
 Members.propTypes = {
   onEntityClick: PropTypes.func,
   membersByType: PropTypes.instanceOf(Map),
+  taxonomies: PropTypes.instanceOf(Map),
+  actorConnections: PropTypes.instanceOf(Map),
 };
 
 

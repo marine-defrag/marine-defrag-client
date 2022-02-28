@@ -57,6 +57,7 @@ import {
   selectIsUserManager,
   selectTaxonomiesWithCategories,
   selectActionConnections,
+  selectActorConnections,
   selectSubjectQuery,
   selectActiontypeQuery,
   selectActortypes,
@@ -107,6 +108,7 @@ export function ActorView(props) {
     actortypes,
     taxonomies,
     actionConnections,
+    actorConnections,
     onSetActiontype,
     viewActiontypeId,
     actionsByActiontype,
@@ -272,6 +274,8 @@ export function ActorView(props) {
                       <Members
                         membersByType={membersByType}
                         onEntityClick={onEntityClick}
+                        taxonomies={taxonomies}
+                        actorConnections={actorConnections}
                       />
                     )}
                     {(viewSubject === 'actors' || viewSubject === 'targets') && (
@@ -281,8 +285,8 @@ export function ActorView(props) {
                         viewActortype={viewActortype}
                         viewSubject={viewSubject}
                         taxonomies={taxonomies}
-                        hasMembers={hasMembers}
                         actionConnections={actionConnections}
+                        hasMembers={hasMembers}
                         onSetActiontype={onSetActiontype}
                         viewActiontypeId={viewActiontypeId}
                         actionsByActiontype={actionsByActiontype}
@@ -360,6 +364,7 @@ ActorView.propTypes = {
   viewTaxonomies: PropTypes.instanceOf(Map),
   taxonomies: PropTypes.instanceOf(Map),
   actionConnections: PropTypes.instanceOf(Map),
+  actorConnections: PropTypes.instanceOf(Map),
   actionsByActiontype: PropTypes.instanceOf(Map),
   actionsAsTargetByActiontype: PropTypes.instanceOf(Map),
   membersByType: PropTypes.instanceOf(Map),
@@ -388,6 +393,7 @@ const mapStateToProps = (state, props) => ({
   actionsAsMemberByActortype: selectActionsAsMemberByActortype(state, props.params.id),
   actionsAsTargetAsMemberByActortype: selectActionsAsTargetAsMemberByActortype(state, props.params.id),
   actionConnections: selectActionConnections(state),
+  actorConnections: selectActorConnections(state),
   membersByType: selectMembersByType(state, props.params.id),
   associationsByType: selectAssociationsByType(state, props.params.id),
   subject: selectSubjectQuery(state),
