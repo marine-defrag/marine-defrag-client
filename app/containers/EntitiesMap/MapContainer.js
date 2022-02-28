@@ -93,6 +93,7 @@ export function MapContainer({
   styleType,
   mapId = 'll-map',
   interactive = true,
+  scrollWheelZoom = false,
 }) {
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
@@ -112,7 +113,7 @@ export function MapContainer({
       zoomControl: interactive,
       dragging: interactive,
       doubleClickZoom: interactive,
-      scrollWheelZoom: interactive,
+      scrollWheelZoom,
       minZoom: mapOptions.ZOOM.MIN,
       maxZoom: mapOptions.ZOOM.MAX,
       maxBounds: [
@@ -129,7 +130,7 @@ export function MapContainer({
       zoomControl: interactive,
       dragging: interactive,
       doubleClickZoom: interactive,
-      scrollWheelZoom: interactive,
+      scrollWheelZoom,
       minZoom: mapOptions.ZOOM.MIN,
       maxZoom: mapOptions.ZOOM.MAX,
       continuousWorld: true,
@@ -402,6 +403,7 @@ MapContainer.propTypes = {
   includeTargetMembers: PropTypes.bool,
   fitBounds: PropTypes.bool,
   interactive: PropTypes.bool,
+  scrollWheelZoom: PropTypes.bool,
   mapSubject: PropTypes.string,
   projection: PropTypes.string,
   styleType: PropTypes.string,

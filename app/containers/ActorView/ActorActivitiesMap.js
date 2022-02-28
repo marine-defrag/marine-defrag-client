@@ -385,9 +385,6 @@ export function ActorActivitiesMap({
                 ...feature,
                 id: country.get('id'),
                 attributes: country.get('attributes').toJS(),
-                tooltip: {
-                  title: country.getIn(['attributes', 'title']),
-                },
                 isActive,
               },
             ];
