@@ -365,7 +365,7 @@ export function ActionView(props) {
                     group={{
                       type: 'dark',
                       fields: [
-                        checkActionAttribute(typeId, 'amount') && getAmountField(viewEntity, 'amount', true),
+                        checkActionAttribute(typeId, 'amount') && getAmountField(viewEntity, 'amount'),
                         checkActionAttribute(typeId, 'amount_comment') && getTextField(viewEntity, 'amount_comment'),
                       ],
                     }}
@@ -375,7 +375,7 @@ export function ActionView(props) {
                     group={{
                       type: 'dark',
                       fields: [
-                        checkActionAttribute(typeId, 'date_start') && getDateField(viewEntity, 'date_start', true),
+                        checkActionAttribute(typeId, 'date_start') && getDateField(viewEntity, 'date_start'),
                         checkActionAttribute(typeId, 'date_end') && getDateField(viewEntity, 'date_end'),
                         checkActionAttribute(typeId, 'date_comment') && getTextField(viewEntity, 'date_comment'),
                       ],

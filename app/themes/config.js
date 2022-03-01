@@ -87,8 +87,10 @@ export const ACTIONTYPES = {
   NATL: '4',
   DONOR: '5',
   INIT: '6',
+  FACTS: '7',
 };
 export const DEFAULT_ACTIONTYPE = ACTIONTYPES.DONOR;
+export const FF_ACTIONTYPE = ACTIONTYPES.FACTS;
 export const ACTORTYPES = {
   COUNTRY: '1',
   ORG: '2',
@@ -188,6 +190,9 @@ export const ACTIONTYPE_ACTORTYPES = {
     ACTORTYPES.ORG,
     ACTORTYPES.GROUP,
   ],
+  [ACTIONTYPES.FACTS]: [
+    ACTORTYPES.COUNTRY,
+  ],
 };
 // type compatibility: targets for actions
 export const ACTIONTYPE_TARGETTYPES = {
@@ -212,6 +217,7 @@ export const ACTIONTYPE_TARGETTYPES = {
     ACTORTYPES.REG,
     ACTORTYPES.CLASS,
   ],
+  [ACTIONTYPES.FACTS]: [],
 };
 
 export const ACTIONTYPE_RESOURCETYPES = {
@@ -243,6 +249,9 @@ export const ACTIONTYPE_RESOURCETYPES = {
   [ACTIONTYPES.INIT]: [
     RESOURCETYPES.REF,
     RESOURCETYPES.WEB,
+  ],
+  [ACTIONTYPES.FACTS]: [
+    RESOURCETYPES.REF,
   ],
 };
 
@@ -316,6 +325,7 @@ export const ACTION_FIELDS = {
         ACTIONTYPES.NATL,
         ACTIONTYPES.DONOR,
         ACTIONTYPES.INIT,
+        ACTIONTYPES.FACTS,
       ],
       type: 'markdown',
     },
@@ -325,6 +335,7 @@ export const ACTION_FIELDS = {
         ACTIONTYPES.NATL,
         ACTIONTYPES.DONOR,
         ACTIONTYPES.INIT,
+        ACTIONTYPES.FACTS,
       ],
       type: 'markdown',
     },
@@ -336,6 +347,7 @@ export const ACTION_FIELDS = {
         ACTIONTYPES.REGLSEAS,
         ACTIONTYPES.DONOR,
         ACTIONTYPES.INIT,
+        ACTIONTYPES.FACTS,
       ],
       type: 'url',
     },
@@ -347,6 +359,7 @@ export const ACTION_FIELDS = {
         ACTIONTYPES.NATL,
         ACTIONTYPES.DONOR,
         ACTIONTYPES.INIT,
+        ACTIONTYPES.FACTS,
       ],
       type: 'date',
     },
@@ -358,6 +371,7 @@ export const ACTION_FIELDS = {
         ACTIONTYPES.NATL,
         ACTIONTYPES.DONOR,
         ACTIONTYPES.INIT,
+        ACTIONTYPES.FACTS,
       ],
       type: 'date',
     },
@@ -369,6 +383,7 @@ export const ACTION_FIELDS = {
         ACTIONTYPES.NATL,
         ACTIONTYPES.DONOR,
         ACTIONTYPES.INIT,
+        ACTIONTYPES.FACTS,
       ],
       type: 'text',
     },

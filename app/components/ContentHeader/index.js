@@ -123,7 +123,6 @@ class ContentHeader extends React.PureComponent { // eslint-disable-line react/p
       subTitle,
       hasViewOptions,
     } = this.props;
-
     return (
       <Styled
         hasBottomBorder={type === CONTENT_PAGE || type === CONTENT_MODAL}
@@ -148,9 +147,11 @@ class ContentHeader extends React.PureComponent { // eslint-disable-line react/p
         <TitleWrap>
           {supTitle && <SupTitle title={supTitle} />}
           <Table>
-            <TableCell>
-              {this.renderTitle(type, title)}
-            </TableCell>
+            {title && (
+              <TableCell>
+                {this.renderTitle(type, title)}
+              </TableCell>
+            )}
             {buttons && (
               <TableCell hiddenMobile>
                 <ButtonGroup>
@@ -175,7 +176,7 @@ class ContentHeader extends React.PureComponent { // eslint-disable-line react/p
 }
 
 ContentHeader.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   buttons: PropTypes.array,
   supTitle: PropTypes.string,
   subTitle: PropTypes.string,

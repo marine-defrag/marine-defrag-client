@@ -25,6 +25,7 @@ import {
   ACTIONTYPE_RESOURCETYPES,
   DEFAULT_ACTIONTYPE,
   DEFAULT_ACTORTYPE,
+  FF_ACTIONTYPE,
 } from 'themes/config';
 
 import {
@@ -441,7 +442,15 @@ export const selectActortypes = createSelector(
 // all action types
 export const selectActiontypes = createSelector(
   (state) => selectEntities(state, API.ACTIONTYPES),
-  (entities) => entities
+  (state, includeFacts) => includeFacts,
+  (entities, includeFacts) => entities && includeFacts
+    ? entities
+    : entities.filter((t) => !qe(t.get('id'), FF_ACTIONTYPE))
+);
+// all action types
+export const selectFactsActiontype = createSelector(
+  (state) => selectEntities(state, API.ACTIONTYPES),
+  (entities) => entities && entities.find((t) => qe(t.get('id'), FF_ACTIONTYPE))
 );
 // all resource types
 export const selectResourcetypes = createSelector(
