@@ -42,6 +42,7 @@ export const ROUTES = {
   UNAUTHORISED: '/unauthorised',
   USERS: '/users',
   ACTIONS: '/actions',
+  ACTOR_ACTIONS: '/actoractions',
   ACTION: '/action',
   ACTORS: '/actors',
   ACTOR: '/actor',

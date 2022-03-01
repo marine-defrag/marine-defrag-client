@@ -1157,6 +1157,10 @@ export const selectActorCategoriesGroupedByCategory = createSelector(
     )
 );
 
+export const selectActorActions = createSelector(
+  (state) => selectEntities(state, API.ACTOR_ACTIONS),
+  (entities) => entities,
+);
 export const selectActorActionsGroupedByActor = createSelector(
   (state) => selectEntities(state, API.ACTOR_ACTIONS),
   (entities) => entities
@@ -1177,6 +1181,15 @@ export const selectActorActionsGroupedByAction = createSelector(
       (group) => group.map(
         (entity) => entity.getIn(['attributes', 'actor_id'])
       )
+    ),
+);
+export const selectActorActionsGroupedByActionAttributes = createSelector(
+  (state) => selectEntities(state, API.ACTOR_ACTIONS),
+  (entities) => entities
+    && entities.groupBy(
+      (entity) => entity.getIn(['attributes', 'measure_id'])
+    ).map(
+      (group) => group.map((entity) => entity.get('attributes'))
     ),
 );
 

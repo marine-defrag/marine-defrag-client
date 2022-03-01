@@ -48,6 +48,7 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
       entityPath,
       url,
       showCode,
+      showValueForAction,
     } = this.props;
     return (
       <Styled>
@@ -84,6 +85,7 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
             entityPath={entityPath}
             url={url}
             showCode={showCode}
+            showValueForAction={showValueForAction}
           />
         </Item>
       </Styled>
@@ -95,6 +97,7 @@ EntityListItem.propTypes = {
   entity: PropTypes.instanceOf(Map).isRequired,
   taxonomies: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
+  showValueForAction: PropTypes.instanceOf(Map),
   error: PropTypes.instanceOf(List),
   isManager: PropTypes.bool,
   isSelected: PropTypes.bool,

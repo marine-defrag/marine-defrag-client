@@ -43,7 +43,7 @@ import {
 } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, ACTIONTYPES } from 'themes/config';
+import { ROUTES, ACTIONTYPES, FF_ACTIONTYPE } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -54,6 +54,7 @@ import ViewWrapper from 'components/EntityView/ViewWrapper';
 import ViewPanel from 'components/EntityView/ViewPanel';
 import ViewPanelInside from 'components/EntityView/ViewPanelInside';
 import FieldGroup from 'components/fields/FieldGroup';
+import ButtonDefault from 'components/buttons/ButtonDefault';
 
 import {
   selectReady,
@@ -69,6 +70,7 @@ import appMessages from 'containers/App/messages';
 import messages from './messages';
 
 import ActionMap from './ActionMap';
+import IndicatorMap from './IndicatorMap';
 import {
   selectViewEntity,
   selectViewTaxonomies,
@@ -111,6 +113,7 @@ export function ActionView(props) {
     handleClose,
     params,
     activitytypes,
+    handleImportConnection,
   } = props;
 
   useEffect(() => {
@@ -292,12 +295,20 @@ export function ActionView(props) {
                       </Box>
                     )}
                     <Box>
-                      {dataReady && actortypesForSubject && hasMap && (
+                      {dataReady && actortypesForSubject && hasMap && !qe(typeId, FF_ACTIONTYPE) && (
                         <ActionMap
                           entities={actortypesForSubject}
                           mapSubject={viewSubject}
                           onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
                           hasMemberOption={hasMemberOption}
+                        />
+                      )}
+                      {dataReady && actortypesForSubject && hasMap && qe(typeId, FF_ACTIONTYPE) && (
+                        <IndicatorMap
+                          entities={actortypesForSubject}
+                          mapSubject="actors"
+                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          indicator={viewEntity}
                         />
                       )}
                       {viewSubject === 'targets' && hasTarget && (
@@ -321,12 +332,29 @@ export function ActionView(props) {
                                   onEntityClick,
                                   connections: actorConnections,
                                   typeid,
+                                  showValueForAction: qe(typeId, FF_ACTIONTYPE)
+                                    ? viewEntity
+                                    : null,
                                 }),
                               ]),
                               [],
                             ),
                           }}
                         />
+                      )}
+                      {qe(typeId, FF_ACTIONTYPE) && (
+                        <Box
+                          margin={{ bottom: 'large', horizontal: 'medium' }}
+                          fill={false}
+                          alignContent="start"
+                          direction="row"
+                        >
+                          <ButtonDefault
+                            onClick={() => handleImportConnection()}
+                          >
+                            Import actor connections
+                          </ButtonDefault>
+                        </Box>
                       )}
                       {resourcesByResourcetype && (
                         <FieldGroup
@@ -453,6 +481,7 @@ ActionView.propTypes = {
   children: PropTypes.object,
   parents: PropTypes.object,
   onSetSubject: PropTypes.func,
+  handleImportConnection: PropTypes.func,
   intl: intlShape.isRequired,
   subject: PropTypes.string,
 };
@@ -489,6 +518,9 @@ function mapDispatchToProps(dispatch, props) {
     },
     handleEdit: () => {
       dispatch(updatePath(`${ROUTES.ACTION}${ROUTES.EDIT}/${props.params.id}`, { replace: true }));
+    },
+    handleImportConnection: () => {
+      dispatch(updatePath(`${ROUTES.ACTOR_ACTIONS}${ROUTES.IMPORT}/${props.params.id}`, { replace: true }));
     },
     handleClose: (typeId) => {
       dispatch(closeEntity(`${ROUTES.ACTIONS}/${typeId}`));
