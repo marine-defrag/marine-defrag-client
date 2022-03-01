@@ -82,7 +82,6 @@ export function MapContainer({
   countryData,
   indicator,
   onCountryClick,
-  typeLabels,
   maxValue,
   includeActorMembers,
   includeTargetMembers,
@@ -339,7 +338,7 @@ export function MapContainer({
     }
   }, [countryData, indicator, tooltip, mapSubject]);
 
-  // add countryFeatures
+  // highlight tooltip feature
   useEffect(() => {
     countryTooltipGroupRef.current.clearLayers();
     if (tooltip && countryData) {
@@ -365,17 +364,30 @@ export function MapContainer({
       countryOverGroupRef.current.addLayer(jsonLayer);
     }
   }, [featureOver]);
-
+  // update tooltip
+  useEffect(() => {
+    if (tooltip && countryData) {
+      const featureUpdated = countryData.find((f) => qe(f.id, tooltip.feature.id));
+      if (featureUpdated) {
+        setTooltip({
+          feature: featureUpdated,
+        });
+      } else {
+        setTooltip(null);
+      }
+    } else {
+      setTooltip(null);
+    }
+  }, [mapSubject, countryData]);
   return (
     <>
       <Styled id={mapId} ref={ref} styleType={styleType} />
-      {tooltip && (
+      {tooltip && tooltip.feature && tooltip.feature.tooltip && (
         <Tooltip
           position={null}
           direction={tooltip.direction}
-          feature={tooltip.feature}
+          feature={tooltip.feature.tooltip}
           onClose={() => setTooltip(null)}
-          typeLabels={typeLabels}
           onFeatureClick={(evt) => {
             if (evt !== undefined && evt.stopPropagation) evt.stopPropagation();
             setTooltip(null);
@@ -383,9 +395,6 @@ export function MapContainer({
               onCountryClick(tooltip.feature.id);
             }
           }}
-          includeActorMembers={includeActorMembers}
-          includeTargetMembers={includeTargetMembers}
-          mapSubject={mapSubject}
         />
       )}
     </>
@@ -393,7 +402,6 @@ export function MapContainer({
 }
 
 MapContainer.propTypes = {
-  typeLabels: PropTypes.object,
   countryFeatures: PropTypes.array,
   countryData: PropTypes.array,
   indicator: PropTypes.string,

@@ -56,7 +56,7 @@ export const CONFIG = {
       ],
     },
     map: {
-      types: [ACTORTYPES.COUNTRY],
+      types: [ACTORTYPES.COUNTRY, ACTORTYPES.ORG, ACTORTYPES.GROUP],
     },
   },
   taxonomies: { // filter by each category

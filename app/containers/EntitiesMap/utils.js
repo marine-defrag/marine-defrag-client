@@ -1,4 +1,5 @@
 import { scaleLinear } from 'd3-scale';
+import { List } from 'immutable';
 
 export const getRange = (allFeatures, attribute) => allFeatures.reduce(
   (range, f) => {
@@ -23,4 +24,15 @@ export const scaleColorCount = (max, stops) => {
   return scaleLinear()
     .domain(domain)
     .range(stops);
+};
+
+export const addToList = (list, countryId, actionId) => {
+  // if already present, add action id to country key
+  if (list.get(countryId)) {
+    return !list.get(countryId).includes(actionId)
+      ? list.set(countryId, list.get(countryId).push(actionId))
+      : list;
+  }
+  // else add country with action id as first entry
+  return list.set(countryId, List([actionId]));
 };

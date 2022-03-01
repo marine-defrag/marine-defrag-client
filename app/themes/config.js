@@ -567,7 +567,7 @@ export const RESOURCE_FIELDS = {
   },
 };
 
-export const KEEP_FILTERS = ['view', 'subj'];
+export const KEEP_FILTERS = ['view', 'subj', 'msubj', 'tm', 'am'];
 
 // Language and date settings ********************
 // Note: you may also set the locales in i18n.js
