@@ -44,6 +44,7 @@ import qe from 'utils/quasi-equals';
 import { hasGroupActors } from 'utils/entities';
 import MapContainer from './MapContainer';
 import MapInfoOptions from './MapInfoOptions';
+import TooltipContent from './TooltipContent';
 // import messages from './messages';
 
 const LoadingWrap = styled.div`
@@ -113,6 +114,7 @@ export function EntitiesMap({
   const entitiesTotal = entities ? entities.size : 0;
   // let cleanMapSubject = 'actors';
   if (dataReady) {
+    // actors ===================================================
     if (config.types === 'actortypes') {
       type = actortypes.find((at) => qe(at.get('id'), typeId));
       hasByTarget = type.getIn(['attributes', 'is_target']);
@@ -203,20 +205,59 @@ export function EntitiesMap({
             const countTargetingActionsMembers = country.get('targetingActionsAsMember')
               ? country.get('targetingActionsAsMember').filter((actionId) => !country.get('targetingActions').includes(actionId)).size
               : 0;
+            const actionsTotal = countActions + countActionsMembers;
+            const targetingActionsTotal = countTargetingActions + countTargetingActionsMembers;
+            let stats;
+            if (mapSubject === 'actors') {
+              stats = [
+                {
+                  title: `${intl.formatMessage(appMessages.entities.actions.plural)}: ${actionsTotal}`,
+                  values: [
+                    {
+                      label: 'As actor',
+                      value: countActions,
+                    },
+                    {
+                      label: 'As member of intergov. org.',
+                      value: countActionsMembers,
+                    },
+                  ],
+                },
+              ];
+            } else if (mapSubject === 'targets') {
+              stats = [
+                {
+                  title: `${intl.formatMessage(appMessages.entities.actions.plural)} as target: ${targetingActionsTotal}`,
+                  values: [
+                    {
+                      label: 'Targeted directly',
+                      value: countTargetingActions,
+                    },
+                    {
+                      label: 'Targeted as member of region, intergov. org. or class',
+                      value: countTargetingActionsMembers,
+                    },
+                  ],
+                },
+              ];
+            }
             return {
               ...feature,
               id: country.get('id'),
               attributes: country.get('attributes').toJS(),
               tooltip: {
                 title: country.getIn(['attributes', 'title']),
+                content: (
+                  <TooltipContent
+                    stats={stats}
+                  />
+                ),
               },
               values: {
                 actions: countActions,
-                actionsMembers: countActionsMembers,
-                actionsTotal: countActions + countActionsMembers,
+                actionsTotal,
                 targetingActions: countTargetingActions,
-                targetingActionsMembers: countTargetingActionsMembers,
-                targetingActionsTotal: countTargetingActions + countTargetingActionsMembers,
+                targetingActionsTotal,
               },
             };
           }
@@ -224,10 +265,8 @@ export function EntitiesMap({
             ...feature,
             values: {
               actions: 0,
-              actionsMembers: 0,
               actionsTotal: 0,
               targetingActions: 0,
-              targetingActionsMembers: 0,
               targetingActionsTotal: 0,
             },
           };
@@ -273,7 +312,7 @@ export function EntitiesMap({
                               return memo3.setIn([targetId, 'targetingActions'], List([actionId]));
                             }
                             // include countries via group-actors
-                            if (includeTargetMembers && membershipsByAssociation && targetType.getIn(['attributes', 'has_members'])) {
+                            if (membershipsByAssociation && targetType.getIn(['attributes', 'has_members'])) {
                               const targetMembers = membershipsByAssociation.get(targetId);
                               if (targetMembers) {
                                 return targetMembers.reduce(
@@ -326,17 +365,37 @@ export function EntitiesMap({
             const countTargetingActionsMember = actionIds && actionIds.get('targetingActionsMember')
               ? actionIds.get('targetingActionsMember').size
               : 0;
+            const targetingActionsTotal = countTargetingActions + countTargetingActionsMember;
+            const stats = [
+              {
+                title: `${intl.formatMessage(appMessages.entities.actions.plural)} as target: ${targetingActionsTotal}`,
+                values: [
+                  {
+                    label: 'Targeted directly',
+                    value: countTargetingActions,
+                  },
+                  {
+                    label: 'Targeted as member of region, intergov. org. or class',
+                    value: countTargetingActionsMember,
+                  },
+                ],
+              },
+            ];
             return {
               ...feature,
               id: country.get('id'),
               attributes: country.get('attributes').toJS(),
               tooltip: {
                 title: country.getIn(['attributes', 'title']),
+                content: (
+                  <TooltipContent
+                    stats={stats}
+                  />
+                ),
               },
               values: {
                 targetingActions: countTargetingActions,
-                targetingActionsMember: countTargetingActionsMember,
-                targetingActionsTotal: countTargetingActions + countTargetingActionsMember,
+                targetingActionsTotal,
               },
             };
           }
@@ -344,7 +403,6 @@ export function EntitiesMap({
             ...feature,
             values: {
               targetingActions: 0,
-              targetingActionsMember: 0,
               targetingActionsTotal: 0,
             },
           };
@@ -362,6 +420,8 @@ export function EntitiesMap({
         infoTitle = `${typeLabels.plural}${hasFilters ? ' (filtered)' : ''}`;
         infoSubTitle = `targeting ${countriesTotal} ${typeLabelsFor[countriesTotal === 1 ? 'single' : 'plural']}`;
       }
+
+    // actions ===================================================
     } else if (config.types === 'actiontypes') {
       typeLabels = {
         single: intl.formatMessage(appMessages.entities[`actions_${typeId}`].single),
@@ -488,20 +548,59 @@ export function EntitiesMap({
           const countActionsMembers = (cCounts && cCounts.get('actionsMembers')) || 0;
           const countTargetingActions = (cCounts && cCounts.get('targetingActions')) || 0;
           const countTargetingActionsMembers = (cCounts && cCounts.get('targetingActionsMembers')) || 0;
+          const actionsTotal = countActions + countActionsMembers;
+          const targetingActionsTotal = countTargetingActions + countTargetingActionsMembers;
+          let stats;
+          if (mapSubject === 'actors') {
+            stats = [
+              {
+                title: `${intl.formatMessage(appMessages.entities[`actions_${typeId}`].plural)}: ${actionsTotal}`,
+                values: [
+                  {
+                    label: 'As actor',
+                    value: countActions,
+                  },
+                  {
+                    label: 'As member of intergov. org.',
+                    value: countActionsMembers,
+                  },
+                ],
+              },
+            ];
+          } else if (mapSubject === 'targets') {
+            stats = [
+              {
+                title: `${intl.formatMessage(appMessages.entities[`actions_${typeId}`].plural)} as target: ${targetingActionsTotal}`,
+                values: [
+                  {
+                    label: 'Targeted directly',
+                    value: countTargetingActions,
+                  },
+                  {
+                    label: 'Targeted as member of region, intergov. org. or class',
+                    value: countTargetingActionsMembers,
+                  },
+                ],
+              },
+            ];
+          }
           return {
             ...feature,
             id: country.get('id'),
             attributes: country.get('attributes').toJS(),
             tooltip: {
               title: country.getIn(['attributes', 'title']),
+              content: (
+                <TooltipContent
+                  stats={stats}
+                />
+              ),
             },
             values: {
               actions: countActions,
-              actionsMembers: countActionsMembers,
-              actionsTotal: countActions + countActionsMembers,
+              actionsTotal,
               targetingActions: countTargetingActions,
-              targetingActionsMembers: countTargetingActionsMembers,
-              targetingActionsTotal: countTargetingActions + countTargetingActionsMembers,
+              targetingActionsTotal,
             },
           };
         }
@@ -509,10 +608,8 @@ export function EntitiesMap({
           ...feature,
           values: {
             actions: 0,
-            actionsMembers: 0,
             actionsTotal: 0,
             targetingActions: 0,
-            targetingActionsMembers: 0,
             targetingActionsTotal: 0,
           },
         };
