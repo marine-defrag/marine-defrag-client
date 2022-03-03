@@ -76,7 +76,7 @@ export function ActionsFactsOverview({
                   && connections.getIn(['resources', resourceId.toString()]);
                 const resourceIndicators = indicatorsByResourceId.get(resourceId);
                 return (
-                  <Group key={resourceId}>
+                  <Group key={`res-${resourceId}`}>
                     {resource && (
                       <ButtonSimple onClick={() => onUpdatePath(`${ROUTES.RESOURCE}/${resourceId}`)}>
                         <GroupTitle>
@@ -94,7 +94,7 @@ export function ActionsFactsOverview({
                         const path = `${ROUTES.ACTION}/${indicator.get('id')}`;
                         return (
                           <CardTeaser
-                            key={typeId}
+                            key={indicator.get('id')}
                             basis="1/3"
                             path={path}
                             onClick={(evt) => {

@@ -1,7 +1,8 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { API } from 'themes/config';
+import { API, FF_ACTIONTYPE } from 'themes/config';
 
+import qe from 'utils/quasi-equals';
 import {
   selectReady,
   selectEntity,
@@ -21,6 +22,7 @@ import {
   selectMembershipsGroupedByAssociation,
   selectActors,
   selectActorCategoriesGroupedByActor,
+  selectActorActionsGroupedByActorAttributes,
 } from 'containers/App/selectors';
 
 import {
@@ -85,7 +87,7 @@ const selectActionsAssociated = createSelector(
 // all connected actions
 // get associated actors with associoted actions and categories
 // - group by actortype
-export const selectActionsByType = createSelector(
+export const selectActionsWith = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActionsAssociated,
   selectActionConnections,
@@ -114,8 +116,22 @@ export const selectActionsByType = createSelector(
         actionResources,
         categories,
         actionCategories,
-      }))
+      }));
+  }
+);
+export const selectActionsByType = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectActionsWith,
+  (
+    ready,
+    actions,
+  ) => {
+    if (!ready) return Map();
+    return actions && actions
       .groupBy((r) => r.getIn(['attributes', 'measuretype_id']))
+      .filter(
+        (typeActions, typeId) => !qe(typeId, FF_ACTIONTYPE),
+      )
       .sortBy((val, key) => key);
   }
 );
@@ -377,4 +393,23 @@ export const selectActionsAsTargetAsMemberByActortype = createSelector(
       (val, key) => key
     );
   },
+);
+
+export const selectActorIndicators = createSelector(
+  (state, id) => id,
+  selectActionsWith,
+  selectActorActionsGroupedByActorAttributes,
+  (id, viewActions, actorActions) => {
+    const viewActorActions = actorActions && actorActions.get(parseInt(id, 10));
+    return viewActions && viewActions.filter(
+      (action) => qe(action.getIn(['attributes', 'measuretype_id']), FF_ACTIONTYPE)
+    ).map(
+      (action) => {
+        const aaa = viewActorActions.find((aa) => qe(aa.get('measure_id'), action.get('id')));
+        return aaa
+          ? action.set('value', aaa.get('value'))
+          : action;
+      }
+    );
+  }
 );

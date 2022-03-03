@@ -34,8 +34,6 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
   render() {
     const { field } = this.props;
     const { intl } = this.context;
-    console.log(field);
-    console.log(field.values && field.values.toJS());
     const label = field.skipLabel
       ? null
       : `${field.values.size} ${intl.formatMessage(

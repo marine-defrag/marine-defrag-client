@@ -442,7 +442,7 @@ export const selectActortypes = createSelector(
 // all action types
 export const selectActiontypes = createSelector(
   (state) => selectEntities(state, API.ACTIONTYPES),
-  (state, includeFacts) => includeFacts,
+  (state, args) => args ? args.includeFacts : false,
   (entities, includeFacts) => entities && includeFacts
     ? entities
     : entities.filter((t) => !qe(t.get('id'), FF_ACTIONTYPE))
@@ -1188,6 +1188,15 @@ export const selectActorActionsGroupedByActionAttributes = createSelector(
   (entities) => entities
     && entities.groupBy(
       (entity) => entity.getIn(['attributes', 'measure_id'])
+    ).map(
+      (group) => group.map((entity) => entity.get('attributes'))
+    ),
+);
+export const selectActorActionsGroupedByActorAttributes = createSelector(
+  (state) => selectEntities(state, API.ACTOR_ACTIONS),
+  (entities) => entities
+    && entities.groupBy(
+      (entity) => entity.getIn(['attributes', 'actor_id'])
     ).map(
       (group) => group.map((entity) => entity.get('attributes'))
     ),
