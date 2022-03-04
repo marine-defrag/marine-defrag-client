@@ -32,24 +32,6 @@ export const CONFIG = {
           clientPath: ROUTES.ACTION,
           search: ['code', 'title', 'description', 'comment', 'url'],
           groupByType: true,
-          sorting: [
-            {
-              default: true,
-              attribute: 'title',
-              type: 'string',
-              order: 'asc',
-            },
-            {
-              attribute: 'id', // proxy for created at
-              type: 'number',
-              order: 'desc',
-            },
-            {
-              attribute: 'updated_at',
-              type: 'date',
-              order: 'desc',
-            },
-          ],
         },
       ],
     },
@@ -63,24 +45,6 @@ export const CONFIG = {
           clientPath: ROUTES.ACTOR,
           search: ['code', 'title', 'description', 'activity_summary', 'url'],
           groupByType: true,
-          sorting: [
-            {
-              default: true,
-              attribute: 'title',
-              type: 'string',
-              order: 'asc',
-            },
-            {
-              attribute: 'id', // proxy for created at
-              type: 'number',
-              order: 'desc',
-            },
-            {
-              attribute: 'updated_at',
-              type: 'date',
-              order: 'desc',
-            },
-          ],
         },
       ],
     },
@@ -94,24 +58,6 @@ export const CONFIG = {
           clientPath: ROUTES.RESOURCE,
           search: ['title', 'description', 'status', 'url'],
           groupByType: true,
-          sorting: [
-            {
-              attribute: 'title',
-              type: 'string',
-              order: 'asc',
-              default: true,
-            },
-            {
-              attribute: 'id', // proxy for created at
-              type: 'number',
-              order: 'desc',
-            },
-            {
-              attribute: 'updated_at',
-              type: 'date',
-              order: 'desc',
-            },
-          ],
         },
       ],
     },
@@ -122,19 +68,6 @@ export const CONFIG = {
         as: 'taxonomy',
       }],
       categorySearch: ['title', 'short_title', 'description', 'url', 'taxonomy'],
-      sorting: [
-        {
-          attribute: 'title',
-          type: 'string',
-          order: 'asc',
-          default: true,
-        },
-        {
-          attribute: 'updated_at',
-          type: 'date',
-          order: 'desc',
-        },
-      ],
     },
     {
       group: 'content',
@@ -143,29 +76,7 @@ export const CONFIG = {
           path: API.PAGES,
           clientPath: ROUTES.PAGES,
           search: ['title', 'content', 'menu_title'],
-          sorting: [
-            {
-              attribute: 'title',
-              type: 'string',
-              order: 'asc',
-              default: true,
-            },
-            {
-              attribute: 'order',
-              type: 'number',
-              order: 'asc',
-            },
-            {
-              attribute: 'id', // proxy for created at
-              type: 'number',
-              order: 'desc',
-            },
-            {
-              attribute: 'updated_at',
-              type: 'date',
-              order: 'desc',
-            },
-          ],
+
         },
       ],
     },
