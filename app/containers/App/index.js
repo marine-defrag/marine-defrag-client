@@ -161,7 +161,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
     const isHomeOrAuth = isHome || isAuth;
     return (
       <div id="app">
-        <Helmet titleTemplate={`${title} - %s`} defaultTitle={title} />
+        <Helmet titleTemplate={`%s - ${title}`} defaultTitle={title} />
         {!isHome && (
           <Header
             isSignedIn={isUserSignedIn}

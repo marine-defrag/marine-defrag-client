@@ -26,9 +26,10 @@ import appMessages from 'containers/App/messages';
 
 import { checkActionAttribute } from 'utils/entities';
 
-import { ROUTES } from 'themes/config';
+import { ROUTES, FF_ACTIONTYPE } from 'themes/config';
 
 import EntityList from 'containers/EntityList';
+import ActionsFactsOverview from 'containers/ActionsFactsOverview';
 import { CONFIG, DEPENDENCIES } from './constants';
 import {
   selectConnections,
@@ -125,28 +126,38 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <EntityList
-          entities={entities}
-          taxonomies={taxonomies}
-          connections={connections}
-          connectedTaxonomies={connectedTaxonomies}
-          config={CONFIG}
-          header={headerOptions}
-          dataReady={dataReady}
-          entityTitle={{
-            single: intl.formatMessage(appMessages.entities[type].single),
-            plural: intl.formatMessage(appMessages.entities[type].plural),
-          }}
-          locationQuery={fromJS(location.query)}
-          actortypes={actortypes}
-          actiontypes={actiontypes}
-          targettypes={targettypes}
-          resourcetypes={resourcetypes}
-          typeOptions={this.prepareTypeOptions(actiontypes, typeId)}
-          onSelectType={onSelectType}
-          typeId={typeId}
-          showCode={checkActionAttribute(typeId, 'code', isManager)}
-        />
+        {typeId !== FF_ACTIONTYPE && (
+          <EntityList
+            entities={entities}
+            taxonomies={taxonomies}
+            connections={connections}
+            connectedTaxonomies={connectedTaxonomies}
+            config={CONFIG}
+            header={headerOptions}
+            dataReady={dataReady}
+            entityTitle={{
+              single: intl.formatMessage(appMessages.entities[type].single),
+              plural: intl.formatMessage(appMessages.entities[type].plural),
+            }}
+            locationQuery={fromJS(location.query)}
+            actortypes={actortypes}
+            actiontypes={actiontypes}
+            targettypes={targettypes}
+            resourcetypes={resourcetypes}
+            typeOptions={this.prepareTypeOptions(actiontypes, typeId)}
+            onSelectType={onSelectType}
+            typeId={typeId}
+            showCode={checkActionAttribute(typeId, 'code', isManager)}
+          />
+        )}
+        {typeId === FF_ACTIONTYPE && (
+          <ActionsFactsOverview
+            entities={entities}
+            connections={connections}
+            dataReady={dataReady}
+            isManager={isManager}
+          />
+        )}
       </div>
     );
   }

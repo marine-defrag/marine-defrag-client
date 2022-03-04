@@ -45,6 +45,7 @@ export class EntityListItemWrapper extends React.Component { // eslint-disable-l
       inSingleView,
       url,
       showCode,
+      showValueForAction,
     } = this.props;
     return (
       <ItemWrapper
@@ -74,6 +75,7 @@ export class EntityListItemWrapper extends React.Component { // eslint-disable-l
                 url={url}
                 wrapper={this.state.wrapper}
                 showCode={showCode}
+                showValueForAction={showValueForAction}
               />
             </div>
           )
@@ -89,6 +91,7 @@ EntityListItemWrapper.propTypes = {
   taxonomies: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
   errors: PropTypes.instanceOf(Map),
+  showValueForAction: PropTypes.instanceOf(Map),
   entityIdsSelected: PropTypes.instanceOf(List),
   config: PropTypes.object,
   isManager: PropTypes.bool,

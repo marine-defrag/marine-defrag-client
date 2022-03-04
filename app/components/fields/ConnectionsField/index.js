@@ -34,7 +34,6 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
   render() {
     const { field } = this.props;
     const { intl } = this.context;
-
     const label = field.skipLabel
       ? null
       : `${field.values.size} ${intl.formatMessage(
@@ -80,6 +79,7 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
               }
               onEntityClick={field.onEntityClick}
               inSingleView
+              showValueForAction={field.showValueForAction}
             />
             {field.values.size > CONNECTIONMAX && (
               <ToggleAllItems

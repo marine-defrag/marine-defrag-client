@@ -15,9 +15,9 @@ export const getRange = (allFeatures, attribute) => allFeatures.reduce(
   },
 );
 
-export const scaleColorCount = (max, stops) => {
+export const scaleColorCount = (max, stops, isIndicator) => {
   const noStops = stops.length;
-  const min = 1;
+  const min = isIndicator ? 0 : 1;
   const minMax = max - min;
   const maxFactor = minMax / (noStops - 1);
   const domain = stops.map((stop, i) => (i * maxFactor + min));
