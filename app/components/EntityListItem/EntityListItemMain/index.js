@@ -6,7 +6,7 @@ import { palette } from 'styled-theme';
 import { Map } from 'immutable';
 import { USER_ROLES } from 'themes/config';
 import appMessages from 'containers/App/messages';
-import { Box } from 'grommet';
+import { Box, Text } from 'grommet';
 
 import ItemStatus from 'components/ItemStatus';
 import EntityListItemMainTop from './EntityListItemMainTop';
@@ -103,6 +103,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     entity,
     connections,
     entityPath,
+    showValueForAction,
     // taxonomies,
   }) => {
     const { intl } = this.context;
@@ -113,6 +114,13 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
       id: entity.get('id'),
       title: entity.getIn(['attributes', 'name']) || entity.getIn(['attributes', 'title']),
       reference: this.getReference(entity, config),
+      indicator: showValueForAction
+        ? {
+          label: showValueForAction.getIn(['attributes', 'title']),
+          value: entity.getIn(['actionValues', showValueForAction.get('id')]),
+          unit: showValueForAction.getIn(['attributes', 'comment']),
+        }
+        : null,
       draft: entity.getIn(['attributes', 'draft']),
       role: entity.get('roles') && connections.get('roles') && this.getRole(entity.get('roles'), connections.get('roles')),
       path: (config && config.clientPath) || entityPath,
@@ -161,6 +169,15 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
                 {entity.title}
               </EntityListItemMainTitle>
             </EntityListItemMainTitleWrap>
+            {entity.indicator && (
+              <Box direction="row" gap="xsmall">
+                <Text size="xsmall">{`${entity.indicator.label}${entity.indicator.unit ? ' ' : ': '}`}</Text>
+                {entity.indicator.unit && (
+                  <Text size="xsmall">{` (${entity.indicator.unit}): `}</Text>
+                )}
+                <Text size="xsmall" weight={600}>{`${entity.indicator.value || 'N/A'}`}</Text>
+              </Box>
+            )}
           </Box>
           {entity.draft && (
             <Box flex={{ shrink: 0 }}>
@@ -186,6 +203,7 @@ EntityListItemMain.propTypes = {
   entity: PropTypes.instanceOf(Map).isRequired, // eslint-disable-line react/no-unused-prop-types
   taxonomies: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
   connections: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
+  showValueForAction: PropTypes.instanceOf(Map), // eslint-disable-line react/no-unused-prop-types
   config: PropTypes.object, // eslint-disable-line react/no-unused-prop-types
   entityPath: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
   url: PropTypes.string, // eslint-disable-line react/no-unused-prop-types

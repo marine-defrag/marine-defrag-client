@@ -20,7 +20,7 @@ import { sortEntities, getSortOption } from 'utils/sort';
 import { CONFIG, DEPENDENCIES } from './constants';
 
 
-const selectPathQuery = createSelector(
+export const selectPathQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('path')
 );
@@ -35,8 +35,9 @@ export const selectEntitiesByQuery = createSelector(
   selectSortByQuery,
   selectSortOrderQuery,
   (ready, searchQuery, allEntities, taxonomies, path, sort, order) => {
-    if (!ready) return null;
-    let active = false;// || CONFIG.search[0].targets[0].path;
+    if (!ready || !searchQuery || searchQuery.size < 2) {
+      return null;
+    }
     return fromJS(CONFIG.search).map((group) => {
       if (group.get('group') === 'taxonomies') {
         return group.set('targets', taxonomies.map((tax) => {
@@ -62,32 +63,13 @@ export const selectEntitiesByQuery = createSelector(
               group.get('categorySearch').valueSeq().toArray()
             )
             : categories;
-          if (
-            path === `taxonomies-${tax.get('id')}`
-            || (!path && !active && filteredCategories.size > 0 && searchQuery)
-          ) {
-            active = true;
-            const sortOption = getSortOption(group.get('sorting') && group.get('sorting').toJS(), sort);
-            return Map()
-              .set('path', `taxonomies-${tax.get('id')}`)
-              .set('optionPath', `taxonomies-${tax.get('id')}`)
-              // .set('icon', `taxonomy_${tax.get('id')}`)
-              .set('clientPath', 'category')
-              .set('taxId', tax.get('id'))
-              .set('active', true)
-              .set('sorting', group.get('sorting'))
-              .set('results', sortEntities(filteredCategories,
-                order || (sortOption ? sortOption.order : 'desc'),
-                sort || (sortOption ? sortOption.attribute : 'id'),
-                sortOption ? sortOption.type : 'number'));
-          }
           return Map()
             .set('path', `taxonomies-${tax.get('id')}`)
             .set('optionPath', `taxonomies-${tax.get('id')}`)
             .set('clientPath', 'category')
             .set('taxId', tax.get('id'))
-            .set('results', filteredCategories);
-        }));
+            .set('results', filteredCategories.toList());
+        }).toList());
       }
       return group.set(
         'targets',
@@ -121,21 +103,11 @@ export const selectEntitiesByQuery = createSelector(
                     .set('path', target.get('path'));
 
                   // if filtered by path
-                  if (
-                    path === typeTargetPath
-                  || (
-                    !path
-                    && !active
-                    && filteredEntities.size > 0
-                    && searchQuery
-                  )
-                  ) {
-                    active = true;
+                  if (path === typeTargetPath) {
                     // only sort the active entities that will be displayed
                     const sortOption = getSortOption(typeTarget.get('sorting') && typeTarget.get('sorting').toJS(), sort);
                     return innerMemo.push(
                       typeTarget
-                        .set('active', true)
                         .set('results', sortEntities(
                           filteredEntities,
                           order || (sortOption ? sortOption.order : 'desc'),
@@ -158,21 +130,11 @@ export const selectEntitiesByQuery = createSelector(
                 : allEntities.get(target.get('path'));
 
               // if filtered by path
-              if (
-                path === target.get('path')
-              || (
-                !path
-                && !active
-                && filteredEntities.size > 0
-                && searchQuery
-              )
-              ) {
-                active = true;
+              if (path === target.get('path')) {
                 // only sort the active entities that will be displayed
                 const sortOption = getSortOption(target.get('sorting') && target.get('sorting').toJS(), sort);
                 return memo.push(
                   target
-                    .set('active', true)
                     .set('optionPath', target.get('path'))
                     .set('results', sortEntities(
                       filteredEntities,

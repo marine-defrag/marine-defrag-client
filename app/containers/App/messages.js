@@ -285,6 +285,10 @@ export default defineMessages({
       id: 'app.containers.App.actiontypes.6',
       defaultMessage: 'Actortype 6',
     },
+    7: {
+      id: 'app.containers.App.actiontypes.7',
+      defaultMessage: 'Actortype 7',
+    },
   },
   actiontypes_short: {
     common: {
@@ -315,6 +319,10 @@ export default defineMessages({
       id: 'app.containers.App.actiontypes_short.6',
       defaultMessage: 'Actortype 6',
     },
+    7: {
+      id: 'app.containers.App.actiontypes_short.7',
+      defaultMessage: 'Actortype 7',
+    },
   },
   actiontypes_long: {
     1: {
@@ -341,6 +349,10 @@ export default defineMessages({
       id: 'app.containers.App.actiontypes_long.6',
       defaultMessage: 'Actortype 6',
     },
+    7: {
+      id: 'app.containers.App.actiontypes_long.7',
+      defaultMessage: 'Actortype 7',
+    },
   },
   actiontypes_about: {
     1: {
@@ -366,6 +378,10 @@ export default defineMessages({
     6: {
       id: 'app.containers.App.actiontypes_about.6',
       defaultMessage: 'Actortype 6',
+    },
+    7: {
+      id: 'app.containers.App.actiontypes_about.7',
+      defaultMessage: 'Actortype 7',
     },
   },
   actiontypeGroups: {
@@ -1360,6 +1376,36 @@ export default defineMessages({
       },
       empty: {
         id: 'app.containers.App.entities.actions_6.empty',
+        defaultMessage: 'No actors yet',
+      },
+    },
+    actions_7: {
+      single: {
+        id: 'app.containers.App.entities.actions_7.single',
+        defaultMessage: 'Actor',
+      },
+      plural: {
+        id: 'app.containers.App.entities.actions_7.plural',
+        defaultMessage: 'Actors',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.actions_7.singleLong',
+        defaultMessage: 'Actor',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.actions_7.pluralLong',
+        defaultMessage: 'Actors',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.actions_7.singleShort',
+        defaultMessage: 'Actor',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.actions_7.pluralShort',
+        defaultMessage: 'Actors',
+      },
+      empty: {
+        id: 'app.containers.App.entities.actions_7.empty',
         defaultMessage: 'No actors yet',
       },
     },

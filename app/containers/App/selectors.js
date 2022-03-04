@@ -25,6 +25,7 @@ import {
   ACTIONTYPE_RESOURCETYPES,
   DEFAULT_ACTIONTYPE,
   DEFAULT_ACTORTYPE,
+  FF_ACTIONTYPE,
 } from 'themes/config';
 
 import {
@@ -441,7 +442,15 @@ export const selectActortypes = createSelector(
 // all action types
 export const selectActiontypes = createSelector(
   (state) => selectEntities(state, API.ACTIONTYPES),
-  (entities) => entities
+  (state, args) => args ? args.includeFacts : false,
+  (entities, includeFacts) => entities && includeFacts
+    ? entities
+    : entities.filter((t) => !qe(t.get('id'), FF_ACTIONTYPE))
+);
+// all action types
+export const selectFactsActiontype = createSelector(
+  (state) => selectEntities(state, API.ACTIONTYPES),
+  (entities) => entities && entities.find((t) => qe(t.get('id'), FF_ACTIONTYPE))
 );
 // all resource types
 export const selectResourcetypes = createSelector(
@@ -1148,6 +1157,10 @@ export const selectActorCategoriesGroupedByCategory = createSelector(
     )
 );
 
+export const selectActorActions = createSelector(
+  (state) => selectEntities(state, API.ACTOR_ACTIONS),
+  (entities) => entities,
+);
 export const selectActorActionsGroupedByActor = createSelector(
   (state) => selectEntities(state, API.ACTOR_ACTIONS),
   (entities) => entities
@@ -1168,6 +1181,24 @@ export const selectActorActionsGroupedByAction = createSelector(
       (group) => group.map(
         (entity) => entity.getIn(['attributes', 'actor_id'])
       )
+    ),
+);
+export const selectActorActionsGroupedByActionAttributes = createSelector(
+  (state) => selectEntities(state, API.ACTOR_ACTIONS),
+  (entities) => entities
+    && entities.groupBy(
+      (entity) => entity.getIn(['attributes', 'measure_id'])
+    ).map(
+      (group) => group.map((entity) => entity.get('attributes'))
+    ),
+);
+export const selectActorActionsGroupedByActorAttributes = createSelector(
+  (state) => selectEntities(state, API.ACTOR_ACTIONS),
+  (entities) => entities
+    && entities.groupBy(
+      (entity) => entity.getIn(['attributes', 'actor_id'])
+    ).map(
+      (group) => group.map((entity) => entity.get('attributes'))
     ),
 );
 

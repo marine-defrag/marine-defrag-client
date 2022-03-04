@@ -9,16 +9,20 @@ export function MapKey({
   mapSubject,
   maxValue,
   maxBinValue = 0,
+  isIndicator,
+  unit,
 }) {
   const stops = maxValue && MAP_OPTIONS.GRADIENT[mapSubject];
   const noStops = maxValue && stops.length;
   const maxFactor = maxValue && maxValue / (noStops - 1);
+  const minValue = isIndicator ? 0 : 1;
   return (
     <>
       {!!maxValue && maxValue > maxBinValue && (
         <Gradient
+          unit={unit}
           config={{
-            range: [1, maxValue],
+            range: [minValue, maxValue],
             stops: stops.map((color, i) => ({
               value: i * maxFactor,
               color,
@@ -35,8 +39,10 @@ export function MapKey({
 
 MapKey.propTypes = {
   mapSubject: PropTypes.string,
+  unit: PropTypes.string,
   maxValue: PropTypes.number,
   maxBinValue: PropTypes.number,
+  isIndicator: PropTypes.bool,
 };
 
 export default MapKey;

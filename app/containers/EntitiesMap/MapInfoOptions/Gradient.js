@@ -34,6 +34,7 @@ const KeyLabel = styled.div`
 `;
 export function Gradient({
   config, // intl, dark,
+  // unit,
 }) {
   // let stops;
   return (
@@ -63,6 +64,7 @@ export function Gradient({
 
 Gradient.propTypes = {
   config: PropTypes.object,
+  // unit: PropTypes.string,
   // dark: PropTypes.bool,
   // intl: intlShape.isRequired,
 };

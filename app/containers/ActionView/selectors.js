@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { API } from 'themes/config';
+import { API, FF_ACTIONTYPE } from 'themes/config';
 import {
   selectReady,
   selectEntity,
@@ -16,6 +16,7 @@ import {
   selectActorActionsGroupedByActor,
   selectActionActorsGroupedByActor,
   selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByActionAttributes,
   selectActorCategoriesGroupedByActor,
   selectActionCategoriesGroupedByAction,
   selectActionResourcesGroupedByAction,
@@ -132,8 +133,10 @@ const selectActorsAssociated = createSelector(
 // - group by actortype
 export const selectActorsByType = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectViewEntity,
   selectActorsAssociated,
   selectActorConnections,
+  selectActorActionsGroupedByActionAttributes,
   selectActorActionsGroupedByActor,
   selectActionActorsGroupedByActor,
   selectMembershipsGroupedByMember,
@@ -142,27 +145,50 @@ export const selectActorsByType = createSelector(
   selectCategories,
   (
     ready,
+    viewEntity,
     actors,
     actorConnections,
-    actorActions,
-    actionActors,
+    actorActionsByActionFull,
+    actorActionsByActor,
+    actionActorsByActor,
     memberships,
     associations,
     actorCategories,
     categories,
   ) => {
     if (!ready) return Map();
-    return actors && actors
+    let actorsWithConnections = actors && actors
       .map((actor) => setActorConnections({
         actor,
         actorConnections,
-        actorActions,
-        actionActors,
+        actorActions: actorActionsByActor,
+        actionActors: actionActorsByActor,
         categories,
         actorCategories,
         memberships,
         associations,
-      }))
+      }));
+    if (viewEntity && qe(viewEntity.getIn(['attributes', 'measuretype_id']), FF_ACTIONTYPE)) {
+      const viewEntityActors = actorActionsByActionFull.get(parseInt(viewEntity.get('id'), 10));
+      if (viewEntityActors) {
+        actorsWithConnections = actorsWithConnections.map(
+          (actor) => {
+            // console.log(actor && actor.toJS())
+            const actorConnection = viewEntityActors.find(
+              (connection) => qe(actor.get('id'), connection.get('actor_id'))
+            );
+            return actorConnection
+              ? actor.setIn([
+                'actionValues',
+                viewEntity.get('id'),
+              ],
+              actorConnection.get('value'))
+              : actor;
+          }
+        );
+      }
+    }
+    return actorsWithConnections && actorsWithConnections
       .groupBy((r) => r.getIn(['attributes', 'actortype_id']))
       .sortBy((val, key) => key);
   }

@@ -264,7 +264,7 @@ export function MapContainer({
     if (countryData) {
       countryOverlayGroupRef.current.clearLayers();
       if (countryData.length > 0) {
-        const scale = mapSubject && scaleColorCount(maxValue, mapOptions.GRADIENT[mapSubject]);
+        const scale = mapSubject && scaleColorCount(maxValue, mapOptions.GRADIENT[mapSubject], indicator === 'indicator');
         const jsonLayer = L.geoJSON(
           countryData,
           {
