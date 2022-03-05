@@ -33,6 +33,7 @@ import {
   updatePath,
   openNewEntityModal,
   setView,
+  updateRouteQuery,
 } from 'containers/App/actions';
 
 // import appMessages from 'containers/App/messages';
@@ -201,6 +202,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       dataReady,
       resourcetypes,
       showCode,
+      onUpdateQuery,
     } = this.props;
 
     // detect print to avoid expensive rendering
@@ -314,6 +316,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             }}
             typeOptions={typeOptions}
             hasFilters={filters && filters.length > 0}
+            onUpdateQuery={onUpdateQuery}
           />
         )}
         {showList && (
@@ -528,6 +531,7 @@ EntityList.propTypes = {
   onCreateOption: PropTypes.func.isRequired,
   onDismissError: PropTypes.func.isRequired,
   onDismissAllErrors: PropTypes.func.isRequired,
+  onUpdateQuery: PropTypes.func.isRequired,
   canEdit: PropTypes.bool,
   includeHeader: PropTypes.bool,
   showCode: PropTypes.bool,
@@ -640,6 +644,9 @@ function mapDispatchToProps(dispatch, props) {
     },
     onCreateOption: (args) => {
       dispatch(openNewEntityModal(args));
+    },
+    onUpdateQuery: (args) => {
+      dispatch(updateRouteQuery(args));
     },
     onSetView: (view) => {
       dispatch(setView(view));

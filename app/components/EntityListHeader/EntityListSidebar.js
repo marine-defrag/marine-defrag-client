@@ -118,6 +118,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
       panelGroups,
       onHideSidebar,
       onHideOptions,
+      onUpdateQuery,
     } = this.props;
     const { intl } = this.context;
     return (
@@ -139,6 +140,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
                   onHideOptions={onHideOptions}
                   onToggleGroup={this.onToggleGroup}
                   expanded={this.state.expandedGroups}
+                  onUpdateQuery={onUpdateQuery}
                 />
               )}
               { isEditPanel && hasEntities && !hasSelected && (
@@ -162,6 +164,7 @@ EntityListSidebar.propTypes = {
   onHideSidebar: PropTypes.func,
   onHideOptions: PropTypes.func,
   setActiveOption: PropTypes.func,
+  onUpdateQuery: PropTypes.func,
 };
 
 EntityListSidebar.contextTypes = {

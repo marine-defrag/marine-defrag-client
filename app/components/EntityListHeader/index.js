@@ -296,6 +296,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       dataReady,
       typeId,
       isManager,
+      onUpdateQuery,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -324,6 +325,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         currentFilters,
         typeId,
         intl,
+        locationQuery,
         messages: {
           attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.filterGroupLabel.taxonomies),
@@ -492,6 +494,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             onHideSidebar={onHideFilters}
             onHideOptions={this.onHideForm}
             setActiveOption={this.onSetActiveOption}
+            onUpdateQuery={onUpdateQuery}
           />
         )}
         {showEditOptions && (
@@ -557,6 +560,7 @@ EntityListHeader.propTypes = {
   theme: PropTypes.object,
   currentFilters: PropTypes.array,
   onClearFilters: PropTypes.func.isRequired,
+  onUpdateQuery: PropTypes.func.isRequired,
   onShowFilters: PropTypes.func,
   onHideFilters: PropTypes.func,
   showFilters: PropTypes.bool,

@@ -112,7 +112,10 @@ const getErrorTag = (label) => ({
 const getConnectionLabel = (connection, value, long) => {
   if (connection) {
     if (long) {
-      return connection.getIn(['attributes', 'title']) || connection.get('id');
+      return truncateText(
+        connection.getIn(['attributes', 'title']) || connection.get('id'),
+        TEXT_TRUNCATE.CONNECTION_TAG,
+      );
     }
     return truncateText(
       connection.getIn(['attributes', 'code']) || connection.getIn(['attributes', 'title']) || connection.get('id'),
@@ -152,7 +155,8 @@ const getCurrentTaxonomyFilters = (
                 query: taxonomyFilters.query,
                 checked: false,
               }),
-              option: taxonomyFilters,
+              groupId: 'taxonomies',
+              optionId: taxonomy.get('id'),
             });
           }
         });
@@ -183,7 +187,8 @@ const getCurrentTaxonomyFilters = (
               query: 'without',
               checked: false,
             }),
-            option: taxonomyFilters,
+            groupId: 'taxonomies',
+            optionId: taxonomy.get('id'),
           });
         }
       });

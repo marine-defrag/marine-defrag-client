@@ -52,9 +52,9 @@ const ConnectionGroupLabel = styled.span`
 `;
 
 export const getFilterLabel = (filter, intl, long) => {
-  console.log(filter);
   // not used I think?
   if (filter.message) {
+    console.log('USED AFTER ALL');
     return filter.messagePrefix
       ? `${filter.messagePrefix} ${lowerCase(appMessage(intl, filter.message))}`
       : appMessage(intl, filter.message);

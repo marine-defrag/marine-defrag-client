@@ -10,12 +10,11 @@ import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { Box } from 'grommet';
 
-import { getFilterLabel } from 'components/TagList';
-import Icon from 'components/Icon';
-import ButtonTagFilter from 'components/buttons/ButtonTagFilter';
+import qe from 'utils/quasi-equals';
 
 import EntityListSidebarGroupLabel from './EntityListSidebarGroupLabel';
-import EntityListSidebarOption from './EntityListSidebarOption';
+import FilterOptionList from './FilterOptionList';
+import FilterOptionCheckboxes from './FilterOptionCheckboxes';
 
 const Group = styled((p) => (
   <Box
@@ -31,8 +30,7 @@ const Group = styled((p) => (
 
 class EntityListSidebarGroups extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
-    const { groups, onHideOptions } = this.props;
-    const { intl } = this.context;
+    const { groups, onHideOptions, onUpdateQuery } = this.props;
     return (
       <div>
         {groups && groups.entrySeq().map(([groupId, group]) => {
@@ -56,45 +54,20 @@ class EntityListSidebarGroups extends React.PureComponent { // eslint-disable-li
                     {groupOptions.map(
                       (option, i) => (
                         <Box key={i}>
-                          <EntityListSidebarOption
-                            option={option}
-                            groupId={group.get('id')}
-                            groupType={group.get('type')}
-                            onShowForm={this.props.onShowForm}
-                          />
-                          {option.get('currentFilters') && option.get('currentFilters').size > 0 && (
-                            <Box
-                              pad={{
-                                top: 'xxsmall',
-                                bottom: 'xsmall',
-                                left: 'medium',
-                              }}
-                              align="start"
-                              gap="hair"
-                            >
-                              {option.get('currentFilters').map(
-                                (f, j) => {
-                                  const filter = f.toJS();
-                                  return (
-                                    <Box key={j} align="start">
-                                      <ButtonTagFilter
-                                        onClick={(arg) => {
-                                          onHideOptions();
-                                          filter.onClick(arg);
-                                        }}
-                                        palette={filter.type || 'attributes'}
-                                        paletteHover={`${filter.type || 'attributes'}Hover`}
-                                        pIndex={parseInt(filter.id, 10) || 0}
-                                        disabled={!filter.onClick}
-                                      >
-                                        {getFilterLabel(filter, intl, true)}
-                                        {filter.onClick && <Icon name="removeSmall" text textRight hidePrint />}
-                                      </ButtonTagFilter>
-                                    </Box>
-                                  );
-                                }
-                              )}
-                            </Box>
+                          {option.get('filterUI') && qe(option.get('filterUI'), 'checkboxes') && (
+                            <FilterOptionCheckboxes
+                              option={option}
+                              group={group}
+                              onUpdateQuery={onUpdateQuery}
+                            />
+                          )}
+                          {(!option.get('filterUI') || qe(option.get('filterUI'), 'list')) && (
+                            <FilterOptionList
+                              option={option}
+                              group={group}
+                              onShowForm={this.props.onShowForm}
+                              onHideOptions={onHideOptions}
+                            />
                           )}
                         </Box>
                       )
@@ -116,6 +89,7 @@ EntityListSidebarGroups.propTypes = {
   onShowForm: PropTypes.func.isRequired,
   onHideOptions: PropTypes.func.isRequired,
   onToggleGroup: PropTypes.func.isRequired,
+  onUpdateQuery: PropTypes.func.isRequired,
 };
 
 EntityListSidebarGroups.contextTypes = {

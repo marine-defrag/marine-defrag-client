@@ -3,6 +3,7 @@ import { sortEntities } from 'utils/sort';
 import { startsWith } from 'utils/string';
 import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
+import { makeAttributeFilterOptions } from './filterOptionsFactory';
 // figure out filter groups for filter panel
 export const makeFilterGroups = ({
   config,
@@ -20,6 +21,7 @@ export const makeFilterGroups = ({
   typeId,
   intl,
   currentFilters,
+  locationQuery,
 }) => {
   const filterGroups = {};
   // taxonomy option group
@@ -33,17 +35,23 @@ export const makeFilterGroups = ({
       options:
         sortEntities(taxonomies, 'asc', 'priority')
           .reduce(
-            (memo, taxonomy) => memo.concat([
-              {
-                id: taxonomy.get('id'), // filterOptionId
-                label: messages.taxonomies(taxonomy.get('id')),
-                info: intl.formatMessage(appMessages.entities.taxonomies[taxonomy.get('id')].description),
-                active: !!activeFilterOption
-                  && activeFilterOption.group === 'taxonomies'
-                  && activeFilterOption.optionId === taxonomy.get('id'),
-                nested: taxonomy.getIn(['attributes', 'parent_id']),
-              },
-            ]),
+            (memo, taxonomy) => {
+              const optionCurrentFilters = currentFilters && currentFilters.filter(
+                (f) => qe(f.optionId, taxonomy.get('id')) && qe(f.groupId, 'taxonomies')
+              );
+              return memo.concat([
+                {
+                  id: taxonomy.get('id'), // filterOptionId
+                  label: messages.taxonomies(taxonomy.get('id')),
+                  info: intl.formatMessage(appMessages.entities.taxonomies[taxonomy.get('id')].description),
+                  active: !!activeFilterOption
+                    && activeFilterOption.group === 'taxonomies'
+                    && activeFilterOption.optionId === taxonomy.get('id'),
+                  nested: taxonomy.getIn(['attributes', 'parent_id']),
+                  currentFilters: optionCurrentFilters,
+                },
+              ]);
+            },
             [],
           ),
     };
@@ -139,19 +147,28 @@ export const makeFilterGroups = ({
       show: true,
       options: reduce(
         config.attributes.options,
-        (memo, option) => (
-          typeof option.role === 'undefined'
-          || (hasUserRole && hasUserRole[option.role])
-        )
-          ? memo.concat([{
-            id: option.attribute, // filterOptionId
-            label: option.label,
-            message: option.message,
-            active: !!activeFilterOption
-              && activeFilterOption.group === 'attributes'
-              && activeFilterOption.optionId === option.attribute,
-          }])
-          : memo,
+        (memo, option) => {
+          if (
+            typeof option.role === 'undefined'
+            || (hasUserRole && hasUserRole[option.role])
+          ) {
+            const attributeFilterOptions = option.filterUI
+              && option.filterUI === 'checkboxes'
+              && makeAttributeFilterOptions({
+                config: config.attributes,
+                activeOptionId: option.attribute,
+                locationQueryValue: locationQuery.get('where'),
+              });
+            return memo.concat([{
+              id: option.attribute, // filterOptionId
+              label: option.label,
+              filterUI: option.filterUI,
+              message: option.message,
+              options: attributeFilterOptions && attributeFilterOptions.options,
+            }]);
+          }
+          return memo;
+        },
         [],
       ),
     };

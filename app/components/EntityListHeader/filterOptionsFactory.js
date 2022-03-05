@@ -19,10 +19,7 @@ import {
 
 import { makeTagFilterGroups } from 'utils/forms';
 
-import {
-  optionChecked,
-  attributeOptionChecked,
-} from './utils';
+import { optionChecked } from './utils';
 
 export const makeActiveFilterOptions = ({
   entities,
@@ -68,109 +65,44 @@ export const makeActiveFilterOptions = ({
         isManager,
       );
     case 'attributes':
-      return makeAttributeFilterOptions(
-        entities,
-        config.attributes,
-        activeFilterOption.optionId,
-        locationQuery.get('where'),
-        messages,
-      );
+      return makeAttributeFilterOptions({
+        config: config.attributes,
+        activeOptionId: activeFilterOption.optionId,
+        locationQueryValue: locationQuery.get('where'),
+      });
     default:
       return null;
   }
 };
 
-export const makeAttributeFilterOptions = (entities, config, activeOptionId, locationQueryValue, messages) => {
+// not as list but other filter UI, eg checkboxes
+export const makeAttributeFilterOptions = ({
+  config,
+  activeOptionId,
+  locationQueryValue,
+}) => {
   const filterOptions = {
     groupId: 'attributes',
     options: {},
-    multiple: true,
-    required: false,
-    search: true,
-    selectAll: false,
   };
   // the attribute option
   const option = find(config.options, (o) => o.attribute === activeOptionId);
   if (option) {
-    filterOptions.messagePrefix = messages.titlePrefix;
     filterOptions.message = option.message;
-    filterOptions.search = option.search;
-    if (entities.size === 0) {
-      if (locationQueryValue && option.options) {
-        asList(locationQueryValue).forEach((queryValue) => {
-          if (attributeOptionChecked(queryValue, option.attribute)) {
-            const locationQueryValueAttribute = queryValue.split(':');
-            if (locationQueryValueAttribute.length > 1) {
-              const locationAttribute = locationQueryValueAttribute[1];
-              forEach(option.options, (attributeOption) => {
-                if (attributeOption.value.toString() === locationAttribute) {
-                  filterOptions.options[attributeOption.value] = {
-                    label: attributeOption.label ? attributeOption.label : upperFirst(attributeOption.value),
-                    message: attributeOption.message,
-                    showCount: true,
-                    value: `${option.attribute}:${attributeOption.value}`,
-                    count: 0,
-                    query: 'where',
-                    checked: true,
-                  };
-                }
-              });
-            }
-          }
-        });
-      }
-    } else {
-      entities.forEach((entity) => {
-        if (typeof entity.getIn(['attributes', option.attribute]) !== 'undefined'
-        && entity.getIn(['attributes', option.attribute]) !== null) {
-          const value = entity.getIn(['attributes', option.attribute]).toString();
-          const queryValue = `${option.attribute}:${value}`;
-          // add connected entities if not present otherwise increase count
-          if (filterOptions.options[value]) {
-            filterOptions.options[value].count += 1;
-          } else if (option.reference && !!entity.get(option.reference.key)) {
-            filterOptions.options[value] = {
-              label: entity.getIn([option.reference.key, 'attributes', option.reference.label]),
-              showCount: true,
-              value: queryValue,
-              count: 1,
-              query: 'where',
-              checked: optionChecked(locationQueryValue, queryValue),
-            };
-          } else if (option.options) {
-            const attributeOption = find(option.options, (o) => o.value.toString() === value);
-            const label = attributeOption ? attributeOption.label : upperFirst(value);
-            filterOptions.options[value] = {
-              label,
-              message: attributeOption.message,
-              showCount: true,
-              value: queryValue,
-              count: 1,
-              query: 'where',
-              checked: optionChecked(locationQueryValue, queryValue),
-            };
-          }
-        } else if (option.reference && option.reference.without) {
-          if (filterOptions.options.without) {
-            // no connection present
-            // add without option
-            filterOptions.options.without.count += 1;
-          } else {
-            const queryValue = `${option.attribute}:null`;
-            filterOptions.options.without = {
-              messagePrefix: messages.without,
-              message: option.message,
-              showCount: true,
-              labelEmphasis: true,
-              value: queryValue,
-              count: 1,
-              query: 'where',
-              checked: optionChecked(locationQueryValue, queryValue),
-            };
-          }
+    if (option.filterUI && option.filterUI === 'checkboxes') {
+      filterOptions.options = option.options.map(
+        (attributeOption) => {
+          const queryValue = `${option.attribute}:${attributeOption.value}`;
+          const checked = asList(locationQueryValue).indexOf(queryValue) > -1;
+          return ({
+            message: attributeOption.message,
+            value: queryValue,
+            query: 'where',
+            checked,
+          });
         }
-      }); // for each entities
-    } // if (entities.length === 0) {
+      );
+    }
   } // if option
   return filterOptions;
 };
