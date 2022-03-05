@@ -117,6 +117,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
       hasSelected,
       panelGroups,
       onHideSidebar,
+      onHideOptions,
     } = this.props;
     const { intl } = this.context;
     return (
@@ -135,6 +136,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
                 <EntityListSidebarGroups
                   groups={fromJS(panelGroups)}
                   onShowForm={this.onShowForm}
+                  onHideOptions={onHideOptions}
                   onToggleGroup={this.onToggleGroup}
                   expanded={this.state.expandedGroups}
                 />
@@ -158,6 +160,7 @@ EntityListSidebar.propTypes = {
   hasSelected: PropTypes.bool,
   panelGroups: PropTypes.object,
   onHideSidebar: PropTypes.func,
+  onHideOptions: PropTypes.func,
   setActiveOption: PropTypes.func,
 };
 

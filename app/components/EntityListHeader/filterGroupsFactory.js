@@ -1,6 +1,7 @@
 import { reduce } from 'lodash/collection';
 import { sortEntities } from 'utils/sort';
 import { startsWith } from 'utils/string';
+import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
 // figure out filter groups for filter panel
 export const makeFilterGroups = ({
@@ -18,6 +19,7 @@ export const makeFilterGroups = ({
   messages,
   typeId,
   intl,
+  currentFilters,
 }) => {
   const filterGroups = {};
   // taxonomy option group
@@ -104,6 +106,9 @@ export const makeFilterGroups = ({
           })
           .reduce((memo, type) => {
             const id = type.get('id');
+            const optionCurrentFilters = currentFilters && currentFilters.filter(
+              (f) => qe(f.optionId, id) && qe(f.groupId, connectionKey)
+            );
             return memo.concat({
               id, // filterOptionId
               label: option.label,
@@ -118,6 +123,7 @@ export const makeFilterGroups = ({
               active: !!activeFilterOption
                 && activeFilterOption.group === connectionKey
                 && activeFilterOption.optionId === id,
+              currentFilters: optionCurrentFilters,
             });
           }, []),
       };

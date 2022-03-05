@@ -215,9 +215,9 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     this.setState({ activeOption: option });
   };
 
-  onShowForm = (option) => {
-    this.setState({ activeOption: option.active ? null : option });
-  };
+  // onShowForm = (option) => {
+  //   this.setState({ activeOption: option.active ? null : option });
+  // };
 
   onHideForm = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
@@ -321,6 +321,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         membertypes,
         associationtypes,
         activeFilterOption: activeOption,
+        currentFilters,
         typeId,
         intl,
         messages: {
@@ -489,6 +490,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             hasEntities={entities && entities.size > 0}
             panelGroups={panelGroups}
             onHideSidebar={onHideFilters}
+            onHideOptions={this.onHideForm}
             setActiveOption={this.onSetActiveOption}
           />
         )}
@@ -516,7 +518,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             onSelect={() => {
               if (showFilters) {
                 this.onHideForm();
-                onHideFilters();
+                // onHideFilters();
               }
             }}
             onSubmit={showEditOptions

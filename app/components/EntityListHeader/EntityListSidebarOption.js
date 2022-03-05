@@ -10,7 +10,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { injectIntl, intlShape } from 'react-intl';
-import { Box, Button } from 'grommet';
+import { Box, Button, Text } from 'grommet';
+import { FormPrevious } from 'grommet-icons';
 
 import appMessage from 'utils/app-message';
 import InfoOverlay from 'components/InfoOverlay';
@@ -26,21 +27,15 @@ const Styled = styled((p) => (
     {...p}
   />
 ))`
-  border-bottom: 1px solid ${palette('asideListItem', 4)};
   background-color: ${(props) => props.active ? palette('asideListItem', 3) : palette('asideListItem', 2)};
   color:  ${(props) => props.active ? palette('asideListItem', 1) : palette('asideListItem', 0)};
 `;
 
 const StyledButton = styled((p) => <Button plain fill="horizontal" focusIndicator={false} {...p} />)`
-  padding: ${(props) => props.small ? '0.5em 8px 0.5em 36px' : '0.75em 8px 0.75em 16px'};
-  font-weight: bold;
+  padding: 0.25em 8px;
+  padding-left: 2px;
   text-align: left;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding: ${(props) => props.small ? '0.5em 8px 0.5em 36px' : '0.75em 8px 0.75em 16px'};
-  }
 `;
-
-const Label = styled.div``;
 
 function EntityListSidebarOption({
   option, onShowForm, groupId, groupType, intl,
@@ -66,7 +61,10 @@ function EntityListSidebarOption({
           option.get('active') ? messages.groupOptionSelect.hide : messages.groupOptionSelect.show
         )}
       >
-        <Label>{label}</Label>
+        <Box direction="row" justify="start" align="center" gap="xsmall">
+          <FormPrevious size="xsmall" color={option.get('active') ? 'white' : 'black'} />
+          <Text size="small" weight={500}>{label}</Text>
+        </Box>
       </StyledButton>
       {option.get('info') && (
         <InfoOverlay
