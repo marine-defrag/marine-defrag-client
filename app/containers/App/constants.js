@@ -75,6 +75,7 @@ export const SET_SUBJECT = 'impactoss/App/SET_SUBJECT';
 export const SET_MAP_SUBJECT = 'impactoss/App/SET_MAP_SUBJECT';
 export const SET_INCLUDE_ACTOR_MEMBERS = 'impactoss/App/SET_INCLUDE_ACTOR_MEMBERS';
 export const SET_INCLUDE_TARGET_MEMBERS = 'impactoss/App/SET_INCLUDE_TARGET_MEMBERS';
+export const SET_INCLUDE_MEMBERS_FORFILTERS = 'impactoss/App/SET_INCLUDE_MEMBERS_FORFILTERS';
 
 export const FILTERS_PANEL = 'filters';
 export const EDIT_PANEL = 'edit';

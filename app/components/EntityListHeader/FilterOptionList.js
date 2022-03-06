@@ -71,7 +71,7 @@ FilterOptionList.propTypes = {
   group: PropTypes.object,
   option: PropTypes.object,
   onShowForm: PropTypes.func.isRequired,
-  onHideOptions: PropTypes.func.isRequired,
+  onHideOptions: PropTypes.func,
   intl: intlShape.isRequired,
 };
 

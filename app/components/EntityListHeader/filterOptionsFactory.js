@@ -33,6 +33,7 @@ export const makeActiveFilterOptions = ({
   contextIntl,
   messages,
   isManager,
+  includeMembers,
 }) => {
   // create filterOptions
   switch (activeFilterOption.group) {
@@ -64,6 +65,7 @@ export const makeActiveFilterOptions = ({
         contextIntl,
         activeFilterOption.group,
         isManager,
+        includeMembers,
       );
     case 'attributes':
       return makeAttributeFilterOptions({
@@ -280,6 +282,7 @@ export const makeConnectionFilterOptions = (
   contextIntl,
   group,
   isManager,
+  includeMembers,
 ) => {
   const filterOptions = {
     groupId: group,
@@ -290,6 +293,7 @@ export const makeConnectionFilterOptions = (
     advanced: true,
     selectAll: false,
   };
+
   // get the active option
   const typeId = activeOptionId;
   const option = config[group];
@@ -490,6 +494,40 @@ export const makeConnectionFilterOptions = (
                 }
               }
             });
+          }
+          if (includeMembers) {
+            const entityMemberConnections = entity.getIn([`${entityType}AssociationsByType`, parseInt(typeId, 10)]);
+            // if entity has connected entities
+            if (entityMemberConnections) {
+              // add connected entities if not present otherwise increase count
+              entityMemberConnections.forEach((connectedId) => {
+                const connection = connections.getIn([path, connectedId.toString()]);
+                // if not taxonomy already considered
+                if (connection) {
+                  optionConnections = optionConnections.push(connection);
+                  // if category already added
+                  if (filterOptions.options[connectedId]) {
+                    filterOptions.options[connectedId].count += 1;
+                  } else {
+                    const value = `${typeId}:${connectedId}`;
+                    const reference = showEntityReference && getEntityReference(connection);
+                    const label = getEntityTitle(connection, option.labels, contextIntl);
+                    filterOptions.options[connectedId] = {
+                      reference,
+                      label,
+                      info: connection.getIn(['attributes', 'description']),
+                      showCount: true,
+                      value: `${typeId}:${connectedId}`,
+                      count: 1,
+                      query,
+                      checked: optionChecked(locationQueryValue, value),
+                      tags: connection.get('categories'),
+                      draft: connection.getIn(['attributes', 'draft']),
+                    };
+                  }
+                }
+              });
+            }
           }
           if (optionConnections.size === 0) {
             if (filterOptions.options.without) {

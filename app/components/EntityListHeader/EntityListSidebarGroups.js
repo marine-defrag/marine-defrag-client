@@ -37,6 +37,12 @@ class EntityListSidebarGroups extends React.PureComponent { // eslint-disable-li
         {groups && groups.entrySeq().map(([groupId, group]) => {
           const groupOptions = group.get('options') && group.get('options').filter(
             (option) => option.get('id')
+          ).sort(
+            (a, b) => {
+              if (a.get('memberType')) return 1;
+              if (b.get('memberType')) return -1;
+              return 0;
+            }
           );
           const groupOptionsGeneral = group.get('optionsGeneral');
           if (
@@ -47,7 +53,6 @@ class EntityListSidebarGroups extends React.PureComponent { // eslint-disable-li
               <Group key={groupId} expanded={this.props.expanded[groupId]}>
                 <EntityListSidebarGroupLabel
                   label={group.get('label')}
-                  icon={group.get('icon') || group.get('id')}
                   expanded={this.props.expanded[groupId]}
                   onToggle={(evt) => {
                     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
@@ -111,9 +116,9 @@ EntityListSidebarGroups.propTypes = {
   groups: PropTypes.object,
   expanded: PropTypes.object,
   onShowForm: PropTypes.func.isRequired,
-  onHideOptions: PropTypes.func.isRequired,
   onToggleGroup: PropTypes.func.isRequired,
-  onUpdateQuery: PropTypes.func.isRequired,
+  onHideOptions: PropTypes.func,
+  onUpdateQuery: PropTypes.func,
 };
 
 EntityListSidebarGroups.contextTypes = {

@@ -44,6 +44,7 @@ import {
   OPEN_BOOKMARK,
   SET_INCLUDE_ACTOR_MEMBERS,
   SET_INCLUDE_TARGET_MEMBERS,
+  SET_INCLUDE_MEMBERS_FORFILTERS,
 } from 'containers/App/constants';
 
 import {
@@ -755,6 +756,19 @@ export function* setIncludeTargetMembersSaga({ value }) {
   );
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
+export function* setIncludeMembersForFilterSaga({ value }) {
+  const location = yield select(selectLocation);
+  const queryNext = getNextQuery(
+    {
+      arg: 'fm',
+      value,
+      replace: true,
+    },
+    true, // extend
+    location,
+  );
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
 
 export function* openBookmarkSaga({ bookmark }) {
   const path = bookmark.getIn(['attributes', 'view', 'path']);
@@ -855,6 +869,7 @@ export default function* rootSaga() {
   yield takeEvery(SET_MAP_SUBJECT, setMapSubjectSaga);
   yield takeEvery(SET_INCLUDE_ACTOR_MEMBERS, setIncludeActorMembersSaga);
   yield takeEvery(SET_INCLUDE_TARGET_MEMBERS, setIncludeTargetMembersSaga);
+  yield takeEvery(SET_INCLUDE_MEMBERS_FORFILTERS, setIncludeMembersForFilterSaga);
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);
   yield takeEvery(DISMISS_QUERY_MESSAGES, dismissQueryMessagesSaga);
 

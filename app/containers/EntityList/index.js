@@ -27,6 +27,7 @@ import {
   selectCurrentPathname,
   selectAllTaxonomiesWithCategories,
   selectViewQuery,
+  selectIncludeMembersForFiltering,
 } from 'containers/App/selectors';
 
 import {
@@ -34,6 +35,7 @@ import {
   openNewEntityModal,
   setView,
   updateRouteQuery,
+  setIncludeMembersForFiltering,
 } from 'containers/App/actions';
 
 // import appMessages from 'containers/App/messages';
@@ -203,6 +205,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       resourcetypes,
       showCode,
       onUpdateQuery,
+      includeMembers,
+      onSetFilterMemberOption,
     } = this.props;
 
     // detect print to avoid expensive rendering
@@ -318,6 +322,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             typeOptions={typeOptions}
             hasFilters={filters && filters.length > 0}
             onUpdateQuery={onUpdateQuery}
+            includeMembers={includeMembers}
+            onSetFilterMemberOption={onSetFilterMemberOption}
           />
         )}
         {showList && (
@@ -536,9 +542,11 @@ EntityList.propTypes = {
   canEdit: PropTypes.bool,
   includeHeader: PropTypes.bool,
   showCode: PropTypes.bool,
+  includeMembers: PropTypes.bool,
   typeOptions: PropTypes.array,
   onSelectType: PropTypes.func,
   onSetView: PropTypes.func,
+  onSetFilterMemberOption: PropTypes.func,
   view: PropTypes.string,
 };
 
@@ -556,6 +564,7 @@ const mapStateToProps = (state) => ({
   currentPath: selectCurrentPathname(state),
   allTaxonomies: selectAllTaxonomiesWithCategories(state),
   view: selectViewQuery(state),
+  includeMembers: selectIncludeMembersForFiltering(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -652,13 +661,17 @@ function mapDispatchToProps(dispatch, props) {
     onSetView: (view) => {
       dispatch(setView(view));
     },
+    onSetFilterMemberOption: (view) => {
+      dispatch(setIncludeMembersForFiltering(view));
+    },
     handleEditSubmit: (formData, activeEditOption, entityIdsSelected, errors) => {
       dispatch(resetProgress());
 
       const entities = props.entities.filter(
         (entity) => entityIdsSelected.includes(entity.get('id'))
       );
-
+      console.log('activeEditOption', activeEditOption);
+      console.log('entities', entities && entities.toJS());
       // figure out changes
       const changes = formData.get('values').filter((option) => option.get('hasChanged'));
       // figure out updates (either new attribute values or new connections)
@@ -666,6 +679,7 @@ function mapDispatchToProps(dispatch, props) {
         .filter((option) => option.get('checked') === true)
         .map((option) => option.get('value'));
 
+      console.log('changes', changes && changes.toJS());
       // attributes
       if (activeEditOption.group === 'attributes') {
         if (creates.size > 0) {
@@ -700,6 +714,7 @@ function mapDispatchToProps(dispatch, props) {
         const deletes = changes
           .filter((option) => option.get('checked') === false)
           .map((option) => option.get('value'));
+        console.log('deletes', deletes && deletes.toJS());
 
         entities.forEach(
           (entity) => {
@@ -733,6 +748,7 @@ function mapDispatchToProps(dispatch, props) {
                 existingAssignments = List();
                 break;
             }
+            console.log('existingAssignments', existingAssignments && existingAssignments.toJS());
             // create connections
             if (creates.size > 0) {
               // exclude existing relations from the changeSet
@@ -776,6 +792,8 @@ function mapDispatchToProps(dispatch, props) {
           },
           Map().set('creates', List()).set('deletes', List()),
         ); // reduce entities
+        console.log('updates', updates && updates.toJS());
+
         // associations
         if (updates.get('creates') && updates.get('creates').size > 0) {
           dispatch(newMultipleConnections(

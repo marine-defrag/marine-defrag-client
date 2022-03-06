@@ -98,6 +98,7 @@ export const CONFIG = {
       ownKey: 'measure_id',
       groupByType: true,
       typeFilter: 'is_active',
+      typeMemberFilter: 'has_members',
     },
     // filter by associated target
     targets: {
@@ -115,6 +116,7 @@ export const CONFIG = {
       ownKey: 'measure_id',
       groupByType: true,
       typeFilter: 'is_target',
+      typeMemberFilter: 'has_members',
     },
     // filter by associated entity
     resources: {

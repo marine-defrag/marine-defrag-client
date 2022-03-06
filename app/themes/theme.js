@@ -299,7 +299,7 @@ theme.sizes = {
   // px only
   aside: {
     header: {
-      height: 90,
+      height: 80,
     },
     width: {
       small: 300,

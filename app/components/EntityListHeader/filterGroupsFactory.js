@@ -22,6 +22,7 @@ export const makeFilterGroups = ({
   intl,
   currentFilters,
   locationQuery,
+  includeMembers,
 }) => {
   const filterGroups = {};
   // taxonomy option group
@@ -109,11 +110,30 @@ export const makeFilterGroups = ({
             if (notFilter) {
               attribute = option.typeFilter.substring(1);
             }
-            return notFilter
+            const typeCondition = notFilter
               ? !type.getIn(['attributes', attribute])
               : type.getIn(['attributes', attribute]);
+            if (includeMembers && option.typeMemberFilter) {
+              return typeCondition || type.getIn(['attributes', option.typeMemberFilter]);
+            }
+            return typeCondition;
           })
           .reduce((memo, type) => {
+            let memberType;
+            if (option.typeFilter) {
+              let attribute = option.typeFilter;
+              const notFilter = startsWith(option.typeFilter, '!');
+              if (notFilter) {
+                attribute = option.typeFilter.substring(1);
+              }
+              const properType = notFilter
+                ? !type.getIn(['attributes', attribute])
+                : type.getIn(['attributes', attribute]);
+              if (includeMembers && option.typeMemberFilter) {
+                memberType = !properType && type.getIn(['attributes', option.typeMemberFilter]);
+              }
+            }
+
             const id = option.attribute || type.get('id');
             const optionCurrentFilters = currentFilters && currentFilters.filter(
               (f) => qe(f.optionId, id) && qe(f.groupId, connectionKey)
@@ -133,6 +153,7 @@ export const makeFilterGroups = ({
                 && activeFilterOption.group === connectionKey
                 && activeFilterOption.optionId === id,
               currentFilters: optionCurrentFilters,
+              memberType,
             });
           }, []),
       };

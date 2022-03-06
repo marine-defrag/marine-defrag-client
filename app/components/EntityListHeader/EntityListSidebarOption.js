@@ -40,9 +40,10 @@ const StyledButton = styled((p) => <Button plain fill="horizontal" focusIndicato
 function EntityListSidebarOption({
   option, onShowForm, groupId, groupType, intl,
 }) {
-  const label = option.get('message')
+  let label = option.get('message')
     ? appMessage(intl, option.get('message'))
     : option.get('label');
+  label = option.get('memberType') ? `${label} (via members)` : label;
   return (
     <Styled active={option.get('active')}>
       <StyledButton

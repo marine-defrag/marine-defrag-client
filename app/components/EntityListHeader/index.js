@@ -300,6 +300,8 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       typeId,
       isManager,
       onUpdateQuery,
+      includeMembers,
+      onSetFilterMemberOption,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -336,8 +338,8 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
           // connectedTaxonomies: intl.formatMessage(messages.filterGroupLabel.connectedTaxonomies),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
         },
+        includeMembers,
       });
-      // console.log(panelGroups)
       panelGroups = Object.keys(panelGroups).reduce(
         (memo, groupId) => {
           const group = panelGroups[groupId];
@@ -390,6 +392,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             without: intl.formatMessage(messages.filterFormWithoutPrefix),
             any: intl.formatMessage(messages.filterFormAnyPrefix),
           },
+          includeMembers,
         });
       }
     } else if (dataReady && showEditOptions && hasSelected) {
@@ -533,6 +536,14 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             onHideOptions={this.onHideForm}
             setActiveOption={this.onSetActiveOption}
             onUpdateQuery={onUpdateQuery}
+            memberOption={{
+              key: 'filter-member-option',
+              active: !!includeMembers,
+              label: 'Include members when filtering by region, class or intergovernmental organisation',
+              onClick: () => {
+                onSetFilterMemberOption(!includeMembers);
+              },
+            }}
           />
         )}
         {showEditOptions && (
@@ -608,8 +619,10 @@ EntityListHeader.propTypes = {
   canEdit: PropTypes.bool,
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
+  includeMembers: PropTypes.bool,
   typeOptions: PropTypes.array,
   onSelectType: PropTypes.func,
+  onSetFilterMemberOption: PropTypes.func,
   typeId: PropTypes.string,
 };
 
