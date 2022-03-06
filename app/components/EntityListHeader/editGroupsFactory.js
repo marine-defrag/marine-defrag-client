@@ -129,7 +129,7 @@ export const makeEditGroups = ({
                   ? option.messageByType.replace('{typeid}', type.get('id'))
                   : option.message,
                 path: option.connectPath,
-                connection: option.entityType,
+                connection: option.entityTypeAs || option.entityType,
                 key: option.key,
                 ownKey: option.ownKey,
                 active: !!activeEditOption
