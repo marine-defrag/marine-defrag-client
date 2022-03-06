@@ -11,7 +11,6 @@ export const makeFilterGroups = ({
   hasUserRole,
   actortypes,
   actiontypes,
-  targettypes,
   resourcetypes,
   actiontypesForTarget,
   activeFilterOption,
@@ -60,7 +59,14 @@ export const makeFilterGroups = ({
 
   // connections option group
   if (config.connections) {
-    Object.keys(config.connections).forEach((connectionKey) => {
+    Object.keys(config.connections).filter((connectionKey) => {
+      // exclude targets for non-target actions
+      if (connectionKey === 'targets' && config.types === 'actiontypes') {
+        const actiontype = actiontypes.find((t) => qe(t.get('id'), typeId));
+        return actiontype.getIn(['attributes', 'has_target']);
+      }
+      return true;
+    }).forEach((connectionKey) => {
       const option = config.connections[connectionKey];
       let types;
       let typeAbout;
@@ -68,7 +74,7 @@ export const makeFilterGroups = ({
         types = actortypes;
         typeAbout = 'actortypes_about';
       } else if (option.type === 'action-targets') {
-        types = targettypes;
+        types = actortypes;
         typeAbout = 'actortypes_about';
       } else if (option.type === 'target-actions') {
         types = actiontypesForTarget;
