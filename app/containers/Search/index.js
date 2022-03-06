@@ -26,6 +26,7 @@ import { CONTENT_LIST } from 'containers/App/constants';
 
 import Button from 'components/buttons/Button';
 import Container from 'components/styled/Container';
+import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Loading from 'components/Loading';
 import ContentHeader from 'components/ContentHeader';
 import TagSearch from 'components/TagSearch';
@@ -146,136 +147,138 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Container>
-          <Content>
-            <ContentHeader
-              type={CONTENT_LIST}
-              supTitle={intl.formatMessage(messages.pageTitle)}
-              title={intl.formatMessage(messages.search)}
-              icon="search"
-              buttons={headerButtons}
-            />
-            {!dataReady && <Loading />}
-            {dataReady && (
-              <div>
-                <EntityListSearch>
-                  <TagSearch
-                    filters={[]}
-                    placeholder={intl.formatMessage(messages.placeholder)}
-                    searchQuery={location.query.search || ''}
-                    onSearch={onSearch}
-                    onClear={() => onClear(['search'])}
-                  />
-                </EntityListSearch>
-                <ListWrapper>
-                  {!hasQuery && (
-                    <ListHint>
-                      <FormattedMessage {...messages.hints.noQuery} />
-                    </ListHint>
-                  )}
-                  {hasQuery && !hasResults && (
-                    <ListHint>
-                      <FormattedMessage {...messages.hints.noResultsNoAlternative} />
-                    </ListHint>
-                  )}
-                  {hasResults && (
-                    <Box>
+        <ContainerWrapper>
+          <Container>
+            <Content>
+              <ContentHeader
+                type={CONTENT_LIST}
+                supTitle={intl.formatMessage(messages.pageTitle)}
+                title={intl.formatMessage(messages.search)}
+                icon="search"
+                buttons={headerButtons}
+              />
+              {!dataReady && <Loading />}
+              {dataReady && (
+                <div>
+                  <EntityListSearch>
+                    <TagSearch
+                      filters={[]}
+                      placeholder={intl.formatMessage(messages.placeholder)}
+                      searchQuery={location.query.search || ''}
+                      onSearch={onSearch}
+                      onClear={() => onClear(['search'])}
+                    />
+                  </EntityListSearch>
+                  <ListWrapper>
+                    {!hasQuery && (
                       <ListHint>
-                        <Text>
-                          {`${countResults} ${countResults === 1 ? 'result' : 'results'} found in database. `}
-                        </Text>
-                        {countTargets > 1 && (
-                          <Text>
-                            Please select a content type below to see individual results
-                          </Text>
-                        )}
+                        <FormattedMessage {...messages.hints.noQuery} />
                       </ListHint>
-                      {entities.map(
-                        (group, id) => {
-                          const hasGroupResults = group.get('targets').some(
-                            (target) => target.get('results') && target.get('results').size > 0
-                          );
-                          if (hasGroupResults) {
-                            return (
-                              <Box key={id} margin={{ bottom: 'large' }}>
-                                <Box margin={{ bottom: 'xsmall' }}>
-                                  <Text size="small">
-                                    <FormattedMessage {...messages.groups[group.get('group')]} />
-                                  </Text>
-                                </Box>
-                                <Box>
-                                  {group.get('targets') && group.get('targets').map(
-                                    (target) => {
-                                      const hasTargetResults = target.get('results') && target.get('results').size > 0;
-                                      if (hasTargetResults) {
-                                        const count = target.get('results').size;
-                                        const title = this.getTargetTitle(target, count, intl);
-                                        const active = qe(target.get('optionPath'), activeTargetPath);
-                                        const otherTargets = countTargets > 1;
-                                        return (
-                                          <Box key={target.get('optionPath')}>
-                                            <Box border="bottom" gap="xsmall">
-                                              <Target
-                                                onClick={(evt) => {
-                                                  if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                                                  if (active) {
-                                                    this.props.onTargetSelect('');
-                                                  } else {
-                                                    this.props.onTargetSelect(target.get('optionPath'));
-                                                  }
-                                                }}
-                                                active={active}
-                                              >
-                                                <Box direction="row" gap="small" align="center" justify="between">
-                                                  <Box direction="row" gap="xsmall" pad={{ vertical: 'small' }}>
-                                                    <Text size="large">
-                                                      {count}
-                                                    </Text>
-                                                    <Text size="large">
-                                                      {title}
-                                                    </Text>
-                                                  </Box>
-                                                  {otherTargets && active && (
-                                                    <FormUp size="large" />
-                                                  )}
-                                                  {otherTargets && !active && (
-                                                    <FormDown size="large" />
-                                                  )}
-                                                </Box>
-                                              </Target>
-                                            </Box>
-                                            {(active || !otherTargets) && (
-                                              <Box margin={{ bottom: 'large' }}>
-                                                { target.get('results').toList().map((entity, key) => (
-                                                  <EntityListItemWrapper
-                                                    key={key}
-                                                    entity={entity}
-                                                    entityPath={target.get('clientPath') || target.get('path')}
-                                                    onEntityClick={onEntityClick}
-                                                  />
-                                                ))}
-                                              </Box>
-                                            )}
-                                          </Box>
-                                        );
-                                      }
-                                      return null;
-                                    }
-                                  )}
-                                </Box>
-                              </Box>
+                    )}
+                    {hasQuery && !hasResults && (
+                      <ListHint>
+                        <FormattedMessage {...messages.hints.noResultsNoAlternative} />
+                      </ListHint>
+                    )}
+                    {hasResults && (
+                      <Box>
+                        <ListHint>
+                          <Text>
+                            {`${countResults} ${countResults === 1 ? 'result' : 'results'} found in database. `}
+                          </Text>
+                          {countTargets > 1 && (
+                            <Text>
+                              Please select a content type below to see individual results
+                            </Text>
+                          )}
+                        </ListHint>
+                        {entities.map(
+                          (group, id) => {
+                            const hasGroupResults = group.get('targets').some(
+                              (target) => target.get('results') && target.get('results').size > 0
                             );
+                            if (hasGroupResults) {
+                              return (
+                                <Box key={id} margin={{ bottom: 'large' }}>
+                                  <Box margin={{ bottom: 'xsmall' }}>
+                                    <Text size="small">
+                                      <FormattedMessage {...messages.groups[group.get('group')]} />
+                                    </Text>
+                                  </Box>
+                                  <Box>
+                                    {group.get('targets') && group.get('targets').map(
+                                      (target) => {
+                                        const hasTargetResults = target.get('results') && target.get('results').size > 0;
+                                        if (hasTargetResults) {
+                                          const count = target.get('results').size;
+                                          const title = this.getTargetTitle(target, count, intl);
+                                          const active = qe(target.get('optionPath'), activeTargetPath);
+                                          const otherTargets = countTargets > 1;
+                                          return (
+                                            <Box key={target.get('optionPath')}>
+                                              <Box border="bottom" gap="xsmall">
+                                                <Target
+                                                  onClick={(evt) => {
+                                                    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                                                    if (active) {
+                                                      this.props.onTargetSelect('');
+                                                    } else {
+                                                      this.props.onTargetSelect(target.get('optionPath'));
+                                                    }
+                                                  }}
+                                                  active={active}
+                                                >
+                                                  <Box direction="row" gap="small" align="center" justify="between">
+                                                    <Box direction="row" gap="xsmall" pad={{ vertical: 'small' }}>
+                                                      <Text size="large">
+                                                        {count}
+                                                      </Text>
+                                                      <Text size="large">
+                                                        {title}
+                                                      </Text>
+                                                    </Box>
+                                                    {otherTargets && active && (
+                                                      <FormUp size="large" />
+                                                    )}
+                                                    {otherTargets && !active && (
+                                                      <FormDown size="large" />
+                                                    )}
+                                                  </Box>
+                                                </Target>
+                                              </Box>
+                                              {(active || !otherTargets) && (
+                                                <Box margin={{ bottom: 'large' }}>
+                                                  { target.get('results').toList().map((entity, key) => (
+                                                    <EntityListItemWrapper
+                                                      key={key}
+                                                      entity={entity}
+                                                      entityPath={target.get('clientPath') || target.get('path')}
+                                                      onEntityClick={onEntityClick}
+                                                    />
+                                                  ))}
+                                                </Box>
+                                              )}
+                                            </Box>
+                                          );
+                                        }
+                                        return null;
+                                      }
+                                    )}
+                                  </Box>
+                                </Box>
+                              );
+                            }
+                            return null;
                           }
-                          return null;
-                        }
-                      )}
-                    </Box>
-                  )}
-                </ListWrapper>
-              </div>
-            )}
-          </Content>
-        </Container>
+                        )}
+                      </Box>
+                    )}
+                  </ListWrapper>
+                </div>
+              )}
+            </Content>
+          </Container>
+        </ContainerWrapper>
       </div>
     );
   }
