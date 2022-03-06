@@ -51,28 +51,29 @@ const ConnectionGroupLabel = styled.span`
   }
 `;
 
-export class TagList extends React.Component { // eslint-disable-line react/prefer-stateless-function
-  getFilterLabel = (filter) => {
-    const { intl } = this.context;
-    // not used I think?
-    if (filter.message) {
-      return filter.messagePrefix
-        ? `${filter.messagePrefix} ${lowerCase(appMessage(intl, filter.message))}`
-        : appMessage(intl, filter.message);
-    }
-    if (filter.labels) {
-      return reduce(filter.labels, (memo, label) => {
-        if (!label.label) return memo;
-        let labelValue = label.appMessage ? appMessage(intl, label.label) : label.label;
-        labelValue = label.postfix ? `${labelValue}${label.postfix}` : labelValue;
-        return `${memo}${label.lowerCase ? lowerCase(labelValue) : labelValue} `;
-      }, '').trim();
-    }
-    return filter.label;
+export const getFilterLabel = (filter, intl, long) => {
+  // not used I think?
+  if (filter.message) {
+    console.log('USED AFTER ALL');
+    return filter.messagePrefix
+      ? `${filter.messagePrefix} ${lowerCase(appMessage(intl, filter.message))}`
+      : appMessage(intl, filter.message);
   }
+  if (filter.labels) {
+    return reduce(filter.labels, (memo, label) => {
+      if (!label.label) return memo;
+      let labelValue = label.appMessage ? appMessage(intl, label.label) : label.label;
+      labelValue = label.postfix ? `${labelValue}${label.postfix}` : labelValue;
+      return `${memo}${label.lowerCase ? lowerCase(labelValue) : labelValue} `;
+    }, '').trim();
+  }
+  return long && filter.labelLong ? filter.labelLong : filter.label;
+};
 
+export class TagList extends React.Component { // eslint-disable-line react/prefer-stateless-function
   render() {
     const { filters } = this.props;
+    const { intl } = this.context;
     const hasFilters = filters.length > 0;
     const groupedFilters = groupBy(filters, 'group');
     return (
@@ -94,7 +95,7 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
                       pIndex={parseInt(filter.id, 10) || 0}
                       disabled={!filter.onClick}
                     >
-                      {this.getFilterLabel(filter)}
+                      {getFilterLabel(filter, intl)}
                       { filter.onClick
                       && <Icon name="removeSmall" text textRight hidePrint />
                       }

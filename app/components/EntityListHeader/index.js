@@ -31,7 +31,10 @@ import EntityListSidebar from './EntityListSidebar';
 
 import { makeFilterGroups } from './filterGroupsFactory';
 import { makeEditGroups } from './editGroupsFactory';
-import { makeActiveFilterOptions } from './filterOptionsFactory';
+import {
+  makeActiveFilterOptions,
+  makeAnyWithoutFilterOptions,
+} from './filterOptionsFactory';
 import { makeActiveEditOptions } from './editOptionsFactory';
 
 import messages from './messages';
@@ -215,9 +218,9 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     this.setState({ activeOption: option });
   };
 
-  onShowForm = (option) => {
-    this.setState({ activeOption: option.active ? null : option });
-  };
+  // onShowForm = (option) => {
+  //   this.setState({ activeOption: option.active ? null : option });
+  // };
 
   onHideForm = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
@@ -296,6 +299,9 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       dataReady,
       typeId,
       isManager,
+      onUpdateQuery,
+      includeMembers,
+      onSetFilterMemberOption,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -321,8 +327,10 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
         membertypes,
         associationtypes,
         activeFilterOption: activeOption,
+        currentFilters,
         typeId,
         intl,
+        locationQuery,
         messages: {
           attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
           taxonomyGroup: intl.formatMessage(messages.filterGroupLabel.taxonomies),
@@ -330,7 +338,41 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
           // connectedTaxonomies: intl.formatMessage(messages.filterGroupLabel.connectedTaxonomies),
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
         },
+        includeMembers,
       });
+      panelGroups = Object.keys(panelGroups).reduce(
+        (memo, groupId) => {
+          const group = panelGroups[groupId];
+          if (group.includeAnyWithout && group.options && group.options.length > 0) {
+            const allAnyOptions = makeAnyWithoutFilterOptions({
+              config,
+              locationQuery,
+              activeFilterOption: {
+                group: groupId,
+              },
+              contextIntl: intl,
+              messages: {
+                titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
+                without: intl.formatMessage(messages.filterFormWithoutPrefix),
+                any: intl.formatMessage(messages.filterFormAnyPrefix),
+                connections: (type) => getFilterConnectionsMsg(intl, type),
+              },
+            });
+            return {
+              ...memo,
+              [groupId]: {
+                ...group,
+                optionsGeneral: allAnyOptions,
+              },
+            };
+          }
+          return {
+            ...memo,
+            [groupId]: group,
+          };
+        },
+        {},
+      );
       if (activeOption) {
         formOptions = makeActiveFilterOptions({
           entities,
@@ -348,7 +390,9 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
           messages: {
             titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
             without: intl.formatMessage(messages.filterFormWithoutPrefix),
+            any: intl.formatMessage(messages.filterFormAnyPrefix),
           },
+          includeMembers,
         });
       }
     } else if (dataReady && showEditOptions && hasSelected) {
@@ -489,7 +533,20 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             hasEntities={entities && entities.size > 0}
             panelGroups={panelGroups}
             onHideSidebar={onHideFilters}
+            onHideOptions={this.onHideForm}
             setActiveOption={this.onSetActiveOption}
+            onUpdateQuery={onUpdateQuery}
+            memberOption={config.hasMemberOption
+              ? {
+                key: 'filter-member-option',
+                active: !!includeMembers,
+                label: 'Include members when filtering by region, class or intergovernmental organisation',
+                onClick: () => {
+                  onSetFilterMemberOption(!includeMembers);
+                },
+              }
+              : null
+            }
           />
         )}
         {showEditOptions && (
@@ -516,7 +573,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             onSelect={() => {
               if (showFilters) {
                 this.onHideForm();
-                onHideFilters();
+                // onHideFilters();
               }
             }}
             onSubmit={showEditOptions
@@ -555,6 +612,7 @@ EntityListHeader.propTypes = {
   theme: PropTypes.object,
   currentFilters: PropTypes.array,
   onClearFilters: PropTypes.func.isRequired,
+  onUpdateQuery: PropTypes.func.isRequired,
   onShowFilters: PropTypes.func,
   onHideFilters: PropTypes.func,
   showFilters: PropTypes.bool,
@@ -564,8 +622,10 @@ EntityListHeader.propTypes = {
   canEdit: PropTypes.bool,
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
+  includeMembers: PropTypes.bool,
   typeOptions: PropTypes.array,
   onSelectType: PropTypes.func,
+  onSetFilterMemberOption: PropTypes.func,
   typeId: PropTypes.string,
 };
 

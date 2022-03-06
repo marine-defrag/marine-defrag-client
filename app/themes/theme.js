@@ -299,7 +299,7 @@ theme.sizes = {
   // px only
   aside: {
     header: {
-      height: 90,
+      height: 80,
     },
     width: {
       small: 300,
@@ -395,11 +395,48 @@ theme.global = {
   drop: {
     zIndex: 200,
   },
+  colors: {
+    icon: '#000000',
+  },
+  edgeSize: {
+    hair: '1px',
+    xxsmall: '3px',
+    xsmall: '6px',
+    small: '12px',
+    ms: '16px',
+    medium: '24px',
+    ml: '36px',
+    large: '48px',
+    xlarge: '64px',
+    xxlarge: '100px',
+  },
 };
 theme.layer = {
   zIndex: 201,
   overlay: {
     background: 'rgba(0, 0, 0, 0.80)',
+  },
+};
+
+theme.text = {
+  xxxlarge: { size: '60px', height: '75px', maxWidth: '800px' },
+  xxlarge: { size: '30px', height: '36px', maxWidth: '800px' },
+  xlarge: { size: '21px', height: '28px', maxWidth: '800px' },
+  large: { size: '18px', height: '24px', maxWidth: '800px' },
+  medium: { size: '16px', height: '21px', maxWidth: '800px' },
+  mediumTight: { size: '16px', height: '18px', maxWidth: '800px' },
+  small: { size: '14px', height: '18px', maxWidth: '700px' },
+  xsmall: { size: '13px', height: '16px', maxWidth: '600px' },
+  xxsmall: { size: '12px', height: '14px', maxWidth: '500px' },
+};
+
+theme.icon = {
+  size: {
+    xsmall: '20px',
+    small: '24px',
+    medium: '36px',
+    large: '48px',
+    xlarge: '96px',
   },
 };
 

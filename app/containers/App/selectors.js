@@ -278,6 +278,10 @@ export const selectWithoutQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('without')
 );
+export const selectAnyQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('any')
+);
 export const selectCategoryQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('cat')
@@ -382,6 +386,15 @@ export const selectIncludeTargetMembers = createSelector(
   (locationQuery) => {
     if (locationQuery && locationQuery.get('tm')) {
       return qe(locationQuery.get('tm'), 1) || locationQuery.get('tm') === 'true';
+    }
+    return true; // default
+  }
+);
+export const selectIncludeMembersForFiltering = createSelector(
+  selectLocationQuery,
+  (locationQuery) => {
+    if (locationQuery && locationQuery.get('fm')) {
+      return qe(locationQuery.get('fm'), 1) || locationQuery.get('fm') === 'true';
     }
     return true; // default
   }
@@ -1282,9 +1295,33 @@ export const selectActorActionsMembersGroupedByAction = createSelector(
     }, Map())
   )
 );
+export const selectActorActionsAssociationsGroupedByAction = createSelector(
+  selectActorActionsGroupedByAction,
+  selectMembershipsGroupedByMember,
+  (entities, memberships) => entities && memberships && entities.map(
+    (actors) => actors.reduce((memo, actorId) => {
+      if (memberships.get(actorId)) {
+        return memo.concat(memberships.get(actorId));
+      }
+      return memo;
+    }, Map())
+  )
+);
 export const selectActionActorsMembersGroupedByAction = createSelector(
   selectActionActorsGroupedByAction,
   selectMembershipsGroupedByAssociation,
+  (actionActorsByAction, memberships) => actionActorsByAction && memberships && actionActorsByAction.map(
+    (actionActors) => actionActors.reduce((memo, actorId) => {
+      if (memberships.get(actorId)) {
+        return memo.concat(memberships.get(actorId));
+      }
+      return memo;
+    }, Map())
+  )
+);
+export const selectActionActorsAssociationsGroupedByAction = createSelector(
+  selectActionActorsGroupedByAction,
+  selectMembershipsGroupedByMember,
   (actionActorsByAction, memberships) => actionActorsByAction && memberships && actionActorsByAction.map(
     (actionActors) => actionActors.reduce((memo, actorId) => {
       if (memberships.get(actorId)) {
