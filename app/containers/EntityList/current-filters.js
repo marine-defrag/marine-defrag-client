@@ -54,6 +54,7 @@ export const currentFilters = (
     intl,
   },
   withoutLabel,
+  anyLabel,
   errorLabel,
 ) => {
   let filterTags = [];
@@ -75,6 +76,7 @@ export const currentFilters = (
       locationQuery,
       onTagClick,
       withoutLabel,
+      anyLabel,
       intl,
     ));
   }
@@ -87,6 +89,7 @@ export const currentFilters = (
         locationQuery,
         onTagClick,
         withoutLabel,
+        anyLabel,
         intl,
       ));
     });
@@ -98,6 +101,7 @@ export const currentFilters = (
       locationQuery,
       onTagClick,
       withoutLabel,
+      anyLabel,
       intl,
     ));
   }
@@ -133,6 +137,7 @@ const getCurrentTaxonomyFilters = (
   locationQuery,
   onClick,
   withoutLabel,
+  anyLabel,
   intl,
 ) => {
   const tags = [];
@@ -194,34 +199,39 @@ const getCurrentTaxonomyFilters = (
       });
     });
   }
+  if (locationQuery.get('any')) {
+    const locationQueryValue = locationQuery.get('any');
+    taxonomies.forEach((taxonomy) => {
+      asList(locationQueryValue).forEach((queryValue) => {
+        // numeric means taxonomy
+        if (isNumber(queryValue) && taxonomy.get('id') === queryValue) {
+          const value = queryValue.toString();
+          tags.push({
+            labels: [
+              { label: anyLabel },
+              {
+                label: `entities.taxonomies.${parseInt(taxonomy.get('id'), 10)}.single`,
+                lowerCase: true,
+                appMessage: true,
+              },
+            ],
+            type: 'taxonomies',
+            group: intl.formatMessage(appMessages.nav.taxonomies),
+            id: taxonomy.get('id'),
+            onClick: () => onClick({
+              value,
+              query: 'any',
+              checked: false,
+            }),
+            groupId: 'taxonomies',
+            optionId: taxonomy.get('id'),
+          });
+        }
+      });
+    });
+  }
   return tags;
 };
-
-// const getCurrentActortypeFilter = (
-//   config,
-//   actortypes,
-//   locationQuery,
-//   onClick,
-// ) => {
-//   const tags = [];
-//   if (locationQuery.get(config.query)) {
-//     const locationQueryValue = locationQuery.get(config.query);
-//     const actortype = actortypes.find((type) => qe(type.get('id'), locationQueryValue));
-//     if (actortype) {
-//       tags.push({
-//         message: `actortypes_short.${actortype.get('id')}`,
-//         type: 'actors',
-//         id: 0,
-//         onClick: () => onClick({
-//           value: actortype.get('id'),
-//           query: config.query,
-//           checked: false,
-//         }),
-//       });
-//     }
-//   }
-//   return tags;
-// };
 
 const getCurrentConnectionFilters = (
   connectionKey,
@@ -230,6 +240,7 @@ const getCurrentConnectionFilters = (
   locationQuery,
   onClick,
   withoutLabel,
+  anyLabel,
   intl,
 ) => {
   const tags = [];
@@ -237,7 +248,6 @@ const getCurrentConnectionFilters = (
   if (locationQuery.get(query) && connections.get(path)) {
     const locationQueryValue = locationQuery.get(query);
     asList(locationQueryValue).forEach((queryValue) => {
-      // const valueSplit = queryValue.split(':');
       const [optionId, value] = queryValue.split(':');
       if (value) {
         const connection = connections.getIn([path, value]);
@@ -259,68 +269,153 @@ const getCurrentConnectionFilters = (
       }
     });
   }
-
-  if (locationQuery.get('without')) {
-    const locationQueryValue = locationQuery.get('without');
-    asList(locationQueryValue).forEach((queryValue) => {
-      // if (option.attribute && startsWith(queryValue, 'att')) {
-      //   tags.push({
-      //     labels: [
-      //       { label: withoutLabel },
-      //       {
-      //         appMessage: true,
-      //         label: option.message,
-      //         lowerCase: true,
-      //       },
-      //       { label: option.label },
-      //     ],
-      //     type: option.entityType,
-      //     group: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
-      //     onClick: () => onClick({
-      //       value: queryValue,
-      //       query: 'without',
-      //       checked: false,
-      //     }),
-      //     groupId: connectionKey,
-      //     optionId,
-      //   });
-      // } else {
-      const [entityType, typeId] = queryValue.split('_');
-      if (entityType === (option.entityTypeAs || option.entityType)) {
-        tags.push({
-          labels: [
-            { label: withoutLabel },
-            {
-              appMessage: true,
-              label: (
-                option.groupByType
-                && option.message
-                && option.message.indexOf('{typeid}') > -1
-              )
-                ? option.message.replace('{typeid}', typeId)
-                : option.message,
-              lowerCase: true,
-            },
-            { label: option.label },
-          ],
-          group: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
-          type: option.entityType,
-          onClick: () => onClick({
-            value: queryValue,
-            query: 'without',
-            checked: false,
-          }),
-          groupId: connectionKey,
-          optionId: typeId,
-        });
-        // }
-      }
-    });
+  // FK connection (1 : n)
+  if (option.attribute) {
+    if (locationQuery.get('without')) {
+      const locationQueryValue = locationQuery.get('without');
+      asList(locationQueryValue).forEach((queryValue) => {
+        const [, attribute] = queryValue.split(':');
+        if (option.attribute === attribute) {
+          const label = option.message;
+          tags.push({
+            labels: [
+              { label: withoutLabel },
+              {
+                appMessage: true,
+                label,
+                lowerCase: true,
+              },
+              { label: option.label },
+            ],
+            group: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
+            type: option.entityType,
+            onClick: () => onClick({
+              value: queryValue,
+              query: 'without',
+              checked: false,
+            }),
+            groupId: connectionKey,
+            optionId: attribute,
+          });
+          // }
+        }
+      });
+    }
+    if (locationQuery.get('any')) {
+      const locationQueryValue = locationQuery.get('any');
+      asList(locationQueryValue).forEach((queryValue) => {
+        const [, attribute] = queryValue.split(':');
+        if (option.attribute === attribute) {
+          const label = option.message;
+          tags.push({
+            labels: [
+              { label: anyLabel },
+              {
+                appMessage: true,
+                label,
+                lowerCase: true,
+              },
+              { label: option.label },
+            ],
+            group: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
+            type: option.entityType,
+            onClick: () => onClick({
+              value: queryValue,
+              query: 'any',
+              checked: false,
+            }),
+            groupId: connectionKey,
+            optionId: attribute,
+          });
+          // }
+        }
+      });
+    }
+  // FK connection (n : m)
+  } else {
+    if (locationQuery.get('without')) {
+      const locationQueryValue = locationQuery.get('without');
+      asList(locationQueryValue).forEach((queryValue) => {
+        const [entityType, typeId] = queryValue.split('_');
+        if (entityType === (option.entityTypeAs || option.entityType)) {
+          let label;
+          if (typeId && option.groupByType && option.messageByType && option.messageByType.indexOf('{typeid}') > -1) {
+            label = option.messageByType.replace('{typeid}', typeId);
+          } else {
+            label = option.message;
+          }
+          tags.push({
+            labels: [
+              { label: withoutLabel },
+              {
+                appMessage: true,
+                label,
+                lowerCase: true,
+              },
+              { label: option.label },
+            ],
+            group: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
+            type: option.entityType,
+            onClick: () => onClick({
+              value: queryValue,
+              query: 'without',
+              checked: false,
+            }),
+            groupId: connectionKey,
+            optionId: typeId,
+          });
+          // }
+        }
+      });
+    }
+    if (locationQuery.get('any')) {
+      const locationQueryValue = locationQuery.get('any');
+      asList(locationQueryValue).forEach((queryValue) => {
+        const [entityType, typeId] = queryValue.split('_');
+        if (entityType === (option.entityTypeAs || option.entityType)) {
+          let label;
+          if (typeId && option.groupByType && option.messageByType && option.messageByType.indexOf('{typeid}') > -1) {
+            label = option.messageByType.replace('{typeid}', typeId);
+          } else {
+            label = option.message;
+          }
+          tags.push({
+            labels: [
+              { label: anyLabel },
+              {
+                appMessage: true,
+                label,
+                lowerCase: true,
+              },
+              { label: option.label },
+            ],
+            group: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
+            type: option.entityType,
+            onClick: () => onClick({
+              value: queryValue,
+              query: 'any',
+              checked: false,
+            }),
+            groupId: connectionKey,
+            optionId: typeId,
+          });
+          // }
+        }
+      });
+    }
   }
   return tags;
 };
 
-const getCurrentAttributeFilters = (entities, attributeFiltersOptions, locationQuery, onClick, withoutLabel, intl) => {
+const getCurrentAttributeFilters = (
+  entities,
+  attributeFiltersOptions,
+  locationQuery,
+  onClick,
+  withoutLabel,
+  anyLabel,
+  intl,
+) => {
   const tags = [];
   if (locationQuery.get('where')) {
     const locationQueryValue = locationQuery.get('where');

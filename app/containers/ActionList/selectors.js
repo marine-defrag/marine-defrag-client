@@ -5,6 +5,7 @@ import {
   selectEntities,
   selectActionsSearchQuery,
   selectWithoutQuery,
+  selectAnyQuery,
   selectActorQuery,
   selectCategoryQuery,
   selectTargetedQuery,
@@ -34,6 +35,7 @@ import {
   filterEntitiesByCategories,
   // filterEntitiesByConnectedCategories,
   filterEntitiesWithoutAssociation,
+  filterEntitiesWithAnyAssociation,
   entitiesSetCategoryIds,
   // filterTaxonomies,
   getTaxonomyCategories,
@@ -302,8 +304,16 @@ const selectActionsWithout = createSelector(
     ? filterEntitiesWithoutAssociation(entities, categories, query)
     : entities
 );
-const selectActionsByActors = createSelector(
+const selectActionsAny = createSelector(
   selectActionsWithout,
+  selectCategories,
+  selectAnyQuery,
+  (entities, categories, query) => query
+    ? filterEntitiesWithAnyAssociation(entities, categories, query)
+    : entities
+);
+const selectActionsByActors = createSelector(
+  selectActionsAny,
   selectActorQuery,
   (entities, query) => query
     ? filterEntitiesByConnection(entities, query, 'actors')

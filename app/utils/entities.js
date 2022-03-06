@@ -115,6 +115,28 @@ export const filterEntitiesWithoutAssociation = (
     }
   )
 );
+// filter entities by presence of any association either by taxonomy id or connection type
+// assumes prior nesting of relationships
+export const filterEntitiesWithAnyAssociation = (
+  entities,
+  categories,
+  query,
+) => entities && entities.filter(
+  (entity) => asList(query).some(
+    (queryValue) => {
+      const isTax = isNumber(queryValue);
+      if (isTax) {
+        return testEntityTaxonomyAssociation(entity, categories, parseInt(queryValue, 10));
+      }
+      const isAttribute = startsWith(queryValue, 'att:');
+      if (isAttribute) {
+        const [, attribute] = queryValue.split(':');
+        return entity.getIn(['attributes', attribute]);
+      }
+      return testEntityAssociation(entity, queryValue);
+    }
+  )
+);
 
 // filter entities by association with one or more categories
 // assumes prior nesting of relationships

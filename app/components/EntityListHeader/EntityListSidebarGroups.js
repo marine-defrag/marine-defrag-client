@@ -15,6 +15,7 @@ import qe from 'utils/quasi-equals';
 import EntityListSidebarGroupLabel from './EntityListSidebarGroupLabel';
 import FilterOptionList from './FilterOptionList';
 import FilterOptionCheckboxes from './FilterOptionCheckboxes';
+import FilterOptionCheckbox from './FilterOptionCheckbox';
 
 const Group = styled((p) => (
   <Box
@@ -37,7 +38,11 @@ class EntityListSidebarGroups extends React.PureComponent { // eslint-disable-li
           const groupOptions = group.get('options') && group.get('options').filter(
             (option) => option.get('id')
           );
-          if (groupOptions && groupOptions.size > 0) {
+          const groupOptionsGeneral = group.get('optionsGeneral');
+          if (
+            (groupOptions && groupOptions.size > 0)
+            || (groupOptionsGeneral && groupOptionsGeneral.size > 0)
+          ) {
             return (
               <Group key={groupId} expanded={this.props.expanded[groupId]}>
                 <EntityListSidebarGroupLabel
@@ -50,27 +55,46 @@ class EntityListSidebarGroups extends React.PureComponent { // eslint-disable-li
                   }}
                 />
                 {this.props.expanded[groupId] && (
-                  <Box margin={{ top: 'ms', bottom: 'medium' }}>
-                    {groupOptions.map(
-                      (option, i) => (
-                        <Box key={i}>
-                          {option.get('filterUI') && qe(option.get('filterUI'), 'checkboxes') && (
-                            <FilterOptionCheckboxes
-                              option={option}
-                              group={group}
-                              onUpdateQuery={onUpdateQuery}
-                            />
-                          )}
-                          {(!option.get('filterUI') || qe(option.get('filterUI'), 'list')) && (
-                            <FilterOptionList
-                              option={option}
-                              group={group}
-                              onShowForm={this.props.onShowForm}
-                              onHideOptions={onHideOptions}
-                            />
-                          )}
-                        </Box>
-                      )
+                  <Box margin={{ top: 'small', bottom: 'medium' }} gap="small">
+                    {groupOptionsGeneral && (
+                      <Box gap="xsmall">
+                        {groupOptionsGeneral && groupOptionsGeneral.map(
+                          (option, i) => (
+                            <Box key={i}>
+                              {option.get('filterUI') && qe(option.get('filterUI'), 'checkbox') && (
+                                <FilterOptionCheckbox
+                                  option={option}
+                                  onUpdateQuery={onUpdateQuery}
+                                />
+                              )}
+                            </Box>
+                          )
+                        )}
+                      </Box>
+                    )}
+                    {groupOptions && (
+                      <Box>
+                        {groupOptions && groupOptions.map(
+                          (option, i) => (
+                            <Box key={i}>
+                              {option.get('filterUI') && qe(option.get('filterUI'), 'checkboxes') && (
+                                <FilterOptionCheckboxes
+                                  option={option}
+                                  onUpdateQuery={onUpdateQuery}
+                                />
+                              )}
+                              {(!option.get('filterUI') || qe(option.get('filterUI'), 'list')) && (
+                                <FilterOptionList
+                                  option={option}
+                                  group={group}
+                                  onShowForm={this.props.onShowForm}
+                                  onHideOptions={onHideOptions}
+                                />
+                              )}
+                            </Box>
+                          )
+                        )}
+                      </Box>
                     )}
                   </Box>
                 )}

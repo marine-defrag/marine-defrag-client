@@ -94,6 +94,7 @@ export const makeFilterGroups = ({
         id: connectionKey, // filterGroupId
         label: messages.connections(option.type),
         show: true,
+        includeAnyWithout: !!option.groupByType,
         options: types && types
           .filter((type) => {
             if (option.type === 'action-parents') {
@@ -113,7 +114,7 @@ export const makeFilterGroups = ({
               : type.getIn(['attributes', attribute]);
           })
           .reduce((memo, type) => {
-            const id = type.get('id');
+            const id = option.attribute || type.get('id');
             const optionCurrentFilters = currentFilters && currentFilters.filter(
               (f) => qe(f.optionId, id) && qe(f.groupId, connectionKey)
             );
@@ -124,8 +125,8 @@ export const makeFilterGroups = ({
                 && appMessages[typeAbout]
                 && appMessages[typeAbout][type.get('id')]
                 && intl.formatMessage(appMessages[typeAbout][type.get('id')]),
-              message: (option.message && option.message.indexOf('{typeid}') > -1)
-                ? option.message.replace('{typeid}', type.get('id'))
+              message: (option.messageByType && option.messageByType.indexOf('{typeid}') > -1)
+                ? option.messageByType.replace('{typeid}', type.get('id'))
                 : option.message,
               color: option.entityType,
               active: !!activeFilterOption

@@ -80,7 +80,8 @@ export const CONFIG = {
       query: 'action',
       type: 'actor-actions',
       search: true,
-      message: 'entities.actions_{typeid}.plural',
+      messageByType: 'entities.actions_{typeid}.plural',
+      message: 'entities.actions.plural',
       path: API.ACTIONS, // filter by actor connection
       entityType: 'actions', // filter by actor connection
       clientPath: ROUTES.ACTION,
@@ -93,7 +94,8 @@ export const CONFIG = {
       query: 'targeting',
       type: 'target-actions',
       search: true,
-      message: 'entities.actions_{typeid}.plural',
+      messageByType: 'entities.actions_{typeid}.plural',
+      message: 'entities.actions.plural',
       path: API.ACTIONS, // filter by actor connection
       entityType: 'actions', // filter by actor connection
       entityTypeAs: 'targetingActions',
@@ -108,7 +110,8 @@ export const CONFIG = {
       query: 'by-member',
       type: 'association-members',
       search: true,
-      message: 'entities.actors_{typeid}.plural',
+      messageByType: 'entities.actors_{typeid}.plural',
+      message: 'entities.actors.plural',
       path: API.ACTORS, // filter by actor connection
       entityTypeAs: 'members', // filter by actor connection
       entityType: 'actors',
@@ -124,7 +127,8 @@ export const CONFIG = {
       query: 'by-association',
       type: 'member-associations',
       search: true,
-      message: 'entities.actors_{typeid}.plural',
+      messageByType: 'entities.actors_{typeid}.plural',
+      message: 'entities.actors.plural',
       path: API.ACTORS, // filter by actor connection
       entityType: 'actors',
       entityTypeAs: 'associations', // filter by actor connection

@@ -5,6 +5,7 @@ import { lowerCase } from 'utils/string';
 import isNumber from 'utils/is-number';
 import asArray from 'utils/as-array';
 import asList from 'utils/as-list';
+import qe from 'utils/quasi-equals';
 
 import appMessages from 'containers/App/messages';
 
@@ -70,6 +71,32 @@ export const makeActiveFilterOptions = ({
         activeOptionId: activeFilterOption.optionId,
         locationQueryValue: locationQuery.get('where'),
       });
+    default:
+      return null;
+  }
+};
+export const makeAnyWithoutFilterOptions = ({
+  config,
+  locationQuery,
+  activeFilterOption,
+  contextIntl,
+  messages,
+}) => {
+  // create filterOptions
+  switch (activeFilterOption.group) {
+    case 'actors':
+    case 'actions':
+    case 'targets':
+    case 'members':
+    case 'associations':
+    case 'resources':
+      return makeAnyWithoutConnectionFilterOptions(
+        config.connections,
+        locationQuery,
+        messages,
+        contextIntl,
+        activeFilterOption.group,
+      );
     default:
       return null;
   }
@@ -323,6 +350,25 @@ export const makeConnectionFilterOptions = (
           }
         });
       }
+      // also check for active any options
+      if (locationQuery.get('any')) {
+        locationQueryValue = locationQuery.get('any');
+        asList(locationQueryValue).forEach((queryValue) => {
+          if (`${query}:${typeId}` === queryValue) {
+            filterOptions.options[queryValue] = {
+              messagePrefix: messages.any,
+              label: option.label,
+              message: option.message,
+              showCount: true,
+              labelEmphasis: true,
+              value: queryValue,
+              count: 0,
+              query: 'any',
+              checked: true,
+            };
+          }
+        });
+      }
     } else {
       entities.forEach((entity) => {
         // FK connection (1 : n)
@@ -365,10 +411,10 @@ export const makeConnectionFilterOptions = (
               let { message } = option;
               if (
                 option.groupByType
-                && option.message
-                && option.message.indexOf('{typeid}') > -1
+                && option.messageByType
+                && option.messageByType.indexOf('{typeid}') > -1
               ) {
-                message = option.message.replace('{typeid}', typeId);
+                message = option.messageByTypemessageByType.replace('{typeid}', typeId);
               }
               filterOptions.options.without = {
                 messagePrefix: messages.without,
@@ -380,6 +426,33 @@ export const makeConnectionFilterOptions = (
                 count: 1,
                 query: 'without',
                 checked: optionChecked(locationQuery.get('without'), `att:${option.attribute}`),
+              };
+            }
+          }
+          if (connection) {
+            if (filterOptions.options.any) {
+              // no connection present
+              // add without option
+              filterOptions.options.any.count += 1;
+            } else {
+              let { message } = option;
+              if (
+                option.groupByType
+                && option.messageByType
+                && option.messageByType.indexOf('{typeid}') > -1
+              ) {
+                message = option.messageByTypemessageByType.replace('{typeid}', typeId);
+              }
+              filterOptions.options.any = {
+                messagePrefix: messages.any,
+                label: option.label,
+                message,
+                showCount: true,
+                labelEmphasis: true,
+                value: `att:${option.attribute}`,
+                count: 1,
+                query: 'any',
+                checked: optionChecked(locationQuery.get('any'), `att:${option.attribute}`),
               };
             }
           }
@@ -427,10 +500,10 @@ export const makeConnectionFilterOptions = (
               let { message } = option;
               if (
                 option.groupByType
-                && option.message
-                && option.message.indexOf('{typeid}') > -1
+                && option.messageByType
+                && option.messageByType.indexOf('{typeid}') > -1
               ) {
-                message = option.message.replace('{typeid}', typeId);
+                message = option.messageByType.replace('{typeid}', typeId);
               }
               filterOptions.options.without = {
                 messagePrefix: messages.without,
@@ -445,10 +518,77 @@ export const makeConnectionFilterOptions = (
               };
             }
           }
+          if (optionConnections.size > 0) {
+            if (filterOptions.options.any) {
+              // no connection present
+              // add without option
+              filterOptions.options.any.count += 1;
+            } else {
+              let { message } = option;
+              if (
+                option.groupByType
+                && option.messageByType
+                && option.messageByType.indexOf('{typeid}') > -1
+              ) {
+                message = option.messageByType.replace('{typeid}', typeId);
+              }
+              filterOptions.options.any = {
+                messagePrefix: messages.any,
+                label: option.label,
+                message,
+                showCount: true,
+                labelEmphasis: true,
+                value: `${entityType}_${typeId}`,
+                count: 1,
+                query: 'any',
+                checked: optionChecked(locationQuery.get('any'), `${entityType}_${typeId}`),
+              };
+            }
+          }
         }
       }); // for each entities
     }
   }
   filterOptions.tagFilterGroups = option && makeTagFilterGroups(connectedTaxonomies, contextIntl);
   return filterOptions;
+};
+export const makeAnyWithoutConnectionFilterOptions = (
+  config,
+  locationQuery,
+  messages,
+  contextIntl,
+  group,
+) => {
+  // get the active option
+  const option = config[group];
+  // if option active
+  if (option) {
+    // the option path
+    // const { query, path } = option;
+    const entityType = option.entityTypeAs || option.entityType;
+    const withoutChecked = qe(locationQuery.get('without'), entityType);
+    const anyChecked = qe(locationQuery.get('any'), entityType);
+    const label = appMessages.nav[group]
+      ? contextIntl.formatMessage(appMessages.nav[group])
+      : 'LABEL NOT FOUND';
+    return [
+      {
+        messagePrefix: messages.any,
+        label,
+        value: entityType,
+        query: 'any',
+        filterUI: 'checkbox',
+        checked: anyChecked,
+      },
+      {
+        messagePrefix: messages.without,
+        label,
+        value: entityType,
+        query: 'without',
+        filterUI: 'checkbox',
+        checked: withoutChecked,
+      },
+    ];
+  }
+  return null;
 };

@@ -238,6 +238,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         intl,
       },
       intl.formatMessage(messages.filterFormWithoutPrefix),
+      intl.formatMessage(messages.filterFormAnyPrefix),
       intl.formatMessage(messages.filterFormError),
     );
 

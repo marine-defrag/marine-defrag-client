@@ -3,6 +3,7 @@ import { Map } from 'immutable';
 import {
   selectResourcesSearchQuery,
   selectWithoutQuery,
+  selectAnyQuery,
   selectActionQuery,
   selectSortByQuery,
   selectSortOrderQuery,
@@ -17,6 +18,7 @@ import {
 import {
   filterEntitiesByConnection,
   filterEntitiesWithoutAssociation,
+  filterEntitiesWithAnyAssociation,
   entitiesSetCategoryIds,
 } from 'utils/entities';
 // import { qe } from 'utils/quasi-equals';
@@ -148,8 +150,16 @@ const selectResourcesWithout = createSelector(
     ? filterEntitiesWithoutAssociation(entities, categories, query)
     : entities
 );
-const selectResourcesByConnections = createSelector(
+const selectResourcesAny = createSelector(
   selectResourcesWithout,
+  selectCategories,
+  selectAnyQuery,
+  (entities, categories, query) => query
+    ? filterEntitiesWithAnyAssociation(entities, categories, query)
+    : entities
+);
+const selectResourcesByConnections = createSelector(
+  selectResourcesAny,
   selectActionQuery,
   (entities, query) => query
     ? filterEntitiesByConnection(entities, query, 'actions')

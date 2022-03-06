@@ -278,6 +278,10 @@ export const selectWithoutQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('without')
 );
+export const selectAnyQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('any')
+);
 export const selectCategoryQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('cat')

@@ -157,6 +157,10 @@ export default defineMessages({
     id: 'app.components.EntityListHeader.filterFormWithoutPrefix',
     defaultMessage: 'Without',
   },
+  filterFormAnyPrefix: {
+    id: 'app.components.EntityListHeader.filterFormAnyPrefix',
+    defaultMessage: 'With some (any)',
+  },
   editFormTitlePrefix: {
     id: 'app.components.EntityListHeader.editFormTitlePrefix',
     defaultMessage: 'Update',

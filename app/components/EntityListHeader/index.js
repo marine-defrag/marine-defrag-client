@@ -31,7 +31,10 @@ import EntityListSidebar from './EntityListSidebar';
 
 import { makeFilterGroups } from './filterGroupsFactory';
 import { makeEditGroups } from './editGroupsFactory';
-import { makeActiveFilterOptions } from './filterOptionsFactory';
+import {
+  makeActiveFilterOptions,
+  makeAnyWithoutFilterOptions,
+} from './filterOptionsFactory';
 import { makeActiveEditOptions } from './editOptionsFactory';
 
 import messages from './messages';
@@ -334,6 +337,40 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
           taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
         },
       });
+      // console.log(panelGroups)
+      panelGroups = Object.keys(panelGroups).reduce(
+        (memo, groupId) => {
+          const group = panelGroups[groupId];
+          if (group.includeAnyWithout && group.options && group.options.length > 0) {
+            const allAnyOptions = makeAnyWithoutFilterOptions({
+              config,
+              locationQuery,
+              activeFilterOption: {
+                group: groupId,
+              },
+              contextIntl: intl,
+              messages: {
+                titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
+                without: intl.formatMessage(messages.filterFormWithoutPrefix),
+                any: intl.formatMessage(messages.filterFormAnyPrefix),
+                connections: (type) => getFilterConnectionsMsg(intl, type),
+              },
+            });
+            return {
+              ...memo,
+              [groupId]: {
+                ...group,
+                optionsGeneral: allAnyOptions,
+              },
+            };
+          }
+          return {
+            ...memo,
+            [groupId]: group,
+          };
+        },
+        {},
+      );
       if (activeOption) {
         formOptions = makeActiveFilterOptions({
           entities,
@@ -351,6 +388,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
           messages: {
             titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
             without: intl.formatMessage(messages.filterFormWithoutPrefix),
+            any: intl.formatMessage(messages.filterFormAnyPrefix),
           },
         });
       }
