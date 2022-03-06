@@ -31,6 +31,7 @@ export const CONFIG = {
   types: 'actiontypes',
   serverPath: API.ACTIONS,
   clientPath: ROUTES.ACTION,
+  hasMemberOption: true,
   views: {
     list: {
       search: ['code', 'title', 'description'],
