@@ -19,7 +19,7 @@ import {
   selectActiontypes,
   selectActortypes,
   // selectActortypesForActiontype,
-  // selectTargettypesForActiontype,
+  selectTargettypesForActiontype,
   selectResourcetypesForActiontype,
 } from 'containers/App/selectors';
 
@@ -198,7 +198,7 @@ const mapStateToProps = (state, props) => ({
   isAnalyst: selectIsUserAnalyst(state),
   actiontypes: selectActiontypes(state),
   actortypes: selectActortypes(state),
-  targettypes: selectActortypes(state),
+  targettypes: selectTargettypesForActiontype(state, { type: props.params.id }),
   resourcetypes: selectResourcetypesForActiontype(state, { type: props.params.id }),
 });
 function mapDispatchToProps(dispatch) {
