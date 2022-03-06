@@ -307,7 +307,7 @@ const selectActorsByTargeted = createSelector(
   selectActorsByActions,
   selectTargetingQuery,
   (entities, query) => query
-    ? filterEntitiesByConnection(entities, query, 'targeting')
+    ? filterEntitiesByConnection(entities, query, 'targetingActions')
     : entities
 );
 
