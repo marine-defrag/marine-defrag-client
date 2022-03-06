@@ -77,7 +77,7 @@
   "app.components.EntityListHeader.editGroupLabel.connections-actor-actions": "Update activity connections",
   "app.components.EntityListHeader.editGroupLabel.connections-target-actions": "Update activity-target connections",
   "app.components.EntityListHeader.filterFormTitlePrefix": "Filter by",
-  "app.components.EntityListHeader.filterFormWithoutPrefix": "Without",
+  "app.components.EntityListHeader.filterFormWithoutPrefix": "Without any",
   "app.components.EntityListHeader.editFormTitlePrefix": "Update",
   "app.components.EntityListHeader.editFormTitlePostfix": "selected",
   "app.components.EntityListHeader.entitiesNotFound": "No entities found",

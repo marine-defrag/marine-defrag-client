@@ -59,14 +59,28 @@ export const testEntityTaxonomyAssociation = (
   );
 
 // check if entity has any nested connection by type
-export const testEntityAssociation = (entity, associatedPath) => {
+export const testEntityAssociation = (entity, associatedPath, includeMembers) => {
   // check for actortype
   if (associatedPath.indexOf('_') > -1) {
     const [path, typeId] = associatedPath.split('_');
     const associations = entity.getIn([`${path}ByType`, parseInt(typeId, 10)]);
-    return associations && associations.size > 0;
+    if (associations && associations.size > 0) {
+      return true;
+    }
+    if (includeMembers) {
+      const memberAssociations = entity.getIn([`${path}AssociationsByType`, parseInt(typeId, 10)]);
+      return memberAssociations && memberAssociations.size > 0;
+    }
+    return false;
   }
-  return entity.get(associatedPath) && entity.get(associatedPath).size > 0;
+  const pass = entity.get(associatedPath) && entity.get(associatedPath).size > 0;
+  if (pass) {
+    return true;
+  }
+  if (includeMembers) {
+    return entity.get(`${associatedPath}Associations`) && entity.get(`${associatedPath}Associations`).size > 0;
+  }
+  return false;
 };
 
 // prep searchtarget, incl id
@@ -99,6 +113,7 @@ export const filterEntitiesWithoutAssociation = (
   entities,
   categories,
   query,
+  includeMembers,
 ) => entities && entities.filter(
   (entity) => asList(query).every(
     (queryValue) => {
@@ -111,7 +126,30 @@ export const filterEntitiesWithoutAssociation = (
         const [, attribute] = queryValue.split(':');
         return !entity.getIn(['attributes', attribute]);
       }
-      return !testEntityAssociation(entity, queryValue);
+      return !testEntityAssociation(entity, queryValue, includeMembers);
+    }
+  )
+);
+// filter entities by presence of any association either by taxonomy id or connection type
+// assumes prior nesting of relationships
+export const filterEntitiesWithAnyAssociation = (
+  entities,
+  categories,
+  query,
+  includeMembers,
+) => entities && entities.filter(
+  (entity) => asList(query).some(
+    (queryValue) => {
+      const isTax = isNumber(queryValue);
+      if (isTax) {
+        return testEntityTaxonomyAssociation(entity, categories, parseInt(queryValue, 10));
+      }
+      const isAttribute = startsWith(queryValue, 'att:');
+      if (isAttribute) {
+        const [, attribute] = queryValue.split(':');
+        return entity.getIn(['attributes', attribute]);
+      }
+      return testEntityAssociation(entity, queryValue, includeMembers);
     }
   )
 );
@@ -171,6 +209,21 @@ export const filterEntitiesByConnection = (
       const [, value] = queryArg.split(':');
       return entity.get(path)
         && testEntityEntityAssociation(entity, path, value);
+    },
+  )
+);
+export const filterEntitiesByMultipleConnections = (
+  entities,
+  query,
+  paths,
+) => entities && entities.filter(
+  // consider replacing with .every()
+  (entity) => asList(query).every(
+    (queryArg) => {
+      const [, value] = queryArg.split(':');
+      return paths.some(
+        (path) => entity.get(path) && testEntityEntityAssociation(entity, path, value)
+      );
     },
   )
 );

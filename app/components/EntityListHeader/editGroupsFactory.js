@@ -125,11 +125,11 @@ export const makeEditGroups = ({
               return memo.concat({
                 id, // filterOptionId
                 label: option.label,
-                message: (option.message && option.message.indexOf('{typeid}') > -1)
-                  ? option.message.replace('{typeid}', type.get('id'))
+                message: (option.messageByType && option.messageByType.indexOf('{typeid}') > -1)
+                  ? option.messageByType.replace('{typeid}', type.get('id'))
                   : option.message,
                 path: option.connectPath,
-                connection: option.entityType,
+                connection: option.entityTypeAs || option.entityType,
                 key: option.key,
                 ownKey: option.ownKey,
                 active: !!activeEditOption

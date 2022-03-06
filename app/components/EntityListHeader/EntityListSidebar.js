@@ -9,6 +9,7 @@ import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { fromJS } from 'immutable';
+import { Box } from 'grommet';
 
 import Scrollable from 'components/styled/Scrollable';
 import Icon from 'components/Icon';
@@ -17,6 +18,7 @@ import SupTitle from 'components/SupTitle';
 
 import Sidebar from 'components/styled/Sidebar';
 import SidebarHeader from 'components/styled/SidebarHeader';
+import MapMemberOption from 'containers/EntitiesMap/MapInfoOptions/MapMemberOption';
 
 import EntityListSidebarGroups from './EntityListSidebarGroups';
 
@@ -117,6 +119,9 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
       hasSelected,
       panelGroups,
       onHideSidebar,
+      onHideOptions,
+      onUpdateQuery,
+      memberOption,
     } = this.props;
     const { intl } = this.context;
     return (
@@ -129,14 +134,21 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
               <ToggleHide onClick={onHideSidebar}>
                 <Icon name="close" />
               </ToggleHide>
+              {memberOption && (
+                <Box margin={{ top: 'small' }}>
+                  <MapMemberOption option={memberOption} />
+                </Box>
+              )}
             </SidebarHeader>
             <div>
               { (!isEditPanel || (isEditPanel && hasSelected && hasEntities)) && (
                 <EntityListSidebarGroups
                   groups={fromJS(panelGroups)}
                   onShowForm={this.onShowForm}
+                  onHideOptions={onHideOptions}
                   onToggleGroup={this.onToggleGroup}
                   expanded={this.state.expandedGroups}
+                  onUpdateQuery={onUpdateQuery}
                 />
               )}
               { isEditPanel && hasEntities && !hasSelected && (
@@ -158,7 +170,10 @@ EntityListSidebar.propTypes = {
   hasSelected: PropTypes.bool,
   panelGroups: PropTypes.object,
   onHideSidebar: PropTypes.func,
+  onHideOptions: PropTypes.func,
   setActiveOption: PropTypes.func,
+  onUpdateQuery: PropTypes.func,
+  memberOption: PropTypes.object,
 };
 
 EntityListSidebar.contextTypes = {
