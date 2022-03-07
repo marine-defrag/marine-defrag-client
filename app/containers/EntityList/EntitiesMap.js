@@ -42,9 +42,9 @@ import EntityListViewOptions from 'components/EntityListViewOptions';
 import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 import { hasGroupActors } from 'utils/entities';
-import MapContainer from './MapContainer';
-import MapInfoOptions from './MapInfoOptions';
-import TooltipContent from './TooltipContent';
+import MapContainer from 'containers/MapContainer';
+import MapInfoOptions from 'containers/MapContainer/MapInfoOptions';
+import TooltipContent from 'containers/MapContainer/TooltipContent';
 // import messages from './messages';
 
 const LoadingWrap = styled.div`

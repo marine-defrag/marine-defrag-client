@@ -19,7 +19,6 @@ import Loading from 'components/Loading';
 import EntityListHeader from 'components/EntityListHeader';
 import EntityListPrintKey from 'components/EntityListPrintKey';
 import EntityListMain from 'components/EntityListMain';
-import EntitiesMap from 'containers/EntitiesMap';
 import PrintOnly from 'components/styled/PrintOnly';
 
 import {
@@ -42,6 +41,7 @@ import {
 import { PARAMS } from 'containers/App/constants';
 import { USER_ROLES } from 'themes/config';
 
+import EntitiesMap from './EntitiesMap';
 import {
   selectDomain,
   selectProgress,

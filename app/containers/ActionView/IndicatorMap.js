@@ -19,9 +19,9 @@ import { ACTORTYPES } from 'themes/config';
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/EntitiesMap/MapContainer';
-import TooltipContent from 'containers/EntitiesMap/TooltipContent';
-import MapKey from 'containers/EntitiesMap/MapInfoOptions/MapKey';
+import MapContainer from 'containers/MapContainer';
+import TooltipContent from 'containers/MapContainer/TooltipContent';
+import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
 const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
   max-width: 400px;
 `;
