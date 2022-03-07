@@ -31,7 +31,9 @@ const Group = styled((p) => (
 
 class EntityListSidebarGroups extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
-    const { groups, onHideOptions, onUpdateQuery } = this.props;
+    const {
+      groups, onHideOptions, onUpdateQuery, onShowForm,
+    } = this.props;
     return (
       <div>
         {groups && groups.entrySeq().map(([groupId, group]) => {
@@ -92,7 +94,7 @@ class EntityListSidebarGroups extends React.PureComponent { // eslint-disable-li
                                 <FilterOptionList
                                   option={option}
                                   group={group}
-                                  onShowForm={this.props.onShowForm}
+                                  onShowForm={onShowForm}
                                   onHideOptions={onHideOptions}
                                 />
                               )}

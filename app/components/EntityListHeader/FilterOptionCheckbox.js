@@ -42,7 +42,7 @@ export function FilterOptionCheckbox({
             value: option.get('value'),
             add: !option.get('checked'),
             remove: option.get('checked'),
-            replace: !option.get('checked'),
+            replace: false,
           },
           {
             arg: 'page',

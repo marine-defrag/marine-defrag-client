@@ -535,13 +535,17 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
             onHideSidebar={onHideFilters}
             onHideOptions={this.onHideForm}
             setActiveOption={this.onSetActiveOption}
-            onUpdateQuery={onUpdateQuery}
+            onUpdateQuery={(args) => {
+              this.onHideForm();
+              onUpdateQuery(args);
+            }}
             memberOption={config.hasMemberOption
               ? {
                 key: 'filter-member-option',
                 active: !!includeMembers,
                 label: 'Include members when filtering by region, class or intergovernmental organisation',
                 onClick: () => {
+                  this.onHideForm();
                   onSetFilterMemberOption(!includeMembers);
                 },
               }
