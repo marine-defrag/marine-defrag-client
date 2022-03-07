@@ -61,24 +61,5 @@ export const CONFIG = {
         },
       ],
     },
-    {
-      group: 'taxonomies',
-      search: [{
-        attribute: 'title',
-        as: 'taxonomy',
-      }],
-      categorySearch: ['title', 'short_title', 'description', 'url', 'taxonomy'],
-    },
-    {
-      group: 'content',
-      targets: [
-        {
-          path: API.PAGES,
-          clientPath: ROUTES.PAGES,
-          search: ['title', 'content', 'menu_title'],
-
-        },
-      ],
-    },
   ],
 };
