@@ -18,22 +18,13 @@ import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
 import { ACTORTYPES, ROUTES } from 'themes/config';
 
 import {
-  selectMapSubjectQuery,
   selectActors,
   selectActions,
   selectActortypeActors,
-  selectIncludeActorMembers,
-  selectIncludeTargetMembers,
   selectActionActorsGroupedByAction,
   selectActorActionsGroupedByAction,
   selectMembershipsGroupedByAssociation,
 } from 'containers/App/selectors';
-
-import {
-  setMapSubject,
-  setIncludeActorMembers,
-  setIncludeTargetMembers,
-} from 'containers/App/actions';
 
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Loading from 'components/Loading';
@@ -94,12 +85,12 @@ export function EntitiesMap({
 }) {
   // const { intl } = this.context;
   // let { countries } = this.props;
-  let type;
   const countriesJSON = topojson.feature(
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
   );
   let countryData;
+  let type;
   let hasByTarget;
   let hasActions;
   let subjectOptions;
@@ -110,7 +101,7 @@ export function EntitiesMap({
   let actionsTotalShowing;
   let infoTitle;
   let infoSubTitle;
-  let mapSubjectClean = mapSubject;
+  let mapSubjectClean = mapSubject || 'actors';
   const entitiesTotal = entities ? entities.size : 0;
   // let cleanMapSubject = 'actors';
   if (dataReady) {
@@ -120,7 +111,6 @@ export function EntitiesMap({
       hasByTarget = type.getIn(['attributes', 'is_target']);
       hasActions = type.getIn(['attributes', 'is_active']);
       if (hasByTarget && qe(typeId, ACTORTYPES.COUNTRY)) { // ie countries & groups
-        mapSubjectClean = mapSubject;
         if (mapSubjectClean === 'targets') {
           indicator = includeTargetMembers ? 'targetingActionsTotal' : 'targetingActions';
         }
@@ -208,7 +198,7 @@ export function EntitiesMap({
             const actionsTotal = countActions + countActionsMembers;
             const targetingActionsTotal = countTargetingActions + countTargetingActionsMembers;
             let stats;
-            if (mapSubject === 'actors') {
+            if (mapSubjectClean === 'actors') {
               stats = [
                 {
                   title: `${intl.formatMessage(appMessages.entities.actions.plural)}: ${actionsTotal}`,
@@ -224,7 +214,7 @@ export function EntitiesMap({
                   ],
                 },
               ];
-            } else if (mapSubject === 'targets') {
+            } else if (mapSubjectClean === 'targets') {
               stats = [
                 {
                   title: `${intl.formatMessage(appMessages.entities.actions.plural)} as target: ${targetingActionsTotal}`,
@@ -250,6 +240,7 @@ export function EntitiesMap({
                 content: (
                   <TooltipContent
                     stats={stats}
+                    isCount
                   />
                 ),
               },
@@ -390,6 +381,7 @@ export function EntitiesMap({
                 content: (
                   <TooltipContent
                     stats={stats}
+                    isCount
                   />
                 ),
               },
@@ -430,7 +422,7 @@ export function EntitiesMap({
       type = actiontypes.find((at) => qe(at.get('id'), typeId));
       hasByTarget = type.getIn(['attributes', 'has_target']);
       if (hasByTarget) {
-        if (mapSubject === 'targets') {
+        if (mapSubjectClean === 'targets') {
           indicator = includeTargetMembers ? 'targetingActionsTotal' : 'targetingActions';
         }
         // cleanMapSubject = mapSubject;
@@ -439,15 +431,15 @@ export function EntitiesMap({
             type: 'secondary',
             title: 'By actor',
             onClick: () => onSetMapSubject('actors'),
-            active: mapSubject === 'actors',
-            disabled: mapSubject === 'actors',
+            active: mapSubjectClean === 'actors',
+            disabled: mapSubjectClean === 'actors',
           },
           {
             type: 'secondary',
             title: 'By target',
             onClick: () => onSetMapSubject('targets'),
-            active: mapSubject === 'targets',
-            disabled: mapSubject === 'targets',
+            active: mapSubjectClean === 'targets',
+            disabled: mapSubjectClean === 'targets',
           },
         ];
       } else {
@@ -539,7 +531,7 @@ export function EntitiesMap({
         }
         return [updated, total];
       }, [Map(), 0]);
-      // console.log('countryCounts', countryCounts && countryCounts.toJS())
+
       countryData = countriesJSON.features.map((feature) => {
         const country = countries.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
         if (country) {
@@ -551,7 +543,7 @@ export function EntitiesMap({
           const actionsTotal = countActions + countActionsMembers;
           const targetingActionsTotal = countTargetingActions + countTargetingActionsMembers;
           let stats;
-          if (mapSubject === 'actors') {
+          if (mapSubjectClean === 'actors') {
             stats = [
               {
                 title: `${intl.formatMessage(appMessages.entities[`actions_${typeId}`].plural)}: ${actionsTotal}`,
@@ -567,7 +559,7 @@ export function EntitiesMap({
                 ],
               },
             ];
-          } else if (mapSubject === 'targets') {
+          } else if (mapSubjectClean === 'targets') {
             stats = [
               {
                 title: `${intl.formatMessage(appMessages.entities[`actions_${typeId}`].plural)} as target: ${targetingActionsTotal}`,
@@ -593,6 +585,7 @@ export function EntitiesMap({
               content: (
                 <TooltipContent
                   stats={stats}
+                  isCount
                 />
               ),
             },
@@ -697,28 +690,12 @@ EntitiesMap.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  mapSubject: selectMapSubjectQuery(state),
   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
   actors: selectActors(state),
   actions: selectActions(state),
   actionActorsByAction: selectActionActorsGroupedByAction(state), // for figuring out targeted countries
   actorActionsByAction: selectActorActionsGroupedByAction(state), // for figuring out targeted countries
-  includeActorMembers: selectIncludeActorMembers(state),
-  includeTargetMembers: selectIncludeTargetMembers(state),
   membershipsByAssociation: selectMembershipsGroupedByAssociation(state),
 });
-function mapDispatchToProps(dispatch) {
-  return {
-    onSetMapSubject: (subject) => {
-      dispatch(setMapSubject(subject));
-    },
-    onSetIncludeTargetMembers: (active) => {
-      dispatch(setIncludeTargetMembers(active));
-    },
-    onSetIncludeActorMembers: (active) => {
-      dispatch(setIncludeActorMembers(active));
-    },
-  };
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(EntitiesMap));
+export default connect(mapStateToProps, null)(injectIntl(EntitiesMap));

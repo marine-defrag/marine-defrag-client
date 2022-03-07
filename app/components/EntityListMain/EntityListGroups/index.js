@@ -213,11 +213,11 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
     return (
       <div>
         <EntityListHeader
-          selectedTotal={entityIdsSelected.toSet().size}
+          selectedTotal={entityIdsSelected && entityIdsSelected.toSet().size}
           pageTotal={entityIdsOnPage.toSet().size}
           entitiesTotal={entities.size}
-          allSelected={entityIdsSelected.toSet().size === entities.size}
-          allSelectedOnPage={entityIdsSelected.toSet().size === entityIdsOnPage.toSet().size}
+          allSelected={entityIdsSelected && entityIdsSelected.toSet().size === entities.size}
+          allSelectedOnPage={entityIdsSelected && entityIdsSelected.toSet().size === entityIdsOnPage.toSet().size}
           isManager={isManager}
           entityTitle={entityTitle}
           sortOptions={config.views.list.sorting}
@@ -367,11 +367,11 @@ EntityListGroups.propTypes = {
   onPageSelect: PropTypes.func.isRequired,
   onPageItemsSelect: PropTypes.func.isRequired,
   onEntityClick: PropTypes.func.isRequired,
-  onEntitySelect: PropTypes.func.isRequired,
-  onEntitySelectAll: PropTypes.func.isRequired,
+  onEntitySelect: PropTypes.func,
+  onEntitySelectAll: PropTypes.func,
   onSortBy: PropTypes.func.isRequired,
   onSortOrder: PropTypes.func.isRequired,
-  onDismissError: PropTypes.func.isRequired,
+  onDismissError: PropTypes.func,
   groupSelectValue: PropTypes.string,
   subgroupSelectValue: PropTypes.string,
   showCode: PropTypes.bool,

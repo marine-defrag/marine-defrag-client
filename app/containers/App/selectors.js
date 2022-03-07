@@ -366,11 +366,11 @@ export const selectViewQuery = createSelector(
 );
 export const selectSubjectQuery = createSelector(
   selectLocationQuery,
-  (locationQuery) => locationQuery && (locationQuery.get('subj') || 'actors')
+  (locationQuery) => locationQuery && (locationQuery.get('subj'))
 );
 export const selectMapSubjectQuery = createSelector(
   selectLocationQuery,
-  (locationQuery) => locationQuery && (locationQuery.get('msubj') || 'actors')
+  (locationQuery) => locationQuery && (locationQuery.get('msubj'))
 );
 export const selectIncludeActorMembers = createSelector(
   selectLocationQuery,

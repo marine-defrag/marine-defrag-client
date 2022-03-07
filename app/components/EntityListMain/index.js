@@ -6,41 +6,33 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
-import styled from 'styled-components';
 import { FormattedMessage } from 'react-intl';
-
-import { jumpToComponent } from 'utils/scroll-to-component';
-import { lowerCase } from 'utils/string';
-
-import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
-import Container from 'components/styled/Container';
-import Content from 'components/styled/Content';
-import Loading from 'components/Loading';
-import ContentHeader from 'components/ContentHeader';
-import EntityListSearch from 'components/EntityListSearch';
-import EntityListViewOptions from 'components/EntityListViewOptions';
-import PrintOnly from 'components/styled/PrintOnly';
+import styled from 'styled-components';
 
 import { CONTENT_LIST, PARAMS } from 'containers/App/constants';
-import appMessages from 'containers/App/messages';
+
+import ContentHeader from 'components/ContentHeader';
+// import EntityListSearch from 'components/EntityListSearch';
+import PrintOnly from 'components/styled/PrintOnly';
 
 import EntityListGroups from './EntityListGroups';
 
 import EntityListOptions from './EntityListOptions';
 import { getGroupOptions, getGroupValue } from './group-options';
 import { groupEntities } from './group-entities';
-
 import messages from './messages';
 
-const EntityListSearchWrapper = styled.div`
-  padding-bottom: 1em;
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
-    padding-bottom: 2em;
-  }
-`;
+const ListWrapper = styled.div``;
+
+// const EntityListSearchWrapper = styled.div`
+//   padding-bottom: 1em;
+//   @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
+//     padding-bottom: 2em;
+//   }
+// `;
 
 const ListEntities = styled.div``;
-const ListWrapper = styled.div``;
+
 const PrintHintKey = styled(PrintOnly)`
   font-style: italic;
   font-size: ${(props) => props.theme.sizes.print.smaller};
@@ -48,13 +40,6 @@ const PrintHintKey = styled(PrintOnly)`
 `;
 
 class EntityListMain extends React.Component { // eslint-disable-line react/prefer-stateless-function
-  constructor(props) {
-    super(props);
-    this.ScrollContainer = React.createRef();
-    this.ScrollTarget = React.createRef();
-    this.ScrollReference = React.createRef();
-  }
-
   shouldComponentUpdate(nextProps) {
     if (nextProps.listUpdating) {
       return false;
@@ -70,25 +55,14 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       || this.props.errors !== nextProps.errors;
   }
 
-  scrollToTop = () => {
-    jumpToComponent(
-      this.ScrollTarget.current,
-      this.ScrollReference.current,
-      this.ScrollContainer.current
-    );
-  }
-
   render() {
     const {
       config,
-      header,
       entityTitle,
-      dataReady,
       isManager,
       isAnalyst,
       onGroupSelect,
       onSubgroupSelect,
-      onSearch,
       taxonomies,
       connections,
       connectedTaxonomies,
@@ -96,15 +70,25 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       entities,
       errors,
       actortypes,
-      hasHeader,
-      onClearFilters,
-      viewOptions,
-      hasFilters,
       showCode,
+      onEntityClick,
+      onEntitySelect,
+      onEntitySelectAll,
+      onPageSelect,
+      onPageItemsSelect,
+      onSortOrder,
+      onSortBy,
+      onDismissError,
+      entityIdsSelected,
+      header,
+      hasFilters,
+      hasViewOptions,
+      // onSearch,
+      // onClearFilters,
     } = this.props;
     const { intl } = this.context;
 
-    let groupSelectValue = locationQuery.get('group');
+    let groupSelectValue = locationQuery && locationQuery.get('group');
     if (config.taxonomies && !groupSelectValue) {
       groupSelectValue = getGroupValue(
         taxonomies,
@@ -115,13 +99,6 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
     let subgroupSelectValue;
     if (groupSelectValue && groupSelectValue !== PARAMS.GROUP_RESET) {
       subgroupSelectValue = locationQuery.get('subgroup');
-    }
-
-    let headerTitle = entities && dataReady
-      ? `${entities.size} ${entities.size === 1 ? entityTitle.single : entityTitle.plural}`
-      : entityTitle.plural;
-    if (hasFilters) {
-      headerTitle = `${headerTitle} (filtered)`;
     }
 
     // group all entities, regardless of page items
@@ -140,100 +117,73 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
         actortypes,
       )
       : null;
-
-    let subtitle = null;
-    if (dataReady && entityGroups && groupSelectValue && intl) {
-      const isPlural = entityGroups.size !== 1;
-      // disable broken support for connectedTaxonomies
-      // let taxId = groupSelectValue;
-      // if (taxId.indexOf('x:') > -1 && taxId.split(':').length > 1) {
-      //   taxId = taxId.split(':')[1];
-      // }
-      subtitle = intl.formatMessage(messages.groupSubtitle, {
-        size: entityGroups.size,
-        type:
-          lowerCase(
-            intl.formatMessage(
-              isPlural
-                ? appMessages.entities.taxonomies[groupSelectValue].plural
-                : appMessages.entities.taxonomies[groupSelectValue].single
-            )
-          ),
-      });
+    let headerTitle;
+    if (entityTitle) {
+      headerTitle = entities
+        ? `${entities.size} ${entities.size === 1 ? entityTitle.single : entityTitle.plural}`
+        : entityTitle.plural;
     }
-    const headerActions = dataReady ? header.actions : [];
+    if (hasFilters) {
+      headerTitle = `${headerTitle} (filtered)`;
+    }
+
+    // <EntityListSearchWrapper>
+    // <EntityListSearch
+    // searchQuery={locationQuery.get('search') || ''}
+    // onSearch={onSearch}
+    // onClear={onClearFilters}
+    // />
+    // </EntityListSearchWrapper>
     return (
-      <ContainerWrapper hasHeader={hasHeader} ref={this.ScrollContainer}>
-        {dataReady && viewOptions && viewOptions.length > 1 && (
-          <EntityListViewOptions options={viewOptions} />
+      <>
+        {entityTitle && (
+          <ContentHeader
+            type={CONTENT_LIST}
+            title={headerTitle}
+            buttons={header && header.actions}
+            hasViewOptions={hasViewOptions}
+          />
         )}
-        <Container ref={this.ScrollReference}>
-          <Content>
-            <ContentHeader
-              type={CONTENT_LIST}
-              title={headerTitle}
-              subTitle={subtitle}
-              buttons={headerActions}
-              hasViewOptions={viewOptions && viewOptions.length > 1}
+        <ListEntities>
+          <PrintHintKey>
+            <FormattedMessage {...messages.printHintKey} />
+          </PrintHintKey>
+          <EntityListOptions
+            groupOptions={getGroupOptions(taxonomies, intl)}
+            subgroupOptions={getGroupOptions(taxonomies, intl)}
+            groupSelectValue={(taxonomies && taxonomies.get(groupSelectValue)) ? groupSelectValue : ''}
+            subgroupSelectValue={(taxonomies && taxonomies.get(subgroupSelectValue)) ? subgroupSelectValue : ''}
+            onGroupSelect={onGroupSelect}
+            onSubgroupSelect={onSubgroupSelect}
+          />
+          <ListWrapper ref={this.ScrollTarget}>
+            <EntityListGroups
+              entities={entities}
+              errors={errors}
+              onDismissError={onDismissError}
+              entityGroups={entityGroups}
+              taxonomies={taxonomies}
+              connections={connections}
+              entityIdsSelected={entityIdsSelected}
+              locationQuery={locationQuery}
+              groupSelectValue={(taxonomies && taxonomies.get(groupSelectValue)) ? groupSelectValue : ''}
+              subgroupSelectValue={(taxonomies && taxonomies.get(subgroupSelectValue)) ? subgroupSelectValue : ''}
+              onEntityClick={onEntityClick}
+              entityTitle={entityTitle}
+              config={config}
+              isManager={isManager}
+              isAnalyst={isAnalyst}
+              onPageItemsSelect={onPageItemsSelect}
+              onPageSelect={onPageSelect}
+              onEntitySelect={onEntitySelect}
+              onEntitySelectAll={onEntitySelectAll}
+              onSortBy={onSortBy}
+              onSortOrder={onSortOrder}
+              showCode={showCode}
             />
-            {!dataReady && <Loading />}
-            {dataReady && (
-              <ListEntities>
-                <PrintHintKey>
-                  <FormattedMessage {...messages.printHintKey} />
-                </PrintHintKey>
-                <EntityListSearchWrapper>
-                  <EntityListSearch
-                    searchQuery={locationQuery.get('search') || ''}
-                    onSearch={onSearch}
-                    onClear={onClearFilters}
-                  />
-                </EntityListSearchWrapper>
-                <EntityListOptions
-                  groupOptions={getGroupOptions(taxonomies, intl)}
-                  subgroupOptions={getGroupOptions(taxonomies, intl)}
-                  groupSelectValue={(taxonomies && taxonomies.get(groupSelectValue)) ? groupSelectValue : ''}
-                  subgroupSelectValue={(taxonomies && taxonomies.get(subgroupSelectValue)) ? subgroupSelectValue : ''}
-                  onGroupSelect={onGroupSelect}
-                  onSubgroupSelect={onSubgroupSelect}
-                />
-                <ListWrapper ref={this.ScrollTarget}>
-                  <EntityListGroups
-                    entities={entities}
-                    errors={errors}
-                    onDismissError={this.props.onDismissError}
-                    entityGroups={entityGroups}
-                    taxonomies={taxonomies}
-                    connections={connections}
-                    entityIdsSelected={this.props.entityIdsSelected}
-                    locationQuery={this.props.locationQuery}
-                    groupSelectValue={(taxonomies && taxonomies.get(groupSelectValue)) ? groupSelectValue : ''}
-                    subgroupSelectValue={(taxonomies && taxonomies.get(subgroupSelectValue)) ? subgroupSelectValue : ''}
-                    onEntityClick={this.props.onEntityClick}
-                    entityTitle={entityTitle}
-                    config={config}
-                    isManager={isManager}
-                    isAnalyst={isAnalyst}
-                    onPageItemsSelect={(no) => {
-                      this.scrollToTop();
-                      this.props.onPageItemsSelect(no);
-                    }}
-                    onPageSelect={(page) => {
-                      this.scrollToTop();
-                      this.props.onPageSelect(page);
-                    }}
-                    onEntitySelect={this.props.onEntitySelect}
-                    onEntitySelectAll={this.props.onEntitySelectAll}
-                    onSortBy={this.props.onSortBy}
-                    onSortOrder={this.props.onSortOrder}
-                    showCode={showCode}
-                  />
-                </ListWrapper>
-              </ListEntities>
-            )}
-          </Content>
-        </Container>
-      </ContainerWrapper>
+          </ListWrapper>
+        </ListEntities>
+      </>
     );
   }
 }
@@ -249,31 +199,30 @@ EntityListMain.propTypes = {
   errors: PropTypes.instanceOf(Map),
   // object/arrays
   config: PropTypes.object,
-  header: PropTypes.object,
-  viewOptions: PropTypes.array,
   entityTitle: PropTypes.object, // single/plural
+  header: PropTypes.object,
   // primitive
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   isAnalyst: PropTypes.bool,
+  typeId: PropTypes.string,
+  listUpdating: PropTypes.bool,
+  showCode: PropTypes.bool,
+  hasFilters: PropTypes.bool,
+  hasViewOptions: PropTypes.bool,
   // functions
+  onGroupSelect: PropTypes.func,
+  onSubgroupSelect: PropTypes.func,
   onEntityClick: PropTypes.func.isRequired,
-  onEntitySelect: PropTypes.func.isRequired,
-  onEntitySelectAll: PropTypes.func.isRequired,
-  onGroupSelect: PropTypes.func.isRequired,
-  onSubgroupSelect: PropTypes.func.isRequired,
-  onSearch: PropTypes.func.isRequired,
+  onEntitySelect: PropTypes.func,
+  onEntitySelectAll: PropTypes.func,
   onPageSelect: PropTypes.func.isRequired,
   onPageItemsSelect: PropTypes.func.isRequired,
   onSortOrder: PropTypes.func.isRequired,
   onSortBy: PropTypes.func.isRequired,
-  onDismissError: PropTypes.func.isRequired,
-  listUpdating: PropTypes.bool,
-  hasHeader: PropTypes.bool,
-  hasFilters: PropTypes.bool,
-  onClearFilters: PropTypes.func.isRequired,
-  typeId: PropTypes.string,
-  showCode: PropTypes.bool,
+  onDismissError: PropTypes.func,
+  // onSearch: PropTypes.func.isRequired,
+  // onClearFilters: PropTypes.func.isRequired,
 };
 
 EntityListMain.contextTypes = {

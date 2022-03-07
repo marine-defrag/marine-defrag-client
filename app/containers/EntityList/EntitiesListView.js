@@ -1,0 +1,354 @@
+/*
+ *
+ * EntitiesListView
+ *
+ */
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Map, List } from 'immutable';
+import { Box, Text, Button } from 'grommet';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import styled from 'styled-components';
+
+import { ROUTES, ACTORTYPES } from 'themes/config';
+import { jumpToComponent } from 'utils/scroll-to-component';
+import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
+import Container from 'components/styled/Container';
+import Content from 'components/styled/Content';
+import Loading from 'components/Loading';
+import EntityListViewOptions from 'components/EntityListViewOptions';
+import EntityListMain from 'components/EntityListMain';
+import MapSubjectOptions from 'containers/MapContainer/MapInfoOptions/MapSubjectOptions';
+import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOption';
+
+import qe from 'utils/quasi-equals';
+import appMessages from 'containers/App/messages';
+
+import { getActorsForEntities } from './utils';
+const TypeButton = styled((p) => <Button plain {...p} />)`
+  padding: 2px 4px;
+  border-bottom: 2px solid;
+  border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
+  background: none;
+`;
+class EntitiesListView extends React.Component { // eslint-disable-line react/prefer-stateless-function
+  constructor(props) {
+    super(props);
+    this.ScrollContainer = React.createRef();
+    this.ScrollTarget = React.createRef();
+    this.ScrollReference = React.createRef();
+    this.state = {
+      viewType: ACTORTYPES.COUNTRY,
+    };
+  }
+
+  scrollToTop = () => {
+    jumpToComponent(
+      this.ScrollTarget.current,
+      this.ScrollReference.current,
+      this.ScrollContainer.current
+    );
+  }
+
+  setType = (type) => {
+    this.setState({ viewType: type });
+  }
+
+  render() {
+    const {
+      config,
+      header,
+      entityTitle,
+      dataReady,
+      isManager,
+      isAnalyst,
+      onGroupSelect,
+      onSubgroupSelect,
+      taxonomies,
+      connections,
+      connectedTaxonomies,
+      locationQuery,
+      entities,
+      errors,
+      actortypes,
+      hasHeader,
+      viewOptions,
+      hasFilters,
+      showCode,
+      entityIdsSelected,
+      listUpdating,
+      onEntityClick,
+      onEntitySelect,
+      onEntitySelectAll,
+      onPageSelect,
+      onPageItemsSelect,
+      onSortOrder,
+      onSortBy,
+      onDismissError,
+      typeId,
+      mapSubject,
+      onSetMapSubject,
+      onSetIncludeActorMembers,
+      onSetIncludeTargetMembers,
+      includeActorMembers,
+      includeTargetMembers,
+      actiontypes,
+      intl,
+    } = this.props;
+    const { viewType } = this.state;
+    let type;
+    let hasByTarget;
+    let subjectOptions;
+    let memberOption;
+    let entityActors;
+    let mapSubjectClean;
+    const hasSubjectOptions = config.types === 'actiontypes';
+    if (hasSubjectOptions && dataReady) {
+      type = actiontypes.find((at) => qe(at.get('id'), typeId));
+      hasByTarget = type.getIn(['attributes', 'has_target']);
+      if (hasByTarget || mapSubject !== 'targets') {
+        mapSubjectClean = mapSubject;
+      }
+      subjectOptions = [
+        {
+          type: 'secondary',
+          title: 'Activities',
+          onClick: () => onSetMapSubject(),
+          active: !mapSubjectClean,
+          disabled: !mapSubjectClean,
+        },
+        {
+          type: 'secondary',
+          title: 'By actor',
+          onClick: () => onSetMapSubject('actors'),
+          active: mapSubjectClean === 'actors',
+          disabled: mapSubjectClean === 'actors',
+        },
+      ];
+      if (hasByTarget) {
+        subjectOptions = [
+          ...subjectOptions,
+          {
+            type: 'secondary',
+            title: 'By target',
+            onClick: () => onSetMapSubject('targets'),
+            active: mapSubjectClean === 'targets',
+            disabled: mapSubjectClean === 'targets',
+          },
+        ];
+      }
+      if (mapSubjectClean === 'targets' && qe(viewType, ACTORTYPES.COUNTRY)) {
+        memberOption = {
+          active: includeTargetMembers,
+          onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
+          label: 'Include activities targeting regions, intergovernmental organisations and classes (countries belong to)',
+        };
+      } else if (mapSubjectClean === 'actors' && qe(viewType, ACTORTYPES.COUNTRY)) {
+        memberOption = {
+          active: includeActorMembers,
+          onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+          label: 'Include activities of intergovernmental organisations (countries belong to)',
+        };
+      }
+      entityActors = mapSubject && config.types === 'actiontypes' && getActorsForEntities(
+        entities,
+        connections && connections.get('actors'),
+        mapSubject,
+        mapSubject === 'actors'
+          ? includeActorMembers
+          : includeTargetMembers,
+      );
+      entityActors = entityActors && entityActors.groupBy(
+        (actor) => actor.getIn(['attributes', 'actortype_id'])
+      );
+    }
+
+    return (
+      <ContainerWrapper hasHeader={hasHeader} ref={this.ScrollContainer}>
+        {dataReady && viewOptions && viewOptions.length > 1 && (
+          <EntityListViewOptions options={viewOptions} />
+        )}
+        <Container ref={this.ScrollReference}>
+          <Content>
+            {!dataReady && <Loading />}
+            {dataReady && hasSubjectOptions && (
+              <Box>
+                {subjectOptions && (
+                  <MapSubjectOptions options={subjectOptions} />
+                )}
+              </Box>
+            )}
+            {dataReady && entityActors && (
+              <Box>
+                <Box direction="row" gap="small" margin={{ vertical: 'small' }}>
+                  {entityActors.keySeq().map(
+                    (actortypeId) => (
+                      <TypeButton
+                        key={actortypeId}
+                        onClick={() => this.setType(actortypeId)}
+                        active={qe(viewType, actortypeId)}
+                      >
+                        <Text>
+                          <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].plural} />
+                        </Text>
+                      </TypeButton>
+                    )
+                  )}
+                </Box>
+                {memberOption && (
+                  <Box>
+                    <MapMemberOption option={memberOption} />
+                  </Box>
+                )}
+                {entityActors.get(parseInt(viewType, 10)) && (
+                  <EntityListMain
+                    entities={entityActors.get(parseInt(viewType, 10))}
+                    entityPath={ROUTES.ACTOR}
+                    onEntityClick={onEntityClick}
+                    entityTitle={{
+                      single: intl.formatMessage(appMessages.entities[`actors_${viewType}`].single),
+                      plural: intl.formatMessage(appMessages.entities[`actors_${viewType}`].plural),
+                    }}
+                    onPageItemsSelect={(no) => {
+                      this.scrollToTop();
+                      onPageItemsSelect(no);
+                    }}
+                    onPageSelect={(page) => {
+                      this.scrollToTop();
+                      onPageSelect(page);
+                    }}
+                    config={{
+                      types: 'actortypes',
+                      clientPath: ROUTES.ACTOR,
+                      views: {
+                        list: {
+                          search: ['code', 'title', 'description'],
+                          sorting: [
+                            {
+                              attribute: 'title',
+                              type: 'string',
+                              order: 'asc',
+                              default: true,
+                            },
+                            {
+                              attribute: 'code',
+                              type: 'string',
+                              order: 'asc',
+                            },
+                            {
+                              attribute: 'updated_at',
+                              type: 'date',
+                              order: 'desc',
+                            },
+                            {
+                              attribute: 'id', // proxy for created at
+                              type: 'number',
+                              order: 'desc',
+                            },
+                          ],
+                        },
+                      },
+                    }}
+                    onSortBy={onSortBy}
+                    onSortOrder={onSortOrder}
+                    locationQuery={locationQuery}
+                  />
+                )}
+              </Box>
+            )}
+            {dataReady && !mapSubject && (
+              <EntityListMain
+                listUpdating={listUpdating}
+                entities={entities}
+                errors={errors}
+                taxonomies={taxonomies}
+                actortypes={actortypes}
+                connections={connections}
+                connectedTaxonomies={connectedTaxonomies}
+                entityIdsSelected={entityIdsSelected}
+                locationQuery={locationQuery}
+
+                config={config}
+                entityTitle={entityTitle}
+
+                dataReady={dataReady}
+                isManager={isManager}
+                isAnalyst={isAnalyst}
+
+                onEntitySelect={onEntitySelect}
+                onEntitySelectAll={onEntitySelectAll}
+                onGroupSelect={onGroupSelect}
+                onSubgroupSelect={onSubgroupSelect}
+                onPageItemsSelect={(no) => {
+                  this.scrollToTop();
+                  onPageItemsSelect(no);
+                }}
+                onPageSelect={(page) => {
+                  this.scrollToTop();
+                  onPageSelect(page);
+                }}
+                onEntityClick={onEntityClick}
+                onSortBy={onSortBy}
+                onSortOrder={onSortOrder}
+                onDismissError={onDismissError}
+                typeId={typeId}
+                showCode={showCode}
+                hasFilters={hasFilters}
+                header={header}
+                hasViewOptions={viewOptions && viewOptions.length > 1}
+              />
+            )}
+          </Content>
+        </Container>
+      </ContainerWrapper>
+    );
+  }
+}
+
+EntitiesListView.propTypes = {
+  entities: PropTypes.instanceOf(List),
+  taxonomies: PropTypes.instanceOf(Map),
+  actortypes: PropTypes.instanceOf(Map),
+  actiontypes: PropTypes.instanceOf(Map),
+  targettypes: PropTypes.instanceOf(Map),
+  connections: PropTypes.instanceOf(Map),
+  connectedTaxonomies: PropTypes.instanceOf(Map),
+  entityIdsSelected: PropTypes.instanceOf(List),
+  locationQuery: PropTypes.instanceOf(Map),
+  errors: PropTypes.instanceOf(Map),
+  // object/arrays
+  config: PropTypes.object,
+  header: PropTypes.object,
+  viewOptions: PropTypes.array,
+  entityTitle: PropTypes.object, // single/plural
+  // primitive
+  dataReady: PropTypes.bool,
+  isManager: PropTypes.bool,
+  isAnalyst: PropTypes.bool,
+  // functions
+  onEntityClick: PropTypes.func.isRequired,
+  onEntitySelect: PropTypes.func.isRequired,
+  onEntitySelectAll: PropTypes.func.isRequired,
+  onGroupSelect: PropTypes.func.isRequired,
+  onSubgroupSelect: PropTypes.func.isRequired,
+  onPageSelect: PropTypes.func.isRequired,
+  onPageItemsSelect: PropTypes.func.isRequired,
+  onSortOrder: PropTypes.func.isRequired,
+  onSortBy: PropTypes.func.isRequired,
+  onDismissError: PropTypes.func.isRequired,
+  listUpdating: PropTypes.bool,
+  hasHeader: PropTypes.bool,
+  hasFilters: PropTypes.bool,
+  typeId: PropTypes.string,
+  showCode: PropTypes.bool,
+  mapSubject: PropTypes.string,
+  onSetMapSubject: PropTypes.func,
+  onSetIncludeActorMembers: PropTypes.func,
+  onSetIncludeTargetMembers: PropTypes.func,
+  includeActorMembers: PropTypes.bool,
+  includeTargetMembers: PropTypes.bool,
+  intl: intlShape.isRequired,
+};
+
+export default injectIntl(EntitiesListView);
+// export default EntitiesListView;

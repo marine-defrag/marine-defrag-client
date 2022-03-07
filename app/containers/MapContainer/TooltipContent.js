@@ -15,6 +15,7 @@ const TTContent = styled((p) => <Text size="xsmall" {...p} />)``;
 
 const TooltipContent = ({
   stats,
+  isCount,
 }) => (
   <Styled>
     {stats && stats.map((stat, i) => (
@@ -26,7 +27,7 @@ const TooltipContent = ({
         )}
         {stat.values && stat.values.map((value, j) => {
           let formatted = value.value;
-          if (isNumber(value.value)) {
+          if (!isCount && isNumber(value.value)) {
             formatted = formatNumber(
               value.value,
               {
@@ -36,7 +37,7 @@ const TooltipContent = ({
             );
           }
           return (
-            <Box direction="row" wrap key={j}>
+            <Box direction="row" wrap key={j} gap="xsmall">
               <TTContent>{`${value.label}: `}</TTContent>
               <TTContent weight={500}>
                 {formatted}
@@ -56,6 +57,7 @@ const TooltipContent = ({
 
 TooltipContent.propTypes = {
   stats: PropTypes.array,
+  isCount: PropTypes.bool,
 };
 
 export default TooltipContent;

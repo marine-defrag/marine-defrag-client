@@ -158,7 +158,7 @@ export function ActionView(props) {
   const hasTarget = viewActivitytype && viewActivitytype.getIn(['attributes', 'has_target']);
   const hasMemberOption = !!typeId && !qe(typeId, ACTIONTYPES.NATL);
   const hasMap = !!typeId; // && !qe(typeId, ACTIONTYPES.NATL);
-  const viewSubject = hasTarget ? subject : 'actors';
+  const viewSubject = hasTarget && subject ? subject : 'actors';
 
   const actortypesForSubject = !hasTarget || viewSubject === 'actors'
     ? actorsByActortype
