@@ -43,7 +43,6 @@ export function ActorsOverview({
     // kick off loading of data
     onLoadData();
   }, []);
-
   return (
     <ContainerWrapper>
       <HeaderExplore />
@@ -62,7 +61,7 @@ export function ActorsOverview({
                   return (
                     <CardTeaser
                       key={typeId}
-                      basis={primary ? 'full' : '1/4'}
+                      basis={primary ? '1/2' : '1/4'}
                       primary={primary}
                       path={path}
                       onClick={(evt) => {
