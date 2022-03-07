@@ -163,14 +163,21 @@ export const getAmountField = (
 export const getDateField = (
   entity,
   attribute,
-  showEmpty,
-  emptyMessage,
-) => (showEmpty || checkEmpty(entity.getIn(['attributes', attribute]))) && ({
-  type: 'date',
-  value: !!entity.getIn(['attributes', attribute]) && entity.getIn(['attributes', attribute]),
-  label: appMessages.attributes[attribute],
-  showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
-});
+  args = {},
+) => {
+  const {
+    showEmpty,
+    emptyMessage,
+    specificity,
+  } = args;
+  return (showEmpty || checkEmpty(entity.getIn(['attributes', attribute]))) && ({
+    type: 'date',
+    value: !!entity.getIn(['attributes', attribute]) && entity.getIn(['attributes', attribute]),
+    label: appMessages.attributes[attribute],
+    showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
+    specificity,
+  });
+};
 
 export const getDateRelatedField = (
   value,

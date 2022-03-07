@@ -177,6 +177,16 @@ export function ActionView(props) {
       );
     }
   }
+  // check date comment for date spceficity
+  const DATE_SPECIFICITIES = ['y', 'm'];
+  let dateSpecificity;
+  if (
+    viewEntity
+    && viewEntity.getIn(['attributes', 'date_comment'])
+    && DATE_SPECIFICITIES.indexOf(viewEntity.getIn(['attributes', 'date_comment']).trim()) > -1
+  ) {
+    dateSpecificity = viewEntity.getIn(['attributes', 'date_comment']).trim();
+  }
   return (
     <div>
       <Helmet
@@ -403,9 +413,13 @@ export function ActionView(props) {
                     group={{
                       type: 'dark',
                       fields: [
-                        checkActionAttribute(typeId, 'date_start') && getDateField(viewEntity, 'date_start'),
-                        checkActionAttribute(typeId, 'date_end') && getDateField(viewEntity, 'date_end'),
-                        checkActionAttribute(typeId, 'date_comment') && getTextField(viewEntity, 'date_comment'),
+                        checkActionAttribute(typeId, 'date_start')
+                          && getDateField(viewEntity, 'date_start', { specificity: dateSpecificity }),
+                        checkActionAttribute(typeId, 'date_end')
+                          && getDateField(viewEntity, 'date_end', { specificity: dateSpecificity }),
+                        !dateSpecificity
+                          && checkActionAttribute(typeId, 'date_comment')
+                          && getTextField(viewEntity, 'date_comment'),
                       ],
                     }}
                   />
