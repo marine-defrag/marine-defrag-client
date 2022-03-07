@@ -21,7 +21,7 @@ import {
   getTextField,
   getInfoField,
   getLinkField,
-  getAmountField,
+  getNumberField,
   getTaxonomyFields,
   hasTaxonomyCategories,
   getActorConnectionField,
@@ -177,6 +177,16 @@ export function ActionView(props) {
       );
     }
   }
+  // check date comment for date spceficity
+  const DATE_SPECIFICITIES = ['y', 'm'];
+  let dateSpecificity;
+  if (
+    viewEntity
+    && viewEntity.getIn(['attributes', 'date_comment'])
+    && DATE_SPECIFICITIES.indexOf(viewEntity.getIn(['attributes', 'date_comment']).trim()) > -1
+  ) {
+    dateSpecificity = viewEntity.getIn(['attributes', 'date_comment']).trim();
+  }
   return (
     <div>
       <Helmet
@@ -240,6 +250,7 @@ export function ActionView(props) {
                         checkActionAttribute(typeId, 'description')
                           && getMarkdownField(viewEntity, 'description', true),
                         checkActionAttribute(typeId, 'comment')
+                          && !qe(typeId, FF_ACTIONTYPE) // (ab)use for unit
                           && getMarkdownField(viewEntity, 'comment', true),
                         checkActionAttribute(typeId, 'status_comment')
                           && getMarkdownField(viewEntity, 'status_comment', true),
@@ -342,7 +353,7 @@ export function ActionView(props) {
                           }}
                         />
                       )}
-                      {qe(typeId, FF_ACTIONTYPE) && (
+                      {isManager && qe(typeId, FF_ACTIONTYPE) && (
                         <Box
                           margin={{ bottom: 'large', horizontal: 'medium' }}
                           fill={false}
@@ -393,7 +404,8 @@ export function ActionView(props) {
                     group={{
                       type: 'dark',
                       fields: [
-                        checkActionAttribute(typeId, 'amount') && getAmountField(viewEntity, 'amount'),
+                        checkActionAttribute(typeId, 'amount')
+                          && getNumberField(viewEntity, 'amount', { unit: 'US$', unitBefore: true }),
                         checkActionAttribute(typeId, 'amount_comment') && getTextField(viewEntity, 'amount_comment'),
                       ],
                     }}
@@ -403,9 +415,13 @@ export function ActionView(props) {
                     group={{
                       type: 'dark',
                       fields: [
-                        checkActionAttribute(typeId, 'date_start') && getDateField(viewEntity, 'date_start'),
-                        checkActionAttribute(typeId, 'date_end') && getDateField(viewEntity, 'date_end'),
-                        checkActionAttribute(typeId, 'date_comment') && getTextField(viewEntity, 'date_comment'),
+                        checkActionAttribute(typeId, 'date_start')
+                          && getDateField(viewEntity, 'date_start', { specificity: dateSpecificity }),
+                        checkActionAttribute(typeId, 'date_end')
+                          && getDateField(viewEntity, 'date_end', { specificity: dateSpecificity }),
+                        !dateSpecificity
+                          && checkActionAttribute(typeId, 'date_comment')
+                          && getTextField(viewEntity, 'date_comment'),
                       ],
                     }}
                   />

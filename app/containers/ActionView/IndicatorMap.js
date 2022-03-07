@@ -60,10 +60,10 @@ export function IndicatorMap({
         const value = country.getIn(['actionValues', indicator.get('id')]);
         const stats = [
           {
-            title: indicator.getIn(['attributes', 'title']),
             values: [
               {
-                label: indicator.getIn(['attributes', 'comment']),
+                label: indicator.getIn(['attributes', 'title']),
+                unit: indicator.getIn(['attributes', 'comment']),
                 value,
               },
             ],
@@ -94,6 +94,7 @@ export function IndicatorMap({
     [],
   );
 
+  // comment stores unit
   const keyTitle = indicator.getIn(['attributes', 'comment'])
     ? `${indicator.getIn(['attributes', 'title'])} (${indicator.getIn(['attributes', 'comment'])})`
     : indicator.getIn(['attributes', 'title']);

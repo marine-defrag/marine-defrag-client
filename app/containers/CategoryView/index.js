@@ -247,7 +247,7 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
       fields.push({
         type: 'dark',
         fields: [
-          showDate && getDateField(entity, 'date', true),
+          showDate && getDateField(entity, 'date', { showEmpty: true }),
           showLink && getLinkField(entity),
         ],
       });

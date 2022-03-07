@@ -25,7 +25,15 @@ class DateField extends React.PureComponent { // eslint-disable-line react/prefe
         { field.value
           && (
             <DateValue>
-              <FormattedDate value={new Date(field.value)} />
+              {(!field.specificity || field.specificity === 'd') && (
+                <FormattedDate value={new Date(field.value)} year="numeric" month="long" day="numeric" />
+              )}
+              {field.specificity === 'm' && (
+                <FormattedDate value={new Date(field.value)} year="numeric" month="long" />
+              )}
+              {field.specificity === 'y' && (
+                <FormattedDate value={new Date(field.value)} year="numeric" />
+              )}
             </DateValue>
           )
         }

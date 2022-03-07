@@ -11,8 +11,9 @@ import { Box, Text, Button } from 'grommet';
 import { Map } from 'immutable';
 import styled from 'styled-components';
 import qe from 'utils/quasi-equals';
+import isNumber from 'utils/is-number';
 import ButtonSimple from 'components/buttons/ButtonSimple';
-import TextField from 'components/fields/TextField';
+import NumberField from 'components/fields/NumberField';
 import { ROUTES } from 'themes/config';
 
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
@@ -27,7 +28,7 @@ export function CountryFacts(props) {
     // intl,
   } = props;
 
-  const indicatorsByResourceId = indicators.groupBy(
+  const indicatorsByResourceId = indicators && indicators.groupBy(
     (entity) => {
       if (entity.get('resourcesByType')) {
         return entity.get('resourcesByType').flatten().toList().first();
@@ -69,17 +70,22 @@ export function CountryFacts(props) {
                   <Box gap="large">
                     {resourceIndicators && resourceIndicators.toList().map((indicator) => {
                       const path = `${ROUTES.ACTION}/${indicator.get('id')}`;
-                      let title = indicator.getIn(['attributes', 'title']);
-                      title = indicator.getIn(['attributes', 'comment'])
-                        ? `${title} (${indicator.getIn(['attributes', 'comment'])}):`
-                        : `${title}:`;
+                      const value = isNumber(indicator.get('value'))
+                        ? parseFloat(indicator.get('value'), 10)
+                        : value;
+                      let digits;
+                      if (isNumber(value)) {
+                        digits = value > 1 ? 1 : 3;
+                      }
                       return (
                         <Box key={indicator.get('id')}>
                           <Box direction="row">
-                            <TextField
+                            <NumberField
                               field={{
-                                title,
-                                value: indicator.get('value'),
+                                title: indicator.getIn(['attributes', 'title']),
+                                unit: indicator.getIn(['attributes', 'comment']),
+                                value,
+                                digits,
                               }}
                             />
                           </Box>
