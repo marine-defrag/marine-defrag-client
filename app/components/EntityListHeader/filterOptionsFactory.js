@@ -5,7 +5,6 @@ import { lowerCase } from 'utils/string';
 import isNumber from 'utils/is-number';
 import asArray from 'utils/as-array';
 import asList from 'utils/as-list';
-import qe from 'utils/quasi-equals';
 
 import appMessages from 'containers/App/messages';
 
@@ -604,8 +603,8 @@ export const makeAnyWithoutConnectionFilterOptions = (
     // the option path
     // const { query, path } = option;
     const entityType = option.entityTypeAs || option.entityType;
-    const withoutChecked = qe(locationQuery.get('without'), entityType);
-    const anyChecked = qe(locationQuery.get('any'), entityType);
+    const withoutChecked = asList(locationQuery.get('without')).includes(entityType);
+    const anyChecked = asList(locationQuery.get('any')).includes(entityType);
     const label = appMessages.nav[group]
       ? contextIntl.formatMessage(appMessages.nav[group])
       : 'LABEL NOT FOUND';
