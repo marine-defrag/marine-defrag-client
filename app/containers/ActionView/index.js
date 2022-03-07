@@ -21,7 +21,7 @@ import {
   getTextField,
   getInfoField,
   getLinkField,
-  getAmountField,
+  getNumberField,
   getTaxonomyFields,
   hasTaxonomyCategories,
   getActorConnectionField,
@@ -250,6 +250,7 @@ export function ActionView(props) {
                         checkActionAttribute(typeId, 'description')
                           && getMarkdownField(viewEntity, 'description', true),
                         checkActionAttribute(typeId, 'comment')
+                          && !qe(typeId, FF_ACTIONTYPE) // (ab)use for unit
                           && getMarkdownField(viewEntity, 'comment', true),
                         checkActionAttribute(typeId, 'status_comment')
                           && getMarkdownField(viewEntity, 'status_comment', true),
@@ -352,7 +353,7 @@ export function ActionView(props) {
                           }}
                         />
                       )}
-                      {qe(typeId, FF_ACTIONTYPE) && (
+                      {isManager && qe(typeId, FF_ACTIONTYPE) && (
                         <Box
                           margin={{ bottom: 'large', horizontal: 'medium' }}
                           fill={false}
@@ -403,7 +404,8 @@ export function ActionView(props) {
                     group={{
                       type: 'dark',
                       fields: [
-                        checkActionAttribute(typeId, 'amount') && getAmountField(viewEntity, 'amount'),
+                        checkActionAttribute(typeId, 'amount')
+                          && getNumberField(viewEntity, 'amount', { unit: 'US$', unitBefore: true }),
                         checkActionAttribute(typeId, 'amount_comment') && getTextField(viewEntity, 'amount_comment'),
                       ],
                     }}

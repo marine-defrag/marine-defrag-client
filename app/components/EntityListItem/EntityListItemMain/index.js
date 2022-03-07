@@ -7,6 +7,8 @@ import { Map } from 'immutable';
 import { USER_ROLES } from 'themes/config';
 import appMessages from 'containers/App/messages';
 import { Box, Text } from 'grommet';
+import isNumber from 'utils/is-number';
+import { formatNumber } from 'utils/fields';
 
 import ItemStatus from 'components/ItemStatus';
 import EntityListItemMainTop from './EntityListItemMainTop';
@@ -171,11 +173,18 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
             </EntityListItemMainTitleWrap>
             {entity.indicator && (
               <Box direction="row" gap="xsmall">
-                <Text size="xsmall">{`${entity.indicator.label}${entity.indicator.unit ? ' ' : ': '}`}</Text>
-                {entity.indicator.unit && (
-                  <Text size="xsmall">{` (${entity.indicator.unit}): `}</Text>
-                )}
-                <Text size="xsmall" weight={600}>{`${entity.indicator.value || 'N/A'}`}</Text>
+                <Text size="xsmall">{`${entity.indicator.label}:`}</Text>
+                <Text size="xsmall" weight={500}>
+                  {isNumber(entity.indicator.value) && (
+                    formatNumber(entity.indicator.value, {
+                      unit: entity.indicator.unit,
+                      digits: parseFloat(entity.indicator.value, 10) > 1 ? 1 : 3,
+                    })
+                  )}
+                  {!isNumber(entity.indicator.value) && (
+                    entity.indicator.value
+                  )}
+                </Text>
               </Box>
             )}
           </Box>

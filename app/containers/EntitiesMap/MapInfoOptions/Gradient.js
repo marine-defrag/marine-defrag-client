@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 // import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+import isNumber from 'utils/is-number';
+import { formatNumber } from 'utils/fields';
 
 import KeyGradient from './KeyGradient';
 
@@ -32,6 +34,13 @@ const KeyLabel = styled.div`
   white-space: nowrap;
   font-size: ${(props) => props.theme.sizes.text.small};
 `;
+const formatKeyLabel = (value) => {
+  if (isNumber(value)) {
+    const vN = parseFloat(value, 10);
+    return formatNumber(vN, { digits: vN > 1 ? 0 : 1 });
+  }
+  return value;
+};
 export function Gradient({
   config, // intl, dark,
   // unit,
@@ -47,12 +56,12 @@ export function Gradient({
       <GradientLabels>
         <KeyLabelWrap offsetLeft="0%">
           <KeyLabel>
-            {config.range[0]}
+            {formatKeyLabel(config.range[0])}
           </KeyLabel>
         </KeyLabelWrap>
         <KeyLabelWrap offsetLeft="100%">
           <KeyLabel>
-            {config.range[1]}
+            {formatKeyLabel(config.range[1])}
           </KeyLabel>
         </KeyLabelWrap>
       </GradientLabels>

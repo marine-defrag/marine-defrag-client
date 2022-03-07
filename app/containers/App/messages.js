@@ -890,6 +890,16 @@ export default defineMessages({
       defaultMessage: 'Status',
     },
   },
+  attributeInfo: {
+    gdp: {
+      id: 'app.containers.App.attributeInfo.gdp',
+      defaultMessage: 'gdp',
+    },
+    population: {
+      id: 'app.containers.App.attributeInfo.population',
+      defaultMessage: 'population',
+    },
+  },
   nav: {
     overview: {
       id: 'app.containers.App.nav.overview',

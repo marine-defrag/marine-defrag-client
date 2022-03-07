@@ -1,11 +1,36 @@
 import { truncateText } from 'utils/string';
 import { sortEntities, sortCategories } from 'utils/sort';
 import { filterTaxonomies } from 'utils/entities';
+import isNumber from 'utils/is-number';
+
 import {
   USER_ROLES, TEXT_TRUNCATE, ROUTES, API,
 } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
+
+export const roundNumber = (value, digits = 0) => {
+  const factor = 10 ** Math.min(digits, 3);
+  return isNumber(value) && Math.round(value * factor) / factor;
+};
+export const formatNumber = (value, args = {}) => {
+  const {
+    intl, digits, unit, unitBefore,
+  } = args;
+  let formatted = value;
+  if (isNumber(value)) {
+    const rounded = roundNumber(value, digits);
+    formatted = intl
+      ? intl.formatNumber(rounded, { minimumFractionDigits: digits })
+      : rounded.toFixed(digits);
+  }
+  if (unit && unit.trim() !== '') {
+    return unitBefore
+      ? `${unit} ${formatted}`
+      : `${formatted} ${unit}`;
+  }
+  return formatted;
+};
 
 const checkEmpty = (
   val
@@ -148,17 +173,20 @@ export const getMarkdownField = (
   label: hasLabel && (appMessages.attributes[label || attribute]),
 });
 
-export const getAmountField = (
+export const getNumberField = (
   entity,
   attribute,
-  showEmpty,
-  emptyMessage,
-) => (showEmpty || checkEmpty(entity.getIn(['attributes', attribute]))) && ({
-  type: 'text',
-  value: !!entity.getIn(['attributes', attribute]) && entity.getIn(['attributes', attribute]),
-  label: appMessages.attributes[attribute],
-  showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
-});
+  args = {},
+) => {
+  const { showEmpty, emptyMessage, ...otherArgs } = args;
+  return (showEmpty || checkEmpty(entity.getIn(['attributes', attribute]))) && ({
+    type: 'number',
+    value: !!entity.getIn(['attributes', attribute]) && entity.getIn(['attributes', attribute]),
+    label: appMessages.attributes[attribute],
+    showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
+    ...otherArgs,
+  });
+};
 
 export const getDateField = (
   entity,

@@ -18,10 +18,9 @@ import {
   getStatusField,
   getMetaField,
   getMarkdownField,
-  getTextField,
   getInfoField,
   getLinkField,
-  getAmountField,
+  getNumberField,
   getTaxonomyFields,
   hasTaxonomyCategories,
   getActorConnectionField,
@@ -331,9 +330,26 @@ export function ActorView(props) {
                     aside
                     group={{
                       fields: [
-                        checkActorAttribute(typeId, 'url') && getLinkField(viewEntity),
-                        checkActorAttribute(typeId, 'gdp') && getAmountField(viewEntity, 'gdp', true),
-                        checkActorAttribute(typeId, 'population') && getTextField(viewEntity, 'population'),
+                        checkActorAttribute(typeId, 'url')
+                          && getLinkField(viewEntity),
+                        checkActorAttribute(typeId, 'gdp')
+                          && getNumberField(
+                            viewEntity,
+                            'gdp',
+                            {
+                              unit: 'US$',
+                              unitBefore: true,
+                              info: appMessages.attributeInfo.gdp && intl.formatMessage(appMessages.attributeInfo.gdp),
+                            },
+                          ),
+                        checkActorAttribute(typeId, 'population')
+                          && getNumberField(
+                            viewEntity,
+                            'population',
+                            {
+                              info: appMessages.attributeInfo.population && intl.formatMessage(appMessages.attributeInfo.population),
+                            },
+                          ),
                       ],
                     }}
                   />
