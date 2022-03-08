@@ -2,13 +2,11 @@ import { createSelector } from 'reselect';
 import { Map } from 'immutable';
 import {
   selectEntities,
-  selectActorsSearchQuery,
+  selectActorsWhereQuery,
   selectWithoutQuery,
   selectAnyQuery,
   selectActionQuery,
   selectCategoryQuery,
-  selectSortByQuery,
-  selectSortOrderQuery,
   selectActions,
   selectActors,
   selectReady,
@@ -35,11 +33,10 @@ import {
 } from 'utils/entities';
 // import { qe } from 'utils/quasi-equals';
 
-import { sortEntities, getSortOption } from 'utils/sort';
 
 import { API } from 'themes/config';
 
-import { CONFIG, DEPENDENCIES } from './constants';
+import { DEPENDENCIES } from './constants';
 
 export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
@@ -134,10 +131,7 @@ export const selectConnectedTaxonomies = createSelector(
 
 const selectActorsWithCategories = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
-  (state, args) => selectActorsSearchQuery(state, {
-    searchAttributes: CONFIG.views.list.search || ['code', 'title'],
-    ...args,
-  }),
+  selectActorsWhereQuery,
   selectActorCategoriesGroupedByActor,
   selectCategories,
   (ready, entities, associationsGrouped, categories) => {
@@ -352,15 +346,5 @@ const selectActorsByCategories = createSelector(
 // 6. selectActorsByCategories will filter by specific categories
 export const selectListActors = createSelector(
   selectActorsByCategories,
-  selectSortByQuery,
-  selectSortOrderQuery,
-  (entities, sort, order) => {
-    const sortOption = getSortOption(CONFIG.views.list.sorting, sort);
-    return sortEntities(
-      entities,
-      order || (sortOption ? sortOption.order : 'desc'),
-      sort || (sortOption ? sortOption.attribute : 'id'),
-      sortOption ? sortOption.type : 'string'
-    );
-  }
+  (entities) => entities && entities.toList()
 );

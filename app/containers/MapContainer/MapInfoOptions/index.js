@@ -46,7 +46,7 @@ export function MapInfoOptions({
           <SubTitle>{subTitle}</SubTitle>
         )}
       </Box>
-      <MapKey maxValue={maxValue} mapSubject={mapSubject} />
+      {maxValue && <MapKey maxValue={maxValue} mapSubject={mapSubject} />}
       {subjectOptions && (
         <MapSubjectOptions options={subjectOptions} />
       )}

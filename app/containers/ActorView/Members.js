@@ -23,7 +23,7 @@ import FieldGroup from 'components/fields/FieldGroup';
 
 // import appMessages from 'containers/App/messages';
 // import ActorMap from './ActorMap';
-import MapContainer from 'containers/EntitiesMap/MapContainer';
+import MapContainer from 'containers/MapContainer';
 // import messages from './messages';
 
 const MapOuterWrapper = styled((p) => <Box {...p} />)`

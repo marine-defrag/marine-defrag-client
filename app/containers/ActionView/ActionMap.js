@@ -32,8 +32,8 @@ import {
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/EntitiesMap/MapContainer';
-import MapMemberOption from 'containers/EntitiesMap/MapInfoOptions/MapMemberOption';
+import MapContainer from 'containers/MapContainer';
+import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOption';
 
 // import messages from './messages';
 

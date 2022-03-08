@@ -917,6 +917,10 @@ export default defineMessages({
       id: 'app.containers.App.nav.actions',
       defaultMessage: 'Actions',
     },
+    actionsMembers: {
+      id: 'app.containers.App.nav.actionsMembers',
+      defaultMessage: 'Activities as member',
+    },
     targetingActions: {
       id: 'app.containers.App.nav.targetingActions',
       defaultMessage: 'Targeted by',
@@ -932,6 +936,10 @@ export default defineMessages({
     targets: {
       id: 'app.containers.App.nav.targets',
       defaultMessage: 'Targets',
+    },
+    targetingActionsAsMember: {
+      id: 'app.containers.App.nav.targetingActionsAsMember',
+      defaultMessage: 'Targeted by (as member)',
     },
     members: {
       id: 'app.containers.App.nav.members',

@@ -18,8 +18,6 @@ import Loading from 'components/Loading';
 
 import EntityListHeader from 'components/EntityListHeader';
 import EntityListPrintKey from 'components/EntityListPrintKey';
-import EntityListMain from 'components/EntityListMain';
-import EntitiesMap from 'containers/EntitiesMap';
 import PrintOnly from 'components/styled/PrintOnly';
 
 import {
@@ -28,6 +26,11 @@ import {
   selectAllTaxonomiesWithCategories,
   selectViewQuery,
   selectIncludeMembersForFiltering,
+  selectMapSubjectQuery,
+  selectIncludeActorMembers,
+  selectIncludeTargetMembers,
+  selectSortByQuery,
+  selectSortOrderQuery,
 } from 'containers/App/selectors';
 
 import {
@@ -36,11 +39,17 @@ import {
   setView,
   updateRouteQuery,
   setIncludeMembersForFiltering,
+  setMapSubject,
+  setIncludeActorMembers,
+  setIncludeTargetMembers,
 } from 'containers/App/actions';
 
 // import appMessages from 'containers/App/messages';
 import { PARAMS } from 'containers/App/constants';
 import { USER_ROLES } from 'themes/config';
+
+import EntitiesMap from './EntitiesMap';
+import EntitiesListView from './EntitiesListView';
 
 import {
   selectDomain,
@@ -68,7 +77,7 @@ import {
   setClientPath,
   dismissError,
   dismissAllErrors,
-  resetSearchQuery,
+  resetFilters,
 } from './actions';
 
 import { currentFilters, currentFilterArgs } from './current-filters';
@@ -207,6 +216,15 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onUpdateQuery,
       includeMembers,
       onSetFilterMemberOption,
+      mapSubject,
+      onSetMapSubject,
+      onSetIncludeActorMembers,
+      onSetIncludeTargetMembers,
+      includeActorMembers,
+      includeTargetMembers,
+      onSearch,
+      sortBy,
+      sortOrder,
     } = this.props;
 
     // detect print to avoid expensive rendering
@@ -327,13 +345,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           />
         )}
         {showList && (
-          <EntityListMain
-            onClearFilters={() => {
-              this.props.onSearch('');
-              if (!this.props.includeHeader) {
-                this.onClearFilters();
-              }
-            }}
+          <EntitiesListView
             viewOptions={viewOptions}
             hasHeader={this.props.includeHeader}
             listUpdating={progress !== null && progress >= 0 && progress < 100}
@@ -342,6 +354,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             taxonomies={this.props.taxonomies}
             actortypes={this.props.actortypes}
             actiontypes={this.props.actiontypes}
+            targettypes={this.props.targettypes}
             resourcetypes={this.props.resourcetypes}
             connections={this.props.connections}
             connectedTaxonomies={this.props.connectedTaxonomies}
@@ -380,7 +393,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             }}
             onGroupSelect={this.props.onGroupSelect}
             onSubgroupSelect={this.props.onSubgroupSelect}
-            onSearch={this.props.onSearch}
             onPageSelect={this.props.onPageSelect}
             onPageItemsSelect={this.props.onPageItemsSelect}
             onEntityClick={(id, path) => this.props.onEntityClick(
@@ -392,6 +404,15 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             typeId={typeId}
             hasFilters={filters && filters.length > 0}
             showCode={showCode}
+            mapSubject={mapSubject}
+            onSetMapSubject={onSetMapSubject}
+            onSetIncludeActorMembers={onSetIncludeActorMembers}
+            onSetIncludeTargetMembers={onSetIncludeTargetMembers}
+            includeActorMembers={includeActorMembers}
+            includeTargetMembers={includeTargetMembers}
+            onSearch={onSearch}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
           />
         )}
         {showMap && (
@@ -408,6 +429,12 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             )}
             typeId={typeId}
             hasFilters={filters && filters.length > 0}
+            mapSubject={mapSubject}
+            onSetMapSubject={onSetMapSubject}
+            onSetIncludeActorMembers={onSetIncludeActorMembers}
+            onSetIncludeTargetMembers={onSetIncludeTargetMembers}
+            includeActorMembers={includeActorMembers}
+            includeTargetMembers={includeTargetMembers}
           />
         )}
         {hasList && dataReady && config.taxonomies && (
@@ -548,6 +575,14 @@ EntityList.propTypes = {
   onSetView: PropTypes.func,
   onSetFilterMemberOption: PropTypes.func,
   view: PropTypes.string,
+  mapSubject: PropTypes.string,
+  onSetMapSubject: PropTypes.func,
+  onSetIncludeActorMembers: PropTypes.func,
+  onSetIncludeTargetMembers: PropTypes.func,
+  includeActorMembers: PropTypes.bool,
+  includeTargetMembers: PropTypes.bool,
+  sortBy: PropTypes.string,
+  sortOrder: PropTypes.string,
 };
 
 EntityList.contextTypes = {
@@ -565,6 +600,11 @@ const mapStateToProps = (state) => ({
   allTaxonomies: selectAllTaxonomiesWithCategories(state),
   view: selectViewQuery(state),
   includeMembers: selectIncludeMembersForFiltering(state),
+  mapSubject: selectMapSubjectQuery(state),
+  includeActorMembers: selectIncludeActorMembers(state),
+  includeTargetMembers: selectIncludeTargetMembers(state),
+  sortBy: selectSortByQuery(state),
+  sortOrder: selectSortOrderQuery(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -614,7 +654,7 @@ function mapDispatchToProps(dispatch, props) {
       ])));
     },
     onResetFilters: (values) => {
-      dispatch(resetSearchQuery(values));
+      dispatch(resetFilters(values));
     },
     onGroupSelect: (value) => {
       dispatch(updateGroup(fromJS([
@@ -663,6 +703,15 @@ function mapDispatchToProps(dispatch, props) {
     },
     onSetFilterMemberOption: (view) => {
       dispatch(setIncludeMembersForFiltering(view));
+    },
+    onSetMapSubject: (subject) => {
+      dispatch(setMapSubject(subject));
+    },
+    onSetIncludeTargetMembers: (active) => {
+      dispatch(setIncludeTargetMembers(active));
+    },
+    onSetIncludeActorMembers: (active) => {
+      dispatch(setIncludeActorMembers(active));
     },
     handleEditSubmit: (formData, activeEditOption, entityIdsSelected, errors) => {
       dispatch(resetProgress());

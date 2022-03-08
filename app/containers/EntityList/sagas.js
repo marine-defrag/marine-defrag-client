@@ -23,7 +23,7 @@ import {
   PAGE_ITEM_CHANGE,
   SORTBY_CHANGE,
   SORTORDER_CHANGE,
-  RESET_SEARCH_QUERY,
+  RESET_FILTERS,
 } from './constants';
 
 export function* updateQuery({ value }) {
@@ -43,7 +43,7 @@ export function* updateQuery({ value }) {
   yield put(updateRouteQuery(params));
 }
 
-export function* resetSearchQuery({ values }) {
+export function* resetFilters({ values }) {
   const params = values.map((arg) => ({
     arg,
     value: '',
@@ -149,7 +149,7 @@ export default function* entityList() {
   yield takeLatest(PAGE_ITEM_CHANGE, updatePageItems);
   yield takeLatest(SORTBY_CHANGE, updateSortBy);
   yield takeLatest(SORTORDER_CHANGE, updateSortOrder);
-  yield takeLatest(RESET_SEARCH_QUERY, resetSearchQuery);
+  yield takeLatest(RESET_FILTERS, resetFilters);
 
   yield takeLatest(SAVE, save);
   yield takeLatest(SAVE_MULTIPLE, saveMultiple);
