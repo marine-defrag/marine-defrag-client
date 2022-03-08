@@ -40,6 +40,7 @@ export const CONFIG = {
           attribute: 'title',
           type: 'string',
           order: 'asc',
+          default: true,
         },
         {
           attribute: 'code',
@@ -50,7 +51,6 @@ export const CONFIG = {
           attribute: 'updated_at',
           type: 'date',
           order: 'desc',
-          default: true,
         },
         {
           attribute: 'id', // proxy for created at
