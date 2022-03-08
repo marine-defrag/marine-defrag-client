@@ -10,7 +10,10 @@ import { Box, Text, Button } from 'grommet';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import styled from 'styled-components';
 
-import { ROUTES, ACTORTYPES } from 'themes/config';
+import {
+  ROUTES, ACTORTYPES, API, ACTIONTYPE_ACTORTYPES, ACTIONTYPE_TARGETTYPES,
+} from 'themes/config';
+import { CONTENT_LIST } from 'containers/App/constants';
 import { jumpToComponent } from 'utils/scroll-to-component';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
@@ -21,6 +24,7 @@ import EntityListMain from 'components/EntityListMain';
 import MapSubjectOptions from 'containers/MapContainer/MapInfoOptions/MapSubjectOptions';
 import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOption';
 
+import ContentHeader from 'components/ContentHeader';
 import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
 
@@ -94,6 +98,9 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       includeTargetMembers,
       actiontypes,
       intl,
+      onSearch,
+      sortBy,
+      sortOrder,
     } = this.props;
     const { viewType } = this.state;
     let type;
@@ -161,8 +168,18 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       entityActors = entityActors && entityActors.groupBy(
         (actor) => actor.getIn(['attributes', 'actortype_id'])
       );
+    } else {
+      mapSubjectClean = null;
     }
-
+    let headerTitle;
+    if (entityTitle) {
+      headerTitle = entities
+        ? `${entities.size} ${entities.size === 1 ? entityTitle.single : entityTitle.plural}`
+        : entityTitle.plural;
+    }
+    if (hasFilters) {
+      headerTitle = `${headerTitle} (filtered)`;
+    }
     return (
       <ContainerWrapper hasHeader={hasHeader} ref={this.ScrollContainer}>
         {dataReady && viewOptions && viewOptions.length > 1 && (
@@ -171,44 +188,168 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
         <Container ref={this.ScrollReference}>
           <Content>
             {!dataReady && <Loading />}
-            {dataReady && hasSubjectOptions && (
-              <Box>
-                {subjectOptions && (
-                  <MapSubjectOptions options={subjectOptions} />
-                )}
-              </Box>
-            )}
-            {dataReady && entityActors && (
-              <Box>
-                <Box direction="row" gap="small" margin={{ vertical: 'small' }}>
-                  {entityActors.keySeq().map(
-                    (actortypeId) => (
-                      <TypeButton
-                        key={actortypeId}
-                        onClick={() => this.setType(actortypeId)}
-                        active={qe(viewType, actortypeId)}
-                      >
-                        <Text>
-                          <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].plural} />
-                        </Text>
-                      </TypeButton>
-                    )
-                  )}
-                </Box>
-                {memberOption && (
+            {dataReady && (
+              <div>
+                <ContentHeader
+                  type={CONTENT_LIST}
+                  title={headerTitle}
+                  buttons={header && header.actions}
+                  hasViewOptions={viewOptions && viewOptions.length > 1}
+                />
+                {dataReady && hasSubjectOptions && (
                   <Box>
-                    <MapMemberOption option={memberOption} />
+                    {subjectOptions && (
+                      <MapSubjectOptions options={subjectOptions} />
+                    )}
                   </Box>
                 )}
-                {entityActors.get(parseInt(viewType, 10)) && (
+                {dataReady && entityActors && (
+                  <Box>
+                    <Box direction="row" gap="small" margin={{ vertical: 'small' }}>
+                      {mapSubject === 'actors' && ACTIONTYPE_ACTORTYPES[typeId].map(
+                        (actortypeId) => (
+                          <TypeButton
+                            key={actortypeId}
+                            onClick={() => this.setType(actortypeId)}
+                            active={qe(viewType, actortypeId)}
+                          >
+                            <Text>
+                              <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].plural} />
+                            </Text>
+                          </TypeButton>
+                        )
+                      )}
+                      {mapSubject === 'targets' && ACTIONTYPE_TARGETTYPES[typeId].map(
+                        (actortypeId) => (
+                          <TypeButton
+                            key={actortypeId}
+                            onClick={() => this.setType(actortypeId)}
+                            active={qe(viewType, actortypeId)}
+                          >
+                            <Text>
+                              <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].plural} />
+                            </Text>
+                          </TypeButton>
+                        )
+                      )}
+                    </Box>
+                    {memberOption && (
+                      <Box>
+                        <MapMemberOption option={memberOption} />
+                      </Box>
+                    )}
+                    {entityActors.get(parseInt(viewType, 10)) && (
+                      <EntityListMain
+                        entities={entityActors.get(parseInt(viewType, 10))}
+                        entityPath={ROUTES.ACTOR}
+                        onEntityClick={onEntityClick}
+                        entityTitle={{
+                          single: intl.formatMessage(appMessages.entities[`actors_${viewType}`].single),
+                          plural: intl.formatMessage(appMessages.entities[`actors_${viewType}`].plural),
+                        }}
+                        onPageItemsSelect={(no) => {
+                          this.scrollToTop();
+                          onPageItemsSelect(no);
+                        }}
+                        onPageSelect={(page) => {
+                          this.scrollToTop();
+                          onPageSelect(page);
+                        }}
+                        config={{
+                          types: 'actortypes',
+                          clientPath: ROUTES.ACTOR,
+                          views: {
+                            list: {
+                              search: ['code', 'title', 'description'],
+                              sorting: [
+                                {
+                                  attribute: 'title',
+                                  type: 'string',
+                                  order: 'asc',
+                                  default: true,
+                                },
+                                {
+                                  attribute: 'code',
+                                  type: 'string',
+                                  order: 'asc',
+                                },
+                                {
+                                  attribute: 'updated_at',
+                                  type: 'date',
+                                  order: 'desc',
+                                },
+                                {
+                                  attribute: 'id', // proxy for created at
+                                  type: 'number',
+                                  order: 'desc',
+                                },
+                              ],
+                            },
+                          },
+                          connections: {
+                            actions: { // filter by associated entity
+                              entityType: 'actions', // filter by actor connection
+                              path: API.ACTIONS, // filter by actor connection
+                              clientPath: ROUTES.ACTION,
+                              actionTypeId: typeId,
+                            },
+                            actionsMembers: { // filter by associated entity
+                              entityType: 'actions', // filter by actor connection
+                              entityTypeAs: 'actionsMembers',
+                              path: API.ACTIONS, // filter by actor connection
+                              clientPath: ROUTES.ACTION,
+                              actionTypeId: typeId,
+                            },
+                            targets: { // filter by associated entity
+                              entityType: 'actions', // filter by actor connection
+                              entityTypeAs: 'targetingActions',
+                              path: API.ACTIONS, // filter by actor connection
+                              clientPath: ROUTES.ACTION,
+                              actionTypeId: typeId,
+                            },
+                            targetsMembers: { // filter by associated entity
+                              entityType: 'actions', // filter by actor connection
+                              entityTypeAs: 'targetingActionsAsMember',
+                              path: API.ACTIONS, // filter by actor connection
+                              clientPath: ROUTES.ACTION,
+                              actionTypeId: typeId,
+                            },
+                          },
+                        }}
+                        onSortBy={onSortBy}
+                        onSortOrder={onSortOrder}
+                        locationQuery={locationQuery}
+                        onSearch={onSearch}
+                        sortBy={sortBy}
+                        sortOrder={sortOrder}
+                        connections={connections}
+                      />
+                    )}
+                  </Box>
+                )}
+                {dataReady && !mapSubjectClean && (
                   <EntityListMain
-                    entities={entityActors.get(parseInt(viewType, 10))}
-                    entityPath={ROUTES.ACTOR}
-                    onEntityClick={onEntityClick}
-                    entityTitle={{
-                      single: intl.formatMessage(appMessages.entities[`actors_${viewType}`].single),
-                      plural: intl.formatMessage(appMessages.entities[`actors_${viewType}`].plural),
-                    }}
+                    listUpdating={listUpdating}
+                    entities={entities}
+                    errors={errors}
+                    taxonomies={taxonomies}
+                    actortypes={actortypes}
+                    connections={connections}
+                    connectedTaxonomies={connectedTaxonomies}
+                    entityIdsSelected={entityIdsSelected}
+                    locationQuery={locationQuery}
+
+                    config={config}
+                    entityTitle={entityTitle}
+
+                    dataReady={dataReady}
+                    isManager={isManager}
+                    isAnalyst={isAnalyst}
+
+                    onEntitySelect={onEntitySelect}
+                    onEntitySelectAll={onEntitySelectAll}
+                    onGroupSelect={onGroupSelect}
+                    onSubgroupSelect={onSubgroupSelect}
                     onPageItemsSelect={(no) => {
                       this.scrollToTop();
                       onPageItemsSelect(no);
@@ -217,86 +358,18 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                       this.scrollToTop();
                       onPageSelect(page);
                     }}
-                    config={{
-                      types: 'actortypes',
-                      clientPath: ROUTES.ACTOR,
-                      views: {
-                        list: {
-                          search: ['code', 'title', 'description'],
-                          sorting: [
-                            {
-                              attribute: 'title',
-                              type: 'string',
-                              order: 'asc',
-                              default: true,
-                            },
-                            {
-                              attribute: 'code',
-                              type: 'string',
-                              order: 'asc',
-                            },
-                            {
-                              attribute: 'updated_at',
-                              type: 'date',
-                              order: 'desc',
-                            },
-                            {
-                              attribute: 'id', // proxy for created at
-                              type: 'number',
-                              order: 'desc',
-                            },
-                          ],
-                        },
-                      },
-                    }}
+                    onEntityClick={onEntityClick}
                     onSortBy={onSortBy}
                     onSortOrder={onSortOrder}
-                    locationQuery={locationQuery}
+                    onDismissError={onDismissError}
+                    typeId={typeId}
+                    showCode={showCode}
+                    onSearch={onSearch}
+                    sortBy={sortBy}
+                    sortOrder={sortOrder}
                   />
                 )}
-              </Box>
-            )}
-            {dataReady && !mapSubject && (
-              <EntityListMain
-                listUpdating={listUpdating}
-                entities={entities}
-                errors={errors}
-                taxonomies={taxonomies}
-                actortypes={actortypes}
-                connections={connections}
-                connectedTaxonomies={connectedTaxonomies}
-                entityIdsSelected={entityIdsSelected}
-                locationQuery={locationQuery}
-
-                config={config}
-                entityTitle={entityTitle}
-
-                dataReady={dataReady}
-                isManager={isManager}
-                isAnalyst={isAnalyst}
-
-                onEntitySelect={onEntitySelect}
-                onEntitySelectAll={onEntitySelectAll}
-                onGroupSelect={onGroupSelect}
-                onSubgroupSelect={onSubgroupSelect}
-                onPageItemsSelect={(no) => {
-                  this.scrollToTop();
-                  onPageItemsSelect(no);
-                }}
-                onPageSelect={(page) => {
-                  this.scrollToTop();
-                  onPageSelect(page);
-                }}
-                onEntityClick={onEntityClick}
-                onSortBy={onSortBy}
-                onSortOrder={onSortOrder}
-                onDismissError={onDismissError}
-                typeId={typeId}
-                showCode={showCode}
-                hasFilters={hasFilters}
-                header={header}
-                hasViewOptions={viewOptions && viewOptions.length > 1}
-              />
+              </div>
             )}
           </Content>
         </Container>
@@ -321,10 +394,21 @@ EntitiesListView.propTypes = {
   header: PropTypes.object,
   viewOptions: PropTypes.array,
   entityTitle: PropTypes.object, // single/plural
+  intl: intlShape.isRequired,
   // primitive
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   isAnalyst: PropTypes.bool,
+  includeActorMembers: PropTypes.bool,
+  includeTargetMembers: PropTypes.bool,
+  listUpdating: PropTypes.bool,
+  hasHeader: PropTypes.bool,
+  hasFilters: PropTypes.bool,
+  typeId: PropTypes.string,
+  showCode: PropTypes.bool,
+  mapSubject: PropTypes.string,
+  sortBy: PropTypes.string,
+  sortOrder: PropTypes.string,
   // functions
   onEntityClick: PropTypes.func.isRequired,
   onEntitySelect: PropTypes.func.isRequired,
@@ -336,18 +420,10 @@ EntitiesListView.propTypes = {
   onSortOrder: PropTypes.func.isRequired,
   onSortBy: PropTypes.func.isRequired,
   onDismissError: PropTypes.func.isRequired,
-  listUpdating: PropTypes.bool,
-  hasHeader: PropTypes.bool,
-  hasFilters: PropTypes.bool,
-  typeId: PropTypes.string,
-  showCode: PropTypes.bool,
-  mapSubject: PropTypes.string,
   onSetMapSubject: PropTypes.func,
   onSetIncludeActorMembers: PropTypes.func,
   onSetIncludeTargetMembers: PropTypes.func,
-  includeActorMembers: PropTypes.bool,
-  includeTargetMembers: PropTypes.bool,
-  intl: intlShape.isRequired,
+  onSearch: PropTypes.func,
 };
 
 export default injectIntl(EntitiesListView);

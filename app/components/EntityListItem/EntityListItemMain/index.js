@@ -57,36 +57,67 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
   getConnections = (entity, connectionOptions, connections) => {
     const { intl } = this.context;
     return Object.values(connectionOptions)
-      .filter((option) => !option.listItemHide
-        && connections.get(option.path)
-        && entity.get(`${option.entityTypeAs || option.entityType}ByType`)
-        && entity.get(`${option.entityTypeAs || option.entityType}ByType`).size > 0)
+      .filter((option) => {
+        if (option.groupByType) {
+          return !option.listItemHide
+            && connections.get(option.path)
+            && entity.get(`${option.entityTypeAs || option.entityType}ByType`)
+            && entity.get(`${option.entityTypeAs || option.entityType}ByType`).size > 0;
+        }
+        return !option.listItemHide
+          && connections.get(option.path)
+          && entity.get(`${option.entityTypeAs || option.entityType}`)
+          && entity.get(`${option.entityTypeAs || option.entityType}`).size > 0;
+      })
       .map((option) => {
-        const connectionsByType = entity.get(`${option.entityTypeAs || option.entityType}ByType`).toJS();
+        if (option.groupByType) {
+          const connectionsByType = entity.get(`${option.entityTypeAs || option.entityType}ByType`).toJS();
+          return ({
+            groupLabel: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
+            connectionsByType: Object.keys(connectionsByType)
+              .filter((typeId) => Object.keys(connectionsByType[typeId]).length > 0)
+              .map((typeId) => {
+                const typeentities = connectionsByType[typeId];
+                const connectedEntities = Object.values(typeentities).map(
+                  (connectionId) => connections.getIn([option.path, connectionId.toString()])
+                );
+                const path = `${option.entityType}_${typeId}`;
+                return ({
+                  option: {
+                    label: (size, short) => intl
+                      && intl.formatMessage(
+                        size === 1
+                          ? appMessages.entities[path][short ? 'singleShort' : 'single']
+                          : appMessages.entities[path][short ? 'pluralShort' : 'plural']
+                      ),
+                    style: option.entityType,
+                    clientPath: option.clientPath,
+                  },
+                  entities: connectedEntities,
+                });
+              }),
+          });
+        }
+        const path = `${option.entityType}_${option.actionTypeId}`;
         return ({
           groupLabel: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),
-          connectionsByType: Object.keys(connectionsByType)
-            .filter((typeId) => Object.keys(connectionsByType[typeId]).length > 0)
-            .map((typeId) => {
-              const typeentities = connectionsByType[typeId];
-              const connectedEntities = Object.values(typeentities).map(
+          connections: {
+            option: {
+              label: (size, short) => intl
+                && intl.formatMessage(
+                  size === 1
+                    ? appMessages.entities[path][short ? 'singleShort' : 'single']
+                    : appMessages.entities[path][short ? 'pluralShort' : 'plural']
+                ),
+              style: option.entityType,
+              clientPath: option.clientPath,
+            },
+            entities: entity
+              .get(`${option.entityTypeAs || option.entityType}`)
+              .map(
                 (connectionId) => connections.getIn([option.path, connectionId.toString()])
-              );
-              const path = `${option.entityType}_${typeId}`;
-              return ({
-                option: {
-                  label: (size, short) => intl
-                    && intl.formatMessage(
-                      size === 1
-                        ? appMessages.entities[path][short ? 'singleShort' : 'single']
-                        : appMessages.entities[path][short ? 'pluralShort' : 'plural']
-                    ),
-                  style: option.entityType,
-                  clientPath: option.clientPath,
-                },
-                entities: connectedEntities,
-              });
-            }),
+              ),
+          },
         });
       });
   };
@@ -112,6 +143,9 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     const connectedCounts = config && config.connections && connections
       ? this.getConnections(entity, config.connections, connections)
       : [];
+    // console.log(connections && connections.toJS())
+    // console.log(entity && entity.toJS())
+    // console.log(config && config.connections)
     return ({
       id: entity.get('id'),
       title: entity.getIn(['attributes', 'name']) || entity.getIn(['attributes', 'title']),
@@ -141,11 +175,8 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     } = this.props;
     const entity = this.mapToEntityListItem(this.props);
     const hasTop = entity.role;
-    const hasBottom = taxonomies
-      && (
-        (entity.categories && entity.categories.size > 0)
-        || (this.props.wrapper && entity.connectedCounts && entity.connectedCounts.length > 0)
-      );
+    const hasBottom = (taxonomies && entity.categories && entity.categories.size > 0)
+      || (this.props.wrapper && entity.connectedCounts && entity.connectedCounts.length > 0);
     return (
       <Styled isManager={this.props.isManager} inSingleView={inSingleView}>
         {hasTop && (

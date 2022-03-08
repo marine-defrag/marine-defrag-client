@@ -29,6 +29,8 @@ import {
   selectMapSubjectQuery,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
+  selectSortByQuery,
+  selectSortOrderQuery,
 } from 'containers/App/selectors';
 
 import {
@@ -75,7 +77,7 @@ import {
   setClientPath,
   dismissError,
   dismissAllErrors,
-  resetSearchQuery,
+  resetFilters,
 } from './actions';
 
 import { currentFilters, currentFilterArgs } from './current-filters';
@@ -220,6 +222,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onSetIncludeTargetMembers,
       includeActorMembers,
       includeTargetMembers,
+      onSearch,
+      sortBy,
+      sortOrder,
     } = this.props;
 
     // detect print to avoid expensive rendering
@@ -405,6 +410,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onSetIncludeTargetMembers={onSetIncludeTargetMembers}
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
+            onSearch={onSearch}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
           />
         )}
         {showMap && (
@@ -573,6 +581,8 @@ EntityList.propTypes = {
   onSetIncludeTargetMembers: PropTypes.func,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
+  sortBy: PropTypes.string,
+  sortOrder: PropTypes.string,
 };
 
 EntityList.contextTypes = {
@@ -593,6 +603,8 @@ const mapStateToProps = (state) => ({
   mapSubject: selectMapSubjectQuery(state),
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
+  sortBy: selectSortByQuery(state),
+  sortOrder: selectSortOrderQuery(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -642,7 +654,7 @@ function mapDispatchToProps(dispatch, props) {
       ])));
     },
     onResetFilters: (values) => {
-      dispatch(resetSearchQuery(values));
+      dispatch(resetFilters(values));
     },
     onGroupSelect: (value) => {
       dispatch(updateGroup(fromJS([

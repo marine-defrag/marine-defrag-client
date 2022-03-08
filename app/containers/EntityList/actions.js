@@ -25,7 +25,7 @@ import {
   PATH_CHANGE,
   DISMISS_ERROR,
   DISMISS_ALL_ERRORS,
-  RESET_SEARCH_QUERY,
+  RESET_FILTERS,
 } from './constants';
 
 export function setClientPath(path) {
@@ -115,9 +115,9 @@ export function updateQuery(value) {
   };
 }
 
-export function resetSearchQuery(values) {
+export function resetFilters(values) {
   return {
-    type: RESET_SEARCH_QUERY,
+    type: RESET_FILTERS,
     values,
   };
 }

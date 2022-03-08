@@ -111,7 +111,7 @@ export class EntityListSearch extends React.Component { // eslint-disable-line r
         />
         { searchQuery && (
           <Clear
-            onClick={this.props.onClear}
+            onClick={() => onSearch()}
           >
             <Icon name="removeSmall" />
           </Clear>
@@ -135,7 +135,6 @@ EntityListSearch.propTypes = {
   searchQuery: PropTypes.string,
   placeholder: PropTypes.string,
   onSearch: PropTypes.func,
-  onClear: PropTypes.func,
 };
 
 EntityListSearch.contextTypes = {

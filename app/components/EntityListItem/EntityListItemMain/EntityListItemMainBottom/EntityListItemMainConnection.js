@@ -21,7 +21,7 @@ export function EntityListItemMainConnections({ connection, wrapper }) {
         {`${connection.groupLabel}: `}
       </ConnectionGroupLabel>
       <Box direction="row" gap="xsmall">
-        {connection.connectionsByType.map((type, i) => {
+        {connection.connectionsByType && connection.connectionsByType.map((type, i) => {
           const entitiesTotal = type.entities ? type.entities.length : 0;
           return entitiesTotal > 0 && (
             <ConnectionPopup
@@ -34,6 +34,17 @@ export function EntityListItemMainConnections({ connection, wrapper }) {
             />
           );
         })}
+        {connection.connections && connection.connections.entities && (
+          <ConnectionPopup
+            entities={connection.connections.entities.toArray()}
+            label={connection.connections.option.label(
+              connection.connections.entities.size
+            )}
+            option={connection.connections.option}
+            wrapper={wrapper}
+            draft
+          />
+        )}
       </Box>
     </Box>
   );

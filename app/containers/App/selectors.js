@@ -742,7 +742,7 @@ export const selectEntitiesWhere = createSelector(
 );
 
 // filter entities by attributes, using locationQuery
-const selectEntitiesWhereQuery = createSelector(
+export const selectEntitiesWhereQuery = createSelector(
   selectAttributeQuery,
   (state, { path }) => selectEntities(state, path),
   (query, entities) => query
@@ -768,7 +768,7 @@ export const selectActorsWhere = createSelector(
 );
 
 // filter entities by attributes, using locationQuery
-const selectActorsWhereQuery = createSelector(
+export const selectActorsWhereQuery = createSelector(
   selectAttributeQuery,
   selectActortypeActors, // type should be optional
   (query, entities) => query
@@ -776,7 +776,7 @@ const selectActorsWhereQuery = createSelector(
     : entities
 );
 // filter entities by attributes, using locationQuery
-const selectResourcesWhereQuery = createSelector(
+export const selectResourcesWhereQuery = createSelector(
   selectAttributeQuery,
   selectResourcetypeResources, // type should be optional
   (query, entities) => query
@@ -812,7 +812,7 @@ export const selectActionsWhere = createSelector(
 );
 
 // filter entities by attributes, using locationQuery
-const selectActionsWhereQuery = createSelector(
+export const selectActionsWhereQuery = createSelector(
   selectAttributeQuery,
   selectActiontypeActions, // type should be optional
   (query, entities) => query

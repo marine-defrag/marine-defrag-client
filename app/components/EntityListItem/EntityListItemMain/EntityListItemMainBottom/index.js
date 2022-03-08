@@ -47,7 +47,10 @@ const getEntityTags = (categories, taxonomies, onClick) => {
 function EntityListItemMainBottom({
   connections, wrapper, categories, taxonomies, onEntityClick,
 }) {
-  const entityTags = categories && categories.size > 0 && getEntityTags(categories, taxonomies, onEntityClick);
+  const entityTags = taxonomies
+    && categories
+    && categories.size > 0
+    && getEntityTags(categories, taxonomies, onEntityClick);
   return (
     <Styled>
       {entityTags && (

@@ -3,12 +3,10 @@ import { Map } from 'immutable';
 
 import {
   selectEntities,
-  selectEntitiesSearchQuery,
+  selectEntitiesWhereQuery,
   selectWithoutQuery,
   selectConnectionQuery,
   selectCategoryQuery,
-  selectSortByQuery,
-  selectSortOrderQuery,
   selectCategories,
 } from 'containers/App/selectors';
 import { USER_ROLES, API } from 'themes/config';
@@ -19,16 +17,9 @@ import {
   filterEntitiesWithoutAssociation,
 } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
-import { sortEntities, getSortOption } from 'utils/sort';
-
-import { CONFIG } from './constants';
 
 const selectUsersNested = createSelector(
-  (state, locationQuery) => selectEntitiesSearchQuery(state, {
-    path: API.USERS,
-    searchAttributes: CONFIG.views.list.search || ['name'],
-    locationQuery,
-  }),
+  (state) => selectEntitiesWhereQuery(state, { path: API.USERS }),
   (state) => selectEntities(state, API.USER_CATEGORIES),
   (state) => selectEntities(state, API.USER_ROLES),
   (entities, entityCategories, entityRoles) => entities.map(
@@ -95,15 +86,5 @@ const selectUsersByCategories = createSelector(
 // 6. selectUsersByCategories will filter by specific categories
 export const selectUsers = createSelector(
   selectUsersByCategories,
-  selectSortByQuery,
-  selectSortOrderQuery,
-  (entities, sort, order) => {
-    const sortOption = getSortOption(CONFIG.sorting, sort);
-    return sortEntities(
-      entities,
-      order || (sortOption ? sortOption.order : 'asc'),
-      sort || (sortOption ? sortOption.attribute : 'name'),
-      sortOption ? sortOption.type : 'string'
-    );
-  }
+  (entities) => entities && entities.toList()
 );

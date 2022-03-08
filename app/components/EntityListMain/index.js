@@ -9,12 +9,12 @@ import { Map, List } from 'immutable';
 import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 
-import { CONTENT_LIST, PARAMS } from 'containers/App/constants';
+import { PARAMS } from 'containers/App/constants';
 
-import ContentHeader from 'components/ContentHeader';
-// import EntityListSearch from 'components/EntityListSearch';
+import EntityListSearch from 'components/EntityListSearch';
 import PrintOnly from 'components/styled/PrintOnly';
-
+import { sortEntities, getSortOption } from 'utils/sort';
+import { filterEntitiesByKeywords } from 'utils/entities';
 import EntityListGroups from './EntityListGroups';
 
 import EntityListOptions from './EntityListOptions';
@@ -24,12 +24,13 @@ import messages from './messages';
 
 const ListWrapper = styled.div``;
 
-// const EntityListSearchWrapper = styled.div`
-//   padding-bottom: 1em;
-//   @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
-//     padding-bottom: 2em;
-//   }
-// `;
+const EntityListSearchWrapper = styled.div`
+  padding-top: 1em;
+  padding-bottom: 12px;
+  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
+    padding-top: 2em;
+  }
+`;
 
 const ListEntities = styled.div``;
 
@@ -80,13 +81,40 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       onSortBy,
       onDismissError,
       entityIdsSelected,
-      header,
-      hasFilters,
-      hasViewOptions,
-      // onSearch,
-      // onClearFilters,
+      onSearch,
+      sortBy,
+      sortOrder,
     } = this.props;
     const { intl } = this.context;
+
+    // filter entitities by keyword
+    const searchQuery = locationQuery.get('search') || '';
+    const searchAttributes = (
+      config.views
+      && config.views.list
+      && config.views.list.search
+    ) || ['title'];
+
+    let searchedEntities = entities;
+
+    if (searchQuery.length > 2) {
+      searchedEntities = filterEntitiesByKeywords(
+        entities,
+        searchQuery,
+        searchAttributes,
+      );
+    }
+    // sort entities
+    const sortOption = config
+      && config.views
+      && config.views.list
+      && getSortOption(config.views.list.sorting, sortBy);
+    const sortedEntities = searchedEntities && sortEntities(
+      searchedEntities,
+      sortOrder || (sortOption ? sortOption.order : 'asc'),
+      sortBy || (sortOption ? sortOption.attribute : 'title'),
+      sortOption ? sortOption.type : 'string'
+    );
 
     let groupSelectValue = locationQuery && locationQuery.get('group');
     if (config.taxonomies && !groupSelectValue) {
@@ -107,7 +135,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       && taxonomies.get(groupSelectValue)
       && groupSelectValue !== PARAMS.GROUP_RESET
       ? groupEntities(
-        entities,
+        sortedEntities,
         taxonomies,
         connectedTaxonomies,
         config,
@@ -117,37 +145,19 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
         actortypes,
       )
       : null;
-    let headerTitle;
-    if (entityTitle) {
-      headerTitle = entities
-        ? `${entities.size} ${entities.size === 1 ? entityTitle.single : entityTitle.plural}`
-        : entityTitle.plural;
-    }
-    if (hasFilters) {
-      headerTitle = `${headerTitle} (filtered)`;
-    }
 
-    // <EntityListSearchWrapper>
-    // <EntityListSearch
-    // searchQuery={locationQuery.get('search') || ''}
-    // onSearch={onSearch}
-    // onClear={onClearFilters}
-    // />
-    // </EntityListSearchWrapper>
     return (
       <>
-        {entityTitle && (
-          <ContentHeader
-            type={CONTENT_LIST}
-            title={headerTitle}
-            buttons={header && header.actions}
-            hasViewOptions={hasViewOptions}
-          />
-        )}
         <ListEntities>
           <PrintHintKey>
             <FormattedMessage {...messages.printHintKey} />
           </PrintHintKey>
+          <EntityListSearchWrapper>
+            <EntityListSearch
+              searchQuery={searchQuery}
+              onSearch={onSearch}
+            />
+          </EntityListSearchWrapper>
           <EntityListOptions
             groupOptions={getGroupOptions(taxonomies, intl)}
             subgroupOptions={getGroupOptions(taxonomies, intl)}
@@ -158,7 +168,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
           />
           <ListWrapper ref={this.ScrollTarget}>
             <EntityListGroups
-              entities={entities}
+              entities={sortedEntities}
               errors={errors}
               onDismissError={onDismissError}
               entityGroups={entityGroups}
@@ -200,7 +210,6 @@ EntityListMain.propTypes = {
   // object/arrays
   config: PropTypes.object,
   entityTitle: PropTypes.object, // single/plural
-  header: PropTypes.object,
   // primitive
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
@@ -208,8 +217,6 @@ EntityListMain.propTypes = {
   typeId: PropTypes.string,
   listUpdating: PropTypes.bool,
   showCode: PropTypes.bool,
-  hasFilters: PropTypes.bool,
-  hasViewOptions: PropTypes.bool,
   // functions
   onGroupSelect: PropTypes.func,
   onSubgroupSelect: PropTypes.func,
@@ -221,8 +228,9 @@ EntityListMain.propTypes = {
   onSortOrder: PropTypes.func.isRequired,
   onSortBy: PropTypes.func.isRequired,
   onDismissError: PropTypes.func,
-  // onSearch: PropTypes.func.isRequired,
-  // onClearFilters: PropTypes.func.isRequired,
+  onSearch: PropTypes.func.isRequired,
+  sortBy: PropTypes.string,
+  sortOrder: PropTypes.string,
 };
 
 EntityListMain.contextTypes = {

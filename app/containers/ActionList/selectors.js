@@ -3,15 +3,13 @@ import { Map } from 'immutable';
 
 import {
   selectEntities,
-  selectActionsSearchQuery,
+  selectActionsWhereQuery,
   selectWithoutQuery,
   selectAnyQuery,
   selectActorQuery,
   selectCategoryQuery,
   selectTargetedQuery,
   selectParentQuery,
-  selectSortByQuery,
-  selectSortOrderQuery,
   selectResourceQuery,
   selectActors,
   selectActions,
@@ -45,11 +43,9 @@ import {
   getTaxonomyCategories,
 } from 'utils/entities';
 
-import { sortEntities, getSortOption } from 'utils/sort';
-
 import { API } from 'themes/config';
 
-import { CONFIG, DEPENDENCIES } from './constants';
+import { DEPENDENCIES } from './constants';
 
 export const selectConnections = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
@@ -156,10 +152,7 @@ export const selectConnectedTaxonomies = createSelector(
 // nest category ids
 const selectActionsWithCategories = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
-  (state, args) => selectActionsSearchQuery(state, {
-    searchAttributes: CONFIG.views.list.search || ['title'],
-    ...args,
-  }),
+  selectActionsWhereQuery,
   selectActionCategoriesGroupedByAction,
   selectCategories,
   (ready, entities, associationsGrouped, categories) => {
@@ -438,15 +431,5 @@ const selectActionsByCategories = createSelector(
 // 7. selectActionsByCOnnectedCategories will filter by specific categories connected via connection
 export const selectViewActions = createSelector(
   selectActionsByCategories,
-  selectSortByQuery,
-  selectSortOrderQuery,
-  (entities, sort, order) => {
-    const sortOption = getSortOption(CONFIG.views.list.sorting, sort);
-    return sortEntities(
-      entities,
-      order || (sortOption ? sortOption.order : 'desc'),
-      sort || (sortOption ? sortOption.attribute : 'id'),
-      sortOption ? sortOption.type : 'string'
-    );
-  }
+  (entities) => entities && entities.toList()
 );
