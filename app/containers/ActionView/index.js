@@ -178,7 +178,7 @@ export function ActionView(props) {
     }
   }
   // check date comment for date spceficity
-  const DATE_SPECIFICITIES = ['y', 'm'];
+  const DATE_SPECIFICITIES = ['y', 'm', 'd'];
   let dateSpecificity;
   if (
     viewEntity
