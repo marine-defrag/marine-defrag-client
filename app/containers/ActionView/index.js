@@ -187,6 +187,17 @@ export function ActionView(props) {
   ) {
     dateSpecificity = viewEntity.getIn(['attributes', 'date_comment']).trim();
   }
+  let datesEqual;
+  if (
+    viewEntity
+    && viewEntity.getIn(['attributes', 'date_start'])
+    && viewEntity.getIn(['attributes', 'date_end'])
+  ) {
+    const [ds] = viewEntity.getIn(['attributes', 'date_start']).split('T');
+    const [de] = viewEntity.getIn(['attributes', 'date_end']).split('T');
+    datesEqual = ds === de;
+  }
+
   return (
     <div>
       <Helmet
@@ -416,8 +427,16 @@ export function ActionView(props) {
                       type: 'dark',
                       fields: [
                         checkActionAttribute(typeId, 'date_start')
-                          && getDateField(viewEntity, 'date_start', { specificity: dateSpecificity }),
-                        checkActionAttribute(typeId, 'date_end')
+                          && getDateField(
+                            viewEntity,
+                            'date_start',
+                            {
+                              specificity: dateSpecificity,
+                              attributeLabel: datesEqual ? 'date' : 'date_start',
+                            }
+                          ),
+                        !datesEqual
+                          && checkActionAttribute(typeId, 'date_end')
                           && getDateField(viewEntity, 'date_end', { specificity: dateSpecificity }),
                         !dateSpecificity
                           && checkActionAttribute(typeId, 'date_comment')

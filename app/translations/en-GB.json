@@ -320,6 +320,7 @@
   "app.containers.App.attributes.comment": "Further information",
   "app.containers.App.attributes.content": "Page content",
   "app.containers.App.attributes.url": "Website",
+  "app.containers.App.attributes.date": "Date",
   "app.containers.App.attributes.date_start": "Start date",
   "app.containers.App.attributes.date_start_empty": "No start date set",
   "app.containers.App.attributes.date_end": "End date",

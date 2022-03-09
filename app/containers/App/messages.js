@@ -753,6 +753,10 @@ export default defineMessages({
       id: 'app.containers.App.attributes.url',
       defaultMessage: 'Website',
     },
+    date: {
+      id: 'app.containers.App.attributes.date',
+      defaultMessage: 'Date',
+    },
     date_start: {
       id: 'app.containers.App.attributes.date_start',
       defaultMessage: 'Date',
