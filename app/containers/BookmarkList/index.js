@@ -36,7 +36,7 @@ import SidebarGroupLabel from 'components/styled/SidebarGroupLabel';
 import SupTitle from 'components/SupTitle';
 import Component from 'components/styled/Component';
 import Content from 'components/styled/Content';
-import EntityListHeader from 'components/EntityListMain/EntityListHeader';
+import EntityListMainHeader from 'components/EntityListMain/EntityListMainHeader';
 import EntityListItem from 'components/EntityListItem';
 import PrintHide from 'components/styled/PrintHide';
 
@@ -320,7 +320,7 @@ export class BookmarkList extends React.PureComponent { // eslint-disable-line r
                     )}
                     {bookmarksFiltered && bookmarksFiltered.size > 0 && (
                       <div>
-                        <EntityListHeader
+                        <EntityListMainHeader
                           entitiesTotal={bookmarksFiltered.size}
                           entityTitle={{
                             single: intl.formatMessage(messages.single),

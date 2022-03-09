@@ -8,7 +8,7 @@ import appMessages from 'containers/App/messages';
 import FieldWrap from 'components/fields/FieldWrap';
 import ConnectionLabel from 'components/fields/ConnectionLabel';
 import ConnectionLabelWrap from 'components/fields/ConnectionLabelWrap';
-import EntityListItemWrapper from 'components/fields/EntityListItemWrapper';
+import EntityListItems from 'components/EntityListMain/EntityListItems';
 // import EntityListItemsWrap from 'components/fields/EntityListItemsWrap';
 import ToggleAllItems from 'components/fields/ToggleAllItems';
 import EmptyHint from 'components/fields/EmptyHint';
@@ -65,7 +65,7 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
                 </PrintHint>
               )
             }
-            <EntityListItemWrapper
+            <EntityListItems
               config={{
                 connections: field.connectionOptions,
                 clientPath: field.entityPath,

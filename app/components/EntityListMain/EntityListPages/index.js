@@ -10,8 +10,7 @@ import { Map, List } from 'immutable';
 
 import Messages from 'components/Messages';
 
-import EntityListItem from 'components/EntityListItem';
-import EntityListHeader from '../EntityListHeader';
+import EntityListItems from '../EntityListItems';
 import EntityListFooter from '../EntityListFooter';
 
 import { getPager } from './pagination';
@@ -44,7 +43,6 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
     const {
       entityIdsSelected,
       config,
-      entityIcon,
       onEntityClick,
       isManager,
       onEntitySelect,
@@ -95,17 +93,13 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
 
     return (
       <div>
-        <EntityListHeader
-          selectedTotal={entityIdsSelected && entityIdsSelected.toSet().size}
+        <EntityListItems
+          entities={entitiesOnPage}
           pageTotal={entityIdsOnPage.toSet().size}
           entitiesTotal={entities.size}
-          allSelected={entityIdsSelected && entityIdsSelected.toSet().size === entities.size}
-          allSelectedOnPage={entityIdsSelected && entityIdsSelected.toSet().size === entityIdsOnPage.toSet().size}
           isManager={isManager}
           entityTitle={entityTitle}
-          sortOptions={config.views.list.sorting}
-          sortBy={locationQuery.get('sort')}
-          sortOrder={locationQuery.get('order')}
+          locationQuery={locationQuery}
           onSortBy={this.props.onSortBy}
           onSortOrder={this.props.onSortOrder}
           onSelect={(checked) => {
@@ -116,28 +110,20 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
               entities.map((entity) => entity.get('id')).valueSeq().toArray(),
             );
           }}
+          onDismissError={this.props.onDismissError}
+          onEntitySelect={onEntitySelect}
+          onEntityClick={onEntityClick}
+          taxonomies={taxonomies}
+          connections={connections}
+          config={config}
+          entityPath={entityPath}
+          url={url}
+          showCode={showCode}
+          showValueForAction={showValueForAction}
+          entityIdsSelected={entityIdsSelected}
+          errors={errors}
         />
         <ListEntitiesMain>
-          {entitiesOnPage.size > 0 && entitiesOnPage.map((entity, key) => (
-            <EntityListItem
-              key={key}
-              entity={entity}
-              error={this.props.errors ? this.props.errors.get(entity.get('id')) : null}
-              onDismissError={this.props.onDismissError}
-              isManager={isManager}
-              isSelected={isManager && entityIdsSelected.includes(entity.get('id'))}
-              onSelect={(checked) => onEntitySelect(entity.get('id'), checked)}
-              entityIcon={entityIcon}
-              taxonomies={taxonomies}
-              connections={connections}
-              config={config}
-              onEntityClick={onEntityClick}
-              entityPath={entityPath}
-              url={url}
-              showCode={showCode}
-              showValueForAction={showValueForAction}
-            />
-          ))}
           { entityIdsOnPage.size === 0 && this.hasLocationQueryFilters(locationQuery) && (!errors || errors.size === 0)
             && (
               <ListEntitiesEmpty>
@@ -200,11 +186,10 @@ EntityListGroups.propTypes = {
   entityIdsSelected: PropTypes.instanceOf(List),
   locationQuery: PropTypes.instanceOf(Map),
   errors: PropTypes.instanceOf(Map),
+  showValueForAction: PropTypes.instanceOf(Map),
   entityTitle: PropTypes.object,
   config: PropTypes.object,
-  entityIcon: PropTypes.func,
   isManager: PropTypes.bool,
-  isAnalyst: PropTypes.bool,
   onPageSelect: PropTypes.func.isRequired,
   onPageItemsSelect: PropTypes.func.isRequired,
   onEntityClick: PropTypes.func.isRequired,
@@ -215,7 +200,6 @@ EntityListGroups.propTypes = {
   onDismissError: PropTypes.func,
   showCode: PropTypes.bool,
   entityPath: PropTypes.string,
-  showValueForAction: PropTypes.instanceOf(Map),
   url: PropTypes.string,
 };
 

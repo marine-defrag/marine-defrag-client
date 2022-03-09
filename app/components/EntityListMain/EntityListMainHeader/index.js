@@ -19,7 +19,7 @@ const Styled = styled.div`
   display: table;
 `;
 
-class EntityListHeader extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+class EntityListMainHeader extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   getListHeaderLabel = (intl, entityTitle, selectedTotal, pageTotal, entitiesTotal, allSelected, allSelectedOnPage) => {
     if (selectedTotal > 0) {
       if (allSelected) {
@@ -108,7 +108,7 @@ class EntityListHeader extends React.PureComponent { // eslint-disable-line reac
     );
   }
 }
-EntityListHeader.propTypes = {
+EntityListMainHeader.propTypes = {
   selectedTotal: PropTypes.number,
   pageTotal: PropTypes.number,
   entitiesTotal: PropTypes.number,
@@ -127,4 +127,4 @@ EntityListHeader.propTypes = {
 };
 
 
-export default injectIntl(EntityListHeader);
+export default injectIntl(EntityListMainHeader);
