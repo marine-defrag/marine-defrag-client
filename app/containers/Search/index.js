@@ -32,7 +32,7 @@ import ContentHeader from 'components/ContentHeader';
 import TagSearch from 'components/TagSearch';
 import Content from 'components/styled/Content';
 
-import EntityListItemWrapper from 'components/EntityListMain/EntityListGroups/EntityListItems/EntityListItemWrapper';
+import EntityListItemWrapper from 'components/EntityListMain/EntityListItems/EntityListItemWrapper';
 
 import appMessages from 'containers/App/messages';
 // import { ROUTES } from 'themes/config';

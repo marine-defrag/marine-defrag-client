@@ -8,7 +8,7 @@ import { palette } from 'styled-theme';
 import { ROUTES } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
-import EntityListItems from 'components/EntityListMain/EntityListGroups/EntityListItems';
+import EntityListItems from 'components/EntityListMain/EntityListItems';
 
 // import EntityListItemsWrap from 'components/fields/EntityListItemsWrap';
 import ToggleAllItems from 'components/fields/ToggleAllItems';

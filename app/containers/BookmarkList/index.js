@@ -36,8 +36,8 @@ import SidebarGroupLabel from 'components/styled/SidebarGroupLabel';
 import SupTitle from 'components/SupTitle';
 import Component from 'components/styled/Component';
 import Content from 'components/styled/Content';
-import EntityListHeader from 'components/EntityListMain/EntityListGroups/EntityListHeader';
-import EntityListItemWrapper from 'components/EntityListMain/EntityListGroups/EntityListItems/EntityListItemWrapper';
+import EntityListHeader from 'components/EntityListMain/EntityListHeader';
+import EntityListItemWrapper from 'components/EntityListMain/EntityListItems/EntityListItemWrapper';
 import PrintHide from 'components/styled/PrintHide';
 
 import {

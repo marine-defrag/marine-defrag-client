@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
-import EntityListItems from 'components/EntityListMain/EntityListGroups/EntityListItems';
+import EntityListItems from 'components/EntityListMain/EntityListItems';
 
 import FieldWrap from 'components/fields/FieldWrap';
 import ConnectionLabel from 'components/fields/ConnectionLabel';

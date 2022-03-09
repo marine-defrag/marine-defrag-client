@@ -11,9 +11,9 @@ import { PARAMS } from 'containers/App/constants';
 
 import Messages from 'components/Messages';
 
-import EntityListItems from './EntityListItems';
-import EntityListHeader from './EntityListHeader';
-import EntityListFooter from './EntityListFooter';
+import EntityListItems from '../EntityListItems';
+import EntityListHeader from '../EntityListHeader';
+import EntityListFooter from '../EntityListFooter';
 import EntityListGroupHeader from './EntityListGroupHeader';
 
 import { getPager } from './pagination';
