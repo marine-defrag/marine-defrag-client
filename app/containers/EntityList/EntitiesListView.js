@@ -6,9 +6,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
-import { Box, Text, Button } from 'grommet';
+import { Box, Text } from 'grommet';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
-import styled from 'styled-components';
 
 import {
   ROUTES, ACTORTYPES, API, ACTIONTYPE_ACTORTYPES, ACTIONTYPE_TARGETTYPES,
@@ -23,18 +22,14 @@ import EntityListViewOptions from 'components/EntityListViewOptions';
 import EntityListMain from 'components/EntityListMain';
 import MapSubjectOptions from 'containers/MapContainer/MapInfoOptions/MapSubjectOptions';
 import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOption';
+import ButtonPill from 'components/buttons/ButtonPill';
 
 import ContentHeader from 'components/ContentHeader';
 import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
 
 import { getActorsForEntities } from './utils';
-const TypeButton = styled((p) => <Button plain {...p} />)`
-  padding: 2px 4px;
-  border-bottom: 2px solid;
-  border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
-  background: none;
-`;
+
 class EntitiesListView extends React.Component { // eslint-disable-line react/prefer-stateless-function
   constructor(props) {
     super(props);
@@ -205,31 +200,31 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 )}
                 {dataReady && entityActors && (
                   <Box>
-                    <Box direction="row" gap="small" margin={{ vertical: 'small' }}>
+                    <Box direction="row" gap="xsmall" margin={{ vertical: 'small' }}>
                       {mapSubject === 'actors' && ACTIONTYPE_ACTORTYPES[typeId].map(
                         (actortypeId) => (
-                          <TypeButton
+                          <ButtonPill
                             key={actortypeId}
                             onClick={() => this.setType(actortypeId)}
                             active={qe(viewType, actortypeId)}
                           >
-                            <Text>
-                              <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].plural} />
+                            <Text size="small">
+                              <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].pluralShort} />
                             </Text>
-                          </TypeButton>
+                          </ButtonPill>
                         )
                       )}
                       {mapSubject === 'targets' && ACTIONTYPE_TARGETTYPES[typeId].map(
                         (actortypeId) => (
-                          <TypeButton
+                          <ButtonPill
                             key={actortypeId}
                             onClick={() => this.setType(actortypeId)}
                             active={qe(viewType, actortypeId)}
                           >
-                            <Text>
-                              <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].plural} />
+                            <Text size="small">
+                              <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].pluralShort} />
                             </Text>
-                          </TypeButton>
+                          </ButtonPill>
                         )
                       )}
                     </Box>

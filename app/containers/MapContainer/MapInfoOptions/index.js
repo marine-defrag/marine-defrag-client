@@ -27,7 +27,7 @@ const Styled = styled((p) => (
   bottom: 50px;
   width: 350px;
   z-index: 50;
-  padding: 15px 20px 5px;
+  padding: 5px 10px 5px;
 `;
 
 export function MapInfoOptions({
@@ -38,6 +38,9 @@ export function MapInfoOptions({
   } = config;
   return (
     <Styled>
+      {subjectOptions && (
+        <MapSubjectOptions options={subjectOptions} />
+      )}
       <Box gap="xsmall" margin={{ bottom: 'small' }}>
         {title && (
           <Title>{title}</Title>
@@ -47,9 +50,6 @@ export function MapInfoOptions({
         )}
       </Box>
       {maxValue && <MapKey maxValue={maxValue} mapSubject={mapSubject} />}
-      {subjectOptions && (
-        <MapSubjectOptions options={subjectOptions} />
-      )}
       {memberOption && (
         <MapMemberOption option={memberOption} />
       )}

@@ -20,7 +20,7 @@ export function MapMemberOption({ option }) {
         checked={active}
         onChange={onClick}
       />
-      <Text as="label" htmlFor={`map-member-${key}`} size="small">{label}</Text>
+      <Text as="label" htmlFor={`map-member-${key}`} size="xsmall">{label}</Text>
     </Styled>
   );
 }

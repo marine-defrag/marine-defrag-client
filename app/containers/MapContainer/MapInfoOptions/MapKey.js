@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { MAP_OPTIONS } from 'themes/config';
-
+import { Box } from 'grommet';
 import Gradient from './Gradient';
 import Bins from './Bins';
 
@@ -17,10 +17,11 @@ export function MapKey({
   const maxFactor = maxValue && maxValue / (noStops - 1);
   const minValue = isIndicator ? 0 : 1;
   return (
-    <>
+    <Box margin={{ horizontal: 'xsmall' }}>
       {!!maxValue && maxValue > maxBinValue && (
         <Gradient
           unit={unit}
+          isCount={!isIndicator}
           config={{
             range: [minValue, maxValue],
             stops: stops.map((color, i) => ({
@@ -33,7 +34,7 @@ export function MapKey({
       {!!maxValue && maxValue <= maxBinValue && maxValue > 0 && (
         <Bins config={{ range: [1, maxValue], maxValue, stops }} />
       )}
-    </>
+    </Box>
   );
 }
 

@@ -1,43 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Box, Text, Button } from 'grommet';
 
-import ButtonFactory from 'components/buttons/ButtonFactory';
+// import ButtonFactory from 'components/buttons/ButtonFactory';
 
 const Styled = styled.div`
-  padding: 10px 0;
+  padding-bottom: 10px;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding: 20px 0;
+    padding-bottom: 15px;
   }
 `;
-const ButtonGroup = styled.div`
-  display: table;
-  text-align: right;
-  margin-bottom: 10px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    margin-bottom: 0;
-  }
+const TypeButton = styled((p) => <Button plain {...p} />)`
+  padding: 2px 4px;
+  border-bottom: 2px solid;
+  border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
+  background: none;
 `;
-
-const TableCell = styled.span`
-  display: ${(props) => {
-    if (props.hiddenMobile) {
-      return 'none';
-    }
-    return 'table-cell';
-  }};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    display: table-cell;
-    vertical-align: middle;
-  }
-`;
-const ButtonWrap = styled.span`
-  padding: 0 0.1em;
-  @media print {
-    display: none;
-  }
-`;
-
 
 class MapSubjectOptions extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
@@ -45,17 +24,19 @@ class MapSubjectOptions extends React.PureComponent { // eslint-disable-line rea
     return (
       <Styled>
         {options && (
-          <ButtonGroup>
+          <Box direction="row" gap="small">
             {
               options.map((option, i) => option && (
-                <TableCell key={i}>
-                  <ButtonWrap>
-                    <ButtonFactory button={option} />
-                  </ButtonWrap>
-                </TableCell>
+                <Box key={i}>
+                  <TypeButton active={option.active} onClick={option.onClick}>
+                    <Text size="large">
+                      {option.title}
+                    </Text>
+                  </TypeButton>
+                </Box>
               ))
             }
-          </ButtonGroup>
+          </Box>
         )}
       </Styled>
     );
