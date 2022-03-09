@@ -6,9 +6,11 @@ import styled from 'styled-components';
 
 import { Map, List } from 'immutable';
 
+// import { isEqual } from 'lodash/lang';
+
 import Messages from 'components/Messages';
 
-import EntityListItems from '../EntityListItems';
+import EntityListItem from 'components/EntityListItem';
 import EntityListHeader from '../EntityListHeader';
 import EntityListFooter from '../EntityListFooter';
 
@@ -22,8 +24,8 @@ const ListEntitiesEmpty = styled.div``;
 
 const PAGE_SIZE = 20;
 const PAGE_SIZE_MAX = 100;
-
-export class EntityListPages extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+const FILTERS = ['items', 'page', 'sort', 'order'];
+export class EntityListGroups extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   transformMessage = (msg, entityId) => {
     const { intl } = this.context;
     return intl
@@ -31,18 +33,20 @@ export class EntityListPages extends React.PureComponent { // eslint-disable-lin
       : msg;
   };
 
-  hasLocationQueryFilters = (locationQuery) => locationQuery.reduce((hasFilters, value, arg) => hasFilters || ['items', 'page', 'group', 'subgroup', 'sort', 'order'].indexOf(arg) === -1,
-    false);
+  hasLocationQueryFilters = (locationQuery) => locationQuery.reduce(
+    (hasFilters, value, arg) => hasFilters
+      || FILTERS.indexOf(arg) === -1,
+    false,
+  );
 
   render() {
-    // console.log('error EntityListPages.render')
+    // console.log('error EntityListGroups.render')
     const {
       entityIdsSelected,
       config,
       entityIcon,
       onEntityClick,
       isManager,
-      isAnalyst,
       onEntitySelect,
       entityTitle,
       onEntitySelectAll,
@@ -50,6 +54,11 @@ export class EntityListPages extends React.PureComponent { // eslint-disable-lin
       entities,
       errors,
       showCode,
+      taxonomies,
+      connections,
+      entityPath,
+      url,
+      showValueForAction,
     } = this.props;
     let pageSize = PAGE_SIZE_MAX;
     if (locationQuery.get('items')) {
@@ -109,6 +118,26 @@ export class EntityListPages extends React.PureComponent { // eslint-disable-lin
           }}
         />
         <ListEntitiesMain>
+          {entitiesOnPage.size > 0 && entitiesOnPage.map((entity, key) => (
+            <EntityListItem
+              key={key}
+              entity={entity}
+              error={this.props.errors ? this.props.errors.get(entity.get('id')) : null}
+              onDismissError={this.props.onDismissError}
+              isManager={isManager}
+              isSelected={isManager && entityIdsSelected.includes(entity.get('id'))}
+              onSelect={(checked) => onEntitySelect(entity.get('id'), checked)}
+              entityIcon={entityIcon}
+              taxonomies={taxonomies}
+              connections={connections}
+              config={config}
+              onEntityClick={onEntityClick}
+              entityPath={entityPath}
+              url={url}
+              showCode={showCode}
+              showValueForAction={showValueForAction}
+            />
+          ))}
           { entityIdsOnPage.size === 0 && this.hasLocationQueryFilters(locationQuery) && (!errors || errors.size === 0)
             && (
               <ListEntitiesEmpty>
@@ -150,25 +179,6 @@ export class EntityListPages extends React.PureComponent { // eslint-disable-lin
               ))
             )).toList()
           }
-          {entitiesOnPage.size > 0 && (
-            <div>
-              <EntityListItems
-                taxonomies={this.props.taxonomies}
-                connections={this.props.connections}
-                errors={errors}
-                config={config}
-                entities={entitiesOnPage}
-                entityIdsSelected={entityIdsSelected}
-                entityIcon={entityIcon}
-                onEntityClick={onEntityClick}
-                isManager={isManager}
-                isAnalyst={isAnalyst}
-                onEntitySelect={onEntitySelect}
-                onDismissError={this.props.onDismissError}
-                showCode={showCode}
-              />
-            </div>
-          )}
         </ListEntitiesMain>
         {entitiesOnPage.size > 0 && (
           <EntityListFooter
@@ -183,7 +193,7 @@ export class EntityListPages extends React.PureComponent { // eslint-disable-lin
   }
 }
 
-EntityListPages.propTypes = {
+EntityListGroups.propTypes = {
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
@@ -204,11 +214,14 @@ EntityListPages.propTypes = {
   onSortOrder: PropTypes.func.isRequired,
   onDismissError: PropTypes.func,
   showCode: PropTypes.bool,
+  entityPath: PropTypes.string,
+  showValueForAction: PropTypes.instanceOf(Map),
+  url: PropTypes.string,
 };
 
-EntityListPages.contextTypes = {
+EntityListGroups.contextTypes = {
   intl: PropTypes.object,
 };
 
 
-export default EntityListPages;
+export default EntityListGroups;

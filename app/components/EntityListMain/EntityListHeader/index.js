@@ -9,7 +9,7 @@ import { STATES as CHECKBOX_STATES } from 'components/forms/IndeterminateCheckbo
 import { SORT_ORDER_OPTIONS } from 'containers/App/constants';
 import { COLUMN_WIDTHS } from 'themes/config';
 
-import messages from 'components/EntityListMain/EntityListGroups/messages';
+import messages from 'components/EntityListMain/EntityListPages/messages';
 
 import ColumnSelect from './ColumnSelect';
 

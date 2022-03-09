@@ -26,7 +26,6 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
   shouldComponentUpdate(nextProps) {
     return this.props.entity !== nextProps.entity
       || this.props.isSelected !== nextProps.isSelected
-      || this.props.wrapper !== nextProps.wrapper
       || this.props.error !== nextProps.error;
   }
 
@@ -79,7 +78,6 @@ class EntityListItem extends React.Component { // eslint-disable-line react/pref
             entityIcon={entityIcon}
             config={config}
             onEntityClick={onEntityClick}
-            wrapper={this.props.wrapper}
             isManager={isManager}
             inSingleView={inSingleView}
             entityPath={entityPath}
@@ -107,7 +105,6 @@ EntityListItem.propTypes = {
   config: PropTypes.object,
   onEntityClick: PropTypes.func,
   onDismissError: PropTypes.func,
-  wrapper: PropTypes.object,
   entityPath: PropTypes.string,
   url: PropTypes.string,
   showCode: PropTypes.bool,

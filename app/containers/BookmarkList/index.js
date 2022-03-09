@@ -37,7 +37,7 @@ import SupTitle from 'components/SupTitle';
 import Component from 'components/styled/Component';
 import Content from 'components/styled/Content';
 import EntityListHeader from 'components/EntityListMain/EntityListHeader';
-import EntityListItemWrapper from 'components/EntityListMain/EntityListItems/EntityListItemWrapper';
+import EntityListItem from 'components/EntityListItem';
 import PrintHide from 'components/styled/PrintHide';
 
 import {
@@ -341,7 +341,7 @@ export class BookmarkList extends React.PureComponent { // eslint-disable-line r
                               bookmark.getIn(['attributes', 'view', 'query']).toJS(),
                             );
                             return (
-                              <EntityListItemWrapper
+                              <EntityListItem
                                 key={key}
                                 entity={bookmark.setIn(['attributes', 'reference'], label)}
                                 entityPath={bookmark.getIn(['attributes', 'view', 'path'])}

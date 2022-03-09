@@ -176,7 +176,7 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
     const entity = this.mapToEntityListItem(this.props);
     const hasTop = entity.role;
     const hasBottom = (taxonomies && entity.categories && entity.categories.size > 0)
-      || (this.props.wrapper && entity.connectedCounts && entity.connectedCounts.length > 0);
+      || (entity.connectedCounts && entity.connectedCounts.length > 0);
     return (
       <Styled isManager={this.props.isManager} inSingleView={inSingleView}>
         {hasTop && (
@@ -228,7 +228,6 @@ class EntityListItemMain extends React.PureComponent { // eslint-disable-line re
         {hasBottom && (
           <EntityListItemMainBottom
             connections={entity.connectedCounts}
-            wrapper={this.props.wrapper}
             taxonomies={taxonomies}
             categories={entity.categories}
             onEntityClick={onEntityClick}
@@ -248,7 +247,6 @@ EntityListItemMain.propTypes = {
   entityPath: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
   url: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
   isManager: PropTypes.bool,
-  wrapper: PropTypes.object,
   onEntityClick: PropTypes.func,
   inSingleView: PropTypes.bool,
   showCode: PropTypes.bool,

@@ -8,7 +8,7 @@ import { palette } from 'styled-theme';
 import { ROUTES } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
-import EntityListItems from 'components/EntityListMain/EntityListItems';
+import EntityListItemWrapper from 'components/fields/EntityListItemWrapper';
 
 // import EntityListItemsWrap from 'components/fields/EntityListItemsWrap';
 import ToggleAllItems from 'components/fields/ToggleAllItems';
@@ -52,16 +52,15 @@ class Group extends React.PureComponent { // eslint-disable-line react/prefer-st
             {getCategoryTitle(group)}
           </GroupHeader>
         </GroupHeaderLink>
-        <EntityListItems
-          taxonomies={field.taxonomies}
-          connections={field.connections}
+        <EntityListItemWrapper
           config={{ connections: { options: field.connectionOptions } }}
           entities={
             this.state.showAllConnections
               ? group.get(field.entityPath)
               : (group.get(field.entityPath).slice(0, CONNECTIONMAX)).toList()
           }
-          entityIcon={field.entityIcon}
+          taxonomies={field.taxonomies}
+          connections={field.connections}
           onEntityClick={field.onEntityClick}
           entityPath={field.entityPath}
           inSingleView
