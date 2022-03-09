@@ -16,7 +16,7 @@ import {
 } from 'utils/fields';
 import qe from 'utils/quasi-equals';
 
-import { ROUTES, ACTIONTYPES } from 'themes/config';
+import { ROUTES, ACTIONTYPES, ACTIONTYPES_CONFIG } from 'themes/config';
 import FieldGroup from 'components/fields/FieldGroup';
 import ButtonPill from 'components/buttons/ButtonPill';
 
@@ -105,8 +105,14 @@ export function Activities(props) {
         ).toSet()
         : (actiontypeIdsAsMemberForSubject && actiontypeIdsAsMemberForSubject.toSet());
     }
+    // sort
+    actiontypeIdsForSubjectOptions = actiontypeIdsForSubjectOptions
+      && actiontypeIdsForSubjectOptions.sort((a, b) => {
+        const configA = ACTIONTYPES_CONFIG[a];
+        const configB = ACTIONTYPES_CONFIG[b];
+        return configA.order < configB.order ? -1 : 1;
+      });
     // figure out active action type #################################################
-
     // selected actiontype (or first in list when not in list)
     activeActiontypeId = viewActiontypeId;
     if (actiontypeIdsForSubjectOptions && !actiontypeIdsForSubjectOptions.includes(viewActiontypeId.toString())) {

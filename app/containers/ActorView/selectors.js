@@ -1,6 +1,11 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { API, FF_ACTIONTYPE } from 'themes/config';
+import {
+  API,
+  FF_ACTIONTYPE,
+  ACTIONTYPES_CONFIG,
+  ACTORTYPES_CONFIG,
+} from 'themes/config';
 
 import qe from 'utils/quasi-equals';
 import {
@@ -183,7 +188,14 @@ export const selectActionsAsTargetByType = createSelector(
         actionCategories,
       }))
       .groupBy((r) => r.getIn(['attributes', 'measuretype_id']))
-      .sortBy((val, key) => key);
+      .sortBy(
+        (val, key) => key,
+        (a, b) => {
+          const configA = ACTIONTYPES_CONFIG[a];
+          const configB = ACTIONTYPES_CONFIG[b];
+          return configA.order < configB.order ? -1 : 1;
+        }
+      );
   }
 );
 
@@ -245,7 +257,14 @@ export const selectMembersByType = createSelector(
         associations,
       }))
       .groupBy((r) => r.getIn(['attributes', 'actortype_id']))
-      .sortBy((val, key) => key);
+      .sortBy(
+        (val, key) => key,
+        (a, b) => {
+          const configA = ACTORTYPES_CONFIG[a];
+          const configB = ACTORTYPES_CONFIG[b];
+          return configA.order < configB.order ? -1 : 1;
+        }
+      );
   }
 );
 
@@ -336,7 +355,12 @@ export const selectActionsAsMemberByActortype = createSelector(
     ).groupBy(
       (r) => r.getIn(['attributes', 'actortype_id'])
     ).sortBy(
-      (val, key) => key
+      (val, key) => key,
+      (a, b) => {
+        const configA = ACTORTYPES_CONFIG[a];
+        const configB = ACTORTYPES_CONFIG[b];
+        return configA.order < configB.order ? -1 : 1;
+      }
     );
   },
 );
@@ -390,7 +414,12 @@ export const selectActionsAsTargetAsMemberByActortype = createSelector(
     ).groupBy(
       (r) => r.getIn(['attributes', 'actortype_id'])
     ).sortBy(
-      (val, key) => key
+      (val, key) => key,
+      (a, b) => {
+        const configA = ACTORTYPES_CONFIG[a];
+        const configB = ACTORTYPES_CONFIG[b];
+        return configA.order < configB.order ? -1 : 1;
+      }
     );
   },
 );

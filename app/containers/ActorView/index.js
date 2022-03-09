@@ -166,7 +166,7 @@ export function ActorView(props) {
   const hasMembers = viewActortype && viewActortype.getIn(['attributes', 'has_members']);
   const isCountry = qe(typeId, ACTORTYPES.COUNTRY);
 
-  let viewSubject = subject || 'actors';
+  let viewSubject = subject || (hasMembers ? 'members' : 'actors');
   const validViewSubjects = [];
   if (isTarget) {
     validViewSubjects.push('targets');

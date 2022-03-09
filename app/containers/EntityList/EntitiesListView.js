@@ -201,32 +201,36 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 {dataReady && entityActors && (
                   <Box>
                     <Box direction="row" gap="xsmall" margin={{ vertical: 'small' }}>
-                      {mapSubject === 'actors' && ACTIONTYPE_ACTORTYPES[typeId].map(
-                        (actortypeId) => (
-                          <ButtonPill
-                            key={actortypeId}
-                            onClick={() => this.setType(actortypeId)}
-                            active={qe(viewType, actortypeId)}
-                          >
-                            <Text size="small">
-                              <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].pluralShort} />
-                            </Text>
-                          </ButtonPill>
-                        )
-                      )}
-                      {mapSubject === 'targets' && ACTIONTYPE_TARGETTYPES[typeId].map(
-                        (actortypeId) => (
-                          <ButtonPill
-                            key={actortypeId}
-                            onClick={() => this.setType(actortypeId)}
-                            active={qe(viewType, actortypeId)}
-                          >
-                            <Text size="small">
-                              <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].pluralShort} />
-                            </Text>
-                          </ButtonPill>
-                        )
-                      )}
+                      {mapSubject === 'actors'
+                        && ACTIONTYPE_ACTORTYPES[typeId].length > 1
+                        && ACTIONTYPE_ACTORTYPES[typeId].map(
+                          (actortypeId) => (
+                            <ButtonPill
+                              key={actortypeId}
+                              onClick={() => this.setType(actortypeId)}
+                              active={qe(viewType, actortypeId)}
+                            >
+                              <Text size="small">
+                                <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].pluralShort} />
+                              </Text>
+                            </ButtonPill>
+                          )
+                        )}
+                      {mapSubject === 'targets'
+                        && ACTIONTYPE_TARGETTYPES[typeId].length > 1
+                        && ACTIONTYPE_TARGETTYPES[typeId].map(
+                          (actortypeId) => (
+                            <ButtonPill
+                              key={actortypeId}
+                              onClick={() => this.setType(actortypeId)}
+                              active={qe(viewType, actortypeId)}
+                            >
+                              <Text size="small">
+                                <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].pluralShort} />
+                              </Text>
+                            </ButtonPill>
+                          )
+                        )}
                     </Box>
                     {memberOption && (
                       <Box>

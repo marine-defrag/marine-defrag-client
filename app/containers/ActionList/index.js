@@ -54,7 +54,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
 
   prepareTypeOptions = (types, activeId) => {
     const { intl } = this.context;
-    return Object.values(types.toJS()).map((type) => ({
+    return types.toList().toJS().map((type) => ({
       value: type.id,
       label: intl.formatMessage(appMessages.actiontypes[type.id]),
       active: activeId === type.id,
