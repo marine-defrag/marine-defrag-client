@@ -61,8 +61,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       dataReady,
       isManager,
       isAnalyst,
-      onGroupSelect,
-      onSubgroupSelect,
       taxonomies,
       connections,
       connectedTaxonomies,
@@ -347,8 +345,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
 
                     onEntitySelect={onEntitySelect}
                     onEntitySelectAll={onEntitySelectAll}
-                    onGroupSelect={onGroupSelect}
-                    onSubgroupSelect={onSubgroupSelect}
                     onPageItemsSelect={(no) => {
                       this.scrollToTop();
                       onPageItemsSelect(no);
@@ -412,8 +408,6 @@ EntitiesListView.propTypes = {
   onEntityClick: PropTypes.func.isRequired,
   onEntitySelect: PropTypes.func.isRequired,
   onEntitySelectAll: PropTypes.func.isRequired,
-  onGroupSelect: PropTypes.func.isRequired,
-  onSubgroupSelect: PropTypes.func.isRequired,
   onPageSelect: PropTypes.func.isRequired,
   onPageItemsSelect: PropTypes.func.isRequired,
   onSortOrder: PropTypes.func.isRequired,

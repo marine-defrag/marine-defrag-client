@@ -9,17 +9,12 @@ import { Map, List } from 'immutable';
 import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 
-import { PARAMS } from 'containers/App/constants';
-
 import EntityListSearch from 'components/EntityListSearch';
 import PrintOnly from 'components/styled/PrintOnly';
 import { sortEntities, getSortOption } from 'utils/sort';
 import { filterEntitiesByKeywords } from 'utils/entities';
-import EntityListGroups from './EntityListGroups';
+import EntityListPages from './EntityListPages';
 
-import EntityListOptions from './EntityListOptions';
-import { getGroupOptions, getGroupValue } from './group-options';
-import { groupEntities } from './group-entities';
 import messages from './messages';
 
 const ListWrapper = styled.div``;
@@ -62,15 +57,11 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       entityTitle,
       isManager,
       isAnalyst,
-      onGroupSelect,
-      onSubgroupSelect,
       taxonomies,
       connections,
-      connectedTaxonomies,
       locationQuery,
       entities,
       errors,
-      actortypes,
       showCode,
       onEntityClick,
       onEntitySelect,
@@ -85,7 +76,6 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       sortBy,
       sortOrder,
     } = this.props;
-    const { intl } = this.context;
 
     // filter entitities by keyword
     const searchQuery = locationQuery.get('search') || '';
@@ -116,36 +106,6 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       sortOption ? sortOption.type : 'string'
     );
 
-    let groupSelectValue = locationQuery && locationQuery.get('group');
-    if (config.taxonomies && !groupSelectValue) {
-      groupSelectValue = getGroupValue(
-        taxonomies,
-        config.taxonomies.defaultGroupAttribute,
-        1,
-      );
-    }
-    let subgroupSelectValue;
-    if (groupSelectValue && groupSelectValue !== PARAMS.GROUP_RESET) {
-      subgroupSelectValue = locationQuery.get('subgroup');
-    }
-
-    // group all entities, regardless of page items
-    const entityGroups = groupSelectValue
-      && taxonomies
-      && taxonomies.get(groupSelectValue)
-      && groupSelectValue !== PARAMS.GROUP_RESET
-      ? groupEntities(
-        sortedEntities,
-        taxonomies,
-        connectedTaxonomies,
-        config,
-        groupSelectValue,
-        subgroupSelectValue !== PARAMS.GROUP_RESET && subgroupSelectValue,
-        intl || null,
-        actortypes,
-      )
-      : null;
-
     return (
       <>
         <ListEntities>
@@ -158,26 +118,15 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
               onSearch={onSearch}
             />
           </EntityListSearchWrapper>
-          <EntityListOptions
-            groupOptions={getGroupOptions(taxonomies, intl)}
-            subgroupOptions={getGroupOptions(taxonomies, intl)}
-            groupSelectValue={(taxonomies && taxonomies.get(groupSelectValue)) ? groupSelectValue : ''}
-            subgroupSelectValue={(taxonomies && taxonomies.get(subgroupSelectValue)) ? subgroupSelectValue : ''}
-            onGroupSelect={onGroupSelect}
-            onSubgroupSelect={onSubgroupSelect}
-          />
           <ListWrapper ref={this.ScrollTarget}>
-            <EntityListGroups
+            <EntityListPages
               entities={sortedEntities}
               errors={errors}
               onDismissError={onDismissError}
-              entityGroups={entityGroups}
               taxonomies={taxonomies}
               connections={connections}
               entityIdsSelected={entityIdsSelected}
               locationQuery={locationQuery}
-              groupSelectValue={(taxonomies && taxonomies.get(groupSelectValue)) ? groupSelectValue : ''}
-              subgroupSelectValue={(taxonomies && taxonomies.get(subgroupSelectValue)) ? subgroupSelectValue : ''}
               onEntityClick={onEntityClick}
               entityTitle={entityTitle}
               config={config}
@@ -201,9 +150,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
 EntityListMain.propTypes = {
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
-  actortypes: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
-  connectedTaxonomies: PropTypes.instanceOf(Map),
   entityIdsSelected: PropTypes.instanceOf(List),
   locationQuery: PropTypes.instanceOf(Map),
   errors: PropTypes.instanceOf(Map),
@@ -231,10 +178,6 @@ EntityListMain.propTypes = {
   onSearch: PropTypes.func.isRequired,
   sortBy: PropTypes.string,
   sortOrder: PropTypes.string,
-};
-
-EntityListMain.contextTypes = {
-  intl: PropTypes.object.isRequired,
 };
 
 export default EntityListMain;
