@@ -95,7 +95,7 @@ export const ACTIONTYPES_CONFIG = {
     id: '1',
     order: 5,
     columns: [
-      'title',
+      'main',
       'date_start',
       'actors', // one row per type,
       'taxonomy_11', // level of commitment: as link
@@ -105,7 +105,7 @@ export const ACTIONTYPES_CONFIG = {
     id: '2',
     order: 4,
     columns: [
-      'title',
+      'main',
       'targets', // one row per type,
       'actors', // one row per type,
       'taxonomy_3', // LBS-protocol statuses: status as link
@@ -117,7 +117,7 @@ export const ACTIONTYPES_CONFIG = {
     id: '3',
     order: 3,
     columns: [
-      'title',
+      'main',
       'actors', // one row per type,
     ],
   },
@@ -125,7 +125,7 @@ export const ACTIONTYPES_CONFIG = {
     id: '4',
     order: 2,
     columns: [
-      'title',
+      'main',
       'actors', // one row per type,
       'taxonomy_4', // strategy type
     ],
@@ -134,7 +134,7 @@ export const ACTIONTYPES_CONFIG = {
     id: '5',
     order: 1,
     columns: [
-      'title',
+      'main',
       'amount',
       'actors', // one row per type,
       'targets', // one row per type,
@@ -144,7 +144,7 @@ export const ACTIONTYPES_CONFIG = {
     id: '6',
     order: 6,
     columns: [
-      'title',
+      'main',
       'actors', // one row per type,
       'targets', // one row per type,
     ],

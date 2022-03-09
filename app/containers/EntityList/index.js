@@ -223,6 +223,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onSearch,
       sortBy,
       sortOrder,
+      columns,
     } = this.props;
 
     // detect print to avoid expensive rendering
@@ -360,6 +361,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             locationQuery={locationQuery}
 
             config={config}
+            columns={columns}
             header={this.props.header}
             entityTitle={this.props.entityTitle}
 
@@ -529,6 +531,7 @@ EntityList.propTypes = {
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   config: PropTypes.object,
+  columns: PropTypes.array,
   dataReady: PropTypes.bool,
   header: PropTypes.object,
   locationQuery: PropTypes.instanceOf(Map),

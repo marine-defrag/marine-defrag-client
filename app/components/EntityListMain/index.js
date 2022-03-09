@@ -75,6 +75,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
       onSearch,
       sortBy,
       sortOrder,
+      columns,
     } = this.props;
 
     // filter entitities by keyword
@@ -139,6 +140,7 @@ class EntityListMain extends React.Component { // eslint-disable-line react/pref
               onSortBy={onSortBy}
               onSortOrder={onSortOrder}
               showCode={showCode}
+              columns={columns}
             />
           </ListWrapper>
         </ListEntities>
@@ -156,6 +158,7 @@ EntityListMain.propTypes = {
   errors: PropTypes.instanceOf(Map),
   // object/arrays
   config: PropTypes.object,
+  columns: PropTypes.array,
   entityTitle: PropTypes.object, // single/plural
   // primitive
   dataReady: PropTypes.bool,

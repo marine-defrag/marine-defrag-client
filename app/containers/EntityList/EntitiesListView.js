@@ -94,6 +94,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       onSearch,
       sortBy,
       sortOrder,
+      columns,
     } = this.props;
     const { viewType } = this.state;
     let type;
@@ -326,6 +327,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 )}
                 {dataReady && !mapSubjectClean && (
                   <EntityListMain
+                    columns={columns}
                     listUpdating={listUpdating}
                     entities={entities}
                     errors={errors}
@@ -417,6 +419,7 @@ EntitiesListView.propTypes = {
   onSetIncludeActorMembers: PropTypes.func,
   onSetIncludeTargetMembers: PropTypes.func,
   onSearch: PropTypes.func,
+  columns: PropTypes.array,
 };
 
 export default injectIntl(EntitiesListView);

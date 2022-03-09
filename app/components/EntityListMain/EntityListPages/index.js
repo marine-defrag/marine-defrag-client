@@ -9,6 +9,7 @@ import { Map, List } from 'immutable';
 // import { isEqual } from 'lodash/lang';
 
 import Messages from 'components/Messages';
+import EntityListTable from 'containers/EntityListTable';
 
 import EntityListItems from '../EntityListItems';
 import EntityListFooter from '../EntityListFooter';
@@ -43,6 +44,7 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
     const {
       entityIdsSelected,
       config,
+      columns,
       onEntityClick,
       isManager,
       onEntitySelect,
@@ -93,36 +95,72 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
 
     return (
       <div>
-        <EntityListItems
-          entities={entitiesOnPage}
-          pageTotal={entityIdsOnPage.toSet().size}
-          entitiesTotal={entities.size}
-          isManager={isManager}
-          entityTitle={entityTitle}
-          locationQuery={locationQuery}
-          onSortBy={this.props.onSortBy}
-          onSortOrder={this.props.onSortOrder}
-          onSelect={(checked) => {
-            onEntitySelectAll(checked ? entityIdsOnPage.valueSeq().toArray() : []);
-          }}
-          onSelectAll={() => {
-            onEntitySelectAll(
-              entities.map((entity) => entity.get('id')).valueSeq().toArray(),
-            );
-          }}
-          onDismissError={this.props.onDismissError}
-          onEntitySelect={onEntitySelect}
-          onEntityClick={onEntityClick}
-          taxonomies={taxonomies}
-          connections={connections}
-          config={config}
-          entityPath={entityPath}
-          url={url}
-          showCode={showCode}
-          showValueForAction={showValueForAction}
-          entityIdsSelected={entityIdsSelected}
-          errors={errors}
-        />
+        {columns && (
+          <EntityListTable
+            entities={entitiesOnPage}
+            pageTotal={entityIdsOnPage.toSet().size}
+            entitiesTotal={entities.size}
+            isManager={isManager}
+            entityTitle={entityTitle}
+            locationQuery={locationQuery}
+            onSortBy={this.props.onSortBy}
+            onSortOrder={this.props.onSortOrder}
+            onSelect={(checked) => {
+              onEntitySelectAll(checked ? entityIdsOnPage.valueSeq().toArray() : []);
+            }}
+            onSelectAll={() => {
+              onEntitySelectAll(
+                entities.map((entity) => entity.get('id')).valueSeq().toArray(),
+              );
+            }}
+            onDismissError={this.props.onDismissError}
+            onEntitySelect={onEntitySelect}
+            onEntityClick={onEntityClick}
+            taxonomies={taxonomies}
+            connections={connections}
+            config={config}
+            columns={columns}
+            entityPath={entityPath}
+            url={url}
+            showCode={showCode}
+            showValueForAction={showValueForAction}
+            entityIdsSelected={entityIdsSelected}
+            errors={errors}
+          />
+        )}
+        {!columns && (
+          <EntityListItems
+            entities={entitiesOnPage}
+            pageTotal={entityIdsOnPage.toSet().size}
+            entitiesTotal={entities.size}
+            isManager={isManager}
+            entityTitle={entityTitle}
+            locationQuery={locationQuery}
+            onSortBy={this.props.onSortBy}
+            onSortOrder={this.props.onSortOrder}
+            onSelect={(checked) => {
+              onEntitySelectAll(checked ? entityIdsOnPage.valueSeq().toArray() : []);
+            }}
+            onSelectAll={() => {
+              onEntitySelectAll(
+                entities.map((entity) => entity.get('id')).valueSeq().toArray(),
+              );
+            }}
+            onDismissError={this.props.onDismissError}
+            onEntitySelect={onEntitySelect}
+            onEntityClick={onEntityClick}
+            taxonomies={taxonomies}
+            connections={connections}
+            config={config}
+            columns={columns}
+            entityPath={entityPath}
+            url={url}
+            showCode={showCode}
+            showValueForAction={showValueForAction}
+            entityIdsSelected={entityIdsSelected}
+            errors={errors}
+          />
+        )}
         <ListEntitiesMain>
           { entityIdsOnPage.size === 0 && this.hasLocationQueryFilters(locationQuery) && (!errors || errors.size === 0)
             && (
@@ -189,6 +227,7 @@ EntityListGroups.propTypes = {
   showValueForAction: PropTypes.instanceOf(Map),
   entityTitle: PropTypes.object,
   config: PropTypes.object,
+  columns: PropTypes.array,
   isManager: PropTypes.bool,
   onPageSelect: PropTypes.func.isRequired,
   onPageItemsSelect: PropTypes.func.isRequired,
