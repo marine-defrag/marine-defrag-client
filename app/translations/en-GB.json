@@ -556,7 +556,7 @@
   "app.containers.App.entities.taxonomies.7.empty": "No sectors assigned yet",
   "app.containers.App.entities.taxonomies.7.shortSingle": "Sector",
   "app.containers.App.entities.taxonomies.7.shortPlural": "Sectors",
-  "app.containers.App.entities.taxonomies.7.description": "Different types of institutions are classified according to the sector from which they emerge. This is important because each sector is guided by a different logic.",
+  "app.containers.App.entities.taxonomies.7.description": "Institutions are classified according to the sector from which they emerge. Each sector is driven by a different logic, ownership etc.",
   "app.containers.App.entities.taxonomies.8.single": "Type of organisation",
   "app.containers.App.entities.taxonomies.8.plural": "Types of organisation",
   "app.containers.App.entities.taxonomies.8.empty": "No type of organisation assigned yet",
