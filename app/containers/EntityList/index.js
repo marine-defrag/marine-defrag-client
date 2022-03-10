@@ -29,8 +29,6 @@ import {
   selectMapSubjectQuery,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
-  selectSortByQuery,
-  selectSortOrderQuery,
 } from 'containers/App/selectors';
 
 import {
@@ -68,10 +66,6 @@ import {
   selectEntity,
   selectMultipleEntities,
   updateQuery,
-  updatePage,
-  updatePageItems,
-  updateSortBy,
-  updateSortOrder,
   setClientPath,
   dismissError,
   dismissAllErrors,
@@ -220,9 +214,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onSetIncludeTargetMembers,
       includeActorMembers,
       includeTargetMembers,
-      onSearch,
-      sortBy,
-      sortOrder,
       columns,
     } = this.props;
 
@@ -358,7 +349,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             connections={this.props.connections}
             connectedTaxonomies={this.props.connectedTaxonomies}
             entityIdsSelected={entityIdsSelectedFiltered}
-            locationQuery={locationQuery}
 
             config={config}
             columns={columns}
@@ -391,13 +381,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               }
               onEntitySelectAll(ids);
             }}
-            onPageSelect={this.props.onPageSelect}
-            onPageItemsSelect={this.props.onPageItemsSelect}
             onEntityClick={(id, path) => this.props.onEntityClick(
               id, path, viewDomain.get('errors')
             )}
-            onSortBy={this.props.onSortBy}
-            onSortOrder={this.props.onSortOrder}
             onDismissError={this.props.onDismissError}
             typeId={typeId}
             hasFilters={filters && filters.length > 0}
@@ -408,9 +394,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onSetIncludeTargetMembers={onSetIncludeTargetMembers}
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
-            onSearch={onSearch}
-            sortBy={sortBy}
-            sortOrder={sortOrder}
           />
         )}
         {showMap && (
@@ -550,15 +533,10 @@ EntityList.propTypes = {
   onEntitySelect: PropTypes.func.isRequired,
   onEntitySelectAll: PropTypes.func.isRequired,
   onTagClick: PropTypes.func.isRequired,
-  onSearch: PropTypes.func.isRequired,
   onResetFilters: PropTypes.func.isRequired,
-  onPageSelect: PropTypes.func.isRequired,
-  onPageItemsSelect: PropTypes.func.isRequired,
   onEntityClick: PropTypes.func.isRequired,
   resetProgress: PropTypes.func.isRequired,
   updateClientPath: PropTypes.func.isRequired,
-  onSortBy: PropTypes.func.isRequired,
-  onSortOrder: PropTypes.func.isRequired,
   onCreateOption: PropTypes.func.isRequired,
   onDismissError: PropTypes.func.isRequired,
   onDismissAllErrors: PropTypes.func.isRequired,
@@ -578,8 +556,6 @@ EntityList.propTypes = {
   onSetIncludeTargetMembers: PropTypes.func,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
-  sortBy: PropTypes.string,
-  sortOrder: PropTypes.string,
 };
 
 EntityList.contextTypes = {
@@ -600,8 +576,6 @@ const mapStateToProps = (state) => ({
   mapSubject: selectMapSubjectQuery(state),
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
-  sortBy: selectSortByQuery(state),
-  sortOrder: selectSortOrderQuery(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -640,30 +614,8 @@ function mapDispatchToProps(dispatch, props) {
     onTagClick: (value) => {
       dispatch(updateQuery(fromJS([value])));
     },
-    onSearch: (value) => {
-      dispatch(updateQuery(fromJS([
-        {
-          query: 'search',
-          value,
-          replace: true,
-          checked: value !== '',
-        },
-      ])));
-    },
     onResetFilters: (values) => {
       dispatch(resetFilters(values));
-    },
-    onPageSelect: (page) => {
-      dispatch(updatePage(page));
-    },
-    onPageItemsSelect: (no) => {
-      dispatch(updatePageItems(no));
-    },
-    onSortOrder: (order) => {
-      dispatch(updateSortOrder(order));
-    },
-    onSortBy: (sort) => {
-      dispatch(updateSortBy(sort));
     },
     onCreateOption: (args) => {
       dispatch(openNewEntityModal(args));

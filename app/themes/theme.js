@@ -439,5 +439,19 @@ theme.icon = {
     xlarge: '96px',
   },
 };
+theme.table = {
+  header: {
+    pad: {
+      horizontal: 0,
+      vertical: 'xsmall',
+    },
+  },
+  body: {
+    pad: {
+      horizontal: 0,
+      vertical: 'xsmall',
+    },
+  },
+};
 
 export default theme;

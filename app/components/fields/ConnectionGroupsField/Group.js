@@ -7,15 +7,11 @@ import { palette } from 'styled-theme';
 
 import { ROUTES } from 'themes/config';
 
-import appMessages from 'containers/App/messages';
-import EntityListItems from 'components/EntityListMain/EntityListItems';
+import EntityListTable from 'containers/EntityListTable';
 
 // import EntityListItemsWrap from 'components/fields/EntityListItemsWrap';
-import ToggleAllItems from 'components/fields/ToggleAllItems';
 import EmptyHint from 'components/fields/EmptyHint';
 import { getCategoryTitle } from 'utils/entities';
-
-const CONNECTIONMAX = 5;
 
 const GroupHeaderLink = styled(Link)`
   color: ${palette('link', 2)};
@@ -36,11 +32,6 @@ const GroupHeader = styled.h6`
 
 
 class Group extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  constructor() {
-    super();
-    this.state = { showAllConnections: false };
-  }
-
   render() {
     const { field, group } = this.props;
     const size = group.get(field.entityPath) ? group.get(field.entityPath).size : 0;
@@ -52,44 +43,28 @@ class Group extends React.PureComponent { // eslint-disable-line react/prefer-st
             {getCategoryTitle(group)}
           </GroupHeader>
         </GroupHeaderLink>
-        <EntityListItems
-          config={{ connections: { options: field.connectionOptions } }}
-          entities={
-            this.state.showAllConnections
-              ? group.get(field.entityPath)
-              : (group.get(field.entityPath).slice(0, CONNECTIONMAX)).toList()
-          }
-          taxonomies={field.taxonomies}
-          connections={field.connections}
-          onEntityClick={field.onEntityClick}
-          entityPath={field.entityPath}
-          inSingleView
-        />
-        { size > CONNECTIONMAX
-          && (
-            <ToggleAllItems
-              onClick={() => this.setState(
-                (prevState) => (
-                  { showAllConnections: !prevState.showAllConnections }
-                )
-              )}
-            >
-              { this.state.showAllConnections
-              && <FormattedMessage {...appMessages.entities.showLess} />
-              }
-              { !this.state.showAllConnections
-              && <FormattedMessage {...appMessages.entities.showAll} />
-              }
-            </ToggleAllItems>
-          )
-        }
-        { (size === 0)
-          && (
-            <EmptyHint>
-              <FormattedMessage {...field.showEmpty} />
-            </EmptyHint>
-          )
-        }
+        {size > 0 && (
+          <EntityListTable
+            config={{ connections: { options: field.connectionOptions } }}
+            entities={group.get(field.entityPath).toList()}
+            taxonomies={field.taxonomies}
+            connections={field.connections}
+            onEntityClick={field.onEntityClick}
+            entityPath={field.entityPath}
+            columns={[{
+              type: 'main',
+              sort: 'title',
+              attributes: ['code', 'title'],
+            }]}
+            moreLess
+            inSingleView
+          />
+        )}
+        {size === 0 && (
+          <EmptyHint>
+            <FormattedMessage {...field.showEmpty} />
+          </EmptyHint>
+        )}
       </div>
     );
   }

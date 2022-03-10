@@ -19,9 +19,9 @@ import Container from 'components/styled/Container';
 import Content from 'components/styled/Content';
 import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
-import EntityListMain from 'components/EntityListMain';
 import MapSubjectOptions from 'containers/MapContainer/MapInfoOptions/MapSubjectOptions';
 import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOption';
+import EntityListTable from 'containers/EntityListTable';
 import ButtonPill from 'components/buttons/ButtonPill';
 
 import ContentHeader from 'components/ContentHeader';
@@ -64,7 +64,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       taxonomies,
       connections,
       connectedTaxonomies,
-      locationQuery,
       entities,
       errors,
       actortypes,
@@ -77,10 +76,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       onEntityClick,
       onEntitySelect,
       onEntitySelectAll,
-      onPageSelect,
-      onPageItemsSelect,
-      onSortOrder,
-      onSortBy,
       onDismissError,
       typeId,
       mapSubject,
@@ -91,9 +86,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       includeTargetMembers,
       actiontypes,
       intl,
-      onSearch,
-      sortBy,
-      sortOrder,
       columns,
     } = this.props;
     const { viewType } = this.state;
@@ -174,6 +166,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
     if (hasFilters) {
       headerTitle = `${headerTitle} (filtered)`;
     }
+
     return (
       <ContainerWrapper hasHeader={hasHeader} ref={this.ScrollContainer}>
         {dataReady && viewOptions && viewOptions.length > 1 && (
@@ -237,7 +230,10 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                       </Box>
                     )}
                     {entityActors.get(parseInt(viewType, 10)) && (
-                      <EntityListMain
+                      <EntityListTable
+                        paginate
+                        hasSearch
+                        columns={['main']}
                         entities={entityActors.get(parseInt(viewType, 10))}
                         entityPath={ROUTES.ACTOR}
                         onEntityClick={onEntityClick}
@@ -245,14 +241,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                           single: intl.formatMessage(appMessages.entities[`actors_${viewType}`].single),
                           plural: intl.formatMessage(appMessages.entities[`actors_${viewType}`].plural),
                         }}
-                        onPageItemsSelect={(no) => {
-                          this.scrollToTop();
-                          onPageItemsSelect(no);
-                        }}
-                        onPageSelect={(page) => {
-                          this.scrollToTop();
-                          onPageSelect(page);
-                        }}
+                        onResetScroll={this.scrollToTop}
                         config={{
                           types: 'actortypes',
                           clientPath: ROUTES.ACTOR,
@@ -314,19 +303,15 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                             },
                           },
                         }}
-                        onSortBy={onSortBy}
-                        onSortOrder={onSortOrder}
-                        locationQuery={locationQuery}
-                        onSearch={onSearch}
-                        sortBy={sortBy}
-                        sortOrder={sortOrder}
                         connections={connections}
                       />
                     )}
                   </Box>
                 )}
                 {dataReady && !mapSubjectClean && (
-                  <EntityListMain
+                  <EntityListTable
+                    paginate
+                    hasSearch
                     columns={columns}
                     listUpdating={listUpdating}
                     entities={entities}
@@ -336,34 +321,21 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                     connections={connections}
                     connectedTaxonomies={connectedTaxonomies}
                     entityIdsSelected={entityIdsSelected}
-                    locationQuery={locationQuery}
 
                     config={config}
                     entityTitle={entityTitle}
 
                     dataReady={dataReady}
-                    isManager={isManager}
+                    canEdit={isManager}
                     isAnalyst={isAnalyst}
 
                     onEntitySelect={onEntitySelect}
                     onEntitySelectAll={onEntitySelectAll}
-                    onPageItemsSelect={(no) => {
-                      this.scrollToTop();
-                      onPageItemsSelect(no);
-                    }}
-                    onPageSelect={(page) => {
-                      this.scrollToTop();
-                      onPageSelect(page);
-                    }}
+                    onResetScroll={this.scrollToTop}
                     onEntityClick={onEntityClick}
-                    onSortBy={onSortBy}
-                    onSortOrder={onSortOrder}
                     onDismissError={onDismissError}
                     typeId={typeId}
                     showCode={showCode}
-                    onSearch={onSearch}
-                    sortBy={sortBy}
-                    sortOrder={sortOrder}
                   />
                 )}
               </div>
@@ -384,7 +356,6 @@ EntitiesListView.propTypes = {
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   entityIdsSelected: PropTypes.instanceOf(List),
-  locationQuery: PropTypes.instanceOf(Map),
   errors: PropTypes.instanceOf(Map),
   // object/arrays
   config: PropTypes.object,
@@ -404,21 +375,14 @@ EntitiesListView.propTypes = {
   typeId: PropTypes.string,
   showCode: PropTypes.bool,
   mapSubject: PropTypes.string,
-  sortBy: PropTypes.string,
-  sortOrder: PropTypes.string,
   // functions
   onEntityClick: PropTypes.func.isRequired,
   onEntitySelect: PropTypes.func.isRequired,
   onEntitySelectAll: PropTypes.func.isRequired,
-  onPageSelect: PropTypes.func.isRequired,
-  onPageItemsSelect: PropTypes.func.isRequired,
-  onSortOrder: PropTypes.func.isRequired,
-  onSortBy: PropTypes.func.isRequired,
   onDismissError: PropTypes.func.isRequired,
   onSetMapSubject: PropTypes.func,
   onSetIncludeActorMembers: PropTypes.func,
   onSetIncludeTargetMembers: PropTypes.func,
-  onSearch: PropTypes.func,
   columns: PropTypes.array,
 };
 
