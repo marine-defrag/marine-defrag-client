@@ -703,6 +703,7 @@ export const ACTIONTYPES_CONFIG = {
         type: 'amount',
         sort: 'amount',
         attribute: 'amount',
+        unit: 'US$',
       },
       {
         type: 'targetsByType', // one row per type,

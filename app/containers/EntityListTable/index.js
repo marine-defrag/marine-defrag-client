@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import isNumber from 'utils/is-number';
 
 import { Map, List, fromJS } from 'immutable';
 
@@ -137,28 +138,18 @@ export function EntityListTable({
     : entityRows && entityRows.sort(
       (a, b) => {
         let result;
-        if (
-          a[sortOption]
-          && a[sortOption].sortValue
-          && b[sortOption]
-          && b[sortOption].sortValue
-        ) {
-          result = a[sortOption].sortValue > b[sortOption].sortValue ? 1 : -1;
-        }
-        if (
-          a[sortOption]
-          && a[sortOption].sortValue
-          && !(b[sortOption] || !b[sortOption].sortValue)
-        ) {
+        const aSortValue = a[sortOption] && a[sortOption].sortValue;
+        const aHasSortValue = aSortValue || isNumber(aSortValue);
+        const bSortValue = b[sortOption] && b[sortOption].sortValue;
+        const bHasSortValue = bSortValue || isNumber(bSortValue);
+        if (aHasSortValue && bHasSortValue) {
+          result = aSortValue > bSortValue ? 1 : -1;
+        } else if (aHasSortValue && !bHasSortValue) {
           result = 1;
-        }
-        if (
-          b[sortOption]
-          && b[sortOption].sortValue
-          && !(a[sortOption] || !a[sortOption].sortValue)
-        ) {
+        } else if (bHasSortValue && !aHasSortValue) {
           result = -1;
         }
+        console.log(aSortValue, bSortValue, result);
         return sortOrder === 'desc' ? result * -1 : result;
       }
     );
@@ -219,8 +210,8 @@ export function EntityListTable({
       allSelectedOnPage: canEdit && entityIdsOnPage.length === entityIdsSelected.size,
       messages,
     }),
+    intl,
   });
-
   return (
     <div>
       {hasSearch && (

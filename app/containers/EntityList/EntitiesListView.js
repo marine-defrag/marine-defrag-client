@@ -233,7 +233,13 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                       <EntityListTable
                         paginate
                         hasSearch
-                        columns={['main']}
+                        columns={[
+                          {
+                            type: 'main',
+                            sort: 'title',
+                            attributes: ['code', 'title'],
+                          },
+                        ]}
                         entities={entityActors.get(parseInt(viewType, 10))}
                         entityPath={ROUTES.ACTOR}
                         onEntityClick={onEntityClick}

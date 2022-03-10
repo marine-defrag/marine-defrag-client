@@ -44,9 +44,16 @@ export function CellHeaderMain({ column, canEdit }) {
         </Select>
       )}
       <Box>
-        <Text as="label" htmlFor="select-all" weight={500} size="small">
-          {column.title}
-        </Text>
+        {canEdit && (
+          <Text as="label" htmlFor="select-all" weight={500} size="small">
+            {column.title}
+          </Text>
+        )}
+        {!canEdit && (
+          <Text weight={500} size="small">
+            {column.title}
+          </Text>
+        )}
       </Box>
       {column.onSort && (
         <Box pad={{ horizontal: 'small' }}>

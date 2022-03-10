@@ -8,8 +8,15 @@ import {
   TableCell,
   Box,
 } from 'grommet';
+import styled from 'styled-components';
 import CellBodyMain from './CellBodyMain';
+import CellBodyPlain from './CellBodyPlain';
 import CellHeaderMain from './CellHeaderMain';
+import CellHeaderPlain from './CellHeaderPlain';
+
+const HeaderTableCell = styled((p) => <TableCell {...p} />)`
+  white-space: nowrap;
+`;
 
 export function EntitiesTable({
   entities,
@@ -25,17 +32,20 @@ export function EntitiesTable({
             <TableRow>
               {headerColumns.map(
                 (col, i) => (
-                  <TableCell key={i} scope="col" border="bottom">
-                    {col.type !== 'main' && (
-                      <span style={{ whiteSpace: 'nowrap' }}>{col.type}</span>
-                    )}
+                  <HeaderTableCell key={i} scope="col" border="bottom">
                     {col.type === 'main' && (
                       <CellHeaderMain
                         column={col}
                         canEdit={canEdit}
                       />
                     )}
-                  </TableCell>
+                    {col.type === 'amount' && (
+                      <CellHeaderPlain
+                        column={col}
+                        align="end"
+                      />
+                    )}
+                  </HeaderTableCell>
                 )
               )}
             </TableRow>
@@ -53,14 +63,16 @@ export function EntitiesTable({
                     side: 'bottom',
                   }}
                 >
-                  {col.type !== 'main' && (
-                    <span style={{ whiteSpace: 'nowrap' }}>{col.type}</span>
-                  )}
                   {col.type === 'main' && (
                     <CellBodyMain
-                      column={col}
                       entity={entity[col.type]}
                       canEdit={canEdit}
+                    />
+                  )}
+                  {col.type === 'amount' && (
+                    <CellBodyPlain
+                      entity={entity[col.type]}
+                      align="end"
                     />
                   )}
                 </TableCell>

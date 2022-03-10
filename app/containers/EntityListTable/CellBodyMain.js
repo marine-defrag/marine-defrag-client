@@ -31,33 +31,38 @@ export function CellBodyMain({
         </Select>
       )}
       <Box>
-        <Button
-          as="a"
-          plain
-          href={entity.href}
-          onClick={entity.onClick}
-          title={entity.values.title}
-        >
-          {Object.keys(entity.values).map(
-            (key) => (
-              <Box key={key}>
-                <Text
-                  color={key === 'code' ? 'dark-2' : 'black'}
-                  size={key === 'code' ? 'small' : 'medium'}
-                >
+        {Object.keys(entity.values).map((key) => (
+          <Box key={key}>
+            {key === 'title' && (
+              <Button
+                as="a"
+                plain
+                href={entity.href}
+                onClick={entity.onClick}
+                title={entity.values.title}
+              >
+                <Text size="medium">
                   {entity.values[key]}
                 </Text>
-              </Box>
-            )
-          )}
-          {entity.draft && (
-            <Box>
-              <Text color="dark-2">
-                DRAFT
+              </Button>
+            )}
+            {key !== 'title' && (
+              <Text
+                color={key === 'code' ? 'dark-5' : 'black'}
+                size={key === 'code' ? 'xsmall' : 'medium'}
+              >
+                {entity.values[key]}
               </Text>
-            </Box>
-          )}
-        </Button>
+            )}
+          </Box>
+        ))}
+        {entity.draft && (
+          <Box>
+            <Text color="dark-5" size="xxsmall">
+              [DRAFT]
+            </Text>
+          </Box>
+        )}
       </Box>
     </Box>
   );

@@ -1,4 +1,46 @@
 import { STATES as CHECKBOX_STATES } from 'components/forms/IndeterminateCheckbox';
+import isNumber from 'utils/is-number';
+import { formatNumber } from 'utils/fields';
+import appMessages from 'containers/App/messages';
+
+export const prepareHeader = ({
+  columns,
+  // config,
+  sortBy,
+  sortOrder,
+  onSort,
+  onSelectAll,
+  selectedState,
+  title,
+  intl,
+}) => columns.map(
+  (col) => {
+    switch (col.type) {
+      case 'main':
+        return ({
+          ...col,
+          title,
+          sortActive: sortBy === col.type,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+          onSelect: onSelectAll,
+          selectedState,
+        });
+      case 'amount':
+        return ({
+          ...col,
+          title: col.unit
+            ? `${intl.formatMessage(appMessages.attributes[col.attribute])} (${col.unit})`
+            : intl.formatMessage(appMessages.attributes[col.attribute]),
+          sortActive: sortBy === col.type,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
+      default:
+        return col;
+    }
+  }
+);
 
 export const prepareEntities = ({
   entities,
@@ -11,7 +53,7 @@ export const prepareEntities = ({
   onEntitySelect,
   // connections,
   // taxonomies,
-  // intl,
+  intl,
 }) => entities.reduce(
   (memoEntities, entity) => {
     const id = entity.get('id');
@@ -34,12 +76,26 @@ export const prepareEntities = ({
                 draft: entity.getIn(['attributes', 'draft']),
                 sortValue: entity.getIn(['attributes', col.sort]),
                 selected: entityIdsSelected && entityIdsSelected.includes(id),
-                href: url || path,
+                href: url || `${path}/${id}`,
                 onClick: (evt) => {
                   if (evt) evt.preventDefault();
                   onEntityClick(id, path);
                 },
                 onSelect: (checked) => onEntitySelect(id, checked),
+              },
+            };
+          case 'amount':
+            return {
+              ...memoEntity,
+              [col.type]: {
+                ...col,
+                value: isNumber(entity.getIn(['attributes', col.attribute]))
+                  && formatNumber(
+                    entity.getIn(['attributes', col.attribute]), { intl },
+                  ),
+                draft: entity.getIn(['attributes', 'draft']),
+                sortValue: entity.getIn(['attributes', col.sort])
+                  && parseFloat(entity.getIn(['attributes', col.sort]), 10),
               },
             };
           default:
@@ -104,31 +160,3 @@ export const getSelectedState = (
   }
   return CHECKBOX_STATES.INDETERMINATE;
 };
-
-export const prepareHeader = ({
-  columns,
-  // config,
-  sortBy,
-  sortOrder,
-  onSort,
-  onSelectAll,
-  selectedState,
-  title,
-}) => columns.map(
-  (col) => {
-    switch (col.type) {
-      case 'main':
-        return ({
-          ...col,
-          title,
-          sortActive: sortBy === col.type,
-          sortOrder: sortOrder || 'asc',
-          onSort,
-          onSelect: onSelectAll,
-          selectedState,
-        });
-      default:
-        return col;
-    }
-  }
-);
