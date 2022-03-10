@@ -90,6 +90,70 @@ export const ACTIONTYPES = {
   INIT: '6',
   FACTS: '7',
 };
+export const ACTIONTYPES_CONFIG = {
+  1: { // INTL
+    id: '1',
+    order: 5,
+    columns: [
+      'main',
+      'date_start',
+      'actors', // one row per type,
+      'taxonomy_11', // level of commitment: as link
+    ],
+  },
+  2: { // REGLSEAS
+    id: '2',
+    order: 4,
+    columns: [
+      'main',
+      'targets', // one row per type,
+      'actors', // one row per type,
+      'taxonomy_3', // LBS-protocol statuses: status as link
+      'resources_4', // presence of AP: checkmark icon w/ tooltip for name
+      'resources_5', // presence of MLAP: checkmark icon w/ tooltip for name
+    ],
+  },
+  3: { // REGL
+    id: '3',
+    order: 3,
+    columns: [
+      'main',
+      'actors', // one row per type,
+    ],
+  },
+  4: { // NATL
+    id: '4',
+    order: 2,
+    columns: [
+      'main',
+      'actors', // one row per type,
+      'taxonomy_4', // strategy type
+    ],
+  },
+  5: { // DONOR
+    id: '5',
+    order: 1,
+    columns: [
+      'main',
+      'amount',
+      'actors', // one row per type,
+      'targets', // one row per type,
+    ],
+  },
+  6: { // INIT
+    id: '6',
+    order: 6,
+    columns: [
+      'main',
+      'actors', // one row per type,
+      'targets', // one row per type,
+    ],
+  },
+  7: { // FF
+    id: '7',
+    order: 7,
+  },
+};
 export const DEFAULT_ACTIONTYPE = ACTIONTYPES.DONOR;
 export const FF_ACTIONTYPE = ACTIONTYPES.FACTS;
 export const ACTORTYPES = {
@@ -99,6 +163,29 @@ export const ACTORTYPES = {
   REG: '4',
   GROUP: '5',
 };
+export const ACTORTYPES_CONFIG = {
+  1: { // COUNTRY
+    id: '1',
+    order: 1,
+  },
+  2: { // ORG
+    id: '2',
+    order: 3,
+  },
+  3: { // CLASS
+    id: '3',
+    order: 5,
+  },
+  4: { // REG
+    id: '4',
+    order: 4,
+  },
+  5: { // GROUP
+    id: '5',
+    order: 2,
+  },
+};
+
 export const DEFAULT_ACTORTYPE = ACTORTYPES.COUNTRY;
 export const RESOURCETYPES = {
   REF: '1',
@@ -163,8 +250,8 @@ export const RESOURCETYPE_GROUPS = {
 export const ACTIONTYPE_ACTORTYPES = {
   [ACTIONTYPES.INTL]: [
     ACTORTYPES.COUNTRY,
-    ACTORTYPES.ORG,
     ACTORTYPES.GROUP,
+    ACTORTYPES.ORG,
   ],
   [ACTIONTYPES.REGLSEAS]: [
     ACTORTYPES.COUNTRY,
@@ -179,13 +266,13 @@ export const ACTIONTYPE_ACTORTYPES = {
   ],
   [ACTIONTYPES.DONOR]: [
     ACTORTYPES.COUNTRY,
-    ACTORTYPES.ORG,
     ACTORTYPES.GROUP,
+    ACTORTYPES.ORG,
   ],
   [ACTIONTYPES.INIT]: [
     ACTORTYPES.COUNTRY,
-    ACTORTYPES.ORG,
     ACTORTYPES.GROUP,
+    ACTORTYPES.ORG,
   ],
   [ACTIONTYPES.FACTS]: [
     ACTORTYPES.COUNTRY,

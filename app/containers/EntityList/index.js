@@ -45,7 +45,6 @@ import {
 } from 'containers/App/actions';
 
 // import appMessages from 'containers/App/messages';
-import { PARAMS } from 'containers/App/constants';
 import { USER_ROLES } from 'themes/config';
 
 import EntitiesMap from './EntitiesMap';
@@ -69,7 +68,6 @@ import {
   selectEntity,
   selectMultipleEntities,
   updateQuery,
-  updateGroup,
   updatePage,
   updatePageItems,
   updateSortBy,
@@ -225,6 +223,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onSearch,
       sortBy,
       sortOrder,
+      columns,
     } = this.props;
 
     // detect print to avoid expensive rendering
@@ -362,6 +361,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             locationQuery={locationQuery}
 
             config={config}
+            columns={columns}
             header={this.props.header}
             entityTitle={this.props.entityTitle}
 
@@ -391,8 +391,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               }
               onEntitySelectAll(ids);
             }}
-            onGroupSelect={this.props.onGroupSelect}
-            onSubgroupSelect={this.props.onSubgroupSelect}
             onPageSelect={this.props.onPageSelect}
             onPageItemsSelect={this.props.onPageItemsSelect}
             onEntityClick={(id, path) => this.props.onEntityClick(
@@ -533,6 +531,7 @@ EntityList.propTypes = {
   connections: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   config: PropTypes.object,
+  columns: PropTypes.array,
   dataReady: PropTypes.bool,
   header: PropTypes.object,
   locationQuery: PropTypes.instanceOf(Map),
@@ -551,8 +550,6 @@ EntityList.propTypes = {
   onEntitySelect: PropTypes.func.isRequired,
   onEntitySelectAll: PropTypes.func.isRequired,
   onTagClick: PropTypes.func.isRequired,
-  onGroupSelect: PropTypes.func.isRequired,
-  onSubgroupSelect: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
   onResetFilters: PropTypes.func.isRequired,
   onPageSelect: PropTypes.func.isRequired,
@@ -655,30 +652,6 @@ function mapDispatchToProps(dispatch, props) {
     },
     onResetFilters: (values) => {
       dispatch(resetFilters(values));
-    },
-    onGroupSelect: (value) => {
-      dispatch(updateGroup(fromJS([
-        {
-          query: 'group',
-          value,
-        },
-      ])));
-      if (value === PARAMS.GROUP_RESET) {
-        dispatch(updateGroup(fromJS([
-          {
-            query: 'subgroup',
-            value,
-          },
-        ])));
-      }
-    },
-    onSubgroupSelect: (value) => {
-      dispatch(updateGroup(fromJS([
-        {
-          query: 'subgroup',
-          value,
-        },
-      ])));
     },
     onPageSelect: (page) => {
       dispatch(updatePage(page));

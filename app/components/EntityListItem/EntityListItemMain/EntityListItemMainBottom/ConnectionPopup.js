@@ -135,16 +135,6 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
     };
   }
 
-  getPopupAlign = (wrapper, popupRef) => {
-    if (wrapper.getBoundingClientRect().right < (popupRef.getBoundingClientRect().right + (POPUP_WIDTH / 2))) {
-      return 'right';
-    }
-    if (wrapper.getBoundingClientRect().left > (popupRef.getBoundingClientRect().left - (POPUP_WIDTH / 2))) {
-      return 'left';
-    }
-    return 'center';
-  }
-
   calcHeight = () => {
     let height = 1;
     if (this.state.listItem_0) height += this.state.listItem_0.clientHeight;
@@ -163,7 +153,7 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
 
   render() {
     const {
-      entities, option, wrapper, draft,
+      entities, option, draft,
     } = this.props;
     const entitiesTotal = entities ? entities.length : 0;
 
@@ -186,7 +176,7 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
         {this.state.popupOpen
           && (
             <Popup
-              align={this.getPopupAlign(wrapper, this.state.popupRef)}
+              align="left"
               total={entitiesTotal}
             >
               <PopupInner>
@@ -213,7 +203,7 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
                   ))}
                 </PopupContent>
               </PopupInner>
-              <TriangleBottom align={this.getPopupAlign(wrapper, this.state.popupRef)} />
+              <TriangleBottom align="left" />
             </Popup>
           )
         }
@@ -225,7 +215,6 @@ export class ConnectionPopup extends React.PureComponent { // eslint-disable-lin
 ConnectionPopup.propTypes = {
   entities: PropTypes.array,
   option: PropTypes.object,
-  wrapper: PropTypes.object,
   draft: PropTypes.bool,
 };
 ConnectionPopup.contextTypes = {

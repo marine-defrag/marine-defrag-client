@@ -116,14 +116,12 @@ export function EntitiesMap({
         }
         subjectOptions = [
           {
-            type: 'secondary',
             title: 'As actors',
             onClick: () => onSetMapSubject('actors'),
             active: mapSubjectClean === 'actors',
             disabled: mapSubjectClean === 'actors',
           },
           {
-            type: 'secondary',
             title: 'As targets',
             onClick: () => onSetMapSubject('targets'),
             active: mapSubjectClean === 'targets',
@@ -428,14 +426,12 @@ export function EntitiesMap({
         // cleanMapSubject = mapSubject;
         subjectOptions = [
           {
-            type: 'secondary',
             title: 'By actor',
             onClick: () => onSetMapSubject('actors'),
             active: mapSubjectClean === 'actors',
             disabled: mapSubjectClean === 'actors',
           },
           {
-            type: 'secondary',
             title: 'By target',
             onClick: () => onSetMapSubject('targets'),
             active: mapSubjectClean === 'targets',

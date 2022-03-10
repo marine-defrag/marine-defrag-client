@@ -197,11 +197,12 @@ export const getDateField = (
     showEmpty,
     emptyMessage,
     specificity,
+    attributeLabel,
   } = args;
   return (showEmpty || checkEmpty(entity.getIn(['attributes', attribute]))) && ({
     type: 'date',
     value: !!entity.getIn(['attributes', attribute]) && entity.getIn(['attributes', attribute]),
-    label: appMessages.attributes[attribute],
+    label: appMessages.attributes[attributeLabel || attribute],
     showEmpty: showEmpty && (emptyMessage || appMessages.attributes[`${attribute}_empty`]),
     specificity,
   });
@@ -322,6 +323,7 @@ export const getActorConnectionField = ({
       entityType: 'actions',
       path: API.ACTIONS,
       clientPath: ROUTES.ACTION,
+      groupByType: true,
     },
     targets: {
       message: 'entities.actions_{typeid}.plural',
@@ -329,6 +331,7 @@ export const getActorConnectionField = ({
       entityTypeAs: 'targetingActions',
       path: API.ACTIONS,
       clientPath: ROUTES.ACTION,
+      groupByType: true,
     },
     members: {
       message: 'entities.actors_{typeid}.plural',
@@ -336,6 +339,7 @@ export const getActorConnectionField = ({
       entityTypeAs: 'members',
       path: API.ACTORS,
       clientPath: ROUTES.ACTOR,
+      groupByType: true,
     },
     associations: {
       message: 'entities.actors_{typeid}.plural',
@@ -343,6 +347,7 @@ export const getActorConnectionField = ({
       entityTypeAs: 'associations',
       path: API.ACTORS,
       clientPath: ROUTES.ACTOR,
+      groupByType: true,
     },
   },
   entityType: typeid ? `actors_${typeid}` : 'actors',
@@ -370,6 +375,7 @@ export const getActionConnectionField = ({
       entityType: 'actors',
       path: API.ACTORS,
       clientPath: ROUTES.ACTOR,
+      groupByType: true,
     },
     targets: {
       message: 'entities.actors_{typeid}.plural',
@@ -377,12 +383,14 @@ export const getActionConnectionField = ({
       entityTypeAs: 'targets',
       path: API.ACTORS,
       clientPath: ROUTES.ACTOR,
+      groupByType: true,
     },
     resources: {
       message: 'entities.resources_{typeid}.plural',
       entityType: 'resources',
       path: API.RESOURCES,
       clientPath: ROUTES.RESOURCE,
+      groupByType: true,
     },
   },
   entityType: typeid ? `actions_${typeid}` : 'actions',
@@ -407,6 +415,7 @@ export const getResourceConnectionField = ({
       entityType: 'actions',
       path: API.ACTIONS,
       clientPath: ROUTES.ACTION,
+      groupByType: true,
     },
   },
   entityType: typeid ? `resources_${typeid}` : 'resources',

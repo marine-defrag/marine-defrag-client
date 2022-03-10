@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Map } from 'immutable';
 import { Box } from 'grommet';
-import { palette } from 'styled-theme';
 
 import { truncateText } from 'utils/string';
 import { TEXT_TRUNCATE } from 'themes/config';
@@ -11,10 +10,7 @@ import { TEXT_TRUNCATE } from 'themes/config';
 import EntityListItemMainConnection from './EntityListItemMainConnection';
 import EntityListItemMainTag from './EntityListItemMainTag';
 
-const Styled = styled((p) => <Box direction="row" gap="small" wrap {...p} />)`
-  border-top: 1px solid ${palette('light', 1)};
-  padding-top: 3px;
-`;
+const Styled = styled((p) => <Box direction="row" gap="small" wrap {...p} />)``;
 
 const getEntityTags = (categories, taxonomies, onClick) => {
   const tags = [];

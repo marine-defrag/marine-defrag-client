@@ -27,7 +27,7 @@ import appMessages from 'containers/App/messages';
 
 import { checkActionAttribute } from 'utils/entities';
 
-import { ROUTES, FF_ACTIONTYPE } from 'themes/config';
+import { ROUTES, FF_ACTIONTYPE, ACTIONTYPES_CONFIG } from 'themes/config';
 
 import EntityList from 'containers/EntityList';
 import ActionsFactsOverview from 'containers/ActionsFactsOverview';
@@ -54,7 +54,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
 
   prepareTypeOptions = (types, activeId) => {
     const { intl } = this.context;
-    return Object.values(types.toJS()).map((type) => ({
+    return types.toList().toJS().map((type) => ({
       value: type.id,
       label: intl.formatMessage(appMessages.actiontypes[type.id]),
       active: activeId === type.id,
@@ -134,6 +134,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
             connections={connections}
             connectedTaxonomies={connectedTaxonomies}
             config={CONFIG}
+            columns={ACTIONTYPES_CONFIG[typeId] && ACTIONTYPES_CONFIG[typeId].columns}
             header={headerOptions}
             dataReady={dataReady}
             entityTitle={{

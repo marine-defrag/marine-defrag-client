@@ -1,5 +1,5 @@
 /*
- * EntityListGroups Messages
+ * EntityListPages Messages
  *
  * This contains all the text for the EntityList component.
  */

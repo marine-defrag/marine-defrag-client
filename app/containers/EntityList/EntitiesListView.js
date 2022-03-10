@@ -6,9 +6,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
-import { Box, Text, Button } from 'grommet';
+import { Box, Text } from 'grommet';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
-import styled from 'styled-components';
 
 import {
   ROUTES, ACTORTYPES, API, ACTIONTYPE_ACTORTYPES, ACTIONTYPE_TARGETTYPES,
@@ -23,18 +22,14 @@ import EntityListViewOptions from 'components/EntityListViewOptions';
 import EntityListMain from 'components/EntityListMain';
 import MapSubjectOptions from 'containers/MapContainer/MapInfoOptions/MapSubjectOptions';
 import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOption';
+import ButtonPill from 'components/buttons/ButtonPill';
 
 import ContentHeader from 'components/ContentHeader';
 import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
 
 import { getActorsForEntities } from './utils';
-const TypeButton = styled((p) => <Button plain {...p} />)`
-  padding: 2px 4px;
-  border-bottom: 2px solid;
-  border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
-  background: none;
-`;
+
 class EntitiesListView extends React.Component { // eslint-disable-line react/prefer-stateless-function
   constructor(props) {
     super(props);
@@ -66,8 +61,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       dataReady,
       isManager,
       isAnalyst,
-      onGroupSelect,
-      onSubgroupSelect,
       taxonomies,
       connections,
       connectedTaxonomies,
@@ -101,6 +94,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       onSearch,
       sortBy,
       sortOrder,
+      columns,
     } = this.props;
     const { viewType } = this.state;
     let type;
@@ -205,33 +199,37 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 )}
                 {dataReady && entityActors && (
                   <Box>
-                    <Box direction="row" gap="small" margin={{ vertical: 'small' }}>
-                      {mapSubject === 'actors' && ACTIONTYPE_ACTORTYPES[typeId].map(
-                        (actortypeId) => (
-                          <TypeButton
-                            key={actortypeId}
-                            onClick={() => this.setType(actortypeId)}
-                            active={qe(viewType, actortypeId)}
-                          >
-                            <Text>
-                              <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].plural} />
-                            </Text>
-                          </TypeButton>
-                        )
-                      )}
-                      {mapSubject === 'targets' && ACTIONTYPE_TARGETTYPES[typeId].map(
-                        (actortypeId) => (
-                          <TypeButton
-                            key={actortypeId}
-                            onClick={() => this.setType(actortypeId)}
-                            active={qe(viewType, actortypeId)}
-                          >
-                            <Text>
-                              <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].plural} />
-                            </Text>
-                          </TypeButton>
-                        )
-                      )}
+                    <Box direction="row" gap="xsmall" margin={{ vertical: 'small' }}>
+                      {mapSubject === 'actors'
+                        && ACTIONTYPE_ACTORTYPES[typeId].length > 1
+                        && ACTIONTYPE_ACTORTYPES[typeId].map(
+                          (actortypeId) => (
+                            <ButtonPill
+                              key={actortypeId}
+                              onClick={() => this.setType(actortypeId)}
+                              active={qe(viewType, actortypeId)}
+                            >
+                              <Text size="small">
+                                <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].pluralShort} />
+                              </Text>
+                            </ButtonPill>
+                          )
+                        )}
+                      {mapSubject === 'targets'
+                        && ACTIONTYPE_TARGETTYPES[typeId].length > 1
+                        && ACTIONTYPE_TARGETTYPES[typeId].map(
+                          (actortypeId) => (
+                            <ButtonPill
+                              key={actortypeId}
+                              onClick={() => this.setType(actortypeId)}
+                              active={qe(viewType, actortypeId)}
+                            >
+                              <Text size="small">
+                                <FormattedMessage {...appMessages.entities[`actors_${actortypeId}`].pluralShort} />
+                              </Text>
+                            </ButtonPill>
+                          )
+                        )}
                     </Box>
                     {memberOption && (
                       <Box>
@@ -329,6 +327,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 )}
                 {dataReady && !mapSubjectClean && (
                   <EntityListMain
+                    columns={columns}
                     listUpdating={listUpdating}
                     entities={entities}
                     errors={errors}
@@ -348,8 +347,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
 
                     onEntitySelect={onEntitySelect}
                     onEntitySelectAll={onEntitySelectAll}
-                    onGroupSelect={onGroupSelect}
-                    onSubgroupSelect={onSubgroupSelect}
                     onPageItemsSelect={(no) => {
                       this.scrollToTop();
                       onPageItemsSelect(no);
@@ -413,8 +410,6 @@ EntitiesListView.propTypes = {
   onEntityClick: PropTypes.func.isRequired,
   onEntitySelect: PropTypes.func.isRequired,
   onEntitySelectAll: PropTypes.func.isRequired,
-  onGroupSelect: PropTypes.func.isRequired,
-  onSubgroupSelect: PropTypes.func.isRequired,
   onPageSelect: PropTypes.func.isRequired,
   onPageItemsSelect: PropTypes.func.isRequired,
   onSortOrder: PropTypes.func.isRequired,
@@ -424,6 +419,7 @@ EntitiesListView.propTypes = {
   onSetIncludeActorMembers: PropTypes.func,
   onSetIncludeTargetMembers: PropTypes.func,
   onSearch: PropTypes.func,
+  columns: PropTypes.array,
 };
 
 export default injectIntl(EntitiesListView);

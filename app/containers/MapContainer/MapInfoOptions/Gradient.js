@@ -34,15 +34,16 @@ const KeyLabel = styled.div`
   white-space: nowrap;
   font-size: ${(props) => props.theme.sizes.text.small};
 `;
-const formatKeyLabel = (value) => {
+const formatKeyLabel = (value, isCount) => {
   if (isNumber(value)) {
     const vN = parseFloat(value, 10);
-    return formatNumber(vN, { digits: vN > 1 ? 0 : 1 });
+    return formatNumber(vN, { digits: isCount ? 0 : 1 });
   }
   return value;
 };
 export function Gradient({
   config, // intl, dark,
+  isCount,
   // unit,
 }) {
   // let stops;
@@ -56,12 +57,12 @@ export function Gradient({
       <GradientLabels>
         <KeyLabelWrap offsetLeft="0%">
           <KeyLabel>
-            {formatKeyLabel(config.range[0])}
+            {formatKeyLabel(config.range[0], isCount)}
           </KeyLabel>
         </KeyLabelWrap>
         <KeyLabelWrap offsetLeft="100%">
           <KeyLabel>
-            {formatKeyLabel(config.range[1])}
+            {formatKeyLabel(config.range[1], isCount)}
           </KeyLabel>
         </KeyLabelWrap>
       </GradientLabels>
@@ -73,8 +74,8 @@ export function Gradient({
 
 Gradient.propTypes = {
   config: PropTypes.object,
+  isCount: PropTypes.bool,
   // unit: PropTypes.string,
-  // dark: PropTypes.bool,
   // intl: intlShape.isRequired,
 };
 

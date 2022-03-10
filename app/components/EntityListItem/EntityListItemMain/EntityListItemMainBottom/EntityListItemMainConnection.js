@@ -14,7 +14,7 @@ const ConnectionGroupLabel = styled.span`
     font-size: ${(props) => props.theme.sizes.print.smaller};
   }
 `;
-export function EntityListItemMainConnections({ connection, wrapper }) {
+export function EntityListItemMainConnections({ connection }) {
   return (
     <Box direction="row" gap="hair">
       <ConnectionGroupLabel>
@@ -29,7 +29,6 @@ export function EntityListItemMainConnections({ connection, wrapper }) {
               entities={type.entities}
               label={type.option.label(entitiesTotal)}
               option={type.option}
-              wrapper={wrapper}
               draft
             />
           );
@@ -41,7 +40,6 @@ export function EntityListItemMainConnections({ connection, wrapper }) {
               connection.connections.entities.size
             )}
             option={connection.connections.option}
-            wrapper={wrapper}
             draft
           />
         )}
@@ -52,7 +50,6 @@ export function EntityListItemMainConnections({ connection, wrapper }) {
 
 EntityListItemMainConnections.propTypes = {
   connection: PropTypes.object,
-  wrapper: PropTypes.object,
 };
 
 export default EntityListItemMainConnections;

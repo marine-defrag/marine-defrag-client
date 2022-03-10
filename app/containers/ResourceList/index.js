@@ -47,7 +47,7 @@ export class ResourceList extends React.PureComponent { // eslint-disable-line r
 
   prepareTypeOptions = (types, activeId) => {
     const { intl } = this.context;
-    return Object.values(types.toJS()).map((type) => ({
+    return types.toList().toJS().map((type) => ({
       value: type.id,
       label: intl.formatMessage(appMessages.resourcetypes[type.id]),
       active: activeId === type.id,

@@ -26,6 +26,8 @@ import {
   DEFAULT_ACTIONTYPE,
   DEFAULT_ACTORTYPE,
   FF_ACTIONTYPE,
+  ACTORTYPES_CONFIG,
+  ACTIONTYPES_CONFIG,
 } from 'themes/config';
 
 import {
@@ -450,15 +452,29 @@ export const selectResource = createSelector(
 // all action types
 export const selectActortypes = createSelector(
   (state) => selectEntities(state, API.ACTORTYPES),
-  (entities) => entities
+  (entities) => entities && entities.sort((a, b) => {
+    const configA = ACTORTYPES_CONFIG[a.get('id')];
+    const configB = ACTORTYPES_CONFIG[b.get('id')];
+    return configA.order < configB.order
+      ? -1
+      : 1;
+  })
 );
 // all action types
 export const selectActiontypes = createSelector(
   (state) => selectEntities(state, API.ACTIONTYPES),
   (state, args) => args ? args.includeFacts : false,
-  (entities, includeFacts) => entities && includeFacts
-    ? entities
-    : entities.filter((t) => !qe(t.get('id'), FF_ACTIONTYPE))
+  (entities, includeFacts) => {
+    if (!entities) return null;
+    const sorted = entities.sort((a, b) => {
+      const configA = ACTIONTYPES_CONFIG[a.get('id')];
+      const configB = ACTIONTYPES_CONFIG[b.get('id')];
+      return configA.order < configB.order ? -1 : 1;
+    });
+    return includeFacts
+      ? sorted
+      : sorted.filter((t) => !qe(t.get('id'), FF_ACTIONTYPE));
+  }
 );
 // all action types
 export const selectFactsActiontype = createSelector(

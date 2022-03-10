@@ -32,7 +32,7 @@ import ContentHeader from 'components/ContentHeader';
 import TagSearch from 'components/TagSearch';
 import Content from 'components/styled/Content';
 
-import EntityListItemWrapper from 'components/EntityListMain/EntityListGroups/EntityListItems/EntityListItemWrapper';
+import EntityListItem from 'components/EntityListItem';
 
 import appMessages from 'containers/App/messages';
 // import { ROUTES } from 'themes/config';
@@ -249,7 +249,7 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
                                               {(active || !otherTargets) && (
                                                 <Box margin={{ bottom: 'large' }}>
                                                   { target.get('results').toList().map((entity, key) => (
-                                                    <EntityListItemWrapper
+                                                    <EntityListItem
                                                       key={key}
                                                       entity={entity}
                                                       entityPath={target.get('clientPath') || target.get('path')}

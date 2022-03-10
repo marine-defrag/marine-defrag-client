@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
-import { Box, Text, Button } from 'grommet';
+import { Box, Text } from 'grommet';
 import { List, Map } from 'immutable';
 import styled from 'styled-components';
 
@@ -16,24 +16,18 @@ import {
 } from 'utils/fields';
 import qe from 'utils/quasi-equals';
 
-import { ROUTES, ACTIONTYPES } from 'themes/config';
+import { ROUTES, ACTIONTYPES, ACTIONTYPES_CONFIG } from 'themes/config';
 import FieldGroup from 'components/fields/FieldGroup';
+import ButtonPill from 'components/buttons/ButtonPill';
 
 import appMessages from 'containers/App/messages';
 import ActorActivitiesMap from './ActorActivitiesMap';
 
-const TypeSelectBox = styled((p) => <Box {...p} />)`
-  background: ${({ theme }) => theme.palette.light[0]};
+const TypeSelectBox = styled((p) => <Box {...p} />)``;
+const TypeButton = styled((p) => <ButtonPill {...p} />)`
+  margin-bottom: 5px;
 `;
-const TypeButton = styled((p) => <Button {...p} />)`
-  background: ${({ active, theme }) => active ? theme.palette.primary[0] : theme.palette.light[0]};
-  color: ${({ active, theme }) => active ? 'white' : theme.palette.dark[3]};
-  padding: 4px 10px;
-  text-align: center;
-  max-width: ${100 / Object.keys(ACTIONTYPES).length}%;
-  min-height: 56px;
-  border-right: 1px solid white;
-`;
+// max-width: ${({ listItems }) => 100 / listItems}%;
 
 export function Activities(props) {
   const {
@@ -111,8 +105,14 @@ export function Activities(props) {
         ).toSet()
         : (actiontypeIdsAsMemberForSubject && actiontypeIdsAsMemberForSubject.toSet());
     }
+    // sort
+    actiontypeIdsForSubjectOptions = actiontypeIdsForSubjectOptions
+      && actiontypeIdsForSubjectOptions.sort((a, b) => {
+        const configA = ACTIONTYPES_CONFIG[a];
+        const configB = ACTIONTYPES_CONFIG[b];
+        return configA.order < configB.order ? -1 : 1;
+      });
     // figure out active action type #################################################
-
     // selected actiontype (or first in list when not in list)
     activeActiontypeId = viewActiontypeId;
     if (actiontypeIdsForSubjectOptions && !actiontypeIdsForSubjectOptions.includes(viewActiontypeId.toString())) {
@@ -198,8 +198,9 @@ export function Activities(props) {
       {actiontypeIdsForSubjectOptions && actiontypeIdsForSubjectOptions.size > 0 && (
         <TypeSelectBox
           direction="row"
-          gap="hair"
+          gap="xxsmall"
           margin={{ vertical: 'small', horizontal: 'medium' }}
+          wrap
         >
           {actiontypeIdsForSubjectOptions.map(
             (id) => (
@@ -207,9 +208,15 @@ export function Activities(props) {
                 key={id}
                 onClick={() => onSetActiontype(id)}
                 active={qe(activeActiontypeId, id) || actiontypeIdsForSubjectOptions.size === 1}
+                listItems={actiontypeIdsForSubjectOptions.size}
               >
-                <Text size="small" weight={600}>
-                  <FormattedMessage {...appMessages.entities[`actions_${id}`].plural} />
+                <Text size="small">
+                  {actiontypeIdsForSubjectOptions.size > 4 && (
+                    <FormattedMessage {...appMessages.entities[`actions_${id}`].pluralShort} />
+                  )}
+                  {actiontypeIdsForSubjectOptions.size <= 4 && (
+                    <FormattedMessage {...appMessages.entities[`actions_${id}`].plural} />
+                  )}
                 </Text>
               </TypeButton>
             )

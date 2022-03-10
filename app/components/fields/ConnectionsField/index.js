@@ -4,11 +4,11 @@ import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
-import EntityListItems from 'components/EntityListMain/EntityListGroups/EntityListItems';
 
 import FieldWrap from 'components/fields/FieldWrap';
 import ConnectionLabel from 'components/fields/ConnectionLabel';
 import ConnectionLabelWrap from 'components/fields/ConnectionLabelWrap';
+import EntityListItems from 'components/EntityListMain/EntityListItems';
 // import EntityListItemsWrap from 'components/fields/EntityListItemsWrap';
 import ToggleAllItems from 'components/fields/ToggleAllItems';
 import EmptyHint from 'components/fields/EmptyHint';
@@ -66,8 +66,6 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
               )
             }
             <EntityListItems
-              taxonomies={field.taxonomies}
-              connections={field.connections}
               config={{
                 connections: field.connectionOptions,
                 clientPath: field.entityPath,
@@ -77,9 +75,11 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
                   ? field.values
                   : (field.values.slice(0, CONNECTIONMAX))
               }
+              taxonomies={field.taxonomies}
+              connections={field.connections}
               onEntityClick={field.onEntityClick}
-              inSingleView
               showValueForAction={field.showValueForAction}
+              inSingleView
             />
             {field.values.size > CONNECTIONMAX && (
               <ToggleAllItems
