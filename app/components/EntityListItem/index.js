@@ -12,7 +12,7 @@ import EntityListItemSelect from './EntityListItemSelect';
 
 // import messages from './messages';
 
-const Styled = styled((p) => <Box {...p} />)``;
+const Styled = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)``;
 const Item = styled((p) => <Box direction="row" align="start" {...p} />)`
   color: ${palette('mainListItem', 0)};
   background-color: ${palette('mainListItem', 1)};

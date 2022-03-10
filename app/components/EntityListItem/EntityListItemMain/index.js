@@ -17,7 +17,7 @@ import EntityListItemMainBottom from './EntityListItemMainBottom';
 import EntityListItemMainTopReference from './EntityListItemMainTopReference';
 
 
-const Styled = styled((p) => <Box fill="horizontal" gap="small" {...p} />)`
+const Styled = styled((p) => <Box fill="horizontal" gap="xsmall" {...p} />)`
   padding-right: 6px;
   padding-bottom: ${({ inSingleView }) => inSingleView ? 10 : 6}px;
   padding-left: ${({ isManager }) => isManager ? 0 : 6}px;

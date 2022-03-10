@@ -95,7 +95,7 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
 
     return (
       <div>
-        {columns && (
+        {columns && false && (
           <EntityListTable
             entities={entitiesOnPage}
             pageTotal={entityIdsOnPage.toSet().size}
@@ -128,7 +128,7 @@ export class EntityListGroups extends React.PureComponent { // eslint-disable-li
             errors={errors}
           />
         )}
-        {!columns && (
+        {(!columns || columns) && (
           <EntityListItems
             entities={entitiesOnPage}
             pageTotal={entityIdsOnPage.toSet().size}
