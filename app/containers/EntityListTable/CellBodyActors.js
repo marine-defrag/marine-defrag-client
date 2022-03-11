@@ -4,8 +4,38 @@ import { injectIntl, intlShape } from 'react-intl';
 import {
   Box, Text, Button, Drop,
 } from 'grommet';
+import styled from 'styled-components';
+import { truncateText } from 'utils/string';
+
 import { ACTORTYPES_CONFIG, ROUTES } from 'themes/config';
 import appMessages from 'containers/App/messages';
+
+const Link = styled((p) => <Button as="a" plain {...p} />)`
+  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
+  line-height: 12px;
+`;
+const Label = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
+  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
+  line-height: 12px;
+`;
+
+const LinkTT = styled(
+  React.forwardRef((p, ref) => <Button plain {...p} ref={ref} />)
+)`
+  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
+  line-height: 12px;
+`;
+const LabelTT = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
+  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
+  font-style: italic;
+  line-height: 12px;
+`;
+const LinkInTT = styled((p) => <Button as="a" plain {...p} />)`
+  line-height: 13px;
+`;
+const LabelInTT = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
+  line-height: 13px;
+`;
 
 const getActorLink = (actor) => `${ROUTES.ACTOR}/${actor.get('id')}`;
 
@@ -25,41 +55,28 @@ export function CellBodyActors({
   return (
     <Box alignContent={align}>
       {entity.single && (
-        <Button
-          as="a"
-          plain
+        <Link
           href={getActorLink(entity.single)}
           onClick={getActorOnClick(entity.single, onEntityClick)}
           title={entity.value}
-          justify={align}
-          style={{ textAlign: align === 'end' ? 'right' : 'left' }}
+          alignSelf={align}
         >
-          <Text
-            size="small"
-            wordBreak="keep-all"
-            textAlign={align}
-          >
-            {entity.value}
-          </Text>
-        </Button>
+          <Label textAlign={align}>
+            {truncateText(entity.value, 25)}
+          </Label>
+        </Link>
       )}
       {entity.tooltip && (
-        <Button
+        <LinkTT
           ref={buttonRef}
-          plain
           alignSelf={align}
-          style={{ textAlign: align === 'end' ? 'right' : 'left' }}
           onClick={() => setShowContent(!showContent)}
+          active={showContent}
         >
-          <Text
-            size="small"
-            textAlign={align}
-            wordBreak="keep-all"
-            style={{ fontStyle: entity.multiple ? 'italic' : 'normal' }}
-          >
+          <LabelTT textAlign={align}>
             {entity.value}
-          </Text>
-        </Button>
+          </LabelTT>
+        </LinkTT>
       )}
       {entity.tooltip && showContent && buttonRef.current && (
         <Drop
@@ -67,11 +84,24 @@ export function CellBodyActors({
           onClickOutside={() => setShowContent(false)}
           align={{
             bottom: 'top',
-            right: 'right',
           }}
-          plain
+          margin={{ horizontal: 'xsmall', vertical: 'xsmall' }}
+          background="white"
+          elevation="small"
+          overflow={{
+            vertical: 'auto',
+            horizontal: 'hidden',
+          }}
         >
-          <Box pad="small" background="white" elevation="small" margin={{ horizontal: 'xsmall', vertical: 'small' }}>
+          <Box
+            style={{ minWidth: '240px' }}
+            pad={{
+              horizontal: 'small',
+              vertical: 'medium',
+            }}
+            gap="medium"
+            flex={{ shrink: 0 }}
+          >
             {Object.values(ACTORTYPES_CONFIG).sort(
               (a, b) => a.order < b.order ? -1 : 1
             ).map(
@@ -79,32 +109,37 @@ export function CellBodyActors({
                 if (entity.tooltip.get(parseInt(type.id, 10))) {
                   const count = entity.tooltip.get(parseInt(type.id, 10)).size;
                   return (
-                    <Box key={type.id}>
-                      <Box border="bottom">
-                        <Text weight={500}>
+                    <Box key={type.id} flex={{ shrink: 0 }}>
+                      <Box border="bottom" flex={{ shrink: 0 }} margin={{ bottom: 'small' }}>
+                        <Text size="small" weight={500}>
                           {`${count} ${intl.formatMessage(appMessages.entities[`actors_${type.id}`][count === 1 ? 'singleShort' : 'pluralShort'])}`}
                         </Text>
                       </Box>
-                      <Box>
-                        {entity.tooltip.get(parseInt(type.id, 10)).toList().map(
-                          (actor) => (
-                            <Button
-                              key={actor.get('id')}
-                              as="a"
-                              plain
-                              href={getActorLink(actor)}
-                              onClick={getActorOnClick(actor, onEntityClick)}
-                              title={actor.getIn(['attributes', 'title'])}
-                            >
-                              <Text
-                                size="small"
-                                wordBreak="keep-all"
-                              >
-                                {actor.getIn(['attributes', 'title'])}
-                              </Text>
-                            </Button>
+                      <Box flex={{ shrink: 0 }} gap="xsmall">
+                        {entity.tooltip.get(parseInt(type.id, 10))
+                          .toList()
+                          .sort(
+                            (a, b) => a.getIn(['attributes', 'title'])
+                              > b.getIn(['attributes', 'title'])
+                              ? 1
+                              : -1
+                          ).map(
+                            (actor) => (
+                              <Box key={actor.get('id')} flex={{ shrink: 0 }}>
+                                <LinkInTT
+                                  key={actor.get('id')}
+                                  href={getActorLink(actor)}
+                                  onClick={getActorOnClick(actor, onEntityClick)}
+                                  title={actor.getIn(['attributes', 'title'])}
+                                >
+                                  <LabelInTT>
+                                    {truncateText(actor.getIn(['attributes', 'title']), 30)}
+                                  </LabelInTT>
+                                </LinkInTT>
+                              </Box>
+                            )
                           )
-                        )}
+                        }
                       </Box>
                     </Box>
                   );

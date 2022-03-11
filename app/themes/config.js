@@ -602,24 +602,22 @@ export const ACTIONTYPES_CONFIG = {
     order: 5,
     columns: [
       {
+        id: 'main',
         type: 'main',
         sort: 'title',
         attributes: ['code', 'title'],
       },
       {
-        type: 'date',
-        sort: 'date_start',
-        sortOrder: 'asc',
-        attribute: 'date_start',
-      },
-      {
+        id: 'taxonomy',
         type: 'taxonomy',
         taxonomy_id: 11, // level of commitment: as link
       },
       {
-        type: 'parent',
-        attribute: 'title',
-        sort: 'title',
+        id: 'date',
+        type: 'date',
+        sort: 'date_start',
+        sortOrder: 'asc',
+        attribute: 'date_start',
       },
     ],
   },
@@ -628,28 +626,31 @@ export const ACTIONTYPES_CONFIG = {
     order: 4,
     columns: [
       {
+        id: 'main',
         type: 'main',
         sort: 'title',
         attributes: ['code', 'title'],
       },
       {
+        id: 'targets', // one row per type,
         type: 'targets', // one row per type,
-        sort: 'count',
       },
       {
+        id: 'actors', // one row per type,
         type: 'actors', // one row per type,
-        groupByType: true,
-        sort: 'count',
       },
       {
+        id: 'taxonomy',
         type: 'taxonomy',
         taxonomy_id: 3, // LBS-protocol statuses: as link
       },
       {
+        id: 'ap',
         type: 'hasResources', // checkmark icon w/ tooltip for names
         resourcetype_id: RESOURCETYPES.AP, // presence of AP
       },
       {
+        id: 'mlap',
         type: 'hasResources', // checkmark icon w/ tooltip for names
         resourcetype_id: RESOURCETYPES.MLAP, // presence of MLAP
       },
@@ -660,13 +661,14 @@ export const ACTIONTYPES_CONFIG = {
     order: 3,
     columns: [
       {
+        id: 'main',
         type: 'main',
         sort: 'title',
         attributes: ['code', 'title'],
       },
       {
+        id: 'actors', // one row per type,
         type: 'actors', // one row per type,
-        sort: 'count',
       },
     ],
   },
@@ -675,16 +677,18 @@ export const ACTIONTYPES_CONFIG = {
     order: 2,
     columns: [
       {
+        id: 'main',
         type: 'main',
         sort: 'title',
-        attributes: ['code', 'title'],
+        attributes: ['title'],
       },
       {
-        type: 'actorsSingleType', // one row per type,
-        actortype_id: ACTORTYPES.COUNTRY,
-        sort: 'count',
+        id: 'actors',
+        type: 'actors',
+        sort: 'title',
       },
       {
+        id: 'taxonomy',
         type: 'taxonomy',
         taxonomy_id: 4, // strategy types: as link
       },
@@ -695,28 +699,25 @@ export const ACTIONTYPES_CONFIG = {
     order: 1,
     columns: [
       {
+        id: 'main',
         type: 'main',
         sort: 'title',
-        attributes: ['code', 'title'],
+        attributes: ['title'],
       },
       {
+        id: 'actors', // one row per type,
+        type: 'actors', // one row per type,
+      },
+      {
+        id: 'targets', // one row per type,
+        type: 'targets', // one row per type,
+      },
+      {
+        id: 'amount',
         type: 'amount',
         sort: 'amount',
         attribute: 'amount',
         unit: 'US$',
-      },
-      {
-        type: 'targets', // one row per type,
-        sort: 'count',
-      },
-      {
-        type: 'actors', // one row per type,
-        sort: 'count',
-      },
-      {
-        type: 'parent',
-        attributes: ['code', 'title'],
-        sort: 'code',
       },
     ],
   },
@@ -725,22 +726,18 @@ export const ACTIONTYPES_CONFIG = {
     order: 6,
     columns: [
       {
+        id: 'main',
         type: 'main',
         sort: 'title',
-        attributes: ['code', 'title'],
+        attributes: ['title'],
       },
       {
+        id: 'targets', // one row per type,
         type: 'targets', // one row per type,
-        sort: 'count',
       },
       {
+        id: 'actors', // one row per type,
         type: 'actors', // one row per type,
-        sort: 'count',
-      },
-      {
-        type: 'parent',
-        attributes: ['code', 'title'],
-        sort: 'code',
       },
     ],
   },

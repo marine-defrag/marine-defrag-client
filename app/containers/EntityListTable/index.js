@@ -16,6 +16,8 @@ import {
   selectPageNoQuery,
   selectSearchQuery,
   selectActortypes,
+  selectCategories,
+  selectResources,
 } from 'containers/App/selectors';
 import { updateQuery } from 'containers/EntityList/actions';
 import EntityListSearch from 'components/EntityListSearch';
@@ -76,7 +78,7 @@ export function EntityListTable({
   onEntitySelectAll,
   entities,
   errors,
-  taxonomies,
+  categories,
   connections,
   entityPath,
   url,
@@ -98,6 +100,8 @@ export function EntityListTable({
   inSingleView,
   label,
   actortypes,
+  taxonomies,
+  resources,
 }) {
   const [showAllConnections, setShowAllConnections] = useState(false);
 
@@ -124,7 +128,7 @@ export function EntityListTable({
     columns,
     config,
     connections,
-    taxonomies,
+    categories,
     intl,
     entityIdsSelected,
     url,
@@ -132,6 +136,8 @@ export function EntityListTable({
     onEntityClick,
     onEntitySelect,
     actortypes,
+    taxonomies,
+    resources,
   });
   const errorsWithoutEntities = errors && errors.filter(
     (error, id) => !searchedEntities.find((entity) => qe(entity.get('id'), id))
@@ -142,17 +148,33 @@ export function EntityListTable({
     ? entityRows
     : entityRows && entityRows.sort(
       (a, b) => {
-        let result;
         const aSortValue = a[sortOption] && a[sortOption].sortValue;
         const aHasSortValue = aSortValue || isNumber(aSortValue);
         const bSortValue = b[sortOption] && b[sortOption].sortValue;
         const bHasSortValue = bSortValue || isNumber(bSortValue);
+        // always prefer values over none, regardless of order
+        if (aHasSortValue && !bHasSortValue) {
+          return -1;
+        }
+        if (bHasSortValue && !aHasSortValue) {
+          return 1;
+        }
+        let result;
         if (aHasSortValue && bHasSortValue) {
-          result = aSortValue > bSortValue ? 1 : -1;
-        } else if (aHasSortValue && !bHasSortValue) {
-          result = 1;
-        } else if (bHasSortValue && !aHasSortValue) {
-          result = -1;
+          if (isNumber(aSortValue) && !isNumber(bSortValue)) {
+            result = -1;
+          } else if (isNumber(bSortValue) && !isNumber(aSortValue)) {
+            result = 1;
+          } else if (
+            isNumber(bSortValue)
+            && isNumber(aSortValue)
+            && a[sortOption].type !== 'amount'
+            && a[sortOption].type !== 'amount'
+          ) {
+            result = aSortValue < bSortValue ? 1 : -1;
+          } else {
+            result = aSortValue > bSortValue ? 1 : -1;
+          }
         }
         return sortOrder === 'desc' ? result * -1 : result;
       }
@@ -317,6 +339,8 @@ export function EntityListTable({
 
 EntityListTable.propTypes = {
   entities: PropTypes.instanceOf(List),
+  categories: PropTypes.instanceOf(Map),
+  resources: PropTypes.instanceOf(Map),
   taxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(OrderedMap),
   connections: PropTypes.instanceOf(Map),
@@ -360,6 +384,8 @@ const mapStateToProps = (state) => ({
   pageNo: selectPageNoQuery(state),
   searchQuery: selectSearchQuery(state),
   actortypes: selectActortypes(state),
+  categories: selectCategories(state),
+  resources: selectResources(state),
 });
 function mapDispatchToProps(dispatch) {
   return {

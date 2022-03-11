@@ -52,7 +52,7 @@ export function CellHeaderMain({ column, canEdit }) {
         )}
       </Box>
       {column.onSort && (
-        <Box pad={{ horizontal: 'small' }}>
+        <Box pad={{ left: 'medium' }}>
           <SortButton
             onClick={() => {
               if (column.sortActive) {
@@ -68,6 +68,8 @@ export function CellHeaderMain({ column, canEdit }) {
                 ? sortOrderOption.icon
                 : 'sorting'
               }
+              palette="dark"
+              paletteIndex={column.sortActive ? 1 : 4}
               hidePrint={!column.sortActive}
             />
           </SortButton>

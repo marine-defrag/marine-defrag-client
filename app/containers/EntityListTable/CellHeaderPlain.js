@@ -16,9 +16,11 @@ const SortButton = styled(ButtonFlatIconOnly)`
 `;
 
 export function CellHeaderPlain({ column, align = 'start' }) {
-  const sortOrderOption = column.onSort && SORT_ORDER_OPTIONS.find((option) => column.sortOrder === option.value);
+  const sortOrderOption = column.onSort && SORT_ORDER_OPTIONS.find(
+    (option) => column.sortOrder === option.value
+  );
   return (
-    <Box direction="row" align="center" justify={align}>
+    <Box direction="row" align="center" justify="start">
       <Box>
         <Text weight={500} size="small" textAlign={align} wordBreak="keep-all">
           {column.title}
@@ -29,10 +31,12 @@ export function CellHeaderPlain({ column, align = 'start' }) {
           <SortButton
             onClick={() => {
               if (column.sortActive) {
-                const nextSortOrderOption = SORT_ORDER_OPTIONS.find((option) => sortOrderOption.nextValue === option.value);
-                column.onSort(column.type, nextSortOrderOption.value);
+                const nextSortOrderOption = SORT_ORDER_OPTIONS.find(
+                  (option) => sortOrderOption.nextValue === option.value
+                );
+                column.onSort(column.id || column.type, nextSortOrderOption.value);
               } else {
-                column.onSort(column.type, sortOrderOption.order);
+                column.onSort(column.id || column.type, sortOrderOption.order);
               }
             }}
           >
@@ -41,6 +45,8 @@ export function CellHeaderPlain({ column, align = 'start' }) {
                 ? sortOrderOption.icon
                 : 'sorting'
               }
+              palette="dark"
+              paletteIndex={column.sortActive ? 1 : 4}
               hidePrint={!column.sortActive}
             />
           </SortButton>

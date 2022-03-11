@@ -1,7 +1,7 @@
 import { STATES as CHECKBOX_STATES } from 'components/forms/IndeterminateCheckbox';
+import { Map } from 'immutable';
 import isNumber from 'utils/is-number';
 import { formatNumber } from 'utils/fields';
-import { truncateText } from 'utils/string';
 import appMessages from 'containers/App/messages';
 
 export const prepareHeader = ({
@@ -21,7 +21,7 @@ export const prepareHeader = ({
         return ({
           ...col,
           title,
-          sortActive: sortBy === col.type,
+          sortActive: sortBy === col.id,
           sortOrder: sortOrder || 'asc',
           onSort,
           onSelect: onSelectAll,
@@ -33,7 +33,15 @@ export const prepareHeader = ({
           title: col.unit
             ? `${intl.formatMessage(appMessages.attributes[col.attribute])} (${col.unit})`
             : intl.formatMessage(appMessages.attributes[col.attribute]),
-          sortActive: sortBy === col.type,
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
+      case 'date':
+        return ({
+          ...col,
+          title: 'Date',
+          sortActive: sortBy === col.id,
           sortOrder: sortOrder || 'asc',
           onSort,
         });
@@ -41,7 +49,35 @@ export const prepareHeader = ({
         return ({
           ...col,
           title: 'Targets',
-          sortActive: sortBy === col.type,
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
+      case 'actors':
+        return ({
+          ...col,
+          title: 'Actors',
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
+      case 'taxonomy':
+        return ({
+          ...col,
+          title: appMessages.entities.taxonomies[col.taxonomy_id]
+            ? intl.formatMessage(appMessages.entities.taxonomies[col.taxonomy_id].shortSingle)
+            : 'Categories',
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
+      case 'hasResources':
+        return ({
+          ...col,
+          title: appMessages.entities[`resources_${col.resourcetype_id}`]
+            ? intl.formatMessage(appMessages.entities[`resources_${col.resourcetype_id}`].singleShort)
+            : 'Resource',
+          sortActive: sortBy === col.id,
           sortOrder: sortOrder || 'asc',
           onSort,
         });
@@ -51,20 +87,37 @@ export const prepareHeader = ({
   }
 );
 
-const getTargets = (targetIDs, connections) => {
-  if (targetIDs && targetIDs.size > 0) {
-    return targetIDs.map(
-      (targetId) => connections.get(targetId.toString())
+const getRelatedEntities = (relatedIDs, connections) => {
+  if (relatedIDs && relatedIDs.size > 0) {
+    return relatedIDs.reduce(
+      (memo, relatedID) => {
+        if (connections.get(relatedID.toString())) {
+          return memo.set(relatedID, connections.get(relatedID.toString()));
+        }
+        return memo;
+      },
+      Map(),
     );
   }
   return null;
 };
-const getTargetsValue = (targets) => {
-  if (targets && targets.size > 0) {
-    if (targets.size > 1) {
-      return targets.size;
+const getRelatedValue = (relatedEntities, typeLabel) => {
+  if (relatedEntities && relatedEntities.size > 0) {
+    if (relatedEntities.size > 1) {
+      return typeLabel
+        ? `${relatedEntities.size} ${typeLabel}`
+        : relatedEntities.size;
     }
-    return truncateText(targets.first().getIn(['attributes', 'title']), 12);
+    return relatedEntities.first().getIn(['attributes', 'title']);
+  }
+  return null;
+};
+const getRelatedSortValue = (relatedEntities) => {
+  if (relatedEntities && relatedEntities.size > 0) {
+    if (relatedEntities.size > 1) {
+      return relatedEntities.size;
+    }
+    return relatedEntities.first().getIn(['attributes', 'title']);
   }
   return null;
 };
@@ -79,7 +132,8 @@ export const prepareEntities = ({
   onEntityClick,
   onEntitySelect,
   connections,
-  // taxonomies,
+  taxonomies,
+  resources,
   intl,
 }) => entities.reduce(
   (memoEntities, entity) => {
@@ -87,12 +141,12 @@ export const prepareEntities = ({
     const entityValues = columns.reduce(
       (memoEntity, col) => {
         const path = (config && config.clientPath) || entityPath;
-        let targets;
+        let relatedEntities;
         switch (col.type) {
           case 'main':
             return {
               ...memoEntity,
-              [col.type]: {
+              [col.id]: {
                 ...col,
                 values: col.attributes.reduce(
                   (memo, att) => ({
@@ -115,7 +169,7 @@ export const prepareEntities = ({
           case 'amount':
             return {
               ...memoEntity,
-              [col.type]: {
+              [col.id]: {
                 ...col,
                 value: isNumber(entity.getIn(['attributes', col.attribute]))
                   && formatNumber(
@@ -126,18 +180,77 @@ export const prepareEntities = ({
                   && parseFloat(entity.getIn(['attributes', col.sort]), 10),
               },
             };
-          case 'targets':
-            targets = getTargets(entity.get('targets'), connections.get('actors'), col);
+          case 'date':
             return {
               ...memoEntity,
-              [col.type]: {
+              [col.id]: {
                 ...col,
-                value: getTargetsValue(targets, col),
-                single: targets && targets.size === 1 && targets.first(),
-                tooltip: targets && targets.size > 1
-                  && targets.groupBy((t) => t.getIn(['attributes', 'actortype_id'])),
-                multiple: targets && targets.size > 1,
-                sortValue: targets && targets.size,
+                value: entity.getIn(['attributes', col.attribute])
+                  && intl.formatDate(entity.getIn(['attributes', col.attribute])),
+                draft: entity.getIn(['attributes', 'draft']),
+                sortValue: entity.getIn(['attributes', col.attribute]),
+              },
+            };
+          case 'targets':
+            relatedEntities = getRelatedEntities(entity.get('targets'), connections.get('actors'), col);
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: getRelatedValue(relatedEntities, 'targets'),
+                single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
+                tooltip: relatedEntities && relatedEntities.size > 1
+                  && relatedEntities.groupBy((t) => t.getIn(['attributes', 'actortype_id'])),
+                multiple: relatedEntities && relatedEntities.size > 1,
+                sortValue: getRelatedSortValue(relatedEntities),
+              },
+            };
+          case 'actors':
+            relatedEntities = getRelatedEntities(entity.get('actors'), connections.get('actors'), col);
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: getRelatedValue(relatedEntities, 'actors'),
+                single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
+                tooltip: relatedEntities && relatedEntities.size > 1
+                  && relatedEntities.groupBy((t) => t.getIn(['attributes', 'actortype_id'])),
+                multiple: relatedEntities && relatedEntities.size > 1,
+                sortValue: getRelatedSortValue(relatedEntities),
+              },
+            };
+          case 'taxonomy':
+            // console.log(entity && entity.toJS())
+            relatedEntities = taxonomies.get(col.taxonomy_id.toString())
+              && getRelatedEntities(
+                entity.get('categories'),
+                taxonomies.get(col.taxonomy_id.toString()).get('categories'),
+                col,
+              );
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: getRelatedValue(relatedEntities, 'categories'),
+                single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
+                tooltip: relatedEntities && relatedEntities.size > 1 && relatedEntities,
+                multiple: relatedEntities && relatedEntities.size > 1,
+                sortValue: getRelatedSortValue(relatedEntities),
+              },
+            };
+          case 'hasResources':
+            relatedEntities = entity.getIn(['resourcesByType', parseInt(col.resourcetype_id, 10)])
+              && getRelatedEntities(
+                entity.getIn(['resourcesByType', parseInt(col.resourcetype_id, 10)]),
+                resources,
+                col,
+              );
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: relatedEntities && relatedEntities.first(),
+                sortValue: relatedEntities ? 1 : -1,
               },
             };
           default:

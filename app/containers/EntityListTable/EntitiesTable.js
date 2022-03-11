@@ -12,11 +12,14 @@ import styled from 'styled-components';
 import CellBodyMain from './CellBodyMain';
 import CellBodyPlain from './CellBodyPlain';
 import CellBodyActors from './CellBodyActors';
+import CellBodyCategories from './CellBodyCategories';
+import CellBodyHasResource from './CellBodyHasResource';
 import CellHeaderMain from './CellHeaderMain';
 import CellHeaderPlain from './CellHeaderPlain';
 
-const HeaderTableCell = styled((p) => <TableCell {...p} />)`
-  white-space: nowrap;
+const HeaderTableCell = styled((p) => <TableCell {...p} />)``;
+const BodyTableCell = styled((p) => <TableCell {...p} />)`
+  padding: 6px 0;
 `;
 
 export function EntitiesTable({
@@ -34,11 +37,28 @@ export function EntitiesTable({
             <TableRow>
               {headerColumns.map(
                 (col, i) => (
-                  <HeaderTableCell key={i} scope="col" border="bottom">
+                  <HeaderTableCell
+                    key={i}
+                    scope="col"
+                    border="bottom"
+                    col={col}
+                  >
                     {col.type === 'main' && (
                       <CellHeaderMain
                         column={col}
                         canEdit={canEdit}
+                      />
+                    )}
+                    {col.type === 'actors' && (
+                      <CellHeaderPlain
+                        column={col}
+                        align="start"
+                      />
+                    )}
+                    {col.type === 'targets' && (
+                      <CellHeaderPlain
+                        column={col}
+                        align="start"
                       />
                     )}
                     {col.type === 'amount' && (
@@ -47,10 +67,22 @@ export function EntitiesTable({
                         align="end"
                       />
                     )}
-                    {col.type === 'targets' && (
+                    {col.type === 'date' && (
                       <CellHeaderPlain
                         column={col}
-                        align="end"
+                        align="start"
+                      />
+                    )}
+                    {col.type === 'taxonomy' && (
+                      <CellHeaderPlain
+                        column={col}
+                        align="start"
+                      />
+                    )}
+                    {col.type === 'hasResources' && (
+                      <CellHeaderPlain
+                        column={col}
+                        align="start"
                       />
                     )}
                   </HeaderTableCell>
@@ -63,34 +95,59 @@ export function EntitiesTable({
           {entities.length > 0 && entities.map((entity, key) => (
             <TableRow key={key}>
               {columns.map((col, i) => (
-                <TableCell
+                <BodyTableCell
                   key={i}
                   scope="row"
                   border={{
                     color: 'light-5',
                     side: 'bottom',
                   }}
+                  col={col}
                 >
                   {col.type === 'main' && (
                     <CellBodyMain
-                      entity={entity[col.type]}
+                      entity={entity[col.id]}
                       canEdit={canEdit}
+                    />
+                  )}
+                  {col.type === 'actors' && (
+                    <CellBodyActors
+                      entity={entity[col.id]}
+                      align="start"
+                      onEntityClick={onEntityClick}
                     />
                   )}
                   {col.type === 'amount' && (
                     <CellBodyPlain
-                      entity={entity[col.type]}
+                      entity={entity[col.id]}
                       align="end"
+                    />
+                  )}
+                  {col.type === 'date' && (
+                    <CellBodyPlain
+                      entity={entity[col.id]}
+                      align="start"
                     />
                   )}
                   {col.type === 'targets' && (
                     <CellBodyActors
-                      entity={entity[col.type]}
-                      align="end"
+                      entity={entity[col.id]}
+                      align="start"
                       onEntityClick={onEntityClick}
                     />
                   )}
-                </TableCell>
+                  {col.type === 'taxonomy' && (
+                    <CellBodyCategories
+                      entity={entity[col.id]}
+                    />
+                  )}
+                  {col.type === 'hasResources' && (
+                    <CellBodyHasResource
+                      entity={entity[col.id]}
+                      onEntityClick={onEntityClick}
+                    />
+                  )}
+                </BodyTableCell>
               ))}
             </TableRow>
           ))}

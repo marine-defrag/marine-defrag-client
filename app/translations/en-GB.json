@@ -580,7 +580,7 @@
   "app.containers.App.entities.taxonomies.11.plural": "Commitment levels",
   "app.containers.App.entities.taxonomies.11.empty": "No commitment level assigned yet",
   "app.containers.App.entities.taxonomies.11.shortSingle": "Commitment level",
-  "app.containers.App.entities.taxonomies.11.shortPlural": "Commitment level",
+  "app.containers.App.entities.taxonomies.11.shortPlural": "Commitment levels",
   "app.containers.App.entities.taxonomies.11.description": "When concluding international agreements, states do not always show the same amount of commitment. The commitment level shows what degree of sovereignty states are willing to give up and in what way a new agreement intersects with pre-existing frameworks and instruments. \n\n _We do not take responsibility for the complete accuracy of the legal information provided._",
   "app.containers.App.entities.taxonomies.12.single": "Commitment type",
   "app.containers.App.entities.taxonomies.12.plural": "Commitment types",

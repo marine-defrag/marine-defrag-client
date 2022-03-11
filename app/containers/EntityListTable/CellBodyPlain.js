@@ -8,7 +8,7 @@ export function CellBodyPlain({
 }) {
   return (
     <Box>
-      <Text size="small" weight={500} wordBreak="keep-all" textAlign={align}>
+      <Text size="xsmall" weight={500} wordBreak="keep-all" textAlign={align}>
         {entity.value}
       </Text>
     </Box>

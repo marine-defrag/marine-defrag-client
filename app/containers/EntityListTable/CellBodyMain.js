@@ -10,6 +10,14 @@ const Select = styled(PrintHide)`
   padding-right: 6px;
 `;
 
+const Link = styled((p) => <Button as="a" plain {...p} />)`
+  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
+  line-height: 16px;
+`;
+const Label = styled((p) => <Text size="small" {...p} />)`
+  line-height: 16px;
+`;
+
 export function CellBodyMain({
   entity,
   // column,
@@ -30,25 +38,23 @@ export function CellBodyMain({
         {Object.keys(entity.values).map((key) => (
           <Box key={key}>
             {key === 'title' && (
-              <Button
-                as="a"
-                plain
+              <Link
                 href={entity.href}
                 onClick={entity.onClick}
                 title={entity.values.title}
               >
-                <Text size="small">
+                <Label size="small">
                   {entity.values[key]}
-                </Text>
-              </Button>
+                </Label>
+              </Link>
             )}
             {key !== 'title' && (
-              <Text
+              <Label
                 color={key === 'code' ? 'dark-5' : 'black'}
                 size={key === 'code' ? 'xsmall' : 'small'}
               >
                 {entity.values[key]}
-              </Text>
+              </Label>
             )}
           </Box>
         ))}
