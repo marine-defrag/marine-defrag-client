@@ -39,6 +39,7 @@ import {
   prepareHeader,
   getListHeaderLabel,
   getSelectedState,
+  getColumnMaxValues,
 } from './utils';
 import messages from './messages';
 
@@ -121,11 +122,11 @@ export function EntityListTable({
       searchAttributes,
     );
   }
-
+  const activeColumns = columns.filter((col) => !col.skip);
   // warning converting List to Array
   const entityRows = prepareEntities({
     entities: searchedEntities,
-    columns,
+    columns: activeColumns,
     config,
     connections,
     categories,
@@ -139,6 +140,10 @@ export function EntityListTable({
     taxonomies,
     resources,
   });
+  const columnMaxValues = getColumnMaxValues(
+    entityRows,
+    activeColumns,
+  );
   const errorsWithoutEntities = errors && errors.filter(
     (error, id) => !searchedEntities.find((entity) => qe(entity.get('id'), id))
   );
@@ -148,9 +153,9 @@ export function EntityListTable({
     ? entityRows
     : entityRows && entityRows.sort(
       (a, b) => {
-        const aSortValue = a[sortOption] && a[sortOption].sortValue;
+        const aSortValue = a[sortOption] && (a[sortOption].sortValue || a[sortOption].value);
         const aHasSortValue = aSortValue || isNumber(aSortValue);
-        const bSortValue = b[sortOption] && b[sortOption].sortValue;
+        const bSortValue = b[sortOption] && (b[sortOption].sortValue || b[sortOption].value);
         const bHasSortValue = bSortValue || isNumber(bSortValue);
         // always prefer values over none, regardless of order
         if (aHasSortValue && !bHasSortValue) {
@@ -216,7 +221,7 @@ export function EntityListTable({
   const entityIdsOnPage = entitiesOnPage.map((entity) => entity.id);
 
   const headerColumns = (label || !inSingleView) && prepareHeader({
-    columns,
+    columns: activeColumns,
     // config,
     sortBy: sortOption,
     sortOrder,
@@ -250,10 +255,11 @@ export function EntityListTable({
       )}
       <EntitiesTable
         entities={entitiesOnPage}
-        columns={columns}
+        columns={activeColumns}
         headerColumns={headerColumns}
         canEdit={canEdit}
         onEntityClick={onEntityClick}
+        columnMaxValues={columnMaxValues}
       />
       <ListEntitiesMain>
         {entityIdsOnPage.length === 0

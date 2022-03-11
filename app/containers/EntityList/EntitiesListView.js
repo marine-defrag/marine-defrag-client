@@ -235,9 +235,32 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                         hasSearch
                         columns={[
                           {
+                            id: 'main',
                             type: 'main',
                             sort: 'title',
                             attributes: ['code', 'title'],
+                          },
+                          {
+                            id: 'actorActions',
+                            type: 'actorActions',
+                            subject: mapSubject,
+                            actions: mapSubject === 'actors'
+                              ? 'actions'
+                              : 'targetingActions',
+                          },
+                          {
+                            id: 'actorActionsAsMember',
+                            type: 'actorActions',
+                            members: true,
+                            subject: mapSubject,
+                            actions: mapSubject === 'actors'
+                              ? 'actionsMembers'
+                              : 'targetingActionsAsMember',
+                            skip: !(memberOption
+                              && (
+                                (mapSubject === 'actors' && includeActorMembers)
+                                || (mapSubject === 'targets' && includeTargetMembers)
+                              )),
                           },
                         ]}
                         entities={entityActors.get(parseInt(viewType, 10))}

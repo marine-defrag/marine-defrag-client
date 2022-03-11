@@ -14,6 +14,7 @@ import CellBodyPlain from './CellBodyPlain';
 import CellBodyActors from './CellBodyActors';
 import CellBodyCategories from './CellBodyCategories';
 import CellBodyHasResource from './CellBodyHasResource';
+import CellBodyBarChart from './CellBodyBarChart';
 import CellHeaderMain from './CellHeaderMain';
 import CellHeaderPlain from './CellHeaderPlain';
 
@@ -28,6 +29,7 @@ export function EntitiesTable({
   columns,
   headerColumns,
   onEntityClick,
+  columnMaxValues,
 }) {
   return (
     <Box fill="horizontal">
@@ -80,6 +82,12 @@ export function EntitiesTable({
                       />
                     )}
                     {col.type === 'hasResources' && (
+                      <CellHeaderPlain
+                        column={col}
+                        align="start"
+                      />
+                    )}
+                    {col.type === 'actorActions' && (
                       <CellHeaderPlain
                         column={col}
                         align="start"
@@ -147,6 +155,14 @@ export function EntitiesTable({
                       onEntityClick={onEntityClick}
                     />
                   )}
+                  {col.type === 'actorActions' && (
+                    <CellBodyBarChart
+                      value={entity[col.id].value}
+                      maxvalue={columnMaxValues[col.id]}
+                      issecondary={col.members}
+                      subject={col.subject}
+                    />
+                  )}
                 </BodyTableCell>
               ))}
             </TableRow>
@@ -160,6 +176,7 @@ export function EntitiesTable({
 EntitiesTable.propTypes = {
   entities: PropTypes.array.isRequired,
   columns: PropTypes.array,
+  columnMaxValues: PropTypes.object,
   headerColumns: PropTypes.array,
   canEdit: PropTypes.bool,
   onEntityClick: PropTypes.func,

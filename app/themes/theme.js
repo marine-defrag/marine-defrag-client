@@ -397,6 +397,8 @@ theme.global = {
   },
   colors: {
     icon: '#000000',
+    actors: '#006076',
+    targets: '#a52752',
   },
   edgeSize: {
     hair: '1px',

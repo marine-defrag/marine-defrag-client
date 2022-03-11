@@ -16,6 +16,7 @@ export const prepareHeader = ({
   intl,
 }) => columns.map(
   (col) => {
+    let label;
     switch (col.type) {
       case 'main':
         return ({
@@ -77,6 +78,19 @@ export const prepareHeader = ({
           title: appMessages.entities[`resources_${col.resourcetype_id}`]
             ? intl.formatMessage(appMessages.entities[`resources_${col.resourcetype_id}`].singleShort)
             : 'Resource',
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
+      case 'actorActions':
+        if (col.subject === 'actors') {
+          label = col.members ? 'Activities as member' : 'Activities';
+        } else {
+          label = col.members ? 'Targeted as member' : 'Targeted by';
+        }
+        return ({
+          ...col,
+          title: label,
           sortActive: sortBy === col.id,
           sortOrder: sortOrder || 'asc',
           onSort,
@@ -253,6 +267,14 @@ export const prepareEntities = ({
                 sortValue: relatedEntities ? 1 : -1,
               },
             };
+          case 'actorActions':
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: entity.get(col.actions) && entity.get(col.actions).size,
+              },
+            };
           default:
             return memoEntity;
         }
@@ -315,3 +337,24 @@ export const getSelectedState = (
   }
   return CHECKBOX_STATES.INDETERMINATE;
 };
+
+export const getColumnMaxValues = (entities, columns) => entities.reduce(
+  (maxValueMemo, entity) => columns.reduce(
+    (maxValueMemo2, column) => {
+      if (column.type === 'actorActions') {
+        const val = entity[column.id].value;
+        return val
+          ? {
+            ...maxValueMemo2,
+            [column.id]: maxValueMemo2[column.id]
+              ? Math.max(maxValueMemo2[column.id], val)
+              : val,
+          }
+          : maxValueMemo2;
+      }
+      return maxValueMemo2;
+    },
+    maxValueMemo,
+  ),
+  {},
+);
