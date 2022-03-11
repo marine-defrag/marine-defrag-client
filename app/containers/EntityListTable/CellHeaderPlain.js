@@ -25,7 +25,7 @@ export function CellHeaderPlain({ column, align = 'start' }) {
         </Text>
       </Box>
       {column.onSort && (
-        <Box pad={{ horizontal: 'small' }}>
+        <Box pad={{ left: 'xxsmall' }}>
           <SortButton
             onClick={() => {
               if (column.sortActive) {

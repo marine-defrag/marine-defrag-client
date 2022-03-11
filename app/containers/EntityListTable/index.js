@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import isNumber from 'utils/is-number';
 
-import { Map, List, fromJS } from 'immutable';
+import {
+  OrderedMap, Map, List, fromJS,
+} from 'immutable';
 
 import {
   selectSortByQuery,
@@ -13,6 +15,7 @@ import {
   selectPageItemsQuery,
   selectPageNoQuery,
   selectSearchQuery,
+  selectActortypes,
 } from 'containers/App/selectors';
 import { updateQuery } from 'containers/EntityList/actions';
 import EntityListSearch from 'components/EntityListSearch';
@@ -94,6 +97,7 @@ export function EntityListTable({
   hasSearch,
   inSingleView,
   label,
+  actortypes,
 }) {
   const [showAllConnections, setShowAllConnections] = useState(false);
 
@@ -127,6 +131,7 @@ export function EntityListTable({
     entityPath,
     onEntityClick,
     onEntitySelect,
+    actortypes,
   });
   const errorsWithoutEntities = errors && errors.filter(
     (error, id) => !searchedEntities.find((entity) => qe(entity.get('id'), id))
@@ -149,7 +154,6 @@ export function EntityListTable({
         } else if (bHasSortValue && !aHasSortValue) {
           result = -1;
         }
-        console.log(aSortValue, bSortValue, result);
         return sortOrder === 'desc' ? result * -1 : result;
       }
     );
@@ -227,6 +231,7 @@ export function EntityListTable({
         columns={columns}
         headerColumns={headerColumns}
         canEdit={canEdit}
+        onEntityClick={onEntityClick}
       />
       <ListEntitiesMain>
         {entityIdsOnPage.length === 0
@@ -313,6 +318,7 @@ export function EntityListTable({
 EntityListTable.propTypes = {
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
+  actortypes: PropTypes.instanceOf(OrderedMap),
   connections: PropTypes.instanceOf(Map),
   entityIdsSelected: PropTypes.instanceOf(List),
   // locationQuery: PropTypes.instanceOf(Map),
@@ -353,6 +359,7 @@ const mapStateToProps = (state) => ({
   pageItems: selectPageItemsQuery(state),
   pageNo: selectPageNoQuery(state),
   searchQuery: selectSearchQuery(state),
+  actortypes: selectActortypes(state),
 });
 function mapDispatchToProps(dispatch) {
   return {

@@ -633,11 +633,11 @@ export const ACTIONTYPES_CONFIG = {
         attributes: ['code', 'title'],
       },
       {
-        type: 'targetsByType', // one row per type,
+        type: 'targets', // one row per type,
         sort: 'count',
       },
       {
-        type: 'actorsByType', // one row per type,
+        type: 'actors', // one row per type,
         groupByType: true,
         sort: 'count',
       },
@@ -665,7 +665,7 @@ export const ACTIONTYPES_CONFIG = {
         attributes: ['code', 'title'],
       },
       {
-        type: 'actorsByType', // one row per type,
+        type: 'actors', // one row per type,
         sort: 'count',
       },
     ],
@@ -706,11 +706,11 @@ export const ACTIONTYPES_CONFIG = {
         unit: 'US$',
       },
       {
-        type: 'targetsByType', // one row per type,
+        type: 'targets', // one row per type,
         sort: 'count',
       },
       {
-        type: 'actorsByType', // one row per type,
+        type: 'actors', // one row per type,
         sort: 'count',
       },
       {
@@ -730,11 +730,11 @@ export const ACTIONTYPES_CONFIG = {
         attributes: ['code', 'title'],
       },
       {
-        type: 'targetsByType', // one row per type,
+        type: 'targets', // one row per type,
         sort: 'count',
       },
       {
-        type: 'actorsByType', // one row per type,
+        type: 'actors', // one row per type,
         sort: 'count',
       },
       {

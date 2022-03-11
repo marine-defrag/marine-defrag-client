@@ -7,11 +7,7 @@ import styled from 'styled-components';
 const Select = styled(PrintHide)`
   width: 20px;
   text-align: center;
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
-    padding-right: ${(props) => props.theme.sizes && props.theme.sizes.mainListItem.paddingHorizontal}px;
-    padding-left: ${(props) => props.theme.sizes && props.theme.sizes.mainListItem.paddingHorizontal}px;
-    width: 40px;
-  }
+  padding-right: 6px;
 `;
 
 export function CellBodyMain({
@@ -41,7 +37,7 @@ export function CellBodyMain({
                 onClick={entity.onClick}
                 title={entity.values.title}
               >
-                <Text size="medium">
+                <Text size="small">
                   {entity.values[key]}
                 </Text>
               </Button>
@@ -49,7 +45,7 @@ export function CellBodyMain({
             {key !== 'title' && (
               <Text
                 color={key === 'code' ? 'dark-5' : 'black'}
-                size={key === 'code' ? 'xsmall' : 'medium'}
+                size={key === 'code' ? 'xsmall' : 'small'}
               >
                 {entity.values[key]}
               </Text>

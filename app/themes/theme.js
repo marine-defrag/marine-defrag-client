@@ -442,13 +442,13 @@ theme.icon = {
 theme.table = {
   header: {
     pad: {
-      horizontal: 0,
+      horizontal: 'xsmall',
       vertical: 'xsmall',
     },
   },
   body: {
     pad: {
-      horizontal: 0,
+      horizontal: 'xsmall',
       vertical: 'xsmall',
     },
   },

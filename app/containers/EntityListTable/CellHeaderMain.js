@@ -14,11 +14,7 @@ const Checkbox = styled(IndeterminateCheckbox)`
 const Select = styled(PrintHide)`
   width: 20px;
   text-align: center;
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
-    padding-right: ${(props) => props.theme.sizes && props.theme.sizes.mainListItem.paddingHorizontal}px;
-    padding-left: ${(props) => props.theme.sizes && props.theme.sizes.mainListItem.paddingHorizontal}px;
-    width: 40px;
-  }
+  padding-right: 6px;
 `;
 
 const SortButton = styled(ButtonFlatIconOnly)`

@@ -11,6 +11,7 @@ import {
 import styled from 'styled-components';
 import CellBodyMain from './CellBodyMain';
 import CellBodyPlain from './CellBodyPlain';
+import CellBodyActors from './CellBodyActors';
 import CellHeaderMain from './CellHeaderMain';
 import CellHeaderPlain from './CellHeaderPlain';
 
@@ -23,6 +24,7 @@ export function EntitiesTable({
   canEdit,
   columns,
   headerColumns,
+  onEntityClick,
 }) {
   return (
     <Box fill="horizontal">
@@ -40,6 +42,12 @@ export function EntitiesTable({
                       />
                     )}
                     {col.type === 'amount' && (
+                      <CellHeaderPlain
+                        column={col}
+                        align="end"
+                      />
+                    )}
+                    {col.type === 'targets' && (
                       <CellHeaderPlain
                         column={col}
                         align="end"
@@ -75,6 +83,13 @@ export function EntitiesTable({
                       align="end"
                     />
                   )}
+                  {col.type === 'targets' && (
+                    <CellBodyActors
+                      entity={entity[col.type]}
+                      align="end"
+                      onEntityClick={onEntityClick}
+                    />
+                  )}
                 </TableCell>
               ))}
             </TableRow>
@@ -90,6 +105,7 @@ EntitiesTable.propTypes = {
   columns: PropTypes.array,
   headerColumns: PropTypes.array,
   canEdit: PropTypes.bool,
+  onEntityClick: PropTypes.func,
 };
 
 export default EntitiesTable;
