@@ -182,16 +182,20 @@ export function EntitiesMap({
           const country = entities.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
           if (country) {
             const countActions = country.get('actions')
-              ? country.get('actions').size
+              ? country.get('actions').toSet().size
               : 0;
             const countActionsMembers = country.get('actionsAsMembers')
-              ? country.get('actionsAsMembers').filter((actionId) => !country.get('actions').includes(actionId)).size
+              ? country.get('actionsAsMembers').filter(
+                (actionId) => !country.get('actions').includes(actionId)
+              ).toSet().size
               : 0;
             const countTargetingActions = country.get('targetingActions')
-              ? country.get('targetingActions').size
+              ? country.get('targetingActions').toSet().size
               : 0;
             const countTargetingActionsMembers = country.get('targetingActionsAsMember')
-              ? country.get('targetingActionsAsMember').filter((actionId) => !country.get('targetingActions').includes(actionId)).size
+              ? country.get('targetingActionsAsMember').filter(
+                (actionId) => !country.get('targetingActions').includes(actionId)
+              ).toSet().size
               : 0;
             const actionsTotal = countActions + countActionsMembers;
             const targetingActionsTotal = countTargetingActions + countTargetingActionsMembers;

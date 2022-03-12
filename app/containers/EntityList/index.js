@@ -215,6 +215,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       includeActorMembers,
       includeTargetMembers,
       columns,
+      headerColumnsUtility,
     } = this.props;
 
     // detect print to avoid expensive rendering
@@ -352,6 +353,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 
             config={config}
             columns={columns}
+            headerColumnsUtility={headerColumnsUtility}
             header={this.props.header}
             entityTitle={this.props.entityTitle}
 
@@ -515,6 +517,7 @@ EntityList.propTypes = {
   connectedTaxonomies: PropTypes.instanceOf(Map),
   config: PropTypes.object,
   columns: PropTypes.array,
+  headerColumnsUtility: PropTypes.array,
   dataReady: PropTypes.bool,
   header: PropTypes.object,
   locationQuery: PropTypes.instanceOf(Map),

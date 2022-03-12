@@ -20,7 +20,7 @@ export function CellHeaderPlain({ column, align = 'start' }) {
     (option) => column.sortOrder === option.value
   );
   return (
-    <Box direction="row" align="center" justify="start">
+    <Box direction="row" align="center" justify={align}>
       <Box>
         <Text weight={500} size="small" textAlign={align} wordBreak="keep-all">
           {column.title}

@@ -9,7 +9,7 @@ const Value = styled.div`
   text-align: right;
 `;
 const BarWrapper = styled.div`
-  width: 100px !important;
+  width: 100%;
   height: 20px;
   display: block;
   position: relative;

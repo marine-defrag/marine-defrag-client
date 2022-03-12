@@ -72,6 +72,7 @@ export function EntityListTable({
   entityIdsSelected,
   config,
   columns,
+  headerColumnsUtility,
   onEntityClick,
   canEdit,
   onEntitySelect,
@@ -103,6 +104,9 @@ export function EntityListTable({
   actortypes,
   taxonomies,
   resources,
+  memberOption,
+  subjectOptions,
+  includeMembers,
 }) {
   const [showAllConnections, setShowAllConnections] = useState(false);
 
@@ -139,6 +143,7 @@ export function EntityListTable({
     actortypes,
     taxonomies,
     resources,
+    includeMembers,
   });
   const columnMaxValues = getColumnMaxValues(
     entityRows,
@@ -260,6 +265,9 @@ export function EntityListTable({
         canEdit={canEdit}
         onEntityClick={onEntityClick}
         columnMaxValues={columnMaxValues}
+        headerColumnsUtility={headerColumnsUtility}
+        memberOption={memberOption}
+        subjectOptions={subjectOptions}
       />
       <ListEntitiesMain>
         {entityIdsOnPage.length === 0
@@ -357,6 +365,7 @@ EntityListTable.propTypes = {
   entityTitle: PropTypes.object,
   config: PropTypes.object,
   columns: PropTypes.array,
+  headerColumnsUtility: PropTypes.array,
   canEdit: PropTypes.bool,
   onPageSelect: PropTypes.func,
   onPageItemsSelect: PropTypes.func,
@@ -381,6 +390,9 @@ EntityListTable.propTypes = {
   onSearch: PropTypes.func,
   hasSearch: PropTypes.bool,
   label: PropTypes.string,
+  memberOption: PropTypes.node,
+  subjectOptions: PropTypes.node,
+  includeMembers: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({

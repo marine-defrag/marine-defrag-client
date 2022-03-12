@@ -149,13 +149,6 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
           onSelectType={onSelectType}
           typeId={typeId}
           showCode={checkActionAttribute(typeId, 'code', isManager)}
-          columns={[
-            {
-              type: 'main',
-              sort: 'title',
-              attributes: ['code', 'title'],
-            },
-          ]}
         />
       </div>
     );

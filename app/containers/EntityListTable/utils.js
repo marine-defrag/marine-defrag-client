@@ -62,6 +62,16 @@ export const prepareHeader = ({
           sortOrder: sortOrder || 'asc',
           onSort,
         });
+      case 'actiontype':
+        return ({
+          ...col,
+          title: appMessages.entities[`actions_${col.actiontype_id}`]
+            ? intl.formatMessage(appMessages.entities[`actions_${col.actiontype_id}`].pluralShort)
+            : 'Actions',
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
       case 'taxonomy':
         return ({
           ...col,
@@ -149,6 +159,7 @@ export const prepareEntities = ({
   taxonomies,
   resources,
   intl,
+  includeMembers,
 }) => entities.reduce(
   (memoEntities, entity) => {
     const id = entity.get('id');
@@ -156,6 +167,7 @@ export const prepareEntities = ({
       (memoEntity, col) => {
         const path = (config && config.clientPath) || entityPath;
         let relatedEntities;
+        let relatedEntityIds;
         switch (col.type) {
           case 'main':
             return {
@@ -275,6 +287,23 @@ export const prepareEntities = ({
                 value: entity.get(col.actions) && entity.get(col.actions).size,
               },
             };
+          case 'actiontype':
+            relatedEntityIds = entity.getIn([col.actions, parseInt(col.actiontype_id, 10)]) || Map();
+            if (includeMembers && entity.getIn([col.actionsMembers, parseInt(col.actiontype_id, 10)])) {
+              relatedEntityIds = relatedEntityIds
+                .merge(entity.getIn([col.actionsMembers, parseInt(col.actiontype_id, 10)]))
+                .toList()
+                .toSet();
+            }
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: relatedEntityIds && relatedEntityIds.size > 0
+                  ? relatedEntityIds.size
+                  : null,
+              },
+            };
           default:
             return memoEntity;
         }
@@ -341,7 +370,7 @@ export const getSelectedState = (
 export const getColumnMaxValues = (entities, columns) => entities.reduce(
   (maxValueMemo, entity) => columns.reduce(
     (maxValueMemo2, column) => {
-      if (column.type === 'actorActions') {
+      if (column.type === 'actorActions' || column.type === 'actiontype') {
         const val = entity[column.id].value;
         return val
           ? {
