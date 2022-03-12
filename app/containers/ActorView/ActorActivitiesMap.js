@@ -406,11 +406,6 @@ export function ActorActivitiesMap({
   );
   return (
     <Styled hasHeader noOverflow>
-      {mapTitle && (
-        <MapTitle>
-          <Text weight={600}>{mapTitle}</Text>
-        </MapTitle>
-      )}
       <MapWrapper>
         <MapContainer
           countryData={countryData}
@@ -425,6 +420,11 @@ export function ActorActivitiesMap({
           projection="gall-peters"
         />
       </MapWrapper>
+      {mapTitle && (
+        <MapTitle>
+          <Text weight={600}>{mapTitle}</Text>
+        </MapTitle>
+      )}
       {maxValue > 1 && (
         <MapKeyWrapper>
           <Text size="small">{keyTitle}</Text>

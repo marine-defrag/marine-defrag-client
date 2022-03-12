@@ -485,7 +485,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                     connections={connections}
                     connectedTaxonomies={connectedTaxonomies}
                     entityIdsSelected={entityIdsSelected}
-
+                    label="label"
                     config={config}
                     entityTitle={entityTitle}
 

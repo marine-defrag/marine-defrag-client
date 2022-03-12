@@ -40,7 +40,7 @@ import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOpt
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
 `;
-const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
+const MapTitle = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)``;
 const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)``;
 const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
@@ -156,11 +156,6 @@ export function ActionMap({
 
   return (
     <Styled hasHeader noOverflow>
-      {mapTitle && (
-        <MapTitle>
-          <Text weight={600}>{mapTitle}</Text>
-        </MapTitle>
-      )}
       <MapWrapper>
         <MapContainer
           countryData={countryData}
@@ -175,11 +170,13 @@ export function ActionMap({
           projection="gall-peters"
         />
       </MapWrapper>
-      {memberOption && (
+      {(memberOption || mapTitle) && (
         <MapOptions>
-          <Box>
-            <Text weight={600}>{mapTitle}</Text>
-          </Box>
+          {mapTitle && (
+            <MapTitle>
+              <Text weight={600}>{mapTitle}</Text>
+            </MapTitle>
+          )}
           {memberOption && (
             <MapMemberOption option={memberOption} />
           )}

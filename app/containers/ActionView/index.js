@@ -521,7 +521,6 @@ export function ActionView(props) {
                             actions: parents.toList(),
                             onEntityClick,
                             typeid: typeId,
-                            skipLabel: true,
                           }),
                         ],
                       }}
@@ -537,7 +536,6 @@ export function ActionView(props) {
                             actions: children.toList(),
                             onEntityClick,
                             typeid: typeId,
-                            skipLabel: true,
                           }),
                         ],
                       }}

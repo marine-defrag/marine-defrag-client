@@ -261,6 +261,20 @@ export function EntitiesTable({
                         onEntityClick={onEntityClick}
                       />
                     )}
+                    {col.type === 'members' && (
+                      <CellBodyActors
+                        entity={entity[col.id]}
+                        align="start"
+                        onEntityClick={onEntityClick}
+                      />
+                    )}
+                    {col.type === 'associations' && (
+                      <CellBodyActors
+                        entity={entity[col.id]}
+                        align="start"
+                        onEntityClick={onEntityClick}
+                      />
+                    )}
                     {col.type === 'taxonomy' && (
                       <CellBodyCategories
                         entity={entity[col.id]}

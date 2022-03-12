@@ -108,7 +108,6 @@ export function EntityListTable({
   subjectOptions,
   includeMembers,
 }) {
-  console.log(connections);
   if (!columns) return null;
   const [showAllConnections, setShowAllConnections] = useState(false);
   const [localSort, setLocalSort] = useState({

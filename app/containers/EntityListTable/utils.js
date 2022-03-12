@@ -262,20 +262,18 @@ export const prepareEntities = ({
               },
             };
           case 'members':
-            // relatedEntities = getRelatedEntities(entity.get('actors'), connections.get('actors'), col);
-            console.log(entity && entity.toJS());
-            console.log(connections && connections.toJS());
+            relatedEntities = entity.get('membersByType') && getRelatedEntities(entity.get('membersByType').flatten(), connections.get('actors'), col);
             return {
               ...memoEntity,
-              // [col.id]: {
-              //   ...col,
-              //   value: getRelatedValue(relatedEntities, 'actors'),
-              //   single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
-              //   tooltip: relatedEntities && relatedEntities.size > 1
-              //     && relatedEntities.groupBy((t) => t.getIn(['attributes', 'actortype_id'])),
-              //   multiple: relatedEntities && relatedEntities.size > 1,
-              //   sortValue: getRelatedSortValue(relatedEntities),
-              // },
+              [col.id]: {
+                ...col,
+                value: getRelatedValue(relatedEntities, 'members'),
+                single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
+                tooltip: relatedEntities && relatedEntities.size > 1
+                  && relatedEntities.groupBy((t) => t.getIn(['attributes', 'actortype_id'])),
+                multiple: relatedEntities && relatedEntities.size > 1,
+                sortValue: getRelatedSortValue(relatedEntities),
+              },
             };
           case 'associations':
             relatedEntities = getRelatedEntities(
