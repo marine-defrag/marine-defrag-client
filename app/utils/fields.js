@@ -1,6 +1,6 @@
 import { truncateText } from 'utils/string';
 import { sortEntities, sortCategories } from 'utils/sort';
-import { filterTaxonomies } from 'utils/entities';
+// import { filterTaxonomies } from 'utils/entities';
 import isNumber from 'utils/is-number';
 
 import {
@@ -289,6 +289,7 @@ const getConnectionField = ({
   onEntityClick,
   skipLabel,
   showValueForAction,
+  columns,
 }) => ({
   type: 'connections',
   values: entities.toList(),
@@ -302,6 +303,12 @@ const getConnectionField = ({
   connectionOptions,
   skipLabel,
   showValueForAction,
+  columns: columns || [{
+    id: 'main',
+    type: 'main',
+    sort: 'title',
+    attributes: ['code', 'title'],
+  }],
 });
 
 export const getActorConnectionField = ({
@@ -313,6 +320,7 @@ export const getActorConnectionField = ({
   skipLabel,
   connectionOptions,
   showValueForAction,
+  columns,
 }) => getConnectionField({
   entities: sortEntities(actors, 'asc', 'id'),
   taxonomies,
@@ -355,6 +363,7 @@ export const getActorConnectionField = ({
   onEntityClick,
   skipLabel,
   showValueForAction,
+  columns,
 });
 
 export const getActionConnectionField = ({
@@ -365,6 +374,7 @@ export const getActionConnectionField = ({
   typeid, // actortype id
   skipLabel,
   connectionOptions,
+  columns,
 }) => getConnectionField({
   entities: sortEntities(actions, 'asc', 'id'),
   taxonomies,
@@ -397,6 +407,7 @@ export const getActionConnectionField = ({
   entityPath: ROUTES.ACTION,
   onEntityClick,
   skipLabel,
+  columns,
 });
 
 export const getResourceConnectionField = ({
@@ -406,6 +417,7 @@ export const getResourceConnectionField = ({
   typeid, // actortype id
   skipLabel,
   connectionOptions,
+  columns,
 }) => getConnectionField({
   entities: sortEntities(resources, 'asc', 'id'),
   connections,
@@ -422,63 +434,64 @@ export const getResourceConnectionField = ({
   entityPath: ROUTES.RESOURCE,
   onEntityClick,
   skipLabel,
+  columns,
 });
 
-const getConnectionGroupsField = ({
-  entityGroups,
-  groupedBy,
-  taxonomies,
-  connections,
-  connectionOptions,
-  entityType,
-  entityIcon,
-  entityPath,
-  onEntityClick,
-}) => ({
-  type: 'connectionGroups',
-  groups: entityGroups.toList(),
-  groupedBy,
-  taxonomies,
-  connections,
-  entityType,
-  entityIcon,
-  entityPath: entityPath || entityType,
-  onEntityClick,
-  showEmpty: appMessages.entities[entityType].empty,
-  connectionOptions: connectionOptions.map((option) => ({
-    label: appMessages.entities[option].plural,
-    path: option,
-    // TODO check path
-    clientPath: option === 'actions' ? 'actions' : option,
-  })),
-});
-export const getActorConnectionGroupsField = (
-  entityGroups,
-  groupedBy,
-  taxonomies,
-  connections,
-  onEntityClick,
-  actortypeid, // actortype id
-) => getConnectionGroupsField({
-  entityGroups,
-  groupedBy,
-  taxonomies: filterTaxonomies(taxonomies, 'tags_actors'),
-  connections,
-  connectionOptions: ['actions'],
-  entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
-  entityPath: ROUTES.ACTOR,
-  onEntityClick,
-});
-export const getActionConnectionGroupsField = (entityGroups, groupedBy, taxonomies, connections, onEntityClick) => getConnectionGroupsField({
-  entityGroups,
-  groupedBy,
-  taxonomies: filterTaxonomies(taxonomies, 'tags_actions'),
-  connections,
-  connectionOptions: ['actors'],
-  entityType: 'actions',
-  entityPath: ROUTES.ACTION,
-  onEntityClick,
-});
+// const getConnectionGroupsField = ({
+//   entityGroups,
+//   groupedBy,
+//   taxonomies,
+//   connections,
+//   connectionOptions,
+//   entityType,
+//   entityIcon,
+//   entityPath,
+//   onEntityClick,
+// }) => ({
+//   type: 'connectionGroups',
+//   groups: entityGroups.toList(),
+//   groupedBy,
+//   taxonomies,
+//   connections,
+//   entityType,
+//   entityIcon,
+//   entityPath: entityPath || entityType,
+//   onEntityClick,
+//   showEmpty: appMessages.entities[entityType].empty,
+//   connectionOptions: connectionOptions.map((option) => ({
+//     label: appMessages.entities[option].plural,
+//     path: option,
+//     // TODO check path
+//     clientPath: option === 'actions' ? 'actions' : option,
+//   })),
+// });
+// export const getActorConnectionGroupsField = (
+//   entityGroups,
+//   groupedBy,
+//   taxonomies,
+//   connections,
+//   onEntityClick,
+//   actortypeid, // actortype id
+// ) => getConnectionGroupsField({
+//   entityGroups,
+//   groupedBy,
+//   taxonomies: filterTaxonomies(taxonomies, 'tags_actors'),
+//   connections,
+//   connectionOptions: ['actions'],
+//   entityType: actortypeid ? `actors_${actortypeid}` : 'actors',
+//   entityPath: ROUTES.ACTOR,
+//   onEntityClick,
+// });
+// export const getActionConnectionGroupsField = (entityGroups, groupedBy, taxonomies, connections, onEntityClick) => getConnectionGroupsField({
+//   entityGroups,
+//   groupedBy,
+//   taxonomies: filterTaxonomies(taxonomies, 'tags_actions'),
+//   connections,
+//   connectionOptions: ['actors'],
+//   entityType: 'actions',
+//   entityPath: ROUTES.ACTION,
+//   onEntityClick,
+// });
 
 export const getManagerField = (entity, messageLabel, messageEmpty) => ({
   label: messageLabel,

@@ -108,7 +108,19 @@ export function EntityListTable({
   subjectOptions,
   includeMembers,
 }) {
+  console.log(connections);
+  if (!columns) return null;
   const [showAllConnections, setShowAllConnections] = useState(false);
+  const [localSort, setLocalSort] = useState({
+    sort: 'main',
+    order: 'asc',
+  });
+
+  const cleanSortOrder = inSingleView ? localSort.order : sortOrder;
+  const cleanSortBy = inSingleView ? localSort.sort : (sortBy || 'main');
+  const cleanOnSort = inSingleView
+    ? (sort, order) => setLocalSort({ sort: sort || cleanSortBy, order: order || cleanSortOrder })
+    : onSort;
 
   // filter entitities by keyword
   const searchAttributes = (
@@ -153,47 +165,44 @@ export function EntityListTable({
     (error, id) => !searchedEntities.find((entity) => qe(entity.get('id'), id))
   );
   // sort entities
-  const sortOption = sortBy || 'main';
-  const sortedEntities = inSingleView
-    ? entityRows
-    : entityRows && entityRows.sort(
-      (a, b) => {
-        const aSortValue = a[sortOption] && (a[sortOption].sortValue || a[sortOption].value);
-        const aHasSortValue = aSortValue || isNumber(aSortValue);
-        const bSortValue = b[sortOption] && (b[sortOption].sortValue || b[sortOption].value);
-        const bHasSortValue = bSortValue || isNumber(bSortValue);
-        // always prefer values over none, regardless of order
-        if (aHasSortValue && !bHasSortValue) {
-          return -1;
-        }
-        if (bHasSortValue && !aHasSortValue) {
-          return 1;
-        }
-        let result;
-        if (aHasSortValue && bHasSortValue) {
-          if (isNumber(aSortValue) && !isNumber(bSortValue)) {
-            result = -1;
-          } else if (isNumber(bSortValue) && !isNumber(aSortValue)) {
-            result = 1;
-          } else if (
-            isNumber(bSortValue)
-            && isNumber(aSortValue)
-            && a[sortOption].type !== 'amount'
-            && a[sortOption].type !== 'amount'
-          ) {
-            result = aSortValue < bSortValue ? 1 : -1;
-          } else {
-            result = aSortValue > bSortValue ? 1 : -1;
-          }
-        }
-        return sortOrder === 'desc' ? result * -1 : result;
+  const sortedEntities = entityRows && entityRows.sort(
+    (a, b) => {
+      const aSortValue = a[cleanSortBy] && (a[cleanSortBy].sortValue || a[cleanSortBy].value);
+      const aHasSortValue = aSortValue || isNumber(aSortValue);
+      const bSortValue = b[cleanSortBy] && (b[cleanSortBy].sortValue || b[cleanSortBy].value);
+      const bHasSortValue = bSortValue || isNumber(bSortValue);
+      // always prefer values over none, regardless of order
+      if (aHasSortValue && !bHasSortValue) {
+        return -1;
       }
-    );
+      if (bHasSortValue && !aHasSortValue) {
+        return 1;
+      }
+      let result;
+      if (aHasSortValue && bHasSortValue) {
+        if (isNumber(aSortValue) && !isNumber(bSortValue)) {
+          result = -1;
+        } else if (isNumber(bSortValue) && !isNumber(aSortValue)) {
+          result = 1;
+        } else if (
+          isNumber(bSortValue)
+          && isNumber(aSortValue)
+          && a[cleanSortBy].type !== 'amount'
+          && a[cleanSortBy].type !== 'amount'
+        ) {
+          result = aSortValue < bSortValue ? 1 : -1;
+        } else {
+          result = aSortValue > bSortValue ? 1 : -1;
+        }
+      }
+      return cleanSortOrder === 'desc' ? result * -1 : result;
+    }
+  );
 
   let pageSize = PAGE_SIZE_MAX;
   let entitiesOnPage = sortedEntities;
   let pager;
-  const isSortedOrPaged = !!pageNo || !!pageItems || !!sortBy || !!sortOrder;
+  const isSortedOrPaged = !!pageNo || !!pageItems || !!cleanSortBy || !!cleanSortOrder;
   if (paginate) {
     if (pageItems) {
       if (pageItems === 'all') {
@@ -224,13 +233,12 @@ export function EntityListTable({
       : (sortedEntities.slice(0, CONNECTIONMAX));
   }
   const entityIdsOnPage = entitiesOnPage.map((entity) => entity.id);
-
-  const headerColumns = (label || !inSingleView) && prepareHeader({
+  const headerColumns = prepareHeader({
     columns: activeColumns,
     // config,
-    sortBy: sortOption,
-    sortOrder,
-    onSort: !inSingleView && onSort,
+    sortBy: cleanSortBy,
+    sortOrder: cleanSortOrder,
+    onSort: cleanOnSort,
     onSelectAll: (checked) => canEdit
       && onEntitySelectAll(checked ? entityIdsOnPage : []),
     selectedState: canEdit && getSelectedState(
@@ -261,7 +269,7 @@ export function EntityListTable({
       <EntitiesTable
         entities={entitiesOnPage}
         columns={activeColumns}
-        headerColumns={headerColumns}
+        headerColumns={headerColumns || []}
         canEdit={canEdit}
         onEntityClick={onEntityClick}
         columnMaxValues={columnMaxValues}

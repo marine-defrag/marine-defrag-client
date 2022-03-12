@@ -581,6 +581,13 @@ export const ACTORTYPES_CONFIG = {
   2: { // ORG
     id: '2',
     order: 3,
+    columns: [
+      {
+        id: 'taxonomy',
+        type: 'taxonomy',
+        taxonomy_id: 7, // sector
+      },
+    ],
   },
   3: { // CLASS
     id: '3',
@@ -589,6 +596,11 @@ export const ACTORTYPES_CONFIG = {
   4: { // REG
     id: '4',
     order: 4,
+    columns: [{
+      id: 'taxonomy',
+      type: 'taxonomy',
+      taxonomy_id: 13, // region type
+    }],
   },
   5: { // GROUP
     id: '5',

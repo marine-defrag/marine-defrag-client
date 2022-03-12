@@ -39,11 +39,7 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
             connections={field.connections}
             onEntityClick={field.onEntityClick}
             showValueForAction={field.showValueForAction}
-            columns={[{
-              type: 'main',
-              sort: 'title',
-              attributes: ['code', 'title'],
-            }]}
+            columns={field.columns}
             moreLess
             inSingleView
           />

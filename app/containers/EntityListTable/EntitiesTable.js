@@ -37,18 +37,18 @@ const TableCellHeader = styled.th`
   padding-right: 6px;
   padding-top: 6px;
   padding-bottom: 6px;
-  width: ${({ col, count }) => {
+  width: ${({ col, count, colSpan = 1 }) => {
     if (count === 1) {
       return 100;
     }
     if (count === 2) {
       return col.type === 'main' ? 70 : 30;
     }
-    if (count > 6) {
-      return col.type === 'main' ? 40 : 60 / (count - 1) * col.span;
+    if (count > 4) {
+      return col.type === 'main' ? 40 : (60 / (count - 1)) * colSpan;
     }
     if (count > 2) {
-      return col.type === 'main' ? 50 : 50 / (count - 1) * col.span;
+      return col.type === 'main' ? 50 : (50 / (count - 1)) * colSpan;
     }
     return 0;
   }}%;
@@ -75,7 +75,7 @@ const TableCellBody = styled.td`
     if (count === 2) {
       return col.type === 'main' ? 70 : 30;
     }
-    if (count > 6) {
+    if (count > 4) {
       return col.type === 'main' ? 40 : 60 / (count - 1);
     }
     if (count > 2) {
@@ -194,6 +194,18 @@ export function EntitiesTable({
                         />
                       )}
                       {col.type === 'actiontype' && (
+                        <CellHeaderPlain
+                          column={col}
+                          align="start"
+                        />
+                      )}
+                      {col.type === 'associations' && (
+                        <CellHeaderPlain
+                          column={col}
+                          align="start"
+                        />
+                      )}
+                      {col.type === 'members' && (
                         <CellHeaderPlain
                           column={col}
                           align="start"

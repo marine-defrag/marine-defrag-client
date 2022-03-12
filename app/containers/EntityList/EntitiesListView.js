@@ -16,6 +16,7 @@ import {
   ACTIONTYPE_ACTORTYPES,
   ACTIONTYPE_TARGETTYPES,
   ACTIONTYPES_CONFIG,
+  ACTORTYPES_CONFIG,
   FF_ACTIONTYPE,
 } from 'themes/config';
 import { CONTENT_LIST } from 'containers/App/constants';
@@ -214,7 +215,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       isTarget = type.getIn(['attributes', 'is_target']);
       isActive = type.getIn(['attributes', 'is_active']);
       if (isTarget && isActive) {
-        mapSubjectClean = mapSubject;
+        mapSubjectClean = mapSubject || 'actors';
       } else if (isTarget && !isActive) {
         mapSubjectClean = 'targets';
       } else if (!isTarget && isActive) {
@@ -227,6 +228,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
         includeActorMembers,
         includeTargetMembers,
       );
+      const typeColumns = ACTORTYPES_CONFIG[typeId].columns || [];
       columns = [
         {
           id: 'main',
@@ -234,13 +236,15 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
           sort: 'title',
           attributes: ['code', 'title'],
         },
+        ...typeColumns,
         ...actionColumns,
       ];
       headerColumnsUtility = [
         {
-          type: 'spacer',
+          type: 'main',
           content: '',
         },
+        ...typeColumns.map(() => ({ type: 'spacer', content: '' })),
         {
           type: 'options',
           span: actionColumns.length,

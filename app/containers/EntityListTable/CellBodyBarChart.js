@@ -16,6 +16,7 @@ const BarWrapper = styled.div`
 `;
 const Bar = styled.div`
   width: ${({ value, maxvalue }) => value / maxvalue * 100}%;
+  min-width: 1px;
   height: 20px;
   background-color: ${({ theme, subject }) => theme.global.colors[subject] || theme.global.colors.primary};
   opacity: ${({ issecondary }) => issecondary ? 0.6 : 1};

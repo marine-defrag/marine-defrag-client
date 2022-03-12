@@ -43,7 +43,9 @@ import {
 } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, ACTIONTYPES, FF_ACTIONTYPE } from 'themes/config';
+import {
+  ROUTES, ACTIONTYPES, FF_ACTIONTYPE, ACTORTYPES_CONFIG, ACTORTYPES,
+} from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -89,6 +91,50 @@ const SubjectButton = styled((p) => <Button plain {...p} />)`
   border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
   background: none;
 `;
+
+const getActortypeColumns = (typeid) => {
+  let columns = [];
+  if (qe(typeid, ACTORTYPES.COUNTRY)) {
+    columns = [
+      ...columns,
+      {
+        id: 'regions',
+        type: 'associations',
+        actortype_id: ACTORTYPES.REG,
+        title: 'Regions',
+      },
+      {
+        id: 'classes',
+        type: 'associations',
+        actortype_id: ACTORTYPES.CLASS,
+        title: 'Classes',
+      },
+    ];
+  }
+  if (
+    qe(typeid, ACTORTYPES.REG)
+    || qe(typeid, ACTORTYPES.GROUP)
+    || qe(typeid, ACTORTYPES.CLASS)
+  ) {
+    columns = [
+      ...columns,
+      {
+        id: 'members', // one row per type,
+        type: 'members', // one row per type,
+      },
+    ];
+  }
+  if (
+    ACTORTYPES_CONFIG[parseInt(typeid, 10)]
+    && ACTORTYPES_CONFIG[parseInt(typeid, 10)].columns
+  ) {
+    columns = [
+      ...columns,
+      ...ACTORTYPES_CONFIG[parseInt(typeid, 10)].columns,
+    ];
+  }
+  return columns;
+};
 
 export function ActionView(props) {
   const {
@@ -197,7 +243,6 @@ export function ActionView(props) {
     const [de] = viewEntity.getIn(['attributes', 'date_end']).split('T');
     datesEqual = ds === de;
   }
-
   return (
     <div>
       <Helmet
@@ -347,18 +392,30 @@ export function ActionView(props) {
                         <FieldGroup
                           group={{
                             fields: actortypesForSubject.reduce(
-                              (memo, actors, typeid) => memo.concat([
-                                getActorConnectionField({
-                                  actors,
-                                  taxonomies,
-                                  onEntityClick,
-                                  connections: actorConnections,
-                                  typeid,
-                                  showValueForAction: qe(typeId, FF_ACTIONTYPE)
-                                    ? viewEntity
-                                    : null,
-                                }),
-                              ]),
+                              (memo, actors, typeid) => {
+                                const typeColumns = getActortypeColumns(typeid);
+                                return memo.concat([
+                                  getActorConnectionField({
+                                    actors,
+                                    taxonomies,
+                                    onEntityClick,
+                                    connections: actorConnections,
+                                    typeid,
+                                    showValueForAction: qe(typeId, FF_ACTIONTYPE)
+                                      ? viewEntity
+                                      : null,
+                                    columns: [
+                                      {
+                                        id: 'main',
+                                        type: 'main',
+                                        sort: 'title',
+                                        attributes: ['code', 'title'],
+                                      },
+                                      ...typeColumns,
+                                    ],
+                                  }),
+                                ]);
+                              },
                               [],
                             ),
                           }}
