@@ -737,12 +737,10 @@ export const ACTIONTYPES_CONFIG = {
       {
         id: 'actors', // one row per type,
         type: 'actors', // one row per type,
-        showOnSingle: ['targets'],
       },
       {
         id: 'targets', // one row per type,
         type: 'targets', // one row per type,
-        showOnSingle: ['actors'],
       },
       {
         id: 'amount',

@@ -37,7 +37,13 @@ export const CONFIG = {
       search: ['code', 'title', 'description'],
     },
     map: {
-      types: Object.values(ACTIONTYPES),
+      types: [
+        ACTIONTYPES.REGLSEAS,
+        ACTIONTYPES.REGL,
+        ACTIONTYPES.NATL,
+        ACTIONTYPES.INIT,
+        ACTIONTYPES.DONOR,
+      ],
     },
   },
   taxonomies: { // filter by each category

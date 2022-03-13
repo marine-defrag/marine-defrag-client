@@ -18,6 +18,7 @@ import {
   ACTIONTYPES_CONFIG,
   ACTORTYPES_CONFIG,
   FF_ACTIONTYPE,
+  ACTIONTYPES,
 } from 'themes/config';
 import { CONTENT_LIST } from 'containers/App/constants';
 import { jumpToComponent } from 'utils/scroll-to-component';
@@ -162,22 +163,27 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       if (!hasByTarget && mapSubject === 'targets') {
         mapSubjectClean = null;
       }
-      subjectOptions = [
-        {
-          type: 'secondary',
-          title: 'Activities',
-          onClick: () => onSetMapSubject(),
-          active: !mapSubjectClean,
-          disabled: !mapSubjectClean,
-        },
-        {
-          type: 'secondary',
-          title: 'By actor',
-          onClick: () => onSetMapSubject('actors'),
-          active: mapSubjectClean === 'actors',
-          disabled: mapSubjectClean === 'actors',
-        },
-      ];
+      if (qe(ACTIONTYPES.INTL, typeId)) {
+        mapSubjectClean = null;
+      }
+      if (!qe(ACTIONTYPES.INTL, typeId)) {
+        subjectOptions = [
+          {
+            type: 'secondary',
+            title: 'Activities',
+            onClick: () => onSetMapSubject(),
+            active: !mapSubjectClean,
+            disabled: !mapSubjectClean,
+          },
+          {
+            type: 'secondary',
+            title: 'By actor',
+            onClick: () => onSetMapSubject('actors'),
+            active: mapSubjectClean === 'actors',
+            disabled: mapSubjectClean === 'actors',
+          },
+        ];
+      }
       if (hasByTarget) {
         subjectOptions = [
           ...subjectOptions,
