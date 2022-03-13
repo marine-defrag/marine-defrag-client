@@ -592,15 +592,27 @@ export const ACTORTYPES_CONFIG = {
   3: { // CLASS
     id: '3',
     order: 5,
+    columns: [
+      {
+        id: 'members', // one row per type,
+        type: 'members', // one row per type,
+      },
+    ],
   },
   4: { // REG
     id: '4',
     order: 4,
-    columns: [{
-      id: 'taxonomy',
-      type: 'taxonomy',
-      taxonomy_id: 13, // region type
-    }],
+    columns: [
+      {
+        id: 'members', // one row per type,
+        type: 'members', // one row per type,
+      },
+      {
+        id: 'taxonomy',
+        type: 'taxonomy',
+        taxonomy_id: 13, // region type
+      },
+    ],
   },
   5: { // GROUP
     id: '5',
@@ -646,10 +658,12 @@ export const ACTIONTYPES_CONFIG = {
       {
         id: 'targets', // one row per type,
         type: 'targets', // one row per type,
+        showOnSingle: false,
       },
       {
         id: 'actors', // one row per type,
         type: 'actors', // one row per type,
+        showOnSingle: false,
       },
       {
         id: 'taxonomy',
@@ -719,10 +733,12 @@ export const ACTIONTYPES_CONFIG = {
       {
         id: 'actors', // one row per type,
         type: 'actors', // one row per type,
+        showOnSingle: ['targets'],
       },
       {
         id: 'targets', // one row per type,
         type: 'targets', // one row per type,
+        showOnSingle: ['actors'],
       },
       {
         id: 'amount',

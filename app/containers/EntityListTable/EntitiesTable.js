@@ -44,11 +44,11 @@ const TableCellHeader = styled.th`
     if (count === 2) {
       return col.type === 'main' ? 70 : 30;
     }
-    if (count > 4) {
+    if (count > 2) {
       return col.type === 'main' ? 40 : (60 / (count - 1)) * colSpan;
     }
-    if (count > 2) {
-      return col.type === 'main' ? 50 : (50 / (count - 1)) * colSpan;
+    if (count > 4) {
+      return col.type === 'main' ? 40 : (60 / (count - 1)) * colSpan;
     }
     return 0;
   }}%;
@@ -79,7 +79,7 @@ const TableCellBody = styled.td`
       return col.type === 'main' ? 40 : 60 / (count - 1);
     }
     if (count > 2) {
-      return col.type === 'main' ? 50 : 50 / (count - 1);
+      return col.type === 'main' ? 40 : 60 / (count - 1);
     }
     return 0;
   }}%;
@@ -172,7 +172,7 @@ export function EntitiesTable({
                       {col.type === 'date' && (
                         <CellHeaderPlain
                           column={col}
-                          align="start"
+                          align="end"
                         />
                       )}
                       {col.type === 'taxonomy' && (
@@ -184,7 +184,7 @@ export function EntitiesTable({
                       {col.type === 'hasResources' && (
                         <CellHeaderPlain
                           column={col}
-                          align="start"
+                          align="end"
                         />
                       )}
                       {col.type === 'actorActions' && (
@@ -251,7 +251,7 @@ export function EntitiesTable({
                     {col.type === 'date' && (
                       <CellBodyPlain
                         entity={entity[col.id]}
-                        align="start"
+                        align="end"
                       />
                     )}
                     {col.type === 'targets' && (
@@ -284,6 +284,7 @@ export function EntitiesTable({
                       <CellBodyHasResource
                         entity={entity[col.id]}
                         onEntityClick={onEntityClick}
+                        align="end"
                       />
                     )}
                     {col.type === 'actorActions' && (

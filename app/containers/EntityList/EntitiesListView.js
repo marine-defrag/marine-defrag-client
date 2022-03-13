@@ -151,12 +151,15 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
     let columns;
     let headerColumnsUtility;
     let mapSubjectClean = mapSubject;
+
+    // ACTIONS =================================================================
+
     if (config.types === 'actiontypes' && dataReady) {
       columns = ACTIONTYPES_CONFIG[typeId] && ACTIONTYPES_CONFIG[typeId].columns;
       type = actiontypes.find((at) => qe(at.get('id'), typeId));
       hasByTarget = type.getIn(['attributes', 'has_target']);
-      if (hasByTarget || mapSubject !== 'targets') {
-        mapSubjectClean = mapSubject;
+      if (!hasByTarget && mapSubject === 'targets') {
+        mapSubjectClean = null;
       }
       subjectOptions = [
         {
@@ -199,17 +202,19 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
           label: 'Include activities of intergovernmental organisations (countries belong to)',
         };
       }
-      entityActors = mapSubject && config.types === 'actiontypes' && getActorsForEntities(
+      entityActors = mapSubjectClean && getActorsForEntities(
         entities,
         connections && connections.get('actors'),
-        mapSubject,
-        mapSubject === 'actors'
-          ? includeActorMembers
-          : includeTargetMembers,
+        mapSubjectClean,
+        mapSubjectClean === 'actors' ? includeActorMembers : includeTargetMembers,
       );
       entityActors = entityActors && entityActors.groupBy(
         (actor) => actor.getIn(['attributes', 'actortype_id'])
       );
+
+
+      // ACTORS ================================================================
+      //
     } else if (config.types === 'actortypes' && dataReady) {
       type = actortypes.find((at) => qe(at.get('id'), typeId));
       isTarget = type.getIn(['attributes', 'is_target']);
@@ -485,7 +490,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                     connections={connections}
                     connectedTaxonomies={connectedTaxonomies}
                     entityIdsSelected={entityIdsSelected}
-                    label="label"
                     config={config}
                     entityTitle={entityTitle}
 

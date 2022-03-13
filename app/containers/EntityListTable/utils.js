@@ -184,6 +184,7 @@ export const prepareEntities = ({
         const path = (config && config.clientPath) || entityPath;
         let relatedEntities;
         let relatedEntityIds;
+        let temp;
         switch (col.type) {
           case 'main':
             return {
@@ -234,7 +235,8 @@ export const prepareEntities = ({
               },
             };
           case 'targets':
-            relatedEntities = getRelatedEntities(entity.get('targets'), connections.get('actors'), col);
+            temp = entity.get('targets') || (entity.get('targetsByType') && entity.get('targetsByType').flatten());
+            relatedEntities = getRelatedEntities(temp, connections.get('actors'), col);
             return {
               ...memoEntity,
               [col.id]: {
@@ -248,7 +250,8 @@ export const prepareEntities = ({
               },
             };
           case 'actors':
-            relatedEntities = getRelatedEntities(entity.get('actors'), connections.get('actors'), col);
+            temp = entity.get('actors') || (entity.get('actorsByType') && entity.get('actorsByType').flatten());
+            relatedEntities = getRelatedEntities(temp, connections.get('actors'), col);
             return {
               ...memoEntity,
               [col.id]: {
@@ -262,7 +265,8 @@ export const prepareEntities = ({
               },
             };
           case 'members':
-            relatedEntities = entity.get('membersByType') && getRelatedEntities(entity.get('membersByType').flatten(), connections.get('actors'), col);
+            temp = entity.get('members') || (entity.get('membersByType') && entity.get('membersByType').flatten());
+            relatedEntities = getRelatedEntities(temp, connections.get('actors'), col);
             return {
               ...memoEntity,
               [col.id]: {
@@ -316,12 +320,10 @@ export const prepareEntities = ({
               },
             };
           case 'hasResources':
-            relatedEntities = entity.getIn(['resourcesByType', parseInt(col.resourcetype_id, 10)])
-              && getRelatedEntities(
-                entity.getIn(['resourcesByType', parseInt(col.resourcetype_id, 10)]),
-                resources,
-                col,
-              );
+            // resources
+            temp = entity.getIn(['resourcesByType', parseInt(col.resourcetype_id, 10)])
+              || entity.getIn(['resourcesByType', col.resourcetype_id]);
+            relatedEntities = temp && getRelatedEntities(temp, resources, col);
             return {
               ...memoEntity,
               [col.id]: {
@@ -331,11 +333,13 @@ export const prepareEntities = ({
               },
             };
           case 'actorActions':
+            temp = entity.get(col.actions)
+              || (entity.get(`${col.actions}ByType`) && entity.get(`${col.actions}ByType`).flatten());
             return {
               ...memoEntity,
               [col.id]: {
                 ...col,
-                value: entity.get(col.actions) && entity.get(col.actions).size,
+                value: temp && temp.size,
               },
             };
           case 'actiontype':

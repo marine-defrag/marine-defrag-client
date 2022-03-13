@@ -120,6 +120,26 @@ export function Members(props) {
                   typeid: ACTORTYPES.COUNTRY,
                   taxonomies,
                   connections: actorConnections,
+                  columns: [
+                    {
+                      id: 'main',
+                      type: 'main',
+                      sort: 'title',
+                      attributes: ['code', 'title'],
+                    },
+                    {
+                      id: 'actorActions',
+                      type: 'actorActions',
+                      subject: 'actors',
+                      actions: 'actions',
+                    },
+                    {
+                      id: 'actorActionsTargets',
+                      type: 'actorActions',
+                      subject: 'targets',
+                      actions: 'targetingActions',
+                    },
+                  ],
                 }),
               ],
             }}

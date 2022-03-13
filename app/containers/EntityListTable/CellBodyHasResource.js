@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   Box, Text, Button, Drop,
 } from 'grommet';
-import { StatusGood } from 'grommet-icons';
+import { StatusGood, StatusCritical } from 'grommet-icons';
 import styled from 'styled-components';
 import appMessages from 'containers/App/messages';
 
@@ -44,8 +44,13 @@ export function CellBodyHasResource({
           alignSelf={align}
           onClick={() => setShowContent(!showContent)}
         >
-          <StatusGood size="small" />
+          <StatusGood size="small" color="dark-2" />
         </LinkTT>
+      )}
+      {!entity.value && (
+        <Box fill={false} align="end">
+          <StatusCritical size="small" color="light-5" />
+        </Box>
       )}
       {entity.value && showContent && buttonRef.current && (
         <Drop

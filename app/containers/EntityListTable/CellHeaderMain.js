@@ -57,9 +57,9 @@ export function CellHeaderMain({ column, canEdit }) {
             onClick={() => {
               if (column.sortActive) {
                 const nextSortOrderOption = SORT_ORDER_OPTIONS.find((option) => sortOrderOption.nextValue === option.value);
-                column.onSort(sortOrderOption.query, nextSortOrderOption.value);
+                column.onSort(column.id || column.type, nextSortOrderOption.value);
               } else {
-                column.onSort(sortOrderOption.query, sortOrderOption.order);
+                column.onSort(column.id || column.type, sortOrderOption.order);
               }
             }}
           >

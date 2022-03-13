@@ -118,9 +118,11 @@ export function EntityListTable({
   const cleanSortOrder = inSingleView ? localSort.order : sortOrder;
   const cleanSortBy = inSingleView ? localSort.sort : (sortBy || 'main');
   const cleanOnSort = inSingleView
-    ? (sort, order) => setLocalSort({ sort: sort || cleanSortBy, order: order || cleanSortOrder })
+    ? (sort, order) => setLocalSort({
+      sort: sort || cleanSortBy,
+      order: order || cleanSortOrder,
+    })
     : onSort;
-
   // filter entitities by keyword
   const searchAttributes = (
     config.views
