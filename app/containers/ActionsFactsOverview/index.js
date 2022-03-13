@@ -92,6 +92,7 @@ export function ActionsFactsOverview({
                     <Box direction="row" gap="small">
                       {resourceIndicators && resourceIndicators.map((indicator) => {
                         const path = `${ROUTES.ACTION}/${indicator.get('id')}`;
+                        const [lead] = indicator.getIn(['attributes', 'description']).split('\n');
                         return (
                           <CardTeaser
                             key={indicator.get('id')}
@@ -105,9 +106,7 @@ export function ActionsFactsOverview({
                             title={
                               indicator.getIn(['attributes', 'title'])
                             }
-                            description={
-                              indicator.getIn(['attributes', 'description'])
-                            }
+                            description={lead}
                           />
                         );
                       })}
