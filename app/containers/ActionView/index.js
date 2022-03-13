@@ -111,6 +111,7 @@ const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
           title: viewEntity.getIn(['attributes', 'title']),
           unit: viewEntity.getIn(['attributes', 'comment']),
           align: 'end',
+          primary: true,
         },
       ];
     }
@@ -459,6 +460,19 @@ export function ActionView(props) {
                                   onEntityClick,
                                   connections: resourceConnections,
                                   typeid: resourcetypeid,
+                                  columns: [
+                                    {
+                                      id: 'main',
+                                      type: 'main',
+                                      sort: 'title',
+                                      attributes: ['title'],
+                                    },
+                                    {
+                                      id: 'attribute',
+                                      type: 'attribute',
+                                      attribute: 'status',
+                                    },
+                                  ],
                                 }),
                               ]),
                               [],

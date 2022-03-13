@@ -57,6 +57,14 @@ export const prepareHeader = ({
           sortOrder: sortOrder || 'asc',
           onSort,
         });
+      case 'attribute':
+        return ({
+          ...col,
+          title: intl.formatMessage(appMessages.attributes[col.attribute]),
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
       case 'userrole':
         return ({
           ...col,
@@ -234,6 +242,14 @@ export const prepareEntities = ({
                   onEntityClick(id, path);
                 },
                 onSelect: (checked) => onEntitySelect(id, checked),
+              },
+            };
+          case 'attribute':
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: entity.getIn(['attributes', col.attribute]),
               },
             };
           case 'amount':

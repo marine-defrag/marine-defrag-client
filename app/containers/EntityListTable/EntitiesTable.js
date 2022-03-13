@@ -45,7 +45,7 @@ const getColWidth = ({
     }
   }
   if (count === 2) {
-    return col.type === 'main' ? 70 : 30;
+    return col.type === 'main' ? 50 : 50;
   }
   if (count > 2) {
     return col.type === 'main' ? 40 : (60 / (count - 1)) * colSpan;
@@ -189,10 +189,9 @@ export function EntitiesTable({
                         column={col}
                       />
                     )}
-                    {col.type === 'actors' && (
-                      <CellBodyActors
+                    {col.type === 'attribute' && (
+                      <CellBodyPlain
                         entity={entity[col.id]}
-                        onEntityClick={onEntityClick}
                         column={col}
                       />
                     )}
@@ -212,11 +211,19 @@ export function EntitiesTable({
                       <CellBodyPlain
                         entity={entity[col.id]}
                         column={col}
+                        primary
                       />
                     )}
                     {col.type === 'date' && (
                       <CellBodyPlain
                         entity={entity[col.id]}
+                        column={col}
+                      />
+                    )}
+                    {col.type === 'actors' && (
+                      <CellBodyActors
+                        entity={entity[col.id]}
+                        onEntityClick={onEntityClick}
                         column={col}
                       />
                     )}

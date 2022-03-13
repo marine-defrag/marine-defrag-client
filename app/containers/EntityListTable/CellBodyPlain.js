@@ -6,10 +6,10 @@ export function CellBodyPlain({
   entity,
   column = {},
 }) {
-  const { align = 'start' } = column;
+  const { align = 'start', primary } = column;
   return (
     <Box>
-      <Text size="xsmall" weight={500} wordBreak="keep-all" textAlign={align}>
+      <Text size="xsmall" weight={primary ? 500 : 300} wordBreak="keep-all" textAlign={align}>
         {entity.value}
       </Text>
     </Box>
