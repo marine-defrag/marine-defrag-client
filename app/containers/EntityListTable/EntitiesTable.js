@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import CellBodyMain from './CellBodyMain';
 import CellBodyPlain from './CellBodyPlain';
 import CellBodyActors from './CellBodyActors';
+import CellBodyActions from './CellBodyActions';
 import CellBodyCategories from './CellBodyCategories';
 import CellBodyHasResource from './CellBodyHasResource';
 import CellBodyBarChart from './CellBodyBarChart';
@@ -187,6 +188,12 @@ export function EntitiesTable({
                           align="end"
                         />
                       )}
+                      {col.type === 'resourceActions' && (
+                        <CellHeaderPlain
+                          column={col}
+                          align="start"
+                        />
+                      )}
                       {col.type === 'actorActions' && (
                         <CellHeaderPlain
                           column={col}
@@ -206,6 +213,12 @@ export function EntitiesTable({
                         />
                       )}
                       {col.type === 'members' && (
+                        <CellHeaderPlain
+                          column={col}
+                          align="start"
+                        />
+                      )}
+                      {col.type === 'userrole' && (
                         <CellHeaderPlain
                           column={col}
                           align="start"
@@ -248,6 +261,12 @@ export function EntitiesTable({
                         align="end"
                       />
                     )}
+                    {col.type === 'userrole' && (
+                      <CellBodyPlain
+                        entity={entity[col.id]}
+                        align="start"
+                      />
+                    )}
                     {col.type === 'date' && (
                       <CellBodyPlain
                         entity={entity[col.id]}
@@ -285,6 +304,13 @@ export function EntitiesTable({
                         entity={entity[col.id]}
                         onEntityClick={onEntityClick}
                         align="end"
+                      />
+                    )}
+                    {col.type === 'resourceActions' && (
+                      <CellBodyActions
+                        entity={entity[col.id]}
+                        align="start"
+                        onEntityClick={onEntityClick}
                       />
                     )}
                     {col.type === 'actorActions' && (

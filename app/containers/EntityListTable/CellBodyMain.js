@@ -37,7 +37,7 @@ export function CellBodyMain({
       <Box>
         {Object.keys(entity.values).map((key) => (
           <Box key={key}>
-            {key === 'title' && (
+            {(key === 'title' || key === 'name') && (
               <Link
                 href={entity.href}
                 onClick={entity.onClick}
@@ -48,10 +48,10 @@ export function CellBodyMain({
                 </Label>
               </Link>
             )}
-            {key !== 'title' && (
+            {key !== 'title' && key !== 'name' && (
               <Label
-                color={key === 'code' ? 'dark-5' : 'black'}
-                size={key === 'code' ? 'xsmall' : 'small'}
+                color="dark-5"
+                size="xsmall"
               >
                 {entity.values[key]}
               </Label>

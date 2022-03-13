@@ -2,7 +2,10 @@ import { STATES as CHECKBOX_STATES } from 'components/forms/IndeterminateCheckbo
 import { Map } from 'immutable';
 import isNumber from 'utils/is-number';
 import { formatNumber } from 'utils/fields';
+import qe from 'utils/quasi-equals';
+import appMessage from 'utils/app-message';
 import appMessages from 'containers/App/messages';
+import { API, USER_ROLES } from 'themes/config';
 
 export const prepareHeader = ({
   columns,
@@ -42,6 +45,14 @@ export const prepareHeader = ({
         return ({
           ...col,
           title: 'Date',
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
+      case 'userrole':
+        return ({
+          ...col,
+          title: 'User role',
           sortActive: sortBy === col.id,
           sortOrder: sortOrder || 'asc',
           onSort,
@@ -104,6 +115,14 @@ export const prepareHeader = ({
           title: appMessages.entities[`resources_${col.resourcetype_id}`]
             ? intl.formatMessage(appMessages.entities[`resources_${col.resourcetype_id}`].singleShort)
             : 'Resource',
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
+      case 'resourceActions':
+        return ({
+          ...col,
+          title: 'Activities',
           sortActive: sortBy === col.id,
           sortOrder: sortOrder || 'asc',
           onSort,
@@ -340,6 +359,48 @@ export const prepareEntities = ({
               [col.id]: {
                 ...col,
                 value: temp && temp.size,
+              },
+            };
+          case 'userrole':
+            temp = entity.get('roles') && entity.get('roles').reduce(
+              (highest, roleId) => {
+                if (!highest) return parseInt(roleId, 10);
+                return Math.min(parseInt(roleId, 10), highest);
+              },
+              null,
+            );
+            // actual only one
+            temp = Object.values(USER_ROLES).find(
+              (r) => qe(temp, r.value)
+            ) || USER_ROLES.DEFAULT;
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: temp.message
+                  ? appMessage(intl, temp.message)
+                  : ((temp && temp.label)),
+                sortValue: temp.value,
+              },
+            };
+          case 'resourceActions':
+            temp = entity.get('actions')
+              || (entity.get('actionsByType') && entity.get('actionsByType').flatten());
+            relatedEntities = temp && getRelatedEntities(
+              temp,
+              connections.get(API.ACTIONS),
+              col,
+            );
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: getRelatedValue(relatedEntities, 'actions'),
+                single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
+                tooltip: relatedEntities && relatedEntities.size > 1
+                  && relatedEntities.groupBy((t) => t.getIn(['attributes', 'measuretype_id'])),
+                multiple: relatedEntities && relatedEntities.size > 1,
+                sortValue: getRelatedSortValue(relatedEntities),
               },
             };
           case 'actiontype':

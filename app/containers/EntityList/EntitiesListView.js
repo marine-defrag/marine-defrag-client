@@ -139,6 +139,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       includeTargetMembers,
       actiontypes,
       intl,
+      resourcetypes,
     } = this.props;
     const { viewType } = this.state;
     let type;
@@ -293,6 +294,44 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
           label: 'Include activities of intergovernmental organisations (countries belong to)',
         };
       }
+      // RESOURCES ================================================================
+      //
+    } else if (config.types === 'resourcetypes' && dataReady) {
+      type = resourcetypes.find((at) => qe(at.get('id'), typeId));
+      columns = [
+        {
+          id: 'main',
+          type: 'main',
+          sort: 'title',
+          attributes: ['code', 'title'],
+        },
+        {
+          id: 'resourceActions',
+          type: 'resourceActions',
+        },
+      ];
+    } else if (config.types === 'users' && dataReady) {
+      columns = [
+        {
+          id: 'main',
+          type: 'main',
+          sort: 'name',
+          attributes: ['name'],
+        },
+        {
+          id: 'userrole',
+          type: 'userrole',
+        },
+      ];
+    } else if (config.types === 'pages' && dataReady) {
+      columns = [
+        {
+          id: 'main',
+          type: 'main',
+          sort: 'name',
+          attributes: ['menu_title', 'title'],
+        },
+      ];
     }
     let headerTitle;
     if (entityTitle) {
@@ -303,7 +342,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
     if (hasFilters) {
       headerTitle = `${headerTitle} (filtered)`;
     }
-
     return (
       <ContainerWrapper hasHeader={hasHeader} ref={this.ScrollContainer}>
         {dataReady && viewOptions && viewOptions.length > 1 && (
@@ -523,6 +561,7 @@ EntitiesListView.propTypes = {
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
+  resourcetypes: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
   targettypes: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
