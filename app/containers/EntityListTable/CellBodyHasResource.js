@@ -31,9 +31,10 @@ const getOnClick = (res, onEntityClick) => (evt) => {
 
 export function CellBodyHasResource({
   entity,
-  align = 'center',
+  column,
   onEntityClick,
 }) {
+  const { align = 'end' } = column;
   const buttonRef = useRef();
   const [showContent, setShowContent] = useState(false);
   return (
@@ -104,7 +105,7 @@ export function CellBodyHasResource({
 
 CellBodyHasResource.propTypes = {
   entity: PropTypes.object,
-  align: PropTypes.string,
+  column: PropTypes.object,
   onEntityClick: PropTypes.func,
 };
 

@@ -15,10 +15,11 @@ const SortButton = styled(ButtonFlatIconOnly)`
   }
 `;
 
-export function CellHeaderPlain({ column, align = 'start' }) {
+export function CellHeaderPlain({ column }) {
   const sortOrderOption = column.onSort && SORT_ORDER_OPTIONS.find(
     (option) => column.sortOrder === option.value
   );
+  const { align = 'start' } = column;
   return (
     <Box direction="row" align="center" justify={align}>
       <Box>
@@ -58,7 +59,6 @@ export function CellHeaderPlain({ column, align = 'start' }) {
 
 CellHeaderPlain.propTypes = {
   column: PropTypes.object,
-  align: PropTypes.string,
 };
 
 export default CellHeaderPlain;

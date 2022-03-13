@@ -41,6 +41,14 @@ export const prepareHeader = ({
           sortOrder: sortOrder || 'asc',
           onSort,
         });
+      case 'indicator':
+        return ({
+          ...col,
+          title: col.unit ? `${col.title} (${col.unit})` : col.title,
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
       case 'date':
         return ({
           ...col,
@@ -240,6 +248,21 @@ export const prepareEntities = ({
                 draft: entity.getIn(['attributes', 'draft']),
                 sortValue: entity.getIn(['attributes', col.sort])
                   && parseFloat(entity.getIn(['attributes', col.sort]), 10),
+              },
+            };
+          case 'indicator':
+            temp = entity.get('actionValues')
+              && entity.getIn(['actionValues', col.indicatorId]);
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: entity.get('actionValues')
+                  && isNumber(temp)
+                    && formatNumber(
+                      temp, { intl, digits: parseFloat(temp, 10) > 1 ? 1 : 3 },
+                    ),
+                sortValue: parseFloat(temp, 10),
               },
             };
           case 'date':

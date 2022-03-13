@@ -642,6 +642,7 @@ export const ACTIONTYPES_CONFIG = {
         sort: 'date_start',
         sortOrder: 'asc',
         attribute: 'date_start',
+        align: 'end',
       },
     ],
   },
@@ -674,11 +675,13 @@ export const ACTIONTYPES_CONFIG = {
         id: 'ap',
         type: 'hasResources', // checkmark icon w/ tooltip for names
         resourcetype_id: RESOURCETYPES.AP, // presence of AP
+        align: 'end',
       },
       {
         id: 'mlap',
         type: 'hasResources', // checkmark icon w/ tooltip for names
         resourcetype_id: RESOURCETYPES.MLAP, // presence of MLAP
+        align: 'end',
       },
     ],
   },
@@ -746,6 +749,7 @@ export const ACTIONTYPES_CONFIG = {
         sort: 'amount',
         attribute: 'amount',
         unit: 'US$',
+        align: 'end',
       },
     ],
   },

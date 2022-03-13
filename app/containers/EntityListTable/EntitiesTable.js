@@ -24,7 +24,37 @@ const TableBody = styled.tbody``;
 const TableRow = styled.tr`
   height: 100%;
 `;
-
+const getColWidth = ({
+  col, count, isIndicator, colSpan = 1,
+}) => {
+  if (count === 1) {
+    return 100;
+  }
+  if (isIndicator) {
+    if (count === 2) {
+      return col.type === 'main' ? 50 : 50;
+    }
+    if (count > 2) {
+      if (col.type === 'indicator') {
+        return 25;
+      }
+      if (col.type === 'main') {
+        return 25;
+      }
+      return 50 / (count - 2);
+    }
+  }
+  if (count === 2) {
+    return col.type === 'main' ? 70 : 30;
+  }
+  if (count > 2) {
+    return col.type === 'main' ? 40 : (60 / (count - 1)) * colSpan;
+  }
+  // if (count > 4) {
+  //   return col.type === 'main' ? 40 : (60 / (count - 1)) * colSpan;
+  // }
+  return 0;
+};
 const TableCellHeader = styled.th`
   margin: 0;
   padding: 0;
@@ -34,25 +64,11 @@ const TableCellHeader = styled.th`
   text-align: start;
   border-bottom: solid 1px;
   border-bottom-color: ${({ utility }) => utility ? 'transparent' : 'rgba(0,0,0,0.33)'};
-  padding-left: 6px;
-  padding-right: 6px;
+  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 20 : 8}px;
+  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 20 : 8}px;
   padding-top: 6px;
   padding-bottom: 6px;
-  width: ${({ col, count, colSpan = 1 }) => {
-    if (count === 1) {
-      return 100;
-    }
-    if (count === 2) {
-      return col.type === 'main' ? 70 : 30;
-    }
-    if (count > 2) {
-      return col.type === 'main' ? 40 : (60 / (count - 1)) * colSpan;
-    }
-    if (count > 4) {
-      return col.type === 'main' ? 40 : (60 / (count - 1)) * colSpan;
-    }
-    return 0;
-  }}%;
+  width: ${getColWidth}%;
 `;
 const TableCellHeaderInner = styled((p) => <Box {...p} />)`
 `;
@@ -64,26 +80,12 @@ const TableCellBody = styled.td`
   height: 100%;
   text-align: start;
   border-bottom: solid 1px #DADADA;
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 20 : 8}px;
+  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 20 : 8}px;
   padding-top: 6px;
   padding-bottom: 6px;
   word-wrap:break-word;
-  width: ${({ col, count }) => {
-    if (count === 1) {
-      return 100;
-    }
-    if (count === 2) {
-      return col.type === 'main' ? 70 : 30;
-    }
-    if (count > 4) {
-      return col.type === 'main' ? 40 : 60 / (count - 1);
-    }
-    if (count > 2) {
-      return col.type === 'main' ? 40 : 60 / (count - 1);
-    }
-    return 0;
-  }}%;
+  width: ${getColWidth}%;
 `;
 const TableCellBodyInner = styled((p) => <Box {...p} />)`
   padding: 6px 0;
@@ -115,7 +117,9 @@ export function EntitiesTable({
                       col={col}
                       count={headerColumns.length}
                       colSpan={col.span || 1}
-                      utility
+                      isIndicator={col.isIndicator}
+                      first={i === 0}
+                      last={i === headerColumns.length - 1}
                     >
                       {col.type === 'options' && (
                         <Box>
@@ -144,6 +148,9 @@ export function EntitiesTable({
                     scope="col"
                     col={col}
                     count={headerColumns.length}
+                    isIndicator={col.isIndicator}
+                    first={i === 0}
+                    last={i === headerColumns.length - 1}
                   >
                     <TableCellHeaderInner>
                       {col.type === 'main' && (
@@ -152,77 +159,8 @@ export function EntitiesTable({
                           canEdit={canEdit}
                         />
                       )}
-                      {col.type === 'actors' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="start"
-                        />
-                      )}
-                      {col.type === 'targets' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="start"
-                        />
-                      )}
-                      {col.type === 'amount' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="end"
-                        />
-                      )}
-                      {col.type === 'date' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="end"
-                        />
-                      )}
-                      {col.type === 'taxonomy' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="start"
-                        />
-                      )}
-                      {col.type === 'hasResources' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="end"
-                        />
-                      )}
-                      {col.type === 'resourceActions' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="start"
-                        />
-                      )}
-                      {col.type === 'actorActions' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="start"
-                        />
-                      )}
-                      {col.type === 'actiontype' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="start"
-                        />
-                      )}
-                      {col.type === 'associations' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="start"
-                        />
-                      )}
-                      {col.type === 'members' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="start"
-                        />
-                      )}
-                      {col.type === 'userrole' && (
-                        <CellHeaderPlain
-                          column={col}
-                          align="start"
-                        />
+                      {col.type !== 'main' && (
+                        <CellHeaderPlain column={col} />
                       )}
                     </TableCellHeaderInner>
                   </TableCellHeader>
@@ -240,76 +178,86 @@ export function EntitiesTable({
                   scope="row"
                   col={col}
                   count={headerColumns.length}
+                  first={i === 0}
+                  last={i === headerColumns.length - 1}
                 >
                   <TableCellBodyInner>
                     {col.type === 'main' && (
                       <CellBodyMain
                         entity={entity[col.id]}
                         canEdit={canEdit}
+                        column={col}
                       />
                     )}
                     {col.type === 'actors' && (
                       <CellBodyActors
                         entity={entity[col.id]}
-                        align="start"
                         onEntityClick={onEntityClick}
+                        column={col}
                       />
                     )}
                     {col.type === 'amount' && (
                       <CellBodyPlain
                         entity={entity[col.id]}
-                        align="end"
+                        column={col}
+                      />
+                    )}
+                    {col.type === 'indicator' && (
+                      <CellBodyPlain
+                        entity={entity[col.id]}
+                        column={col}
                       />
                     )}
                     {col.type === 'userrole' && (
                       <CellBodyPlain
                         entity={entity[col.id]}
-                        align="start"
+                        column={col}
                       />
                     )}
                     {col.type === 'date' && (
                       <CellBodyPlain
                         entity={entity[col.id]}
-                        align="end"
+                        column={col}
                       />
                     )}
                     {col.type === 'targets' && (
                       <CellBodyActors
                         entity={entity[col.id]}
-                        align="start"
                         onEntityClick={onEntityClick}
+                        column={col}
                       />
                     )}
                     {col.type === 'members' && (
                       <CellBodyActors
                         entity={entity[col.id]}
-                        align="start"
                         onEntityClick={onEntityClick}
+                        column={col}
                       />
                     )}
                     {col.type === 'associations' && (
                       <CellBodyActors
                         entity={entity[col.id]}
-                        align="start"
                         onEntityClick={onEntityClick}
+                        column={col}
                       />
                     )}
                     {col.type === 'taxonomy' && (
                       <CellBodyCategories
                         entity={entity[col.id]}
+                        column={col}
                       />
                     )}
                     {col.type === 'hasResources' && (
                       <CellBodyHasResource
                         entity={entity[col.id]}
                         onEntityClick={onEntityClick}
-                        align="end"
+                        column={col}
                       />
                     )}
                     {col.type === 'resourceActions' && (
                       <CellBodyActions
                         entity={entity[col.id]}
-                        align="start"
+                        column={col}
                         onEntityClick={onEntityClick}
                       />
                     )}
@@ -319,6 +267,7 @@ export function EntitiesTable({
                         maxvalue={Object.values(columnMaxValues).reduce((memo, val) => Math.max(memo, val), 0)}
                         issecondary={col.members}
                         subject={col.subject}
+                        column={col}
                       />
                     )}
                     {col.type === 'actiontype' && (
@@ -326,6 +275,7 @@ export function EntitiesTable({
                         value={entity[col.id].value}
                         maxvalue={Object.values(columnMaxValues).reduce((memo, val) => Math.max(memo, val), 0)}
                         subject={col.subject}
+                        column={col}
                       />
                     )}
                   </TableCellBodyInner>

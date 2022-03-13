@@ -4,8 +4,9 @@ import { Box, Text } from 'grommet';
 
 export function CellBodyPlain({
   entity,
-  align = 'start',
+  column = {},
 }) {
+  const { align = 'start' } = column;
   return (
     <Box>
       <Text size="xsmall" weight={500} wordBreak="keep-all" textAlign={align}>
@@ -17,7 +18,7 @@ export function CellBodyPlain({
 
 CellBodyPlain.propTypes = {
   entity: PropTypes.object,
-  align: PropTypes.string,
+  column: PropTypes.object,
 };
 
 export default CellBodyPlain;

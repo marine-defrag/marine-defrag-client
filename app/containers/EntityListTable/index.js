@@ -186,12 +186,17 @@ export function EntityListTable({
         } else if (isNumber(bSortValue) && !isNumber(aSortValue)) {
           result = 1;
         } else if (
-          isNumber(bSortValue)
-          && isNumber(aSortValue)
-          && a[cleanSortBy].type !== 'amount'
-          && a[cleanSortBy].type !== 'amount'
+          isNumber(bSortValue) && isNumber(aSortValue)
         ) {
-          result = aSortValue < bSortValue ? 1 : -1;
+          if (
+            a[cleanSortBy].type === 'amount'
+            || a[cleanSortBy].type === 'indicator'
+            || a[cleanSortBy].type === 'actorActions'
+          ) {
+            result = aSortValue > bSortValue ? 1 : -1;
+          } else {
+            result = aSortValue < bSortValue ? 1 : -1;
+          }
         } else {
           result = aSortValue > bSortValue ? 1 : -1;
         }

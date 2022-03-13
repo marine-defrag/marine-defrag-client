@@ -254,7 +254,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
         {
           type: 'options',
           span: actionColumns.length,
-          content: 'options TODO',
         },
       ];
       if (isActive) {
@@ -452,29 +451,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                           views: {
                             list: {
                               search: ['code', 'title', 'description'],
-                              sorting: [
-                                {
-                                  attribute: 'title',
-                                  type: 'string',
-                                  order: 'asc',
-                                  default: true,
-                                },
-                                {
-                                  attribute: 'code',
-                                  type: 'string',
-                                  order: 'asc',
-                                },
-                                {
-                                  attribute: 'updated_at',
-                                  type: 'date',
-                                  order: 'desc',
-                                },
-                                {
-                                  attribute: 'id', // proxy for created at
-                                  type: 'number',
-                                  order: 'desc',
-                                },
-                              ],
                             },
                           },
                           connections: {
