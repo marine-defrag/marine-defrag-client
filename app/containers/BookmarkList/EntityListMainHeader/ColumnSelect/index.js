@@ -1,16 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { FormattedMessage } from 'react-intl';
 
-import IndeterminateCheckbox from 'components/forms/IndeterminateCheckbox';
 import SelectReset from 'components/SelectReset';
 import ButtonFlatIconOnly from 'components/buttons/ButtonFlatIconOnly';
 import Icon from 'components/Icon';
 
-import A from 'components/styled/A';
 import ColumnHeader from 'components/styled/ColumnHeader';
-import PrintHide from 'components/styled/PrintHide';
 
 import messages from './messages';
 
@@ -31,17 +27,7 @@ const LabelWrap = styled.div`
     padding-left: ${(props) => props.isSelect ? 0 : 7}px;
   }
 `;
-const CheckboxWrap = styled(PrintHide)`
-  display: table-cell;
-  text-align: center;
-  width: 20px;
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
-    width: 40px;
-  }
-`;
-const Checkbox = styled(IndeterminateCheckbox)`
-  vertical-align: middle;
-`;
+
 const Label = styled.label`
   vertical-align: middle;
 `;
@@ -55,14 +41,10 @@ const SelectWrapper = styled.div`
   padding-right: 2px;
 `;
 
-const SelectAll = styled(A)`
-  vertical-align: middle;
-`;
-
 class ColumnSelect extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
     const {
-      isSelect, isSelected, onSelect, width, label, hasSelectAll, onSelectAll, entitiesTotal,
+      width, label,
     } = this.props;
     const { intl } = this.context;
     const sortOptions = this.props.sortOptions && this.props.sortOptions.map((option) => ({
@@ -74,49 +56,11 @@ class ColumnSelect extends React.PureComponent { // eslint-disable-line react/pr
     const nextSortOrderOption = sortOrderOption && this.props.sortOrderOptions.find((option) => sortOrderOption.nextValue === option.value);
 
     return (
-      <Styled colWidth={width * 100} hasSelectAll={isSelect}>
+      <Styled colWidth={width * 100}>
         <Wrapper>
-          {isSelect
-            && (
-              <CheckboxWrap>
-                <Checkbox
-                  id="select-all"
-                  checked={isSelected}
-                  onChange={onSelect}
-                />
-              </CheckboxWrap>
-            )
-          }
-          {isSelect
-            && (
-              <LabelWrap isSelect={isSelect}>
-                <Label htmlFor="select-all">{label}</Label>
-                {hasSelectAll
-                && (
-                  <SelectAll
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onSelectAll();
-                    }}
-                    href="/"
-                  >
-                    <FormattedMessage
-                      {...messages.selectAll}
-                      values={{ number: entitiesTotal }}
-                    />
-                  </SelectAll>
-                )
-                }
-              </LabelWrap>
-            )
-          }
-          {!isSelect
-            && (
-              <LabelWrap>
-                <Label>{label}</Label>
-              </LabelWrap>
-            )
-          }
+          <LabelWrap>
+            <Label>{label}</Label>
+          </LabelWrap>
           { sortOptions && this.props.sortBy && (
             <SelectWrapper>
               <SelectReset
@@ -147,19 +91,13 @@ class ColumnSelect extends React.PureComponent { // eslint-disable-line react/pr
 }
 
 ColumnSelect.propTypes = {
-  isSelect: PropTypes.bool,
-  isSelected: PropTypes.bool,
-  onSelect: PropTypes.func,
-  onSelectAll: PropTypes.func,
   sortBy: PropTypes.string,
   sortOrder: PropTypes.string,
   sortOptions: PropTypes.array,
   sortOrderOptions: PropTypes.array,
   onSortBy: PropTypes.func,
   onSortOrder: PropTypes.func,
-  hasSelectAll: PropTypes.bool,
   label: PropTypes.string,
-  entitiesTotal: PropTypes.number,
   width: PropTypes.number,
 };
 ColumnSelect.defaultProps = {

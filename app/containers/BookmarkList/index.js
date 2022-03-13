@@ -36,10 +36,10 @@ import SidebarGroupLabel from 'components/styled/SidebarGroupLabel';
 import SupTitle from 'components/SupTitle';
 import Component from 'components/styled/Component';
 import Content from 'components/styled/Content';
-import EntityListMainHeader from 'containers/EntityListTable/EntityListMainHeader';
 import EntityListItem from 'components/EntityListItem';
 import PrintHide from 'components/styled/PrintHide';
 
+import EntityListMainHeader from './EntityListMainHeader';
 import {
   updateQuery,
   resetSearchQuery,
