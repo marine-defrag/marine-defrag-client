@@ -28,7 +28,6 @@ import ContainerWithSidebar from 'components/styled/Container/ContainerWithSideb
 import Container from 'components/styled/Container';
 import Loading from 'components/Loading';
 import ContentHeader from 'components/ContentHeader';
-import TagSearch from 'components/TagSearch';
 import Scrollable from 'components/styled/Scrollable';
 import Sidebar from 'components/styled/Sidebar';
 import SidebarHeader from 'components/styled/SidebarHeader';
@@ -42,7 +41,6 @@ import PrintHide from 'components/styled/PrintHide';
 import EntityListMainHeader from './EntityListMainHeader';
 import {
   updateQuery,
-  resetSearchQuery,
   updateSortBy,
   updateSortOrder,
 } from './actions';
@@ -54,11 +52,6 @@ import messages from './messages';
 const ScrollableWrapper = styled(Scrollable)`
   background-color: ${palette('aside', 0)};
 `;
-
-const EntityListSearch = styled.div`
-  padding: 0 0 2em;
-`;
-
 const Group = styled.div`
   border-bottom: ${(props) => props.hasBorder ? '1px solid' : 0};
   border-color: ${(props) => props.expanded ? palette('aside', 0) : palette('light', 2)};
@@ -144,7 +137,6 @@ const getTypeLabel = (type, formatMessage, short = true) => {
   }
   return label;
 };
-
 export class BookmarkList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   constructor(props) {
     super(props);
@@ -236,8 +228,6 @@ export class BookmarkList extends React.PureComponent { // eslint-disable-line r
     const {
       dataReady,
       location,
-      onSearch,
-      onClear,
       bookmarksForSearch,
       onOpenBookmark,
       onSortOrder,
@@ -291,22 +281,6 @@ export class BookmarkList extends React.PureComponent { // eslint-disable-line r
               }
               { dataReady && (
                 <div>
-                  <EntityListSearch>
-                    <TagSearch
-                      filters={filtered
-                        ? [{
-                          id: 'type',
-                          label: getTypeLabel(activeType, intl.formatMessage, true),
-                          onClick: () => this.props.onTypeSelect(''),
-                        }]
-                        : []
-                      }
-                      placeholder={intl.formatMessage(messages.placeholder)}
-                      searchQuery={location.query.search || ''}
-                      onSearch={onSearch}
-                      onClear={() => onClear(['search'])}
-                    />
-                  </EntityListSearch>
                   <ListWrapper>
                     {(allBookmarks.size === 0) && (
                       <ListHint>
@@ -368,8 +342,6 @@ BookmarkList.propTypes = {
   loadEntitiesIfNeeded: PropTypes.func,
   dataReady: PropTypes.bool,
   location: PropTypes.object,
-  onSearch: PropTypes.func.isRequired,
-  onClear: PropTypes.func.isRequired,
   onOpenBookmark: PropTypes.func.isRequired,
   onSortOrder: PropTypes.func.isRequired,
   onSortBy: PropTypes.func.isRequired,
@@ -394,20 +366,6 @@ function mapDispatchToProps(dispatch) {
   return {
     loadEntitiesIfNeeded: () => {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
-    },
-    onSearch: (value) => {
-      // console.log('onSearch')
-      dispatch(updateQuery(fromJS([
-        {
-          query: 'search',
-          value,
-          replace: true,
-          checked: value !== '',
-        },
-      ])));
-    },
-    onClear: (values) => {
-      dispatch(resetSearchQuery(values));
     },
     onTypeSelect: (value) => {
       // console.log('onTypeSelect')

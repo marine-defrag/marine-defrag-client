@@ -21,13 +21,15 @@ import {
   // selectActortypesForActiontype,
   selectTargettypesForActiontype,
   selectResourcetypesForActiontype,
+  selectActiontypeActions,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
 
 import { checkActionAttribute } from 'utils/entities';
+import qe from 'utils/quasi-equals';
 
-import { ROUTES, FF_ACTIONTYPE } from 'themes/config';
+import { ROUTES, FF_ACTIONTYPE, ACTIONTYPES } from 'themes/config';
 
 import EntityList from 'containers/EntityList';
 import ActionsFactsOverview from 'containers/ActionsFactsOverview';
@@ -65,6 +67,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
     const {
       dataReady,
       entities,
+      allEntities,
       taxonomies,
       connections,
       connectedTaxonomies,
@@ -84,6 +87,12 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
     const headerOptions = {
       supTitle: intl.formatMessage(messages.pageTitle),
       actions: [],
+      info: qe(typeId, ACTIONTYPES.INTL)
+        ? {
+          title: 'Please note',
+          content: intl.formatMessage(appMessages.actiontypes_info[typeId]),
+        }
+        : null,
     };
     if (isAnalyst) {
       headerOptions.actions.push({
@@ -102,20 +111,16 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
     }
     if (isManager) {
       headerOptions.actions.push({
-        type: 'text',
-        title: intl.formatMessage(appMessages.buttons.import),
-        onClick: () => this.props.handleImport(),
+        title: 'Create new',
+        onClick: () => this.props.handleNew(typeId),
+        icon: 'add',
+        isManager,
       });
       headerOptions.actions.push({
-        type: 'add',
-        title: [
-          intl.formatMessage(appMessages.buttons.add),
-          {
-            title: intl.formatMessage(appMessages.entities[type].single),
-            hiddenSmall: true,
-          },
-        ],
-        onClick: () => this.props.handleNew(typeId),
+        title: intl.formatMessage(appMessages.buttons.import),
+        onClick: () => this.props.handleImport(),
+        icon: 'import',
+        isManager,
       });
     }
 
@@ -127,14 +132,15 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        {typeId !== FF_ACTIONTYPE && (
+        {!qe(typeId, FF_ACTIONTYPE) && (
           <EntityList
             entities={entities}
+            allEntityCount={allEntities && allEntities.size}
             taxonomies={taxonomies}
             connections={connections}
             connectedTaxonomies={connectedTaxonomies}
             config={CONFIG}
-            header={headerOptions}
+            headerOptions={headerOptions}
             dataReady={dataReady}
             entityTitle={{
               single: intl.formatMessage(appMessages.entities[type].single),
@@ -151,7 +157,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
             showCode={checkActionAttribute(typeId, 'code', isManager)}
           />
         )}
-        {typeId === FF_ACTIONTYPE && (
+        {qe(typeId, FF_ACTIONTYPE) && (
           <ActionsFactsOverview
             entities={entities}
             connections={connections}
@@ -179,6 +185,7 @@ ActionList.propTypes = {
   actiontypes: PropTypes.instanceOf(Map),
   targettypes: PropTypes.instanceOf(Map),
   resourcetypes: PropTypes.instanceOf(Map),
+  allEntities: PropTypes.instanceOf(Map),
   location: PropTypes.object,
   isAnalyst: PropTypes.bool,
   params: PropTypes.object,
@@ -200,6 +207,7 @@ const mapStateToProps = (state, props) => ({
   actortypes: selectActortypes(state),
   targettypes: selectTargettypesForActiontype(state, { type: props.params.id }),
   resourcetypes: selectResourcetypesForActiontype(state, { type: props.params.id }),
+  allEntities: selectActiontypeActions(state, { type: props.params.id }),
 });
 function mapDispatchToProps(dispatch) {
   return {

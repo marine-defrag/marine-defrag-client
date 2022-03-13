@@ -13,6 +13,7 @@
 export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
 const IS_DEV = true;
+export const version = '1.0beta';
 
 export const ENDPOINTS = {
   API: (
@@ -668,7 +669,7 @@ export const ACTIONTYPES_CONFIG = {
         showOnSingle: false,
       },
       {
-        id: 'taxonomy',
+        id: 'taxonomy-3',
         type: 'taxonomy',
         taxonomy_id: 3, // LBS-protocol statuses: as link
       },

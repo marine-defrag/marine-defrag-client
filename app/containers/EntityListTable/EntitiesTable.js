@@ -48,7 +48,7 @@ const getColWidth = ({
     return col.type === 'main' ? 50 : 50;
   }
   if (count > 2) {
-    return col.type === 'main' ? 40 : (60 / (count - 1)) * colSpan;
+    return col.type === 'main' ? 35 : (65 / (count - 1)) * colSpan;
   }
   // if (count > 4) {
   //   return col.type === 'main' ? 40 : (60 / (count - 1)) * colSpan;
@@ -64,8 +64,8 @@ const TableCellHeader = styled.th`
   text-align: start;
   border-bottom: solid 1px;
   border-bottom-color: ${({ utility }) => utility ? 'transparent' : 'rgba(0,0,0,0.33)'};
-  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 20 : 8}px;
-  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 20 : 8}px;
+  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 16 : 8}px;
+  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 16 : 8}px;
   padding-top: 6px;
   padding-bottom: 6px;
   width: ${getColWidth}%;
@@ -120,6 +120,7 @@ export function EntitiesTable({
                       isIndicator={col.isIndicator}
                       first={i === 0}
                       last={i === headerColumns.length - 1}
+                      utility
                     >
                       {col.type === 'options' && (
                         <Box>

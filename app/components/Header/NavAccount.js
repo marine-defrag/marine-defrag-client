@@ -55,7 +55,7 @@ class NavAccount extends React.PureComponent { // eslint-disable-line react/pref
               active={currentPath === userPath}
               onClick={(evt) => this.onClick(evt, userPath)}
             >
-              {user.name}
+              Profile
             </LinkAccount>
           )
         }

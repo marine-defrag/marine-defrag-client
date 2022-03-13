@@ -8,6 +8,7 @@ import {
 } from 'containers/App/constants';
 
 import SupTitle from 'components/SupTitle';
+import InfoOverlay from 'components/InfoOverlay';
 // import Icon from 'components/Icon';
 
 import ButtonFactory from 'components/buttons/ButtonFactory';
@@ -122,6 +123,7 @@ class ContentHeader extends React.PureComponent { // eslint-disable-line react/p
       buttons,
       subTitle,
       hasViewOptions,
+      info,
     } = this.props;
     return (
       <Styled
@@ -152,6 +154,16 @@ class ContentHeader extends React.PureComponent { // eslint-disable-line react/p
                 {this.renderTitle(type, title)}
               </TableCell>
             )}
+            {info && (
+              <TableCell>
+                <ButtonGroup>
+                  <InfoOverlay
+                    title={info.title}
+                    content={info.content}
+                  />
+                </ButtonGroup>
+              </TableCell>
+            )}
             {buttons && (
               <TableCell hiddenMobile>
                 <ButtonGroup>
@@ -180,6 +192,7 @@ ContentHeader.propTypes = {
   buttons: PropTypes.array,
   supTitle: PropTypes.string,
   subTitle: PropTypes.string,
+  info: PropTypes.object,
   type: PropTypes.string,
   hasViewOptions: PropTypes.bool,
 };

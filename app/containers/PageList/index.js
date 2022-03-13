@@ -63,7 +63,7 @@ export class PageList extends React.PureComponent { // eslint-disable-line react
         <EntityList
           entities={this.props.entities && this.props.entities.toList()}
           config={CONFIG}
-          header={headerOptions}
+          headerOptions={headerOptions}
           dataReady={dataReady}
           includeHeader={false}
           canEdit={false}

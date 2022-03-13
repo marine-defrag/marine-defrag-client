@@ -54,10 +54,11 @@ const ListEntitiesMain = styled.div`
 `;
 const ListEntitiesEmpty = styled.div``;
 const EntityListSearchWrapper = styled.div`
-  padding-top: 1em;
+  padding-top: 12px;
   padding-bottom: 12px;
   @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
-    padding-top: 2em;
+    padding-top: 12px;
+    padding-bottom: 16px;
   }
 `;
 const CONNECTIONMAX = 5;

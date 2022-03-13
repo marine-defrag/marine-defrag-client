@@ -21,6 +21,7 @@ import {
   selectActiontypesForTargettype,
   selectMembertypesForActortype,
   selectAssociationtypesForActortype,
+  selectActortypeActors,
 } from 'containers/App/selectors';
 
 import { checkActionAttribute } from 'utils/entities';
@@ -65,6 +66,7 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
     const {
       dataReady,
       entities,
+      allEntities,
       taxonomies,
       connections,
       connectedTaxonomies,
@@ -105,17 +107,13 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
         type: 'text',
         title: intl.formatMessage(appMessages.buttons.import),
         onClick: () => this.props.handleImport(),
+        isManager,
       });
       headerOptions.actions.push({
-        type: 'add',
-        title: [
-          intl.formatMessage(appMessages.buttons.add),
-          {
-            title: intl.formatMessage(appMessages.entities[type].single),
-            hiddenSmall: true,
-          },
-        ],
+        type: 'text',
+        title: 'Create new',
         onClick: () => this.props.handleNew(typeId),
+        isManager,
       });
     }
 
@@ -129,11 +127,12 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
         />
         <EntityList
           entities={entities}
+          allEntityCount={allEntities && allEntities.size}
           taxonomies={taxonomies}
           connections={connections}
           connectedTaxonomies={connectedTaxonomies}
           config={CONFIG}
-          header={headerOptions}
+          headerOptions={headerOptions}
           dataReady={dataReady}
           entityTitle={{
             single: intl.formatMessage(appMessages.entities[type].single),
@@ -163,6 +162,7 @@ ActorList.propTypes = {
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   entities: PropTypes.instanceOf(List).isRequired,
+  allEntities: PropTypes.instanceOf(Map),
   taxonomies: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
@@ -193,6 +193,7 @@ const mapStateToProps = (state, props) => ({
   membertypes: selectMembertypesForActortype(state, { type: props.params.id }),
   associationtypes: selectAssociationtypesForActortype(state, { type: props.params.id }),
   actortypes: selectActortypes(state),
+  allEntities: selectActortypeActors(state, { type: props.params.id }),
 });
 
 function mapDispatchToProps(dispatch) {

@@ -15,6 +15,8 @@ const Select = styled(PrintHide)`
   width: 20px;
   text-align: center;
   padding-right: 6px;
+  position: relative;
+  top: -1px
 `;
 
 const SortButton = styled(ButtonFlatIconOnly)`
@@ -31,13 +33,15 @@ export function CellHeaderMain({ column, canEdit }) {
   return (
     <Box direction="row" align="center" justify="start">
       {canEdit && (
-        <Select>
-          <Checkbox
-            id="select-all"
-            checked={column.selectedState}
-            onChange={column.onSelect}
-          />
-        </Select>
+        <Box>
+          <Select>
+            <Checkbox
+              id="select-all"
+              checked={column.selectedState}
+              onChange={column.onSelect}
+            />
+          </Select>
+        </Box>
       )}
       <Box>
         {canEdit && (

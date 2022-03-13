@@ -434,6 +434,7 @@ theme.text = {
 
 theme.icon = {
   size: {
+    xxsmall: '14px',
     xsmall: '20px',
     small: '24px',
     medium: '36px',

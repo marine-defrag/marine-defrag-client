@@ -110,7 +110,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
   render() {
     const {
       config,
-      header,
       entityTitle,
       dataReady,
       isManager,
@@ -141,6 +140,8 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       actiontypes,
       intl,
       resourcetypes,
+      allEntityCount,
+      headerOptions,
     } = this.props;
     const { viewType } = this.state;
     let type;
@@ -339,13 +340,14 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       ];
     }
     let headerTitle;
+    let headerSubTitle;
     if (entityTitle) {
       headerTitle = entities
         ? `${entities.size} ${entities.size === 1 ? entityTitle.single : entityTitle.plural}`
         : entityTitle.plural;
     }
     if (hasFilters) {
-      headerTitle = `${headerTitle} (filtered)`;
+      headerSubTitle = `of ${allEntityCount} total`;
     }
     return (
       <ContainerWrapper hasHeader={hasHeader} ref={this.ScrollContainer}>
@@ -360,8 +362,9 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 <ContentHeader
                   type={CONTENT_LIST}
                   title={headerTitle}
-                  buttons={header && header.actions}
+                  subTitle={headerSubTitle}
                   hasViewOptions={viewOptions && viewOptions.length > 1}
+                  info={headerOptions && headerOptions.info}
                 />
                 {config.types === 'actiontypes' && (
                   <Box>
@@ -501,7 +504,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                     columns={columns}
                     headerColumnsUtility={headerColumnsUtility}
                     memberOption={memberOption && <MapMemberOption option={memberOption} />}
-                    subjectOptions={subjectOptions && <MapSubjectOptions options={subjectOptions} />}
+                    subjectOptions={subjectOptions && <MapSubjectOptions inList options={subjectOptions} />}
                     listUpdating={listUpdating}
                     entities={entities}
                     errors={errors}
@@ -552,9 +555,9 @@ EntitiesListView.propTypes = {
   errors: PropTypes.instanceOf(Map),
   // object/arrays
   config: PropTypes.object,
-  header: PropTypes.object,
   viewOptions: PropTypes.array,
   entityTitle: PropTypes.object, // single/plural
+  headerOptions: PropTypes.object, // single/plural
   intl: intlShape.isRequired,
   // primitive
   dataReady: PropTypes.bool,
@@ -568,6 +571,7 @@ EntitiesListView.propTypes = {
   typeId: PropTypes.string,
   showCode: PropTypes.bool,
   mapSubject: PropTypes.string,
+  allEntityCount: PropTypes.number,
   // functions
   onEntityClick: PropTypes.func.isRequired,
   onEntitySelect: PropTypes.func.isRequired,
