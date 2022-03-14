@@ -5,11 +5,9 @@ import headerLogo2x from 'themes/media/headerLogo@2x.png';
 
 import graphicHome from 'themes/media/homeGraphic.png';
 import graphicHome2x from 'themes/media/homeGraphic@2x.png';
-import titleHome from 'themes/media/homeTitle.png';
-import titleHome2x from 'themes/media/homeTitle@2x.png';
 
-import impactossLogo from 'themes/media/impactoss.png';
-import impactossLogo2x from 'themes/media/impactoss@2x.png';
+// import impactossLogo from 'themes/media/impactoss.png';
+// import impactossLogo2x from 'themes/media/impactoss@2x.png';
 
 const theme = {};
 
@@ -19,8 +17,7 @@ const theme = {};
 theme.media = {
   headerLogo: [headerLogo, headerLogo2x],
   graphicHome: [graphicHome, graphicHome2x],
-  titleHome: [titleHome, titleHome2x],
-  impactossLogo: [impactossLogo, impactossLogo2x],
+  // impactossLogo: [impactossLogo, impactossLogo2x],
 };
 
 // grid-styles settings https://github.com/jxnblk/grid-styled
@@ -54,7 +51,7 @@ const dark = coolorsToHex('https://coolors.co/1c2121-232b2b-323e3e-687271-8d9696
 // 2:  gray 1 (gray pattern)
 // 3:  gray 2 (icons light)
 // 4:  gray 3 (dark lines)
-const light = coolorsToHex('https://coolors.co/f1f4f4-e0e6e6-d5dddd-cdd6d6-c7d1d1');
+const light = coolorsToHex('https://coolors.co/f1f0f1-e0e6e6-d5dddd-cdd6d6-c7d1d1');
 
 // other palettes
 // 0: AA on light[0] and on error[3]
@@ -469,7 +466,17 @@ theme.global = {
     brand: '#183863',
     highlight: '#0070cc',
     highlightHover: '#0063b5',
-    text: '#1c2121',
+    background: '#f1f0f1',
+    text: {
+      brand: '#183863',
+      dark: '#FFFFFF', //  on dark background
+      light: '#1c2121', // on light background (empowerment)
+      secondary: '#777b7e', // on light background (empowerment)
+    },
+    border: {
+      light: '#CECED2',
+      dark: '#FFFFFF',
+    },
   },
   edgeSize: {
     hair: '1px',
@@ -492,7 +499,7 @@ theme.layer = {
 };
 
 theme.text = {
-  xxxlarge: { size: '60px', height: '75px', maxWidth: '800px' },
+  xxxlarge: { size: '48px', height: '60px', maxWidth: '800px' },
   xxlarge: { size: '30px', height: '36px', maxWidth: '800px' },
   xlarge: { size: '21px', height: '28px', maxWidth: '800px' },
   large: { size: '18px', height: '24px', maxWidth: '800px' },

@@ -9,11 +9,12 @@ import { ROUTES } from 'themes/config';
 import { isMinSize } from 'utils/responsive';
 import appMessages from 'containers/App/messages';
 import Icon from 'components/Icon';
+import ScreenReaderOnly from 'components/styled/ScreenReaderOnly';
 
 import Brand from './Brand';
 import BrandTitle from './BrandTitle';
-import NavAccount from './NavAccount';
 import Logo from './Logo';
+import messages from './messages';
 
 
 const Styled = styled.div`
@@ -53,27 +54,54 @@ const Styled = styled.div`
 `;
 
 const LinkPage = styled((p) => <Button plain as="a" justify="center" fill="vertical" {...p} />)`
-  color: white;
-  background-color:${({ theme, active }) => active ? theme.global.colors.highlight : 'transparent'};
+  color: ${({ wide, theme }) => theme.global.colors.text[!wide ? 'light' : 'dark']};
+  background-color: ${({ theme, active, wide }) => (active && wide) ? theme.global.colors.highlight : 'transparent'};
   padding-right: 12px;
   padding-left: 12px;
   padding-top: 16px;
+  padding-bottom: ${({ wide }) => !wide ? 16 : 0}px;
+  width: ${({ wide }) => !wide ? '100%' : 'auto'};
+  text-align: center;
   font-size: ${({ theme }) => theme.text.small.size};
   line-height: ${({ theme }) => theme.text.small.height};
+  font-weight: ${({ wide, active }) => (!wide && active) ? 500 : 300};
+  &:hover {
+    color: ${({ wide, theme }) => theme.global.colors.text[!wide ? 'light' : 'dark']};
+    background-color:${({ theme, wide }) => wide ? theme.global.colors.highlightHover : 'transparent'};
+  }
+`;
+const LinkAccount = LinkPage;
+
+
+const ToggleMenu = styled((p) => <Button plain as="a" {...p} />)`
+  display: block;
+  z-index: 300;
+  background-color: transparent;
+  color: white;
   &:hover {
     color: white;
-    background-color:${({ theme }) => theme.global.colors.highlightHover};
+    opacity: 0.9;
   }
 `;
 
 const Section = styled((p) => <Box {...p} />)`
-  border-right: 1px solid black;
+  border-right: 1px solid ${({ wide }) => wide ? 'black' : 'transparent'};
+  border-bottom: 1px solid ${({ wide }) => wide ? 'transparent' : 'white'};
+  &:last-child {
+    border-color: transparent;
+  }
 `;
-const Menu = styled((p) => <Box {...p} />)`
+const MainMenu = styled((p) => <Box {...p} />)`
+  position: ${({ wide }) => !wide ? 'absolute' : 'static'};
+  left: ${({ wide }) => !wide ? 0 : 'auto'};
+  right: ${({ wide }) => !wide ? 0 : 'auto'};
+  width: ${({ wide }) => !wide ? '100%' : 'auto'};
+  top: ${({ wide, theme }) => !wide ? theme.sizes.header.banner.heightMobile : 0}px;
+  background: ${({ wide, theme }) => !wide ? theme.global.colors.background : 'transparent'};
 `;
 
 const STATE_INITIAL = {
-  showSecondary: false,
+  showMenu: false,
 };
 
 class Header extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
@@ -96,18 +124,19 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
     window.removeEventListener('mousedown', this.handleClickOutside);
   }
 
-  onShowSecondary = (evt) => {
+  onShowMenu = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.setState({ showSecondary: true });
+    this.setState({ showMenu: true });
   };
 
-  onHideSecondary = (evt) => {
+  onHideMenu = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.setState({ showSecondary: false });
+    this.setState({ showMenu: false });
   };
 
   onClick = (evt, path, currentPath) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    this.onHideMenu();
     if (currentPath) {
       if (currentPath === ROUTES.LOGIN || currentPath === ROUTES.REGISTER) {
         this.props.onPageLink(path, { keepQuery: true });
@@ -126,16 +155,18 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
   };
 
   render() {
-    const { isAuth, navItems, search } = this.props;
+    const {
+      isAuth, navItems, search, isSignedIn, user, currentPath,
+    } = this.props;
     const { intl } = this.context;
     const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
+    const userPath = user ? `${ROUTES.USERS}/${user.id}` : '';
     return (
       <ResponsiveContext.Consumer>
         {(size) => {
           const wide = isMinSize(size, 'large');
           return (
             <Styled
-              fixed={isAuth}
               sticky={!isAuth}
               hasBackground={!isAuth}
               hasShadow={!isAuth}
@@ -162,25 +193,65 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                     </Box>
                   </Brand>
                 </Box>
-                {(wide || this.state.showSecondary) && (
-                  <Menu
+                {!wide && !this.state.showMenu && (
+                  <Box
                     flex={{ grow: 1 }}
-                    direction={wide ? 'row' : 'column'}
+                    direction="row"
                     align="center"
                     justify="end"
+                    pad={{ right: 'small' }}
+                  >
+                    <ToggleMenu
+                      onClick={this.onShowMenu}
+                    >
+                      <ScreenReaderOnly>
+                        <FormattedMessage {...appMessages.buttons.showSecondaryNavigation} />
+                      </ScreenReaderOnly>
+                      <Icon name="menu" hasStroke size="39px" />
+                    </ToggleMenu>
+                  </Box>
+                )}
+                {!wide && this.state.showMenu && (
+                  <Box
+                    flex={{ grow: 1 }}
+                    direction="row"
+                    align="center"
+                    justify="end"
+                    pad={{ right: 'small' }}
+                  >
+                    <ToggleMenu
+                      onClick={this.onHideMenu}
+                    >
+                      <ScreenReaderOnly>
+                        <FormattedMessage {...appMessages.buttons.showSecondaryNavigation} />
+                      </ScreenReaderOnly>
+                      <Icon name="close" size="39px" />
+                    </ToggleMenu>
+                  </Box>
+                )}
+                {(wide || this.state.showMenu) && (
+                  <MainMenu
+                    flex={{ grow: 1 }}
+                    direction={wide ? 'row' : 'column'}
+                    align={wide ? 'center' : 'end'}
+                    justify={wide ? 'end' : 'center'}
                     wide={wide}
+                    elevation={wide ? 'none' : 'medium'}
                   >
                     {search && (
                       <Section
-                        fill="vertical"
-                        justify="center"
+                        fill={wide ? 'vertical' : 'horizontal'}
+                        justify={wide ? 'center' : 'end'}
+                        align={wide ? 'end' : 'center'}
                         direction={wide ? 'row' : 'column'}
+                        wide={wide}
                       >
                         <LinkPage
                           href={search.path}
                           active={search.active}
                           onClick={(evt) => this.onClick(evt, search.path)}
                           title={search.title}
+                          wide={wide}
                         >
                           {search.title}
                           {search.icon
@@ -189,11 +260,13 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                         </LinkPage>
                       </Section>
                     )}
-                    {this.props.pages && (
+                    {this.props.pages && this.props.pages.length > 0 && (
                       <Section
-                        fill="vertical"
-                        justify="center"
+                        fill={wide ? 'vertical' : 'horizontal'}
+                        justify={wide ? 'center' : 'end'}
+                        align={wide ? 'end' : 'center'}
                         direction={wide ? 'row' : 'column'}
+                        wide={wide}
                       >
                         {this.props.pages.map((page, i) => (
                           <LinkPage
@@ -201,17 +274,20 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                             href={page.path}
                             active={page.active || this.props.currentPath === page.path}
                             onClick={(evt) => this.onClick(evt, page.path)}
+                            wide={wide}
                           >
                             {page.title}
                           </LinkPage>
                         ))}
                       </Section>
                     )}
-                    {navItems && (
+                    {navItems && navItems.length > 0 && (
                       <Section
-                        fill="vertical"
-                        justify="center"
+                        fill={wide ? 'vertical' : 'horizontal'}
+                        justify={wide ? 'center' : 'end'}
+                        align={wide ? 'end' : 'center'}
                         direction={wide ? 'row' : 'column'}
+                        wide={wide}
                       >
                         {navItems.map((item, i) => (
                           <LinkPage
@@ -220,9 +296,10 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                             active={item.active}
                             onClick={(evt) => {
                               evt.stopPropagation();
-                              this.onHideSecondary();
+                              this.onHideMenu();
                               this.onClick(evt, item.path);
                             }}
+                            wide={wide}
                           >
                             {item.title}
                           </LinkPage>
@@ -230,22 +307,71 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                       </Section>
                     )}
                     <Section
-                      fill="vertical"
-                      justify="center"
+                      fill={wide ? 'vertical' : 'horizontal'}
+                      justify={wide ? 'center' : 'end'}
+                      align={wide ? 'end' : 'center'}
                       direction={wide ? 'row' : 'column'}
+                      wide={wide}
                     >
-                      <NavAccount
-                        isSignedIn={this.props.isSignedIn}
-                        user={this.props.user}
-                        onPageLink={(evt, path, query) => {
-                          if (evt !== undefined && evt.stopPropagation) evt.stopPropagation();
-                          this.onHideSecondary();
-                          this.props.onPageLink(path, query);
-                        }}
-                        currentPath={this.props.currentPath}
-                      />
+                      {isSignedIn && user
+                        && (
+                          <LinkAccount
+                            href={ROUTES.BOOKMARKS}
+                            active={currentPath === ROUTES.BOOKMARKS}
+                            onClick={(evt) => this.onClick(evt, ROUTES.BOOKMARKS)}
+                            wide={wide}
+                          >
+                            <FormattedMessage {...appMessages.nav.bookmarks} />
+                          </LinkAccount>
+                        )
+                      }
+                      {isSignedIn && user && (
+                        <LinkAccount
+                          href={userPath}
+                          active={currentPath === userPath}
+                          onClick={(evt) => this.onClick(evt, userPath)}
+                          wide={wide}
+                        >
+                          Profile
+                        </LinkAccount>
+                      )}
+                      {isSignedIn && !user && wide && (
+                        <LinkAccount>
+                          <FormattedMessage {...messages.userLoading} />
+                        </LinkAccount>
+                      )}
+                      {isSignedIn && (
+                        <LinkAccount
+                          href={ROUTES.LOGOUT}
+                          active={currentPath === ROUTES.LOGOUT}
+                          onClick={(evt) => this.onClick(evt, ROUTES.LOGOUT)}
+                          wide={wide}
+                        >
+                          <FormattedMessage {...appMessages.nav.logout} />
+                        </LinkAccount>
+                      )}
+                      {!isSignedIn && (
+                        <LinkAccount
+                          href={ROUTES.REGISTER}
+                          active={currentPath === ROUTES.REGISTER}
+                          onClick={(evt) => this.onClick(evt, ROUTES.REGISTER, currentPath)}
+                          wide={wide}
+                        >
+                          <FormattedMessage {...appMessages.nav.register} />
+                        </LinkAccount>
+                      )}
+                      {!isSignedIn && (
+                        <LinkAccount
+                          href={ROUTES.LOGIN}
+                          active={currentPath === ROUTES.LOGIN}
+                          onClick={(evt) => this.onClick(evt, ROUTES.LOGIN, currentPath)}
+                          wide={wide}
+                        >
+                          <FormattedMessage {...appMessages.nav.login} />
+                        </LinkAccount>
+                      )}
                     </Section>
-                  </Menu>
+                  </MainMenu>
                 )}
               </Box>
             </Styled>

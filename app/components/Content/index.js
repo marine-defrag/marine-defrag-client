@@ -5,7 +5,7 @@ import Container from 'components/styled/Container';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 
 const Content = React.forwardRef((props, ref) => (
-  <ContainerWrapper ref={ref} isStatic={props.withoutHeaderNav}>
+  <ContainerWrapper ref={ref} isStatic={props.withoutHeaderNav || props.isStatic}>
     <Container inModal={props.inModal}>
       {props.children}
     </Container>
@@ -16,6 +16,7 @@ Content.propTypes = {
   children: PropTypes.node,
   inModal: PropTypes.bool,
   withoutHeaderNav: PropTypes.bool,
+  isStatic: PropTypes.bool,
 };
 
 export default Content;
