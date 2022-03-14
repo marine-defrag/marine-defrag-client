@@ -348,6 +348,14 @@ export const selectSortByQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('sort')
 );
+export const selectPageItemsQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('items')
+);
+export const selectPageNoQuery = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('page')
+);
 
 export const selectActortypeQuery = createSelector(
   selectLocationQuery,

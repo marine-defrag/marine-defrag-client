@@ -19,10 +19,6 @@ import {
   DELETE_MULTIPLE_CONNECTIONS,
   UPDATE_QUERY,
   UPDATE_GROUP,
-  PAGE_CHANGE,
-  PAGE_ITEM_CHANGE,
-  SORTBY_CHANGE,
-  SORTORDER_CHANGE,
   RESET_FILTERS,
 } from './constants';
 
@@ -69,42 +65,6 @@ export function* updateGroup({ value }) {
   });
   yield put(updateRouteQuery(params));
 }
-export function* updatePage({ page }) {
-  yield put(updateRouteQuery({
-    arg: 'page',
-    value: page,
-    replace: true,
-  }));
-}
-export function* updatePageItems({ no }) {
-  yield put(updateRouteQuery([
-    {
-      arg: 'items',
-      value: no,
-      replace: true,
-    },
-    {
-      arg: 'page',
-      value: '',
-      replace: true,
-      remove: true,
-    },
-  ]));
-}
-export function* updateSortBy({ sort }) {
-  yield put(updateRouteQuery({
-    arg: 'sort',
-    value: sort,
-    replace: true,
-  }));
-}
-export function* updateSortOrder({ order }) {
-  yield put(updateRouteQuery({
-    arg: 'order',
-    value: order,
-    replace: true,
-  }));
-}
 
 export function* save({ data }) {
   yield put(saveEntity({
@@ -145,10 +105,6 @@ export function* deleteConnection({ data }) {
 export default function* entityList() {
   yield takeLatest(UPDATE_QUERY, updateQuery);
   yield takeLatest(UPDATE_GROUP, updateGroup);
-  yield takeLatest(PAGE_CHANGE, updatePage);
-  yield takeLatest(PAGE_ITEM_CHANGE, updatePageItems);
-  yield takeLatest(SORTBY_CHANGE, updateSortBy);
-  yield takeLatest(SORTORDER_CHANGE, updateSortOrder);
   yield takeLatest(RESET_FILTERS, resetFilters);
 
   yield takeLatest(SAVE, save);

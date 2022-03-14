@@ -9,7 +9,10 @@ import { FormattedMessage } from 'react-intl';
 import styled, { withTheme } from 'styled-components';
 import { Map, List } from 'immutable';
 import { palette } from 'styled-theme';
-import { Box } from 'grommet';
+import { Box, Text, Button } from 'grommet';
+import {
+  Add, Edit, Multiple,
+} from 'grommet-icons';
 
 import { isEqual } from 'lodash/lang';
 import { truncateText } from 'utils/string';
@@ -17,15 +20,15 @@ import { truncateText } from 'utils/string';
 import { TEXT_TRUNCATE } from 'themes/config';
 import { FILTER_FORM_MODEL, EDIT_FORM_MODEL } from 'containers/EntityListForm/constants';
 
-import Button from 'components/buttons/Button';
 import ButtonFlatIconOnly from 'components/buttons/ButtonFlatIconOnly';
-import ButtonFlatWithIcon from 'components/buttons/ButtonFlatWithIcon';
+import Bookmarker from 'containers/Bookmarker';
 
 import EntityListForm from 'containers/EntityListForm';
 import appMessages from 'containers/App/messages';
 import PrintHide from 'components/styled/PrintHide';
 import TagList from 'components/TagList';
 import Icon from 'components/Icon';
+import ButtonOld from 'components/buttons/Button';
 
 import EntityListSidebar from './EntityListSidebar';
 
@@ -63,7 +66,7 @@ const HeaderSectionType = styled((p) => <Box direction="column" {...p} />)`
   padding: 18px 5px 2px;
   height: 100%;
 `;
-const SelectType = styled(Button)`
+const SelectType = styled(ButtonOld)`
   display: none;
   text-align: left;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
@@ -73,16 +76,10 @@ const SelectType = styled(Button)`
     max-width: 100%;
   }
 `;
-const EntityListSearch = styled((p) => <Box direction="row" gap="medium" {...p} />)``;
+const EntityListSearch = styled((p) => <Box justify="end" direction="row" gap="medium" {...p} />)``;
 
-const ButtonOptions = styled((p) => <ButtonFlatWithIcon iconRight iconSize="20px" small {...p} />)`
-  position: relative;
-  top: 3px;
-  padding: 4px 8px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding: ${(props) => props.inForm ? '1em 1.2em' : '0.25em 1.25em'};
-    padding: 5px 10px;
-  }
+const ButtonOptions = styled((p) => <Button plain {...p} />)`
+  color: ${palette('buttonFlat', 1)};
 `;
 
 const Label = styled.div`
@@ -125,7 +122,7 @@ const TypeOptions = styled(PrintHide)`
   margin-top: 3px;
   padding: 5px 0;
 `;
-const TypeOption = styled(Button)`
+const TypeOption = styled(ButtonOld)`
   display: block;
   width: 100%;
   text-align: left;
@@ -286,7 +283,6 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       membertypes,
       associationtypes,
       currentFilters,
-      onClearFilters,
       onShowFilters,
       onHideFilters,
       showFilters,
@@ -302,6 +298,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       onUpdateQuery,
       includeMembers,
       onSetFilterMemberOption,
+      headerActions,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -437,6 +434,12 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     const hasTypeOptions = typeOptions && typeOptions.length > 0;
     const currentTypeOption = hasTypeOptions && typeOptions.find((option) => option.active);
 
+    const managerActions = canEdit && headerActions.filter(
+      (action) => action.isManager
+    );
+    const normalActions = headerActions.filter(
+      (action) => !action.isManager
+    );
     return (
       <Styled>
         <TheHeader align="center">
@@ -501,30 +504,93 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
               )}
             </HeaderSectionType>
           )}
-          <HeaderSection grow noBorder={!canEdit} align="center" gap="medium">
-            <ButtonOptions
-              onClick={onShowFilters}
-              disabled={showFilters}
-              icon="filter"
-              title={intl.formatMessage(messages.listOptions.showFilter)}
-            />
+          <HeaderSection grow align="center" gap="medium" justify="end">
             {dataReady && (
               <EntityListSearch>
                 <TagList
                   filters={currentFilters}
-                  onClear={onClearFilters}
                 />
               </EntityListSearch>
             )}
           </HeaderSection>
+          <HeaderSection align="center">
+            <ButtonOptions
+              onClick={onShowFilters}
+              label={(
+                <Box direction="row" gap="small" align="center">
+                  <Box>{<Icon name="filter" text />}</Box>
+                  <Text>{intl.formatMessage(messages.listOptions.showFilter)}</Text>
+                </Box>
+              )}
+            />
+          </HeaderSection>
+          {normalActions && (
+            <HeaderSection noBorder={!canEdit}>
+              <Box fill="vertical" direction="row" align="center" pad={{ vertical: 'xsmall' }}>
+                {normalActions.map(
+                  (action, i) => {
+                    if (action.type === 'bookmarker') {
+                      return (
+                        <Box key={i}>
+                          <Bookmarker viewTitle={action.title} type={action.entityType} />
+                        </Box>
+                      );
+                    }
+                    if (action.type === 'icon') {
+                      return (
+                        <Box key={i}>
+                          <ButtonFlatIconOnly
+                            onClick={action.onClick && (() => action.onClick())}
+                            title={action.title}
+                            subtle
+                          >
+                            <Icon name={action.icon} />
+                          </ButtonFlatIconOnly>
+                        </Box>
+                      );
+                    }
+                    return null;
+                  }
+                )}
+              </Box>
+            </HeaderSection>
+          )}
           {canEdit && (
             <HeaderSection noBorder>
-              <ButtonOptions
-                onClick={onShowEditOptions}
-                disabled={showEditOptions}
-                icon="edit"
-                title={intl.formatMessage(messages.listOptions.showEditOptions)}
-              />
+              <Box fill="vertical" justify="between" pad={{ top: 'xsmall', bottom: 'xxsmall' }}>
+                <ButtonOptions
+                  onClick={onShowEditOptions}
+                  label={(
+                    <Box direction="row" gap="small">
+                      <Box>{<Edit color="dark-3" size="xxsmall" />}</Box>
+                      <Text color="dark-3" size="small">{intl.formatMessage(messages.listOptions.showEditOptions)}</Text>
+                    </Box>
+                  )}
+                />
+                {managerActions && managerActions.map(
+                  (action, i) => {
+                    let icon;
+                    if (action.icon === 'add') {
+                      icon = <Add color="dark-3" size="xxsmall" />;
+                    }
+                    if (action.icon === 'import') {
+                      icon = <Multiple color="dark-3" size="xxsmall" />;
+                    }
+                    return (
+                      <ButtonOptions
+                        key={i}
+                        onClick={action.onClick}
+                        label={(
+                          <Box direction="row" gap="small">
+                            <Box>{icon}</Box>
+                            <Text color="dark-3" size="small">{action.title}</Text>
+                          </Box>
+                        )}
+                      />
+                    );
+                  }
+                )}
+              </Box>
             </HeaderSection>
           )}
         </TheHeader>
@@ -615,7 +681,6 @@ EntityListHeader.propTypes = {
   listUpdating: PropTypes.bool,
   theme: PropTypes.object,
   currentFilters: PropTypes.array,
-  onClearFilters: PropTypes.func.isRequired,
   onUpdateQuery: PropTypes.func.isRequired,
   onShowFilters: PropTypes.func,
   onHideFilters: PropTypes.func,
@@ -631,6 +696,7 @@ EntityListHeader.propTypes = {
   onSelectType: PropTypes.func,
   onSetFilterMemberOption: PropTypes.func,
   typeId: PropTypes.string,
+  headerActions: PropTypes.array,
 };
 
 EntityListHeader.contextTypes = {

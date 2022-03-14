@@ -384,6 +384,36 @@ export default defineMessages({
       defaultMessage: 'Actortype 7',
     },
   },
+  actiontypes_info: {
+    1: {
+      id: 'app.containers.App.actiontypes_info.1',
+      defaultMessage: 'In some cases country memberships/actors are not displayed in international frameworks and policies due to difficulty in retrieving information and potential inconsistencies through updates (e.g. regarding ratifications, etc.).',
+    },
+    2: {
+      id: 'app.containers.App.actiontypes_info.2',
+      defaultMessage: 'SDGs',
+    },
+    3: {
+      id: 'app.containers.App.actiontypes_info.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actiontypes_info.4',
+      defaultMessage: 'Actortype 4',
+    },
+    5: {
+      id: 'app.containers.App.actiontypes_info.5',
+      defaultMessage: 'Actortype 5',
+    },
+    6: {
+      id: 'app.containers.App.actiontypes_info.6',
+      defaultMessage: 'Actortype 6',
+    },
+    7: {
+      id: 'app.containers.App.actiontypes_info.7',
+      defaultMessage: 'Actortype 7',
+    },
+  },
   actiontypeGroups: {
     1: {
       id: 'app.containers.App.actiontypeGroups.1',

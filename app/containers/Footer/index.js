@@ -15,8 +15,8 @@ import { API } from 'themes/config';
 import messages from './messages';
 
 const FooterMain = styled.div`
-  background-color: ${palette('footer', 1)};
-  color: ${palette('footer', 0)};
+  background-color: #183863;
+  color: white;
   padding: 0;
   min-height: 150px;
   @media print {
@@ -29,7 +29,8 @@ const FooterLink = styled.a`
   font-weight:bold;
   color: ${palette('footerLinks', 0)};
   &:hover {
-    color: ${palette('footerLinksHover', 0)};
+    color: ${palette('footerLinks', 0)};
+    text-decoration: underline;
   }
 `;
 // const ImpactLink = styled.a`

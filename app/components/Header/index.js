@@ -3,26 +3,20 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import styled, { withTheme } from 'styled-components';
 import { palette } from 'styled-theme';
-
+import { Box, Button, ResponsiveContext } from 'grommet';
 import { SHOW_HEADER_TITLE, ROUTES } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
 import Icon from 'components/Icon';
-import Button from 'components/buttons/Button';
-import ScreenReaderOnly from 'components/styled/ScreenReaderOnly';
-import PrintHide from 'components/styled/PrintHide';
+// import ButtonOld from 'components/buttons/Button';
+// import ScreenReaderOnly from 'components/styled/ScreenReaderOnly';
+// import PrintHide from 'components/styled/PrintHide';
 
-import Banner from './Banner';
 import Brand from './Brand';
-import BrandText from './BrandText';
 import BrandTitle from './BrandTitle';
 import BrandClaim from './BrandClaim';
-import NavPages from './NavPages';
-import NavAdmin from './NavAdmin';
-import LinkPage from './LinkPage';
 import NavAccount from './NavAccount';
 
-import LinkAdmin from './LinkAdmin';
 // import Link from './Link';
 
 
@@ -50,7 +44,7 @@ const Styled = styled.div`
     return 0;
   }}px;
   }
-  background-color: ${(props) => props.hasBackground ? palette('header', 0) : 'transparent'};
+  background-color: #183863;
   box-shadow: ${(props) => props.hasShadow ? '0px 0px 5px 0px rgba(0,0,0,0.5)' : 'none'};
   z-index: 101;
   @media print {
@@ -62,54 +56,26 @@ const Styled = styled.div`
   }
 `;
 
-const NavSecondary = styled(PrintHide)`
-  display: ${(props) => props.visible ? 'block' : 'none'};
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  z-index: 99999;
-  background-color:  ${palette('header', 0)};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    position: relative;
-    top: auto;
-    bottom: auto;
-    left: auto;
-    right: auto;
-    z-index: 300;
-    display: block;
+const LinkPage = styled((p) => <Button plain as="a" {...p} />)`
+  color: white;
+  background-color:${(props) => props.active ? palette('headerNavPagesItem', 3) : palette('headerNavPagesItem', 2)};
+  padding: 8px 0.7em;
+  &:hover {
+    color: white;
+    background-color:${(props) => props.active ? palette('headerNavPagesItemHover', 3) : palette('headerNavPagesItemHover', 3)};
   }
 `;
-const ShowSecondary = styled(Button)`
-  display: ${(props) => props.visible ? 'block' : 'none'};
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 300;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    display: none;
+const LinkMain = styled((p) => <Button plain as="a" {...p} />)`
+  color: white;
+  background-color:${(props) => props.active ? palette('headerNavPagesItem', 3) : palette('headerNavPagesItem', 2)};
+  padding: 8px 0.7em;
+  &:hover {
+    color: white;
+    background-color:${(props) => props.active ? palette('headerNavPagesItemHover', 3) : palette('headerNavPagesItemHover', 3)};
   }
-  background-color: transparent;
+  font-weight: 500;
 `;
-const HideSecondaryWrap = styled.div`
-  background-color: ${palette('header', 0)};
-  text-align: right;
-  display: block;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    display: none;
-  }
-`;
-const HideSecondary = styled(Button)``;
 
-
-const Search = styled(LinkPage)`
-  display: none;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    display: inline-block;
-  }
-`;
 
 const STATE_INITIAL = {
   showSecondary: false,
@@ -137,12 +103,12 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
 
   onShowSecondary = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.setState({ showSecondary: true });
+    // this.setState({ showSecondary: true });
   };
 
   onHideSecondary = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.setState({ showSecondary: false });
+    // this.setState({ showSecondary: false });
   };
 
   onClick = (evt, path, currentPath) => {
@@ -164,129 +130,93 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
     this.forceUpdate();
   };
 
-  renderSecondary = (navItems, search) => (
-    <PrintHide>
-      <ShowSecondary
-        visible={!this.state.showSecondary}
-        onClick={this.onShowSecondary}
-      >
-        <ScreenReaderOnly>
-          <FormattedMessage {...appMessages.buttons.showSecondaryNavigation} />
-        </ScreenReaderOnly>
-        <Icon name="menu" hasStroke />
-      </ShowSecondary>
-      <NavSecondary
-        visible={this.state.showSecondary}
-        onClick={(evt) => {
-          evt.stopPropagation();
-          this.onHideSecondary();
-        }}
-      >
-        <HideSecondaryWrap>
-          <HideSecondary
-            onClick={this.onHideSecondary}
-          >
-            <ScreenReaderOnly>
-              <FormattedMessage {...appMessages.buttons.hideSecondaryNavigation} />
-            </ScreenReaderOnly>
-            <Icon name="close" size="30px" />
-          </HideSecondary>
-        </HideSecondaryWrap>
-        <NavAccount
-          isSignedIn={this.props.isSignedIn}
-          user={this.props.user}
-          onPageLink={(evt, path, query) => {
-            if (evt !== undefined && evt.stopPropagation) evt.stopPropagation();
-            this.onHideSecondary();
-            this.props.onPageLink(path, query);
-          }}
-          currentPath={this.props.currentPath}
-        />
-        { navItems
-          && (
-            <NavAdmin>
-              { navItems.map((item, i) => (
-                <LinkAdmin
-                  key={i}
-                  href={item.path}
-                  active={item.active}
-                  onClick={(evt) => {
-                    evt.stopPropagation();
-                    this.onHideSecondary();
-                    this.onClick(evt, item.path);
-                  }}
-                >
-                  {item.title}
-                </LinkAdmin>
-              ))}
-            </NavAdmin>
-          )
-        }
-        <NavPages>
-          { this.props.pages && this.props.pages.map((page, i) => (
-            <LinkPage
-              key={i}
-              href={page.path}
-              active={page.active || this.props.currentPath === page.path}
-              onClick={(evt) => this.onClick(evt, page.path)}
-            >
-              {page.title}
-            </LinkPage>
-          ))}
-        </NavPages>
-        {search && (
-          <NavPages>
-            <Search
-              href={search.path}
-              active={search.active}
-              onClick={(evt) => this.onClick(evt, search.path)}
-              icon={search.icon}
-            >
-              {search.title}
-              {search.icon
-              && <Icon title={search.title} name={search.icon} text textRight size="1em" />
-              }
-            </Search>
-          </NavPages>
-        )}
-      </NavSecondary>
-    </PrintHide>
-  );
-
   render() {
     const { isAuth, navItems, search } = this.props;
     const { intl } = this.context;
-
     const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
     return (
-      <Styled
-        fixed={isAuth}
-        sticky={!isAuth}
-        hasBackground={!isAuth}
-        hasShadow={!isAuth}
-        hasNav={!isAuth}
-        hasBrand
-      >
-        <Banner>
-          <Brand
-            href="/"
-            onClick={(evt) => this.onClick(evt, '/')}
-            title={appTitle}
+      <ResponsiveContext.Consumer>
+        {() => (
+          <Styled
+            fixed={isAuth}
+            sticky={!isAuth}
+            hasBackground={!isAuth}
+            hasShadow={!isAuth}
+            hasNav={!isAuth}
+            hasBrand
           >
-            {SHOW_HEADER_TITLE && (
-              <BrandText>
-                <BrandClaim>
-                  <FormattedMessage {...appMessages.app.claim} />
-                </BrandClaim>
-                <BrandTitle>
-                  <FormattedMessage {...appMessages.app.title} />
-                </BrandTitle>
-              </BrandText>
-            )}
-          </Brand>
-          {this.renderSecondary(navItems, search)}
-        </Banner>
-      </Styled>
+            <Box direction="row" fill>
+              <Box>
+                <Brand
+                  href="/"
+                  onClick={(evt) => this.onClick(evt, '/')}
+                  title={appTitle}
+                >
+                  {SHOW_HEADER_TITLE && (
+                    <Box direction="row" align="center" fill="vertical" pad={{ left: 'small' }}>
+                      <BrandClaim>
+                        <FormattedMessage {...appMessages.app.claim} />
+                      </BrandClaim>
+                      <BrandTitle>
+                        <FormattedMessage {...appMessages.app.title} />
+                      </BrandTitle>
+                    </Box>
+                  )}
+                </Brand>
+              </Box>
+              <Box flex={{ grow: 1 }} direction="row" align="center" justify="end">
+                {search && (
+                  <LinkPage
+                    href={search.path}
+                    active={search.active}
+                    onClick={(evt) => this.onClick(evt, search.path)}
+                    title={search.title}
+                  >
+                    {search.title}
+                    {search.icon
+                      && <Icon title={search.title} name={search.icon} text textRight size="1em" />
+                    }
+                  </LinkPage>
+                )}
+                {this.props.pages && this.props.pages.map((page, i) => (
+                  <LinkPage
+                    key={i}
+                    href={page.path}
+                    active={page.active || this.props.currentPath === page.path}
+                    onClick={(evt) => this.onClick(evt, page.path)}
+                  >
+                    {page.title}
+                  </LinkPage>
+                ))}
+                {navItems && navItems.map((item, i) => (
+                  <LinkMain
+                    key={i}
+                    href={item.path}
+                    active={item.active}
+                    onClick={(evt) => {
+                      evt.stopPropagation();
+                      this.onHideSecondary();
+                      this.onClick(evt, item.path);
+                    }}
+                  >
+                    {item.title}
+                  </LinkMain>
+                ))}
+                <NavAccount
+                  isSignedIn={this.props.isSignedIn}
+                  user={this.props.user}
+                  onPageLink={(evt, path, query) => {
+                    if (evt !== undefined && evt.stopPropagation) evt.stopPropagation();
+                    this.onHideSecondary();
+                    this.props.onPageLink(path, query);
+                  }}
+                  currentPath={this.props.currentPath}
+                />
+              </Box>
+            </Box>
+          </Styled>
+        )}
+      </ResponsiveContext.Consumer>
     );
   }
 }

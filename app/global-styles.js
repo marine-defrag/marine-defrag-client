@@ -28,7 +28,7 @@ const GlobalStyle = createGlobalStyle`
     outline: 5px auto rgb(77, 144, 254); /* TODO: improve focus styles and individualise for specific buttons and links */
   }
   #app {
-    background-color: #F1F3F3;
+    background-color: #FFF;
     min-height: 100%;
     min-width: 100%;
   }

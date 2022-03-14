@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { palette } from 'styled-theme';
 
 import {
   CONTENT_SINGLE, CONTENT_PAGE, CONTENT_MODAL,
 } from 'containers/App/constants';
 
 import SupTitle from 'components/SupTitle';
+import InfoOverlay from 'components/InfoOverlay';
 // import Icon from 'components/Icon';
 
 import ButtonFactory from 'components/buttons/ButtonFactory';
@@ -25,8 +25,6 @@ const Styled = styled.div`
     return '3em 0 1em';
   }};
   }
-  border-bottom: ${(props) => props.hasBottomBorder ? '1px solid' : 'none'};
-  border-color: ${palette('light', 1)};
 `;
 
 // const TitleLarge = styled.h1`
@@ -122,6 +120,7 @@ class ContentHeader extends React.PureComponent { // eslint-disable-line react/p
       buttons,
       subTitle,
       hasViewOptions,
+      info,
     } = this.props;
     return (
       <Styled
@@ -152,6 +151,16 @@ class ContentHeader extends React.PureComponent { // eslint-disable-line react/p
                 {this.renderTitle(type, title)}
               </TableCell>
             )}
+            {info && (
+              <TableCell>
+                <ButtonGroup>
+                  <InfoOverlay
+                    title={info.title}
+                    content={info.content}
+                  />
+                </ButtonGroup>
+              </TableCell>
+            )}
             {buttons && (
               <TableCell hiddenMobile>
                 <ButtonGroup>
@@ -180,6 +189,7 @@ ContentHeader.propTypes = {
   buttons: PropTypes.array,
   supTitle: PropTypes.string,
   subTitle: PropTypes.string,
+  info: PropTypes.object,
   type: PropTypes.string,
   hasViewOptions: PropTypes.bool,
 };

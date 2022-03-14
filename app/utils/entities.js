@@ -138,7 +138,7 @@ export const filterEntitiesWithAnyAssociation = (
   query,
   includeMembers,
 ) => entities && entities.filter(
-  (entity) => asList(query).some(
+  (entity) => asList(query).every(
     (queryValue) => {
       const isTax = isNumber(queryValue);
       if (isTax) {

@@ -29,6 +29,31 @@ const TypeButton = styled((p) => <ButtonPill {...p} />)`
 `;
 // max-width: ${({ listItems }) => 100 / listItems}%;
 
+const getActiontypeColumns = (typeid, viewSubject) => {
+  if (
+    ACTIONTYPES_CONFIG[parseInt(typeid, 10)]
+    && ACTIONTYPES_CONFIG[parseInt(typeid, 10)].columns
+  ) {
+    return ACTIONTYPES_CONFIG[parseInt(typeid, 10)].columns.filter(
+      (col) => {
+        if (typeof col.showOnSingle !== 'undefined') {
+          if (Array.isArray(col.showOnSingle)) {
+            return col.showOnSingle.indexOf(viewSubject) > -1;
+          }
+          return col.showOnSingle;
+        }
+        return true;
+      }
+    );
+  }
+  return [{
+    id: 'main',
+    type: 'main',
+    sort: 'title',
+    attributes: ['title'],
+  }];
+};
+
 export function Activities(props) {
   const {
     viewEntity,
@@ -254,6 +279,7 @@ export function Activities(props) {
                   onEntityClick,
                   connections: actionConnections,
                   typeid: activeActiontypeId,
+                  columns: getActiontypeColumns(activeActiontypeId, viewSubject),
                 }),
               ],
             }}
@@ -277,6 +303,7 @@ export function Activities(props) {
                         onEntityClick,
                         connections: actionConnections,
                         typeid: activeActiontypeId,
+                        columns: getActiontypeColumns(activeActiontypeId, viewSubject),
                       }),
                     ],
                   }}

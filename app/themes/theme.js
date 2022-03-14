@@ -192,8 +192,8 @@ theme.palette = {
   // headerNavAccount: [ '#bg' ],
   headerNavAccount: ['transparent'],
   // headerNavAccountItem: ['#color', '#colorActive', '#bg', '#bgActive', '#border' ]
-  headerNavAccountItem: [primary[4], primary[4], dark[2], primary[2], dark[0]],
-  headerNavAccountItemHover: [primary[4], primary[4], dark[1], primary[2], dark[2]],
+  headerNavAccountItem: [primary[4], primary[4], dark[1], primary[0], dark[0]],
+  headerNavAccountItemHover: [primary[4], primary[4], primary[0], primary[0], dark[2]],
 
   // headerNavMain: [ '#bg', '#border'  ],
   headerNavMain: [secondary[4], secondary[4]],
@@ -338,7 +338,7 @@ theme.sizes = {
     },
     // px or em
     text: {
-      title: '24px',
+      title: '16px',
       titleMobile: '16px',
       claim: '12px',
       claimMobile: '9px',
@@ -397,6 +397,8 @@ theme.global = {
   },
   colors: {
     icon: '#000000',
+    actors: '#006076',
+    targets: '#a52752',
   },
   edgeSize: {
     hair: '1px',
@@ -432,11 +434,26 @@ theme.text = {
 
 theme.icon = {
   size: {
+    xxsmall: '14px',
     xsmall: '20px',
     small: '24px',
     medium: '36px',
     large: '48px',
     xlarge: '96px',
+  },
+};
+theme.table = {
+  header: {
+    pad: {
+      horizontal: 'xsmall',
+      vertical: 'xsmall',
+    },
+  },
+  body: {
+    pad: {
+      horizontal: 'xsmall',
+      vertical: 'xsmall',
+    },
   },
 };
 

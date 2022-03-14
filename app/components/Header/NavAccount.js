@@ -4,23 +4,32 @@ import { FormattedMessage } from 'react-intl';
 
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
+import { Button } from 'grommet';
 
 import { ROUTES } from 'themes/config';
 import { PARAMS } from 'containers/App/constants';
 import appMessages from 'containers/App/messages';
 
-import LinkAccount from './LinkAccount';
-import LinkAccountLoading from './LinkAccountLoading';
 import messages from './messages';
 
 
 const Styled = styled.div`
   background-color: ${palette('headerNavAccount', 0)};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    float: right;
-  }
 `;
 
+const LinkAccount = styled((p) => <Button plain as="a" {...p} />)`
+  color: ${(props) => props.active ? palette('headerNavAccountItem', 1) : palette('headerNavAccountItem', 0)};
+  background-color: ${(props) => props.active ? palette('headerNavAccountItem', 3) : palette('headerNavAccountItem', 2)};
+
+  border-right: 1px solid ${palette('headerNavAccountItem', 4)};
+  padding: 8px 0.7em;
+
+  &:hover {
+    color: ${(props) => props.active ? palette('headerNavAccountItemHover', 1) : palette('headerNavAccountItemHover', 0)};
+    background-color: ${(props) => props.active ? palette('headerNavAccountItemHover', 3) : palette('headerNavAccountItemHover', 2)};
+    border-right: 1px solid ${palette('headerNavAccountItemHover', 4)};
+  }
+`;
 
 class NavAccount extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   onClick = (evt, path, currentPath) => {
@@ -45,7 +54,6 @@ class NavAccount extends React.PureComponent { // eslint-disable-line react/pref
     const { isSignedIn, currentPath, user } = this.props;
 
     const userPath = user ? `${ROUTES.USERS}/${user.id}` : '';
-
     return (
       <Styled>
         {isSignedIn && user
@@ -55,15 +63,15 @@ class NavAccount extends React.PureComponent { // eslint-disable-line react/pref
               active={currentPath === userPath}
               onClick={(evt) => this.onClick(evt, userPath)}
             >
-              {user.name}
+              Profile
             </LinkAccount>
           )
         }
         {isSignedIn && !user
           && (
-            <LinkAccountLoading>
+            <LinkAccount>
               <FormattedMessage {...messages.userLoading} />
-            </LinkAccountLoading>
+            </LinkAccount>
           )
         }
         {isSignedIn

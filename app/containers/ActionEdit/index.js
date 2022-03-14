@@ -170,12 +170,12 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
               intl.formatMessage(appMessages.actiontypes[typeId]),
               true // large
             ), // required
-            checkActionAttribute(typeId, 'code') && getCodeFormField(
+            checkActionAttribute(typeId, 'code', true) && getCodeFormField(
               intl.formatMessage,
               'code',
               checkActionRequired(typeId, 'code'),
             ),
-            checkActionAttribute(typeId, 'title') && getTitleFormField(
+            checkActionAttribute(typeId, 'title', true) && getTitleFormField(
               intl.formatMessage,
               'title',
               'title',
@@ -221,12 +221,12 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     groups.push(
       {
         fields: [
-          checkActionAttribute(typeId, 'description') && getMarkdownFormField(
+          checkActionAttribute(typeId, 'description', true) && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'description'),
             'description',
           ),
-          checkActionAttribute(typeId, 'comment') && getMarkdownFormField(
+          checkActionAttribute(typeId, 'comment', true) && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'comment'),
             'comment',
@@ -235,21 +235,21 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       },
       {
         fields: [
-          checkActionAttribute(typeId, 'reference_ml') && getMarkdownFormField(
+          checkActionAttribute(typeId, 'reference_ml', true) && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'reference_ml'),
             'reference_ml',
           ),
-          checkActionAttribute(typeId, 'status_lbs_protocol') && getMarkdownFormField(
+          checkActionAttribute(typeId, 'status_lbs_protocol', true) && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'status_lbs_protocol'),
             'status_lbs_protocol',
           ),
-          checkActionAttribute(typeId, 'has_reference_landbased_ml') && getCheckboxField(
+          checkActionAttribute(typeId, 'has_reference_landbased_ml', true) && getCheckboxField(
             intl.formatMessage,
             'has_reference_landbased_ml',
           ),
-          checkActionAttribute(typeId, 'reference_landbased_ml') && getMarkdownFormField(
+          checkActionAttribute(typeId, 'reference_landbased_ml', true) && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'reference_landbased_ml'),
             'reference_landbased_ml',
@@ -258,12 +258,12 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       },
       {
         fields: [
-          checkActionAttribute(typeId, 'target_comment') && getMarkdownFormField(
+          checkActionAttribute(typeId, 'target_comment', true) && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'target_comment'),
             'target_comment',
           ),
-          checkActionAttribute(typeId, 'status_comment') && getMarkdownFormField(
+          checkActionAttribute(typeId, 'status_comment', true) && getMarkdownFormField(
             intl.formatMessage,
             checkActionRequired(typeId, 'status_comment'),
             'status_comment',

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Field from 'components/fields/Field';
 
 import ConnectionsField from 'components/fields/ConnectionsField';
-import ConnectionGroupsField from 'components/fields/ConnectionGroupsField';
 import DateField from 'components/fields/DateField';
 import MarkdownField from 'components/fields/MarkdownField';
 import EmailField from 'components/fields/EmailField';
@@ -52,8 +51,6 @@ class FieldFactory extends React.PureComponent { // eslint-disable-line react/pr
         return (<MarkdownField field={field} />);
       case 'connections':
         return (<ConnectionsField field={field} />);
-      case 'connectionGroups':
-        return (<ConnectionGroupsField field={field} />);
       case 'number':
         return (<NumberField field={field} />);
       case 'text':

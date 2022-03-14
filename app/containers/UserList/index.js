@@ -67,7 +67,7 @@ export class UserList extends React.PureComponent { // eslint-disable-line react
           taxonomies={this.props.taxonomies}
           connections={this.props.connections}
           config={CONFIG}
-          header={headerOptions}
+          headerOptions={headerOptions}
           dataReady={dataReady}
           includeHeader={false}
           canEdit={false}

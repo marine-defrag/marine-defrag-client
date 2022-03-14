@@ -29,8 +29,6 @@ import {
   selectMapSubjectQuery,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
-  selectSortByQuery,
-  selectSortOrderQuery,
 } from 'containers/App/selectors';
 
 import {
@@ -68,10 +66,6 @@ import {
   selectEntity,
   selectMultipleEntities,
   updateQuery,
-  updatePage,
-  updatePageItems,
-  updateSortBy,
-  updateSortOrder,
   setClientPath,
   dismissError,
   dismissAllErrors,
@@ -153,6 +147,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
   };
 
   onClearFilters = () => {
+    // TODO: broken
     this.props.onResetFilters(currentFilterArgs(
       this.props.config,
       this.props.locationQuery,
@@ -202,6 +197,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onTagClick,
       actortypes,
       actiontypes,
+      targettypes,
+      resourcetypes,
       typeOptions,
       onSelectType,
       onSetView,
@@ -209,7 +206,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       view,
       onEntitySelectAll,
       dataReady,
-      resourcetypes,
       showCode,
       onUpdateQuery,
       includeMembers,
@@ -220,12 +216,25 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onSetIncludeTargetMembers,
       includeActorMembers,
       includeTargetMembers,
-      onSearch,
-      sortBy,
-      sortOrder,
       columns,
+      headerColumnsUtility,
+      headerOptions,
+      taxonomies,
+      connectedTaxonomies,
+      includeHeader,
+      entityTitle,
+      hasUserRole,
+      onEntitySelect,
+      onDismissError,
+      onEntityClick,
+      onResetProgress,
+      actiontypesForTarget,
+      membertypes,
+      associationtypes,
+      handleEditSubmit,
+      onCreateOption,
+      allEntityCount,
     } = this.props;
-
     // detect print to avoid expensive rendering
     const printing = !!(
       typeof window !== 'undefined'
@@ -244,7 +253,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     const entityIdsSelectedFiltered = entityIdsSelected.size > 0 && entities
       ? entityIdsSelected.filter((id) => entities.map((entity) => entity.get('id')).includes(id))
       : entityIdsSelected;
-    const isManager = canEdit && this.props.hasUserRole[USER_ROLES.MANAGER.value];
+    const isManager = canEdit && hasUserRole[USER_ROLES.MANAGER.value];
 
     const filters = currentFilters(
       {
@@ -293,36 +302,35 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     }
     return (
       <div>
-        {this.props.includeHeader && !printing && (
+        {includeHeader && !printing && (
           <EntityListHeader
             typeId={typeId}
             dataReady={dataReady}
             currentFilters={filters}
-            onClearFilters={this.onClearFilters}
             listUpdating={progress !== null && progress >= 0 && progress < 100}
             entities={entities}
             entityIdsSelected={entityIdsSelected}
-            taxonomies={this.props.taxonomies}
+            taxonomies={taxonomies}
             actortypes={actortypes}
             resourcetypes={resourcetypes}
             actiontypes={actiontypes}
-            targettypes={this.props.targettypes}
-            actiontypesForTarget={this.props.actiontypesForTarget}
-            membertypes={this.props.membertypes}
+            targettypes={targettypes}
+            actiontypesForTarget={actiontypesForTarget}
+            membertypes={membertypes}
             connections={connections}
-            associationtypes={this.props.associationtypes}
-            connectedTaxonomies={this.props.connectedTaxonomies}
+            associationtypes={associationtypes}
+            connectedTaxonomies={connectedTaxonomies}
             config={config}
             locationQuery={locationQuery}
             canEdit={isManager && showList}
             isManager={isManager}
-            hasUserRole={this.props.hasUserRole}
-            onCreateOption={this.props.onCreateOption}
+            hasUserRole={hasUserRole}
+            onCreateOption={onCreateOption}
             onUpdate={
-              (associations, activeEditOption) => this.props.handleEditSubmit(
+              (associations, activeEditOption) => handleEditSubmit(
                 associations,
                 activeEditOption,
-                this.props.entityIdsSelected,
+                entityIdsSelected,
                 viewDomain.get('errors'),
               )}
             showFilters={this.state.visibleFilters}
@@ -341,33 +349,35 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onUpdateQuery={onUpdateQuery}
             includeMembers={includeMembers}
             onSetFilterMemberOption={onSetFilterMemberOption}
+            headerActions={headerOptions && headerOptions.actions}
           />
         )}
         {showList && (
           <EntitiesListView
+            headerOptions={headerOptions}
+            allEntityCount={allEntityCount}
             viewOptions={viewOptions}
-            hasHeader={this.props.includeHeader}
+            hasHeader={includeHeader}
             listUpdating={progress !== null && progress >= 0 && progress < 100}
             entities={entities}
             errors={errors}
-            taxonomies={this.props.taxonomies}
-            actortypes={this.props.actortypes}
-            actiontypes={this.props.actiontypes}
-            targettypes={this.props.targettypes}
-            resourcetypes={this.props.resourcetypes}
-            connections={this.props.connections}
-            connectedTaxonomies={this.props.connectedTaxonomies}
+            taxonomies={taxonomies}
+            actortypes={actortypes}
+            actiontypes={actiontypes}
+            targettypes={targettypes}
+            resourcetypes={resourcetypes}
+            connections={connections}
+            connectedTaxonomies={connectedTaxonomies}
             entityIdsSelected={entityIdsSelectedFiltered}
-            locationQuery={locationQuery}
 
             config={config}
             columns={columns}
-            header={this.props.header}
-            entityTitle={this.props.entityTitle}
+            headerColumnsUtility={headerColumnsUtility}
+            entityTitle={entityTitle}
 
             dataReady={dataReady}
             isManager={isManager}
-            isAnalyst={this.props.hasUserRole[USER_ROLES.ANALYST.value]}
+            isAnalyst={hasUserRole[USER_ROLES.ANALYST.value]}
 
             onEntitySelect={(id, checked) => {
               // show options when selected and not hidden
@@ -378,7 +388,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               if (!checked && !this.state.visibleEditOptions && entityIdsSelected.size === 1) {
                 this.onResetEditOptions();
               }
-              this.props.onEntitySelect(id, checked);
+              onEntitySelect(id, checked);
             }}
             onEntitySelectAll={(ids) => {
               // show options when selected and not hidden
@@ -391,14 +401,10 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               }
               onEntitySelectAll(ids);
             }}
-            onPageSelect={this.props.onPageSelect}
-            onPageItemsSelect={this.props.onPageItemsSelect}
-            onEntityClick={(id, path) => this.props.onEntityClick(
+            onEntityClick={(id, path) => onEntityClick(
               id, path, viewDomain.get('errors')
             )}
-            onSortBy={this.props.onSortBy}
-            onSortOrder={this.props.onSortOrder}
-            onDismissError={this.props.onDismissError}
+            onDismissError={onDismissError}
             typeId={typeId}
             hasFilters={filters && filters.length > 0}
             showCode={showCode}
@@ -408,21 +414,18 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onSetIncludeTargetMembers={onSetIncludeTargetMembers}
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
-            onSearch={onSearch}
-            sortBy={sortBy}
-            sortOrder={sortOrder}
           />
         )}
         {showMap && (
           <EntitiesMap
             viewOptions={viewOptions}
             entities={entities}
-            actortypes={this.props.actortypes}
-            actiontypes={this.props.actiontypes}
-            targettypes={this.props.targettypes}
+            actortypes={actortypes}
+            actiontypes={actiontypes}
+            targettypes={targettypes}
             config={config}
             dataReady={dataReady}
-            onEntityClick={(id, path) => this.props.onEntityClick(
+            onEntityClick={(id, path) => onEntityClick(
               id, path, viewDomain.get('errors')
             )}
             typeId={typeId}
@@ -439,7 +442,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           <PrintOnly>
             <EntityListPrintKey
               entities={entities}
-              taxonomies={this.props.taxonomies}
+              taxonomies={taxonomies}
               config={config}
               locationQuery={locationQuery}
             />
@@ -481,7 +484,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
                   },
                 )
               }
-              onDismiss={this.props.resetProgress}
+              onDismiss={onResetProgress}
               preMessage={false}
             />
           </Progress>
@@ -501,7 +504,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
                   },
                 )
               }
-              onDismiss={this.props.resetProgress}
+              onDismiss={onResetProgress}
               autoDismiss={2000}
             />
           </Progress>
@@ -532,8 +535,9 @@ EntityList.propTypes = {
   connectedTaxonomies: PropTypes.instanceOf(Map),
   config: PropTypes.object,
   columns: PropTypes.array,
+  headerColumnsUtility: PropTypes.array,
   dataReady: PropTypes.bool,
-  header: PropTypes.object,
+  headerOptions: PropTypes.object,
   locationQuery: PropTypes.instanceOf(Map),
   entityTitle: PropTypes.object, // single/plural
   entityIcon: PropTypes.func,
@@ -550,15 +554,10 @@ EntityList.propTypes = {
   onEntitySelect: PropTypes.func.isRequired,
   onEntitySelectAll: PropTypes.func.isRequired,
   onTagClick: PropTypes.func.isRequired,
-  onSearch: PropTypes.func.isRequired,
   onResetFilters: PropTypes.func.isRequired,
-  onPageSelect: PropTypes.func.isRequired,
-  onPageItemsSelect: PropTypes.func.isRequired,
   onEntityClick: PropTypes.func.isRequired,
-  resetProgress: PropTypes.func.isRequired,
+  onResetProgress: PropTypes.func.isRequired,
   updateClientPath: PropTypes.func.isRequired,
-  onSortBy: PropTypes.func.isRequired,
-  onSortOrder: PropTypes.func.isRequired,
   onCreateOption: PropTypes.func.isRequired,
   onDismissError: PropTypes.func.isRequired,
   onDismissAllErrors: PropTypes.func.isRequired,
@@ -578,8 +577,7 @@ EntityList.propTypes = {
   onSetIncludeTargetMembers: PropTypes.func,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
-  sortBy: PropTypes.string,
-  sortOrder: PropTypes.string,
+  allEntityCount: PropTypes.number,
 };
 
 EntityList.contextTypes = {
@@ -600,8 +598,6 @@ const mapStateToProps = (state) => ({
   mapSubject: selectMapSubjectQuery(state),
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
-  sortBy: selectSortByQuery(state),
-  sortOrder: selectSortOrderQuery(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -614,7 +610,7 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(resetProgress());
       dispatch(dismissAllErrors());
     },
-    resetProgress: () => {
+    onResetProgress: () => {
       dispatch(resetProgress());
     },
     updateClientPath: () => {
@@ -640,30 +636,8 @@ function mapDispatchToProps(dispatch, props) {
     onTagClick: (value) => {
       dispatch(updateQuery(fromJS([value])));
     },
-    onSearch: (value) => {
-      dispatch(updateQuery(fromJS([
-        {
-          query: 'search',
-          value,
-          replace: true,
-          checked: value !== '',
-        },
-      ])));
-    },
     onResetFilters: (values) => {
       dispatch(resetFilters(values));
-    },
-    onPageSelect: (page) => {
-      dispatch(updatePage(page));
-    },
-    onPageItemsSelect: (no) => {
-      dispatch(updatePageItems(no));
-    },
-    onSortOrder: (order) => {
-      dispatch(updateSortOrder(order));
-    },
-    onSortBy: (sort) => {
-      dispatch(updateSortBy(sort));
     },
     onCreateOption: (args) => {
       dispatch(openNewEntityModal(args));

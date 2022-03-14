@@ -43,7 +43,9 @@ import {
 } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, ACTIONTYPES, FF_ACTIONTYPE } from 'themes/config';
+import {
+  ROUTES, ACTIONTYPES, FF_ACTIONTYPE, ACTORTYPES_CONFIG, ACTORTYPES,
+} from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -90,6 +92,72 @@ const SubjectButton = styled((p) => <Button plain {...p} />)`
   background: none;
 `;
 
+const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
+  let columns = [{
+    id: 'main',
+    type: 'main',
+    sort: 'title',
+    attributes: ['code', 'title'],
+    isIndicator,
+  }];
+  if (qe(typeid, ACTORTYPES.COUNTRY)) {
+    if (isIndicator) {
+      columns = [
+        ...columns,
+        {
+          id: 'indicator',
+          type: 'indicator',
+          indicatorId: viewEntity.get('id'),
+          title: viewEntity.getIn(['attributes', 'title']),
+          unit: viewEntity.getIn(['attributes', 'comment']),
+          align: 'end',
+          primary: true,
+        },
+      ];
+    }
+    columns = [
+      ...columns,
+      {
+        id: 'regions',
+        type: 'associations',
+        actortype_id: ACTORTYPES.REG,
+        title: 'Regions',
+        isIndicator,
+      },
+      {
+        id: 'classes',
+        type: 'associations',
+        actortype_id: ACTORTYPES.CLASS,
+        title: 'Classes',
+        isIndicator,
+      },
+    ];
+  }
+  if (
+    qe(typeid, ACTORTYPES.REG)
+    || qe(typeid, ACTORTYPES.GROUP)
+    || qe(typeid, ACTORTYPES.CLASS)
+  ) {
+    columns = [
+      ...columns,
+      {
+        id: 'members', // one row per type,
+        type: 'members', // one row per type,
+      },
+    ];
+  }
+  if (
+    ACTORTYPES_CONFIG[parseInt(typeid, 10)]
+    && ACTORTYPES_CONFIG[parseInt(typeid, 10)].columns
+  ) {
+    columns = [
+      ...columns,
+      ...ACTORTYPES_CONFIG[parseInt(typeid, 10)].columns,
+    ];
+  }
+  return columns;
+};
+
 export function ActionView(props) {
   const {
     viewEntity,
@@ -123,6 +191,7 @@ export function ActionView(props) {
 
   const typeId = viewEntity && viewEntity.getIn(['attributes', 'measuretype_id']);
   const viewActivitytype = activitytypes && activitytypes.find((type) => qe(type.get('id'), typeId));
+  const isIndicator = qe(typeId, FF_ACTIONTYPE);
   let buttons = [];
   if (dataReady) {
     buttons.push({
@@ -197,7 +266,6 @@ export function ActionView(props) {
     const [de] = viewEntity.getIn(['attributes', 'date_end']).split('T');
     datesEqual = ds === de;
   }
-
   return (
     <div>
       <Helmet
@@ -226,7 +294,7 @@ export function ActionView(props) {
           <ViewWrapper>
             <ViewPanel>
               <ViewPanelInside>
-                <Main hasAside>
+                <Main hasAside={!isIndicator}>
                   <FieldGroup
                     group={{ // fieldGroup
                       fields: [
@@ -254,14 +322,14 @@ export function ActionView(props) {
             </ViewPanel>
             <ViewPanel>
               <ViewPanelInside>
-                <Main hasAside bottom>
+                <Main hasAside={!isIndicator} bottom>
                   <FieldGroup
                     group={{
                       fields: [
                         checkActionAttribute(typeId, 'description')
                           && getMarkdownField(viewEntity, 'description', true),
                         checkActionAttribute(typeId, 'comment')
-                          && !qe(typeId, FF_ACTIONTYPE) // (ab)use for unit
+                          && !isIndicator // (ab)use for unit
                           && getMarkdownField(viewEntity, 'comment', true),
                         checkActionAttribute(typeId, 'status_comment')
                           && getMarkdownField(viewEntity, 'status_comment', true),
@@ -286,22 +354,24 @@ export function ActionView(props) {
                     }}
                   />
                   <Box>
-                    <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
-                      <SubjectButton
-                        onClick={() => onSetSubject('actors')}
-                        active={viewSubject === 'actors'}
-                      >
-                        <Text size="large">Actors</Text>
-                      </SubjectButton>
-                      {hasTarget && (
+                    {!isIndicator && (
+                      <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
                         <SubjectButton
-                          onClick={() => onSetSubject('targets')}
-                          active={viewSubject === 'targets'}
+                          onClick={() => onSetSubject('actors')}
+                          active={viewSubject === 'actors'}
                         >
-                          <Text size="large">Targets</Text>
+                          <Text size="large">Actors</Text>
                         </SubjectButton>
-                      )}
-                    </Box>
+                        {hasTarget && (
+                          <SubjectButton
+                            onClick={() => onSetSubject('targets')}
+                            active={viewSubject === 'targets'}
+                          >
+                            <Text size="large">Targets</Text>
+                          </SubjectButton>
+                        )}
+                      </Box>
+                    )}
                     {(!actortypesForSubject || actortypesForSubject.size === 0) && (
                       <Box margin={{ vertical: 'small', horizontal: 'medium' }}>
                         {viewSubject === 'actors' && (
@@ -317,7 +387,7 @@ export function ActionView(props) {
                       </Box>
                     )}
                     <Box>
-                      {dataReady && actortypesForSubject && hasMap && !qe(typeId, FF_ACTIONTYPE) && (
+                      {dataReady && actortypesForSubject && hasMap && !isIndicator && (
                         <ActionMap
                           entities={actortypesForSubject}
                           mapSubject={viewSubject}
@@ -325,7 +395,7 @@ export function ActionView(props) {
                           hasMemberOption={hasMemberOption}
                         />
                       )}
-                      {dataReady && actortypesForSubject && hasMap && qe(typeId, FF_ACTIONTYPE) && (
+                      {dataReady && actortypesForSubject && hasMap && isIndicator && (
                         <IndicatorMap
                           entities={actortypesForSubject}
                           mapSubject="actors"
@@ -354,9 +424,8 @@ export function ActionView(props) {
                                   onEntityClick,
                                   connections: actorConnections,
                                   typeid,
-                                  showValueForAction: qe(typeId, FF_ACTIONTYPE)
-                                    ? viewEntity
-                                    : null,
+                                  columns: getActortypeColumns(typeid, isIndicator, viewEntity),
+                                  isIndicator,
                                 }),
                               ]),
                               [],
@@ -364,7 +433,7 @@ export function ActionView(props) {
                           }}
                         />
                       )}
-                      {isManager && qe(typeId, FF_ACTIONTYPE) && (
+                      {isManager && isIndicator && (
                         <Box
                           margin={{ bottom: 'large', horizontal: 'medium' }}
                           fill={false}
@@ -391,6 +460,19 @@ export function ActionView(props) {
                                   onEntityClick,
                                   connections: resourceConnections,
                                   typeid: resourcetypeid,
+                                  columns: [
+                                    {
+                                      id: 'main',
+                                      type: 'main',
+                                      sort: 'title',
+                                      attributes: ['title'],
+                                    },
+                                    {
+                                      id: 'attribute',
+                                      type: 'attribute',
+                                      attribute: 'status',
+                                    },
+                                  ],
                                 }),
                               ]),
                               [],
@@ -401,92 +483,92 @@ export function ActionView(props) {
                     </Box>
                   </Box>
                 </Main>
-                <Aside bottom>
-                  <FieldGroup
-                    aside
-                    group={{
-                      fields: [
-                        checkActionAttribute(typeId, 'url') && getLinkField(viewEntity),
-                      ],
-                    }}
-                  />
-                  <FieldGroup
-                    aside
-                    group={{
-                      type: 'dark',
-                      fields: [
-                        checkActionAttribute(typeId, 'amount')
-                          && getNumberField(viewEntity, 'amount', { unit: 'US$', unitBefore: true }),
-                        checkActionAttribute(typeId, 'amount_comment') && getTextField(viewEntity, 'amount_comment'),
-                      ],
-                    }}
-                  />
-                  <FieldGroup
-                    aside
-                    group={{
-                      type: 'dark',
-                      fields: [
-                        checkActionAttribute(typeId, 'date_start')
-                          && getDateField(
-                            viewEntity,
-                            'date_start',
-                            {
-                              specificity: dateSpecificity,
-                              attributeLabel: datesEqual ? 'date' : 'date_start',
-                            }
-                          ),
-                        !datesEqual
-                          && checkActionAttribute(typeId, 'date_end')
-                          && getDateField(viewEntity, 'date_end', { specificity: dateSpecificity }),
-                        !dateSpecificity
-                          && checkActionAttribute(typeId, 'date_comment')
-                          && getTextField(viewEntity, 'date_comment'),
-                      ],
-                    }}
-                  />
-                  {hasTaxonomyCategories(viewTaxonomies) && (
+                {!isIndicator && (
+                  <Aside bottom>
                     <FieldGroup
                       aside
                       group={{
-                        label: appMessages.entities.taxonomies.plural,
-                        icon: 'categories',
-                        fields: getTaxonomyFields(viewTaxonomies),
-                      }}
-                    />
-                  )}
-                  {parents && parents.size > 0 && (
-                    <FieldGroup
-                      aside
-                      group={{
-                        label: appMessages.entities.actions.parent,
                         fields: [
-                          getActionConnectionField({
-                            actions: parents.toList(),
-                            onEntityClick,
-                            typeid: typeId,
-                            skipLabel: true,
-                          }),
+                          checkActionAttribute(typeId, 'url') && getLinkField(viewEntity),
                         ],
                       }}
                     />
-                  )}
-                  {children && children.size > 0 && (
                     <FieldGroup
                       aside
                       group={{
-                        label: appMessages.entities.actions.children,
+                        type: 'dark',
                         fields: [
-                          getActionConnectionField({
-                            actions: children.toList(),
-                            onEntityClick,
-                            typeid: typeId,
-                            skipLabel: true,
-                          }),
+                          checkActionAttribute(typeId, 'amount')
+                            && getNumberField(viewEntity, 'amount', { unit: 'US$', unitBefore: true }),
+                          checkActionAttribute(typeId, 'amount_comment') && getTextField(viewEntity, 'amount_comment'),
                         ],
                       }}
                     />
-                  )}
-                </Aside>
+                    <FieldGroup
+                      aside
+                      group={{
+                        type: 'dark',
+                        fields: [
+                          checkActionAttribute(typeId, 'date_start')
+                            && getDateField(
+                              viewEntity,
+                              'date_start',
+                              {
+                                specificity: dateSpecificity,
+                                attributeLabel: datesEqual ? 'date' : 'date_start',
+                              }
+                            ),
+                          !datesEqual
+                            && checkActionAttribute(typeId, 'date_end')
+                            && getDateField(viewEntity, 'date_end', { specificity: dateSpecificity }),
+                          !dateSpecificity
+                            && checkActionAttribute(typeId, 'date_comment')
+                            && getTextField(viewEntity, 'date_comment'),
+                        ],
+                      }}
+                    />
+                    {hasTaxonomyCategories(viewTaxonomies) && (
+                      <FieldGroup
+                        aside
+                        group={{
+                          label: appMessages.entities.taxonomies.plural,
+                          icon: 'categories',
+                          fields: getTaxonomyFields(viewTaxonomies),
+                        }}
+                      />
+                    )}
+                    {parents && parents.size > 0 && (
+                      <FieldGroup
+                        aside
+                        group={{
+                          label: appMessages.entities.actions.parent,
+                          fields: [
+                            getActionConnectionField({
+                              actions: parents.toList(),
+                              onEntityClick,
+                              typeid: typeId,
+                            }),
+                          ],
+                        }}
+                      />
+                    )}
+                    {children && children.size > 0 && (
+                      <FieldGroup
+                        aside
+                        group={{
+                          label: appMessages.entities.actions.children,
+                          fields: [
+                            getActionConnectionField({
+                              actions: children.toList(),
+                              onEntityClick,
+                              typeid: typeId,
+                            }),
+                          ],
+                        }}
+                      />
+                    )}
+                  </Aside>
+                )}
               </ViewPanelInside>
             </ViewPanel>
           </ViewWrapper>

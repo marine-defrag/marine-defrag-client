@@ -29,7 +29,6 @@ import MapContainer from 'containers/MapContainer';
 const MapOuterWrapper = styled((p) => <Box {...p} />)`
   z-index: 0;
 `;
-const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
 const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
   height: 400px;
@@ -100,11 +99,6 @@ export function Members(props) {
       {countries && countries.size > 0 && (
         <Box>
           <MapOuterWrapper hasHeader noOverflow>
-            <MapTitle>
-              <Text weight={600}>
-                {`${countries.size} countries`}
-              </Text>
-            </MapTitle>
             <MapWrapper>
               <MapContainer
                 countryData={countryData}
@@ -126,7 +120,26 @@ export function Members(props) {
                   typeid: ACTORTYPES.COUNTRY,
                   taxonomies,
                   connections: actorConnections,
-                  skipLabel: true,
+                  columns: [
+                    {
+                      id: 'main',
+                      type: 'main',
+                      sort: 'title',
+                      attributes: ['code', 'title'],
+                    },
+                    {
+                      id: 'actorActions',
+                      type: 'actorActions',
+                      subject: 'actors',
+                      actions: 'actions',
+                    },
+                    {
+                      id: 'actorActionsTargets',
+                      type: 'actorActions',
+                      subject: 'targets',
+                      actions: 'targetingActions',
+                    },
+                  ],
                 }),
               ],
             }}

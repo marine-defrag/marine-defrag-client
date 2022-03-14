@@ -2,13 +2,13 @@ import styled from 'styled-components';
 import { palette } from 'styled-theme';
 
 const SVG = styled.svg`
-  fill: ${(props) => props.palette ? palette(props.paletteIndex) : 'currentColor'};
+  fill: ${(props) => props.palette ? palette(props.paletteIndex) : 'currentColor'} !important;
   stroke: ${(props) => {
     if (props.hasStroke) {
       return props.palette ? palette(props.paletteIndex) : 'currentColor';
     }
     return 'none';
-  }};
+  }} !important;
   bottom: ${(props) => props.text ? 0.1 : 0}em;
   position: relative;
   display: inline-block;

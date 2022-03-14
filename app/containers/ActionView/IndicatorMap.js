@@ -33,7 +33,7 @@ const Styled = styled((p) => <Box {...p} />)`
 const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
 const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
-  height: 400px;
+  height: 500px;
 `;
 
 export function IndicatorMap({
@@ -120,7 +120,9 @@ export function IndicatorMap({
         />
       </MapWrapper>
       <MapKeyWrapper>
-        <Text size="small">{keyTitle}</Text>
+        <Box margin={{ bottom: 'xsmall' }}>
+          <Text size="small">{keyTitle}</Text>
+        </Box>
         <MapKey
           mapSubject={mapSubject}
           maxValue={maxValue}

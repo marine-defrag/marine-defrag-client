@@ -14,6 +14,8 @@ export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
 const IS_DEV = false;
 
+export const version = '1.0beta';
+
 export const ENDPOINTS = {
   API: (
     NODE_ENV === 'production' && !IS_DEV
@@ -90,70 +92,7 @@ export const ACTIONTYPES = {
   INIT: '6',
   FACTS: '7',
 };
-export const ACTIONTYPES_CONFIG = {
-  1: { // INTL
-    id: '1',
-    order: 5,
-    columns: [
-      'main',
-      'date_start',
-      'actors', // one row per type,
-      'taxonomy_11', // level of commitment: as link
-    ],
-  },
-  2: { // REGLSEAS
-    id: '2',
-    order: 4,
-    columns: [
-      'main',
-      'targets', // one row per type,
-      'actors', // one row per type,
-      'taxonomy_3', // LBS-protocol statuses: status as link
-      'resources_4', // presence of AP: checkmark icon w/ tooltip for name
-      'resources_5', // presence of MLAP: checkmark icon w/ tooltip for name
-    ],
-  },
-  3: { // REGL
-    id: '3',
-    order: 3,
-    columns: [
-      'main',
-      'actors', // one row per type,
-    ],
-  },
-  4: { // NATL
-    id: '4',
-    order: 2,
-    columns: [
-      'main',
-      'actors', // one row per type,
-      'taxonomy_4', // strategy type
-    ],
-  },
-  5: { // DONOR
-    id: '5',
-    order: 1,
-    columns: [
-      'main',
-      'amount',
-      'actors', // one row per type,
-      'targets', // one row per type,
-    ],
-  },
-  6: { // INIT
-    id: '6',
-    order: 6,
-    columns: [
-      'main',
-      'actors', // one row per type,
-      'targets', // one row per type,
-    ],
-  },
-  7: { // FF
-    id: '7',
-    order: 7,
-  },
-};
+
 export const DEFAULT_ACTIONTYPE = ACTIONTYPES.DONOR;
 export const FF_ACTIONTYPE = ACTIONTYPES.FACTS;
 export const ACTORTYPES = {
@@ -162,28 +101,6 @@ export const ACTORTYPES = {
   CLASS: '3',
   REG: '4',
   GROUP: '5',
-};
-export const ACTORTYPES_CONFIG = {
-  1: { // COUNTRY
-    id: '1',
-    order: 1,
-  },
-  2: { // ORG
-    id: '2',
-    order: 3,
-  },
-  3: { // CLASS
-    id: '3',
-    order: 5,
-  },
-  4: { // REG
-    id: '4',
-    order: 4,
-  },
-  5: { // GROUP
-    id: '5',
-    order: 2,
-  },
 };
 
 export const DEFAULT_ACTORTYPE = ACTORTYPES.COUNTRY;
@@ -657,6 +574,213 @@ export const RESOURCE_FIELDS = {
     },
   },
 };
+
+export const ACTORTYPES_CONFIG = {
+  1: { // COUNTRY
+    id: '1',
+    order: 1,
+  },
+  2: { // ORG
+    id: '2',
+    order: 3,
+    columns: [
+      {
+        id: 'taxonomy',
+        type: 'taxonomy',
+        taxonomy_id: 7, // sector
+      },
+    ],
+  },
+  3: { // CLASS
+    id: '3',
+    order: 5,
+    columns: [
+      {
+        id: 'members', // one row per type,
+        type: 'members', // one row per type,
+      },
+    ],
+  },
+  4: { // REG
+    id: '4',
+    order: 4,
+    columns: [
+      {
+        id: 'members', // one row per type,
+        type: 'members', // one row per type,
+      },
+      {
+        id: 'taxonomy',
+        type: 'taxonomy',
+        taxonomy_id: 13, // region type
+      },
+    ],
+  },
+  5: { // GROUP
+    id: '5',
+    order: 2,
+  },
+};
+
+export const ACTIONTYPES_CONFIG = {
+  1: { // INTL
+    id: '1',
+    order: 5,
+    columns: [
+      {
+        id: 'main',
+        type: 'main',
+        sort: 'title',
+        attributes: ['code', 'title'],
+      },
+      {
+        id: 'taxonomy',
+        type: 'taxonomy',
+        taxonomy_id: 11, // level of commitment: as link
+      },
+      {
+        id: 'date',
+        type: 'date',
+        sort: 'date_start',
+        sortOrder: 'asc',
+        attribute: 'date_start',
+        align: 'end',
+        primary: true,
+      },
+    ],
+  },
+  2: { // REGLSEAS
+    id: '2',
+    order: 4,
+    columns: [
+      {
+        id: 'main',
+        type: 'main',
+        sort: 'title',
+        attributes: ['code', 'title'],
+      },
+      {
+        id: 'targets', // one row per type,
+        type: 'targets', // one row per type,
+        showOnSingle: false,
+      },
+      {
+        id: 'actors', // one row per type,
+        type: 'actors', // one row per type,
+        showOnSingle: false,
+      },
+      {
+        id: 'taxonomy-3',
+        type: 'taxonomy',
+        taxonomy_id: 3, // LBS-protocol statuses: as link
+      },
+      {
+        id: 'ap',
+        type: 'hasResources', // checkmark icon w/ tooltip for names
+        resourcetype_id: RESOURCETYPES.AP, // presence of AP
+        align: 'end',
+      },
+      {
+        id: 'mlap',
+        type: 'hasResources', // checkmark icon w/ tooltip for names
+        resourcetype_id: RESOURCETYPES.MLAP, // presence of MLAP
+        align: 'end',
+      },
+    ],
+  },
+  3: { // REGL
+    id: '3',
+    order: 3,
+    columns: [
+      {
+        id: 'main',
+        type: 'main',
+        sort: 'title',
+        attributes: ['code', 'title'],
+      },
+      {
+        id: 'actors', // one row per type,
+        type: 'actors', // one row per type,
+      },
+    ],
+  },
+  4: { // NATL
+    id: '4',
+    order: 2,
+    columns: [
+      {
+        id: 'main',
+        type: 'main',
+        sort: 'title',
+        attributes: ['title'],
+      },
+      {
+        id: 'actors',
+        type: 'actors',
+        sort: 'title',
+      },
+      {
+        id: 'taxonomy',
+        type: 'taxonomy',
+        taxonomy_id: 4, // strategy types: as link
+      },
+    ],
+  },
+  5: { // DONOR
+    id: '5',
+    order: 1,
+    columns: [
+      {
+        id: 'main',
+        type: 'main',
+        sort: 'title',
+        attributes: ['title'],
+      },
+      {
+        id: 'actors', // one row per type,
+        type: 'actors', // one row per type,
+      },
+      {
+        id: 'targets', // one row per type,
+        type: 'targets', // one row per type,
+      },
+      {
+        id: 'amount',
+        type: 'amount',
+        sort: 'amount',
+        attribute: 'amount',
+        unit: 'US$',
+        align: 'end',
+        primary: true,
+      },
+    ],
+  },
+  6: { // INIT
+    id: '6',
+    order: 6,
+    columns: [
+      {
+        id: 'main',
+        type: 'main',
+        sort: 'title',
+        attributes: ['title'],
+      },
+      {
+        id: 'targets', // one row per type,
+        type: 'targets', // one row per type,
+      },
+      {
+        id: 'actors', // one row per type,
+        type: 'actors', // one row per type,
+      },
+    ],
+  },
+  7: { // FF
+    id: '7',
+    order: 7,
+  },
+};
+
 
 export const KEEP_FILTERS = ['view', 'subj', 'msubj', 'tm', 'am'];
 
