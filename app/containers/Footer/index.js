@@ -68,10 +68,7 @@ const Table = styled.div`
     display: table;
     width: 100%;
     table-layout: fixed;
-    font-size: 0.9em;
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
-    font-size: 1em;
+    font-size: ${({ theme }) => theme.text.small.size};
   }
   @media print {
     font-size: ${(props) => props.theme.sizes.print.default};

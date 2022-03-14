@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { palette } from 'styled-theme';
 
 const Container = styled.div`
   margin-right: auto;
@@ -8,7 +7,7 @@ const Container = styled.div`
   padding-bottom: ${(props) => props.noPaddingBottom || props.inModal ? 0 : '3em'};
   padding-left: ${(props) => props.inModal ? 6 : 12}px;
   padding-right: ${(props) => props.inModal ? 6 : 12}px;
-  background-color: ${(props) => props.inModal ? palette('light', 0) : 'transparent'};
+  background-color: ${({ inModal, bg, theme }) => (inModal || bg) ? theme.global.colors.background : 'transparent'};
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding-right: 12px;
     padding-left: 12px;

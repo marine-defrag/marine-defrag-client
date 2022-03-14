@@ -4,12 +4,13 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { injectIntl, intlShape } from 'react-intl';
 import { Map, List } from 'immutable';
-import { Box } from 'grommet';
+import { Box, Button, ResponsiveContext } from 'grommet';
 
 import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
+import { isMaxSize } from 'utils/responsive';
 
 import { ROUTES, FF_ACTIONTYPE } from 'themes/config';
 import { updatePath } from 'containers/App/actions';
@@ -21,11 +22,13 @@ import Content from 'components/styled/Content';
 import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
 import ButtonFactory from 'components/buttons/ButtonFactory';
-import ButtonSimple from 'components/buttons/ButtonSimple';
 
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
 const GroupTitle = styled.h5`
   font-size: 14px;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 0;
 `;
 const ViewContainer = styled(Container)`
   min-height: 70vH;
@@ -33,6 +36,9 @@ const ViewContainer = styled(Container)`
     min-height: 50vH;
   }
 `;
+
+const ResourceButton = styled((p) => <Button plain {...p} />)``;
+
 export function ActionsFactsOverview({
   entities, intl, dataReady, handleNew, isManager, connections, onUpdatePath,
 }) {
@@ -58,8 +64,9 @@ export function ActionsFactsOverview({
       return 'without';
     }
   );
+  const size = React.useContext(ResponsiveContext);
   return (
-    <ContainerWrapper>
+    <ContainerWrapper bg>
       <HeaderExplore />
       <ViewContainer>
         <Content>
@@ -78,18 +85,38 @@ export function ActionsFactsOverview({
                 return (
                   <Group key={`res-${resourceId}`}>
                     {resource && (
-                      <ButtonSimple onClick={() => onUpdatePath(`${ROUTES.RESOURCE}/${resourceId}`)}>
-                        <GroupTitle>
-                          {resource.getIn(['attributes', 'title'])}
-                        </GroupTitle>
-                      </ButtonSimple>
+                      <Box
+                        pad={{ vertical: 'medium' }}
+                        direction={isMaxSize(size, 'medium') ? 'column' : 'row'}
+                        gap="xsmall"
+                      >
+                        <Box>
+                          <GroupTitle>
+                            Publication
+                          </GroupTitle>
+                        </Box>
+                        <Box>
+                          <ResourceButton
+                            as="a"
+                            href={`${ROUTES.RESOURCE}/${resourceId}`}
+                            onClick={(e) => {
+                              if (e) e.preventDefault();
+                              onUpdatePath(`${ROUTES.RESOURCE}/${resourceId}`);
+                            }}
+                          >
+                            <GroupTitle>
+                              {resource.getIn(['attributes', 'title'])}
+                            </GroupTitle>
+                          </ResourceButton>
+                        </Box>
+                      </Box>
                     )}
                     {!resource && (
                       <GroupTitle>
                         Without resource
                       </GroupTitle>
                     )}
-                    <Box direction="row" gap="small">
+                    <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
                       {resourceIndicators && resourceIndicators.map((indicator) => {
                         const path = `${ROUTES.ACTION}/${indicator.get('id')}`;
                         const [lead] = indicator.getIn(['attributes', 'description']).split('\n');

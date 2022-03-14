@@ -5,7 +5,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Map } from 'immutable';
-import { Box } from 'grommet';
+import { Box, ResponsiveContext } from 'grommet';
 
 import styled from 'styled-components';
 
@@ -19,6 +19,7 @@ import Container from 'components/styled/Container';
 import Content from 'components/styled/Content';
 import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
+import { isMaxSize } from 'utils/responsive';
 
 import { selectResourcetypesWithResourceCount } from './selectors';
 import { DEPENDENCIES } from './constants';
@@ -41,9 +42,10 @@ export function ResourcesOverview({
     // kick off loading of data
     onLoadData();
   }, []);
+  const size = React.useContext(ResponsiveContext);
 
   return (
-    <ContainerWrapper hasFooter>
+    <ContainerWrapper bg>
       <ViewContainer>
         <Content>
           {Object.keys(RESOURCETYPE_GROUPS).map((key) => (
@@ -51,7 +53,7 @@ export function ResourcesOverview({
               <GroupTitle>
                 <FormattedMessage {...appMessages.resourcetypeGroups[key]} />
               </GroupTitle>
-              <Box direction="row" gap="small">
+              <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
                 {RESOURCETYPE_GROUPS[key].types.map((typeId) => {
                   const path = `${ROUTES.RESOURCES}/${typeId}`;
                   const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;

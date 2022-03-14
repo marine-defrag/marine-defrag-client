@@ -17,5 +17,6 @@ const ContainerWrapper = styled.div`
     position: static;
   }
   z-index: 90;
+  background-color: ${({ bg, theme }) => bg ? theme.global.colors.background : 'transparent'};
 `;
 export default ContainerWrapper;

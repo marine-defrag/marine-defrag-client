@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import styled, { withTheme } from 'styled-components';
 import {
-  Box, Button, ResponsiveContext, Text,
+  Box, Button, ResponsiveContext, Text, Heading,
 } from 'grommet';
 import { ROUTES } from 'themes/config';
 import { isMinSize } from 'utils/responsive';
@@ -12,10 +12,33 @@ import Icon from 'components/Icon';
 import ScreenReaderOnly from 'components/styled/ScreenReaderOnly';
 
 import Brand from './Brand';
-import BrandTitle from './BrandTitle';
 import Logo from './Logo';
 import messages from './messages';
 
+const Claim = styled((p) => <Text {...p} />)`
+  font-family: ${(props) => props.theme.fonts.title};
+  font-size: ${(props) => props.theme.text.xxsmall.size};
+  line-height: ${(props) => props.theme.text.xxsmall.size};
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    font-size: ${(props) => props.theme.text.xsmall.size};
+    line-height: ${(props) => props.theme.text.xsmall.size};
+  }
+`;
+const BrandTitle = styled((p) => <Heading level={1} {...p} />)`
+  margin: 0;
+  font-family: ${(props) => props.theme.fonts.title};
+  font-size: ${(props) => props.theme.text.small.size};
+  line-height: ${(props) => props.theme.text.small.size};
+  font-weight: 500;
+  padding: 0;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    font-size: ${(props) => props.theme.text.large.size};
+    line-height: ${(props) => props.theme.text.large.size};
+  }
+  @media print {
+    font-size: ${(props) => props.theme.sizes.header.print.title};
+  }
+`;
 
 const Styled = styled.div`
   position: ${(props) => {
@@ -182,10 +205,10 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                   >
                     <Box direction="row" align="center">
                       <Logo src={this.props.theme.media.headerLogo} alt={appTitle} />
-                      <Box fill="vertical" pad={{ left: 'small' }} justify="center">
-                        <Text size="xsmall">
+                      <Box fill="vertical" pad={{ left: 'small' }} justify="center" gap="xxsmall">
+                        <Claim>
                           <FormattedMessage {...appMessages.app.claim} />
-                        </Text>
+                        </Claim>
                         <BrandTitle>
                           <FormattedMessage {...appMessages.app.title} />
                         </BrandTitle>

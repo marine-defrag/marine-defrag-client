@@ -316,7 +316,7 @@ theme.sizes = {
     },
     nav: {
       height: 40,
-      heightMobile: 30,
+      heightMobile: 35,
     },
   },
   header: {
