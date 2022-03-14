@@ -434,10 +434,10 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     const hasTypeOptions = typeOptions && typeOptions.length > 0;
     const currentTypeOption = hasTypeOptions && typeOptions.find((option) => option.active);
 
-    const managerActions = canEdit && headerActions.filter(
+    const managerActions = canEdit && headerActions && headerActions.filter(
       (action) => action.isManager
     );
-    const normalActions = headerActions.filter(
+    const normalActions = headerActions && headerActions.filter(
       (action) => !action.isManager
     );
     return (

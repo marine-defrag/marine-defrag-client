@@ -30,7 +30,7 @@ theme.gutter = 20;
 // 2: main colour, light
 // 3: main colour, background
 // 4: white
-const primary = coolorsToHex('https://coolors.co/0063b5-0070cc-0077d8-f1f3f3-ffffff');
+const primary = coolorsToHex('https://coolors.co/0063b5-0070cc-0077d8-f1f0f1-ffffff');
 // secondary color palette: dark to light
 // 0: dark header colour, darker
 // 1: dark header colour

@@ -208,9 +208,7 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
               />
             )
           }
-          {(saveSending || !dataReady)
-            && <Loading />
-          }
+          {saveSending && <Loading />}
           {!viewEntity && dataReady && !saveError
             && (
               <div>
@@ -218,33 +216,31 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
               </div>
             )
           }
-          {viewEntity && dataReady
-            && (
-              <EntityForm
-                model="userEdit.form.data"
-                formData={viewDomain.getIn(['form', 'data'])}
-                saving={saveSending}
-                handleSubmit={(formData) => this.props.handleSubmit(
-                  formData,
-                  roles,
-                )}
-                handleSubmitFail={this.props.handleSubmitFail}
-                handleCancel={() => this.props.handleCancel(reference)}
-                handleUpdate={this.props.handleUpdate}
-                fields={{
-                  header: {
-                    main: this.getHeaderMainFields(),
-                    aside: this.getHeaderAsideFields(viewEntity, editableRoles),
-                  },
-                  body: {
-                    main: this.getBodyMainFields(),
-                    // aside: (sessionUserHighestRoleId <= USER_ROLES.MANAGER.value) && this.getBodyAsideFields(taxonomies, onCreateOption),
-                  },
-                }}
-                scrollContainer={this.scrollContainer.current}
-              />
-            )
-          }
+          {viewEntity && (
+            <EntityForm
+              model="userEdit.form.data"
+              formData={viewDomain.getIn(['form', 'data'])}
+              saving={saveSending}
+              handleSubmit={(formData) => this.props.handleSubmit(
+                formData,
+                roles,
+              )}
+              handleSubmitFail={this.props.handleSubmitFail}
+              handleCancel={() => this.props.handleCancel(reference)}
+              handleUpdate={this.props.handleUpdate}
+              fields={{
+                header: {
+                  main: this.getHeaderMainFields(),
+                  aside: this.getHeaderAsideFields(viewEntity, editableRoles),
+                },
+                body: {
+                  main: this.getBodyMainFields(),
+                  // aside: (sessionUserHighestRoleId <= USER_ROLES.MANAGER.value) && this.getBodyAsideFields(taxonomies, onCreateOption),
+                },
+              }}
+              scrollContainer={this.scrollContainer.current}
+            />
+          )}
           { saveSending
             && <Loading />
           }

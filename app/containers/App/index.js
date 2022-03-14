@@ -159,6 +159,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
         {!isHome && (
           <Header
             isSignedIn={isUserSignedIn}
+            isAnalyst={isAnalyst}
             user={user}
             pages={pages && this.preparePageMenuPages(pages, location.pathname)}
             navItems={this.prepareMainMenuItems(

@@ -156,7 +156,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
 
   render() {
     const {
-      isAuth, navItems, search, isSignedIn, user, currentPath,
+      isAuth, navItems, search, isSignedIn, user, currentPath, isAnalyst,
     } = this.props;
     const { intl } = this.context;
     const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
@@ -313,18 +313,16 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                       direction={wide ? 'row' : 'column'}
                       wide={wide}
                     >
-                      {isSignedIn && user
-                        && (
-                          <LinkAccount
-                            href={ROUTES.BOOKMARKS}
-                            active={currentPath === ROUTES.BOOKMARKS}
-                            onClick={(evt) => this.onClick(evt, ROUTES.BOOKMARKS)}
-                            wide={wide}
-                          >
-                            <FormattedMessage {...appMessages.nav.bookmarks} />
-                          </LinkAccount>
-                        )
-                      }
+                      {isSignedIn && isAnalyst && (
+                        <LinkAccount
+                          href={ROUTES.BOOKMARKS}
+                          active={currentPath === ROUTES.BOOKMARKS}
+                          onClick={(evt) => this.onClick(evt, ROUTES.BOOKMARKS)}
+                          wide={wide}
+                        >
+                          <FormattedMessage {...appMessages.nav.bookmarks} />
+                        </LinkAccount>
+                      )}
                       {isSignedIn && user && (
                         <LinkAccount
                           href={userPath}
@@ -396,6 +394,7 @@ Header.propTypes = {
   isAuth: PropTypes.bool, // not shown on home page
   theme: PropTypes.object.isRequired,
   search: PropTypes.object,
+  isAnalyst: PropTypes.bool,
 };
 
 export default withTheme(Header);

@@ -186,7 +186,10 @@ class ContentHeader extends React.PureComponent { // eslint-disable-line react/p
 
 ContentHeader.propTypes = {
   title: PropTypes.string,
-  buttons: PropTypes.array,
+  buttons: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.bool,
+  ]),
   supTitle: PropTypes.string,
   subTitle: PropTypes.string,
   info: PropTypes.object,
