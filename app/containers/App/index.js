@@ -77,7 +77,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
     }
   }
 
-  preparePageMenuPages = (pages) => sortEntities(
+  preparePageMenuPages = (pages, currentPath) => sortEntities(
     pages,
     'asc',
     'order',
@@ -86,6 +86,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
     .map((page) => ({
       path: `${ROUTES.PAGES}/${page.get('id')}`,
       title: page.getIn(['attributes', 'menu_title']) || page.getIn(['attributes', 'title']),
+      active: currentPath === `${ROUTES.PAGES}/${page.get('id')}`,
     }))
     .toArray();
 
@@ -165,7 +166,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           <Header
             isSignedIn={isUserSignedIn}
             user={user}
-            pages={pages && this.preparePageMenuPages(pages)}
+            pages={pages && this.preparePageMenuPages(pages, location.pathname)}
             navItems={this.prepareMainMenuItems(
               isUserSignedIn && isManager,
               isUserSignedIn && isAnalyst,
@@ -182,6 +183,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             }
             onPageLink={onPageLink}
             isAuth={isAuth}
+            currentPath={location.pathname}
           />
         )}
         <Main isHome={isHomeOrAuth}>

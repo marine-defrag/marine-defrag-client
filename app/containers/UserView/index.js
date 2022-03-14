@@ -151,7 +151,7 @@ export class UserView extends React.PureComponent { // eslint-disable-line react
             title={pageTitle}
             type={CONTENT_SINGLE}
             icon="users"
-            buttons={user && this.getButtons(this.props)}
+            buttons={user && dataReady && this.getButtons(this.props)}
           />
           { !user && !dataReady
             && <Loading />

@@ -192,8 +192,8 @@ theme.palette = {
   // headerNavAccount: [ '#bg' ],
   headerNavAccount: ['transparent'],
   // headerNavAccountItem: ['#color', '#colorActive', '#bg', '#bgActive', '#border' ]
-  headerNavAccountItem: [primary[4], primary[4], dark[2], primary[2], dark[0]],
-  headerNavAccountItemHover: [primary[4], primary[4], dark[1], primary[2], dark[2]],
+  headerNavAccountItem: [primary[4], primary[4], dark[1], primary[0], dark[0]],
+  headerNavAccountItemHover: [primary[4], primary[4], primary[0], primary[0], dark[2]],
 
   // headerNavMain: [ '#bg', '#border'  ],
   headerNavMain: [secondary[4], secondary[4]],
@@ -338,7 +338,7 @@ theme.sizes = {
     },
     // px or em
     text: {
-      title: '24px',
+      title: '16px',
       titleMobile: '16px',
       claim: '12px',
       claimMobile: '9px',

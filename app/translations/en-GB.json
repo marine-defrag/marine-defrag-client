@@ -150,7 +150,7 @@
   "app.containers.ActionView.metaDescription": "Activity page description",
   "app.containers.ActionView.header": "Activity",
   "app.containers.ActionView.notFound": "Sorry no action found",
-  "app.containers.App.app.title": "ML Action Mapping Tool",
+  "app.containers.App.app.title": "Marine Litter Action Mapping Tool",
   "app.containers.App.app.claim": "Marine: DeFRAG",
   "app.containers.App.actortypes.single": "Type of actor",
   "app.containers.App.actortypes.plural": "Types of actors",

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { palette } from 'styled-theme';
 
 export default styled.h1`
   margin: 0;
@@ -8,7 +7,8 @@ export default styled.h1`
   font-family: ${(props) => props.theme.fonts.title};
   font-size: ${(props) => props.theme.sizes.header.text.titleMobile};
   line-height: ${(props) => props.theme.sizes.header.banner.heightMobile}px;
-  float: left;
+  color: white;
+  max-width: 180px;
   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
     padding: 4px 0 0 0;
     font-size: ${(props) => props.theme.sizes.header.text.title};
@@ -16,6 +16,5 @@ export default styled.h1`
   }
   @media print {
     font-size: ${(props) => props.theme.sizes.header.print.title};
-    color: ${palette('primary', 0)};
   }
 `;
