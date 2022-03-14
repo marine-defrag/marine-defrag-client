@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { palette } from 'styled-theme';
 
 import {
   CONTENT_SINGLE, CONTENT_PAGE, CONTENT_MODAL,
@@ -26,8 +25,6 @@ const Styled = styled.div`
     return '3em 0 1em';
   }};
   }
-  border-bottom: ${(props) => props.hasBottomBorder ? '1px solid' : 'none'};
-  border-color: ${palette('light', 1)};
 `;
 
 // const TitleLarge = styled.h1`
