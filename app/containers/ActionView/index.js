@@ -294,7 +294,7 @@ export function ActionView(props) {
           <ViewWrapper>
             <ViewPanel>
               <ViewPanelInside>
-                <Main hasAside={!isIndicator}>
+                <Main hasAside={isManager && !isIndicator}>
                   <FieldGroup
                     group={{ // fieldGroup
                       fields: [
@@ -307,17 +307,19 @@ export function ActionView(props) {
                     }}
                   />
                 </Main>
-                <Aside>
-                  <FieldGroup
-                    group={{
-                      fields: [
-                        getStatusField(viewEntity),
-                        getMetaField(viewEntity),
-                      ],
-                    }}
-                    aside
-                  />
-                </Aside>
+                {isManager && (
+                  <Aside>
+                    <FieldGroup
+                      group={{
+                        fields: [
+                          getStatusField(viewEntity),
+                          getMetaField(viewEntity),
+                        ],
+                      }}
+                      aside
+                    />
+                  </Aside>
+                )}
               </ViewPanelInside>
             </ViewPanel>
             <ViewPanel>

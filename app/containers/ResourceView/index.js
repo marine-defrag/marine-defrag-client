@@ -224,7 +224,7 @@ export class ResourceView extends React.PureComponent { // eslint-disable-line r
                 fields={{
                   header: {
                     main: this.getHeaderMainFields(viewEntity),
-                    aside: this.getHeaderAsideFields(viewEntity),
+                    aside: isManager && this.getHeaderAsideFields(viewEntity),
                   },
                   body: {
                     main: this.getBodyMainFields(
