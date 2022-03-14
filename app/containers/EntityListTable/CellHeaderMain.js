@@ -22,7 +22,7 @@ const Select = styled(PrintHide)`
 const SortButton = styled(ButtonFlatIconOnly)`
   color: inherit;
   padding: 0;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: 0;
   }
 `;
@@ -75,6 +75,7 @@ export function CellHeaderMain({ column, canEdit }) {
               palette="dark"
               paletteIndex={column.sortActive ? 1 : 4}
               hidePrint={!column.sortActive}
+              size="20px"
             />
           </SortButton>
         </Box>

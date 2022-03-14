@@ -18,7 +18,7 @@ const Styled = styled((p) => (
   width: 100%;
   line-height: 1.3;
   font-size: 0.8em;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     border-bottom: 1px solid ${palette('light', 1)};
     font-size: 1em;
   }

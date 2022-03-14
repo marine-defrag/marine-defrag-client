@@ -7,11 +7,11 @@ import { Box } from 'grommet';
 
 const Root = styled.div`
   position: absolute;
-  bottom: 0;
+  top: ${({ position }) => position ? position.y : 50}px;
   left: 0;
   right: 0;
   z-index: 2501;
-  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.large}) {
     bottom: auto;
     right: auto;
     top: ${({ position }) => position ? position.y : 10}px;
@@ -51,7 +51,7 @@ const Main = styled.div`
   background: white;
   width: 100%;
   overflow: auto;
-  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.large}) {
     min-height: 100px;
     max-height: 80vH;
     height: auto;
@@ -66,7 +66,7 @@ const CloseWrap = styled.div`
   position: absolute;
   right: 12px;
   top: 10px;
-  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.large}) {
     right: -10px;
     top: -10px;
   }

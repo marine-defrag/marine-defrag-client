@@ -17,15 +17,15 @@ const SVG = styled.svg`
   margin-left: ${(props) => props.textRight ? (parseFloat(props.size) / 4) + props.size.split(/[0-9]+/)[1] : 0};
   width: ${(props) => (props.sizes && props.sizes.mobile) ? props.sizes.mobile : props.size};
   height: ${(props) => (props.sizes && props.sizes.mobile) ? props.sizes.mobile : props.size};
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
+  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.medium : '769px'}) {
     width: ${(props) => (props.sizes && props.sizes.small) ? props.sizes.small : props.size};
     height: ${(props) => (props.sizes && props.sizes.small) ? props.sizes.small : props.size};
   }
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.medium : '993px'}) {
+  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.large : '993px'}) {
     width: ${(props) => (props.sizes && props.sizes.medium) ? props.sizes.medium : props.size};
     height: ${(props) => (props.sizes && props.sizes.medium) ? props.sizes.medium : props.size};
   }
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.large : '1200px'}) {
+  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.xlarge : '1200px'}) {
     width: ${(props) => (props.sizes && props.sizes.large) ? props.sizes.large : props.size};
     height: ${(props) => (props.sizes && props.sizes.large) ? props.sizes.large : props.size};
   }

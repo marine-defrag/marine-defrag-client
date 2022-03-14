@@ -620,7 +620,7 @@ export function EntitiesMap({
   }
 
   return (
-    <Styled hasHeader noOverflow>
+    <Styled headerStyle="types" noOverflow>
       <MapContainer
         typeLabels={typeLabels}
         countryFeatures={countriesJSON.features}
@@ -639,7 +639,7 @@ export function EntitiesMap({
         </LoadingWrap>
       )}
       {viewOptions && viewOptions.length > 1 && (
-        <EntityListViewOptions options={viewOptions} />
+        <EntityListViewOptions options={viewOptions} onMap />
       )}
       {dataReady && (
         <MapInfoOptions

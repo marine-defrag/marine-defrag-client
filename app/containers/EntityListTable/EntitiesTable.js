@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box } from 'grommet';
+import { Box, ResponsiveContext } from 'grommet';
 import styled from 'styled-components';
+import { isMinSize } from 'utils/responsive';
+
 import CellBodyMain from './CellBodyMain';
 import CellBodyPlain from './CellBodyPlain';
 import CellBodyActors from './CellBodyActors';
@@ -55,6 +57,10 @@ const getColWidth = ({
   // }
   return 0;
 };
+// background-color: ${({ utility, col }) => {
+  //   if (utility && col.type === 'options') return '#f9f9f9';
+  //   return 'transparent';
+  // }};
 const TableCellHeader = styled.th`
   margin: 0;
   padding: 0;
@@ -63,12 +69,19 @@ const TableCellHeader = styled.th`
   height: 100%;
   text-align: start;
   border-bottom: solid 1px;
-  border-bottom-color: ${({ utility }) => utility ? 'transparent' : 'rgba(0,0,0,0.33)'};
+  border-bottom-color: ${({ utility, col }) => {
+    if (utility && col.type === 'options') return 'rgba(0,0,0,0.05)';
+    if (utility) return 'transparent';
+    return 'rgba(0,0,0,0.33)';
+  }};
   padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 16 : 8}px;
   padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 16 : 8}px;
   padding-top: 6px;
   padding-bottom: 6px;
-  width: ${getColWidth}%;
+  width: 100%;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    width: ${getColWidth}%;
+  }
 `;
 const TableCellHeaderInner = styled((p) => <Box {...p} />)`
 `;
@@ -85,7 +98,10 @@ const TableCellBody = styled.td`
   padding-top: 6px;
   padding-bottom: 6px;
   word-wrap:break-word;
-  width: ${getColWidth}%;
+  width: 100%;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    width: ${getColWidth}%;
+  }
 `;
 const TableCellBodyInner = styled((p) => <Box {...p} />)`
   padding: 6px 0;
@@ -102,12 +118,14 @@ export function EntitiesTable({
   memberOption,
   subjectOptions,
 }) {
+  const size = React.useContext(ResponsiveContext);
+
   return (
     <Box fill="horizontal">
       <Table>
         {headerColumns && (
           <TableHeader>
-            {headerColumnsUtility && (
+            {headerColumnsUtility && isMinSize(size, 'large') && (
               <TableRow>
                 {headerColumnsUtility.map(
                   (col, i) => (
@@ -143,7 +161,7 @@ export function EntitiesTable({
             )}
             <TableRow>
               {headerColumns.map(
-                (col, i) => (
+                (col, i) => (isMinSize(size, 'large') || col.type === 'main') && (
                   <TableCellHeader
                     key={i}
                     scope="col"
@@ -160,7 +178,7 @@ export function EntitiesTable({
                           canEdit={canEdit}
                         />
                       )}
-                      {col.type !== 'main' && (
+                      {isMinSize(size, 'large') && col.type !== 'main' && (
                         <CellHeaderPlain column={col} />
                       )}
                     </TableCellHeaderInner>
@@ -173,7 +191,7 @@ export function EntitiesTable({
         <TableBody>
           {entities.length > 0 && entities.map((entity, key) => (
             <TableRow key={key}>
-              {columns.map((col, i) => (
+              {columns.map((col, i) => (isMinSize(size, 'large') || col.type === 'main') && (
                 <TableCellBody
                   key={i}
                   scope="row"

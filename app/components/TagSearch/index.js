@@ -65,7 +65,7 @@ const Clear = styled(Button)`
   top: 0;
   right: 0;
   background-color: ${palette('background', 4)};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: ${(props) => props.small ? '4px 6px' : '8px 6px'};
   }
   @media print {

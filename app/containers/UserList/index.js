@@ -62,21 +62,23 @@ export class UserList extends React.PureComponent { // eslint-disable-line react
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <EntityList
-          entities={this.props.entities}
-          taxonomies={this.props.taxonomies}
-          connections={this.props.connections}
-          config={CONFIG}
-          headerOptions={headerOptions}
-          dataReady={dataReady}
-          includeHeader={false}
-          canEdit={false}
-          entityTitle={{
-            single: intl.formatMessage(appMessages.entities.users.single),
-            plural: intl.formatMessage(appMessages.entities.users.plural),
-          }}
-          locationQuery={fromJS(this.props.location.query)}
-        />
+        {dataReady && (
+          <EntityList
+            entities={this.props.entities}
+            taxonomies={this.props.taxonomies}
+            connections={this.props.connections}
+            config={CONFIG}
+            headerOptions={headerOptions}
+            dataReady={dataReady}
+            includeHeader={false}
+            canEdit={false}
+            entityTitle={{
+              single: intl.formatMessage(appMessages.entities.users.single),
+              plural: intl.formatMessage(appMessages.entities.users.plural),
+            }}
+            locationQuery={fromJS(this.props.location.query)}
+          />
+        )}
       </div>
     );
   }

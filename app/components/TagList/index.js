@@ -29,7 +29,7 @@ const Tags = styled((p) => <Box direction="row" {...p} />)``;
 const Clear = styled(Button)`
   background-color: ${palette('background', 4)};
   padding: 1px 6px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: 1px 6px;
   }
   @media print {

@@ -2,12 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
-import Icon from 'components/Icon';
-
 import FieldFactory from 'components/fields/FieldFactory';
 import FieldGroupWrapper from 'components/fields/FieldGroupWrapper';
 import FieldGroupLabel from 'components/fields/FieldGroupLabel';
-import GroupIcon from 'components/fields/GroupIcon';
 import GroupLabel from 'components/fields/GroupLabel';
 import Field from 'components/fields/Field';
 
@@ -36,11 +33,6 @@ class FieldGroup extends React.PureComponent { // eslint-disable-line react/pref
               <GroupLabel>
                 <FormattedMessage {...group.label} />
               </GroupLabel>
-              {group.icon && (
-                <GroupIcon>
-                  <Icon name={group.icon} />
-                </GroupIcon>
-              )}
             </FieldGroupLabel>
           )}
           {group.title && (

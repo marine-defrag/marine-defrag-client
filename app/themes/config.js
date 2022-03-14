@@ -798,7 +798,6 @@ export const DATE_FORMAT = 'dd/MM/yyyy';
 // set in translations/[LOCALE].js
 // - app.containers.App.app.title
 // - app.containers.App.app.claim
-export const SHOW_HEADER_TITLE = true;
 
 // show header pattern
 // specified in themes/[theme].js: theme.backgroundImages.header

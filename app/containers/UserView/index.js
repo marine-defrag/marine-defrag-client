@@ -146,12 +146,12 @@ export class UserView extends React.PureComponent { // eslint-disable-line react
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Content>
+        <Content isSingle>
           <ContentHeader
             title={pageTitle}
             type={CONTENT_SINGLE}
             icon="users"
-            buttons={user && dataReady && this.getButtons(this.props)}
+            buttons={user && this.getButtons(this.props)}
           />
           { !user && !dataReady
             && <Loading />
@@ -163,22 +163,20 @@ export class UserView extends React.PureComponent { // eslint-disable-line react
               </div>
             )
           }
-          { user && dataReady
-            && (
-              <EntityView
-                fields={{
-                  header: {
-                    main: this.getHeaderMainFields(user, isManager),
-                    aside: isManager && this.getHeaderAsideFields(user),
-                  },
-                  body: {
-                    main: this.getBodyMainFields(user),
-                    aside: isManager && this.getBodyAsideFields(taxonomies),
-                  },
-                }}
-              />
-            )
-          }
+          { user && (
+            <EntityView
+              fields={{
+                header: {
+                  main: this.getHeaderMainFields(user, isManager),
+                  aside: isManager && this.getHeaderAsideFields(user),
+                },
+                body: {
+                  main: this.getBodyMainFields(user),
+                  aside: isManager && this.getBodyAsideFields(taxonomies),
+                },
+              }}
+            />
+          )}
         </Content>
       </div>
     );

@@ -7,7 +7,7 @@ import { Box, Text, Button } from 'grommet';
 
 const Styled = styled.div`
   padding-bottom: ${({ inList }) => inList ? 2 : 8}px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding-bottom: ${({ inList }) => inList ? 5 : 10}px;
   }
 `;

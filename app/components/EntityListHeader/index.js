@@ -9,13 +9,16 @@ import { FormattedMessage } from 'react-intl';
 import styled, { withTheme } from 'styled-components';
 import { Map, List } from 'immutable';
 import { palette } from 'styled-theme';
-import { Box, Text, Button } from 'grommet';
+import {
+  Box, Text, Button, ResponsiveContext,
+} from 'grommet';
 import {
   Add, Edit, Multiple,
 } from 'grommet-icons';
 
 import { isEqual } from 'lodash/lang';
 import { truncateText } from 'utils/string';
+import { isMinSize } from 'utils/responsive';
 
 import { TEXT_TRUNCATE } from 'themes/config';
 import { FILTER_FORM_MODEL, EDIT_FORM_MODEL } from 'containers/EntityListForm/constants';
@@ -46,18 +49,24 @@ const Styled = styled(PrintHide)``;
 
 const TheHeader = styled((p) => <Box direction="row" {...p} />)`
   height: ${({ theme }) => theme.sizes.headerList.banner.height}px;
-  padding: 0 15px;
+  padding: 0 3px;
   background-color: ${palette('primary', 3)};
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
   position: relative;
   z-index: 96;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    padding: 0 15px;
+  }
 `;
 const HeaderSection = styled((p) => <Box direction="row" {...p} />)`
   position: relative;
   border-right: 1px solid ${({ noBorder }) => noBorder ? 'transparent' : palette('light', 4)};
-  padding: 2px 10px;
   height: 100%;
+  padding: 2px 5px;
   flex: ${({ grow }) => grow ? '1' : '0'} ${({ shrink = '1' }) => shrink ? '1' : '0'} auto;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    padding: 2px 10px;
+  }
 `;
 const HeaderSectionType = styled((p) => <Box direction="column" {...p} />)`
   position: relative;
@@ -69,7 +78,7 @@ const HeaderSectionType = styled((p) => <Box direction="column" {...p} />)`
 const SelectType = styled(ButtonOld)`
   display: none;
   text-align: left;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: block;
     padding-left: 2px;
     padding-right: 2px;
@@ -87,7 +96,7 @@ const Label = styled.div`
   color: ${palette('text', 1)};
   padding-left: 2px;
   padding-right: 2px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.theme.sizes.text.smaller};
   }
   @media print {
@@ -98,7 +107,7 @@ const LinkTitle = styled.div`
   font-size: ${(props) => props.theme.sizes.text.small};
   font-weight: bold;
   color: ${(props) => props.active ? palette('headerNavMainItem', 1) : 'inherit'};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.theme.sizes.text.default};
   }
   @media print {
@@ -108,13 +117,13 @@ const LinkTitle = styled.div`
 
 const TypeOptions = styled(PrintHide)`
   display: none;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     position: absolute;
     top: 100%;
     left: 0;
     display: block;
   }
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
     min-width: 240px;
   }
   background: white;
@@ -434,229 +443,244 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     const hasTypeOptions = typeOptions && typeOptions.length > 0;
     const currentTypeOption = hasTypeOptions && typeOptions.find((option) => option.active);
 
-    const managerActions = canEdit && headerActions.filter(
+    const managerActions = canEdit && headerActions && headerActions.filter(
       (action) => action.isManager
     );
-    const normalActions = headerActions.filter(
+    const normalActions = headerActions && headerActions.filter(
       (action) => !action.isManager
     );
     return (
-      <Styled>
-        <TheHeader align="center">
-          {config.types && typeOptions && (
-            <HeaderSection noBorder>
-              <ButtonFlatIconOnly onClick={() => onSelectType()}>
-                <Icon name="arrowLeft" size="2em" />
-              </ButtonFlatIconOnly>
-            </HeaderSection>
-          )}
-          {config.types && typeOptions && (
-            <HeaderSectionType justify="start">
-              {config.types && (
-                <Label>
-                  <FormattedMessage
-                    {...messages.selectType}
-                    values={{
-                      types: intl.formatMessage(appMessages[config.types].single),
-                    }}
-                  />
-                </Label>
+      <ResponsiveContext.Consumer>
+        {(size) => (
+          <Styled>
+            <TheHeader align="center">
+              {config.types && typeOptions && (
+                <HeaderSection noBorder>
+                  <ButtonFlatIconOnly onClick={() => onSelectType()}>
+                    <Icon name="arrowLeft" size="2em" />
+                  </ButtonFlatIconOnly>
+                </HeaderSection>
               )}
-              {dataReady && (
-                <SelectType
-                  as="button"
-                  ref={this.typeButtonRef}
-                  onClick={(evt) => this.state.showTypes
-                    ? this.onHideTypes(evt)
-                    : this.onShowTypes(evt)
-                  }
-                >
-                  <LinkTitle active>
-                    {truncateText(
-                      currentTypeOption.label,
-                      TEXT_TRUNCATE.TYPE_SELECT,
-                      false,
-                    )}
-                    {!this.state.showTypes && (
-                      <Icon name="dropdownOpen" text textRight size="1em" />
-                    )}
-                    {this.state.showTypes && (
-                      <Icon name="dropdownClose" text textRight size="1em" />
-                    )}
-                  </LinkTitle>
-                </SelectType>
-              )}
-              {this.state.showTypes && typeOptions && (
-                <TypeOptions ref={this.typeWrapperRef}>
-                  {typeOptions.map((option) => (
-                    <TypeOption
-                      key={option.value}
-                      active={option.active}
-                      onClick={() => {
-                        this.onHideTypes();
-                        onSelectType(option.value);
-                      }}
-                    >
-                      {option.label}
-                    </TypeOption>
-                  ))}
-                </TypeOptions>
-              )}
-            </HeaderSectionType>
-          )}
-          <HeaderSection grow align="center" gap="medium" justify="end">
-            {dataReady && (
-              <EntityListSearch>
-                <TagList
-                  filters={currentFilters}
-                />
-              </EntityListSearch>
-            )}
-          </HeaderSection>
-          <HeaderSection align="center">
-            <ButtonOptions
-              onClick={onShowFilters}
-              label={(
-                <Box direction="row" gap="small" align="center">
-                  <Box>{<Icon name="filter" text />}</Box>
-                  <Text>{intl.formatMessage(messages.listOptions.showFilter)}</Text>
-                </Box>
-              )}
-            />
-          </HeaderSection>
-          {normalActions && (
-            <HeaderSection noBorder={!canEdit}>
-              <Box fill="vertical" direction="row" align="center" pad={{ vertical: 'xsmall' }}>
-                {normalActions.map(
-                  (action, i) => {
-                    if (action.type === 'bookmarker') {
-                      return (
-                        <Box key={i}>
-                          <Bookmarker viewTitle={action.title} type={action.entityType} />
-                        </Box>
-                      );
-                    }
-                    if (action.type === 'icon') {
-                      return (
-                        <Box key={i}>
-                          <ButtonFlatIconOnly
-                            onClick={action.onClick && (() => action.onClick())}
-                            title={action.title}
-                            subtle
-                          >
-                            <Icon name={action.icon} />
-                          </ButtonFlatIconOnly>
-                        </Box>
-                      );
-                    }
-                    return null;
-                  }
-                )}
-              </Box>
-            </HeaderSection>
-          )}
-          {canEdit && (
-            <HeaderSection noBorder>
-              <Box fill="vertical" justify="between" pad={{ top: 'xsmall', bottom: 'xxsmall' }}>
-                <ButtonOptions
-                  onClick={onShowEditOptions}
-                  label={(
-                    <Box direction="row" gap="small">
-                      <Box>{<Edit color="dark-3" size="xxsmall" />}</Box>
-                      <Text color="dark-3" size="small">{intl.formatMessage(messages.listOptions.showEditOptions)}</Text>
-                    </Box>
+              {currentTypeOption && !isMinSize(size, 'large') && (
+                <Text>
+                  {truncateText(
+                    currentTypeOption.label,
+                    TEXT_TRUNCATE.TYPE_SELECT,
+                    false,
                   )}
-                />
-                {managerActions && managerActions.map(
-                  (action, i) => {
-                    let icon;
-                    if (action.icon === 'add') {
-                      icon = <Add color="dark-3" size="xxsmall" />;
-                    }
-                    if (action.icon === 'import') {
-                      icon = <Multiple color="dark-3" size="xxsmall" />;
-                    }
-                    return (
-                      <ButtonOptions
-                        key={i}
-                        onClick={action.onClick}
-                        label={(
-                          <Box direction="row" gap="small">
-                            <Box>{icon}</Box>
-                            <Text color="dark-3" size="small">{action.title}</Text>
-                          </Box>
-                        )}
+                </Text>
+              )}
+              {config.types && typeOptions && isMinSize(size, 'large') && (
+                <HeaderSectionType justify="start">
+                  {config.types && (
+                    <Label>
+                      <FormattedMessage
+                        {...messages.selectType}
+                        values={{
+                          types: intl.formatMessage(appMessages[config.types].single),
+                        }}
                       />
-                    );
-                  }
+                    </Label>
+                  )}
+                  {currentTypeOption && (
+                    <SelectType
+                      as="button"
+                      ref={this.typeButtonRef}
+                      onClick={(evt) => this.state.showTypes
+                        ? this.onHideTypes(evt)
+                        : this.onShowTypes(evt)
+                      }
+                    >
+                      <LinkTitle active>
+                        {truncateText(
+                          currentTypeOption.label,
+                          TEXT_TRUNCATE.TYPE_SELECT,
+                          false,
+                        )}
+                        {!this.state.showTypes && (
+                          <Icon name="dropdownOpen" text textRight size="1em" />
+                        )}
+                        {this.state.showTypes && (
+                          <Icon name="dropdownClose" text textRight size="1em" />
+                        )}
+                      </LinkTitle>
+                    </SelectType>
+                  )}
+                  {this.state.showTypes && typeOptions && (
+                    <TypeOptions ref={this.typeWrapperRef}>
+                      {typeOptions.map((option) => (
+                        <TypeOption
+                          key={option.value}
+                          active={option.active}
+                          onClick={() => {
+                            this.onHideTypes();
+                            onSelectType(option.value);
+                          }}
+                        >
+                          {option.label}
+                        </TypeOption>
+                      ))}
+                    </TypeOptions>
+                  )}
+                </HeaderSectionType>
+              )}
+              <HeaderSection grow align="center" gap="medium" justify="end">
+                {dataReady && isMinSize(size, 'large') && (
+                  <EntityListSearch>
+                    <TagList
+                      filters={currentFilters}
+                    />
+                  </EntityListSearch>
                 )}
-              </Box>
-            </HeaderSection>
-          )}
-        </TheHeader>
-        {showFilters && (
-          <EntityListSidebar
-            hasEntities={entities && entities.size > 0}
-            panelGroups={panelGroups}
-            onHideSidebar={onHideFilters}
-            onHideOptions={this.onHideForm}
-            setActiveOption={this.onSetActiveOption}
-            onUpdateQuery={(args) => {
-              this.onHideForm();
-              onUpdateQuery(args);
-            }}
-            memberOption={config.hasMemberOption
-              ? {
-                key: 'filter-member-option',
-                active: !!includeMembers,
-                label: 'Include members when filtering by region, class or intergovernmental organisation',
-                onClick: () => {
+              </HeaderSection>
+              {dataReady && isMinSize(size, 'large') && (
+                <HeaderSection align="center">
+                  <ButtonOptions
+                    onClick={onShowFilters}
+                    label={(
+                      <Box direction="row" gap="small" align="center">
+                        <Box>{<Icon name="filter" text />}</Box>
+                        <Text>{intl.formatMessage(messages.listOptions.showFilter)}</Text>
+                      </Box>
+                    )}
+                  />
+                </HeaderSection>
+              )}
+              {normalActions && (
+                <HeaderSection noBorder={!canEdit}>
+                  <Box fill="vertical" direction="row" align="center" pad={{ vertical: 'xsmall' }}>
+                    {normalActions.map(
+                      (action, i) => {
+                        if (action.type === 'bookmarker') {
+                          return (
+                            <Box key={i}>
+                              <Bookmarker viewTitle={action.title} type={action.entityType} />
+                            </Box>
+                          );
+                        }
+                        if (action.type === 'icon') {
+                          return (
+                            <Box key={i}>
+                              <ButtonFlatIconOnly
+                                onClick={action.onClick && (() => action.onClick())}
+                                title={action.title}
+                                subtle
+                              >
+                                <Icon name={action.icon} />
+                              </ButtonFlatIconOnly>
+                            </Box>
+                          );
+                        }
+                        return null;
+                      }
+                    )}
+                  </Box>
+                </HeaderSection>
+              )}
+              {canEdit && isMinSize(size, 'large') && (
+                <HeaderSection noBorder>
+                  <Box fill="vertical" justify="between" pad={{ top: 'xsmall', bottom: 'xxsmall' }}>
+                    <ButtonOptions
+                      onClick={onShowEditOptions}
+                      label={(
+                        <Box direction="row" gap="small">
+                          <Box>{<Edit color="dark-3" size="xxsmall" />}</Box>
+                          <Text color="dark-3" size="small">{intl.formatMessage(messages.listOptions.showEditOptions)}</Text>
+                        </Box>
+                      )}
+                    />
+                    {managerActions && managerActions.map(
+                      (action, i) => {
+                        let icon;
+                        if (action.icon === 'add') {
+                          icon = <Add color="dark-3" size="xxsmall" />;
+                        }
+                        if (action.icon === 'import') {
+                          icon = <Multiple color="dark-3" size="xxsmall" />;
+                        }
+                        return (
+                          <ButtonOptions
+                            key={i}
+                            onClick={action.onClick}
+                            label={(
+                              <Box direction="row" gap="small">
+                                <Box>{icon}</Box>
+                                <Text color="dark-3" size="small">{action.title}</Text>
+                              </Box>
+                            )}
+                          />
+                        );
+                      }
+                    )}
+                  </Box>
+                </HeaderSection>
+              )}
+            </TheHeader>
+            {showFilters && (
+              <EntityListSidebar
+                hasEntities={entities && entities.size > 0}
+                panelGroups={panelGroups}
+                onHideSidebar={onHideFilters}
+                onHideOptions={this.onHideForm}
+                setActiveOption={this.onSetActiveOption}
+                onUpdateQuery={(args) => {
                   this.onHideForm();
-                  onSetFilterMemberOption(!includeMembers);
-                },
-              }
-              : null
-            }
-          />
+                  onUpdateQuery(args);
+                }}
+                memberOption={config.hasMemberOption
+                  ? {
+                    key: 'filter-member-option',
+                    active: !!includeMembers,
+                    label: 'Include members when filtering by region, class or intergovernmental organisation',
+                    onClick: () => {
+                      this.onHideForm();
+                      onSetFilterMemberOption(!includeMembers);
+                    },
+                  }
+                  : null
+                }
+              />
+            )}
+            {showEditOptions && (
+              <EntityListSidebar
+                isEditPanel
+                hasEntities={entities && entities.size > 0}
+                hasSelected={hasSelected}
+                panelGroups={panelGroups}
+                onHideSidebar={onHideEditOptions}
+                setActiveOption={this.onSetActiveOption}
+              />
+            )}
+            {activeOption && formOptions && (
+              <EntityListForm
+                model={formModel}
+                activeOptionId={`${activeOption.group}-${activeOption.optionId}`}
+                formOptions={formOptions}
+                buttons={showEditOptions
+                  ? this.getFormButtons(activeOption)
+                  : null
+                }
+                onCancel={this.onHideForm}
+                showCancelButton={showFilters}
+                onSelect={() => {
+                  if (showFilters) {
+                    this.onHideForm();
+                    // onHideFilters();
+                  }
+                }}
+                onSubmit={showEditOptions
+                  ? (associations) => {
+                  // close and reset option panel
+                    this.setState({ activeOption: null });
+                    onUpdate(associations, activeOption);
+                  }
+                  : null
+                }
+              />
+            )}
+          </Styled>
         )}
-        {showEditOptions && (
-          <EntityListSidebar
-            isEditPanel
-            hasEntities={entities && entities.size > 0}
-            hasSelected={hasSelected}
-            panelGroups={panelGroups}
-            onHideSidebar={onHideEditOptions}
-            setActiveOption={this.onSetActiveOption}
-          />
-        )}
-        {activeOption && formOptions && (
-          <EntityListForm
-            model={formModel}
-            activeOptionId={`${activeOption.group}-${activeOption.optionId}`}
-            formOptions={formOptions}
-            buttons={showEditOptions
-              ? this.getFormButtons(activeOption)
-              : null
-            }
-            onCancel={this.onHideForm}
-            showCancelButton={showFilters}
-            onSelect={() => {
-              if (showFilters) {
-                this.onHideForm();
-                // onHideFilters();
-              }
-            }}
-            onSubmit={showEditOptions
-              ? (associations) => {
-              // close and reset option panel
-                this.setState({ activeOption: null });
-                onUpdate(associations, activeOption);
-              }
-              : null
-            }
-          />
-        )}
-      </Styled>
+      </ResponsiveContext.Consumer>
     );
   }
 }

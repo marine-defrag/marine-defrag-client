@@ -33,10 +33,12 @@ const Styled = styled.div`
 `;
 
 const LinkTitle = styled.div`
-  font-size: ${(props) => props.theme.sizes.text.small};
-  font-weight: bold;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    font-size: ${(props) => props.theme.sizes.text.default};
+  font-weight: 500;
+  font-size: ${({ theme }) => theme.text.small.size};
+  line-height: ${({ theme }) => theme.text.small.height};
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    font-size: ${({ theme }) => theme.text.medium.size};
+    line-height: ${({ theme }) => theme.text.medium.height};
   }
   @media print {
     font-size: ${(props) => props.theme.sizes.print.default};
@@ -48,9 +50,21 @@ const NavMain = styled(PrintHide)`
 `;
 
 const Title = styled.h1`
-  font-size: 1.5em;
+  font-size: ${({ theme }) => theme.text.large.size};
+  line-height: ${({ theme }) => theme.text.large.height};
+  max-width: 100%;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    font-size: ${({ theme }) => theme.text.xlarge.size};
+    line-height: ${({ theme }) => theme.text.xlarge.height};
+    max-width: ${({ theme }) => theme.text.xlarge.maxWidth};
+  }
+  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
+    font-size: ${({ theme }) => theme.text.xxlarge.size};
+    line-height: ${({ theme }) => theme.text.xxlarge.height};
+    max-width: ${({ theme }) => theme.text.xxlarge.maxWidth};
+  }
   margin: 0;
-  max-width: 720px;
+  color: ${({ theme }) => theme.global.colors.brand};
 `;
 const Label = styled.div`
   margin-top: 30px;

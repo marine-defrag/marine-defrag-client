@@ -87,7 +87,8 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
     const headerOptions = {
       supTitle: intl.formatMessage(messages.pageTitle),
       actions: [],
-      info: qe(typeId, ACTIONTYPES.INTL)
+      info: appMessages.actiontypes_info[typeId]
+        && qe(typeId, ACTIONTYPES.INTL)
         ? {
           title: 'Please note',
           content: intl.formatMessage(appMessages.actiontypes_info[typeId]),

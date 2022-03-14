@@ -67,7 +67,7 @@ const FormTitle = styled.h2`
 
 const Intro = styled.div`
   margin-bottom: 10px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     margin-bottom: 16px;
     font-size: 1.2em;
   }
@@ -76,7 +76,7 @@ const Intro = styled.div`
   }
 `;
 const Hint = styled.div`
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     margin-bottom: 16px;
     font-size: 1.2em;
   }

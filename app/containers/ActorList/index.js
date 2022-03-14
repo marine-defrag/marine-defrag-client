@@ -25,9 +25,9 @@ import {
 } from 'containers/App/selectors';
 
 import { checkActionAttribute } from 'utils/entities';
-
+import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
-import { ROUTES } from 'themes/config';
+import { ROUTES, ACTORTYPES } from 'themes/config';
 
 import EntityList from 'containers/EntityList';
 
@@ -86,6 +86,13 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
     const headerOptions = {
       supTitle: intl.formatMessage(messages.pageTitle),
       actions: [],
+      info: appMessages.actortypes_info[typeId]
+        && (qe(typeId, ACTORTYPES.REG) || qe(typeId, ACTORTYPES.ORG))
+        ? {
+          title: 'Please note',
+          content: intl.formatMessage(appMessages.actortypes_info[typeId]),
+        }
+        : null,
     };
     if (isAnalyst) {
       headerOptions.actions.push({

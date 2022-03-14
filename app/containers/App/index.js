@@ -51,7 +51,7 @@ const Main = styled.div`
   background-color: transparent;
   overflow: hidden;
 
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     top: ${(props) => props.isHome
     ? 0
     : props.theme.sizes.header.banner.height
@@ -97,6 +97,15 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
   ) => {
     const { intl } = this.context;
     let navItems = [];
+    if (isAnalyst) {
+      navItems = navItems.concat([
+        {
+          path: ROUTES.RESOURCES,
+          title: intl.formatMessage(messages.nav.resources),
+          active: currentPath && currentPath.startsWith(ROUTES.RESOURCE),
+        },
+      ]);
+    }
     if (isManager) {
       navItems = navItems.concat([
         {
@@ -117,21 +126,6 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           title: intl.formatMessage(messages.nav.users),
           isAdmin: true,
           active: currentPath === ROUTES.USERS,
-        },
-      ]);
-    }
-    if (isAnalyst) {
-      navItems = navItems.concat([
-        {
-          path: ROUTES.RESOURCES,
-          title: intl.formatMessage(messages.nav.resources),
-          active: currentPath && currentPath.startsWith(ROUTES.RESOURCE),
-        },
-        {
-          path: ROUTES.BOOKMARKS,
-          title: intl.formatMessage(messages.nav.bookmarks),
-          isAdmin: true,
-          active: currentPath === ROUTES.BOOKMARKS,
         },
       ]);
     }
@@ -165,6 +159,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
         {!isHome && (
           <Header
             isSignedIn={isUserSignedIn}
+            isAnalyst={isAnalyst}
             user={user}
             pages={pages && this.preparePageMenuPages(pages, location.pathname)}
             navItems={this.prepareMainMenuItems(

@@ -118,7 +118,6 @@ const autoRestart = (generator, handleError, maxTries = MAX_LOAD_ATTEMPTS) => fu
     } catch (err) {
       // console.log('err', n)
       if (n >= maxTries) {
-        // console.log('handleError', n)
         yield handleError(err, ...args);
       }
     }
@@ -131,7 +130,6 @@ const autoRestart = (generator, handleError, maxTries = MAX_LOAD_ATTEMPTS) => fu
    * @param {object} payload {key: data set key}
    */
 function* loadEntitiesErrorHandler(err, { path }) {
-  // console.log('handle loading error', path)
   yield put(entitiesLoadingError(err, path));
 }
 /**
@@ -157,22 +155,19 @@ export function* loadEntitiesSaga({ path }) {
             response: call(apiRequest, 'get', path),
             cancel: take(INVALIDATE_ENTITIES), // will also reset entities requested
           });
-          // console.log('response', response)
           if (response && response.data) {
             // Save response
             yield put(entitiesLoaded(keyBy(response.data, 'id'), path, Date.now()));
           } else {
-            // console.log('no response data', response)
             yield put(entitiesRequested(path, false));
             throw new Error(response.statusText || 'error');
           }
         } catch (err) {
-          // console.log('error', err)
           // Whoops Save error
           // Clear the request time on error, This will cause us to try again next time, which we probably want to do?
           yield put(entitiesRequested(path, false));
           // throw error
-          throw new Error(err);
+          throw new Error((err.response && err.response.status) || err);
         }
       } else {
         // console.log('error: not signedin', )

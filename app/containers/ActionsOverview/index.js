@@ -5,7 +5,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Map } from 'immutable';
-import { Box } from 'grommet';
+import { Box, ResponsiveContext } from 'grommet';
 
 import styled from 'styled-components';
 
@@ -22,6 +22,7 @@ import Content from 'components/styled/Content';
 import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
 
+import { isMaxSize } from 'utils/responsive';
 import { selectActiontypesWithActionCount } from './selectors';
 import { DEPENDENCIES } from './constants';
 
@@ -29,6 +30,8 @@ import { DEPENDENCIES } from './constants';
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
 const GroupTitle = styled.h5`
   font-size: 14px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.global.colors.text.brand};
 `;
 const ViewContainer = styled(Container)`
   min-height: 70vH;
@@ -43,9 +46,10 @@ export function ActionsOverview({
     // kick off loading of data
     onLoadData();
   }, []);
+  const size = React.useContext(ResponsiveContext);
 
   return (
-    <ContainerWrapper>
+    <ContainerWrapper bg>
       <HeaderExplore />
       <ViewContainer>
         <Content>
@@ -54,7 +58,7 @@ export function ActionsOverview({
               <GroupTitle>
                 <FormattedMessage {...appMessages.actiontypeGroups[key]} />
               </GroupTitle>
-              <Box direction="row" gap="small">
+              <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
                 {ACTIONTYPE_GROUPS[key].types.map((typeId) => {
                   const path = `${ROUTES.ACTIONS}/${typeId}`;
                   const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;

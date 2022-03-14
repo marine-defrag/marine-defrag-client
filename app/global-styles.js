@@ -137,6 +137,9 @@ const GlobalStyle = createGlobalStyle`
     h6 {
       font-size: 1em;
     }
+    hr {
+      opacity: 0.3;
+    }
   }
 
   .content-page {
