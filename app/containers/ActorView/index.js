@@ -18,7 +18,7 @@ import {
   getStatusField,
   getMetaField,
   getMarkdownField,
-  getInfoField,
+  getReferenceField,
   getLinkField,
   getNumberField,
   getTaxonomyFields,
@@ -42,7 +42,7 @@ import { ROUTES, ACTORTYPES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
-import ContentHeader from 'components/ContentHeader';
+import ViewHeader from 'components/EntityView/ViewHeader';
 // import EntityView from 'components/EntityView';
 import Main from 'components/EntityView/Main';
 import Aside from 'components/EntityView/Aside';
@@ -101,6 +101,7 @@ export function ActorView(props) {
     params,
     handleEdit,
     handleClose,
+    handleTypeClick,
     viewTaxonomies,
     associationsByType,
     onEntityClick,
@@ -131,27 +132,24 @@ export function ActorView(props) {
 
   let buttons = [];
   if (dataReady) {
-    buttons.push({
-      type: 'icon',
-      onClick: () => window.print(),
-      title: 'Print',
-      icon: 'print',
-    });
-    buttons = isManager
-      ? buttons.concat([
+    buttons = [
+      ...buttons,
+      {
+        type: 'icon',
+        onClick: () => window.print(),
+        title: 'Print',
+        icon: 'print',
+      },
+    ];
+    if (isManager) {
+      buttons = [
+        ...buttons,
         {
           type: 'edit',
-          onClick: () => handleEdit(params.id),
+          onClick: handleEdit,
         },
-        {
-          type: 'close',
-          onClick: () => handleClose(typeId),
-        },
-      ])
-      : buttons.concat([{
-        type: 'close',
-        onClick: () => handleClose(typeId),
-      }]);
+      ];
+    }
   }
   const pageTitle = typeId
     ? intl.formatMessage(appMessages.entities[`actors_${typeId}`].single)
@@ -191,12 +189,7 @@ export function ActorView(props) {
           { name: 'description', content: intl.formatMessage(messages.metaDescription) },
         ]}
       />
-      <Content>
-        <ContentHeader
-          title={pageTitle}
-          type={CONTENT_SINGLE}
-          buttons={buttons}
-        />
+      <Content isSingle>
         { !dataReady
           && <Loading />
         }
@@ -209,15 +202,26 @@ export function ActorView(props) {
         }
         { viewEntity && dataReady && (
           <ViewWrapper>
+            <ViewHeader
+              title={typeId
+                ? intl.formatMessage(appMessages.actortypes[typeId])
+                : intl.formatMessage(appMessages.entities.actors.plural)
+              }
+              type={CONTENT_SINGLE}
+              buttons={buttons}
+              onClose={() => handleClose(typeId)}
+              onTypeClick={() => handleTypeClick(typeId)}
+            />
             <ViewPanel>
               <ViewPanelInside>
                 <Main hasAside={isManager}>
                   <FieldGroup
                     group={{ // fieldGroup
                       fields: [
-                        checkActorAttribute(typeId, 'code', isManager) && getInfoField(
+                        checkActorAttribute(typeId, 'code', isManager) && getReferenceField(
+                          viewEntity,
                           'code',
-                          viewEntity.getIn(['attributes', 'code']),
+                          isManager,
                         ),
                         checkActorAttribute(typeId, 'title') && getTitleField(viewEntity),
                       ],
@@ -396,6 +400,7 @@ ActorView.propTypes = {
   dataReady: PropTypes.bool,
   handleEdit: PropTypes.func,
   handleClose: PropTypes.func,
+  handleTypeClick: PropTypes.func,
   onEntityClick: PropTypes.func,
   onUpdatePath: PropTypes.func,
   viewTaxonomies: PropTypes.instanceOf(Map),
@@ -451,6 +456,9 @@ function mapDispatchToProps(dispatch, props) {
     },
     handleClose: (typeId) => {
       dispatch(closeEntity(`${ROUTES.ACTORS}/${typeId}`));
+    },
+    handleTypeClick: (typeId) => {
+      dispatch(updatePath(`${ROUTES.ACTORS}/${typeId}`));
     },
     onEntityClick: (id, path) => {
       dispatch(updatePath(`${path}/${id}`));

@@ -29,6 +29,8 @@ import { DEPENDENCIES } from './constants';
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
 const GroupTitle = styled.h5`
   font-size: 14px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.global.colors.text.brand};
 `;
 const ViewContainer = styled(Container)`
   min-height: 70vH;

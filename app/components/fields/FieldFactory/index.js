@@ -81,7 +81,7 @@ class FieldFactory extends React.PureComponent { // eslint-disable-line react/pr
       // or showEmpty
       || (typeof field.showEmpty !== 'undefined' && field.showEmpty))
       ? (
-        <Field nested={nested} noPadding={field.type === 'smartTaxonomy'}>
+        <Field nested={nested} noPadding={field.type === 'reference'}>
           {this.renderField(field)}
         </Field>
       )

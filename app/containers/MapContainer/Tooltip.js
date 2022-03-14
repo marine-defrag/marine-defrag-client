@@ -7,7 +7,7 @@ import { Box } from 'grommet';
 
 const Root = styled.div`
   position: absolute;
-  bottom: 0;
+  top: ${({ position }) => position ? position.y : 50}px;
   left: 0;
   right: 0;
   z-index: 2501;

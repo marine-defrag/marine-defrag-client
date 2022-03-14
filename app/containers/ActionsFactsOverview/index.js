@@ -30,6 +30,9 @@ const GroupTitle = styled.h5`
   margin-top: 0;
   margin-bottom: 0;
 `;
+const GroupTitleLabel = styled(GroupTitle)`
+  color: ${({ theme }) => theme.global.colors.text.brand};
+`;
 const ViewContainer = styled(Container)`
   min-height: 70vH;
   @media print {
@@ -91,9 +94,9 @@ export function ActionsFactsOverview({
                         gap="xsmall"
                       >
                         <Box>
-                          <GroupTitle>
+                          <GroupTitleLabel>
                             Publication
-                          </GroupTitle>
+                          </GroupTitleLabel>
                         </Box>
                         <Box>
                           <ResourceButton

@@ -120,6 +120,36 @@ export default defineMessages({
       defaultMessage: 'Actortype 5',
     },
   },
+  actortypes_info: {
+    1: {
+      id: 'app.containers.App.actortypes_info.1',
+      defaultMessage: 'In some cases country memberships/actors are not displayed in international frameworks and policies due to difficulty in retrieving information and potential inconsistencies through updates (e.g. regarding ratifications, etc.).',
+    },
+    2: {
+      id: 'app.containers.App.actortypes_info.2',
+      defaultMessage: 'The linking of institutions with activities, initiatives, etc. is partially shown in this mapping tool. For a comprehensive overview, institutions are also listed, but not linked to actors, etc., as they only contribute to plastic pollution prevention in general. It is continuously updated, especially with regard to regional contexts. ',
+    },
+    3: {
+      id: 'app.containers.App.actortypes_info.3',
+      defaultMessage: 'Actortype 3',
+    },
+    4: {
+      id: 'app.containers.App.actortypes_info.4',
+      defaultMessage: 'The naming and classifications of regions in this mapping tool is for informational purposes only and do not constitute recognition of international boundaries or regions.',
+    },
+    5: {
+      id: 'app.containers.App.actortypes_info.5',
+      defaultMessage: 'Actortype 5',
+    },
+    6: {
+      id: 'app.containers.App.actortypes_info.6',
+      defaultMessage: 'Actortype 6',
+    },
+    7: {
+      id: 'app.containers.App.actortypes_info.7',
+      defaultMessage: 'Actortype 7',
+    },
+  },
   actortypeGroups: {
     1: {
       id: 'app.containers.App.actortypeGroups.1',

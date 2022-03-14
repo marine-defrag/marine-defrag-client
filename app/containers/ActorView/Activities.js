@@ -224,7 +224,7 @@ export function Activities(props) {
         <TypeSelectBox
           direction="row"
           gap="xxsmall"
-          margin={{ vertical: 'small', horizontal: 'medium' }}
+          margin={{ top: 'small', horizontal: 'medium', bottom: 'medium' }}
           wrap
         >
           {actiontypeIdsForSubjectOptions.map(

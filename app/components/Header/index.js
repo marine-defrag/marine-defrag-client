@@ -109,7 +109,7 @@ const ToggleMenu = styled((p) => <Button plain as="a" {...p} />)`
 
 const Section = styled((p) => <Box {...p} />)`
   border-right: 1px solid ${({ wide }) => wide ? 'black' : 'transparent'};
-  border-bottom: 1px solid ${({ wide }) => wide ? 'transparent' : 'white'};
+  border-bottom: 1px solid ${({ wide, theme }) => wide ? 'transparent' : theme.global.colors.background};
   &:last-child {
     border-color: transparent;
   }
@@ -120,7 +120,7 @@ const MainMenu = styled((p) => <Box {...p} />)`
   right: ${({ wide }) => !wide ? 0 : 'auto'};
   width: ${({ wide }) => !wide ? '100%' : 'auto'};
   top: ${({ wide, theme }) => !wide ? theme.sizes.header.banner.heightMobile : 0}px;
-  background: ${({ wide, theme }) => !wide ? theme.global.colors.background : 'transparent'};
+  background: ${({ wide, theme }) => !wide ? theme.global.colors.white : 'transparent'};
 `;
 
 const STATE_INITIAL = {
@@ -357,7 +357,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                         </LinkAccount>
                       )}
                       {isSignedIn && !user && wide && (
-                        <LinkAccount>
+                        <LinkAccount wide>
                           <FormattedMessage {...messages.userLoading} />
                         </LinkAccount>
                       )}

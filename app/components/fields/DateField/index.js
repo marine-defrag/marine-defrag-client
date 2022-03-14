@@ -5,20 +5,15 @@ import { FormattedMessage, FormattedDate } from 'react-intl';
 import appMessages from 'containers/App/messages';
 
 import FieldWrap from 'components/fields/FieldWrap';
-import FieldIcon from 'components/fields/FieldIcon';
 import Label from 'components/fields/Label';
 import EmptyHint from 'components/fields/EmptyHint';
 import DateValue from 'components/fields/DateValue';
-import Icon from 'components/Icon';
 
 class DateField extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
     const { field } = this.props;
     return (
       <FieldWrap>
-        <FieldIcon>
-          <Icon name="calendar" />
-        </FieldIcon>
         <Label>
           <FormattedMessage {...(field.label || appMessages.attributes.date)} />
         </Label>

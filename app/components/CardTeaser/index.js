@@ -12,11 +12,18 @@ const Styled = styled((p) => <Box {...p} />)``;
 const CardLink = styled((p) => <Button plain as="a" fill="vertical" {...p} />)`
   padding: 20px 15px;
   min-height: ${({ prim }) => prim ? 180 : 0}px;
+  color: ${({ theme }) => theme.global.colors.text.brand};
+  &:hover {
+    color: ${({ theme }) => theme.global.colors.text.highlight};
+  }
 `;
 const TitleWrap = styled((p) => <Box margin={{ bottom: 'medium' }} {...p} />)``;
-const Count = styled((p) => <Text size="xlarge" weight="bold" {...p} />)``;
-const Title = styled((p) => <Text weight="bold" {...p} />)``;
-const Description = styled((p) => <Text size="small" {...p} />)``;
+const Count = styled((p) => <Text size="xlarge" weight="bold" {...p} />)`
+`;
+const Title = styled((p) => <Text weight="bold" {...p} />)`
+`;
+const Description = styled((p) => <Text size="small" {...p} />)`
+`;
 
 export function CardTeaser({
   primary,

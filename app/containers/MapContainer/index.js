@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import L from 'leaflet';
 import 'proj4leaflet';
-
+import { ResponsiveContext } from 'grommet';
 import { merge } from 'lodash/object';
 
 import { MAP_OPTIONS } from 'themes/config';
@@ -96,6 +96,7 @@ export function MapContainer({
 }) {
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
+  const size = React.useContext(ResponsiveContext);
   const leafletOptions = customMapProjection
     ? {
       crs: new L.Proj.CRS(
@@ -109,7 +110,7 @@ export function MapContainer({
       ),
       // center: mapOptions.CENTER,
       // zoom: size === 'small' ? mapOptions.ZOOM.MIN : mapOptions.ZOOM.INIT,
-      zoomControl: interactive,
+      zoomControl: size !== 'small' && interactive,
       dragging: interactive,
       doubleClickZoom: interactive,
       scrollWheelZoom,

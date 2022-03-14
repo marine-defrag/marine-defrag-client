@@ -23,11 +23,16 @@ const Styled = styled((p) => (
   />
 ))`
   position: absolute;
-  left: 10px;
-  bottom: 50px;
-  width: 350px;
   z-index: 50;
+  bottom: 10px;
+  width: 100%;
+  left: 0;
+  max-width: 350px;
   padding: 5px 10px 5px;
+  @media (min-width: 370px) {
+    left: 10px;
+    bottom: 50px;
+  }
 `;
 
 export function MapInfoOptions({

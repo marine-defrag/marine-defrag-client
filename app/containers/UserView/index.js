@@ -146,7 +146,7 @@ export class UserView extends React.PureComponent { // eslint-disable-line react
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Content>
+        <Content isSingle>
           <ContentHeader
             title={pageTitle}
             type={CONTENT_SINGLE}

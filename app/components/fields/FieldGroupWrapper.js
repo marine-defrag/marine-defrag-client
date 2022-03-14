@@ -1,10 +1,9 @@
 import styled from 'styled-components';
-import { palette } from 'styled-theme';
 
 const FieldGroupWrapper = styled.div`
-  background-color: ${(props) => props.groupType === 'dark' ? palette('light', 0) : 'transparent'};
+  background-color: transparent;
   border-bottom: ${(props) => props.groupType === 'smartTaxonomy' ? '1px solid' : 0};
-  border-bottom-color: ${palette('light', 1)};
+  border-bottom-color: ${({ theme }) => theme.global.colors.background};
   padding-top: ${({ theme }) => theme.global.edgeSize.small};
   padding-right: ${({ theme }) => theme.global.edgeSize.small};
   padding-left: ${({ seamless, theme }) => seamless ? 0 : theme.global.edgeSize.small};

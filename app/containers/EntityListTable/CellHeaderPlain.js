@@ -49,6 +49,7 @@ export function CellHeaderPlain({ column }) {
               palette="dark"
               paletteIndex={column.sortActive ? 1 : 4}
               hidePrint={!column.sortActive}
+              size="20px"
             />
           </SortButton>
         </Box>

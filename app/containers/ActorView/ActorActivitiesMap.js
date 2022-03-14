@@ -49,6 +49,7 @@ const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
 const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
   height: 400px;
+  background: #F9F9FA;
 `;
 
 const addToList = (list, countryId, actionId) => {

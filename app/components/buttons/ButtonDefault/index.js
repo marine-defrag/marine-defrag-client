@@ -32,7 +32,8 @@ const ButtonDefault = styled(Button)`
     return 'none';
   }};
   border-radius: 999px;
-  padding: 0.5em 1.75em;
+  border: 1px solid ${({ theme, inactive }) => !inactive ? palette('buttonDefault', 1) : theme.global.colors['light-4']};
+  padding: 0.4em 1.2em;
   cursor: ${(props) => props.disabled ? 'default' : 'pointer'};
   &:hover {
     color: ${(props) => props.inactive

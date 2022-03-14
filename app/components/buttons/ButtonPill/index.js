@@ -13,6 +13,7 @@ const getActiveHoverBackground = (disabled) => disabled
 
 // eslint-disable no-nested-ternary
 const ButtonPill = styled(Button)`
+  margin: 2px 0;
   color: ${(props) => props.active
     ? palette('buttonDefault', 0)
     : palette('buttonToggleInactive', 0)
@@ -21,8 +22,9 @@ const ButtonPill = styled(Button)`
     ? palette('buttonDefault', 1)
     : palette('buttonToggleInactive', 1)
 };
+  border: 1px solid ${({ theme, active }) => active ? palette('buttonDefault', 1) : theme.global.colors['light-4']};
   border-radius: 999px;
-  padding: 0.5em 1.75em;
+  padding: 0.2em 1em;
   cursor: ${(props) => props.active ? 'default' : 'pointer'};
   &:hover {
     color: ${(props) => props.active

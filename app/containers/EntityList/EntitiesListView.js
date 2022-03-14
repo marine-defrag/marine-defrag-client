@@ -375,7 +375,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 )}
                 {entityActors && (
                   <Box>
-                    <Box direction="row" gap="xsmall" margin={{ vertical: 'small' }}>
+                    <Box direction="row" gap="xsmall" margin={{ vertical: 'small' }} wrap>
                       {mapSubject === 'actors'
                         && ACTIONTYPE_ACTORTYPES[typeId].length > 1
                         && ACTIONTYPE_ACTORTYPES[typeId].map(

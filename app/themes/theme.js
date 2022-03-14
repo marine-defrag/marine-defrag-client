@@ -51,7 +51,7 @@ const dark = coolorsToHex('https://coolors.co/1c2121-232b2b-323e3e-687271-8d9696
 // 2:  gray 1 (gray pattern)
 // 3:  gray 2 (icons light)
 // 4:  gray 3 (dark lines)
-const light = coolorsToHex('https://coolors.co/f1f0f1-e0e6e6-d5dddd-cdd6d6-c7d1d1');
+const light = coolorsToHex('https://coolors.co/f1f0f1-f1f0f1-d5dddd-cdd6d6-c7d1d1');
 
 // other palettes
 // 0: AA on light[0] and on error[3]
@@ -467,6 +467,7 @@ theme.global = {
     highlight: '#0070cc',
     highlightHover: '#0063b5',
     background: '#f1f0f1',
+    backgroundLight: '#fcfcfc',
     text: {
       brand: '#183863',
       dark: '#FFFFFF', //  on dark background
@@ -503,7 +504,9 @@ theme.text = {
   xxlarge: { size: '30px', height: '36px', maxWidth: '800px' },
   xlarge: { size: '21px', height: '28px', maxWidth: '800px' },
   large: { size: '18px', height: '24px', maxWidth: '800px' },
+  largeTall: { size: '18px', height: '26px', maxWidth: '800px' },
   medium: { size: '16px', height: '21px', maxWidth: '800px' },
+  mediumTall: { size: '16px', height: '23px', maxWidth: '800px' },
   mediumTight: { size: '16px', height: '18px', maxWidth: '800px' },
   small: { size: '14px', height: '18px', maxWidth: '700px' },
   xsmall: { size: '13px', height: '16px', maxWidth: '600px' },

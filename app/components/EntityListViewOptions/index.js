@@ -7,10 +7,11 @@ import ButtonFactory from 'components/buttons/ButtonFactory';
 const Styled = styled.div`
   position: relative;
   z-index: 20;
-  margin-left: 60px;
+  margin-left: 10px;
   padding: 10px 0;
   display: inline-block;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    margin-left: 60px;
     padding: 20px 0;
   }
 `;
@@ -45,9 +46,9 @@ const ButtonWrap = styled.span`
 
 class EntityListViewOptions extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
-    const { options } = this.props;
+    const { options, onMap } = this.props;
     return (
-      <Styled>
+      <Styled onMap={onMap}>
         {options && (
           <ButtonGroup>
             {
@@ -67,6 +68,7 @@ class EntityListViewOptions extends React.PureComponent { // eslint-disable-line
 }
 
 EntityListViewOptions.propTypes = {
+  onMap: PropTypes.bool,
   options: PropTypes.array,
 };
 

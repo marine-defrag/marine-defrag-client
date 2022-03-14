@@ -49,9 +49,9 @@ export const getIdField = (entity) => checkEmpty(entity.get('id')) && ({
   large: true,
   label: appMessages.attributes.id,
 });
-export const getReferenceField = (entity, isManager, defaultToId) => {
-  const value = defaultToId
-    ? entity.getIn(['attributes', 'reference']) || entity.get('id')
+export const getReferenceField = (entity, att, isManager) => {
+  const value = att
+    ? entity.getIn(['attributes', 'reference']) || entity.getIn(['attributes', att])
     : entity.getIn(['attributes', 'reference']);
   if (checkEmpty(value)) {
     return ({

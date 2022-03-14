@@ -20,6 +20,7 @@ import {
   getDateField,
   getTextField,
   getInfoField,
+  getReferenceField,
   getLinkField,
   getNumberField,
   getTaxonomyFields,
@@ -42,14 +43,13 @@ import {
   setSubject,
 } from 'containers/App/actions';
 
-import { CONTENT_SINGLE } from 'containers/App/constants';
 import {
-  ROUTES, ACTIONTYPES, FF_ACTIONTYPE, ACTORTYPES_CONFIG, ACTORTYPES,
+  ROUTES, ACTIONTYPES, FF_ACTIONTYPE, ACTORTYPES_CONFIG, ACTORTYPES, RESOURCE_FIELDS,
 } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
-import ContentHeader from 'components/ContentHeader';
+import ViewHeader from 'components/EntityView/ViewHeader';
 import Main from 'components/EntityView/Main';
 import Aside from 'components/EntityView/Aside';
 import ViewWrapper from 'components/EntityView/ViewWrapper';
@@ -105,6 +105,23 @@ const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
       columns = [
         ...columns,
         {
+          id: 'regions',
+          type: 'associations',
+          actortype_id: ACTORTYPES.REG,
+          title: 'Regions',
+          isIndicator,
+        },
+        {
+          id: 'classes',
+          type: 'associations',
+          actortype_id: ACTORTYPES.CLASS,
+          title: 'Classes',
+          isIndicator,
+        },
+      ];
+      columns = [
+        ...columns,
+        {
           id: 'indicator',
           type: 'indicator',
           indicatorId: viewEntity.get('id'),
@@ -115,23 +132,6 @@ const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
         },
       ];
     }
-    columns = [
-      ...columns,
-      {
-        id: 'regions',
-        type: 'associations',
-        actortype_id: ACTORTYPES.REG,
-        title: 'Regions',
-        isIndicator,
-      },
-      {
-        id: 'classes',
-        type: 'associations',
-        actortype_id: ACTORTYPES.CLASS,
-        title: 'Classes',
-        isIndicator,
-      },
-    ];
   }
   if (
     qe(typeid, ACTORTYPES.REG)
@@ -182,6 +182,7 @@ export function ActionView(props) {
     params,
     activitytypes,
     handleImportConnection,
+    handleTypeClick,
   } = props;
 
   useEffect(() => {
@@ -194,27 +195,24 @@ export function ActionView(props) {
   const isIndicator = qe(typeId, FF_ACTIONTYPE);
   let buttons = [];
   if (dataReady) {
-    buttons.push({
-      type: 'icon',
-      onClick: () => window.print(),
-      title: 'Print',
-      icon: 'print',
-    });
-    buttons = isManager
-      ? buttons.concat([
+    buttons = [
+      ...buttons,
+      {
+        type: 'icon',
+        onClick: () => window.print(),
+        title: 'Print',
+        icon: 'print',
+      },
+    ];
+    if (isManager) {
+      buttons = [
+        ...buttons,
         {
           type: 'edit',
           onClick: handleEdit,
         },
-        {
-          type: 'close',
-          onClick: () => handleClose(typeId),
-        },
-      ])
-      : buttons.concat([{
-        type: 'close',
-        onClick: () => handleClose(typeId),
-      }]);
+      ];
+    }
   }
   const pageTitle = typeId
     ? intl.formatMessage(appMessages.entities[`actions_${typeId}`].single)
@@ -274,12 +272,7 @@ export function ActionView(props) {
           { name: 'description', content: intl.formatMessage(messages.metaDescription) },
         ]}
       />
-      <Content>
-        <ContentHeader
-          title={pageTitle}
-          type={CONTENT_SINGLE}
-          buttons={buttons}
-        />
+      <Content isSingle>
         { !dataReady
           && <Loading />
         }
@@ -292,15 +285,25 @@ export function ActionView(props) {
         }
         { viewEntity && dataReady && (
           <ViewWrapper>
+            <ViewHeader
+              title={typeId
+                ? intl.formatMessage(appMessages.actiontypes[typeId])
+                : intl.formatMessage(appMessages.entities.actions.plural)
+              }
+              buttons={buttons}
+              onClose={() => handleClose(typeId)}
+              onTypeClick={() => handleTypeClick(typeId)}
+            />
             <ViewPanel>
               <ViewPanelInside>
                 <Main hasAside={isManager && !isIndicator}>
                   <FieldGroup
                     group={{ // fieldGroup
                       fields: [
-                        checkActionAttribute(typeId, 'code', isManager) && getInfoField(
+                        checkActionAttribute(typeId, 'code', isManager) && getReferenceField(
+                          viewEntity,
                           'code',
-                          viewEntity.getIn(['attributes', 'code']),
+                          isManager,
                         ),
                         checkActionAttribute(typeId, 'title') && getTitleField(viewEntity),
                       ],
@@ -455,28 +458,36 @@ export function ActionView(props) {
                             type: 'dark',
                             label: appMessages.nav.resources,
                             fields: resourcesByResourcetype.reduce(
-                              (memo, resources, resourcetypeid) => memo.concat([
-                                getResourceConnectionField({
-                                  resources,
-                                  taxonomies,
-                                  onEntityClick,
-                                  connections: resourceConnections,
-                                  typeid: resourcetypeid,
-                                  columns: [
-                                    {
-                                      id: 'main',
-                                      type: 'main',
-                                      sort: 'title',
-                                      attributes: ['title'],
-                                    },
+                              (memo, resources, resourcetypeid) => {
+                                let columns = [
+                                  {
+                                    id: 'main',
+                                    type: 'main',
+                                    sort: 'title',
+                                    attributes: ['title'],
+                                  },
+                                ];
+                                if (RESOURCE_FIELDS.ATTRIBUTES.status.optional.indexOf(resourcetypeid.toString()) > -1) {
+                                  columns = [
+                                    ...columns,
                                     {
                                       id: 'attribute',
                                       type: 'attribute',
                                       attribute: 'status',
                                     },
-                                  ],
-                                }),
-                              ]),
+                                  ];
+                                }
+                                return memo.concat([
+                                  getResourceConnectionField({
+                                    resources,
+                                    taxonomies,
+                                    onEntityClick,
+                                    connections: resourceConnections,
+                                    typeid: resourcetypeid,
+                                    columns,
+                                  }),
+                                ]);
+                              },
                               [],
                             ),
                           }}
@@ -583,6 +594,7 @@ export function ActionView(props) {
 ActionView.propTypes = {
   viewEntity: PropTypes.object,
   onLoadData: PropTypes.func,
+  handleTypeClick: PropTypes.func,
   dataReady: PropTypes.bool,
   handleEdit: PropTypes.func,
   handleClose: PropTypes.func,
@@ -643,6 +655,9 @@ function mapDispatchToProps(dispatch, props) {
     },
     handleClose: (typeId) => {
       dispatch(closeEntity(`${ROUTES.ACTIONS}/${typeId}`));
+    },
+    handleTypeClick: (typeId) => {
+      dispatch(updatePath(`${ROUTES.ACTIONS}/${typeId}`));
     },
     onSetSubject: (type) => {
       dispatch(setSubject(type));
