@@ -25,11 +25,6 @@ theme.media = {
 
 // grid-styles settings https://github.com/jxnblk/grid-styled
 theme.gutter = 20;
-theme.breakpoints = {
-  small: '769px',
-  medium: '993px',
-  large: '1200px',
-};
 
 // global color palettes
 // primary color palette: dark to light
@@ -329,8 +324,8 @@ theme.sizes = {
   },
   header: {
     banner: {
-      height: 40,
-      heightMobile: 40,
+      height: 50,
+      heightMobile: 50,
     },
     nav: {
       height: 30,
@@ -389,16 +384,92 @@ theme.transitions = {
 
 theme.backgroundImages = {};
 
+export const BREAKPOINTS = {
+  small: {
+    min: 0,
+    max: 420, // inclusive
+    name: 'mobile',
+    index: 0,
+  },
+  ms: {
+    min: 420, // exclusive
+    max: 720,
+    name: 'mobile (landscape)',
+    index: 1,
+  },
+  medium: {
+    min: 720, // exclusive
+    max: 992,
+    name: 'tablet (portrait)',
+    index: 2,
+  },
+  large: {
+    min: 992, // exclusive
+    max: 1152,
+    name: 'laptop/tablet (landscape)',
+    index: 3,
+  },
+  xlarge: {
+    min: 1152, // exclusive
+    max: 1728,
+    name: 'desktop',
+    index: 4,
+  },
+  xxlarge: {
+    min: 1728, // exclusive
+    max: 99999999,
+    name: 'large desktop',
+    index: 5,
+  },
+};
+theme.breakpoints = {
+  small: `${BREAKPOINTS.small.min}px`, // max
+  ms: `${BREAKPOINTS.ms.min}px`, // max
+  medium: `${BREAKPOINTS.medium.min}px`, // min
+  large: `${BREAKPOINTS.large.min}px`, // min
+  xlarge: `${BREAKPOINTS.xlarge.min}px`, // min
+  xxlarge: `${BREAKPOINTS.xxlarge.min}px`, // min
+};
+theme.breakpointsMin = {
+  small: `${BREAKPOINTS.small.min + 1}px`, // min
+  ms: `${BREAKPOINTS.ms.min + 1}px`, // min
+  medium: `${BREAKPOINTS.medium.min + 1}px`, // min
+  large: `${BREAKPOINTS.large.min + 1}px`, // min
+  xlarge: `${BREAKPOINTS.xlarge.min + 1}px`, // min
+  xxlarge: `${BREAKPOINTS.xxlarge.min + 1}px`, // min
+};
 
 // grommet
 theme.global = {
   drop: {
     zIndex: 200,
   },
+  breakpoints: {
+    small: {
+      value: BREAKPOINTS.small.max,
+    },
+    ms: {
+      value: BREAKPOINTS.ms.max,
+    },
+    medium: {
+      value: BREAKPOINTS.medium.max,
+    },
+    large: {
+      value: BREAKPOINTS.large.max,
+    },
+    xlarge: {
+      value: BREAKPOINTS.xlarge.max,
+    },
+    xxlarge: {},
+  },
   colors: {
     icon: '#000000',
     actors: '#006076',
     targets: '#a52752',
+    brand: '#183863',
+    highlight: '#0070cc',
+    highlightHover: '#0063b5',
+    text: '#1c2121',
   },
   edgeSize: {
     hair: '1px',

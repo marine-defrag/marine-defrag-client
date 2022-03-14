@@ -10,7 +10,7 @@ const Styled = styled.div`
   margin-left: 60px;
   padding: 10px 0;
   display: inline-block;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: 20px 0;
   }
 `;
@@ -18,7 +18,7 @@ const ButtonGroup = styled.div`
   display: table;
   text-align: right;
   margin-bottom: 10px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     margin-bottom: 0;
   }
 `;
@@ -30,7 +30,7 @@ const TableCell = styled.span`
     }
     return 'table-cell';
   }};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: table-cell;
     vertical-align: middle;
   }

@@ -64,14 +64,14 @@ const SectionWrapper = styled.div`
   display: ${(props) => props.hasBrand ? 'block' : 'table-cell'};
   vertical-align: ${(props) => props.hasBrand ? 'baseline' : 'middle'};
   padding-bottom: 3em;
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
     padding-bottom: 6em;
   }
 `;
 
 const HomeActions = styled.div`
   padding-top: 1em;
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
     padding-top: 2em;
   }
 `;
@@ -80,10 +80,10 @@ const Title = styled.h1`
   font-family: ${(props) => props.theme.fonts.title};
   font-size: ${(props) => props.theme.sizes.home.text.titleMobile};
   /* text-transform: uppercase; */
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.theme.sizes.home.text.title};
   }
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
     margin-bottom: 1em;
   }
   @media print {
@@ -101,7 +101,7 @@ const Claim = styled.p`
   margin-right: auto;
   margin-top: 0.5em;
   line-height: 1.3;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.theme.sizes.home.text.claim};
     margin-top: 2.5em;
   }
@@ -116,10 +116,10 @@ const Intro = styled(ReactMarkdown)`
   margin-left: auto;
   margin-right: auto;
   line-height: 1.3;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: 1.1em;
   }
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
     font-size: 1.25em;
   }
   @media print {
@@ -128,7 +128,7 @@ const Intro = styled(ReactMarkdown)`
 `;
 const GridSpace = styled(Grid)`
   display: none !important;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: inline-block;
   }
 `;
@@ -139,7 +139,7 @@ const MainButton = styled(ButtonHero)`
   display: block;
   margin-bottom: 10px;
   min-width: auto;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: inline-block;
     margin-bottom: 0;
     min-width: auto;

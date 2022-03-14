@@ -13,7 +13,7 @@ import messages from './messages';
 const SortButton = styled(ButtonFlatIconOnly)`
   padding: 0;
   color: inherit;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: 0;
   }
 `;
@@ -23,7 +23,7 @@ const Styled = styled(ColumnHeader)`
 const LabelWrap = styled.div`
   display: table-cell;
   padding-right: 4px;
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
+  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.medium : '769px'}) {
     padding-left: ${(props) => props.isSelect ? 0 : 7}px;
   }
 `;

@@ -35,7 +35,7 @@ const Styled = styled.div`
 const LinkTitle = styled.div`
   font-size: ${(props) => props.theme.sizes.text.small};
   font-weight: bold;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.theme.sizes.text.default};
   }
   @media print {

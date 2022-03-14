@@ -69,7 +69,7 @@ const HeaderSectionType = styled((p) => <Box direction="column" {...p} />)`
 const SelectType = styled(ButtonOld)`
   display: none;
   text-align: left;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: block;
     padding-left: 2px;
     padding-right: 2px;
@@ -87,7 +87,7 @@ const Label = styled.div`
   color: ${palette('text', 1)};
   padding-left: 2px;
   padding-right: 2px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.theme.sizes.text.smaller};
   }
   @media print {
@@ -98,7 +98,7 @@ const LinkTitle = styled.div`
   font-size: ${(props) => props.theme.sizes.text.small};
   font-weight: bold;
   color: ${(props) => props.active ? palette('headerNavMainItem', 1) : 'inherit'};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.theme.sizes.text.default};
   }
   @media print {
@@ -108,13 +108,13 @@ const LinkTitle = styled.div`
 
 const TypeOptions = styled(PrintHide)`
   display: none;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     position: absolute;
     top: 100%;
     left: 0;
     display: block;
   }
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
     min-width: 240px;
   }
   background: white;

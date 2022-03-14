@@ -56,7 +56,7 @@ const ListEntitiesEmpty = styled.div``;
 const EntityListSearchWrapper = styled.div`
   padding-top: 12px;
   padding-bottom: 12px;
-  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.small : '769px'}) {
+  @media (min-width: ${(props) => props.theme && props.theme.breakpoints ? props.theme.breakpoints.medium : '769px'}) {
     padding-top: 12px;
     padding-bottom: 16px;
   }

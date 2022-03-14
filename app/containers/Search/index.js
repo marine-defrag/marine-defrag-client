@@ -59,7 +59,7 @@ const Target = styled(Button)`
   font-weight: ${(props) => props.active ? 'bold' : 'normal'};
   padding: 0;
   text-align: left;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: 0;
   }
 `;

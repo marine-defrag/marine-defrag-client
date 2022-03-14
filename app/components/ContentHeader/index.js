@@ -18,7 +18,7 @@ const Styled = styled.div`
     if (hasViewOptions) return '0.5em 0 0.5em';
     return '1em 0 0.5em';
   }};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: ${({ isModal, hasViewOptions }) => {
     if (isModal) return '20px 0 20px 40px';
     if (hasViewOptions) return '0 0 1em';
@@ -47,7 +47,7 @@ const ButtonWrap = styled.span`
 `;
 const Table = styled.span`
   display: block;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: table;
     width: 100%;
     min-height: 62px;
@@ -61,7 +61,7 @@ const TableCell = styled.span`
     return 'block';
   }};
   clear: both;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: table-cell;
     vertical-align: middle;
   }
@@ -77,7 +77,7 @@ const ButtonGroup = styled.div`
   display: table;
   text-align: right;
   margin-bottom: 10px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     margin-bottom: 0;
   }
 `;
@@ -93,7 +93,7 @@ const TitleWrap = styled.div`
 `;
 const VisibleMobile = styled.span`
   display: block;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: none;
   }
 `;

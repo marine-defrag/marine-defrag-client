@@ -34,7 +34,7 @@ const ButtonPill = styled(Button)`
     : getInactiveHoverBackground(props.active)
 };
   }
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: 0.2em 1em;
   }
 `;

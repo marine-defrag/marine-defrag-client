@@ -620,7 +620,7 @@ export function EntitiesMap({
   }
 
   return (
-    <Styled hasHeader noOverflow>
+    <Styled headerStyle="types" noOverflow>
       <MapContainer
         typeLabels={typeLabels}
         countryFeatures={countriesJSON.features}

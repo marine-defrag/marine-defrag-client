@@ -17,17 +17,17 @@ const Styled = styled.div`
   background-color: ${palette('headerNavAccount', 0)};
 `;
 
-const LinkAccount = styled((p) => <Button plain as="a" {...p} />)`
-  color: ${(props) => props.active ? palette('headerNavAccountItem', 1) : palette('headerNavAccountItem', 0)};
-  background-color: ${(props) => props.active ? palette('headerNavAccountItem', 3) : palette('headerNavAccountItem', 2)};
-
-  border-right: 1px solid ${palette('headerNavAccountItem', 4)};
-  padding: 8px 0.7em;
-
+const LinkAccount = styled((p) => <Button plain as="a" justify="center" fill="vertical" {...p} />)`
+  color: white;
+  background-color:${({ theme, active }) => active ? theme.global.colors.highlight : 'transparent'};
+  padding-right: 12px;
+  padding-left: 12px;
+  padding-top: 16px;
+  font-size: ${({ theme }) => theme.text.small.size};
+  line-height: ${({ theme }) => theme.text.small.height};
   &:hover {
-    color: ${(props) => props.active ? palette('headerNavAccountItemHover', 1) : palette('headerNavAccountItemHover', 0)};
-    background-color: ${(props) => props.active ? palette('headerNavAccountItemHover', 3) : palette('headerNavAccountItemHover', 2)};
-    border-right: 1px solid ${palette('headerNavAccountItemHover', 4)};
+    color: white;
+    background-color:${({ theme }) => theme.global.colors.highlightHover};
   }
 `;
 
@@ -56,6 +56,17 @@ class NavAccount extends React.PureComponent { // eslint-disable-line react/pref
     const userPath = user ? `${ROUTES.USERS}/${user.id}` : '';
     return (
       <Styled>
+        {isSignedIn && user
+          && (
+            <LinkAccount
+              href={ROUTES.BOOKMARKS}
+              active={currentPath === ROUTES.BOOKMARKS}
+              onClick={(evt) => this.onClick(evt, ROUTES.BOOKMARKS)}
+            >
+              <FormattedMessage {...appMessages.nav.bookmarks} />
+            </LinkAccount>
+          )
+        }
         {isSignedIn && user
           && (
             <LinkAccount

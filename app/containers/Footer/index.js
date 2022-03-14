@@ -52,11 +52,11 @@ const FooterLink = styled.a`
 
 const TableWrapper = styled.div`
   min-height: 150px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     margin-left: -15px;
     margin-right: -15px;
   }
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
     margin-left: -35px;
     margin-right: -35px;
   }
@@ -64,13 +64,13 @@ const TableWrapper = styled.div`
 const Table = styled.div`
   font-size: 0.8em;
   min-height: 150px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: table;
     width: 100%;
     table-layout: fixed;
     font-size: 0.9em;
   }
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
     font-size: 1em;
   }
   @media print {
@@ -82,7 +82,7 @@ const TableCell = styled.div`
   padding-top: 0.8em;
   padding-bottom: 0.8em;
   border-bottom: 1px solid ${palette('footer', 3)};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: table-cell;
     vertical-align: top;
     width: 50%;
@@ -94,7 +94,7 @@ const TableCell = styled.div`
       border-right: none;
     }
   }
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
     padding-left: 35px;
     padding-right: 35px;
     padding-top: 1.6em;
@@ -102,7 +102,7 @@ const TableCell = styled.div`
   }
 `;
 // const TableCellSmall = styled(TableCell)`
-//   @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+//   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
 //     width: 25%;
 //   }
 // `;

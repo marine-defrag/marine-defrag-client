@@ -10,7 +10,7 @@ import Label from 'components/fields/Label';
 
 const Markdown = styled(ReactMarkdown)`
   font-size: ${(props) => props.theme.sizes.text.markdownMobile};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.theme.sizes.text.markdown};
   }
   @media print {

@@ -222,6 +222,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       taxonomies,
       connectedTaxonomies,
       includeHeader,
+      headerStyle,
       entityTitle,
       hasUserRole,
       onEntitySelect,
@@ -302,7 +303,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     }
     return (
       <div>
-        {includeHeader && !printing && (
+        {headerStyle === 'types' && !printing && (
           <EntityListHeader
             typeId={typeId}
             dataReady={dataReady}
@@ -358,6 +359,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             allEntityCount={allEntityCount}
             viewOptions={viewOptions}
             hasHeader={includeHeader}
+            headerStyle={headerStyle}
             listUpdating={progress !== null && progress >= 0 && progress < 100}
             entities={entities}
             errors={errors}
@@ -517,6 +519,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 EntityList.defaultProps = {
   includeHeader: true,
   canEdit: true,
+  headerStyle: 'types',
 };
 
 EntityList.propTypes = {
@@ -564,6 +567,7 @@ EntityList.propTypes = {
   onUpdateQuery: PropTypes.func.isRequired,
   canEdit: PropTypes.bool,
   includeHeader: PropTypes.bool,
+  headerStyle: PropTypes.string,
   showCode: PropTypes.bool,
   includeMembers: PropTypes.bool,
   typeOptions: PropTypes.array,

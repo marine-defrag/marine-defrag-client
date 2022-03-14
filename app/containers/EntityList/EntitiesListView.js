@@ -120,7 +120,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       entities,
       errors,
       actortypes,
-      hasHeader,
+      headerStyle,
       viewOptions,
       hasFilters,
       showCode,
@@ -350,7 +350,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       headerSubTitle = `of ${allEntityCount} total`;
     }
     return (
-      <ContainerWrapper hasHeader={hasHeader} ref={this.ScrollContainer}>
+      <ContainerWrapper headerStyle={headerStyle} ref={this.ScrollContainer}>
         {dataReady && viewOptions && viewOptions.length > 1 && (
           <EntityListViewOptions options={viewOptions} />
         )}
@@ -566,7 +566,7 @@ EntitiesListView.propTypes = {
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
   listUpdating: PropTypes.bool,
-  hasHeader: PropTypes.bool,
+  headerStyle: PropTypes.string,
   hasFilters: PropTypes.bool,
   typeId: PropTypes.string,
   showCode: PropTypes.bool,

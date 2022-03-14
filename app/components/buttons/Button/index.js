@@ -17,7 +17,7 @@ const Button = styled.button`
   background-image: none;
   border: none;
   border-radius: 0;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.small ? 0.9 : 1}em;
     padding: 6px 12px;
   }

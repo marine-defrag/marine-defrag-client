@@ -1,16 +1,15 @@
+import React from 'react';
 import styled from 'styled-components';
+import { Heading } from 'grommet';
 
-export default styled.h1`
+export default styled((p) => <Heading level={1} {...p} />)`
   margin: 0;
   padding-left: 10px;
-  /* text-transform: uppercase; */
   font-family: ${(props) => props.theme.fonts.title};
   font-size: ${(props) => props.theme.sizes.header.text.titleMobile};
-  line-height: ${(props) => props.theme.sizes.header.banner.heightMobile}px;
-  color: white;
-  max-width: 180px;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
-    padding: 4px 0 0 0;
+  font-weight: 500;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    padding: 0;
     font-size: ${(props) => props.theme.sizes.header.text.title};
     line-height: ${(props) => props.theme.sizes.header.text.title};
   }

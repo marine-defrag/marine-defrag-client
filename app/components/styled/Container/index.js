@@ -9,12 +9,12 @@ const Container = styled.div`
   padding-left: ${(props) => props.inModal ? 6 : 12}px;
   padding-right: ${(props) => props.inModal ? 6 : 12}px;
   background-color: ${(props) => props.inModal ? palette('light', 0) : 'transparent'};
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding-right: 12px;
     padding-left: 12px;
   }
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    max-width: ${(props) => props.isNarrow ? '960' : (parseInt(props.theme.breakpoints.large, 10) - 30)}px;
+  @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
+    max-width: ${(props) => props.isNarrow ? '960' : (parseInt(props.theme.breakpoints.xlarge, 10) - 30)}px;
   }
   @media print {
     max-width: 100%;

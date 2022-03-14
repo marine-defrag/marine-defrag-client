@@ -10,21 +10,21 @@ import Row from 'components/styled/Row';
 
 const RowStyled = styled(Row)`
   margin: 0;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     margin-right: -${(props) => props.theme.gutter}px;
     margin-left: -${(props) => props.theme.gutter}px;
   }
 `;
 const GridSpace = styled(Grid)`
   display: none !important;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: inline-block !important;
   }
 `;
 const GridMain = styled(Grid)`
   padding-right: 0 !important;
   padding-left: 0 !important;
-  @media (min-width: ${(props) => props.theme.breakpoints.small}) {
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding-right: ${(props) => props.theme.gutter}px !important;
     padding-left: ${(props) => props.theme.gutter}px !important;
   }
