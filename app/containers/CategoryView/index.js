@@ -98,14 +98,16 @@ export class CategoryView extends React.PureComponent { // eslint-disable-line r
 
   getHeaderAsideFields = (entity, isManager, parentTaxonomy) => {
     const { intl } = this.context;
-    const groups = [
-      {
-        fields: [
-          isManager && getStatusField(entity),
-          getMetaField(entity),
-        ],
-      },
-    ]; // fieldGroups
+    const groups = isManager
+      ? [
+        {
+          fields: [
+            isManager && getStatusField(entity),
+            getMetaField(entity),
+          ],
+        },
+      ]
+      : []; // fieldGroups
 
     if (
       entity.getIn(['taxonomy', 'attributes', 'tags_users'])
