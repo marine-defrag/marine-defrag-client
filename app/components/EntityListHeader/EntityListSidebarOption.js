@@ -27,7 +27,7 @@ const Styled = styled((p) => (
     {...p}
   />
 ))`
-  background-color: ${(props) => props.active ? palette('asideListItem', 3) : palette('asideListItem', 2)};
+  background-color: ${({ theme, active }) => active ? theme.global.colors.highlightHover : 'transparent'};
   color:  ${(props) => props.active ? palette('asideListItem', 1) : palette('asideListItem', 0)};
 `;
 

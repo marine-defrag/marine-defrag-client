@@ -9,11 +9,10 @@ import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { fromJS } from 'immutable';
-import { Box } from 'grommet';
+import { Box, Button } from 'grommet';
 
 import Scrollable from 'components/styled/Scrollable';
 import Icon from 'components/Icon';
-import Button from 'components/buttons/Button';
 import SupTitle from 'components/SupTitle';
 
 import Sidebar from 'components/styled/Sidebar';
@@ -38,15 +37,6 @@ const ListEntitiesEmpty = styled.div`
   }
 `;
 
-const ToggleHide = styled(Button)`
-  position: absolute;
-  right:0;
-  top:0;
-`;
-// color: ${palette('link', 3)};
-// &:hover {
-//   color: ${palette('linkHover', 3)};
-// }
 const SidebarWrapper = styled.div`
   position: absolute;
   top: 0;
@@ -129,11 +119,13 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
         <Sidebar onClick={(evt) => evt.stopPropagation()}>
           <ScrollableWrapper>
             <SidebarHeader>
-              {isEditPanel && <SupTitle title={intl.formatMessage(messages.header.edit)} />}
-              {!isEditPanel && <SupTitle title={intl.formatMessage(messages.header.filter)} />}
-              <ToggleHide onClick={onHideSidebar}>
-                <Icon name="close" />
-              </ToggleHide>
+              <Box direction="row" justify="between" align="center">
+                {isEditPanel && <SupTitle title={intl.formatMessage(messages.header.edit)} />}
+                {!isEditPanel && <SupTitle title={intl.formatMessage(messages.header.filter)} />}
+                <Button plain onClick={onHideSidebar}>
+                  <Icon name="close" />
+                </Button>
+              </Box>
               {memberOption && (
                 <Box margin={{ top: 'small' }}>
                   <MapMemberOption option={memberOption} />
