@@ -243,6 +243,16 @@ export const selectPreviousPathname = createSelector(
   }
 );
 
+export const selectHasBack = createSelector(
+  selectCurrentPathname,
+  selectPreviousPathname,
+  (currentPath, previousPath) => {
+    const isPreviousValid = previousPath.indexOf('/edit') > -1
+      || previousPath.indexOf('/new') > -1;
+    return !isPreviousValid && previousPath && (previousPath !== currentPath);
+  }
+);
+
 export const selectLocation = createSelector(
   getRoute,
   (routeState) => {

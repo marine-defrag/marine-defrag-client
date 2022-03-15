@@ -639,7 +639,7 @@ export function EntitiesMap({
         </LoadingWrap>
       )}
       {viewOptions && viewOptions.length > 1 && (
-        <EntityListViewOptions options={viewOptions} onMap />
+        <EntityListViewOptions options={viewOptions} isOnMap />
       )}
       {dataReady && (
         <MapInfoOptions

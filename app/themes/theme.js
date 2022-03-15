@@ -85,7 +85,7 @@ theme.palette = {
   taxonomies: [
     '#8D95A0', // default, not used
     '#0059A3', // 1
-    '#0077D8', // 2
+    '#0077D8', // 2{onClose && (
     '#007C70', // 3
     '#05A763', // 4
     '#B7177A', // 5
@@ -468,6 +468,7 @@ theme.global = {
     highlightHover: '#0063b5',
     background: '#f1f0f1',
     backgroundLight: '#fcfcfc',
+    inactive: '#f1f0f1', // on light background (empowerment)
     text: {
       brand: '#183863',
       dark: '#FFFFFF', //  on dark background

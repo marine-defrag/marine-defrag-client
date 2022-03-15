@@ -46,12 +46,16 @@ function ViewHeader({
             justify="between"
           >
             <Box direction="row" align="center" gap="small">
-              <MyButton onClick={onClose} title="Back to previous view">
-                <Box pad="xsmall">
-                  <LinkPrevious size="xsmall" color="inherit" />
-                </Box>
-              </MyButton>
-              <Between />
+              {onClose && (
+                <MyButton onClick={onClose} title="Back to previous view">
+                  <Box pad="xsmall">
+                    <LinkPrevious size="xsmall" color="inherit" />
+                  </Box>
+                </MyButton>
+              )}
+              {onClose && (
+                <Between />
+              )}
               {onTypeClick && (
                 <MyButton onClick={onTypeClick} title={title}>
                   <Box pad="xsmall">

@@ -633,7 +633,12 @@ export const ACTIONTYPES_CONFIG = {
         attributes: ['code', 'title'],
       },
       {
-        id: 'taxonomy',
+        id: 'taxonomy-12',
+        type: 'taxonomy',
+        taxonomy_id: 12, // commitment type
+      },
+      {
+        id: 'taxonomy-11',
         type: 'taxonomy',
         taxonomy_id: 11, // level of commitment: as link
       },

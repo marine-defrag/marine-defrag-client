@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import styled from 'styled-components';
 import { Box, Text, ResponsiveContext } from 'grommet';
@@ -102,9 +101,6 @@ function Footer({
 }
 
 Footer.propTypes = {
-  theme: PropTypes.object.isRequired,
-  onPageLink: PropTypes.func.isRequired,
-  loadEntitiesIfNeeded: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
 };
 
