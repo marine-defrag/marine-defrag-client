@@ -584,19 +584,46 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                       onClick={onShowEditOptions}
                       label={(
                         <Box direction="row" gap="small">
-                          <Box>{<Edit color="dark-3" size="xxsmall" />}</Box>
+                          <Box>
+                            <Edit color="dark-3" size="xxsmall" />
+                          </Box>
                           <Text color="dark-3" size="small">{intl.formatMessage(messages.listOptions.showEditOptions)}</Text>
                         </Box>
                       )}
                     />
                     {managerActions && managerActions.map(
                       (action, i) => {
-                        let icon;
                         if (action.icon === 'add') {
-                          icon = <Add color="dark-3" size="xxsmall" />;
+                          return (
+                            <ButtonOptions
+                              key={i}
+                              onClick={action.onClick}
+                              label={(
+                                <Box direction="row" gap="small">
+                                  <Box>
+                                    <Add color="dark-3" size="xxsmall" />
+                                  </Box>
+                                  <Text color="dark-3" size="small">{action.title}</Text>
+                                </Box>
+                              )}
+                            />
+                          );
                         }
                         if (action.icon === 'import') {
-                          icon = <Multiple color="dark-3" size="xxsmall" />;
+                          return (
+                            <ButtonOptions
+                              key={i}
+                              onClick={action.onClick}
+                              label={(
+                                <Box direction="row" gap="small">
+                                  <Box>
+                                    <Multiple color="dark-3" size="xxsmall" />
+                                  </Box>
+                                  <Text color="dark-3" size="small">{action.title}</Text>
+                                </Box>
+                              )}
+                            />
+                          );
                         }
                         return (
                           <ButtonOptions
@@ -604,7 +631,6 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                             onClick={action.onClick}
                             label={(
                               <Box direction="row" gap="small">
-                                <Box>{icon}</Box>
                                 <Text color="dark-3" size="small">{action.title}</Text>
                               </Box>
                             )}
