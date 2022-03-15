@@ -11,9 +11,8 @@ import Main from './Main';
 const Between = styled((p) => <Box plain {...p} />)`
   flex: 0 0 auto;
   align-self: stretch;
-  width: px;
+  width: 1px;
   position: relative;
-  backgroun: red;
   &:after {
     content: "";
     position: absolute;
