@@ -101,6 +101,16 @@ const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
     isIndicator,
   }];
   if (qe(typeid, ACTORTYPES.COUNTRY)) {
+    columns = [
+      ...columns,
+      {
+        id: 'classes',
+        type: 'associations',
+        actortype_id: ACTORTYPES.CLASS,
+        title: 'Classes',
+        isIndicator,
+      },
+    ];
     if (isIndicator) {
       columns = [
         ...columns,
@@ -112,16 +122,6 @@ const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
           isIndicator,
         },
         {
-          id: 'classes',
-          type: 'associations',
-          actortype_id: ACTORTYPES.CLASS,
-          title: 'Classes',
-          isIndicator,
-        },
-      ];
-      columns = [
-        ...columns,
-        {
           id: 'indicator',
           type: 'indicator',
           indicatorId: viewEntity.get('id'),
@@ -132,19 +132,6 @@ const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
         },
       ];
     }
-  }
-  if (
-    qe(typeid, ACTORTYPES.REG)
-    || qe(typeid, ACTORTYPES.GROUP)
-    || qe(typeid, ACTORTYPES.CLASS)
-  ) {
-    columns = [
-      ...columns,
-      {
-        id: 'members', // one row per type,
-        type: 'members', // one row per type,
-      },
-    ];
   }
   if (
     ACTORTYPES_CONFIG[parseInt(typeid, 10)]
@@ -365,14 +352,14 @@ export function ActionView(props) {
                           onClick={() => onSetSubject('actors')}
                           active={viewSubject === 'actors'}
                         >
-                          <Text size="large">Actors</Text>
+                          <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Donors' : 'Actors'}</Text>
                         </SubjectButton>
                         {hasTarget && (
                           <SubjectButton
                             onClick={() => onSetSubject('targets')}
                             active={viewSubject === 'targets'}
                           >
-                            <Text size="large">Targets</Text>
+                            <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Recipients' : 'Targets'}</Text>
                           </SubjectButton>
                         )}
                       </Box>
@@ -398,6 +385,7 @@ export function ActionView(props) {
                           mapSubject={viewSubject}
                           onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
                           hasMemberOption={hasMemberOption}
+                          typeId={typeId}
                         />
                       )}
                       {dataReady && actortypesForSubject && hasMap && isIndicator && (

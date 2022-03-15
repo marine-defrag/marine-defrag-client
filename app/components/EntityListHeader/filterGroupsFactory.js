@@ -3,6 +3,9 @@ import { sortEntities } from 'utils/sort';
 import { startsWith } from 'utils/string';
 import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
+
+import { ACTIONTYPES } from 'themes/config';
+
 import { makeAttributeFilterOptions } from './filterOptionsFactory';
 // figure out filter groups for filter panel
 export const makeFilterGroups = ({
@@ -70,11 +73,14 @@ export const makeFilterGroups = ({
       const option = config.connections[connectionKey];
       let types;
       let typeAbout;
+      let label;
       if (option.type === 'action-actors') {
         types = actortypes;
+        label = qe(ACTIONTYPES.DONOR, typeId) && 'By donor';
         typeAbout = 'actortypes_about';
       } else if (option.type === 'action-targets') {
         types = actortypes;
+        label = qe(ACTIONTYPES.DONOR, typeId) && 'By recipient';
         typeAbout = 'actortypes_about';
       } else if (option.type === 'target-actions') {
         types = actiontypesForTarget;
@@ -99,7 +105,7 @@ export const makeFilterGroups = ({
       }
       filterGroups[connectionKey] = {
         id: connectionKey, // filterGroupId
-        label: messages.connections(option.type),
+        label: label || messages.connections(option.type),
         show: true,
         includeAnyWithout: !!option.groupByType,
         options: types && types

@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import ButtonSecondary from 'components/buttons/ButtonSecondary';
 import ButtonClose from 'components/buttons/ButtonClose';
-import { Box } from 'grommet';
+import { Box, Text } from 'grommet';
+import Icon from 'components/Icon';
+import A from 'components/styled/A';
 
 const Root = styled.div`
   position: absolute;
@@ -41,10 +42,10 @@ const ButtonWrap = styled.div`
   margin-left: auto;
   position: absolute;
   bottom: 10px;
-  right: 20px;
+  right: 10px;
 `;
 const Main = styled.div`
-  padding: 20px 20px 40px;
+  padding: 20px 10px 30px;
   min-height: 100px;
   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2);
   display: block;
@@ -52,11 +53,11 @@ const Main = styled.div`
   width: 100%;
   overflow: auto;
   @media (min-width: ${({ theme }) => theme.breakpoints.large}) {
-    min-height: 100px;
     max-height: 80vH;
     height: auto;
     overflow: visible;
-    width: ${({ w }) => w}px;
+    max-width: ${({ w }) => w}px;
+    min-width: 250px;
     pointer-events: all;
   }
 `;
@@ -79,14 +80,6 @@ font-size: ${({ theme }) => theme.sizes.text.default};
 // const TTContent = styled.div`
 //   font-size: ${({ theme }) => theme.sizes.text.small};
 // `;
-const TTFootnote = styled.div`
-  font-size: ${({ theme }) => theme.sizes.text.small};
-  margin-top: 15px;
-  font-style: italic;
-  position: absolute;
-  bottom: 10px;
-  left: 20px;
-`;
 // const TTSectionTitle = styled.div`
 //   margin: 15px 0 3px;
 //   font-size: ${({ theme }) => theme.sizes.text.default};
@@ -122,15 +115,13 @@ const Tooltip = ({
             {feature.content}
           </TTContentWrap>
         )}
-        {feature.footnote && (
-          <TTFootnote>
-            {feature.footnote}
-          </TTFootnote>
-        )}
         <ButtonWrap>
-          <ButtonSecondary onClick={onFeatureClick}>
-            Details
-          </ButtonSecondary>
+          <A as="button" onClick={onFeatureClick}>
+            <Box direction="row" align="center" ggap="small">
+              <Text size="small">Country profile</Text>
+              <Icon name="arrowRight" size="1em" sizes={{ mobile: '1em' }} />
+            </Box>
+          </A>
         </ButtonWrap>
       </Main>
     </Anchor>

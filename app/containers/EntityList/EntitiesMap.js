@@ -15,7 +15,7 @@ import * as topojson from 'topojson-client';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
 
-import { ACTORTYPES, ROUTES } from 'themes/config';
+import { ACTORTYPES, ROUTES, ACTIONTYPES } from 'themes/config';
 
 import {
   selectActors,
@@ -430,13 +430,13 @@ export function EntitiesMap({
         // cleanMapSubject = mapSubject;
         subjectOptions = [
           {
-            title: 'By actor',
+            title: qe(ACTIONTYPES.DONOR, typeId) ? 'By donor' : 'By actor',
             onClick: () => onSetMapSubject('actors'),
             active: mapSubjectClean === 'actors',
             disabled: mapSubjectClean === 'actors',
           },
           {
-            title: 'By target',
+            title: qe(ACTIONTYPES.DONOR, typeId) ? 'By recipient' : 'By target',
             onClick: () => onSetMapSubject('targets'),
             active: mapSubjectClean === 'targets',
             disabled: mapSubjectClean === 'targets',
@@ -639,7 +639,7 @@ export function EntitiesMap({
         </LoadingWrap>
       )}
       {viewOptions && viewOptions.length > 1 && (
-        <EntityListViewOptions options={viewOptions} onMap />
+        <EntityListViewOptions options={viewOptions} isOnMap />
       )}
       {dataReady && (
         <MapInfoOptions

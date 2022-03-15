@@ -46,9 +46,9 @@ const ButtonWrap = styled.span`
 
 class EntityListViewOptions extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
-    const { options, onMap } = this.props;
+    const { options, isOnMap } = this.props;
     return (
-      <Styled onMap={onMap}>
+      <Styled isOnMap={isOnMap}>
         {options && (
           <ButtonGroup>
             {
@@ -68,7 +68,7 @@ class EntityListViewOptions extends React.PureComponent { // eslint-disable-line
 }
 
 EntityListViewOptions.propTypes = {
-  onMap: PropTypes.bool,
+  isOnMap: PropTypes.bool,
   options: PropTypes.array,
 };
 

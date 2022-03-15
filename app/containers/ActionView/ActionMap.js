@@ -15,7 +15,7 @@ import * as topojson from 'topojson-client';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
 
-import { ACTORTYPES } from 'themes/config';
+import { ACTORTYPES, ACTIONTYPES } from 'themes/config';
 
 import {
   selectActortypeActors,
@@ -45,6 +45,7 @@ const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
 const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
   height: 400px;
+  background: #F9F9FA;
 `;
 
 export function ActionMap({
@@ -57,6 +58,7 @@ export function ActionMap({
   onEntityClick,
   countries,
   hasMemberOption,
+  typeId,
   // intl,
 }) {
   // const { intl } = this.context;
@@ -75,10 +77,10 @@ export function ActionMap({
     : includeTargetMembers;
 
   const countriesVia = hasMemberOption && includeMembers && hasAssociations && entities.reduce(
-    (memo, typeActors, typeId) => {
+    (memo, typeActors, actortypeId) => {
       // skip non group types
       // TODO check actortypes db object
-      if (qe(typeId, ACTORTYPES.COUNTRY) || qe(typeId, ACTORTYPES.ORG)) {
+      if (qe(actortypeId, ACTORTYPES.COUNTRY) || qe(actortypeId, ACTORTYPES.ORG)) {
         return memo;
       }
       return memo.concat(typeActors.reduce(
@@ -133,7 +135,9 @@ export function ActionMap({
   let memberOption;
   let mapTitle;
   if (mapSubject === 'targets') {
-    mapTitle = 'Countries targeted by activity';
+    mapTitle = qe(ACTIONTYPES.DONOR, typeId)
+      ? 'Recipient countries'
+      : 'Countries targeted by activity';
     // note this should always be true!
     if (hasMemberOption && hasAssociations) {
       memberOption = {
@@ -144,7 +148,9 @@ export function ActionMap({
     }
   }
   if (mapSubject === 'actors') {
-    mapTitle = 'Countries responsible for activity';
+    mapTitle = qe(ACTIONTYPES.DONOR, typeId)
+      ? 'Donor countries'
+      : 'Countries responsible by activity';
     if (hasMemberOption && hasAssociations) {
       memberOption = {
         active: includeActorMembers,
@@ -196,6 +202,10 @@ ActionMap.propTypes = {
   hasMemberOption: PropTypes.bool,
   onEntityClick: PropTypes.func,
   mapSubject: PropTypes.string,
+  typeId: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
 };
 
 const mapStateToProps = (state) => ({

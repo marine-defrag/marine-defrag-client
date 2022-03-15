@@ -178,7 +178,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
           },
           {
             type: 'secondary',
-            title: 'By actor',
+            title: qe(ACTIONTYPES.DONOR, typeId) ? 'By donor' : 'By actor',
             onClick: () => onSetMapSubject('actors'),
             active: mapSubjectClean === 'actors',
             disabled: mapSubjectClean === 'actors',
@@ -190,7 +190,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
           ...subjectOptions,
           {
             type: 'secondary',
-            title: 'By target',
+            title: qe(ACTIONTYPES.DONOR, typeId) ? 'By recipient' : 'By target',
             onClick: () => onSetMapSubject('targets'),
             active: mapSubjectClean === 'targets',
             disabled: mapSubjectClean === 'targets',

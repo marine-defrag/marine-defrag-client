@@ -24,7 +24,7 @@ export function CellHeaderPlain({ column }) {
     <Box direction="row" align="center" justify={align}>
       <Box>
         <Text weight={500} size="small" textAlign={align} wordBreak="keep-all">
-          {column.title}
+          {column.label || column.title}
         </Text>
       </Box>
       {column.onSort && (

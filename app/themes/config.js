@@ -13,8 +13,7 @@
 export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
 const IS_DEV = false;
-
-export const version = '1.0beta';
+export const version = '1.0';
 
 export const ENDPOINTS = {
   API: (
@@ -619,6 +618,12 @@ export const ACTORTYPES_CONFIG = {
   5: { // GROUP
     id: '5',
     order: 2,
+    columns: [
+      {
+        id: 'members', // one row per type,
+        type: 'members', // one row per type,
+      },
+    ],
   },
 };
 
@@ -634,7 +639,12 @@ export const ACTIONTYPES_CONFIG = {
         attributes: ['code', 'title'],
       },
       {
-        id: 'taxonomy',
+        id: 'taxonomy-12',
+        type: 'taxonomy',
+        taxonomy_id: 12, // commitment type
+      },
+      {
+        id: 'taxonomy-11',
         type: 'taxonomy',
         taxonomy_id: 11, // level of commitment: as link
       },
@@ -739,10 +749,12 @@ export const ACTIONTYPES_CONFIG = {
       {
         id: 'actors', // one row per type,
         type: 'actors', // one row per type,
+        label: 'Donors',
       },
       {
         id: 'targets', // one row per type,
         type: 'targets', // one row per type,
+        label: 'Recipients',
       },
       {
         id: 'amount',
