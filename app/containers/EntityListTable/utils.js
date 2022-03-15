@@ -4,6 +4,7 @@ import isNumber from 'utils/is-number';
 import { formatNumber } from 'utils/fields';
 import qe from 'utils/quasi-equals';
 import appMessage from 'utils/app-message';
+import { lowerCase } from 'utils/string';
 import appMessages from 'containers/App/messages';
 import { API, USER_ROLES } from 'themes/config';
 
@@ -180,7 +181,7 @@ const getRelatedValue = (relatedEntities, typeLabel) => {
   if (relatedEntities && relatedEntities.size > 0) {
     if (relatedEntities.size > 1) {
       return typeLabel
-        ? `${relatedEntities.size} ${typeLabel}`
+        ? `${relatedEntities.size} ${lowerCase(typeLabel)}`
         : relatedEntities.size;
     }
     return relatedEntities.first().getIn(['attributes', 'title']);
@@ -299,7 +300,7 @@ export const prepareEntities = ({
               ...memoEntity,
               [col.id]: {
                 ...col,
-                value: getRelatedValue(relatedEntities, 'targets'),
+                value: getRelatedValue(relatedEntities, col.label || 'targets'),
                 single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
                 tooltip: relatedEntities && relatedEntities.size > 1
                   && relatedEntities.groupBy((t) => t.getIn(['attributes', 'actortype_id'])),
@@ -314,7 +315,7 @@ export const prepareEntities = ({
               ...memoEntity,
               [col.id]: {
                 ...col,
-                value: getRelatedValue(relatedEntities, 'actors'),
+                value: getRelatedValue(relatedEntities, col.label || 'actors'),
                 single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
                 tooltip: relatedEntities && relatedEntities.size > 1
                   && relatedEntities.groupBy((t) => t.getIn(['attributes', 'actortype_id'])),

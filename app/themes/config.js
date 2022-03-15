@@ -618,6 +618,12 @@ export const ACTORTYPES_CONFIG = {
   5: { // GROUP
     id: '5',
     order: 2,
+    columns: [
+      {
+        id: 'members', // one row per type,
+        type: 'members', // one row per type,
+      },
+    ],
   },
 };
 
@@ -743,10 +749,12 @@ export const ACTIONTYPES_CONFIG = {
       {
         id: 'actors', // one row per type,
         type: 'actors', // one row per type,
+        label: 'Donors',
       },
       {
         id: 'targets', // one row per type,
         type: 'targets', // one row per type,
+        label: 'Recipients',
       },
       {
         id: 'amount',
