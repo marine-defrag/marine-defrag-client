@@ -529,6 +529,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                   <EntityListSearch>
                     <TagList
                       filters={currentFilters}
+                      long={!isManager}
                     />
                   </EntityListSearch>
                 )}

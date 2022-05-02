@@ -72,7 +72,7 @@ export const getFilterLabel = (filter, intl, long) => {
 
 export class TagList extends React.Component { // eslint-disable-line react/prefer-stateless-function
   render() {
-    const { filters } = this.props;
+    const { filters, long } = this.props;
     const { intl } = this.context;
     const hasFilters = filters.length > 0;
     const groupedFilters = groupBy(filters, 'group');
@@ -95,7 +95,7 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
                       pIndex={parseInt(filter.id, 10) || 0}
                       disabled={!filter.onClick}
                     >
-                      {getFilterLabel(filter, intl)}
+                      {getFilterLabel(filter, intl, long)}
                       { filter.onClick
                       && <Icon name="removeSmall" text textRight hidePrint />
                       }
@@ -121,6 +121,7 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
 TagList.propTypes = {
   filters: PropTypes.array,
   onClear: PropTypes.func,
+  long: PropTypes.bool,
 };
 
 TagList.contextTypes = {
