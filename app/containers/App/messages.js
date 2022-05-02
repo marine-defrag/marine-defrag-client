@@ -433,7 +433,7 @@ export default defineMessages({
     },
     5: {
       id: 'app.containers.App.actiontypes_info.5',
-      defaultMessage: 'Actortype 5',
+      defaultMessage: 'The term **donor** may also refer to other actors responsible for conducting the donor activity, such as **implementing partners**',
     },
     6: {
       id: 'app.containers.App.actiontypes_info.6',

@@ -102,6 +102,11 @@ export const ACTORTYPES = {
   GROUP: '5',
 };
 
+export const ACTIONTYPE_DISCLAIMERS = [
+  ACTIONTYPES.INTL,
+  ACTIONTYPES.DONOR,
+];
+
 export const DEFAULT_ACTORTYPE = ACTORTYPES.COUNTRY;
 export const RESOURCETYPES = {
   REF: '1',
