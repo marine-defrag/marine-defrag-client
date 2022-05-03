@@ -49,7 +49,6 @@ const Table = styled.span`
   display: block;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: table;
-    width: 100%;
     min-height: 62px;
   }
 `;
@@ -71,12 +70,11 @@ const TableCellInner = styled(TableCell)`
 `;
 
 const ButtonGroup = styled.div`
-  float: right;
   display: table;
-  text-align: right;
+  text-align: left;
   margin-bottom: 10px;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    margin-bottom: 0;
+    margin-bottom: -4px;
   }
 `;
 
