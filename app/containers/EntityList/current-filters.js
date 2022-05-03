@@ -1,7 +1,10 @@
 import { find, forEach } from 'lodash/collection';
 import { upperFirst } from 'lodash/string';
 
-import { TEXT_TRUNCATE } from 'themes/config';
+import {
+  TEXT_TRUNCATE,
+  ACTIONTYPES_CONFIG,
+} from 'themes/config';
 
 import { getCategoryShortTitle } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
@@ -52,6 +55,7 @@ export const currentFilters = (
     errors,
     // actortypes,
     intl,
+    isManager,
   },
   withoutLabel,
   anyLabel,
@@ -91,6 +95,7 @@ export const currentFilters = (
         withoutLabel,
         anyLabel,
         intl,
+        isManager,
       ));
     });
   }
@@ -233,6 +238,18 @@ const getCurrentTaxonomyFilters = (
   return tags;
 };
 
+const checkCodeVisibility = (
+  connection,
+  entityType,
+  isManager,
+) => {
+  if (!isManager && entityType === 'actions') {
+    const config = ACTIONTYPES_CONFIG[connection.getIn(['attributes', 'measuretype_id'])];
+    return !!config.is_code_public;
+  }
+  return true;
+};
+
 const getCurrentConnectionFilters = (
   connectionKey,
   option,
@@ -242,6 +259,7 @@ const getCurrentConnectionFilters = (
   withoutLabel,
   anyLabel,
   intl,
+  isManager,
 ) => {
   const tags = [];
   const { query, path } = option;
@@ -252,8 +270,9 @@ const getCurrentConnectionFilters = (
       if (value) {
         const connection = connections.getIn([path, value]);
         if (connection) {
+          const isCodePublic = checkCodeVisibility(connection, option.entityType, isManager);
           tags.push({
-            label: getConnectionLabel(connection, value, false),
+            label: getConnectionLabel(connection, value, !isCodePublic),
             labelLong: getConnectionLabel(connection, value, true),
             type: option.entityType,
             group: intl.formatMessage(appMessages.nav[option.entityTypeAs || option.entityType]),

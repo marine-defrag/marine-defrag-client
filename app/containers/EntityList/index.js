@@ -267,6 +267,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         errors,
         actortypes,
         intl,
+        isManager,
       },
       intl.formatMessage(messages.filterFormWithoutPrefix),
       intl.formatMessage(messages.filterFormAnyPrefix),

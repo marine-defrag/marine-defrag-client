@@ -102,6 +102,11 @@ export const ACTORTYPES = {
   GROUP: '5',
 };
 
+export const ACTIONTYPE_DISCLAIMERS = [
+  ACTIONTYPES.INTL,
+  ACTIONTYPES.DONOR,
+];
+
 export const DEFAULT_ACTORTYPE = ACTORTYPES.COUNTRY;
 export const RESOURCETYPES = {
   REF: '1',
@@ -631,6 +636,7 @@ export const ACTIONTYPES_CONFIG = {
   1: { // INTL
     id: '1',
     order: 5,
+    is_code_public: true,
     columns: [
       {
         id: 'main',
@@ -662,6 +668,7 @@ export const ACTIONTYPES_CONFIG = {
   2: { // REGLSEAS
     id: '2',
     order: 4,
+    is_code_public: true,
     columns: [
       {
         id: 'main',
@@ -701,6 +708,7 @@ export const ACTIONTYPES_CONFIG = {
   3: { // REGL
     id: '3',
     order: 3,
+    is_code_public: true,
     columns: [
       {
         id: 'main',
@@ -850,7 +858,7 @@ export const PAGE_ITEM_OPTIONS = [
 ];
 
 export const TEXT_TRUNCATE = {
-  CONNECTION_TAG: 20,
+  CONNECTION_TAG: 10,
   ATTRIBUTE_TAG: 10,
   ENTITY_TAG: 7,
   CONNECTION_POPUP: 80,
