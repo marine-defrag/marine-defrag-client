@@ -13,7 +13,7 @@
 export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
 const IS_DEV = true;
-export const version = '1.0';
+export const version = '1.0.1';
 
 export const ENDPOINTS = {
   API: (
