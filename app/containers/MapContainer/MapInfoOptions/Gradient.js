@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-// import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+import { intlShape, injectIntl } from 'react-intl';
 import isNumber from 'utils/is-number';
 import { formatNumber } from 'utils/fields';
 
@@ -32,15 +32,16 @@ const KeyLabelWrap = styled.div`
   transform: translate(-50%, 0);
 `;
 
-const formatKeyLabel = (value, isCount) => {
+const formatKeyLabel = (value, isCount, intl) => {
   if (isNumber(value)) {
     const vN = parseFloat(value, 10);
-    return formatNumber(vN, { digits: isCount ? 0 : 1 });
+    return formatNumber(vN, { digits: isCount ? 0 : 1, intl });
   }
   return value;
 };
 export function Gradient({
-  config, // intl, dark,
+  config,
+  intl,
   isCount,
   // unit,
 }) {
@@ -55,12 +56,12 @@ export function Gradient({
       <GradientLabels>
         <KeyLabelWrap offsetLeft="0%">
           <KeyLabel>
-            {formatKeyLabel(config.range[0], isCount)}
+            {formatKeyLabel(config.range[0], isCount, intl)}
           </KeyLabel>
         </KeyLabelWrap>
         <KeyLabelWrap offsetLeft="100%">
           <KeyLabel>
-            {formatKeyLabel(config.range[1], isCount)}
+            {formatKeyLabel(config.range[1], isCount, intl)}
           </KeyLabel>
         </KeyLabelWrap>
       </GradientLabels>
@@ -74,7 +75,7 @@ Gradient.propTypes = {
   config: PropTypes.object,
   isCount: PropTypes.bool,
   // unit: PropTypes.string,
-  // intl: intlShape.isRequired,
+  intl: intlShape.isRequired,
 };
 
-export default Gradient;
+export default injectIntl(Gradient);
