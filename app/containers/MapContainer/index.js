@@ -15,7 +15,7 @@ import { MAP_OPTIONS } from 'themes/config';
 
 import qe from 'utils/quasi-equals';
 import Tooltip from './Tooltip';
-import { scaleColorCount } from './utils';
+import { scaleColorCount, getCircleLayer } from './utils';
 
 const Styled = styled.div`
   position: absolute;
@@ -80,6 +80,7 @@ const getBBox = (bounds, xLat = 0.5, xLon = 180) => {
 export function MapContainer({
   countryFeatures,
   countryData,
+  locationData,
   indicator,
   onCountryClick,
   maxValue,
@@ -93,6 +94,7 @@ export function MapContainer({
   mapId = 'll-map',
   interactive = true,
   scrollWheelZoom = false,
+  layerConfig = {},
 }) {
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
@@ -143,6 +145,7 @@ export function MapContainer({
   const mapRef = useRef(null);
   const countryLayerGroupRef = useRef(null);
   const countryOverlayGroupRef = useRef(null);
+  const locationOverlayGroupRef = useRef(null);
   const countryTooltipGroupRef = useRef(null);
   const countryOverGroupRef = useRef(null);
   const mapEvents = {
@@ -177,7 +180,8 @@ export function MapContainer({
     //   // setTooltip(null)
     // },
   };
-  const onFeatureClick = (e, feature) => {
+  const onFeatureClick = (e) => {
+    const { feature } = e.sourceTarget;
     if (e && L.DomEvent) L.DomEvent.stopPropagation(e);
     if (e && e.containerPoint && feature && feature.tooltip) {
       setTooltip({
@@ -224,6 +228,8 @@ export function MapContainer({
     countryLayerGroupRef.current.addTo(mapRef.current);
     countryOverlayGroupRef.current = L.layerGroup();
     countryOverlayGroupRef.current.addTo(mapRef.current);
+    locationOverlayGroupRef.current = L.layerGroup();
+    locationOverlayGroupRef.current.addTo(mapRef.current);
     countryTooltipGroupRef.current = L.layerGroup();
     countryTooltipGroupRef.current.addTo(mapRef.current);
     countryOverGroupRef.current = L.layerGroup();
@@ -244,7 +250,7 @@ export function MapContainer({
     }
   }, []);
 
-  // add countryFeatures
+  // add countryFeatures basemap
   useEffect(() => {
     if (countryFeatures) {
       countryLayerGroupRef.current.clearLayers();
@@ -301,15 +307,11 @@ export function MapContainer({
                 ...f.style,
               };
             },
-            onEachFeature: (feature, layer) => {
-              layer.on({
-                click: (e) => onFeatureClick(e, feature),
-                // mouseover: (e) => onFeatureOver(e, feature),
-                mouseout: () => onFeatureOver(),
-              });
-            },
           },
-        );
+        ).on({
+          click: (e) => onFeatureClick(e),
+          mouseout: () => onFeatureOver(),
+        });
         countryOverlayGroupRef.current.addLayer(jsonLayer);
         if (fitBounds) {
           const boundsZoom = mapRef.current.getBoundsZoom(
@@ -339,6 +341,50 @@ export function MapContainer({
     }
   }, [countryData, indicator, tooltip, mapSubject]);
 
+  // add locationData
+  useEffect(() => {
+    if (locationData) {
+      locationOverlayGroupRef.current.clearLayers();
+      if (locationData.length > 0) {
+        const layer = L.featureGroup(null, { pane: 'overlayPane' });
+        const jsonLayer = getCircleLayer({
+          features: locationData,
+          config: layerConfig,
+          markerEvents: {
+            click: (e) => onFeatureClick(e),
+            mouseout: () => onFeatureOver(),
+          },
+        });
+        layer.addLayer(jsonLayer);
+        locationOverlayGroupRef.current.addLayer(layer);
+        if (fitBounds) {
+          const boundsZoom = mapRef.current.getBoundsZoom(
+            jsonLayer.getBounds(),
+            false, // inside,
+            [20, 20], // padding in px
+          );
+          const boundsCenter = jsonLayer.getBounds().getCenter();
+          // add zoom level to account for custom proj issue
+          const ZOOM_OFFSET = 0;
+          const MAX_ZOOM = 7;
+          mapRef.current.setView(
+            boundsCenter,
+            Math.min(
+              Math.max(
+                boundsZoom - ZOOM_OFFSET,
+                0,
+              ),
+              MAX_ZOOM,
+            ),
+            {
+              animate: false,
+            },
+          );
+        }
+      }
+    }
+  }, [countryData, indicator, tooltip, mapSubject, layerConfig]);
+
   // highlight tooltip feature
   useEffect(() => {
     countryTooltipGroupRef.current.clearLayers();
@@ -350,6 +396,22 @@ export function MapContainer({
         },
       );
       countryTooltipGroupRef.current.addLayer(jsonLayer);
+    }
+    if (locationData && locationOverlayGroupRef.current && locationOverlayGroupRef.current.getLayers()) {
+      const layerGroup = locationOverlayGroupRef.current.getLayers()[0];
+      const layer = layerGroup && layerGroup.getLayers()[0];
+      if (tooltip && layer) {
+        const features = layer && layer.getLayers() && layer.getLayers().filter(
+          (f) => qe(f.feature.id, tooltip.feature.id)
+        );
+        const feature = features && features[0];
+        feature.bringToFront();
+        feature.setStyle({ weight: 1.5 });
+      } else if (layer) {
+        layer.getLayers().forEach(
+          (feature) => feature.setStyle({ weight: 0.5 })
+        );
+      }
     }
   }, [tooltip, mapSubject, includeActorMembers, includeTargetMembers]);
 
@@ -389,13 +451,16 @@ export function MapContainer({
           direction={tooltip.direction}
           feature={tooltip.feature.tooltip}
           onClose={() => setTooltip(null)}
-          onFeatureClick={(evt) => {
-            if (evt !== undefined && evt.stopPropagation) evt.stopPropagation();
-            setTooltip(null);
-            if (tooltip.feature && tooltip.feature.attributes) {
-              onCountryClick(tooltip.feature.id);
+          onFeatureClick={onCountryClick
+            ? (evt) => {
+              if (evt !== undefined && evt.stopPropagation) evt.stopPropagation();
+              setTooltip(null);
+              if (tooltip.feature && tooltip.feature.attributes) {
+                onCountryClick(tooltip.feature.id);
+              }
             }
-          }}
+            : null
+          }
         />
       )}
     </>
@@ -403,8 +468,9 @@ export function MapContainer({
 }
 
 MapContainer.propTypes = {
-  countryFeatures: PropTypes.array,
-  countryData: PropTypes.array,
+  countryFeatures: PropTypes.array, // country basemap
+  countryData: PropTypes.array, // country data overlay
+  locationData: PropTypes.array, // location data overlay
   indicator: PropTypes.string,
   onCountryClick: PropTypes.func,
   maxValue: PropTypes.number,
@@ -418,6 +484,7 @@ MapContainer.propTypes = {
   styleType: PropTypes.string,
   mapId: PropTypes.string,
   options: PropTypes.object,
+  layerConfig: PropTypes.object,
   // onSetMapSubject: PropTypes.func,
 };
 

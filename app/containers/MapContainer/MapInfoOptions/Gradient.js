@@ -6,6 +6,7 @@ import isNumber from 'utils/is-number';
 import { formatNumber } from 'utils/fields';
 
 import KeyGradient from './KeyGradient';
+import KeyLabel from './KeyLabel';
 
 // import { formatNumber } from 'utils/numbers';
 
@@ -30,10 +31,7 @@ const KeyLabelWrap = styled.div`
   left: ${({ offsetLeft }) => offsetLeft || '0'};
   transform: translate(-50%, 0);
 `;
-const KeyLabel = styled.div`
-  white-space: nowrap;
-  font-size: ${(props) => props.theme.sizes.text.small};
-`;
+
 const formatKeyLabel = (value, isCount) => {
   if (isNumber(value)) {
     const vN = parseFloat(value, 10);

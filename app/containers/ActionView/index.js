@@ -44,7 +44,12 @@ import {
 } from 'containers/App/actions';
 
 import {
-  ROUTES, ACTIONTYPES, FF_ACTIONTYPE, ACTORTYPES_CONFIG, ACTORTYPES, RESOURCE_FIELDS,
+  ROUTES,
+  ACTIONTYPES,
+  FF_ACTIONTYPE,
+  ACTORTYPES_CONFIG,
+  ACTORTYPES,
+  RESOURCE_FIELDS,
 } from 'themes/config';
 
 import Loading from 'components/Loading';
@@ -72,7 +77,8 @@ import appMessages from 'containers/App/messages';
 import messages from './messages';
 
 import ActionMap from './ActionMap';
-import IndicatorMap from './IndicatorMap';
+import IndicatorCountryMap from './IndicatorCountryMap';
+import IndicatorLocationMap from './IndicatorLocationMap';
 import {
   selectViewEntity,
   selectViewTaxonomies,
@@ -121,17 +127,22 @@ const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
           title: 'Regions',
           isIndicator,
         },
-        {
-          id: 'indicator',
-          type: 'indicator',
-          indicatorId: viewEntity.get('id'),
-          title: viewEntity.getIn(['attributes', 'title']),
-          unit: viewEntity.getIn(['attributes', 'comment']),
-          align: 'end',
-          primary: true,
-        },
       ];
     }
+  }
+  if (isIndicator) {
+    columns = [
+      ...columns,
+      {
+        id: 'indicator',
+        type: 'indicator',
+        indicatorId: viewEntity.get('id'),
+        title: viewEntity.getIn(['attributes', 'title']),
+        unit: viewEntity.getIn(['attributes', 'comment']),
+        align: 'end',
+        primary: true,
+      },
+    ];
   }
   if (
     ACTORTYPES_CONFIG[parseInt(typeid, 10)]
@@ -211,13 +222,17 @@ export function ActionView(props) {
 
   const hasTarget = viewActivitytype && viewActivitytype.getIn(['attributes', 'has_target']);
   const hasMemberOption = !!typeId && !qe(typeId, ACTIONTYPES.NATL);
-  const hasMap = !!typeId; // && !qe(typeId, ACTIONTYPES.NATL);
   const viewSubject = hasTarget && subject ? subject : 'actors';
 
   const actortypesForSubject = !hasTarget || viewSubject === 'actors'
     ? actorsByActortype
     : targetsByActortype;
 
+  // action has a map
+  const hasCountryActionMap = !!typeId && !isIndicator;
+  const hasIndicatorCountryMap = !!typeId && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10));
+  const hasIndicatorLocationMap = !!typeId && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.POINT, 10));
+  // && !qe(typeId, ACTIONTYPES.NATL);
   let hasLandbasedValue;
   if (viewEntity && checkActionAttribute(typeId, 'has_reference_landbased_ml')) {
     if (
@@ -379,7 +394,7 @@ export function ActionView(props) {
                       </Box>
                     )}
                     <Box>
-                      {dataReady && actortypesForSubject && hasMap && !isIndicator && (
+                      {dataReady && actortypesForSubject && hasCountryActionMap && (
                         <ActionMap
                           entities={actortypesForSubject}
                           mapSubject={viewSubject}
@@ -388,11 +403,18 @@ export function ActionView(props) {
                           typeId={typeId}
                         />
                       )}
-                      {dataReady && actortypesForSubject && hasMap && isIndicator && (
-                        <IndicatorMap
-                          entities={actortypesForSubject}
+                      {dataReady && actortypesForSubject && hasIndicatorCountryMap && (
+                        <IndicatorCountryMap
+                          countries={actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10))}
                           mapSubject="actors"
                           onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          indicator={viewEntity}
+                        />
+                      )}
+                      {dataReady && actortypesForSubject && hasIndicatorLocationMap && (
+                        <IndicatorLocationMap
+                          locations={actortypesForSubject.get(parseInt(ACTORTYPES.POINT, 10))}
+                          mapSubject="actors"
                           indicator={viewEntity}
                         />
                       )}
