@@ -441,6 +441,8 @@ export function ActionView(props) {
                                   typeid,
                                   columns: getActortypeColumns(typeid, isIndicator, viewEntity),
                                   isIndicator,
+                                  sortBy: isIndicator ? 'indicator' : null,
+                                  sortOrder: isIndicator ? 'desc' : null,
                                 }),
                               ]),
                               [],

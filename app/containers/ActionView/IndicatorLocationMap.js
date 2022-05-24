@@ -117,7 +117,7 @@ export function IndicatorLocationMap({
         fillOpacity: 0.3,
       },
     };
-    console.log(locations, locationData);
+
     return (
       <Styled hasHeader noOverflow>
         <MapTitle>

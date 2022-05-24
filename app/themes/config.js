@@ -170,7 +170,7 @@ export const ACTORTYPE_GROUPS = {
     ],
   },
   3: {
-    role: USER_ROLES.ADMIN,
+    managerOnly: true,
     types: [
       ACTORTYPES.POINT,
     ],
