@@ -13,6 +13,7 @@ import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
+import countryPointsJSON from 'data/country-points.json';
 
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
@@ -39,67 +40,142 @@ export function IndicatorCountryMap({
   mapSubject,
   onEntityClick,
   indicator,
+  showAsPoint = false,
   // intl,
 }) {
   // const { intl } = this.context;
   // let type;
   // const indicatorCountries = entities.get(parseInt(ACTORTYPES.COUNTRY, 10));
+  let countryData;
+  let locationData;
+  let maxValue;
+  let minValue;
   if (countries) {
     const countriesJSON = topojson.feature(
       countriesTopo,
       Object.values(countriesTopo.objects)[0],
     );
-    const countryData = countriesJSON.features.reduce(
-      (memo, feature) => {
-        const country = countries.find(
-          (c) => qe(c.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-        );
-        if (country) {
-          const value = country.getIn(['actionValues', indicator.get('id')]);
-          const stats = [
-            {
-              values: [
-                {
-                  label: indicator.getIn(['attributes', 'title']),
-                  unit: indicator.getIn(['attributes', 'comment']),
-                  value,
+    if (showAsPoint) {
+      locationData = countryPointsJSON.features.reduce(
+        (memo, feature) => {
+          const country = countries.find(
+            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
+          );
+          if (country) {
+            const value = country.getIn(['actionValues', indicator.get('id')]);
+            const stats = [
+              {
+                values: [
+                  {
+                    label: indicator.getIn(['attributes', 'title']),
+                    unit: indicator.getIn(['attributes', 'comment']),
+                    value,
+                  },
+                ],
+              },
+            ];
+            return [
+              ...memo,
+              {
+                ...feature,
+                id: country.get('id'),
+                attributes: country.get('attributes').toJS(),
+                tooltip: {
+                  title: country.getIn(['attributes', 'title']),
+                  content: (
+                    <TooltipContent
+                      stats={stats}
+                    />
+                  ),
                 },
-              ],
-            },
-          ];
-          return [
-            ...memo,
-            {
-              ...feature,
-              id: country.get('id'),
-              attributes: country.get('attributes').toJS(),
-              tooltip: {
-                title: country.getIn(['attributes', 'title']),
-                content: (
-                  <TooltipContent
-                    stats={stats}
-                  />
-                ),
+                values: {
+                  indicator: parseFloat(value, 10),
+                },
               },
-              values: {
-                indicator: parseFloat(value, 10),
+            ];
+          }
+          return memo;
+        },
+        [],
+      );
+      [maxValue, minValue] = locationData && locationData.reduce(
+        ([max, min], feature) => ([
+          max ? Math.max(max, feature.values.indicator) : feature.values.indicator,
+          min ? Math.min(min, feature.values.indicator) : feature.values.indicator,
+        ]),
+        [null, null],
+      );
+    } else {
+      countryData = countriesJSON.features.reduce(
+        (memo, feature) => {
+          const country = countries.find(
+            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+          );
+          if (country) {
+            const value = country.getIn(['actionValues', indicator.get('id')]);
+            const stats = [
+              {
+                values: [
+                  {
+                    label: indicator.getIn(['attributes', 'title']),
+                    unit: indicator.getIn(['attributes', 'comment']),
+                    value,
+                  },
+                ],
               },
-            },
-          ];
-        }
-        return memo;
-      },
-      [],
-    );
+            ];
+            return [
+              ...memo,
+              {
+                ...feature,
+                id: country.get('id'),
+                attributes: country.get('attributes').toJS(),
+                tooltip: {
+                  title: country.getIn(['attributes', 'title']),
+                  content: (
+                    <TooltipContent
+                      stats={stats}
+                    />
+                  ),
+                },
+                values: {
+                  indicator: parseFloat(value, 10),
+                },
+              },
+            ];
+          }
+          return memo;
+        },
+        [],
+      );
+      [maxValue, minValue] = countryData && countryData.reduce(
+        ([max, min], feature) => ([
+          max ? Math.max(max, feature.values.indicator) : feature.values.indicator,
+          min ? Math.min(min, feature.values.indicator) : feature.values.indicator,
+        ]),
+        [null, null],
+      );
+    }
 
     // comment stores unit
     const keyTitle = indicator.getIn(['attributes', 'comment'])
       ? `${indicator.getIn(['attributes', 'title'])} (${indicator.getIn(['attributes', 'comment'])})`
       : indicator.getIn(['attributes', 'title']);
-    const maxValue = countryData && countryData.reduce(
-      (max, feature) => Math.max(max, feature.values.indicator),
-      0,
-    );
+
+    const config = {
+      attribute: 'indicator',
+      render: {
+        min: 2,
+        max: 30,
+        exp: 0.5,
+      },
+      style: {
+        color: '#000A40',
+        weight: 0.5,
+        fillColor: '#000A40',
+        fillOpacity: 0.3,
+      },
+    };
     return (
       <Styled hasHeader noOverflow>
         <MapTitle>
@@ -108,6 +184,7 @@ export function IndicatorCountryMap({
         <MapWrapper>
           <MapContainer
             countryData={countryData}
+            locationData={locationData}
             countryFeatures={countriesJSON.features}
             indicator="indicator"
             onCountryClick={(id) => onEntityClick(id)}
@@ -115,6 +192,7 @@ export function IndicatorCountryMap({
             mapSubject={mapSubject}
             fitBounds
             projection="robinson"
+            layerConfig={config}
           />
         </MapWrapper>
         <MapKeyWrapper>
@@ -124,9 +202,12 @@ export function IndicatorCountryMap({
           <MapKey
             mapSubject={mapSubject}
             maxValue={maxValue}
+            minValue={minValue}
             maxBinValue={0}
             isIndicator
+            type={showAsPoint ? 'circles' : 'gradient'}
             unit={indicator.getIn(['attributes', 'comment'])}
+            config={config}
           />
         </MapKeyWrapper>
       </Styled>
@@ -140,6 +221,7 @@ IndicatorCountryMap.propTypes = {
   countries: PropTypes.instanceOf(Map), // actors by actortype for current action
   onEntityClick: PropTypes.func,
   mapSubject: PropTypes.string,
+  showAsPoint: PropTypes.bool,
 };
 
 // const mapStateToProps = (state) => ({
