@@ -266,6 +266,8 @@ export function MapContainer({
       countryOverlayGroupRef.current.clearLayers();
       if (countryData.length > 0) {
         const scale = mapSubject && scaleColorCount(maxValue, mapOptions.GRADIENT[mapSubject], indicator === 'indicator');
+        // treat 0 as no data when showing counts
+        const noDataThreshold = indicator === 'indicator' ? 0 : 1;
         const jsonLayer = L.geoJSON(
           countryData,
           {
@@ -283,7 +285,11 @@ export function MapContainer({
                 }
                 : defaultStyle;
               if (mapSubject) {
-                if (f.values && f.values[indicator] && f.values[indicator] > 0) {
+                if (
+                  f.values
+                  && typeof f.values[indicator] !== 'undefined'
+                  && f.values[indicator] >= noDataThreshold
+                ) {
                   return {
                     ...fstyle,
                     fillColor: scale(f.values[indicator]),
