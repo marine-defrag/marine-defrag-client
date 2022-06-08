@@ -473,9 +473,12 @@ export const selectActortypes = createSelector(
   (entities) => entities && entities.sort((a, b) => {
     const configA = ACTORTYPES_CONFIG[a.get('id')];
     const configB = ACTORTYPES_CONFIG[b.get('id')];
-    return configA.order < configB.order
-      ? -1
-      : 1;
+    if (configA && configB) {
+      return configA.order < configB.order
+        ? -1
+        : 1;
+    }
+    return 1;
   })
 );
 // all action types
