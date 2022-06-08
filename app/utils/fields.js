@@ -124,7 +124,7 @@ export const getStatusField = (
 });
 
 // only show the highest rated role (lower role ids means higher)
-const getHighestUserRoleId = (roles) => roles.reduce(
+export const getHighestUserRoleId = (roles) => roles.reduce(
   (memo, role) => role.get('id') < memo ? role.get('id') : memo,
   USER_ROLES.DEFAULT.value
 );

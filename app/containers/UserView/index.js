@@ -16,6 +16,7 @@ import {
   getMetaField,
   getEmailField,
   getTaxonomyFields,
+  getHighestUserRoleId,
 } from 'utils/fields';
 
 import { getEntityTitle } from 'utils/entities';
@@ -87,7 +88,7 @@ export class UserView extends React.PureComponent { // eslint-disable-line react
     }
     if (sessionUserHighestRoleId === USER_ROLES.ADMIN.value // is admin
       || userId === sessionUserId // own profile
-      || sessionUserHighestRoleId < this.getHighestUserRoleId(user.get('roles'))
+      || sessionUserHighestRoleId < getHighestUserRoleId(user.get('roles'))
     ) {
       buttons.push({
         type: 'edit',
@@ -121,10 +122,6 @@ export class UserView extends React.PureComponent { // eslint-disable-line react
       fields: getTaxonomyFields(taxonomies),
     },
   ]);
-
-  // only show the highest rated role (lower role ids means higher)
-  getHighestUserRoleId = (roles) => roles.reduce((memo, role) => (role.get('id') < memo) ? role.get('id') : memo,
-    USER_ROLES.DEFAULT.value);
 
   render() {
     const { intl } = this.context;
@@ -163,7 +160,7 @@ export class UserView extends React.PureComponent { // eslint-disable-line react
               </div>
             )
           }
-          { user && (
+          { user && dataReady && (
             <EntityView
               fields={{
                 header: {
