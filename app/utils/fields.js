@@ -290,6 +290,8 @@ const getConnectionField = ({
   skipLabel,
   showValueForAction,
   columns,
+  sortBy,
+  sortOrder,
 }) => ({
   type: 'connections',
   values: entities.toList(),
@@ -309,6 +311,8 @@ const getConnectionField = ({
     sort: 'title',
     attributes: ['code', 'title'],
   }],
+  sortBy,
+  sortOrder,
 });
 
 export const getActorConnectionField = ({
@@ -321,6 +325,8 @@ export const getActorConnectionField = ({
   connectionOptions,
   showValueForAction,
   columns,
+  sortBy,
+  sortOrder,
 }) => getConnectionField({
   entities: sortEntities(actors, 'asc', 'id'),
   taxonomies,
@@ -364,6 +370,8 @@ export const getActorConnectionField = ({
   skipLabel,
   showValueForAction,
   columns,
+  sortBy,
+  sortOrder,
 });
 
 export const getActionConnectionField = ({

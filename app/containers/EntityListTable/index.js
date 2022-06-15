@@ -93,6 +93,8 @@ export function EntityListTable({
   onPageItemsSelect,
   sortBy,
   sortOrder,
+  sortByQuery,
+  sortOrderQuery,
   pageItems,
   pageNo,
   intl,
@@ -112,12 +114,12 @@ export function EntityListTable({
   if (!columns) return null;
   const [showAllConnections, setShowAllConnections] = useState(false);
   const [localSort, setLocalSort] = useState({
-    sort: 'main',
-    order: 'asc',
+    sort: sortBy || 'main',
+    order: sortOrder || 'asc',
   });
 
-  const cleanSortOrder = inSingleView ? localSort.order : sortOrder;
-  const cleanSortBy = inSingleView ? localSort.sort : (sortBy || 'main');
+  const cleanSortOrder = inSingleView ? localSort.order : sortOrderQuery;
+  const cleanSortBy = inSingleView ? localSort.sort : (sortByQuery || 'main');
   const cleanOnSort = inSingleView
     ? (sort, order) => setLocalSort({
       sort: sort || cleanSortBy,
@@ -141,6 +143,7 @@ export function EntityListTable({
     );
   }
   const activeColumns = columns.filter((col) => !col.skip);
+
   // warning converting List to Array
   const entityRows = prepareEntities({
     entities: searchedEntities,
@@ -397,6 +400,8 @@ EntityListTable.propTypes = {
   entityPath: PropTypes.string,
   url: PropTypes.string,
   intl: intlShape,
+  sortByQuery: PropTypes.string,
+  sortOrderQuery: PropTypes.string,
   sortBy: PropTypes.string,
   sortOrder: PropTypes.string,
   pageItems: PropTypes.string,
@@ -411,8 +416,8 @@ EntityListTable.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  sortBy: selectSortByQuery(state),
-  sortOrder: selectSortOrderQuery(state),
+  sortByQuery: selectSortByQuery(state),
+  sortOrderQuery: selectSortOrderQuery(state),
   pageItems: selectPageItemsQuery(state),
   pageNo: selectPageNoQuery(state),
   searchQuery: selectSearchQuery(state),
