@@ -13,7 +13,7 @@ import appMessages from 'containers/App/messages';
 
 import { ROUTES, ACTORTYPE_GROUPS } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
-import { selectReady } from 'containers/App/selectors';
+import { selectReady, selectIsUserManager } from 'containers/App/selectors';
 
 import HeaderExplore from 'containers/HeaderExplore';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
@@ -39,19 +39,29 @@ const ViewContainer = styled(Container)`
   }
 `;
 export function ActorsOverview({
-  onLoadData, types, onUpdatePath, intl, dataReady,
+  onLoadData,
+  types,
+  onUpdatePath,
+  intl,
+  dataReady,
+  isUserManager,
 }) {
   useEffect(() => {
     // kick off loading of data
     onLoadData();
   }, []);
   const size = React.useContext(ResponsiveContext);
+  const groupIds = Object.keys(ACTORTYPE_GROUPS).filter(
+    (key) => ACTORTYPE_GROUPS[key].managerOnly
+      ? isUserManager
+      : true
+  );
   return (
     <ContainerWrapper bg>
       <HeaderExplore />
       <ViewContainer>
         <Content>
-          {Object.keys(ACTORTYPE_GROUPS).map((key) => (
+          {groupIds.map((key) => (
             <Group key={key}>
               <GroupTitle>
                 <FormattedMessage {...appMessages.actortypeGroups[key]} />
@@ -95,6 +105,7 @@ export function ActorsOverview({
 ActorsOverview.propTypes = {
   intl: intlShape.isRequired,
   dataReady: PropTypes.bool,
+  isUserManager: PropTypes.bool,
   onLoadData: PropTypes.func.isRequired,
   onUpdatePath: PropTypes.func.isRequired,
   types: PropTypes.instanceOf(Map),
@@ -103,6 +114,7 @@ ActorsOverview.propTypes = {
 const mapStateToProps = createStructuredSelector({
   dataReady: (state) => selectReady(state, DEPENDENCIES),
   types: (state) => selectActortypesWithActorCount(state),
+  isUserManager: (state) => selectIsUserManager(state),
 });
 
 export function mapDispatchToProps(dispatch) {

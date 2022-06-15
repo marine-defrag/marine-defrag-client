@@ -159,10 +159,11 @@ export function ActorView(props) {
     ? `${pageTitle}: ${getEntityTitleTruncated(viewEntity)}`
     : `${pageTitle}: ${params.id}`;
 
-  const isTarget = viewActortype && viewActortype.getIn(['attributes', 'is_target']);
-  const isActive = viewActortype && viewActortype.getIn(['attributes', 'is_active']);
-  const hasMembers = viewActortype && viewActortype.getIn(['attributes', 'has_members']);
   const isCountry = qe(typeId, ACTORTYPES.COUNTRY);
+  const isLocation = qe(typeId, ACTORTYPES.POINT);
+  const isTarget = !isLocation && viewActortype && viewActortype.getIn(['attributes', 'is_target']);
+  const isActive = !isLocation && viewActortype && viewActortype.getIn(['attributes', 'is_active']);
+  const hasMembers = viewActortype && viewActortype.getIn(['attributes', 'has_members']);
 
   let viewSubject = subject || (hasMembers ? 'members' : 'actors');
   const validViewSubjects = [];
@@ -175,7 +176,7 @@ export function ActorView(props) {
   if (hasMembers) {
     validViewSubjects.push('members');
   }
-  if (isCountry) {
+  if (isCountry || isLocation) {
     validViewSubjects.push('facts');
   }
   if (validViewSubjects.indexOf(viewSubject) === -1) {
@@ -282,7 +283,7 @@ export function ActorView(props) {
                           <Text size="large">Targeted by</Text>
                         </SubjectButton>
                       )}
-                      {isCountry && (
+                      {(isCountry || isLocation) && (
                         <SubjectButton
                           onClick={() => onSetSubject('facts')}
                           active={viewSubject === 'facts'}

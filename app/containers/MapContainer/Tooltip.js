@@ -115,14 +115,16 @@ const Tooltip = ({
             {feature.content}
           </TTContentWrap>
         )}
-        <ButtonWrap>
-          <A as="button" onClick={onFeatureClick}>
-            <Box direction="row" align="center" ggap="small">
-              <Text size="small">Country profile</Text>
-              <Icon name="arrowRight" size="1em" sizes={{ mobile: '1em' }} />
-            </Box>
-          </A>
-        </ButtonWrap>
+        {onFeatureClick && (
+          <ButtonWrap>
+            <A as="button" onClick={onFeatureClick}>
+              <Box direction="row" align="center" ggap="small">
+                <Text size="small">Country profile</Text>
+                <Icon name="arrowRight" size="1em" sizes={{ mobile: '1em' }} />
+              </Box>
+            </A>
+          </ButtonWrap>
+        )}
       </Main>
     </Anchor>
   </Root>

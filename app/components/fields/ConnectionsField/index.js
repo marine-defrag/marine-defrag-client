@@ -23,6 +23,7 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
         ? appMessages.entities[field.entityType].single
         : appMessages.entities[field.entityType].plural
     )}`;
+
     return (
       <StyledFieldWrap>
         {(field.values && field.values.size > 0) && (
@@ -40,6 +41,8 @@ class ConnectionsField extends React.PureComponent { // eslint-disable-line reac
             columns={field.columns}
             moreLess
             inSingleView
+            sortBy={field.sortBy}
+            sortOrder={field.sortOrder}
           />
         )}
         { (!field.values || field.values.size === 0)

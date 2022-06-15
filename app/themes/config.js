@@ -27,6 +27,19 @@ export const ENDPOINTS = {
   VALIDATE_TOKEN: 'auth/validate_token',
 };
 
+// user roles
+export const USER_ROLES = {
+  ADMIN: { value: 1, message: 'ui.userRoles.admin' },
+  MANAGER: { value: 2, message: 'ui.userRoles.manager' },
+  ANALYST: { value: 3, message: 'ui.userRoles.analyst' },
+  DEFAULT: { value: 9999, message: 'ui.userRoles.default' }, // note: client side only - no role assigned on server
+};
+// Entity publish statuses
+export const PUBLISH_STATUSES = [
+  { value: true, message: 'ui.publishStatuses.draft' },
+  { value: false, message: 'ui.publishStatuses.public' },
+];
+
 // client app routes **************************
 export const ROUTES = {
   ID: '/:id',
@@ -100,7 +113,12 @@ export const ACTORTYPES = {
   CLASS: '3',
   REG: '4',
   GROUP: '5',
+  POINT: '6',
 };
+
+export const FF_ONLY_ACTORTYPES = [
+  ACTORTYPES.POINT,
+];
 
 export const ACTIONTYPE_DISCLAIMERS = [
   ACTIONTYPES.INTL,
@@ -151,6 +169,12 @@ export const ACTORTYPE_GROUPS = {
       ACTORTYPES.CLASS, // classes
     ],
   },
+  3: {
+    managerOnly: true,
+    types: [
+      ACTORTYPES.POINT,
+    ],
+  },
 };
 export const RESOURCETYPE_GROUPS = {
   // temp: one group only for now
@@ -197,6 +221,7 @@ export const ACTIONTYPE_ACTORTYPES = {
   ],
   [ACTIONTYPES.FACTS]: [
     ACTORTYPES.COUNTRY,
+    ACTORTYPES.POINTS,
   ],
 };
 // type compatibility: targets for actions
@@ -630,6 +655,11 @@ export const ACTORTYPES_CONFIG = {
       },
     ],
   },
+  6: { // GROUP
+    id: '6',
+    order: 10,
+    columns: [],
+  },
 };
 
 export const ACTIONTYPES_CONFIG = {
@@ -908,19 +938,6 @@ export const SERVER_ERRORS = {
 };
 
 // Map server attribute values **************************
-
-// user roles
-export const USER_ROLES = {
-  ADMIN: { value: 1, message: 'ui.userRoles.admin' },
-  MANAGER: { value: 2, message: 'ui.userRoles.manager' },
-  ANALYST: { value: 3, message: 'ui.userRoles.analyst' },
-  DEFAULT: { value: 9999, message: 'ui.userRoles.default' }, // note: client side only - no role assigned on server
-};
-// Entity publish statuses
-export const PUBLISH_STATUSES = [
-  { value: true, message: 'ui.publishStatuses.draft' },
-  { value: false, message: 'ui.publishStatuses.public' },
-];
 
 export const NO_PARENT_KEY = 'parentUndefined';
 

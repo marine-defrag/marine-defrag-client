@@ -252,17 +252,19 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
         ...typeColumns,
         ...actionColumns,
       ];
-      headerColumnsUtility = [
-        {
-          type: 'main',
-          content: '',
-        },
-        ...typeColumns.map(() => ({ type: 'spacer', content: '' })),
-        {
-          type: 'options',
-          span: actionColumns.length,
-        },
-      ];
+      headerColumnsUtility = actionColumns.length > 0
+        ? [
+          {
+            type: 'main',
+            content: '',
+          },
+          ...typeColumns.map(() => ({ type: 'spacer', content: '' })),
+          {
+            type: 'options',
+            span: actionColumns.length,
+          },
+        ]
+        : null;
       if (isActive) {
         subjectOptions = [
           ...subjectOptions,
