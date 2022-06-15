@@ -27,7 +27,7 @@ import {
 import { checkActionAttribute } from 'utils/entities';
 import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
-import { ROUTES, ACTORTYPES } from 'themes/config';
+import { ROUTES, ACTORTYPES, FF_ONLY_ACTORTYPES } from 'themes/config';
 
 import EntityList from 'containers/EntityList';
 
@@ -52,13 +52,19 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
     }
   }
 
-  prepareTypeOptions = (types, activeId) => {
+  prepareTypeOptions = (types, activeId, isUserManager) => {
     const { intl } = this.context;
-    return types.toList().toJS().map((type) => ({
-      value: type.id,
-      label: intl.formatMessage(appMessages.actortypes[type.id]),
-      active: activeId === type.id,
-    }));
+    return types.toList().toJS().filter(
+      (type) => qe(FF_ONLY_ACTORTYPES, type.id)
+        ? isUserManager
+        : true
+    ).map(
+      (type) => ({
+        value: type.id,
+        label: intl.formatMessage(appMessages.actortypes[type.id]),
+        active: activeId === type.id,
+      })
+    );
   }
 
   render() {
@@ -151,7 +157,7 @@ export class ActorList extends React.PureComponent { // eslint-disable-line reac
           actiontypesForTarget={actiontypesForTarget}
           membertypes={membertypes}
           associationtypes={associationtypes}
-          typeOptions={this.prepareTypeOptions(actortypes, typeId)}
+          typeOptions={this.prepareTypeOptions(actortypes, typeId, isManager)}
           onSelectType={onSelectType}
           typeId={typeId}
           showCode={checkActionAttribute(typeId, 'code', isManager)}

@@ -96,7 +96,7 @@ export function CountryFacts(props) {
                               if (evt && evt.preventDefault) evt.preventDefault();
                               onUpdatePath(path);
                             }}
-                            label={<Text size="xsmall">{'See all country values >'}</Text>}
+                            label={<Text size="xsmall">{'See all values for indicator >'}</Text>}
                           />
                         </Box>
                       );
