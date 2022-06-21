@@ -230,8 +230,8 @@ export function ActionView(props) {
 
   // action has a map
   const hasCountryActionMap = !!typeId && !isIndicator;
-  const hasIndicatorCountryMap = !!typeId && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10));
-  const hasIndicatorLocationMap = !!typeId && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.POINT, 10));
+  const hasIndicatorCountryMap = !!typeId && isIndicator && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10));
+  const hasIndicatorLocationMap = !!typeId && isIndicator && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.POINT, 10));
   // && !qe(typeId, ACTIONTYPES.NATL);
   let hasLandbasedValue;
   if (viewEntity && checkActionAttribute(typeId, 'has_reference_landbased_ml')) {
