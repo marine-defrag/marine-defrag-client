@@ -145,12 +145,13 @@ export const renderActorControl = (
   : null;
 
 // actors grouped by actortype
-export const renderActorsByActortypeControl = (
+export const renderActorsByActortypeControl = ({
   entitiesByActortype,
   taxonomies,
   onCreateOption,
   contextIntl,
-) => entitiesByActortype
+  connnectionAttributeOptions,
+}) => entitiesByActortype
   ? entitiesByActortype.reduce(
     (controls, entities, typeid) => controls.concat({
       id: `actors.${typeid}`,
@@ -162,6 +163,7 @@ export const renderActorsByActortypeControl = (
       options: entityOptions(entities),
       advanced: true,
       selectAll: true,
+      connnectionAttributeOptions,
       tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
       onCreate: onCreateOption
         ? () => onCreateOption({

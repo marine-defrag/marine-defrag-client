@@ -16,6 +16,16 @@ export default defineMessages({
       defaultMessage: 'Samoa\'s home of human rights implementation',
     },
   },
+  actorroles: {
+    1: {
+      id: 'app.containers.App.actorroles.1',
+      defaultMessage: 'Donor',
+    },
+    2: {
+      id: 'app.containers.App.actorroles.2',
+      defaultMessage: 'Implementing partner',
+    },
+  },
   actortypes: {
     single: {
       id: 'app.containers.App.actortypes.single',

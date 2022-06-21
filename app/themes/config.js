@@ -134,6 +134,23 @@ export const RESOURCETYPES = {
 export const DEFAULT_RESOURCETYPE = RESOURCETYPES.REF;
 export const DEFAULT_TAXONOMY = '11';
 
+export const ACTOR_ACTION_ROLES = {
+  DONOR: {
+    default: true,
+    value: '1',
+  },
+  PARTNER: {
+    value: '2',
+  },
+};
+
+export const ACTIONTYPE_ACTOR_ACTION_ROLES = {
+  [ACTIONTYPES.DONOR]: [
+    ACTOR_ACTION_ROLES.DONOR,
+    ACTOR_ACTION_ROLES.PARTNER,
+  ],
+};
+
 export const ACTIONTYPE_GROUPS = {
   // donor activities
   1: {

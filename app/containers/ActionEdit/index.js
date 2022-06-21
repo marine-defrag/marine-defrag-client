@@ -48,7 +48,12 @@ import { hasNewError } from 'utils/entity-form';
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES, API, ROUTES } from 'themes/config';
+import {
+  USER_ROLES,
+  API,
+  ROUTES,
+  ACTIONTYPE_ACTOR_ACTION_ROLES,
+} from 'themes/config';
 
 import {
   loadEntitiesIfNeeded,
@@ -282,12 +287,17 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       });
     }
     if (actorsByActortype) {
-      const actorConnections = renderActorsByActortypeControl(
-        actorsByActortype,
-        connectedTaxonomies,
+      const actorConnections = renderActorsByActortypeControl({
+        entitiesByActortype: actorsByActortype,
+        taxonomies: connectedTaxonomies,
         onCreateOption,
-        intl,
-      );
+        contextIntl: intl,
+        connnectionAttributeOptions: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]
+          ? {
+            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId],
+          }
+          : null,
+      });
       if (actorConnections) {
         groups.push(
           {

@@ -40,7 +40,7 @@ import { hasNewError } from 'utils/entity-form';
 import { checkActionAttribute, checkActionRequired } from 'utils/entities';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES, ROUTES } from 'themes/config';
+import { USER_ROLES, ROUTES, ACTIONTYPE_ACTOR_ACTION_ROLES } from 'themes/config';
 
 import {
   loadEntitiesIfNeeded,
@@ -233,12 +233,17 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
       });
     }
     if (actorsByActortype) {
-      const actorConnections = renderActorsByActortypeControl(
-        actorsByActortype,
-        connectedTaxonomies,
+      const actorConnections = renderActorsByActortypeControl({
+        entitiesByActortype: actorsByActortype,
+        taxonomies: connectedTaxonomies,
         onCreateOption,
-        intl,
-      );
+        contextIntl: intl,
+        connnectionAttributeOptions: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]
+          ? {
+            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId],
+          }
+          : null,
+      });
       if (actorConnections) {
         groups.push(
           {
