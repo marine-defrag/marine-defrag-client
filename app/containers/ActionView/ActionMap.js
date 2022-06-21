@@ -159,7 +159,6 @@ export function ActionMap({
       };
     }
   }
-  console.log(mapSubject);
   return (
     <Styled hasHeader noOverflow>
       <MapWrapper>
