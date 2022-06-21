@@ -115,6 +115,7 @@ export function IndicatorCountryMap({
             mapSubject={mapSubject}
             fitBounds
             projection="robinson"
+            mapId="ll-indicator-country-map"
           />
         </MapWrapper>
         <MapKeyWrapper>

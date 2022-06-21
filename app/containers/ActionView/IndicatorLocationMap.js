@@ -133,6 +133,7 @@ export function IndicatorLocationMap({
             fitBounds
             projection="robinson"
             layerConfig={config}
+            mapId="ll-indicator-location-map"
           />
         </MapWrapper>
         <MapKeyWrapper>

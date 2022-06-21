@@ -174,6 +174,7 @@ export function ActionMap({
           mapSubject={mapSubject}
           fitBounds
           projection="gall-peters"
+          mapId="ll-action-map"
         />
       </MapWrapper>
       {(memberOption || mapTitle) && (
