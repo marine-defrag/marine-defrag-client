@@ -803,6 +803,10 @@ export default defineMessages({
       id: 'app.containers.App.attributes.id',
       defaultMessage: 'ID',
     },
+    relationshiptype_id: {
+      id: 'app.containers.App.attributes.relationshiptype_id',
+      defaultMessage: 'Relationship type',
+    },
     actortype_id: {
       id: 'app.containers.App.attributes.actortype_id',
       defaultMessage: 'Actortype id',

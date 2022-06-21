@@ -1152,6 +1152,16 @@ export const selectUserTaxonomies = createSelector(
   )
 );
 
+// entity joins ///////////////////////////////////////////////////////
+
+export const selectActorActionsForAction = createSelector(
+  (state) => selectEntities(state, API.ACTOR_ACTIONS),
+  (state, id) => id,
+  (connections, id) => connections && connections
+    .filter((connection) => qe(connection.getIn(['attributes', 'measure_id']), id))
+    .map((connection) => connection.get('attributes'))
+);
+
 // potential connections ///////////////////////////////////////////////////////
 
 export const selectUserConnections = createSelector(

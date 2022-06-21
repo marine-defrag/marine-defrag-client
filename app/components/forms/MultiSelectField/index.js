@@ -8,6 +8,8 @@ import { getEntitySortComparator } from 'utils/sort';
 
 import { fitComponent, SCROLL_PADDING } from 'utils/scroll-to-component';
 
+import { Box } from 'grommet';
+
 import { omit } from 'lodash/object';
 import Button from 'components/buttons/Button';
 import A from 'components/styled/A';
@@ -49,14 +51,16 @@ const MultiselectActiveOptions = styled.div`
 const MultiselectActiveOptionList = styled.div`
   position: relative;
 `;
-const MultiselectActiveOptionListItem = styled.div`
+const MultiselectActiveOptionListItem = styled(
+  (p) => <Box direction="row" align="center" justify="between" {...p} />
+)`
   position: relative;
   background-color: ${palette('mainListItem', 1)};
   border-bottom: 1px solid ${palette('light', 1)};
-  padding: 6px 0 6px 8px;
+  padding: 6px 0;
   font-size: 0.8em;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    padding: 12px 0 12px 16px;
+    padding: 12px 0;
     font-size: 1em;
   }
   @media print {
@@ -64,11 +68,7 @@ const MultiselectActiveOptionListItem = styled.div`
   }
 `;
 const MultiselectActiveOptionRemove = styled(Button)`
-  position: absolute;
-  top: 0;
-  right: 0;
   display: block;
-  bottom: 0;
   color: ${palette('link', 2)};
   &:hover {
     color: ${palette('linkHover', 2)};
@@ -78,7 +78,7 @@ const MultiselectActiveOptionRemove = styled(Button)`
     padding: 0 16px;
   }
 `;
-const MultiselectActiveOption = styled.div`
+const MultiselectActiveOption = styled((p) => <Box direction="column" {...p} />)`
   padding-right: 30px;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding-right: 50px;
@@ -206,23 +206,44 @@ class MultiSelectField extends React.Component { // eslint-disable-line react/pr
 
   renderMultiselectActiveOption = (option, field, i) => (
     <MultiselectActiveOptionListItem key={i}>
-      <MultiselectActiveOption>
-        {option.get('draft')
-          && <ItemStatus draft />
-        }
-        { option.get('reference')
-          && <Reference>{option.get('reference')}</Reference>
-        }
-        {option.get('label')}
-      </MultiselectActiveOption>
-      <MultiselectActiveOptionRemove
-        onClick={(evt) => {
-          if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-          this.onMultiSelectItemRemove(option, field);
-        }}
-      >
-        <Icon name="removeSmall" />
-      </MultiselectActiveOptionRemove>
+      <Box direction="row" align="center">
+        <Box>
+          <MultiselectActiveOptionRemove
+            onClick={(evt) => {
+              if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+              this.onMultiSelectItemRemove(option, field);
+            }}
+          >
+            <Icon name="removeSmall" />
+          </MultiselectActiveOptionRemove>
+        </Box>
+        <MultiselectActiveOption>
+          {option.get('draft') && (
+            <Box><ItemStatus draft /></Box>
+          )}
+          <Box direction="row" gap="small">
+            {option.get('reference') && (
+              <Box><Reference>{option.get('reference')}</Reference></Box>
+            )}
+            <Box>{option.get('label')}</Box>
+          </Box>
+        </MultiselectActiveOption>
+      </Box>
+      {field.connnectionAttributeOptions && (
+        <Box direction="row" gap="xsmall" pad={{ right: 'small' }}>
+          {Object.keys(field.connnectionAttributeOptions).map((attribute) => (
+            <Box key={attribute}>
+              <select>
+                {field.connnectionAttributeOptions[attribute].map((attributeOption, j) => (
+                  <option key={j} value={attributeOption.value}>
+                    {attributeOption.label || attributeOption.value}
+                  </option>
+                ))}
+              </select>
+            </Box>
+          ))}
+        </Box>
+      )}
     </MultiselectActiveOptionListItem>
   )
 
@@ -230,9 +251,10 @@ class MultiSelectField extends React.Component { // eslint-disable-line react/pr
     const { field, fieldData } = this.props;
     const { intl } = this.context;
     const { id, model, ...controlProps } = omit(field, NON_CONTROL_PROPS);
-
+    // console.log('field', field)
+    // console.log('fieldData', fieldData && fieldData.toJS())
     const options = this.getMultiSelectActiveOptions(field, fieldData);
-
+    // console.log('field options', options && options.toJS())
     return (
       <MultiSelectFieldWrapper>
         <MultiSelectDropdown

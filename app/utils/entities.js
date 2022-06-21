@@ -291,6 +291,27 @@ const entitySetAssociated = (
   }
   return entity.set('associated', false);
 };
+const entitySetAssociated_NEW = (
+  entity, // associated entity
+  associations,
+  key,
+  // associationId,
+) => {
+  if (associations) {
+    // console.log('entitySetAssociated', associations && associations.toJS())
+    // console.log('entitySetAssociated', key)
+    const entityAssociationKey = associations.findKey(
+      (association) => qe(association.get(key), entity.get('id'))
+    );
+    // console.log('entitySetAssociated', entityAssociation && entityAssociation.toJS())
+    if (entityAssociationKey) {
+      return entity
+        .set('associated', entityAssociationKey)
+        .set('association', associations.get(entityAssociationKey));
+    }
+  }
+  return entity.set('associated', false);
+};
 export const entitiesSetAssociated = (
   entities,
   associationsGrouped,
@@ -306,6 +327,17 @@ export const entitiesSetAssociated = (
     ),
   );
 };
+export const entitiesSetAssociated_NEW = (
+  entities,
+  associations,
+  key,
+) => entities && entities.map(
+  (entity) => entitySetAssociated_NEW(
+    entity,
+    associations,
+    key,
+  ),
+);
 
 const entitySetAssociatedCategory = (
   entityCategorised,

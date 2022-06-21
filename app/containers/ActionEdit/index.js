@@ -70,6 +70,7 @@ import {
   selectReady,
   selectReadyForAuthCheck,
   selectIsUserAdmin,
+  selectActorActionsForAction,
 } from 'containers/App/selectors';
 
 import Messages from 'components/Messages';
@@ -210,7 +211,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     return groups;
   };
 
-  getBodyMainFields = (
+  getBodyMainFields = ({
     entity,
     connectedTaxonomies,
     actorsByActortype,
@@ -218,7 +219,8 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     resourcesByResourcetype,
     parentOptions,
     onCreateOption,
-  ) => {
+    entityActorConnections,
+  }) => {
     const { intl } = this.context;
     const typeId = entity.getIn(['attributes', 'measuretype_id']);
 
@@ -292,9 +294,13 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
         taxonomies: connectedTaxonomies,
         onCreateOption,
         contextIntl: intl,
+        connections: entityActorConnections,
         connnectionAttributeOptions: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]
           ? {
-            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId],
+            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId].map((role) => ({
+              label: intl.formatMessage(appMessages.actorroles[role.value]),
+              ...role,
+            })),
           }
           : null,
       });
@@ -404,6 +410,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       resourcesByResourcetype,
       onCreateOption,
       parentOptions,
+      entityActorConnections,
     } = this.props;
     const { intl } = this.context;
     // const reference = this.props.params.id;
@@ -501,15 +508,16 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
                     ),
                   },
                   body: {
-                    main: this.getBodyMainFields(
-                      viewEntity,
+                    main: this.getBodyMainFields({
+                      entity: viewEntity,
                       connectedTaxonomies,
                       actorsByActortype,
                       targetsByActortype,
                       resourcesByResourcetype,
                       parentOptions,
                       onCreateOption,
-                    ),
+                      entityActorConnections,
+                    }),
                     aside: this.getBodyAsideFields(viewEntity),
                   },
                 }}
@@ -551,6 +559,7 @@ ActionEdit.propTypes = {
   onCreateOption: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
+  entityActorConnections: PropTypes.object,
 };
 
 ActionEdit.contextTypes = {
@@ -569,6 +578,7 @@ const mapStateToProps = (state, props) => ({
   targetsByActortype: selectTargetsByActortype(state, props.params.id),
   resourcesByResourcetype: selectResourcesByResourcetype(state, props.params.id),
   parentOptions: selectParentOptions(state, props.params.id),
+  entityActorConnections: selectActorActionsForAction(state, props.params.id),
 });
 
 function mapDispatchToProps(dispatch, props) {

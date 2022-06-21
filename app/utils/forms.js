@@ -30,7 +30,8 @@ export const entityOption = (entity, defaultToId, hasTags) => Map({
   value: entity.get('id'),
   label: getEntityTitle(entity),
   reference: getEntityReference(entity, defaultToId),
-  checked: !!entity.get('associated'),
+  checked: !!entity.get('associated'), // convert to boolean
+  association: !!entity.get('associated') && entity.get('association'),
   tags: hasTags && entity.get('categories'),
   draft: entity.getIn(['attributes', 'draft']),
 });
@@ -150,6 +151,7 @@ export const renderActorsByActortypeControl = ({
   taxonomies,
   onCreateOption,
   contextIntl,
+  connections,
   connnectionAttributeOptions,
 }) => entitiesByActortype
   ? entitiesByActortype.reduce(
@@ -163,6 +165,7 @@ export const renderActorsByActortypeControl = ({
       options: entityOptions(entities),
       advanced: true,
       selectAll: true,
+      connections,
       connnectionAttributeOptions,
       tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
       onCreate: onCreateOption
