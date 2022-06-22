@@ -17,6 +17,10 @@ export default defineMessages({
     },
   },
   actorroles: {
+    0: {
+      id: 'app.containers.App.actorroles.0',
+      defaultMessage: 'No role assigned',
+    },
     1: {
       id: 'app.containers.App.actorroles.1',
       defaultMessage: 'Donor',

@@ -7,8 +7,9 @@ import {
   getEntityReference,
   getCategoryShortTitle,
 } from 'utils/entities';
+import qe from 'utils/quasi-equals';
 
-import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
+import { getCheckedValuesFromOptions, getCheckedOptions } from 'components/forms/MultiSelectControl';
 import validateDateFormat from 'components/forms/validators/validate-date-format';
 import validateRequired from 'components/forms/validators/validate-required';
 import validateNumber from 'components/forms/validators/validate-number';
@@ -152,7 +153,7 @@ export const renderActorsByActortypeControl = ({
   onCreateOption,
   contextIntl,
   connections,
-  connnectionAttributeOptions,
+  connectionAttributeOptions,
 }) => entitiesByActortype
   ? entitiesByActortype.reduce(
     (controls, entities, typeid) => controls.concat({
@@ -166,7 +167,7 @@ export const renderActorsByActortypeControl = ({
       advanced: true,
       selectAll: true,
       connections,
-      connnectionAttributeOptions,
+      connectionAttributeOptions,
       tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
       onCreate: onCreateOption
         ? () => onCreateOption({
@@ -446,6 +447,17 @@ const getAssociatedEntities = (entities) => entities
     Map(),
   )
   : Map();
+const getAssociations = (entities) => entities
+  ? entities.reduce(
+    (entitiesAssociated, entity) => {
+      if (entity && entity.get('associated')) {
+        return entitiesAssociated.set(entity.get('id'), entity);
+      }
+      return entitiesAssociated;
+    },
+    Map(),
+  )
+  : Map();
 
 const getAssociatedCategories = (taxonomy) => taxonomy.get('categories')
   ? getAssociatedEntities(taxonomy.get('categories'))
@@ -486,33 +498,104 @@ export const getConnectionUpdatesFromFormData = ({
   connectionAttribute,
   createConnectionKey,
   createKey,
+  connectionAttributeOptions,
 }) => {
+  // console.log('formData', formData && formData.toJS())
+  // // console.log(connections && connections.toJS())
+  // // console.log(createKey)
+  // console.log('connectionAttribute', connectionAttribute)
+  // console.log('formData.getIn(connectionAttribute)', formData.getIn(connectionAttribute))
   let formConnectionIds = List();
+  let formConnections = List();
   if (formData) {
     if (Array.isArray(connectionAttribute)) {
+      // store associated Actions as [ [action.id] ]
       formConnectionIds = getCheckedValuesFromOptions(formData.getIn(connectionAttribute));
+      // store associated Actions as [ action ]
+      formConnections = getCheckedOptions(formData.getIn(connectionAttribute));
     } else {
       formConnectionIds = getCheckedValuesFromOptions(formData.get(connectionAttribute));
+      formConnections = getCheckedOptions(formData.get(connectionAttribute));
     }
   }
   // store associated Actions as { [action.id]: [association.id], ... }
-  const associatedConnections = getAssociatedEntities(connections);
-  return Map({
-    delete: associatedConnections.reduce(
-      (associatedIds, associatedId, id) => !formConnectionIds.includes(id)
-        ? associatedIds.push(associatedId)
-        : associatedIds,
-      List()
-    ),
-    create: formConnectionIds.reduce(
-      (payloads, id) => !associatedConnections.has(id)
-        ? payloads.push(Map({
-          [createConnectionKey]: id,
-          [createKey]: formData.get('id'),
-        }))
-        : payloads,
+  const previousConnectionIds = getAssociatedEntities(connections);
+  // store associated Actions as { [action.id]: association, ... }
+  const previousConnections = getAssociations(connections);
+  // console.log(previousConnections && previousConnections.toJS())
+  // console.log('previousConnectionIds', previousConnectionIds && previousConnectionIds.toJS())
+  // console.log('previousConnections', previousConnections && previousConnections.toJS())
+  // console.log('formConnectionIds', formConnectionIds && formConnectionIds.toJS())
+  // console.log('formConnections', formConnections && formConnections.toJS())
+
+  // connection ids to be deleted / removed in formData
+  const deleteListOfIds = previousConnectionIds.reduce(
+    (associatedIds, associationId, id) => !formConnectionIds.includes(id)
+      ? associatedIds.push(associationId)
+      : associatedIds,
+    List()
+  );
+
+  // new connections / added in formData
+  // TODO add attribute
+  const createList = formConnections.reduce(
+    (payloads, connection) => {
+      const id = connection.get('value');
+      const payload = connection.get('association') || Map();
+      if (!previousConnectionIds.has(id)) {
+        return payloads.push(
+          payload
+            .set(createConnectionKey, id)
+            .set(createKey, formData.get('id'))
+        );
+      }
+      return payloads;
+    },
+    List(),
+  );
+
+  const updateList = connectionAttributeOptions
+    ? formConnections.reduce(
+      (payloads, connection) => {
+        const id = connection.get('value');
+        if (previousConnectionIds.has(id)) {
+          const previousConnection = previousConnections.get(id);
+          const attributeChanges = connectionAttributeOptions.reduce(
+            (memo, attribute) => {
+              const previousValue = previousConnection.getIn(['association', attribute]);
+              const formValue = connection.getIn(['association', attribute]);
+              if (!qe(previousValue, formValue)) {
+                return {
+                  ...memo,
+                  [attribute]: formValue,
+                };
+              }
+              return memo;
+            },
+            {},
+          );
+
+          if (Object.keys(attributeChanges).length > 0) {
+            return payloads.push(
+              Map({
+                id: previousConnectionIds.get(id),
+                attributes: {
+                  ...previousConnection.get('association').toJS(),
+                  ...attributeChanges,
+                },
+              })
+            );
+          }
+        }
+        return payloads;
+      },
       List(),
-    ),
+    )
+    : List();
+  return Map({
+    delete: deleteListOfIds,
+    create: createList,
+    update: updateList,
   });
 };
 

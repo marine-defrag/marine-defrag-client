@@ -295,12 +295,14 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
         onCreateOption,
         contextIntl: intl,
         connections: entityActorConnections,
-        connnectionAttributeOptions: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]
+        connectionAttributeOptions: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]
           ? {
-            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId].map((role) => ({
-              label: intl.formatMessage(appMessages.actorroles[role.value]),
-              ...role,
-            })),
+            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId].map(
+              (role) => ({
+                label: intl.formatMessage(appMessages.actorroles[role.value]),
+                ...role,
+              }),
+            ),
           }
           : null,
       });
@@ -624,18 +626,22 @@ function mapDispatchToProps(dispatch, props) {
               connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
               createConnectionKey: 'actor_id',
               createKey: 'measure_id',
+              connectionAttributeOptions: ['relationshiptype_id'],
             }))
             .reduce(
               (memo, deleteCreateLists) => {
                 const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
                 const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                const updates = memo.get('update').concat(deleteCreateLists.get('update'));
                 return memo
                   .set('delete', deletes)
-                  .set('create', creates);
+                  .set('create', creates)
+                  .set('update', updates);
               },
               fromJS({
                 delete: [],
                 create: [],
+                update: [],
               }),
             )
         );
@@ -705,6 +711,7 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(updatePath(`${ROUTES.ACTION}/${props.params.id}`, { replace: true }));
     },
     handleUpdate: (formData) => {
+      // console.log(formData && formData.toJS())
       dispatch(updateEntityForm(formData));
     },
     handleDelete: () => {

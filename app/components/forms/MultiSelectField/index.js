@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
+import { Map } from 'immutable';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 import { lowerCase } from 'utils/string';
@@ -8,16 +9,14 @@ import { getEntitySortComparator } from 'utils/sort';
 
 import { fitComponent, SCROLL_PADDING } from 'utils/scroll-to-component';
 
-import { Box } from 'grommet';
-
 import { omit } from 'lodash/object';
 import Button from 'components/buttons/Button';
 import A from 'components/styled/A';
 
 import Icon from 'components/Icon';
-import ItemStatus from 'components/ItemStatus';
 
 import MultiSelectControl from '../MultiSelectControl';
+import MultiSelectActiveOption from './MultiSelectActiveOption';
 import messages from './messages';
 
 const MultiSelectWrapper = styled.div`
@@ -51,39 +50,7 @@ const MultiselectActiveOptions = styled.div`
 const MultiselectActiveOptionList = styled.div`
   position: relative;
 `;
-const MultiselectActiveOptionListItem = styled(
-  (p) => <Box direction="row" align="center" justify="between" {...p} />
-)`
-  position: relative;
-  background-color: ${palette('mainListItem', 1)};
-  border-bottom: 1px solid ${palette('light', 1)};
-  padding: 6px 0;
-  font-size: 0.8em;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    padding: 12px 0;
-    font-size: 1em;
-  }
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.default};
-  }
-`;
-const MultiselectActiveOptionRemove = styled(Button)`
-  display: block;
-  color: ${palette('link', 2)};
-  &:hover {
-    color: ${palette('linkHover', 2)};
-  }
-  padding: 0 8px;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    padding: 0 16px;
-  }
-`;
-const MultiselectActiveOption = styled((p) => <Box direction="column" {...p} />)`
-  padding-right: 30px;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    padding-right: 50px;
-  }
-`;
+
 const MultiSelectDropdownIcon = styled.div`
   position: absolute;
   right: 0;
@@ -125,17 +92,6 @@ const MultiSelectWithoutLink = styled(A)`
   color: ${palette('text', 1)};
   &:hover {
     color: ${palette('link', 0)};
-  }
-`;
-
-const Reference = styled.div`
-  color: ${palette('text', 1)};
-  &:hover {
-    color: ${palette('text', 0)};
-  }
-  font-size: 0.85em;
-  @media print {
-    font-size: ${(props) => props.theme.sizes.print.smaller};
   }
 `;
 
@@ -183,13 +139,40 @@ class MultiSelectField extends React.Component { // eslint-disable-line react/pr
       : d)
   );
 
+  onMultiSelectItemConnectionAttributeChange =
+    (option, attribute, value) => this.props.handleUpdate && this.props.handleUpdate(
+      this.props.fieldData.map(
+        (d) => {
+          if (option.get('value') === d.get('value')) {
+            if (d.get('association')) {
+              return d.setIn(['association', attribute], value);
+            }
+            return d.set('association', Map({ [attribute]: value }));
+          }
+          return d;
+        }
+      )
+    );
+
   getMultiSelectActiveOptions = (field, fieldData) => {
     // use form data if already loaded
     if (fieldData) {
-      return this.sortOptions(fieldData.filter((o) => o.get('checked')));
+      return this.sortOptions(
+        fieldData.map(
+          (option, index) => option.set('index', index)
+        ).filter(
+          (o) => o.get('checked')
+        )
+      );
     }
     // until then use initial options
-    return this.sortOptions(field.options.filter((o) => o.get('checked')));
+    return this.sortOptions(
+      field.options.map(
+        (option, index) => option.set('index', index)
+      ).filter(
+        (o) => o.get('checked')
+      )
+    );
   }
 
   getOptionSortValueMapper = (option) => {
@@ -202,49 +185,6 @@ class MultiSelectField extends React.Component { // eslint-disable-line react/pr
   sortOptions = (options) => options.sortBy(
     (option) => this.getOptionSortValueMapper(option),
     (a, b) => getEntitySortComparator(a, b, 'asc')
-  )
-
-  renderMultiselectActiveOption = (option, field, i) => (
-    <MultiselectActiveOptionListItem key={i}>
-      <Box direction="row" align="center">
-        <Box>
-          <MultiselectActiveOptionRemove
-            onClick={(evt) => {
-              if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-              this.onMultiSelectItemRemove(option, field);
-            }}
-          >
-            <Icon name="removeSmall" />
-          </MultiselectActiveOptionRemove>
-        </Box>
-        <MultiselectActiveOption>
-          {option.get('draft') && (
-            <Box><ItemStatus draft /></Box>
-          )}
-          <Box direction="row" gap="small">
-            {option.get('reference') && (
-              <Box><Reference>{option.get('reference')}</Reference></Box>
-            )}
-            <Box>{option.get('label')}</Box>
-          </Box>
-        </MultiselectActiveOption>
-      </Box>
-      {field.connnectionAttributeOptions && (
-        <Box direction="row" gap="xsmall" pad={{ right: 'small' }}>
-          {Object.keys(field.connnectionAttributeOptions).map((attribute) => (
-            <Box key={attribute}>
-              <select>
-                {field.connnectionAttributeOptions[attribute].map((attributeOption, j) => (
-                  <option key={j} value={attributeOption.value}>
-                    {attributeOption.label || attributeOption.value}
-                  </option>
-                ))}
-              </select>
-            </Box>
-          ))}
-        </Box>
-      )}
-    </MultiselectActiveOptionListItem>
   )
 
   render() {
@@ -272,7 +212,15 @@ class MultiSelectField extends React.Component { // eslint-disable-line react/pr
           { options.size > 0
             ? (
               <MultiselectActiveOptionList>
-                {options.map((option, i) => this.renderMultiselectActiveOption(option, field, i))}
+                {options.map((option, i) => (
+                  <MultiSelectActiveOption
+                    key={i}
+                    option={option}
+                    field={field}
+                    onItemRemove={this.onMultiSelectItemRemove}
+                    onConnectionAttributeChange={this.onMultiSelectItemConnectionAttributeChange}
+                  />
+                ))}
               </MultiselectActiveOptionList>
             )
             : (

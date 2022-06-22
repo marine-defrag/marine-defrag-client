@@ -238,9 +238,14 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
         taxonomies: connectedTaxonomies,
         onCreateOption,
         contextIntl: intl,
-        connnectionAttributeOptions: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]
+        connectionAttributeOptions: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]
           ? {
-            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId],
+            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId].map(
+              (role) => ({
+                label: intl.formatMessage(appMessages.actorroles[role.value]),
+                ...role,
+              }),
+            ),
           }
           : null,
       });
@@ -619,7 +624,7 @@ function mapDispatchToProps(dispatch) {
       } else {
         saveData = saveData.setIn(['attributes', 'parent_id'], null);
       }
-      dispatch(save(saveData.toJS(), actiontype.get('id')));
+      dispatch(save(saveData.toJS()));
     },
     handleCancel: (typeId) => {
       dispatch(updatePath(`${ROUTES.ACTIONS}/${typeId}`), { replace: true });
