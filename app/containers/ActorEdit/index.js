@@ -37,7 +37,12 @@ import { hasNewError } from 'utils/entity-form';
 import { checkActorAttribute, checkActorRequired } from 'utils/entities';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES, ROUTES, API } from 'themes/config';
+import {
+  USER_ROLES,
+  ROUTES,
+  API,
+  ACTIONTYPE_ACTOR_ACTION_ROLES,
+} from 'themes/config';
 import appMessages from 'containers/App/messages';
 
 import {
@@ -218,12 +223,22 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
     );
 
     if (actionsByActiontype) {
-      const actionConnections = renderActionsByActiontypeControl(
-        actionsByActiontype,
-        connectedTaxonomies,
+      const actionConnections = renderActionsByActiontypeControl({
+        entitiesByActiontype: actionsByActiontype,
+        taxonomies: connectedTaxonomies,
         onCreateOption,
-        intl,
-      );
+        contextIntl: intl,
+        connectionAttributeOptionsForType: (actiontypeId) => ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId]
+          ? {
+            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId].map(
+              (role) => ({
+                label: intl.formatMessage(appMessages.actorroles[role.value]),
+                ...role,
+              }),
+            ),
+          }
+          : null,
+      });
       if (actionConnections) {
         groups.push(
           {
@@ -543,18 +558,22 @@ function mapDispatchToProps(dispatch, props) {
               connectionAttribute: ['associatedActionsByActiontype', actiontypeid.toString()],
               createConnectionKey: 'measure_id',
               createKey: 'actor_id',
+              connectionAttributeOptions: ['relationshiptype_id'],
             }))
             .reduce(
               (memo, deleteCreateLists) => {
                 const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
                 const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                const updates = memo.get('update').concat(deleteCreateLists.get('update'));
                 return memo
                   .set('delete', deletes)
-                  .set('create', creates);
+                  .set('create', creates)
+                  .set('update', updates);
               },
               fromJS({
                 delete: [],
                 create: [],
+                update: [],
               }),
             )
         );

@@ -282,12 +282,13 @@ export const renderAssociationsByActortypeControl = (
   })
   : null;
 
-export const renderActionsByActiontypeControl = (
+export const renderActionsByActiontypeControl = ({
   entitiesByActiontype,
   taxonomies,
   onCreateOption,
   contextIntl,
-) => entitiesByActiontype
+  connectionAttributeOptionsForType,
+}) => entitiesByActiontype
   ? entitiesByActiontype.reduce(
     (controls, entities, typeid) => controls.concat({
       id: `actions.${typeid}`,
@@ -299,6 +300,7 @@ export const renderActionsByActiontypeControl = (
       options: entityOptions(entities),
       advanced: true,
       selectAll: true,
+      connectionAttributeOptions: connectionAttributeOptionsForType && connectionAttributeOptionsForType(typeid),
       tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
       onCreate: onCreateOption
         ? () => onCreateOption({

@@ -5,6 +5,7 @@ import {
   FF_ACTIONTYPE,
   ACTIONTYPES_CONFIG,
   ACTORTYPES_CONFIG,
+  ACTIONTYPE_ACTOR_ACTION_ROLES,
 } from 'themes/config';
 
 import qe from 'utils/quasi-equals';
@@ -124,14 +125,33 @@ export const selectActionsWith = createSelector(
       }));
   }
 );
+
 export const selectActionsByType = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectActionsWith,
+  selectViewEntity,
+  selectActorActionsGroupedByActorAttributes,
   (
     ready,
-    actions,
+    actionsWithConnections,
+    viewEntity,
+    actorActionsFull,
   ) => {
     if (!ready) return Map();
+    const actions = actionsWithConnections && actionsWithConnections
+      .map((action) => {
+        const hasRelationshipRole = action
+          && ACTIONTYPE_ACTOR_ACTION_ROLES[action.getIn(['attributes', 'measuretype_id'])]
+          && ACTIONTYPE_ACTOR_ACTION_ROLES[action.getIn(['attributes', 'measuretype_id'])].length > 0;
+        if (hasRelationshipRole) {
+          const viewEntityActions = actorActionsFull.get(parseInt(viewEntity.get('id'), 10));
+          const actionConnection = viewEntityActions.find(
+            (connection) => qe(action.get('id'), connection.get('measure_id'))
+          );
+          return action.setIn(['relationshipRole', viewEntity.get('id')], actionConnection.get('relationshiptype_id'));
+        }
+        return action;
+      });
     return actions && actions
       .groupBy((r) => r.getIn(['attributes', 'measuretype_id']))
       .filter(
