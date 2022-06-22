@@ -282,6 +282,19 @@ export const prepareEntities = ({
                 sortValue: parseFloat(temp, 10),
               },
             };
+          case 'relationship':
+            temp = entity.get('relationshipRole')
+              && entity.getIn(['relationshipRole', col.actionId]);
+            if (!temp) {
+              temp = 0;
+            }
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: intl.formatMessage(appMessages.actorroles[temp]),
+              },
+            };
           case 'date':
             return {
               ...memoEntity,

@@ -537,7 +537,6 @@ export const getConnectionUpdatesFromFormData = ({
   );
 
   // new connections / added in formData
-  // TODO add attribute
   const createList = formConnections.reduce(
     (payloads, connection) => {
       const id = connection.get('value');
