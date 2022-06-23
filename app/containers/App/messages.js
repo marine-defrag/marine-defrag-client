@@ -809,7 +809,7 @@ export default defineMessages({
     },
     relationshiptype_id: {
       id: 'app.containers.App.attributes.relationshiptype_id',
-      defaultMessage: 'Relationship role',
+      defaultMessage: 'Role',
     },
     actortype_id: {
       id: 'app.containers.App.attributes.actortype_id',
