@@ -830,6 +830,7 @@ export const setActionConnections = ({
   action,
   actionConnections,
   actorActions,
+  actorActionsAttributes,
   actionActors,
   actionResources,
   categories,
@@ -868,6 +869,7 @@ export const setActionConnections = ({
   );
   return action
     .set('categories', entityCategories)
+    .set('actorsAttributes', actorActionsAttributes && actorActionsAttributes.get(parseInt(action.get('id'), 10)))
     .set('actorsByType', entityActorsByActortype)
     .set('targetsByType', entityTargetsByActortype)
     .set('resourcesByType', entityResourcesByResourcetype);

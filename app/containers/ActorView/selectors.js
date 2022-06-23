@@ -19,6 +19,7 @@ import {
   selectActorConnections,
   selectActions,
   selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByActionAttributes,
   selectActionActorsGroupedByAction,
   selectActorActionsGroupedByActor,
   selectActionActorsGroupedByActor,
@@ -98,6 +99,7 @@ export const selectActionsWith = createSelector(
   selectActionsAssociated,
   selectActionConnections,
   selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByActionAttributes,
   selectActionActorsGroupedByAction,
   selectActionResourcesGroupedByAction,
   selectCategories,
@@ -107,6 +109,7 @@ export const selectActionsWith = createSelector(
     actions,
     actionConnections,
     actorActions,
+    actorActionsAttributes,
     actionActors,
     actionResources,
     categories,
@@ -118,6 +121,7 @@ export const selectActionsWith = createSelector(
         action,
         actionConnections,
         actorActions,
+        actorActionsAttributes,
         actionActors,
         actionResources,
         categories,
@@ -135,7 +139,7 @@ export const selectActionsByType = createSelector(
     ready,
     actionsWithConnections,
     viewEntity,
-    actorActionsFull,
+    actorActionsAttributes,
   ) => {
     if (!ready) return Map();
     const actions = actionsWithConnections && actionsWithConnections
@@ -144,7 +148,7 @@ export const selectActionsByType = createSelector(
           && ACTIONTYPE_ACTOR_ACTION_ROLES[action.getIn(['attributes', 'measuretype_id'])]
           && ACTIONTYPE_ACTOR_ACTION_ROLES[action.getIn(['attributes', 'measuretype_id'])].length > 0;
         if (hasRelationshipRole) {
-          const viewEntityActions = actorActionsFull.get(parseInt(viewEntity.get('id'), 10));
+          const viewEntityActions = actorActionsAttributes.get(parseInt(viewEntity.get('id'), 10));
           const actionConnection = viewEntityActions.find(
             (connection) => qe(action.get('id'), connection.get('measure_id'))
           );
@@ -182,6 +186,7 @@ export const selectActionsAsTargetByType = createSelector(
   selectActionsAsTargetAssociated,
   selectActionConnections,
   selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByActionAttributes,
   selectActionActorsGroupedByAction,
   selectActionResourcesGroupedByAction,
   selectActionCategoriesGroupedByAction,
@@ -191,6 +196,7 @@ export const selectActionsAsTargetByType = createSelector(
     actions,
     actionConnections,
     actorActions,
+    actorActionsAttributes,
     actionActors,
     actionResources,
     actionCategories,
@@ -202,6 +208,7 @@ export const selectActionsAsTargetByType = createSelector(
         action,
         actionConnections,
         actorActions,
+        actorActionsAttributes,
         actionActors,
         actionResources,
         categories,
@@ -332,6 +339,7 @@ export const selectActionsAsMemberByActortype = createSelector(
   selectActorConnections,
   selectActionConnections,
   selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByActionAttributes,
   selectActionActorsGroupedByAction,
   selectActionResourcesGroupedByAction,
   selectCategories,
@@ -344,6 +352,7 @@ export const selectActionsAsMemberByActortype = createSelector(
     actorConnections,
     actionConnections,
     actorActionsByAction,
+    actorActionsByActionAttributes,
     actionActors,
     actionResources,
     categories,
@@ -366,6 +375,7 @@ export const selectActionsAsMemberByActortype = createSelector(
               actionCategories,
               actionConnections,
               actorActions: actorActionsByAction,
+              actorActionsAttributes: actorActionsByActionAttributes,
               actionActors,
               actionResources,
             })
@@ -391,6 +401,7 @@ export const selectActionsAsTargetAsMemberByActortype = createSelector(
   selectActorConnections,
   selectActionConnections,
   selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByActionAttributes,
   selectActionActorsGroupedByAction,
   selectActionResourcesGroupedByAction,
   selectCategories,
@@ -403,6 +414,7 @@ export const selectActionsAsTargetAsMemberByActortype = createSelector(
     actorConnections,
     actionConnections,
     actorActionsByAction,
+    actorActionsByActionAttributes,
     actionActors,
     actionResources,
     categories,
@@ -425,6 +437,7 @@ export const selectActionsAsTargetAsMemberByActortype = createSelector(
               actionCategories,
               actionConnections,
               actorActions: actorActionsByAction,
+              actorActionsAttributes: actorActionsByActionAttributes,
               actionActors,
               actionResources,
             })

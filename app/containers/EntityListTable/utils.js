@@ -6,7 +6,12 @@ import qe from 'utils/quasi-equals';
 import appMessage from 'utils/app-message';
 import { lowerCase } from 'utils/string';
 import appMessages from 'containers/App/messages';
-import { API, USER_ROLES } from 'themes/config';
+import {
+  API,
+  USER_ROLES,
+  ACTOR_ACTION_ROLES,
+  ACTIONTYPE_ACTOR_ACTION_ROLES,
+} from 'themes/config';
 
 export const prepareHeader = ({
   columns,
@@ -322,7 +327,29 @@ export const prepareEntities = ({
               },
             };
           case 'actors':
-            temp = entity.get('actors') || (entity.get('actorsByType') && entity.get('actorsByType').flatten());
+            if (
+              ACTIONTYPE_ACTOR_ACTION_ROLES[entity.getIn(['attributes', 'measuretype_id'])]
+              && ACTIONTYPE_ACTOR_ACTION_ROLES[entity.getIn(['attributes', 'measuretype_id'])].length > 0
+              && entity.get('actorsAttributes')
+            ) {
+              temp = entity.get('actorsAttributes')
+                .filter(
+                  (relationship) => {
+                    const roleId = relationship.get('relationshiptype_id');
+                    if (!roleId) return true;
+                    const role = Object.values(ACTOR_ACTION_ROLES).find(
+                      (r) => qe(r.value, roleId)
+                    );
+                    return typeof role.hideOnActionList === 'undefined'
+                      || role.hideOnActionList !== true;
+                  }
+                )
+                .map(
+                  (relationship) => relationship.get('actor_id')
+                );
+            } else {
+              temp = entity.get('actors') || (entity.get('actorsByType') && entity.get('actorsByType').flatten());
+            }
             relatedEntities = getRelatedEntities(temp, connections.get('actors'), col);
             return {
               ...memoEntity,

@@ -138,13 +138,15 @@ export const DEFAULT_TAXONOMY = '11';
 export const ACTOR_ACTION_ROLES = {
   NONE: {
     value: '0',
-    default: true,
+    hideOnActionList: true,
   },
   DONOR: {
     value: '1',
+    default: true,
   },
   PARTNER: {
     value: '2',
+    hideOnActionList: true,
   },
 };
 
