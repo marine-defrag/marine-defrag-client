@@ -12,9 +12,9 @@
 // General ********************
 export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
-const IS_DEV = true;
+const IS_DEV = false;
 
-export const version = '1.0.4';
+export const version = '1.0.5';
 
 export const ENDPOINTS = {
   API: (
