@@ -226,6 +226,12 @@ export function EntitiesTable({
                         column={col}
                       />
                     )}
+                    {col.type === 'relationship' && (
+                      <CellBodyPlain
+                        entity={entity[col.id]}
+                        column={col}
+                      />
+                    )}
                     {col.type === 'userrole' && (
                       <CellBodyPlain
                         entity={entity[col.id]}

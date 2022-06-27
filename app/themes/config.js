@@ -12,8 +12,9 @@
 // General ********************
 export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
-const IS_DEV = false;
-export const version = '1.0.4';
+const IS_DEV = true;
+
+export const version = '1.0.5';
 
 export const ENDPOINTS = {
   API: (
@@ -120,11 +121,6 @@ export const FF_ONLY_ACTORTYPES = [
   ACTORTYPES.POINT,
 ];
 
-export const ACTIONTYPE_DISCLAIMERS = [
-  ACTIONTYPES.INTL,
-  ACTIONTYPES.DONOR,
-];
-
 export const DEFAULT_ACTORTYPE = ACTORTYPES.COUNTRY;
 export const RESOURCETYPES = {
   REF: '1',
@@ -133,6 +129,29 @@ export const RESOURCETYPES = {
 };
 export const DEFAULT_RESOURCETYPE = RESOURCETYPES.REF;
 export const DEFAULT_TAXONOMY = '11';
+
+export const ACTOR_ACTION_ROLES = {
+  NONE: {
+    value: '0',
+    hideOnActionList: true,
+  },
+  DONOR: {
+    value: '1',
+    default: true,
+  },
+  PARTNER: {
+    value: '2',
+    hideOnActionList: true,
+  },
+};
+
+export const ACTIONTYPE_ACTOR_ACTION_ROLES = {
+  [ACTIONTYPES.DONOR]: [
+    ACTOR_ACTION_ROLES.NONE,
+    ACTOR_ACTION_ROLES.DONOR,
+    ACTOR_ACTION_ROLES.PARTNER,
+  ],
+};
 
 export const ACTIONTYPE_GROUPS = {
   // donor activities

@@ -10,7 +10,7 @@ import {
   selectActorsCategorised,
   selectActorTaxonomies,
   selectActortypes,
-  selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByActionAttributes,
   selectActionActorsGroupedByAction,
   selectActionCategoriesGroupedByAction,
   selectCategories,
@@ -25,6 +25,7 @@ import {
 
 import {
   entitiesSetAssociated,
+  entitiesSetAssociated_NEW,
   entitySetUser,
   prepareTaxonomiesAssociated,
   prepareTaxonomies,
@@ -127,7 +128,7 @@ export const selectActorsByActortype = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectViewEntity,
   selectActorsCategorised,
-  selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByActionAttributes,
   selectActortypes,
   (ready, action, actors, associations, actortypes) => {
     if (!action || !ready) return null;
@@ -147,10 +148,10 @@ export const selectActorsByActortype = createSelector(
           actor.getIn(['attributes', 'actortype_id']),
         )
       );
-      return entitiesSetAssociated(
+      return entitiesSetAssociated_NEW(
         filtered,
-        associations,
-        action.get('id'),
+        associations.get(parseInt(action.get('id'), 10)),
+        'actor_id'
       );
     });
   }

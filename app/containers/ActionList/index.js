@@ -29,7 +29,7 @@ import appMessages from 'containers/App/messages';
 import { checkActionAttribute } from 'utils/entities';
 import qe from 'utils/quasi-equals';
 
-import { ROUTES, FF_ACTIONTYPE, ACTIONTYPE_DISCLAIMERS } from 'themes/config';
+import { ROUTES, FF_ACTIONTYPE } from 'themes/config';
 
 import EntityList from 'containers/EntityList';
 import ActionsFactsOverview from 'containers/ActionsFactsOverview';
@@ -88,7 +88,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
       supTitle: intl.formatMessage(messages.pageTitle),
       actions: [],
       info: appMessages.actiontypes_info[typeId]
-        && ACTIONTYPE_DISCLAIMERS.indexOf(typeId) > -1
+        && intl.formatMessage(appMessages.actiontypes_info[typeId]).trim() !== ''
         ? {
           title: 'Please note',
           content: intl.formatMessage(appMessages.actiontypes_info[typeId]),

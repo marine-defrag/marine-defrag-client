@@ -97,7 +97,7 @@ export function IndicatorCountryMap({
       ? `${indicator.getIn(['attributes', 'title'])} (${indicator.getIn(['attributes', 'comment'])})`
       : indicator.getIn(['attributes', 'title']);
     const maxValue = countryData && countryData.reduce(
-      (max, feature) => Math.max(max, feature.values.indicator),
+      (max, feature) => feature.values.indicator ? Math.max(max, feature.values.indicator) : max,
       0,
     );
     return (
