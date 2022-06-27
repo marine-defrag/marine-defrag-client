@@ -811,6 +811,10 @@ export default defineMessages({
       id: 'app.containers.App.attributes.relationshiptype_id',
       defaultMessage: 'Role',
     },
+    value: {
+      id: 'app.containers.App.attributes.value',
+      defaultMessage: 'Value',
+    },
     actortype_id: {
       id: 'app.containers.App.attributes.actortype_id',
       defaultMessage: 'Actortype id',

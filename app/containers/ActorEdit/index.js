@@ -228,15 +228,19 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
         taxonomies: connectedTaxonomies,
         onCreateOption,
         contextIntl: intl,
-        connectionAttributeOptionsForType: (actiontypeId) => ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId]
-          ? {
-            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId].map(
-              (role) => ({
-                label: intl.formatMessage(appMessages.actorroles[role.value]),
-                ...role,
-              }),
-            ),
-          }
+        connectionAttributesForType: (actiontypeId) => ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId]
+          ? [
+            {
+              attribute: 'relationshiptype_id',
+              type: 'select',
+              options: ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId].map(
+                (role) => ({
+                  label: intl.formatMessage(appMessages.actorroles[role.value]),
+                  ...role,
+                }),
+              ),
+            },
+          ]
           : null,
       });
       if (actionConnections) {
@@ -558,7 +562,7 @@ function mapDispatchToProps(dispatch, props) {
               connectionAttribute: ['associatedActionsByActiontype', actiontypeid.toString()],
               createConnectionKey: 'measure_id',
               createKey: 'actor_id',
-              connectionAttributeOptions: ['relationshiptype_id'],
+              connectionAttributes: ['relationshiptype_id'],
             }))
             .reduce(
               (memo, deleteCreateLists) => {

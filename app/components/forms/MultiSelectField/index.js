@@ -140,14 +140,14 @@ class MultiSelectField extends React.Component { // eslint-disable-line react/pr
   );
 
   onMultiSelectItemConnectionAttributeChange =
-    (option, attribute, value) => this.props.handleUpdate && this.props.handleUpdate(
+    ({ option, attribute, value }) => this.props.handleUpdate && this.props.handleUpdate(
       this.props.fieldData.map(
         (d) => {
           if (option.get('value') === d.get('value')) {
             if (d.get('association')) {
-              return d.setIn(['association', attribute], value);
+              return d.setIn(['association', attribute.attribute], value);
             }
-            return d.set('association', Map({ [attribute]: value }));
+            return d.set('association', Map({ [attribute.attribute]: value }));
           }
           return d;
         }

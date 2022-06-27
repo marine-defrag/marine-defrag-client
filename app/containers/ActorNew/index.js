@@ -183,15 +183,19 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
         taxonomies: connectedTaxonomies,
         onCreateOption,
         contextIntl: intl,
-        connectionAttributeOptionsForType: (actiontypeId) => ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId]
-          ? {
-            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId].map(
-              (role) => ({
-                label: intl.formatMessage(appMessages.actorroles[role.value]),
-                ...role,
-              }),
-            ),
-          }
+        connectionAttributesForType: (actiontypeId) => ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId]
+          ? [
+            {
+              attribute: 'relationshiptype_id',
+              type: 'select',
+              options: ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId].map(
+                (role) => ({
+                  label: intl.formatMessage(appMessages.actorroles[role.value]),
+                  ...role,
+                }),
+              ),
+            },
+          ]
           : null,
       });
       if (actionConnections) {

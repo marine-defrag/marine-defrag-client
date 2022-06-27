@@ -153,7 +153,7 @@ export const renderActorsByActortypeControl = ({
   onCreateOption,
   contextIntl,
   connections,
-  connectionAttributeOptions,
+  connectionAttributes,
 }) => entitiesByActortype
   ? entitiesByActortype.reduce(
     (controls, entities, typeid) => controls.concat({
@@ -167,7 +167,7 @@ export const renderActorsByActortypeControl = ({
       advanced: true,
       selectAll: true,
       connections,
-      connectionAttributeOptions,
+      connectionAttributes,
       tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
       onCreate: onCreateOption
         ? () => onCreateOption({
@@ -287,7 +287,7 @@ export const renderActionsByActiontypeControl = ({
   taxonomies,
   onCreateOption,
   contextIntl,
-  connectionAttributeOptionsForType,
+  connectionAttributesForType,
 }) => entitiesByActiontype
   ? entitiesByActiontype.reduce(
     (controls, entities, typeid) => controls.concat({
@@ -300,7 +300,7 @@ export const renderActionsByActiontypeControl = ({
       options: entityOptions(entities),
       advanced: true,
       selectAll: true,
-      connectionAttributeOptions: connectionAttributeOptionsForType && connectionAttributeOptionsForType(typeid),
+      connectionAttributes: connectionAttributesForType && connectionAttributesForType(typeid),
       tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
       onCreate: onCreateOption
         ? () => onCreateOption({
@@ -500,7 +500,7 @@ export const getConnectionUpdatesFromFormData = ({
   connectionAttribute,
   createConnectionKey,
   createKey,
-  connectionAttributeOptions,
+  connectionAttributes,
 }) => {
   // console.log('formData', formData && formData.toJS())
   // // console.log(connections && connections.toJS())
@@ -554,14 +554,13 @@ export const getConnectionUpdatesFromFormData = ({
     },
     List(),
   );
-
-  const updateList = connectionAttributeOptions
+  const updateList = connectionAttributes
     ? formConnections.reduce(
       (payloads, connection) => {
         const id = connection.get('value');
         if (previousConnectionIds.has(id)) {
           const previousConnection = previousConnections.get(id);
-          const attributeChanges = connectionAttributeOptions.reduce(
+          const attributeChanges = connectionAttributes.reduce(
             (memo, attribute) => {
               const previousValue = previousConnection.getIn(['association', attribute]);
               const formValue = connection.getIn(['association', attribute]);

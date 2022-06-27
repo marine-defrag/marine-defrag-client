@@ -32,6 +32,7 @@ import {
   renderParentActionControl,
 } from 'utils/forms';
 import { getInfoField } from 'utils/fields';
+import qe from 'utils/quasi-equals';
 
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
 
@@ -40,7 +41,12 @@ import { hasNewError } from 'utils/entity-form';
 import { checkActionAttribute, checkActionRequired } from 'utils/entities';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES, ROUTES, ACTIONTYPE_ACTOR_ACTION_ROLES } from 'themes/config';
+import {
+  USER_ROLES,
+  ROUTES,
+  FF_ACTIONTYPE,
+  ACTIONTYPE_ACTOR_ACTION_ROLES,
+} from 'themes/config';
 
 import {
   loadEntitiesIfNeeded,
@@ -233,21 +239,38 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
       });
     }
     if (actorsByActortype) {
-      const actorConnections = renderActorsByActortypeControl({
-        entitiesByActortype: actorsByActortype,
-        taxonomies: connectedTaxonomies,
-        onCreateOption,
-        contextIntl: intl,
-        connectionAttributeOptions: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]
-          ? {
-            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId].map(
+      let connectionAttributes = [];
+      if (ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]) {
+        connectionAttributes = [
+          ...connectionAttributes,
+          {
+            attribute: 'relationshiptype_id',
+            type: 'select',
+            options: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId].map(
               (role) => ({
                 label: intl.formatMessage(appMessages.actorroles[role.value]),
                 ...role,
               }),
             ),
-          }
-          : null,
+          },
+        ];
+      }
+      // is indicator
+      if (qe(FF_ACTIONTYPE, typeId)) {
+        connectionAttributes = [
+          ...connectionAttributes,
+          {
+            attribute: 'value',
+            type: 'text',
+          },
+        ];
+      }
+      const actorConnections = renderActorsByActortypeControl({
+        entitiesByActortype: actorsByActortype,
+        taxonomies: connectedTaxonomies,
+        onCreateOption,
+        contextIntl: intl,
+        connectionAttributes,
       });
       if (actorConnections) {
         groups.push(

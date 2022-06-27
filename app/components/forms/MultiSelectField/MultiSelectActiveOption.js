@@ -21,6 +21,12 @@ const AttributeSelect = styled.select`
   color:#000;
   padding:5px;
 `;
+const AttributeInput = styled.input`
+  background:#ffffff;
+  border:1px solid #E0E1E2;
+  color:#000;
+  padding:5px;
+`;
 
 const Styled = styled(
   (p) => <Box direction="column" {...p} />
@@ -94,31 +100,51 @@ export function MultiSelectActiveOption({
           </Box>
         </Box>
       </Box>
-      {field.connectionAttributeOptions && (
+      {field.connectionAttributes && (
         <ConnectionAttributes>
-          {Object.keys(field.connectionAttributeOptions).map((attribute) => {
+          {field.connectionAttributes.map((attribute) => {
             const value = option.get('association')
-              ? option.getIn(['association', attribute])
+              ? option.getIn(['association', attribute.attribute])
               : 0;
+
             return (
-              <Box key={attribute} direction="row" align="center" gap="medium">
-                <Text size="small"><FormattedMessage {...appMessages.attributes[attribute]} /></Text>
+              <Box key={attribute.attribute} direction="row" align="center" gap="medium">
+                <Text size="small"><FormattedMessage {...appMessages.attributes[attribute.attribute]} /></Text>
                 <Box>
-                  <AttributeSelect
-                    onChange={(e) => {
-                      onConnectionAttributeChange(option, attribute, e.target.value);
-                    }}
-                    value={value || 0}
-                  >
-                    {field.connectionAttributeOptions[attribute].map((attributeOption, j) => (
-                      <option
-                        key={j}
-                        value={attributeOption.value}
-                      >
-                        {attributeOption.label || attributeOption.value}
-                      </option>
-                    ))}
-                  </AttributeSelect>
+                  {attribute.type === 'text' && (
+                    <AttributeInput
+                      type="text"
+                      onChange={(e) => {
+                        onConnectionAttributeChange({
+                          attribute,
+                          option,
+                          value: e.target.value,
+                        });
+                      }}
+                      value={value || ''}
+                    />
+                  )}
+                  {attribute.type === 'select' && (
+                    <AttributeSelect
+                      onChange={(e) => {
+                        onConnectionAttributeChange({
+                          attribute,
+                          option,
+                          value: e.target.value,
+                        });
+                      }}
+                      value={value || 0}
+                    >
+                      {attribute.options.map((attributeOption, j) => (
+                        <option
+                          key={j}
+                          value={attributeOption.value}
+                        >
+                          {attributeOption.label || attributeOption.value}
+                        </option>
+                      ))}
+                    </AttributeSelect>
+                  )}
                 </Box>
               </Box>
             );

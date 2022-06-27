@@ -39,6 +39,7 @@ import {
   getMetaField,
   getInfoField,
 } from 'utils/fields';
+import qe from 'utils/quasi-equals';
 
 import { checkActionAttribute, checkActionRequired } from 'utils/entities';
 
@@ -52,6 +53,7 @@ import {
   USER_ROLES,
   API,
   ROUTES,
+  FF_ACTIONTYPE,
   ACTIONTYPE_ACTOR_ACTION_ROLES,
 } from 'themes/config';
 
@@ -289,22 +291,39 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       });
     }
     if (actorsByActortype) {
+      let connectionAttributes = [];
+      if (ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]) {
+        connectionAttributes = [
+          ...connectionAttributes,
+          {
+            attribute: 'relationshiptype_id',
+            type: 'select',
+            options: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId].map(
+              (role) => ({
+                label: intl.formatMessage(appMessages.actorroles[role.value]),
+                ...role,
+              }),
+            ),
+          },
+        ];
+      }
+      // is indicator
+      if (qe(FF_ACTIONTYPE, typeId)) {
+        connectionAttributes = [
+          ...connectionAttributes,
+          {
+            attribute: 'value',
+            type: 'text',
+          },
+        ];
+      }
       const actorConnections = renderActorsByActortypeControl({
         entitiesByActortype: actorsByActortype,
         taxonomies: connectedTaxonomies,
         onCreateOption,
         contextIntl: intl,
         connections: entityActorConnections,
-        connectionAttributeOptions: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]
-          ? {
-            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId].map(
-              (role) => ({
-                label: intl.formatMessage(appMessages.actorroles[role.value]),
-                ...role,
-              }),
-            ),
-          }
-          : null,
+        connectionAttributes,
       });
       if (actorConnections) {
         groups.push(
@@ -626,7 +645,7 @@ function mapDispatchToProps(dispatch, props) {
               connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
               createConnectionKey: 'actor_id',
               createKey: 'measure_id',
-              connectionAttributeOptions: ['relationshiptype_id'],
+              connectionAttributes: ['relationshiptype_id', 'value'],
             }))
             .reduce(
               (memo, deleteCreateLists) => {
