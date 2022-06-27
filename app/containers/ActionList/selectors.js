@@ -19,6 +19,7 @@ import {
   selectActorCategoriesGroupedByActor,
   selectActionCategoriesGroupedByAction,
   selectActorActionsGroupedByAction, // active
+  selectActorActionsGroupedByActionAttributes, // w/ all attributes not just id
   selectActorActionsMembersGroupedByAction,
   selectActionActorsGroupedByAction, // passive, as targets
   selectActionActorsMembersGroupedByAction, // passive, as targets
@@ -174,6 +175,7 @@ const selectActionsWithConnections = createSelector(
   selectActionsWithCategories,
   selectConnections,
   selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByActionAttributes,
   selectActorActionsMembersGroupedByAction,
   selectActorActionsAssociationsGroupedByAction,
   selectActionActorsGroupedByAction,
@@ -186,6 +188,7 @@ const selectActionsWithConnections = createSelector(
     entities,
     connections,
     actorConnectionsGrouped,
+    actorConnectionsGroupedFull,
     actorMemberConnectionsGrouped,
     actorAssociationConnectionsGrouped,
     targetConnectionsGrouped,
@@ -194,13 +197,13 @@ const selectActionsWithConnections = createSelector(
     resourceAssociationsGrouped,
     includeMembers,
   ) => {
-    // console.log(actorConnectionsGrouped && actorConnectionsGrouped.toJS())
     // console.log(actorAssociationConnectionsGrouped && actorAssociationConnectionsGrouped.toJS())
     if (ready && (connections.get(API.ACTORS) || connections.get(API.RESOURCES))) {
       return entities.map(
         (entity) => {
           // actors
           const entityActors = actorConnectionsGrouped.get(parseInt(entity.get('id'), 10));
+          const entityActorsAttributes = actorConnectionsGroupedFull.get(parseInt(entity.get('id'), 10));
           const entityActorsByActortype = entityActors && entityActors.filter(
             (actorId) => connections.getIn([
               API.ACTORS,
@@ -316,6 +319,7 @@ const selectActionsWithConnections = createSelector(
           return entity
             // directly connected actors
             .set('actors', entityActors)
+            .set('actorsAttributes', entityActorsAttributes)
             .set('actorsByType', entityActorsByActortype)
             // indirectly connected actors (member of a directly connected group)
             .set('actorsMembers', entityActorsMembers)

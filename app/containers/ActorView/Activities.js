@@ -16,7 +16,12 @@ import {
 } from 'utils/fields';
 import qe from 'utils/quasi-equals';
 
-import { ROUTES, ACTIONTYPES, ACTIONTYPES_CONFIG } from 'themes/config';
+import {
+  ROUTES,
+  ACTIONTYPES,
+  ACTIONTYPES_CONFIG,
+  ACTIONTYPE_ACTOR_ACTION_ROLES,
+} from 'themes/config';
 import FieldGroup from 'components/fields/FieldGroup';
 import ButtonPill from 'components/buttons/ButtonPill';
 
@@ -29,12 +34,18 @@ const TypeButton = styled((p) => <ButtonPill {...p} />)`
 `;
 // max-width: ${({ listItems }) => 100 / listItems}%;
 
-const getActiontypeColumns = (typeid, viewSubject) => {
+const getActiontypeColumns = (viewEntity, typeid, viewSubject, intl) => {
+  let columns = [{
+    id: 'main',
+    type: 'main',
+    sort: 'title',
+    attributes: ['title'],
+  }];
   if (
     ACTIONTYPES_CONFIG[parseInt(typeid, 10)]
     && ACTIONTYPES_CONFIG[parseInt(typeid, 10)].columns
   ) {
-    return ACTIONTYPES_CONFIG[parseInt(typeid, 10)].columns.filter(
+    columns = ACTIONTYPES_CONFIG[parseInt(typeid, 10)].columns.filter(
       (col) => {
         if (typeof col.showOnSingle !== 'undefined') {
           if (Array.isArray(col.showOnSingle)) {
@@ -46,12 +57,23 @@ const getActiontypeColumns = (typeid, viewSubject) => {
       }
     );
   }
-  return [{
-    id: 'main',
-    type: 'main',
-    sort: 'title',
-    attributes: ['title'],
-  }];
+  // relationship type
+  if (
+    viewSubject === 'actors'
+    && ACTIONTYPE_ACTOR_ACTION_ROLES[typeid]
+    && ACTIONTYPE_ACTOR_ACTION_ROLES[typeid].length > 0
+  ) {
+    columns = [
+      ...columns,
+      {
+        id: 'relationshiptype_id',
+        type: 'relationship',
+        actionId: viewEntity.get('id'),
+        title: intl.formatMessage(appMessages.attributes.relationshiptype_id),
+      },
+    ];
+  }
+  return columns;
 };
 
 export function Activities(props) {
@@ -279,7 +301,12 @@ export function Activities(props) {
                   onEntityClick,
                   connections: actionConnections,
                   typeid: activeActiontypeId,
-                  columns: getActiontypeColumns(activeActiontypeId, viewSubject),
+                  columns: getActiontypeColumns(
+                    viewEntity,
+                    activeActiontypeId,
+                    viewSubject,
+                    intl,
+                  ),
                 }),
               ],
             }}
@@ -303,7 +330,12 @@ export function Activities(props) {
                         onEntityClick,
                         connections: actionConnections,
                         typeid: activeActiontypeId,
-                        columns: getActiontypeColumns(activeActiontypeId, viewSubject),
+                        columns: getActiontypeColumns(
+                          viewEntity,
+                          activeActiontypeId,
+                          viewSubject,
+                          intl,
+                        ),
                       }),
                     ],
                   }}

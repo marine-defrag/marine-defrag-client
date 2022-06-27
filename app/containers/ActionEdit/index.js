@@ -48,7 +48,12 @@ import { hasNewError } from 'utils/entity-form';
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { USER_ROLES, API, ROUTES } from 'themes/config';
+import {
+  USER_ROLES,
+  API,
+  ROUTES,
+  ACTIONTYPE_ACTOR_ACTION_ROLES,
+} from 'themes/config';
 
 import {
   loadEntitiesIfNeeded,
@@ -65,6 +70,7 @@ import {
   selectReady,
   selectReadyForAuthCheck,
   selectIsUserAdmin,
+  selectActorActionsForAction,
 } from 'containers/App/selectors';
 
 import Messages from 'components/Messages';
@@ -205,7 +211,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     return groups;
   };
 
-  getBodyMainFields = (
+  getBodyMainFields = ({
     entity,
     connectedTaxonomies,
     actorsByActortype,
@@ -213,7 +219,8 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     resourcesByResourcetype,
     parentOptions,
     onCreateOption,
-  ) => {
+    entityActorConnections,
+  }) => {
     const { intl } = this.context;
     const typeId = entity.getIn(['attributes', 'measuretype_id']);
 
@@ -282,12 +289,23 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       });
     }
     if (actorsByActortype) {
-      const actorConnections = renderActorsByActortypeControl(
-        actorsByActortype,
-        connectedTaxonomies,
+      const actorConnections = renderActorsByActortypeControl({
+        entitiesByActortype: actorsByActortype,
+        taxonomies: connectedTaxonomies,
         onCreateOption,
-        intl,
-      );
+        contextIntl: intl,
+        connections: entityActorConnections,
+        connectionAttributeOptions: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId]
+          ? {
+            relationshiptype_id: ACTIONTYPE_ACTOR_ACTION_ROLES[typeId].map(
+              (role) => ({
+                label: intl.formatMessage(appMessages.actorroles[role.value]),
+                ...role,
+              }),
+            ),
+          }
+          : null,
+      });
       if (actorConnections) {
         groups.push(
           {
@@ -394,6 +412,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       resourcesByResourcetype,
       onCreateOption,
       parentOptions,
+      entityActorConnections,
     } = this.props;
     const { intl } = this.context;
     // const reference = this.props.params.id;
@@ -491,15 +510,16 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
                     ),
                   },
                   body: {
-                    main: this.getBodyMainFields(
-                      viewEntity,
+                    main: this.getBodyMainFields({
+                      entity: viewEntity,
                       connectedTaxonomies,
                       actorsByActortype,
                       targetsByActortype,
                       resourcesByResourcetype,
                       parentOptions,
                       onCreateOption,
-                    ),
+                      entityActorConnections,
+                    }),
                     aside: this.getBodyAsideFields(viewEntity),
                   },
                 }}
@@ -541,6 +561,7 @@ ActionEdit.propTypes = {
   onCreateOption: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
+  entityActorConnections: PropTypes.object,
 };
 
 ActionEdit.contextTypes = {
@@ -559,6 +580,7 @@ const mapStateToProps = (state, props) => ({
   targetsByActortype: selectTargetsByActortype(state, props.params.id),
   resourcesByResourcetype: selectResourcesByResourcetype(state, props.params.id),
   parentOptions: selectParentOptions(state, props.params.id),
+  entityActorConnections: selectActorActionsForAction(state, props.params.id),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -604,18 +626,22 @@ function mapDispatchToProps(dispatch, props) {
               connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
               createConnectionKey: 'actor_id',
               createKey: 'measure_id',
+              connectionAttributeOptions: ['relationshiptype_id'],
             }))
             .reduce(
               (memo, deleteCreateLists) => {
                 const deletes = memo.get('delete').concat(deleteCreateLists.get('delete'));
                 const creates = memo.get('create').concat(deleteCreateLists.get('create'));
+                const updates = memo.get('update').concat(deleteCreateLists.get('update'));
                 return memo
                   .set('delete', deletes)
-                  .set('create', creates);
+                  .set('create', creates)
+                  .set('update', updates);
               },
               fromJS({
                 delete: [],
                 create: [],
+                update: [],
               }),
             )
         );
@@ -685,6 +711,7 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(updatePath(`${ROUTES.ACTION}/${props.params.id}`, { replace: true }));
     },
     handleUpdate: (formData) => {
+      // console.log(formData && formData.toJS())
       dispatch(updateEntityForm(formData));
     },
     handleDelete: () => {

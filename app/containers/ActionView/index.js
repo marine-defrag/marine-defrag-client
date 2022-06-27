@@ -50,6 +50,7 @@ import {
   ACTORTYPES_CONFIG,
   ACTORTYPES,
   RESOURCE_FIELDS,
+  ACTIONTYPE_ACTOR_ACTION_ROLES,
 } from 'themes/config';
 
 import Loading from 'components/Loading';
@@ -98,7 +99,13 @@ const SubjectButton = styled((p) => <Button plain {...p} />)`
   background: none;
 `;
 
-const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
+const getActortypeColumns = (
+  actortypeId,
+  isIndicator,
+  isActive,
+  viewEntity,
+  intl,
+) => {
   let columns = [{
     id: 'main',
     type: 'main',
@@ -106,7 +113,7 @@ const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
     attributes: ['code', 'title'],
     isIndicator,
   }];
-  if (qe(typeid, ACTORTYPES.COUNTRY)) {
+  if (qe(actortypeId, ACTORTYPES.COUNTRY)) {
     columns = [
       ...columns,
       {
@@ -145,12 +152,29 @@ const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
     ];
   }
   if (
-    ACTORTYPES_CONFIG[parseInt(typeid, 10)]
-    && ACTORTYPES_CONFIG[parseInt(typeid, 10)].columns
+    ACTORTYPES_CONFIG[parseInt(actortypeId, 10)]
+    && ACTORTYPES_CONFIG[parseInt(actortypeId, 10)].columns
   ) {
     columns = [
       ...columns,
-      ...ACTORTYPES_CONFIG[parseInt(typeid, 10)].columns,
+      ...ACTORTYPES_CONFIG[parseInt(actortypeId, 10)].columns,
+    ];
+  }
+
+  // relationship type
+  if (
+    isActive
+    && ACTIONTYPE_ACTOR_ACTION_ROLES[viewEntity.getIn(['attributes', 'measuretype_id'])]
+    && ACTIONTYPE_ACTOR_ACTION_ROLES[viewEntity.getIn(['attributes', 'measuretype_id'])].length > 0
+  ) {
+    columns = [
+      ...columns,
+      {
+        id: 'relationshiptype_id',
+        type: 'relationship',
+        actionId: viewEntity.get('id'),
+        title: intl.formatMessage(appMessages.attributes.relationshiptype_id),
+      },
     ];
   }
   return columns;
@@ -439,7 +463,13 @@ export function ActionView(props) {
                                   onEntityClick,
                                   connections: actorConnections,
                                   typeid,
-                                  columns: getActortypeColumns(typeid, isIndicator, viewEntity),
+                                  columns: getActortypeColumns(
+                                    typeid,
+                                    isIndicator,
+                                    viewSubject === 'actors',
+                                    viewEntity,
+                                    intl,
+                                  ),
                                   isIndicator,
                                   sortBy: isIndicator ? 'indicator' : null,
                                   sortOrder: isIndicator ? 'desc' : null,

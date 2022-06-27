@@ -1,6 +1,12 @@
 import { createSelector } from 'reselect';
 import { Map } from 'immutable';
-import { API, FF_ACTIONTYPE, ACTORTYPES_CONFIG } from 'themes/config';
+import {
+  API,
+  FF_ACTIONTYPE,
+  ACTORTYPES_CONFIG,
+  ACTIONTYPE_ACTOR_ACTION_ROLES,
+} from 'themes/config';
+
 import {
   selectReady,
   selectEntity,
@@ -168,22 +174,30 @@ export const selectActorsByType = createSelector(
         memberships,
         associations,
       }));
-    if (viewEntity && qe(viewEntity.getIn(['attributes', 'measuretype_id']), FF_ACTIONTYPE)) {
+    const isIndicator = viewEntity && qe(viewEntity.getIn(['attributes', 'measuretype_id']), FF_ACTIONTYPE);
+    const hasRelationshipRole = viewEntity
+      && ACTIONTYPE_ACTOR_ACTION_ROLES[viewEntity.getIn(['attributes', 'measuretype_id'])]
+      && ACTIONTYPE_ACTOR_ACTION_ROLES[viewEntity.getIn(['attributes', 'measuretype_id'])].length > 0;
+    // console.log('hasRelationshipRole', hasRelationshipRole)
+    if (isIndicator || hasRelationshipRole) {
       const viewEntityActors = actorActionsByActionFull.get(parseInt(viewEntity.get('id'), 10));
       if (viewEntityActors) {
         actorsWithConnections = actorsWithConnections.map(
           (actor) => {
+            let actorX = actor;
             // console.log(actor && actor.toJS())
             const actorConnection = viewEntityActors.find(
               (connection) => qe(actor.get('id'), connection.get('actor_id'))
             );
-            return actorConnection
-              ? actor.setIn([
-                'actionValues',
-                viewEntity.get('id'),
-              ],
-              actorConnection.get('value'))
-              : actor;
+            if (actorConnection) {
+              if (isIndicator) {
+                actorX = actorX.setIn(['actionValues', viewEntity.get('id')], actorConnection.get('value'));
+              }
+              if (hasRelationshipRole) {
+                actorX = actorX.setIn(['relationshipRole', viewEntity.get('id')], actorConnection.get('relationshiptype_id'));
+              }
+            }
+            return actorX;
           }
         );
       }

@@ -16,6 +16,20 @@ export default defineMessages({
       defaultMessage: 'Samoa\'s home of human rights implementation',
     },
   },
+  actorroles: {
+    0: {
+      id: 'app.containers.App.actorroles.0',
+      defaultMessage: 'No role assigned',
+    },
+    1: {
+      id: 'app.containers.App.actorroles.1',
+      defaultMessage: 'Donor',
+    },
+    2: {
+      id: 'app.containers.App.actorroles.2',
+      defaultMessage: 'Implementing partner',
+    },
+  },
   actortypes: {
     single: {
       id: 'app.containers.App.actortypes.single',
@@ -792,6 +806,10 @@ export default defineMessages({
     id: {
       id: 'app.containers.App.attributes.id',
       defaultMessage: 'ID',
+    },
+    relationshiptype_id: {
+      id: 'app.containers.App.attributes.relationshiptype_id',
+      defaultMessage: 'Role',
     },
     actortype_id: {
       id: 'app.containers.App.attributes.actortype_id',
