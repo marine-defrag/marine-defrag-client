@@ -458,7 +458,11 @@ export function ActionView(props) {
                             fields: actortypesForSubject.reduce(
                               (memo, actors, typeid) => memo.concat([
                                 getActorConnectionField({
-                                  actors,
+                                  actors: isIndicator
+                                    ? actors.filter(
+                                      (actor) => !!actor.getIn(['actionValues', viewEntity.get('id')])
+                                    )
+                                    : actors,
                                   taxonomies,
                                   onEntityClick,
                                   connections: actorConnections,
