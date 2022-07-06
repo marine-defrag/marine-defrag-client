@@ -444,17 +444,20 @@ export function MapContainer({
     if (locationData && locationOverlayGroupRef.current && locationOverlayGroupRef.current.getLayers()) {
       const layerGroup = locationOverlayGroupRef.current.getLayers()[0];
       const layer = layerGroup && layerGroup.getLayers()[0];
-      if (tooltip && layer) {
-        const features = layer && layer.getLayers() && layer.getLayers().filter(
-          (f) => qe(f.feature.id, tooltip.feature.id)
-        );
-        const feature = features && features[0];
-        feature.bringToFront();
-        feature.setStyle({ weight: 1.5 });
-      } else if (layer) {
-        layer.getLayers().forEach(
-          (feature) => feature.setStyle({ weight: 0.5 })
-        );
+      if (layer) {
+        if (tooltip && tooltip.features && tooltip.features.length > 0) {
+          const tooltipFeatureIds = tooltip.features.map((f) => f.id);
+          const features = layer && layer.getLayers() && layer.getLayers().filter(
+            (f) => tooltipFeatureIds.indexOf(f.feature.id) > -1
+          );
+          const feature = features && features[0];
+          feature.bringToFront();
+          feature.setStyle({ weight: 1.5 });
+        } else {
+          layer.getLayers().forEach(
+            (feature) => feature.setStyle({ weight: 0.5 })
+          );
+        }
       }
     }
   }, [tooltip, mapSubject, includeActorMembers, includeTargetMembers]);
