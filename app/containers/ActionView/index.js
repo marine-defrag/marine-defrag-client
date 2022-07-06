@@ -431,7 +431,7 @@ export function ActionView(props) {
                         <IndicatorCountryMap
                           countries={actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10))}
                           mapSubject="actors"
-                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          onCountryClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
                           indicator={viewEntity}
                         />
                       )}

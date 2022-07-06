@@ -238,12 +238,10 @@ export function EntitiesMap({
               id: country.get('id'),
               attributes: country.get('attributes').toJS(),
               tooltip: {
+                id: country.get('id'),
                 title: country.getIn(['attributes', 'title']),
                 content: (
-                  <TooltipContent
-                    stats={stats}
-                    isCount
-                  />
+                  <TooltipContent stats={stats} isCount />
                 ),
               },
               values: {
@@ -379,6 +377,7 @@ export function EntitiesMap({
               id: country.get('id'),
               attributes: country.get('attributes').toJS(),
               tooltip: {
+                id: country.get('id'),
                 title: country.getIn(['attributes', 'title']),
                 content: (
                   <TooltipContent
@@ -581,6 +580,7 @@ export function EntitiesMap({
             id: country.get('id'),
             attributes: country.get('attributes').toJS(),
             tooltip: {
+              id: country.get('id'),
               title: country.getIn(['attributes', 'title']),
               content: (
                 <TooltipContent

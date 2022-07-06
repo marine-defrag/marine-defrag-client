@@ -24,7 +24,7 @@ import NumberField from 'components/fields/NumberField';
 
 import { ROUTES } from 'themes/config';
 
-import messages from './messages';
+import appMessages from 'containers/App/messages';
 
 const ResourceButton = styled((p) => <Button plain {...p} />)``;
 const Group = styled(
@@ -135,7 +135,7 @@ export function CountryFacts(props) {
                                 unit: indicator.getIn(['attributes', 'comment']),
                                 value,
                                 digits,
-                                showEmpty: messages.noIndicatorValue,
+                                showEmpty: appMessages.labels.noIndicatorValue,
                                 titleLink: {
                                   href: path,
                                   onClick: (evt) => {

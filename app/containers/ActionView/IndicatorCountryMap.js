@@ -37,7 +37,7 @@ const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
 export function IndicatorCountryMap({
   countries,
   mapSubject,
-  onEntityClick,
+  onCountryClick,
   indicator,
   // intl,
 }) {
@@ -60,7 +60,6 @@ export function IndicatorCountryMap({
             {
               values: [
                 {
-                  label: indicator.getIn(['attributes', 'title']),
                   unit: indicator.getIn(['attributes', 'comment']),
                   value,
                 },
@@ -74,12 +73,9 @@ export function IndicatorCountryMap({
               id: country.get('id'),
               attributes: country.get('attributes').toJS(),
               tooltip: {
+                id: country.get('id'),
                 title: country.getIn(['attributes', 'title']),
-                content: (
-                  <TooltipContent
-                    stats={stats}
-                  />
-                ),
+                content: <TooltipContent stats={stats} />,
               },
               values: {
                 indicator: parseFloat(value, 10),
@@ -110,7 +106,7 @@ export function IndicatorCountryMap({
             countryData={countryData}
             countryFeatures={countriesJSON.features}
             indicator="indicator"
-            onCountryClick={(id) => onEntityClick(id)}
+            onCountryClick={(id) => onCountryClick(id)}
             maxValue={maxValue}
             mapSubject={mapSubject}
             fitBounds
@@ -139,7 +135,7 @@ export function IndicatorCountryMap({
 IndicatorCountryMap.propTypes = {
   indicator: PropTypes.instanceOf(Map), // the action
   countries: PropTypes.instanceOf(Map), // actors by actortype for current action
-  onEntityClick: PropTypes.func,
+  onCountryClick: PropTypes.func,
   mapSubject: PropTypes.string,
 };
 

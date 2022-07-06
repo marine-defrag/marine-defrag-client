@@ -116,6 +116,7 @@ export function ActionMap({
             id: country.get('id'),
             attributes: country.get('attributes').toJS(),
             tooltip: {
+              id: country.get('id'),
               title: country.getIn(['attributes', 'title']),
             },
             values: {

@@ -73,6 +73,7 @@ export function IndicatorLocationMap({
               id: location.get('id'),
               attributes: location.get('attributes').toJS(),
               tooltip: {
+                id: location.get('id'),
                 title: location.getIn(['attributes', 'title']),
                 content: (
                   <TooltipContent
