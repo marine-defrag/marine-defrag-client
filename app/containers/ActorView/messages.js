@@ -18,4 +18,8 @@ export default defineMessages({
     id: 'app.containers.ActorView.notFound',
     defaultMessage: 'Sorry no actor found',
   },
+  noIndicatorValue: {
+    id: 'app.containers.ActorView.noIndicatorValue',
+    defaultMessage: 'No data available',
+  },
 });
