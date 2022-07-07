@@ -413,7 +413,7 @@ export function ActorActivitiesMap({
           countryData={countryData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
-          onCountryClick={(id) => onEntityClick(id)}
+          onActorClick={(id) => onEntityClick(id)}
           maxValue={maxValue}
           includeActorMembers={includeActorMembers}
           includeTargetMembers={includeTargetMembers}

@@ -59,7 +59,6 @@ export function IndicatorLocationMap({
             {
               values: [
                 {
-                  label: indicator.getIn(['attributes', 'title']),
                   unit: indicator.getIn(['attributes', 'comment']),
                   value,
                 },
@@ -76,9 +75,7 @@ export function IndicatorLocationMap({
                 id: location.get('id'),
                 title: location.getIn(['attributes', 'title']),
                 content: (
-                  <TooltipContent
-                    stats={stats}
-                  />
+                  <TooltipContent stats={stats} />
                 ),
               },
               values: {

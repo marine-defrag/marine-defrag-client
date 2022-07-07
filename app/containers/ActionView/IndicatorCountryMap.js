@@ -106,7 +106,7 @@ export function IndicatorCountryMap({
             countryData={countryData}
             countryFeatures={countriesJSON.features}
             indicator="indicator"
-            onCountryClick={(id) => onCountryClick(id)}
+            onActorClick={(id) => onCountryClick(id)}
             maxValue={maxValue}
             mapSubject={mapSubject}
             fitBounds

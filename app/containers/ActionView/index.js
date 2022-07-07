@@ -422,7 +422,7 @@ export function ActionView(props) {
                         <ActionMap
                           entities={actortypesForSubject}
                           mapSubject={viewSubject}
-                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
                           hasMemberOption={hasMemberOption}
                           typeId={typeId}
                         />

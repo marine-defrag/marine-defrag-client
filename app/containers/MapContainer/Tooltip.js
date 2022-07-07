@@ -82,6 +82,7 @@ const Tooltip = ({
   onClose,
   mapRef,
   onFeatureClick,
+  isLocationData,
 }) => (
   <Root position={position}>
     <Anchor dirLeft={direction && direction.x === 'left'} xy={{ x: 0, y: 0 }}>
@@ -120,7 +121,7 @@ const Tooltip = ({
                     }}
                   >
                     <Box direction="row" align="center">
-                      <Text size="small">Country profile</Text>
+                      <Text size="small">{isLocationData ? 'Location details' : 'Country details'}</Text>
                       <FormNext size="xsmall" style={{ stroke: 'inherit' }} />
                     </Box>
                   </CountryButton>
@@ -135,6 +136,7 @@ const Tooltip = ({
 );
 
 Tooltip.propTypes = {
+  isLocationData: PropTypes.bool,
   position: PropTypes.object,
   direction: PropTypes.object, // x, y
   mapRef: PropTypes.object,

@@ -626,7 +626,7 @@ export function EntitiesMap({
         countryFeatures={countriesJSON.features}
         countryData={countryData}
         indicator={indicator}
-        onCountryClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+        onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
         maxValue={maxValue}
         includeActorMembers={includeActorMembers}
         includeTargetMembers={includeTargetMembers}

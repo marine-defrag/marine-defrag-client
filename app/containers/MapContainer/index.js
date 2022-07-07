@@ -95,7 +95,7 @@ export function MapContainer({
   countryData,
   locationData,
   indicator,
-  onCountryClick,
+  onActorClick,
   maxValue,
   includeActorMembers,
   includeTargetMembers,
@@ -495,11 +495,12 @@ export function MapContainer({
       <Map id={mapId} ref={ref} styleType={styleType} />
       {tooltip && tooltip.features && tooltip.features.length > 0 && (
         <Tooltip
+          isLocationData={!countryData && !!locationData}
           mapRef={ref}
           position={null}
           direction={tooltip.direction}
           features={tooltip.features.map((f) => f.tooltip)}
-          onFeatureClick={(id) => onCountryClick(id)}
+          onFeatureClick={onActorClick ? (id) => onActorClick(id) : null}
           onClose={(id) => setTooltip({
             ...tooltip,
             features: tooltip.features.reduce(
@@ -518,7 +519,7 @@ MapContainer.propTypes = {
   countryData: PropTypes.array, // country data overlay
   locationData: PropTypes.array, // location data overlay
   indicator: PropTypes.string,
-  onCountryClick: PropTypes.func,
+  onActorClick: PropTypes.func,
   maxValue: PropTypes.number,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
