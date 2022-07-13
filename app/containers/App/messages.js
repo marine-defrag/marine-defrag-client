@@ -565,6 +565,10 @@ export default defineMessages({
       id: 'app.containers.App.labels.groupedByTaxonomy',
       defaultMessage: ' (by {tax})',
     },
+    noIndicatorValue: {
+      id: 'app.containers.App.labels.noIndicatorValue',
+      defaultMessage: 'No data available',
+    },
     smart: {
       met: {
         id: 'app.containers.App.labels.smart.met',

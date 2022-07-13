@@ -104,7 +104,7 @@ export function Members(props) {
                 countryData={countryData}
                 countryFeatures={countriesJSON.features}
                 styleType="members"
-                onCountryClick={(id) => onEntityClick(id)}
+                onActorClick={(id) => onEntityClick(id)}
                 fitBounds
                 projection="gall-peters"
               />
