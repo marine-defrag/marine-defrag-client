@@ -83,60 +83,57 @@ const Tooltip = ({
   mapRef,
   onFeatureClick,
   isLocationData,
-}) => {
-  console.log(features);
-  return (
-    <Root position={position}>
-      <Anchor dirLeft={direction && direction.x === 'left'} xy={{ x: 0, y: 0 }}>
-        <Main
-          dirLeft={direction && direction.x === 'left'}
-          h={mapRef && mapRef.current ? mapRef.current.clientHeight : 300}
-        >
-          <Box>
-            {features.map((feature, i) => (
-              <Feature key={i}>
-                <Box direction="row" justify="between" align="center" margin={{ bottom: 'xsmall' }}>
-                  <Box>
-                    <TTTitle>{feature.title}</TTTitle>
-                  </Box>
-                  <Button
-                    plain
-                    icon={<FormClose size="small" />}
-                    onClick={() => onClose(feature.id)}
-                  />
+}) => (
+  <Root position={position}>
+    <Anchor dirLeft={direction && direction.x === 'left'} xy={{ x: 0, y: 0 }}>
+      <Main
+        dirLeft={direction && direction.x === 'left'}
+        h={mapRef && mapRef.current ? mapRef.current.clientHeight : 300}
+      >
+        <Box>
+          {features.map((feature, i) => (
+            <Feature key={i}>
+              <Box direction="row" justify="between" align="center" margin={{ bottom: 'xsmall' }}>
+                <Box>
+                  <TTTitle>{feature.title}</TTTitle>
                 </Box>
-                {feature.content && (
-                  <TTContentWrap>
-                    {feature.content}
-                  </TTContentWrap>
-                )}
-                {onFeatureClick && feature.id && (
-                  <ButtonWrap>
-                    <CountryButton
-                      as="a"
-                      plain
-                      href={`${ROUTES.ACTOR}/${feature.id}`}
-                      onClick={(evt) => {
-                        if (evt && evt.preventDefault) evt.preventDefault();
-                        if (evt && evt.stopPropagation) evt.stopPropagation();
-                        onFeatureClick(feature.id);
-                      }}
-                    >
-                      <Box direction="row" align="center">
-                        <Text size="small">{isLocationData ? 'Location details' : 'Country details'}</Text>
-                        <FormNext size="xsmall" style={{ stroke: 'inherit' }} />
-                      </Box>
-                    </CountryButton>
-                  </ButtonWrap>
-                )}
-              </Feature>
-            ))}
-          </Box>
-        </Main>
-      </Anchor>
-    </Root>
-  );
-};
+                <Button
+                  plain
+                  icon={<FormClose size="small" />}
+                  onClick={() => onClose(feature.id)}
+                />
+              </Box>
+              {feature.content && (
+                <TTContentWrap>
+                  {feature.content}
+                </TTContentWrap>
+              )}
+              {onFeatureClick && feature.id && (
+                <ButtonWrap>
+                  <CountryButton
+                    as="a"
+                    plain
+                    href={`${ROUTES.ACTOR}/${feature.id}`}
+                    onClick={(evt) => {
+                      if (evt && evt.preventDefault) evt.preventDefault();
+                      if (evt && evt.stopPropagation) evt.stopPropagation();
+                      onFeatureClick(feature.id);
+                    }}
+                  >
+                    <Box direction="row" align="center">
+                      <Text size="small">{isLocationData ? 'Location details' : 'Country details'}</Text>
+                      <FormNext size="xsmall" style={{ stroke: 'inherit' }} />
+                    </Box>
+                  </CountryButton>
+                </ButtonWrap>
+              )}
+            </Feature>
+          ))}
+        </Box>
+      </Main>
+    </Anchor>
+  </Root>
+);
 
 Tooltip.propTypes = {
   isLocationData: PropTypes.bool,
