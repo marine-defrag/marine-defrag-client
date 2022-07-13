@@ -124,24 +124,24 @@ module.exports = require('./webpack.base.babel')({
     }),
 
     new WebpackPwaManifest({
-      name: 'Sadata',
-      short_name: 'Sadata',
-      description: 'Sadata',
+      name: 'Marine:DeFRAG Marine Litter Action Mapping Tool',
+      short_name: 'Marine Litter Actions',
+      description: 'Marine:DeFRAG Marine Litter Action Mapping Tool',
       background_color: '#ffffff',
       theme_color: '#ffffff',
       inject: true,
       ios: true,
-      // icons: [
-      //   {
-      //     src: path.resolve('app/images/icon-512x512.png'),
-      //     sizes: [72, 96, 128, 144, 192, 384, 512],
-      //   },
-      //   {
-      //     src: path.resolve('app/images/icon-512x512.png'),
-      //     sizes: [120, 152, 167, 180],
-      //     ios: true,
-      //   },
-      // ],
+      icons: [
+        {
+          src: path.resolve('app/android-chrome-512x512.png'),
+          sizes: [192, 256, 512],
+        },
+        // {
+        //   src: path.resolve('app/apple-512x512.png'),
+        //   sizes: [120, 152, 167, 180],
+        //   ios: true,
+        // },
+      ],
     }),
 
     new HashedModuleIdsPlugin({
