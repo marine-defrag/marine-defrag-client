@@ -97,7 +97,13 @@ class Messages extends React.PureComponent { // eslint-disable-line react/prefer
 
   render() {
     const {
-      type, message, messageKey, messages, onDismiss, preMessage, details,
+      type,
+      message,
+      messageKey,
+      messages,
+      onDismiss,
+      preMessage,
+      details,
     } = this.props;
 
     return !(message || messageKey || messages)
