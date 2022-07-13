@@ -209,76 +209,72 @@ class MultiSelectField extends React.Component { // eslint-disable-line react/pr
           </MultiSelectDropdownIcon>
         </MultiSelectDropdown>
         <MultiselectActiveOptions>
-          { options.size > 0
-            ? (
-              <MultiselectActiveOptionList>
-                {options.map((option, i) => (
-                  <MultiSelectActiveOption
-                    key={i}
-                    option={option}
-                    field={field}
-                    onItemRemove={this.onMultiSelectItemRemove}
-                    onConnectionAttributeChange={this.onMultiSelectItemConnectionAttributeChange}
-                  />
-                ))}
-              </MultiselectActiveOptionList>
-            )
-            : (
-              <MultiSelectWithout>
-                <FormattedMessage
-                  {...messages.empty}
-                  values={{ entities: lowerCase(field.label) }}
+          {options.size > 0 && (
+            <MultiselectActiveOptionList>
+              {options.map((option, i) => (
+                <MultiSelectActiveOption
+                  key={i}
+                  option={option}
+                  field={field}
+                  onItemRemove={this.onMultiSelectItemRemove}
+                  onConnectionAttributeChange={this.onMultiSelectItemConnectionAttributeChange}
                 />
-                <MultiSelectWithoutLink
-                  href="#add"
-                  onClick={(evt) => {
-                    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                    this.onToggleMultiselect(field);
-                  }}
-                >
-                  <FormattedMessage {...messages.emptyLink} />
-                </MultiSelectWithoutLink>
-              </MultiSelectWithout>
-            )
-          }
-        </MultiselectActiveOptions>
-        { this.state.multiselectOpen === id
-          && (
-            <MultiSelectWrapper
-              ref={this.controlRef}
-              wrapperHeight={(
-                this.props.scrollContainer
-                && this.props.scrollContainer.current
-                && this.props.scrollContainer.current.getBoundingClientRect
-              )
-                ? this.props.scrollContainer.current.getBoundingClientRect().height - (SCROLL_PADDING * 2)
-                : 450
-              }
-            >
-              <MultiSelectControl
-                id={id}
-                model={model || `.${id}`}
-                title={intl.formatMessage(messages.update, { type: lowerCase(field.label) })}
-                onCancel={this.onCloseMultiselect}
-                closeOnClickOutside={this.props.closeOnClickOutside}
-                buttons={[
-                  field.onCreate
-                    ? {
-                      type: 'addFromMultiselect',
-                      position: 'left',
-                      onClick: field.onCreate,
-                    }
-                    : null,
-                  {
-                    type: 'closeText',
-                    onClick: this.onCloseMultiselect,
-                  },
-                ]}
-                {...controlProps}
+              ))}
+            </MultiselectActiveOptionList>
+          )}
+          {options.size === 0 && (
+            <MultiSelectWithout>
+              <FormattedMessage
+                {...messages.empty}
+                values={{ entities: lowerCase(field.label) }}
               />
-            </MultiSelectWrapper>
-          )
-        }
+              <MultiSelectWithoutLink
+                href="#add"
+                onClick={(evt) => {
+                  if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                  this.onToggleMultiselect(field);
+                }}
+              >
+                <FormattedMessage {...messages.emptyLink} />
+              </MultiSelectWithoutLink>
+            </MultiSelectWithout>
+          )}
+        </MultiselectActiveOptions>
+        {this.state.multiselectOpen === id && (
+          <MultiSelectWrapper
+            ref={this.controlRef}
+            wrapperHeight={(
+              this.props.scrollContainer
+              && this.props.scrollContainer.current
+              && this.props.scrollContainer.current.getBoundingClientRect
+            )
+              ? this.props.scrollContainer.current.getBoundingClientRect().height - (SCROLL_PADDING * 2)
+              : 450
+            }
+          >
+            <MultiSelectControl
+              id={id}
+              model={model || `.${id}`}
+              title={intl.formatMessage(messages.update, { type: lowerCase(field.label) })}
+              onCancel={this.onCloseMultiselect}
+              closeOnClickOutside={this.props.closeOnClickOutside}
+              buttons={[
+                field.onCreate
+                  ? {
+                    type: 'addFromMultiselect',
+                    position: 'left',
+                    onClick: field.onCreate,
+                  }
+                  : null,
+                {
+                  type: 'closeText',
+                  onClick: this.onCloseMultiselect,
+                },
+              ]}
+              {...controlProps}
+            />
+          </MultiSelectWrapper>
+        )}
       </MultiSelectFieldWrapper>
     );
   }

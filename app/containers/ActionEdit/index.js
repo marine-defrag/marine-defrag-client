@@ -55,6 +55,7 @@ import {
   ROUTES,
   FF_ACTIONTYPE,
   ACTIONTYPE_ACTOR_ACTION_ROLES,
+  ACTIONTYPES,
 } from 'themes/config';
 
 import {
@@ -283,11 +284,15 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     if (parentOptions) {
       groups.push({
         label: intl.formatMessage(appMessages.entities.actions.parent),
-        fields: [renderParentActionControl(
-          parentOptions,
-          intl.formatMessage(appMessages.entities.actions.single),
-          entity.getIn(['attributes', 'parent_id']),
-        )],
+        fields: [renderParentActionControl({
+          entities: parentOptions,
+          label: intl.formatMessage(appMessages.entities.actions.single),
+          activeParentId: entity.getIn(['attributes', 'parent_id']),
+          contextIntl: intl,
+          types: Object.values(ACTIONTYPES).filter(
+            (at) => at !== FF_ACTIONTYPE,
+          ),
+        })],
       });
     }
     if (actorsByActortype) {
