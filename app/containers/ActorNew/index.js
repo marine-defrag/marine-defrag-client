@@ -37,7 +37,7 @@ import { checkActorAttribute, checkActorRequired } from 'utils/entities';
 import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
-import { ROUTES, USER_ROLES } from 'themes/config';
+import { ROUTES, USER_ROLES, ACTIONTYPE_ACTOR_ACTION_ROLES } from 'themes/config';
 import appMessages from 'containers/App/messages';
 
 import {
@@ -178,12 +178,26 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
       ],
     });
     if (actionsByActiontype) {
-      const actionConnections = renderActionsByActiontypeControl(
-        actionsByActiontype,
-        connectedTaxonomies,
+      const actionConnections = renderActionsByActiontypeControl({
+        entitiesByActiontype: actionsByActiontype,
+        taxonomies: connectedTaxonomies,
         onCreateOption,
-        intl,
-      );
+        contextIntl: intl,
+        connectionAttributesForType: (actiontypeId) => ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId]
+          ? [
+            {
+              attribute: 'relationshiptype_id',
+              type: 'select',
+              options: ACTIONTYPE_ACTOR_ACTION_ROLES[actiontypeId].map(
+                (role) => ({
+                  label: intl.formatMessage(appMessages.actorroles[role.value]),
+                  ...role,
+                }),
+              ),
+            },
+          ]
+          : null,
+      });
       if (actionConnections) {
         groups.push(
           {
@@ -594,7 +608,7 @@ function mapDispatchToProps(dispatch) {
             )
         );
       }
-      dispatch(save(saveData.toJS(), actortype.get('id')));
+      dispatch(save(saveData.toJS()));
     },
     handleCancel: (typeId) => {
       dispatch(updatePath(`${ROUTES.ACTORS}/${typeId}`), { replace: true });

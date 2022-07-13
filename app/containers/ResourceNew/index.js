@@ -162,12 +162,12 @@ export class ResourceNew extends React.PureComponent { // eslint-disable-line re
       ],
     });
     if (actionsByActiontype) {
-      const actionConnections = renderActionsByActiontypeControl(
-        actionsByActiontype,
-        connectedTaxonomies,
+      const actionConnections = renderActionsByActiontypeControl({
+        entitiesByActiontype: actionsByActiontype,
+        taxonomies: connectedTaxonomies,
         onCreateOption,
-        intl,
-      );
+        contextIntl: intl,
+      });
       if (actionConnections) {
         groups.push(
           {

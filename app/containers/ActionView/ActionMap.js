@@ -55,7 +55,7 @@ export function ActionMap({
   onSetIncludeTargetMembers,
   includeActorMembers,
   includeTargetMembers,
-  onEntityClick,
+  onActorClick,
   countries,
   hasMemberOption,
   typeId,
@@ -116,6 +116,7 @@ export function ActionMap({
             id: country.get('id'),
             attributes: country.get('attributes').toJS(),
             tooltip: {
+              id: country.get('id'),
               title: country.getIn(['attributes', 'title']),
             },
             values: {
@@ -159,7 +160,6 @@ export function ActionMap({
       };
     }
   }
-
   return (
     <Styled hasHeader noOverflow>
       <MapWrapper>
@@ -167,13 +167,14 @@ export function ActionMap({
           countryData={countryData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
-          onCountryClick={(id) => onEntityClick(id)}
+          onActorClick={(id) => onActorClick(id)}
           maxValue={1}
           includeActorMembers={includeActorMembers}
           includeTargetMembers={includeTargetMembers}
           mapSubject={mapSubject}
           fitBounds
           projection="gall-peters"
+          mapId="ll-action-map"
         />
       </MapWrapper>
       {(memberOption || mapTitle) && (
@@ -200,7 +201,7 @@ ActionMap.propTypes = {
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
   hasMemberOption: PropTypes.bool,
-  onEntityClick: PropTypes.func,
+  onActorClick: PropTypes.func,
   mapSubject: PropTypes.string,
   typeId: PropTypes.oneOfType([
     PropTypes.string,

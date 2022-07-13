@@ -460,6 +460,8 @@ theme.global = {
     xxlarge: {},
   },
   colors: {
+    a: '#0077d8',
+    aHover: '#0063b5',
     icon: '#000000',
     actors: '#006076',
     targets: '#a52752',

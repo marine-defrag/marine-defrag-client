@@ -1,4 +1,4 @@
-import { truncateText } from 'utils/string';
+import { truncateText, startsWith } from 'utils/string';
 import { sortEntities, sortCategories } from 'utils/sort';
 // import { filterTaxonomies } from 'utils/entities';
 import isNumber from 'utils/is-number';
@@ -15,21 +15,38 @@ export const roundNumber = (value, digits = 0) => {
 };
 export const formatNumber = (value, args = {}) => {
   const {
-    intl, digits, unit, unitBefore,
+    intl,
+    digits,
+    unit,
+    unitBefore,
+    abbrevThousands = false,
+    round = false,
   } = args;
-  let formatted = value;
+  let result = value;
+
   if (isNumber(value)) {
-    const rounded = roundNumber(value, digits);
-    formatted = intl
-      ? intl.formatNumber(rounded, { minimumFractionDigits: digits })
-      : rounded.toFixed(digits);
+    let dgts = digits;
+    if (abbrevThousands && value >= 10000) {
+      result /= 1000;
+      dgts = 0;
+    }
+    result = round ? roundNumber(result, dgts) : result;
+    result = intl
+      ? intl.formatNumber(result)
+      : result.toFixed(digits);
+    if (abbrevThousands && value >= 10000) {
+      result = `${result}k`;
+    }
+  }
+  if (unit && startsWith(unit, '%')) {
+    return `${result}${unit.trim()}`;
   }
   if (unit && unit.trim() !== '') {
     return unitBefore
-      ? `${unit} ${formatted}`
-      : `${formatted} ${unit}`;
+      ? `${unit.trim()} ${result}`
+      : `${result} ${unit.trim()}`;
   }
-  return formatted;
+  return result;
 };
 
 const checkEmpty = (
@@ -124,7 +141,7 @@ export const getStatusField = (
 });
 
 // only show the highest rated role (lower role ids means higher)
-const getHighestUserRoleId = (roles) => roles.reduce(
+export const getHighestUserRoleId = (roles) => roles.reduce(
   (memo, role) => role.get('id') < memo ? role.get('id') : memo,
   USER_ROLES.DEFAULT.value
 );
@@ -290,6 +307,8 @@ const getConnectionField = ({
   skipLabel,
   showValueForAction,
   columns,
+  sortBy,
+  sortOrder,
 }) => ({
   type: 'connections',
   values: entities.toList(),
@@ -309,6 +328,8 @@ const getConnectionField = ({
     sort: 'title',
     attributes: ['code', 'title'],
   }],
+  sortBy,
+  sortOrder,
 });
 
 export const getActorConnectionField = ({
@@ -321,6 +342,8 @@ export const getActorConnectionField = ({
   connectionOptions,
   showValueForAction,
   columns,
+  sortBy,
+  sortOrder,
 }) => getConnectionField({
   entities: sortEntities(actors, 'asc', 'id'),
   taxonomies,
@@ -364,6 +387,8 @@ export const getActorConnectionField = ({
   skipLabel,
   showValueForAction,
   columns,
+  sortBy,
+  sortOrder,
 });
 
 export const getActionConnectionField = ({

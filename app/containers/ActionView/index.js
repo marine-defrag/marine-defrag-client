@@ -44,7 +44,13 @@ import {
 } from 'containers/App/actions';
 
 import {
-  ROUTES, ACTIONTYPES, FF_ACTIONTYPE, ACTORTYPES_CONFIG, ACTORTYPES, RESOURCE_FIELDS,
+  ROUTES,
+  ACTIONTYPES,
+  FF_ACTIONTYPE,
+  ACTORTYPES_CONFIG,
+  ACTORTYPES,
+  RESOURCE_FIELDS,
+  ACTIONTYPE_ACTOR_ACTION_ROLES,
 } from 'themes/config';
 
 import Loading from 'components/Loading';
@@ -72,7 +78,8 @@ import appMessages from 'containers/App/messages';
 import messages from './messages';
 
 import ActionMap from './ActionMap';
-import IndicatorMap from './IndicatorMap';
+import IndicatorCountryMap from './IndicatorCountryMap';
+import IndicatorLocationMap from './IndicatorLocationMap';
 import {
   selectViewEntity,
   selectViewTaxonomies,
@@ -92,7 +99,13 @@ const SubjectButton = styled((p) => <Button plain {...p} />)`
   background: none;
 `;
 
-const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
+const getActortypeColumns = (
+  actortypeId,
+  isIndicator,
+  isActive,
+  viewEntity,
+  intl,
+) => {
   let columns = [{
     id: 'main',
     type: 'main',
@@ -100,7 +113,7 @@ const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
     attributes: ['code', 'title'],
     isIndicator,
   }];
-  if (qe(typeid, ACTORTYPES.COUNTRY)) {
+  if (qe(actortypeId, ACTORTYPES.COUNTRY)) {
     columns = [
       ...columns,
       {
@@ -121,25 +134,47 @@ const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
           title: 'Regions',
           isIndicator,
         },
-        {
-          id: 'indicator',
-          type: 'indicator',
-          indicatorId: viewEntity.get('id'),
-          title: viewEntity.getIn(['attributes', 'title']),
-          unit: viewEntity.getIn(['attributes', 'comment']),
-          align: 'end',
-          primary: true,
-        },
       ];
     }
   }
+  if (isIndicator) {
+    columns = [
+      ...columns,
+      {
+        id: 'indicator',
+        type: 'indicator',
+        indicatorId: viewEntity.get('id'),
+        title: viewEntity.getIn(['attributes', 'title']),
+        unit: viewEntity.getIn(['attributes', 'comment']),
+        align: 'end',
+        primary: true,
+      },
+    ];
+  }
   if (
-    ACTORTYPES_CONFIG[parseInt(typeid, 10)]
-    && ACTORTYPES_CONFIG[parseInt(typeid, 10)].columns
+    ACTORTYPES_CONFIG[parseInt(actortypeId, 10)]
+    && ACTORTYPES_CONFIG[parseInt(actortypeId, 10)].columns
   ) {
     columns = [
       ...columns,
-      ...ACTORTYPES_CONFIG[parseInt(typeid, 10)].columns,
+      ...ACTORTYPES_CONFIG[parseInt(actortypeId, 10)].columns,
+    ];
+  }
+
+  // relationship type
+  if (
+    isActive
+    && ACTIONTYPE_ACTOR_ACTION_ROLES[viewEntity.getIn(['attributes', 'measuretype_id'])]
+    && ACTIONTYPE_ACTOR_ACTION_ROLES[viewEntity.getIn(['attributes', 'measuretype_id'])].length > 0
+  ) {
+    columns = [
+      ...columns,
+      {
+        id: 'relationshiptype_id',
+        type: 'relationship',
+        actionId: viewEntity.get('id'),
+        title: intl.formatMessage(appMessages.attributes.relationshiptype_id),
+      },
     ];
   }
   return columns;
@@ -211,13 +246,17 @@ export function ActionView(props) {
 
   const hasTarget = viewActivitytype && viewActivitytype.getIn(['attributes', 'has_target']);
   const hasMemberOption = !!typeId && !qe(typeId, ACTIONTYPES.NATL);
-  const hasMap = !!typeId; // && !qe(typeId, ACTIONTYPES.NATL);
   const viewSubject = hasTarget && subject ? subject : 'actors';
 
   const actortypesForSubject = !hasTarget || viewSubject === 'actors'
     ? actorsByActortype
     : targetsByActortype;
 
+  // action has a map
+  const hasCountryActionMap = !!typeId && !isIndicator;
+  const hasIndicatorCountryMap = !!typeId && isIndicator && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10));
+  const hasIndicatorLocationMap = !!typeId && isIndicator && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.POINT, 10));
+  // && !qe(typeId, ACTIONTYPES.NATL);
   let hasLandbasedValue;
   if (viewEntity && checkActionAttribute(typeId, 'has_reference_landbased_ml')) {
     if (
@@ -379,20 +418,27 @@ export function ActionView(props) {
                       </Box>
                     )}
                     <Box>
-                      {dataReady && actortypesForSubject && hasMap && !isIndicator && (
+                      {dataReady && actortypesForSubject && hasCountryActionMap && (
                         <ActionMap
                           entities={actortypesForSubject}
                           mapSubject={viewSubject}
-                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
                           hasMemberOption={hasMemberOption}
                           typeId={typeId}
                         />
                       )}
-                      {dataReady && actortypesForSubject && hasMap && isIndicator && (
-                        <IndicatorMap
-                          entities={actortypesForSubject}
+                      {dataReady && actortypesForSubject && hasIndicatorCountryMap && (
+                        <IndicatorCountryMap
+                          countries={actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10))}
                           mapSubject="actors"
-                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          onCountryClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          indicator={viewEntity}
+                        />
+                      )}
+                      {dataReady && actortypesForSubject && hasIndicatorLocationMap && (
+                        <IndicatorLocationMap
+                          locations={actortypesForSubject.get(parseInt(ACTORTYPES.POINT, 10))}
+                          mapSubject="actors"
                           indicator={viewEntity}
                         />
                       )}
@@ -412,13 +458,25 @@ export function ActionView(props) {
                             fields: actortypesForSubject.reduce(
                               (memo, actors, typeid) => memo.concat([
                                 getActorConnectionField({
-                                  actors,
+                                  actors: isIndicator
+                                    ? actors.filter(
+                                      (actor) => !!actor.getIn(['actionValues', viewEntity.get('id')])
+                                    )
+                                    : actors,
                                   taxonomies,
                                   onEntityClick,
                                   connections: actorConnections,
                                   typeid,
-                                  columns: getActortypeColumns(typeid, isIndicator, viewEntity),
+                                  columns: getActortypeColumns(
+                                    typeid,
+                                    isIndicator,
+                                    viewSubject === 'actors',
+                                    viewEntity,
+                                    intl,
+                                  ),
                                   isIndicator,
+                                  sortBy: isIndicator ? 'indicator' : null,
+                                  sortOrder: isIndicator ? 'desc' : null,
                                 }),
                               ]),
                               [],

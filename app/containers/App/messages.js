@@ -16,6 +16,20 @@ export default defineMessages({
       defaultMessage: 'Samoa\'s home of human rights implementation',
     },
   },
+  actorroles: {
+    0: {
+      id: 'app.containers.App.actorroles.0',
+      defaultMessage: 'No role assigned',
+    },
+    1: {
+      id: 'app.containers.App.actorroles.1',
+      defaultMessage: 'Donor',
+    },
+    2: {
+      id: 'app.containers.App.actorroles.2',
+      defaultMessage: 'Implementing partner',
+    },
+  },
   actortypes: {
     single: {
       id: 'app.containers.App.actortypes.single',
@@ -49,6 +63,10 @@ export default defineMessages({
       id: 'app.containers.App.actortypes.5',
       defaultMessage: 'Actortype 5',
     },
+    6: {
+      id: 'app.containers.App.actortypes.6',
+      defaultMessage: 'Actortype 5',
+    },
   },
   actortypes_short: {
     common: {
@@ -75,6 +93,10 @@ export default defineMessages({
       id: 'app.containers.App.actortypes_short.5',
       defaultMessage: 'Actortype 5',
     },
+    6: {
+      id: 'app.containers.App.actortypes_short.6',
+      defaultMessage: 'Actortype 5',
+    },
   },
   actortypes_long: {
     1: {
@@ -97,6 +119,10 @@ export default defineMessages({
       id: 'app.containers.App.actortypes_long.5',
       defaultMessage: 'Actortype 5',
     },
+    6: {
+      id: 'app.containers.App.actortypes_long.6',
+      defaultMessage: 'Actortype 5',
+    },
   },
   actortypes_about: {
     1: {
@@ -117,6 +143,10 @@ export default defineMessages({
     },
     5: {
       id: 'app.containers.App.actortypes_about.5',
+      defaultMessage: 'Actortype 5',
+    },
+    6: {
+      id: 'app.containers.App.actortypes_about.6',
       defaultMessage: 'Actortype 5',
     },
   },
@@ -158,6 +188,10 @@ export default defineMessages({
     2: {
       id: 'app.containers.App.actortypeGroups.2',
       defaultMessage: 'Other actors and activity targets',
+    },
+    3: {
+      id: 'app.containers.App.actortypeGroups.3',
+      defaultMessage: 'Points and locations of interest (used for Facts & Figures)',
     },
   },
   resourcetypes: {
@@ -531,6 +565,10 @@ export default defineMessages({
       id: 'app.containers.App.labels.groupedByTaxonomy',
       defaultMessage: ' (by {tax})',
     },
+    noIndicatorValue: {
+      id: 'app.containers.App.labels.noIndicatorValue',
+      defaultMessage: 'No data available',
+    },
     smart: {
       met: {
         id: 'app.containers.App.labels.smart.met',
@@ -772,6 +810,14 @@ export default defineMessages({
     id: {
       id: 'app.containers.App.attributes.id',
       defaultMessage: 'ID',
+    },
+    relationshiptype_id: {
+      id: 'app.containers.App.attributes.relationshiptype_id',
+      defaultMessage: 'Role',
+    },
+    value: {
+      id: 'app.containers.App.attributes.value',
+      defaultMessage: 'Value',
     },
     actortype_id: {
       id: 'app.containers.App.attributes.actortype_id',
@@ -1240,6 +1286,36 @@ export default defineMessages({
       },
       empty: {
         id: 'app.containers.App.entities.actors_5.empty',
+        defaultMessage: 'No actors yet',
+      },
+    },
+    actors_6: {
+      single: {
+        id: 'app.containers.App.entities.actors_6.single',
+        defaultMessage: 'Actor',
+      },
+      plural: {
+        id: 'app.containers.App.entities.actors_6.plural',
+        defaultMessage: 'Actors',
+      },
+      singleLong: {
+        id: 'app.containers.App.entities.actors_6.singleLong',
+        defaultMessage: 'Actor',
+      },
+      pluralLong: {
+        id: 'app.containers.App.entities.actors_6.pluralLong',
+        defaultMessage: 'Actors',
+      },
+      singleShort: {
+        id: 'app.containers.App.entities.actors_6.singleShort',
+        defaultMessage: 'Actor',
+      },
+      pluralShort: {
+        id: 'app.containers.App.entities.actors_6.pluralShort',
+        defaultMessage: 'Actors',
+      },
+      empty: {
+        id: 'app.containers.App.entities.actors_6.empty',
         defaultMessage: 'No actors yet',
       },
     },

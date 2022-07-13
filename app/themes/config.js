@@ -13,7 +13,8 @@
 export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
 const IS_DEV = true;
-export const version = '1.0.1';
+
+export const version = '1.0.6[dev]';
 
 export const ENDPOINTS = {
   API: (
@@ -26,6 +27,19 @@ export const ENDPOINTS = {
   PASSWORD: 'auth/password',
   VALIDATE_TOKEN: 'auth/validate_token',
 };
+
+// user roles
+export const USER_ROLES = {
+  ADMIN: { value: 1, message: 'ui.userRoles.admin' },
+  MANAGER: { value: 2, message: 'ui.userRoles.manager' },
+  ANALYST: { value: 3, message: 'ui.userRoles.analyst' },
+  DEFAULT: { value: 9999, message: 'ui.userRoles.default' }, // note: client side only - no role assigned on server
+};
+// Entity publish statuses
+export const PUBLISH_STATUSES = [
+  { value: true, message: 'ui.publishStatuses.draft' },
+  { value: false, message: 'ui.publishStatuses.public' },
+];
 
 // client app routes **************************
 export const ROUTES = {
@@ -100,11 +114,11 @@ export const ACTORTYPES = {
   CLASS: '3',
   REG: '4',
   GROUP: '5',
+  POINT: '6',
 };
 
-export const ACTIONTYPE_DISCLAIMERS = [
-  ACTIONTYPES.INTL,
-  ACTIONTYPES.DONOR,
+export const FF_ONLY_ACTORTYPES = [
+  ACTORTYPES.POINT,
 ];
 
 export const DEFAULT_ACTORTYPE = ACTORTYPES.COUNTRY;
@@ -115,6 +129,29 @@ export const RESOURCETYPES = {
 };
 export const DEFAULT_RESOURCETYPE = RESOURCETYPES.REF;
 export const DEFAULT_TAXONOMY = '11';
+
+export const ACTOR_ACTION_ROLES = {
+  NONE: {
+    value: '0',
+    hideOnActionList: true,
+  },
+  DONOR: {
+    value: '1',
+    default: true,
+  },
+  PARTNER: {
+    value: '2',
+    hideOnActionList: true,
+  },
+};
+
+export const ACTIONTYPE_ACTOR_ACTION_ROLES = {
+  [ACTIONTYPES.DONOR]: [
+    ACTOR_ACTION_ROLES.NONE,
+    ACTOR_ACTION_ROLES.DONOR,
+    ACTOR_ACTION_ROLES.PARTNER,
+  ],
+};
 
 export const ACTIONTYPE_GROUPS = {
   // donor activities
@@ -149,6 +186,12 @@ export const ACTORTYPE_GROUPS = {
       ACTORTYPES.GROUP, // groups
       ACTORTYPES.REG, // regions
       ACTORTYPES.CLASS, // classes
+    ],
+  },
+  3: {
+    managerOnly: true,
+    types: [
+      ACTORTYPES.POINT,
     ],
   },
 };
@@ -197,6 +240,7 @@ export const ACTIONTYPE_ACTORTYPES = {
   ],
   [ACTIONTYPES.FACTS]: [
     ACTORTYPES.COUNTRY,
+    ACTORTYPES.POINTS,
   ],
 };
 // type compatibility: targets for actions
@@ -630,6 +674,11 @@ export const ACTORTYPES_CONFIG = {
       },
     ],
   },
+  6: { // GROUP
+    id: '6',
+    order: 10,
+    columns: [],
+  },
 };
 
 export const ACTIONTYPES_CONFIG = {
@@ -908,19 +957,6 @@ export const SERVER_ERRORS = {
 };
 
 // Map server attribute values **************************
-
-// user roles
-export const USER_ROLES = {
-  ADMIN: { value: 1, message: 'ui.userRoles.admin' },
-  MANAGER: { value: 2, message: 'ui.userRoles.manager' },
-  ANALYST: { value: 3, message: 'ui.userRoles.analyst' },
-  DEFAULT: { value: 9999, message: 'ui.userRoles.default' }, // note: client side only - no role assigned on server
-};
-// Entity publish statuses
-export const PUBLISH_STATUSES = [
-  { value: true, message: 'ui.publishStatuses.draft' },
-  { value: false, message: 'ui.publishStatuses.public' },
-];
 
 export const NO_PARENT_KEY = 'parentUndefined';
 

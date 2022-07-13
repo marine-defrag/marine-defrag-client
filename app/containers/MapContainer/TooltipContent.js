@@ -1,18 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Box, Text } from 'grommet';
-import isNumber from 'utils/is-number';
-import { formatNumber } from 'utils/fields';
+import { Box } from 'grommet';
+
+import NumberField from 'components/fields/NumberField';
+
+import appMessages from 'containers/App/messages';
 
 const Styled = styled((p) => <Box {...p} />)``;
 
 const TTSectionTitle = styled.div`
-  margin: 15px 0 3px;
+  margin: 5px 0 3px;
   font-size: ${({ theme }) => theme.text.small.size};
   font-weight: 500;
 `;
-const TTContent = styled((p) => <Text size="xsmall" {...p} />)``;
 
 const TooltipContent = ({
   stats,
@@ -27,24 +28,19 @@ const TooltipContent = ({
           </TTSectionTitle>
         )}
         {stat.values && (
-          <Box gap="xsmall">
-            {stat.values.map((value, j) => {
-              let formatted = value.value;
-              if (!isCount && isNumber(value.value)) {
-                formatted = formatNumber(
-                  value.value,
-                  {
-                    unit: value.unit,
-                    digits: parseFloat(value.value, 10) > 1 ? 1 : 3,
-                  },
-                );
-              }
-              return (
-                <Box direction="row" wrap key={j} gap="xsmall">
-                  <TTContent>{`${value.label}: ${formatted}`}</TTContent>
-                </Box>
-              );
-            })}
+          <Box gap="xxsmall">
+            {stat.values.map((value, j) => (
+              <NumberField
+                key={j}
+                field={{
+                  title: value.label,
+                  value: value.value,
+                  unit: value.unit,
+                  isCount,
+                  showEmpty: !isCount && appMessages.labels.noIndicatorValue,
+                }}
+              />
+            ))}
           </Box>
         )}
       </Box>

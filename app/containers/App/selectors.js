@@ -473,9 +473,12 @@ export const selectActortypes = createSelector(
   (entities) => entities && entities.sort((a, b) => {
     const configA = ACTORTYPES_CONFIG[a.get('id')];
     const configB = ACTORTYPES_CONFIG[b.get('id')];
-    return configA.order < configB.order
-      ? -1
-      : 1;
+    if (configA && configB) {
+      return configA.order < configB.order
+        ? -1
+        : 1;
+    }
+    return 1;
   })
 );
 // all action types
@@ -1149,6 +1152,16 @@ export const selectUserTaxonomies = createSelector(
   )
 );
 
+// entity joins ///////////////////////////////////////////////////////
+
+export const selectActorActionsForAction = createSelector(
+  (state) => selectEntities(state, API.ACTOR_ACTIONS),
+  (state, id) => id,
+  (connections, id) => connections && connections
+    .filter((connection) => qe(connection.getIn(['attributes', 'measure_id']), id))
+    .map((connection) => connection.get('attributes'))
+);
+
 // potential connections ///////////////////////////////////////////////////////
 
 export const selectUserConnections = createSelector(
@@ -1284,12 +1297,12 @@ export const selectActionResourcesGroupedByAction = createSelector(
 );
 export const selectActionActorsGroupedByAction = createSelector(
   (state) => selectEntities(state, API.ACTION_ACTORS),
-  (entities) => entities
-    && entities.groupBy(
-      (entity) => entity.getIn(['attributes', 'measure_id'])
+  (connections) => connections
+    && connections.groupBy(
+      (connection) => connection.getIn(['attributes', 'measure_id'])
     ).map(
       (group) => group.map(
-        (entity) => entity.getIn(['attributes', 'actor_id'])
+        (connection) => connection.getIn(['attributes', 'actor_id'])
       )
     ),
 );

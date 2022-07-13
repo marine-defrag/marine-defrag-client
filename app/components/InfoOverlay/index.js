@@ -97,11 +97,13 @@ function InfoOverlay({
       </Box>
       {info && infoRef && tooltip && (
         <Drop
-          align={{ top: 'top', right: 'left' }}
+          align={{ bottom: 'top' }}
           target={infoRef.current}
         >
           <DropContent>
-            {content}
+            <div>
+              <Markdown source={content} className="react-markdown" linkTarget="_blank" />
+            </div>
           </DropContent>
         </Drop>
       )}
