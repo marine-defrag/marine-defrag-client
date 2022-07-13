@@ -74,7 +74,6 @@ export function MultiSelectActiveOption({
   onItemRemove,
   onConnectionAttributeChange,
 }) {
-  console.log(field.connectionAttributes);
   return (
     <Styled>
       <Box
