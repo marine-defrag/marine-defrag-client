@@ -28,7 +28,7 @@ class NumberField extends React.PureComponent { // eslint-disable-line react/pre
       ? intl.formatMessage(field.label)
       : field.title;
     const { isCount } = field;
-
+    console.log(field);
     return (
       <FieldWrap>
         {!isCount && (
@@ -67,9 +67,7 @@ class NumberField extends React.PureComponent { // eslint-disable-line react/pre
                   intl,
                   unit: field.unit,
                   unitBefore: field.unitBefore,
-                  digits: field.digits,
                 })}
-                {!isNumber(field.value) && field.value}
                 {!isNumber(field.value) && field.value}
               </Box>
             )}
@@ -86,7 +84,6 @@ class NumberField extends React.PureComponent { // eslint-disable-line react/pre
               intl,
               unit: field.unit,
               unitBefore: field.unitBefore,
-              digits: field.digits,
             })}`}
           </Label>
         )}

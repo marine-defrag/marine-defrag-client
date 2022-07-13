@@ -281,9 +281,9 @@ export const prepareEntities = ({
                 ...col,
                 value: entity.get('actionValues')
                   && isNumber(temp)
-                    && formatNumber(
-                      temp, { intl, digits: parseFloat(temp, 10) > 1 ? 1 : 3 },
-                    ),
+                  && formatNumber(
+                    temp, { intl },
+                  ),
                 sortValue: parseFloat(temp, 10),
               },
             };

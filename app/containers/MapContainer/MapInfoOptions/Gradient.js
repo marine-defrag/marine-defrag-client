@@ -35,7 +35,7 @@ const KeyLabelWrap = styled.div`
 const formatKeyLabel = (value, isCount, intl) => {
   if (isNumber(value)) {
     const vN = parseFloat(value, 10);
-    return formatNumber(vN, { digits: isCount ? 0 : 1, intl });
+    return formatNumber(vN, { intl });
   }
   return value;
 };
