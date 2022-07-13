@@ -422,7 +422,7 @@ export function ActionView(props) {
                         <ActionMap
                           entities={actortypesForSubject}
                           mapSubject={viewSubject}
-                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
                           hasMemberOption={hasMemberOption}
                           typeId={typeId}
                         />
@@ -431,7 +431,7 @@ export function ActionView(props) {
                         <IndicatorCountryMap
                           countries={actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10))}
                           mapSubject="actors"
-                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                          onCountryClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
                           indicator={viewEntity}
                         />
                       )}
@@ -458,7 +458,11 @@ export function ActionView(props) {
                             fields: actortypesForSubject.reduce(
                               (memo, actors, typeid) => memo.concat([
                                 getActorConnectionField({
-                                  actors,
+                                  actors: isIndicator
+                                    ? actors.filter(
+                                      (actor) => !!actor.getIn(['actionValues', viewEntity.get('id')])
+                                    )
+                                    : actors,
                                   taxonomies,
                                   onEntityClick,
                                   connections: actorConnections,
