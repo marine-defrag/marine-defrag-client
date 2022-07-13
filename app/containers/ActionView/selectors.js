@@ -72,8 +72,7 @@ export const selectViewTaxonomies = createSelector(
   )
 );
 
-
-export const selectChildActions = createSelector(
+export const selectChildActionsbyType = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   (state, id) => id,
   selectActions,
@@ -93,10 +92,12 @@ export const selectChildActions = createSelector(
       action.getIn(['attributes', 'parent_id']),
       actionId,
     ));
-    return children && children.size > 0 ? children : null;
+    return children && children.size > 0
+      ? children.groupBy((c) => c.getIn(['attributes', 'measuretype_id']))
+      : null;
   }
 );
-export const selectParentActions = createSelector(
+export const selectParentAction = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectViewEntity,
   selectActions,
@@ -106,11 +107,11 @@ export const selectParentActions = createSelector(
     actions,
   ) => {
     if (!ready) return null;
-    const parents = actions.filter((action) => qe(
+    const parent = actions.find((action) => qe(
       viewAction.getIn(['attributes', 'parent_id']),
       action.get('id'),
     ));
-    return parents && parents.size > 0 ? parents : null;
+    return parent || null;
   }
 );
 

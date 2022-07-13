@@ -1322,7 +1322,7 @@ export default defineMessages({
     actions: {
       parent: {
         id: 'app.containers.App.entities.actions.parent',
-        defaultMessage: 'Predecessor activity',
+        defaultMessage: 'Parent/predecessor activity',
       },
       children: {
         id: 'app.containers.App.entities.actions.children',

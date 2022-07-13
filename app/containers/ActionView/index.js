@@ -8,6 +8,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import { List } from 'immutable';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Box, Text, Button } from 'grommet';
 import styled from 'styled-components';
@@ -86,8 +87,8 @@ import {
   selectActorsByType,
   selectTargetsByType,
   selectResourcesByType,
-  selectChildActions,
-  selectParentActions,
+  selectChildActionsbyType,
+  selectParentAction,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
@@ -193,8 +194,8 @@ export function ActionView(props) {
     onEntityClick,
     actorConnections,
     resourceConnections,
-    children,
-    parents,
+    childrenByType,
+    parent,
     onLoadData,
     subject,
     onSetSubject,
@@ -290,6 +291,7 @@ export function ActionView(props) {
     const [de] = viewEntity.getIn(['attributes', 'date_end']).split('T');
     datesEqual = ds === de;
   }
+
   return (
     <div>
       <Helmet
@@ -596,33 +598,36 @@ export function ActionView(props) {
                         }}
                       />
                     )}
-                    {parents && parents.size > 0 && (
+                    {parent && (
                       <FieldGroup
                         aside
                         group={{
                           label: appMessages.entities.actions.parent,
                           fields: [
                             getActionConnectionField({
-                              actions: parents.toList(),
+                              actions: List().push(parent),
                               onEntityClick,
-                              typeid: typeId,
+                              typeid: parent.getIn(['attributes', 'measuretype_id']),
                             }),
                           ],
                         }}
                       />
                     )}
-                    {children && children.size > 0 && (
+                    {childrenByType && childrenByType.size > 0 && (
                       <FieldGroup
                         aside
                         group={{
                           label: appMessages.entities.actions.children,
-                          fields: [
-                            getActionConnectionField({
-                              actions: children.toList(),
-                              onEntityClick,
-                              typeid: typeId,
-                            }),
-                          ],
+                          fields: childrenByType.reduce(
+                            (memo, children, typeid) => memo.concat(
+                              getActionConnectionField({
+                                actions: children,
+                                onEntityClick,
+                                typeid,
+                              })
+                            ),
+                            [],
+                          ),
                         }}
                       />
                     )}
@@ -655,8 +660,8 @@ ActionView.propTypes = {
   resourceConnections: PropTypes.object,
   activitytypes: PropTypes.object,
   params: PropTypes.object,
-  children: PropTypes.object,
-  parents: PropTypes.object,
+  childrenByType: PropTypes.object,
+  parent: PropTypes.object,
   onSetSubject: PropTypes.func,
   handleImportConnection: PropTypes.func,
   intl: intlShape.isRequired,
@@ -679,8 +684,8 @@ const mapStateToProps = (state, props) => ({
   targetsByActortype: selectTargetsByType(state, props.params.id),
   actorConnections: selectActorConnections(state),
   resourceConnections: selectResourceConnections(state),
-  children: selectChildActions(state, props.params.id),
-  parents: selectParentActions(state, props.params.id),
+  childrenByType: selectChildActionsbyType(state, props.params.id),
+  parent: selectParentAction(state, props.params.id),
   subject: selectSubjectQuery(state),
   activitytypes: selectActiontypes(state),
 });
