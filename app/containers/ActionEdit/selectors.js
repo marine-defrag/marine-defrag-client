@@ -58,11 +58,10 @@ export const selectParentOptions = createSelector(
       );
       if (type && type.getIn(['attributes', 'has_parent'])) {
         return actions.filter((action) => {
-          const sameType = qe(type.get('id'), action.getIn(['attributes', 'measuretype_id']));
           const notSelf = !qe(action.get('id'), viewAction.get('id'));
           // const hasParent = action.getIn(['attributes', 'parent_id']);
           // todo: avoid circular dependencies
-          return sameType && notSelf;
+          return notSelf;
         });
       }
       return null;
