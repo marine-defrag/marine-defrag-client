@@ -77,9 +77,7 @@ export function Circles({ config, range, intl }) {
             />
           </WrapCircle>
           <KeyLabel>
-            {
-              formatNumber(val, { intl, digits: 0 })
-            }
+            {formatNumber(val, { intl })}
           </KeyLabel>
         </CircleLabel>
       ))}
@@ -92,10 +90,7 @@ export function Circles({ config, range, intl }) {
           <KeyCircle relative circleStyle={style} radius={maxRadius} />
         </WrapCircle>
         <KeyLabel>
-          {range && formatNumber(
-            range.max,
-            { intl, digits: 0 },
-          )}
+          {range && formatNumber(range.max, { intl })}
         </KeyLabel>
       </CircleLabel>
     </Styled>
