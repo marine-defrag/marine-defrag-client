@@ -97,8 +97,7 @@ export function MapContainer({
   indicator,
   onActorClick,
   maxValue,
-  includeActorMembers,
-  includeTargetMembers,
+  includeSecondaryMembers,
   mapSubject,
   fitBounds,
   options = {},
@@ -460,7 +459,7 @@ export function MapContainer({
         }
       }
     }
-  }, [tooltip, mapSubject, includeActorMembers, includeTargetMembers]);
+  }, [tooltip, mapSubject, includeSecondaryMembers]);
 
   useEffect(() => {
     countryOverGroupRef.current.clearLayers();
@@ -521,8 +520,7 @@ MapContainer.propTypes = {
   indicator: PropTypes.string,
   onActorClick: PropTypes.func,
   maxValue: PropTypes.number,
-  includeActorMembers: PropTypes.bool,
-  includeTargetMembers: PropTypes.bool,
+  includeSecondaryMembers: PropTypes.bool,
   fitBounds: PropTypes.bool,
   interactive: PropTypes.bool,
   scrollWheelZoom: PropTypes.bool,

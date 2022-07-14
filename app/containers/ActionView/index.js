@@ -74,7 +74,7 @@ import {
   selectViewEntity,
   selectViewTaxonomies,
   selectResourcesByType,
-  selectChildActionsbyType,
+  selectChildActionsByType,
   selectParentAction,
 } from './selectors';
 
@@ -269,7 +269,6 @@ export function ActionView(props) {
                   <Actors
                     id={params.id}
                     viewEntity={viewEntity}
-                    dataReady={dataReady}
                     isManager={isManager}
                     taxonomies={taxonomies}
                     onEntityClick={onEntityClick}
@@ -445,7 +444,7 @@ const mapStateToProps = (state, props) => ({
   taxonomies: selectTaxonomiesWithCategories(state),
   resourcesByResourcetype: selectResourcesByType(state, props.params.id),
   resourceConnections: selectResourceConnections(state),
-  childrenByType: selectChildActionsbyType(state, props.params.id),
+  childrenByType: selectChildActionsByType(state, props.params.id),
   parent: selectParentAction(state, props.params.id),
 });
 

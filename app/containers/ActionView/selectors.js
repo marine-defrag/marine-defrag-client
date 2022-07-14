@@ -14,7 +14,7 @@ import {
   selectCategories,
   selectTaxonomiesSorted,
   selectActorConnections,
-  selectActionConnections,
+  // selectActionConnections,
   selectActions,
   selectActors,
   selectResources,
@@ -23,8 +23,9 @@ import {
   selectActionActorsGroupedByActor,
   selectActorActionsGroupedByAction,
   selectActorActionsGroupedByActionAttributes,
+  selectActionActorsGroupedByActionAttributes,
   selectActorCategoriesGroupedByActor,
-  selectActionCategoriesGroupedByAction,
+  // selectActionCategoriesGroupedByAction,
   selectActionResourcesGroupedByAction,
   selectResourceConnections,
   selectActionResourcesGroupedByResource,
@@ -72,26 +73,23 @@ export const selectViewTaxonomies = createSelector(
   )
 );
 
-export const selectChildActionsbyType = createSelector(
+const selectChildActions = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   (state, id) => id,
   selectActions,
-  selectActionConnections,
-  selectActorActionsGroupedByAction,
-  selectActionActorsGroupedByAction,
-  selectActionResourcesGroupedByAction,
-  selectActionCategoriesGroupedByAction,
-  selectCategories,
-  (
-    ready,
-    actionId,
-    actions,
-  ) => {
+  (ready, actionId, actions) => {
     if (!ready) return null;
-    const children = actions.filter((action) => qe(
+    return actions.filter((action) => qe(
       action.getIn(['attributes', 'parent_id']),
       actionId,
     ));
+  }
+);
+export const selectChildActionsByType = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectChildActions,
+  (ready, children) => {
+    if (!ready) return null;
     return children && children.size > 0
       ? children.groupBy((c) => c.getIn(['attributes', 'measuretype_id']))
       : null;
@@ -144,32 +142,28 @@ export const selectActorsByType = createSelector(
   selectActorsAssociated,
   selectActorConnections,
   selectActorActionsGroupedByActionAttributes,
-  selectActorActionsGroupedByActor,
-  selectActionActorsGroupedByActor,
-  selectMembershipsGroupedByMember,
-  selectMembershipsGroupedByAssociation,
   selectActorCategoriesGroupedByActor,
   selectCategories,
+  selectMembershipsGroupedByMember,
+  selectMembershipsGroupedByAssociation,
   (
     ready,
     viewEntity,
     actors,
     actorConnections,
     actorActionsByActionFull,
-    actorActionsByActor,
-    actionActorsByActor,
-    memberships,
-    associations,
     actorCategories,
     categories,
+    memberships,
+    associations,
   ) => {
     if (!ready) return Map();
     let actorsWithConnections = actors && actors
       .map((actor) => setActorConnections({
         actor,
         actorConnections,
-        actorActions: actorActionsByActor,
-        actionActors: actionActorsByActor,
+        // actorActions: actorActionsByActor,
+        // actionActors: actionActorsByActor,
         categories,
         actorCategories,
         memberships,
@@ -213,6 +207,164 @@ export const selectActorsByType = createSelector(
           return configA.order < configB.order ? -1 : 1;
         }
       );
+  }
+);
+
+// get list of child actions grouped by type
+// - for each action store actors (with connections) grouped by type
+// - group actors by actortype
+export const selectChildActionsByTypeWithActorsByType = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectChildActions,
+  selectActors,
+  selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByActionAttributes,
+  selectActorConnections,
+  selectActorCategoriesGroupedByActor,
+  selectCategories,
+  selectMembershipsGroupedByMember,
+  selectMembershipsGroupedByAssociation,
+  (
+    ready,
+    childActions,
+    actors,
+    actorActionsByAction,
+    actorActionsByActionFull,
+    actorConnections,
+    actorCategories,
+    categories,
+    memberships,
+    associations,
+  ) => {
+    if (!ready) return null;
+    const childActionsWithConnections = childActions.map(
+      (childAction) => {
+        let childActionActors = actorActionsByAction.get(
+          parseInt(childAction.get('id'), 10)
+        );
+        if (childActionActors) {
+          childActionActors = actors.filter(
+            (actor) => childActionActors.includes(
+              parseInt(actor.get('id'), 10)
+            )
+          ).map(
+            (actor) => setActorConnections({
+              actor,
+              actorConnections,
+              categories,
+              actorCategories,
+              memberships,
+              associations,
+            })
+          );
+          const hasRelationshipRole = childAction
+            && ACTIONTYPE_ACTOR_ACTION_ROLES[childAction.getIn(['attributes', 'measuretype_id'])]
+            && ACTIONTYPE_ACTOR_ACTION_ROLES[childAction.getIn(['attributes', 'measuretype_id'])].length > 0;
+          if (hasRelationshipRole) {
+            const viewEntityActors = actorActionsByActionFull.get(parseInt(childAction.get('id'), 10));
+            if (viewEntityActors) {
+              childActionActors = childActionActors.map(
+                (actor) => {
+                  let actorX = actor;
+                  // console.log(actor && actor.toJS())
+                  const actorConnection = viewEntityActors.find(
+                    (connection) => qe(actor.get('id'), connection.get('actor_id'))
+                  );
+                  if (actorConnection) {
+                    if (hasRelationshipRole) {
+                      actorX = actorX.setIn(['relationshipRole', childAction.get('id')], actorConnection.get('relationshiptype_id'));
+                    }
+                  }
+                  return actorX;
+                }
+              );
+            }
+          }
+          const childActionActorsByType = childActionActors
+            .groupBy((r) => r.getIn(['attributes', 'actortype_id']))
+            .sortBy(
+              (val, key) => key,
+              (a, b) => {
+                const configA = ACTORTYPES_CONFIG[a];
+                const configB = ACTORTYPES_CONFIG[b];
+                return configA.order < configB.order ? -1 : 1;
+              }
+            );
+          return childAction.set('actorsByType', childActionActorsByType);
+        }
+        return childAction;
+      }
+    );
+    if (childActionsWithConnections.size === 0) return null;
+    return childActionsWithConnections
+      .groupBy((childAction) => childAction.getIn(['attributes', 'measuretype_id']));
+  }
+);
+// get list of child actions grouped by type
+// - for each action store targets (with connections) grouped by type
+// - group actors by actortype
+export const selectChildActionsByTypeWithTargetsByType = createSelector(
+  (state) => selectReady(state, { path: DEPENDENCIES }),
+  selectChildActions,
+  selectActors,
+  selectActionActorsGroupedByAction,
+  selectActionActorsGroupedByActionAttributes,
+  selectActorConnections,
+  selectActorCategoriesGroupedByActor,
+  selectCategories,
+  selectMembershipsGroupedByMember,
+  selectMembershipsGroupedByAssociation,
+  (
+    ready,
+    childActions,
+    actors,
+    actionActorsByAction,
+    actionActorsByActionFull,
+    actorConnections,
+    actorCategories,
+    categories,
+    memberships,
+    associations,
+  ) => {
+    if (!ready) return null;
+    const childActionsWithConnections = childActions.map(
+      (childAction) => {
+        let childActionTargets = actionActorsByAction.get(
+          parseInt(childAction.get('id'), 10)
+        );
+        if (childActionTargets) {
+          childActionTargets = actors.filter(
+            (actor) => childActionTargets.includes(
+              parseInt(actor.get('id'), 10)
+            )
+          ).map(
+            (actor) => setActorConnections({
+              actor,
+              actorConnections,
+              categories,
+              actorCategories,
+              memberships,
+              associations,
+            })
+          );
+          const childActionTargetsByType = childActionTargets
+            .groupBy((r) => r.getIn(['attributes', 'actortype_id']))
+            .sortBy(
+              (val, key) => key,
+              (a, b) => {
+                const configA = ACTORTYPES_CONFIG[a];
+                const configB = ACTORTYPES_CONFIG[b];
+                return configA.order < configB.order ? -1 : 1;
+              }
+            );
+          return childAction.set('targetsByType', childActionTargetsByType);
+        }
+        return childAction;
+      }
+    );
+    if (childActionsWithConnections.size === 0) return null;
+    return childActionsWithConnections
+      .groupBy((childAction) => childAction.getIn(['attributes', 'measuretype_id']));
   }
 );
 
@@ -266,8 +418,6 @@ export const selectTargetsByType = createSelector(
       .map((actor) => setActorConnections({
         actor,
         actorConnections,
-        actorActions,
-        actionActors,
         categories,
         actorCategories,
         memberships,

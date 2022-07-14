@@ -6,6 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Box, Text, Button } from 'grommet';
@@ -46,6 +47,8 @@ import appMessages from 'containers/App/messages';
 
 import {
   selectActorsByType,
+  selectChildActionsByTypeWithActorsByType,
+  selectChildActionsByTypeWithTargetsByType,
   selectTargetsByType,
 } from './selectors';
 
@@ -66,7 +69,7 @@ const getActortypeColumns = (
   actortypeId,
   isIndicator,
   isActive,
-  viewEntity,
+  entity,
   intl,
 ) => {
   let columns = [{
@@ -106,9 +109,9 @@ const getActortypeColumns = (
       {
         id: 'indicator',
         type: 'indicator',
-        indicatorId: viewEntity.get('id'),
-        title: viewEntity.getIn(['attributes', 'title']),
-        unit: viewEntity.getIn(['attributes', 'comment']),
+        indicatorId: entity.get('id'),
+        title: entity.getIn(['attributes', 'title']),
+        unit: entity.getIn(['attributes', 'comment']),
         align: 'end',
         primary: true,
       },
@@ -127,15 +130,15 @@ const getActortypeColumns = (
   // relationship type
   if (
     isActive
-    && ACTIONTYPE_ACTOR_ACTION_ROLES[viewEntity.getIn(['attributes', 'measuretype_id'])]
-    && ACTIONTYPE_ACTOR_ACTION_ROLES[viewEntity.getIn(['attributes', 'measuretype_id'])].length > 0
+    && ACTIONTYPE_ACTOR_ACTION_ROLES[entity.getIn(['attributes', 'measuretype_id'])]
+    && ACTIONTYPE_ACTOR_ACTION_ROLES[entity.getIn(['attributes', 'measuretype_id'])].length > 0
   ) {
     columns = [
       ...columns,
       {
         id: 'relationshiptype_id',
         type: 'relationship',
-        actionId: viewEntity.get('id'),
+        actionId: entity.get('id'),
         title: intl.formatMessage(appMessages.attributes.relationshiptype_id),
       },
     ];
@@ -146,11 +149,12 @@ const getActortypeColumns = (
 export function Actors(props) {
   const {
     viewEntity,
-    dataReady,
     isManager,
     taxonomies,
     actorsByActortype,
     targetsByActortype,
+    childActionsByActiontypeWithActorsByType,
+    childActionsByActiontypeWithTargetsByType,
     onEntityClick,
     actorConnections,
     subject,
@@ -161,20 +165,33 @@ export function Actors(props) {
     isIndicator,
     onSetSubject,
   } = props;
-
+  // console.log(subject)
+  // console.log('childActionsByActiontypeWithActorsByType', childActionsByActiontypeWithActorsByType && childActionsByActiontypeWithActorsByType.toJS())
+  // console.log('childActionsByActiontypeWithActorsByType', childActionsByActiontypeWithActorsByType && childActionsByActiontypeWithActorsByType.flatten(1).toJS())
+  // console.log(
+  //   'childActionsByActiontypeWithTargetsByType',
+  //   childActionsByActiontypeWithTargetsByType && childActionsByActiontypeWithTargetsByType.toJS()
+  // )
+  // console.log(
+  //   'childActionsByActiontypeWithTargetsByType',
+  //   childActionsByActiontypeWithTargetsByType && childActionsByActiontypeWithTargetsByType.flatten(1).toJS()
+  // )
   const viewActivitytype = activitytypes && activitytypes.find((type) => qe(type.get('id'), typeId));
   const hasTarget = viewActivitytype && viewActivitytype.getIn(['attributes', 'has_target']);
   const hasMemberOption = !!typeId && !qe(typeId, ACTIONTYPES.NATL);
   const viewSubject = hasTarget && subject ? subject : 'actors';
 
-  const actortypesForSubject = !hasTarget || viewSubject === 'actors'
+  const actorsByTypeForSubject = !hasTarget || viewSubject === 'actors'
     ? actorsByActortype
     : targetsByActortype;
+  const childActionsByTypeWithActorsByTypeForSubject = viewSubject === 'actors'
+    ? childActionsByActiontypeWithActorsByType
+    : childActionsByActiontypeWithTargetsByType;
 
   // action has a map
   const hasCountryActionMap = !!typeId && !isIndicator;
-  const hasIndicatorCountryMap = !!typeId && isIndicator && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10));
-  const hasIndicatorLocationMap = !!typeId && isIndicator && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.POINT, 10));
+  const hasIndicatorCountryMap = !!typeId && isIndicator && actorsByTypeForSubject && actorsByTypeForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10));
+  const hasIndicatorLocationMap = !!typeId && isIndicator && actorsByTypeForSubject && actorsByTypeForSubject.get(parseInt(ACTORTYPES.POINT, 10));
   // && !qe(typeId, ACTIONTYPES.NATL);
 
   return (
@@ -197,40 +214,38 @@ export function Actors(props) {
           )}
         </Box>
       )}
-      {(!actortypesForSubject || actortypesForSubject.size === 0) && (
-        <Box margin={{ vertical: 'small', horizontal: 'medium' }}>
-          {viewSubject === 'actors' && (
-            <Text>
-              No actors for activity in database
-            </Text>
-          )}
-          {viewSubject === 'targets' && (
-            <Text>
-              No activity targets in database
-            </Text>
-          )}
-        </Box>
-      )}
-      {dataReady && actortypesForSubject && hasCountryActionMap && (
+      {(actorsByTypeForSubject || childActionsByTypeWithActorsByTypeForSubject) && hasCountryActionMap && (
         <ActionMap
-          entities={actortypesForSubject}
+          actorsByType={actorsByTypeForSubject}
+          childCountries={
+            childActionsByTypeWithActorsByTypeForSubject
+            && childActionsByTypeWithActorsByTypeForSubject.flatten(1).reduce(
+              (memo, childActions) => (
+                childActions.get(viewSubject === 'actors' ? 'actorsByType' : 'targetsByType')
+                && childActions.get(viewSubject === 'actors' ? 'actorsByType' : 'targetsByType').get(1)
+              )
+                ? memo.merge(childActions.get(viewSubject === 'actors' ? 'actorsByType' : 'targetsByType').get(1))
+                : memo,
+              Map(),
+            )
+          }
           mapSubject={viewSubject}
           onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
           hasMemberOption={hasMemberOption}
           typeId={typeId}
         />
       )}
-      {dataReady && actortypesForSubject && hasIndicatorCountryMap && (
+      {actorsByTypeForSubject && hasIndicatorCountryMap && (
         <IndicatorCountryMap
-          countries={actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10))}
+          countries={actorsByTypeForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10))}
           mapSubject="actors"
           onCountryClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
           indicator={viewEntity}
         />
       )}
-      {dataReady && actortypesForSubject && hasIndicatorLocationMap && (
+      {actorsByTypeForSubject && hasIndicatorLocationMap && (
         <IndicatorLocationMap
-          locations={actortypesForSubject.get(parseInt(ACTORTYPES.POINT, 10))}
+          locations={actorsByTypeForSubject.get(parseInt(ACTORTYPES.POINT, 10))}
           mapSubject="actors"
           indicator={viewEntity}
         />
@@ -245,10 +260,10 @@ export function Actors(props) {
           }}
         />
       )}
-      {actortypesForSubject && (
+      {actorsByTypeForSubject && (
         <FieldGroup
           group={{
-            fields: actortypesForSubject.reduce(
+            fields: actorsByTypeForSubject.reduce(
               (memo, actors, typeid) => memo.concat([
                 getActorConnectionField({
                   actors: isIndicator
@@ -277,6 +292,112 @@ export function Actors(props) {
           }}
         />
       )}
+      {(!actorsByTypeForSubject || actorsByTypeForSubject.size === 0) && (
+        <Box margin={{ vertical: 'small', horizontal: 'medium' }}>
+          {viewSubject === 'actors' && !childActionsByActiontypeWithActorsByType && (
+            <Text>
+              No actors for activity in database
+            </Text>
+          )}
+          {viewSubject === 'actors' && childActionsByActiontypeWithActorsByType && (
+            <Text>
+              No directly linked actors for activity in database
+            </Text>
+          )}
+          {viewSubject === 'targets' && !childActionsByActiontypeWithTargetsByType && (
+            <Text>
+              No activity targets in database
+            </Text>
+          )}
+          {viewSubject === 'targets' && childActionsByActiontypeWithTargetsByType && (
+            <Text>
+              No directly linked activity targets in database
+            </Text>
+          )}
+        </Box>
+      )}
+      {viewSubject === 'actors'
+        && childActionsByActiontypeWithActorsByType
+        && childActionsByActiontypeWithActorsByType.entrySeq().map(
+          ([actiontypeId, typeActions]) => (
+            <Box key={actiontypeId}>
+              {typeActions.entrySeq().map(([actionId, action]) => {
+                const typeLabel = intl.formatMessage(appMessages.entities[`actions_${actiontypeId}`].singleShort);
+                const prefix = 'As parent/predecessor of';
+                return (
+                  <Box key={actionId}>
+                    <FieldGroup
+                      group={{
+                        title: `${prefix} ${typeLabel}: "${action.getIn(['attributes', 'title'])}"`,
+                        fields: action.get('actorsByType').reduce(
+                          (memo, actors, typeid) => memo.concat([
+                            getActorConnectionField({
+                              actors,
+                              taxonomies,
+                              onEntityClick,
+                              connections: actorConnections,
+                              typeid,
+                              columns: getActortypeColumns(
+                                typeid,
+                                isIndicator,
+                                true,
+                                action,
+                                intl,
+                              ),
+                            }),
+                          ]),
+                          [],
+                        ),
+                      }}
+                    />
+                  </Box>
+                );
+              })}
+            </Box>
+          )
+        )
+      }
+      {viewSubject === 'targets'
+        && childActionsByActiontypeWithTargetsByType
+        && childActionsByActiontypeWithTargetsByType.entrySeq().map(
+          ([actiontypeId, typeActions]) => (
+            <Box key={actiontypeId}>
+              {typeActions.entrySeq().map(([actionId, action]) => {
+                const typeLabel = intl.formatMessage(appMessages.entities[`actions_${actiontypeId}`].singleShort);
+                const prefix = 'As parent/predecessor of';
+                return (
+                  <Box key={actionId}>
+                    <FieldGroup
+                      group={{
+                        title: `${prefix} ${typeLabel}: "${action.getIn(['attributes', 'title'])}"`,
+                        fields: action.get('targetsByType').reduce(
+                          (memo, actors, typeid) => memo.concat([
+                            getActorConnectionField({
+                              actors,
+                              taxonomies,
+                              onEntityClick,
+                              connections: actorConnections,
+                              typeid,
+                              columns: getActortypeColumns(
+                                typeid,
+                                isIndicator,
+                                true,
+                                action,
+                                intl,
+                              ),
+                            }),
+                          ]),
+                          [],
+                        ),
+                      }}
+                    />
+                  </Box>
+                );
+              })}
+            </Box>
+          )
+        )
+      }
       {isManager && isIndicator && (
         <Box
           margin={{ bottom: 'large', horizontal: 'medium' }}
@@ -284,9 +405,7 @@ export function Actors(props) {
           alignContent="start"
           direction="row"
         >
-          <ButtonDefault
-            onClick={() => handleImportConnection()}
-          >
+          <ButtonDefault onClick={() => handleImportConnection()}>
             <FormattedMessage {...messages.importActorConnections} />
           </ButtonDefault>
         </Box>
@@ -297,11 +416,12 @@ export function Actors(props) {
 
 Actors.propTypes = {
   viewEntity: PropTypes.object,
-  dataReady: PropTypes.bool,
   onEntityClick: PropTypes.func,
   isManager: PropTypes.bool,
   taxonomies: PropTypes.object,
   actorsByActortype: PropTypes.object,
+  childActionsByActiontypeWithActorsByType: PropTypes.object,
+  childActionsByActiontypeWithTargetsByType: PropTypes.object,
   targetsByActortype: PropTypes.object,
   actorConnections: PropTypes.object,
   activitytypes: PropTypes.object,
@@ -316,6 +436,8 @@ Actors.propTypes = {
 const mapStateToProps = (state, { id }) => ({
   subject: selectSubjectQuery(state),
   actorsByActortype: selectActorsByType(state, id),
+  childActionsByActiontypeWithActorsByType: selectChildActionsByTypeWithActorsByType(state, id),
+  childActionsByActiontypeWithTargetsByType: selectChildActionsByTypeWithTargetsByType(state, id),
   targetsByActortype: selectTargetsByType(state, id),
   actorConnections: selectActorConnections(state),
   activitytypes: selectActiontypes(state),

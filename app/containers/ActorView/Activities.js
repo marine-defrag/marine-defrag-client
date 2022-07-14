@@ -403,7 +403,7 @@ export function Activities(props) {
             <Box>
               <FieldGroup
                 group={{
-                  title: viewSubject === 'actors' ? 'Individually' : 'Explicitly targeted',
+                  title: viewSubject === 'actors' ? 'Individually' : 'Targeted directly',
                   fields: [
                     getActionConnectionField({
                       actions: activeActiontypeActions,
