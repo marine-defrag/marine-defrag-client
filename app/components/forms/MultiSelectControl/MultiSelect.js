@@ -116,7 +116,10 @@ const Checkbox = styled(IndeterminateCheckbox)`
   vertical-align: middle;
 `;
 const Label = styled.label``;
-const FilterWrap = styled.div``;
+const FilterWrap = styled.div`
+  position: relative;
+  z-index: 2;
+`;
 const ListWrap = styled.div`
   position: relative;
 `;
@@ -420,6 +423,9 @@ class MultiSelect extends React.Component {
           hasFooter={this.props.buttons}
           hasChangeNote={showChangeHint}
         >
+          {(this.state.typeOpen || this.state.tagGroupOpenId !== null) && (
+            <ListCover />
+          )}
           <FilterWrap>
             {this.props.search && (
               <Search>
@@ -459,9 +465,6 @@ class MultiSelect extends React.Component {
             )}
           </FilterWrap>
           <ListWrap>
-            {(this.state.typeOpen || this.state.tagGroupOpenId) && (
-              <ListCover />
-            )}
             {this.props.selectAll && (
               <SelectAll>
                 <CheckboxWrap>
