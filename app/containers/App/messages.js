@@ -957,7 +957,7 @@ export default defineMessages({
     },
     parent_id: {
       id: 'app.containers.App.attributes.parent_id',
-      defaultMessage: 'Predecessor',
+      defaultMessage: 'Parent/predecessor',
     },
     manager_id: {
       categories: {
