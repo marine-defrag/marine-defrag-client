@@ -28,7 +28,6 @@ class NumberField extends React.PureComponent { // eslint-disable-line react/pre
       ? intl.formatMessage(field.label)
       : field.title;
     const { isCount } = field;
-    console.log(field);
     return (
       <FieldWrap>
         {!isCount && (

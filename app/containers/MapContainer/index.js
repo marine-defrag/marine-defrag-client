@@ -97,8 +97,7 @@ export function MapContainer({
   indicator,
   onActorClick,
   maxValue,
-  includeActorMembers,
-  includeTargetMembers,
+  includeSecondaryMembers,
   mapSubject,
   fitBounds,
   options = {},
@@ -460,7 +459,7 @@ export function MapContainer({
         }
       }
     }
-  }, [tooltip, mapSubject, includeActorMembers, includeTargetMembers]);
+  }, [tooltip, mapSubject, includeSecondaryMembers]);
 
   useEffect(() => {
     countryOverGroupRef.current.clearLayers();
@@ -481,6 +480,8 @@ export function MapContainer({
         setTooltip({
           features: tooltip.features.map(
             (f) => countryData.find((c) => qe(c.id, f.id))
+          ).filter(
+            (f) => !!f
           ),
         });
       } else {
@@ -490,6 +491,7 @@ export function MapContainer({
       setTooltip(TOOLTIP_INITIAL);
     }
   }, [mapSubject, countryData]);
+
   return (
     <Styled>
       <Map id={mapId} ref={ref} styleType={styleType} />
@@ -499,7 +501,7 @@ export function MapContainer({
           mapRef={ref}
           position={null}
           direction={tooltip.direction}
-          features={tooltip.features.map((f) => f.tooltip)}
+          features={tooltip.features && tooltip.features.map((f) => f && f.tooltip)}
           onFeatureClick={onActorClick ? (id) => onActorClick(id) : null}
           onClose={(id) => setTooltip({
             ...tooltip,
@@ -521,8 +523,7 @@ MapContainer.propTypes = {
   indicator: PropTypes.string,
   onActorClick: PropTypes.func,
   maxValue: PropTypes.number,
-  includeActorMembers: PropTypes.bool,
-  includeTargetMembers: PropTypes.bool,
+  includeSecondaryMembers: PropTypes.bool,
   fitBounds: PropTypes.bool,
   interactive: PropTypes.bool,
   scrollWheelZoom: PropTypes.bool,

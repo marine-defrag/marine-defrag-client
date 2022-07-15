@@ -35,6 +35,7 @@ const Styled = styled(
   background-color: ${palette('mainListItem', 1)};
   margin-bottom: 4px;
   margin-top: 4px;
+  max
 `;
 
 const MultiselectActiveOptionRemove = styled(Button)`
@@ -75,32 +76,37 @@ export function MultiSelectActiveOption({
 }) {
   return (
     <Styled>
-      <Box direction="row" align="center" justify="between" pad={{ vertical: 'xsmall' }}>
+      <Box
+        direction="row"
+        align="center"
+        justify="between"
+        pad={{ vertical: 'xsmall' }}
+      >
         <TitleWrap>
           {option.get('draft') && (
             <Box><ItemStatus draft /></Box>
           )}
           <Box direction="row" gap="small">
             {option.get('reference') && (
-              <Box><Reference>{option.get('reference')}</Reference></Box>
+              <Box flex={{ shrink: 0 }}>
+                <Reference>{option.get('reference')}</Reference>
+              </Box>
             )}
             <Box>{option.get('label')}</Box>
           </Box>
         </TitleWrap>
-        <Box>
-          <Box>
-            <MultiselectActiveOptionRemove
-              onClick={(evt) => {
-                if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                onItemRemove(option, field);
-              }}
-            >
-              <Icon name="removeSmall" />
-            </MultiselectActiveOptionRemove>
-          </Box>
+        <Box flex={{ shrink: 0 }}>
+          <MultiselectActiveOptionRemove
+            onClick={(evt) => {
+              if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+              onItemRemove(option, field);
+            }}
+          >
+            <Icon name="removeSmall" />
+          </MultiselectActiveOptionRemove>
         </Box>
       </Box>
-      {field.connectionAttributes && (
+      {field.connectionAttributes && field.connectionAttributes.length > 0 && (
         <ConnectionAttributes>
           {field.connectionAttributes.map((attribute) => {
             const value = option.get('association')

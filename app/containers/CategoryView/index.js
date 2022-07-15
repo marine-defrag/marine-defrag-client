@@ -433,7 +433,7 @@ const mapStateToProps = (state, props) => ({
   childActionsByActiontype: selectChildActionsByType(state, props.params.id),
 });
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, { params }) {
   return {
     loadEntitiesIfNeeded: () => {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
@@ -441,8 +441,8 @@ function mapDispatchToProps(dispatch) {
     onEntityClick: (id, path) => {
       dispatch(updatePath(`${path}/${id}`));
     },
-    handleEdit: (categoryId) => {
-      dispatch(updatePath(`${ROUTES.CATEGORY}${ROUTES.EDIT}/${categoryId}`, { replace: true }));
+    handleEdit: () => {
+      dispatch(updatePath(`${ROUTES.CATEGORY}${ROUTES.EDIT}/${params.id}`, { replace: true }));
     },
     handleClose: (taxId) => {
       dispatch(closeEntity(`${ROUTES.TAXONOMIES}/${taxId}`));

@@ -46,6 +46,7 @@ import {
   ROUTES,
   FF_ACTIONTYPE,
   ACTIONTYPE_ACTOR_ACTION_ROLES,
+  ACTIONTYPES,
 } from 'themes/config';
 
 import {
@@ -232,10 +233,12 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
     if (parentOptions) {
       groups.push({
         label: intl.formatMessage(appMessages.entities.actions.parent),
-        fields: [renderParentActionControl(
-          parentOptions,
-          intl.formatMessage(appMessages.entities.actions.single),
-        )],
+        fields: [renderParentActionControl({
+          entities: parentOptions,
+          label: intl.formatMessage(appMessages.entities.actions.single),
+          contextIntl: intl,
+          types: Object.values(ACTIONTYPES),
+        })],
       });
     }
     if (actorsByActortype) {

@@ -628,8 +628,7 @@ export function EntitiesMap({
         indicator={indicator}
         onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
         maxValue={maxValue}
-        includeActorMembers={includeActorMembers}
-        includeTargetMembers={includeTargetMembers}
+        includeSecondaryMembers={includeActorMembers || includeTargetMembers}
         mapSubject={mapSubjectClean}
         scrollWheelZoom
       />

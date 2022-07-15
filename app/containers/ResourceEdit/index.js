@@ -289,7 +289,7 @@ export class ResourceEdit extends React.PureComponent { // eslint-disable-line r
             )
           }
           {deleteError
-            && <Messages type="error" messages={deleteError} />
+            && <Messages type="error" messages={deleteError.messages} />
           }
           {(saveSending || deleteSending || !dataReady)
             && <Loading />
