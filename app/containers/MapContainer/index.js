@@ -480,6 +480,8 @@ export function MapContainer({
         setTooltip({
           features: tooltip.features.map(
             (f) => countryData.find((c) => qe(c.id, f.id))
+          ).filter(
+            (f) => !!f
           ),
         });
       } else {
@@ -489,6 +491,7 @@ export function MapContainer({
       setTooltip(TOOLTIP_INITIAL);
     }
   }, [mapSubject, countryData]);
+
   return (
     <Styled>
       <Map id={mapId} ref={ref} styleType={styleType} />
@@ -498,7 +501,7 @@ export function MapContainer({
           mapRef={ref}
           position={null}
           direction={tooltip.direction}
-          features={tooltip.features.map((f) => f.tooltip)}
+          features={tooltip.features && tooltip.features.map((f) => f && f.tooltip)}
           onFeatureClick={onActorClick ? (id) => onActorClick(id) : null}
           onClose={(id) => setTooltip({
             ...tooltip,
