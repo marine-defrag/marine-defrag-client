@@ -275,8 +275,8 @@ export function ActionView(props) {
                     typeId={typeId}
                     isIndicator={isIndicator}
                   />
-                  <Box>
-                    {resourcesByResourcetype && (
+                  {resourcesByResourcetype && (
+                    <Box pad={{ top: 'medium', bottom: 'large' }}>
                       <FieldGroup
                         group={{
                           type: 'dark',
@@ -316,8 +316,8 @@ export function ActionView(props) {
                           ),
                         }}
                       />
-                    )}
-                  </Box>
+                    </Box>
+                  )}
                 </Main>
                 {!isIndicator && (
                   <Aside bottom>

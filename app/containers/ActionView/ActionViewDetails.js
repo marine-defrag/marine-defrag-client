@@ -57,6 +57,12 @@ import IndicatorCountryMap from './IndicatorCountryMap';
 import IndicatorLocationMap from './IndicatorLocationMap';
 import messages from './messages';
 
+const Styled = styled((p) => <Box pad={{ top: 'medium', bottom: 'large' }} {...p} />)`
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+  border-color: #f1f0f1;
+`;
+
 const SubjectButton = styled((p) => <Button plain {...p} />)`
   padding: 2px 4px;
   border-bottom: 2px solid;
@@ -203,7 +209,7 @@ export function ActionViewDetails(props) {
   // && !qe(typeId, ACTIONTYPES.NATL);
 
   return (
-    <Box>
+    <Styled>
       {!isIndicator && (
         <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
           <SubjectButton
@@ -418,7 +424,7 @@ export function ActionViewDetails(props) {
           </ButtonDefault>
         </Box>
       )}
-    </Box>
+    </Styled>
   );
 }
 

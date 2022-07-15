@@ -56,6 +56,11 @@ import {
   selectActorIndicators,
 } from './selectors';
 
+const Styled = styled((p) => <Box pad={{ top: 'medium', bottom: 'large' }} {...p} />)`
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+  border-color: #f1f0f1;
+`;
 const TypeSelectBox = styled((p) => <Box {...p} />)``;
 const TypeButton = styled((p) => <ButtonPill {...p} />)`
   margin-bottom: 5px;
@@ -293,7 +298,7 @@ export function ActorViewDetails(props) {
   }
 
   return (
-    <Box>
+    <Styled>
       <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
         {hasMembers && (
           <SubjectButton
@@ -464,7 +469,7 @@ export function ActorViewDetails(props) {
           resources={actionConnections && actionConnections.get('resources')}
         />
       )}
-    </Box>
+    </Styled>
   );
 }
 
