@@ -14,7 +14,7 @@ export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
 const IS_DEV = true;
 
-export const version = '1.0.7[dev-pilot-projects]';
+export const version = '1.0.7[dev:pilot-projects]';
 
 export const ENDPOINTS = {
   API: (
@@ -804,9 +804,9 @@ export const ACTIONTYPES_CONFIG = {
         attributes: ['title'],
       },
       {
-        id: 'taxonomy-13',
+        id: 'taxonomy-14',
         type: 'taxonomy',
-        taxonomy_id: 13, // project types
+        taxonomy_id: 14, // project types
       },
       {
         id: 'actors', // one row per type,

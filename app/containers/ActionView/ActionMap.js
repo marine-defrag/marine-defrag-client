@@ -71,13 +71,15 @@ export function ActionMap({
   childCountries,
   // intl,
 }) {
-  // const { intl } = this.context;
-  // let type;
+  // console.log('ActionMap')
+  // // const { intl } = this.context;
+  // // let type;
   // console.log('childCountries', childCountries && childCountries.toJS());
   const countriesJSON = topojson.feature(
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
   );
+  const hasChildCountries = childCountries && childCountries.size > 0;
   let hasCountries;
   let hasAssociations;
   if (actorsByType) {
@@ -86,7 +88,7 @@ export function ActionMap({
       ? !!actorsByType.get(parseInt(ACTORTYPES.GROUP, 10))
       : !!(actorsByType.get(parseInt(ACTORTYPES.GROUP, 10)) || actorsByType.get(parseInt(ACTORTYPES.REG, 10)) || actorsByType.get(parseInt(ACTORTYPES.CLASS, 10)));
   }
-  if (!hasCountries && !hasAssociations) return null;
+  if (!hasCountries && !hasAssociations && !hasChildCountries) return null;
   const includeMembers = mapSubject === 'actors'
     ? includeActorMembers
     : includeTargetMembers;
