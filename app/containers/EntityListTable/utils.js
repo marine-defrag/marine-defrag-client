@@ -313,7 +313,7 @@ export const prepareEntities = ({
             };
           case 'targets':
             temp = entity.get('targets') || (entity.get('targetsByType') && entity.get('targetsByType').flatten());
-            relatedEntities = getRelatedEntities(temp, connections.get('actors'), col);
+            relatedEntities = connections && getRelatedEntities(temp, connections.get('actors'), col);
             return {
               ...memoEntity,
               [col.id]: {
@@ -350,7 +350,7 @@ export const prepareEntities = ({
             } else {
               temp = entity.get('actors') || (entity.get('actorsByType') && entity.get('actorsByType').flatten());
             }
-            relatedEntities = getRelatedEntities(temp, connections.get('actors'), col);
+            relatedEntities = connections && getRelatedEntities(temp, connections.get('actors'), col);
             return {
               ...memoEntity,
               [col.id]: {
@@ -401,7 +401,7 @@ export const prepareEntities = ({
             };
           case 'taxonomy':
             // console.log(entity && entity.toJS())
-            relatedEntities = taxonomies.get(col.taxonomy_id.toString())
+            relatedEntities = taxonomies && taxonomies.get(col.taxonomy_id.toString())
               && getRelatedEntities(
                 entity.get('categories'),
                 taxonomies.get(col.taxonomy_id.toString()).get('categories'),
@@ -466,7 +466,7 @@ export const prepareEntities = ({
           case 'resourceActions':
             temp = entity.get('actions')
               || (entity.get('actionsByType') && entity.get('actionsByType').flatten());
-            relatedEntities = temp && getRelatedEntities(
+            relatedEntities = temp && connections && getRelatedEntities(
               temp,
               connections.get(API.ACTIONS),
               col,

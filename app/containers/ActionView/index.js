@@ -74,7 +74,6 @@ import {
   selectViewEntity,
   selectViewTaxonomies,
   selectResourcesByType,
-  selectChildActionsByType,
   selectParentAction,
 } from './selectors';
 
@@ -90,7 +89,6 @@ export function ActionView(props) {
     resourcesByResourcetype,
     onEntityClick,
     resourceConnections,
-    childrenByType,
     parent,
     onLoadData,
     intl,
@@ -388,24 +386,6 @@ export function ActionView(props) {
                         }}
                       />
                     )}
-                    {childrenByType && childrenByType.size > 0 && (
-                      <FieldGroup
-                        aside
-                        group={{
-                          label: appMessages.entities.actions.children,
-                          fields: childrenByType.reduce(
-                            (memo, children, typeid) => memo.concat(
-                              getActionConnectionField({
-                                actions: children,
-                                onEntityClick,
-                                typeid,
-                              })
-                            ),
-                            [],
-                          ),
-                        }}
-                      />
-                    )}
                   </Aside>
                 )}
               </ViewPanelInside>
@@ -431,7 +411,6 @@ ActionView.propTypes = {
   resourcesByResourcetype: PropTypes.object,
   resourceConnections: PropTypes.object,
   params: PropTypes.object,
-  childrenByType: PropTypes.object,
   parent: PropTypes.object,
   intl: intlShape.isRequired,
 };
@@ -444,7 +423,6 @@ const mapStateToProps = (state, props) => ({
   taxonomies: selectTaxonomiesWithCategories(state),
   resourcesByResourcetype: selectResourcesByType(state, props.params.id),
   resourceConnections: selectResourceConnections(state),
-  childrenByType: selectChildActionsByType(state, props.params.id),
   parent: selectParentAction(state, props.params.id),
 });
 

@@ -119,7 +119,6 @@ export function EntitiesTable({
   subjectOptions,
 }) {
   const size = React.useContext(ResponsiveContext);
-
   return (
     <Box fill="horizontal">
       <Table>
@@ -191,128 +190,131 @@ export function EntitiesTable({
         <TableBody>
           {entities.length > 0 && entities.map((entity, key) => (
             <TableRow key={key}>
-              {columns.map((col, i) => (isMinSize(size, 'large') || col.type === 'main') && (
-                <TableCellBody
-                  key={i}
-                  scope="row"
-                  col={col}
-                  count={headerColumns.length}
-                  first={i === 0}
-                  last={i === headerColumns.length - 1}
-                >
-                  <TableCellBodyInner>
-                    {col.type === 'main' && (
-                      <CellBodyMain
-                        entity={entity[col.id]}
-                        canEdit={canEdit}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'attribute' && (
-                      <CellBodyPlain
-                        entity={entity[col.id]}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'amount' && (
-                      <CellBodyPlain
-                        entity={entity[col.id]}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'indicator' && (
-                      <CellBodyPlain
-                        entity={entity[col.id]}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'relationship' && (
-                      <CellBodyPlain
-                        entity={entity[col.id]}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'userrole' && (
-                      <CellBodyPlain
-                        entity={entity[col.id]}
-                        column={col}
-                        primary
-                      />
-                    )}
-                    {col.type === 'date' && (
-                      <CellBodyPlain
-                        entity={entity[col.id]}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'actors' && (
-                      <CellBodyActors
-                        entity={entity[col.id]}
-                        onEntityClick={onEntityClick}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'targets' && (
-                      <CellBodyActors
-                        entity={entity[col.id]}
-                        onEntityClick={onEntityClick}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'members' && (
-                      <CellBodyActors
-                        entity={entity[col.id]}
-                        onEntityClick={onEntityClick}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'associations' && (
-                      <CellBodyActors
-                        entity={entity[col.id]}
-                        onEntityClick={onEntityClick}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'taxonomy' && (
-                      <CellBodyCategories
-                        entity={entity[col.id]}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'hasResources' && (
-                      <CellBodyHasResource
-                        entity={entity[col.id]}
-                        onEntityClick={onEntityClick}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'resourceActions' && (
-                      <CellBodyActions
-                        entity={entity[col.id]}
-                        column={col}
-                        onEntityClick={onEntityClick}
-                      />
-                    )}
-                    {col.type === 'actorActions' && (
-                      <CellBodyBarChart
-                        value={entity[col.id].value}
-                        maxvalue={Object.values(columnMaxValues).reduce((memo, val) => Math.max(memo, val), 0)}
-                        issecondary={col.members}
-                        subject={col.subject}
-                        column={col}
-                      />
-                    )}
-                    {col.type === 'actiontype' && (
-                      <CellBodyBarChart
-                        value={entity[col.id].value}
-                        maxvalue={Object.values(columnMaxValues).reduce((memo, val) => Math.max(memo, val), 0)}
-                        subject={col.subject}
-                        column={col}
-                      />
-                    )}
-                  </TableCellBodyInner>
-                </TableCellBody>
-              ))}
+              {columns.map((col, i) => entity[col.id]
+                && (isMinSize(size, 'large') || col.type === 'main')
+                && (
+                  <TableCellBody
+                    key={i}
+                    scope="row"
+                    col={col}
+                    count={headerColumns.length}
+                    first={i === 0}
+                    last={i === headerColumns.length - 1}
+                  >
+                    <TableCellBodyInner>
+                      {col.type === 'main' && (
+                        <CellBodyMain
+                          entity={entity[col.id]}
+                          canEdit={canEdit}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'attribute' && (
+                        <CellBodyPlain
+                          entity={entity[col.id]}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'amount' && (
+                        <CellBodyPlain
+                          entity={entity[col.id]}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'indicator' && (
+                        <CellBodyPlain
+                          entity={entity[col.id]}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'relationship' && (
+                        <CellBodyPlain
+                          entity={entity[col.id]}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'userrole' && (
+                        <CellBodyPlain
+                          entity={entity[col.id]}
+                          column={col}
+                          primary
+                        />
+                      )}
+                      {col.type === 'date' && (
+                        <CellBodyPlain
+                          entity={entity[col.id]}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'actors' && (
+                        <CellBodyActors
+                          entity={entity[col.id]}
+                          onEntityClick={onEntityClick}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'targets' && (
+                        <CellBodyActors
+                          entity={entity[col.id]}
+                          onEntityClick={onEntityClick}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'members' && (
+                        <CellBodyActors
+                          entity={entity[col.id]}
+                          onEntityClick={onEntityClick}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'associations' && (
+                        <CellBodyActors
+                          entity={entity[col.id]}
+                          onEntityClick={onEntityClick}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'taxonomy' && (
+                        <CellBodyCategories
+                          entity={entity[col.id]}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'hasResources' && (
+                        <CellBodyHasResource
+                          entity={entity[col.id]}
+                          onEntityClick={onEntityClick}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'resourceActions' && (
+                        <CellBodyActions
+                          entity={entity[col.id]}
+                          column={col}
+                          onEntityClick={onEntityClick}
+                        />
+                      )}
+                      {col.type === 'actorActions' && (
+                        <CellBodyBarChart
+                          value={entity[col.id].value}
+                          maxvalue={Object.values(columnMaxValues).reduce((memo, val) => Math.max(memo, val), 0)}
+                          issecondary={col.members}
+                          subject={col.subject}
+                          column={col}
+                        />
+                      )}
+                      {col.type === 'actiontype' && (
+                        <CellBodyBarChart
+                          value={entity[col.id].value}
+                          maxvalue={Object.values(columnMaxValues).reduce((memo, val) => Math.max(memo, val), 0)}
+                          subject={col.subject}
+                          column={col}
+                        />
+                      )}
+                    </TableCellBodyInner>
+                  </TableCellBody>
+                ))
+              }
             </TableRow>
           ))}
         </TableBody>
