@@ -68,7 +68,7 @@ import FieldGroup from 'components/fields/FieldGroup';
 import appMessages from 'containers/App/messages';
 import messages from './messages';
 
-import Actors from './Actors';
+import ActionViewDetails from './ActionViewDetails';
 
 import {
   selectViewEntity,
@@ -266,7 +266,7 @@ export function ActionView(props) {
                       ],
                     }}
                   />
-                  <Actors
+                  <ActionViewDetails
                     id={params.id}
                     viewEntity={viewEntity}
                     isManager={isManager}

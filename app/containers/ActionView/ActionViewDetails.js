@@ -1,6 +1,6 @@
 /*
  *
- * Actors
+ * ActionViewDetails
  *
  */
 
@@ -146,7 +146,7 @@ const getActortypeColumns = (
   return columns;
 };
 
-export function Actors(props) {
+export function ActionViewDetails(props) {
   const {
     viewEntity,
     isManager,
@@ -422,7 +422,7 @@ export function Actors(props) {
   );
 }
 
-Actors.propTypes = {
+ActionViewDetails.propTypes = {
   viewEntity: PropTypes.object,
   onEntityClick: PropTypes.func,
   isManager: PropTypes.bool,
@@ -463,4 +463,4 @@ function mapDispatchToProps(dispatch, { id }) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(Actors));
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(ActionViewDetails));

@@ -1,6 +1,6 @@
 /*
  *
- * Activities
+ * ActorViewDetails
  *
  */
 
@@ -110,7 +110,7 @@ const getActiontypeColumns = (viewEntity, typeid, viewSubject, intl) => {
   return columns;
 };
 
-export function Activities(props) {
+export function ActorViewDetails(props) {
   const {
     viewEntity,
     taxonomies,
@@ -468,7 +468,7 @@ export function Activities(props) {
   );
 }
 
-Activities.propTypes = {
+ActorViewDetails.propTypes = {
   viewEntity: PropTypes.instanceOf(Map),
   taxonomies: PropTypes.instanceOf(Map),
   actionConnections: PropTypes.instanceOf(Map),
@@ -521,4 +521,4 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(Activities));
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(ActorViewDetails));

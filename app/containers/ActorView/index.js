@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Map } from 'immutable';
-import { Box } from 'grommet';
 
 import {
   getTitleField,
@@ -57,7 +56,7 @@ import {
 
 import appMessages from 'containers/App/messages';
 import messages from './messages';
-import Activities from './Activities';
+import ActorViewDetails from './ActorViewDetails';
 import CountryMap from './CountryMap';
 
 import {
@@ -197,16 +196,14 @@ export function ActorView(props) {
                       ],
                     }}
                   />
-                  <Box>
-                    <Activities
-                      id={params.id}
-                      typeId={typeId}
-                      viewEntity={viewEntity}
-                      onEntityClick={onEntityClick}
-                      taxonomies={taxonomies}
-                      isCountry={isCountry}
-                    />
-                  </Box>
+                  <ActorViewDetails
+                    id={params.id}
+                    typeId={typeId}
+                    viewEntity={viewEntity}
+                    onEntityClick={onEntityClick}
+                    taxonomies={taxonomies}
+                    isCountry={isCountry}
+                  />
                 </Main>
                 <Aside bottom>
                   {isCountry && (
