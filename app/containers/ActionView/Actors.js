@@ -179,7 +179,15 @@ export function Actors(props) {
   const viewActivitytype = activitytypes && activitytypes.find((type) => qe(type.get('id'), typeId));
   const hasTarget = viewActivitytype && viewActivitytype.getIn(['attributes', 'has_target']);
   const hasMemberOption = !!typeId && !qe(typeId, ACTIONTYPES.NATL);
-  const viewSubject = hasTarget && subject ? subject : 'actors';
+
+  let viewSubject = hasTarget && subject ? subject : 'actors';
+  const validViewSubjects = ['actors'];
+  if (hasTarget) {
+    validViewSubjects.push('targets');
+  }
+  if (validViewSubjects.indexOf(viewSubject) === -1) {
+    viewSubject = validViewSubjects.length > 0 ? validViewSubjects[0] : null;
+  }
 
   const actorsByTypeForSubject = !hasTarget || viewSubject === 'actors'
     ? actorsByActortype
