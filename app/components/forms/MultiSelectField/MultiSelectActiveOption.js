@@ -106,7 +106,7 @@ export function MultiSelectActiveOption({
           </MultiselectActiveOptionRemove>
         </Box>
       </Box>
-      {field.connectionAttributes && (
+      {field.connectionAttributes && field.connectionAttributes.length > 0 && (
         <ConnectionAttributes>
           {field.connectionAttributes.map((attribute) => {
             const value = option.get('association')

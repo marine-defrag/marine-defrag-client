@@ -5,6 +5,7 @@ import { cleanupSearchTarget, regExMultipleWords } from 'utils/string';
 import { testEntityEntityAssociation } from 'utils/entities';
 import { getEntitySortComparator } from 'utils/sort';
 import asArray from 'utils/as-array';
+import qe from 'utils/quasi-equals';
 
 export const getOptionSortValueMapper = (option) => {
   if (option.get('order')) {
@@ -89,6 +90,13 @@ export const filterOptionsByTags = (options, queryTags) => options.filter(
   (option) => asArray(queryTags).every(
     (tag) => testEntityEntityAssociation(option, 'tags', parseInt(tag, 10)),
   )
+);
+export const filterOptionsByType = (
+  checkboxOptions,
+  queryType,
+  typeFilter,
+) => checkboxOptions.filter(
+  (option) => qe(queryType, option.getIn(['attributes', typeFilter.attribute])),
 );
 
 export const getChangedOptions = (options) => options.filter((o) => o.get('hasChanged'));

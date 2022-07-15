@@ -6,8 +6,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
-import { Box, Text } from 'grommet';
+import { Box, Text, Button } from 'grommet';
 import { List, Map } from 'immutable';
 import styled from 'styled-components';
 
@@ -21,18 +22,51 @@ import {
   ACTIONTYPES,
   ACTIONTYPES_CONFIG,
   ACTIONTYPE_ACTOR_ACTION_ROLES,
+  ACTORTYPES,
 } from 'themes/config';
+
 import FieldGroup from 'components/fields/FieldGroup';
 import ButtonPill from 'components/buttons/ButtonPill';
 
+import {
+  selectActionConnections,
+  selectSubjectQuery,
+  selectActiontypeQuery,
+  selectActortypes,
+  selectActiontypes,
+} from 'containers/App/selectors';
+
+import {
+  updatePath,
+  setSubject,
+  setActiontype,
+} from 'containers/App/actions';
+
 import appMessages from 'containers/App/messages';
 import ActorActivitiesMap from './ActorActivitiesMap';
+import Members from './Members';
+import CountryFacts from './CountryFacts';
+
+import {
+  selectActionsByType,
+  selectActionsAsTargetByType,
+  selectMembersByType,
+  selectActionsAsMemberByActortype,
+  selectActionsAsTargetAsMemberByActortype,
+  selectActorIndicators,
+} from './selectors';
 
 const TypeSelectBox = styled((p) => <Box {...p} />)``;
 const TypeButton = styled((p) => <ButtonPill {...p} />)`
   margin-bottom: 5px;
 `;
-// max-width: ${({ listItems }) => 100 / listItems}%;
+
+const SubjectButton = styled((p) => <Button plain {...p} />)`
+  padding: 2px 4px;
+  border-bottom: 2px solid;
+  border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
+  background: none;
+`;
 
 const getActiontypeColumns = (viewEntity, typeid, viewSubject, intl) => {
   let columns = [{
@@ -79,7 +113,6 @@ const getActiontypeColumns = (viewEntity, typeid, viewSubject, intl) => {
 export function Activities(props) {
   const {
     viewEntity,
-    viewSubject,
     taxonomies,
     actionConnections,
     onSetActiontype,
@@ -89,11 +122,43 @@ export function Activities(props) {
     actiontypes,
     actionsAsMemberByActortype,
     actionsAsTargetAsMemberByActortype,
-    viewActortype,
     onEntityClick,
-    hasMembers,
     intl,
+    actortypes,
+    isCountry,
+    typeId,
+    subject,
+    onSetSubject,
+    membersByType,
+    actorConnections,
+    onUpdatePath,
+    indicators,
   } = props;
+  const viewActortype = actortypes && actortypes.find((type) => qe(type.get('id'), typeId));
+
+  const isLocation = qe(typeId, ACTORTYPES.POINT);
+  const isTarget = !isLocation && viewActortype && viewActortype.getIn(['attributes', 'is_target']);
+  const isActive = !isLocation && viewActortype && viewActortype.getIn(['attributes', 'is_active']);
+  const hasMembers = viewActortype && viewActortype.getIn(['attributes', 'has_members']);
+
+  let viewSubject = subject || (hasMembers ? 'members' : 'actors');
+  const validViewSubjects = [];
+  if (isTarget) {
+    validViewSubjects.push('targets');
+  }
+  if (isActive) {
+    validViewSubjects.push('actors');
+  }
+  if (hasMembers) {
+    validViewSubjects.push('members');
+  }
+  if (isCountry || isLocation) {
+    validViewSubjects.push('facts');
+  }
+  if (validViewSubjects.indexOf(viewSubject) === -1) {
+    viewSubject = validViewSubjects.length > 0 ? validViewSubjects[0] : null;
+  }
+
   // figure out connected action types ##################################################
   const canBeMember = viewActortype && !hasMembers;
   let actiontypesForSubject;
@@ -226,146 +291,234 @@ export function Activities(props) {
       mapSubject = 'actors';
     }
   }
+
   return (
     <Box>
-      {(!actiontypeIdsForSubjectOptions || actiontypeIdsForSubjectOptions.size === 0) && (
-        <Box margin={{ vertical: 'small', horizontal: 'medium' }}>
-          {viewSubject === 'actors' && (
-            <Text>
-              No activities for actor in database
-            </Text>
-          )}
-          {viewSubject === 'targets' && (
-            <Text>
-              Actor not target of any activities in database
-            </Text>
-          )}
-        </Box>
+      <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
+        {hasMembers && (
+          <SubjectButton
+            onClick={() => onSetSubject('members')}
+            active={viewSubject === 'members'}
+          >
+            <Text size="large">Members</Text>
+          </SubjectButton>
+        )}
+        {isActive && (
+          <SubjectButton
+            onClick={() => onSetSubject('actors')}
+            active={viewSubject === 'actors'}
+          >
+            <Text size="large">Activities</Text>
+          </SubjectButton>
+        )}
+        {isTarget && (
+          <SubjectButton
+            onClick={() => onSetSubject('targets')}
+            active={viewSubject === 'targets'}
+          >
+            <Text size="large">Targeted by</Text>
+          </SubjectButton>
+        )}
+        {(isCountry || isLocation) && (
+          <SubjectButton
+            onClick={() => onSetSubject('facts')}
+            active={viewSubject === 'facts'}
+          >
+            <Text size="large">Facts & Figures</Text>
+          </SubjectButton>
+        )}
+      </Box>
+      {viewSubject === 'members' && hasMembers && (
+        <Members
+          membersByType={membersByType}
+          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+          taxonomies={taxonomies}
+          actorConnections={actorConnections}
+        />
       )}
-      {actiontypeIdsForSubjectOptions && actiontypeIdsForSubjectOptions.size > 0 && (
-        <TypeSelectBox
-          direction="row"
-          gap="xxsmall"
-          margin={{ top: 'small', horizontal: 'medium', bottom: 'medium' }}
-          wrap
-        >
-          {actiontypeIdsForSubjectOptions.map(
-            (id) => (
-              <TypeButton
-                key={id}
-                onClick={() => onSetActiontype(id)}
-                active={qe(activeActiontypeId, id) || actiontypeIdsForSubjectOptions.size === 1}
-                listItems={actiontypeIdsForSubjectOptions.size}
-              >
-                <Text size="small">
-                  {actiontypeIdsForSubjectOptions.size > 4 && (
-                    <FormattedMessage {...appMessages.entities[`actions_${id}`].pluralShort} />
-                  )}
-                  {actiontypeIdsForSubjectOptions.size <= 4 && (
-                    <FormattedMessage {...appMessages.entities[`actions_${id}`].plural} />
-                  )}
+      {(viewSubject === 'actors' || viewSubject === 'targets') && (
+        <Box>
+          {(!actiontypeIdsForSubjectOptions || actiontypeIdsForSubjectOptions.size === 0) && (
+            <Box margin={{ vertical: 'small', horizontal: 'medium' }}>
+              {viewSubject === 'actors' && (
+                <Text>
+                  No activities for actor in database
                 </Text>
-              </TypeButton>
-            )
+              )}
+              {viewSubject === 'targets' && (
+                <Text>
+                  Actor not target of any activities in database
+                </Text>
+              )}
+            </Box>
           )}
-        </TypeSelectBox>
-      )}
-      {actiontypeIdsForSubjectOptions && actiontypeIdsForSubjectOptions.size > 0 && (
-        <Box>
-          {viewEntity && hasActivityMap && (
-            <ActorActivitiesMap
-              actor={viewEntity}
-              actions={activeActiontypeActions}
-              actionsAsMember={actiontypesAsMemberForSubject}
-              hasMemberOption={hasMemberOption}
-              viewSubject={viewSubject}
-              mapSubject={mapSubject}
-              actiontypeHasTarget={hasTarget}
-              dataReady
-              onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
-              actiontypeId={activeActiontypeId}
-              actorCanBeMember={canBeMember}
-            />
+          {actiontypeIdsForSubjectOptions && actiontypeIdsForSubjectOptions.size > 0 && (
+            <TypeSelectBox
+              direction="row"
+              gap="xxsmall"
+              margin={{ top: 'small', horizontal: 'medium', bottom: 'medium' }}
+              wrap
+            >
+              {actiontypeIdsForSubjectOptions.map(
+                (id) => (
+                  <TypeButton
+                    key={id}
+                    onClick={() => onSetActiontype(id)}
+                    active={qe(activeActiontypeId, id) || actiontypeIdsForSubjectOptions.size === 1}
+                    listItems={actiontypeIdsForSubjectOptions.size}
+                  >
+                    <Text size="small">
+                      {actiontypeIdsForSubjectOptions.size > 4 && (
+                        <FormattedMessage {...appMessages.entities[`actions_${id}`].pluralShort} />
+                      )}
+                      {actiontypeIdsForSubjectOptions.size <= 4 && (
+                        <FormattedMessage {...appMessages.entities[`actions_${id}`].plural} />
+                      )}
+                    </Text>
+                  </TypeButton>
+                )
+              )}
+            </TypeSelectBox>
           )}
-        </Box>
-      )}
-      {actiontypesForSubject && activeActiontypeActions && actiontypesForSubject.size > 0 && (
-        <Box>
-          <FieldGroup
-            group={{
-              title: viewSubject === 'actors' ? 'Individually' : 'Explicitly targeted',
-              fields: [
-                getActionConnectionField({
-                  actions: activeActiontypeActions,
-                  taxonomies,
-                  onEntityClick,
-                  connections: actionConnections,
-                  typeid: activeActiontypeId,
-                  columns: getActiontypeColumns(
-                    viewEntity,
-                    activeActiontypeId,
-                    viewSubject,
-                    intl,
-                  ),
-                }),
-              ],
-            }}
-          />
-        </Box>
-      )}
-      {canBeMember && actiontypesAsMemberForSubject.entrySeq().map(([actortypeId, typeActors]) => (
-        <Box key={actortypeId}>
-          {typeActors.entrySeq().map(([actorId, actor]) => {
-            const typeLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeId}`].singleShort);
-            const prefix = viewSubject === 'actors' ? 'As member of ' : 'Targeted as member of ';
-            return (
-              <Box key={actorId}>
-                <FieldGroup
-                  group={{
-                    title: `${prefix} ${typeLabel}: "${actor.getIn(['attributes', 'title'])}"`,
-                    fields: [
-                      getActionConnectionField({
-                        actions: actor.getIn([viewSubject === 'actors' ? 'actionsByType' : 'targetingActionsByType', activeActiontypeId]),
-                        taxonomies,
-                        onEntityClick,
-                        connections: actionConnections,
-                        typeid: activeActiontypeId,
-                        columns: getActiontypeColumns(
-                          viewEntity,
-                          activeActiontypeId,
-                          viewSubject,
-                          intl,
-                        ),
-                      }),
-                    ],
-                  }}
+          {actiontypeIdsForSubjectOptions && actiontypeIdsForSubjectOptions.size > 0 && (
+            <Box>
+              {viewEntity && hasActivityMap && (
+                <ActorActivitiesMap
+                  actor={viewEntity}
+                  actions={activeActiontypeActions}
+                  actionsAsMember={actiontypesAsMemberForSubject}
+                  hasMemberOption={hasMemberOption}
+                  viewSubject={viewSubject}
+                  mapSubject={mapSubject}
+                  actiontypeHasTarget={hasTarget}
+                  dataReady
+                  onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                  actiontypeId={activeActiontypeId}
+                  actorCanBeMember={canBeMember}
                 />
-              </Box>
-            );
-          })}
+              )}
+            </Box>
+          )}
+          {actiontypesForSubject && activeActiontypeActions && actiontypesForSubject.size > 0 && (
+            <Box>
+              <FieldGroup
+                group={{
+                  title: viewSubject === 'actors' ? 'Individually' : 'Targeted directly',
+                  fields: [
+                    getActionConnectionField({
+                      actions: activeActiontypeActions,
+                      taxonomies,
+                      onEntityClick,
+                      connections: actionConnections,
+                      typeid: activeActiontypeId,
+                      columns: getActiontypeColumns(
+                        viewEntity,
+                        activeActiontypeId,
+                        viewSubject,
+                        intl,
+                      ),
+                    }),
+                  ],
+                }}
+              />
+            </Box>
+          )}
+          {canBeMember && actiontypesAsMemberForSubject.entrySeq().map(([actortypeId, typeActors]) => (
+            <Box key={actortypeId}>
+              {typeActors.entrySeq().map(([actorId, actor]) => {
+                const typeLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeId}`].singleShort);
+                const prefix = viewSubject === 'actors' ? 'As member of ' : 'Targeted as member of ';
+                return (
+                  <Box key={actorId}>
+                    <FieldGroup
+                      group={{
+                        title: `${prefix} ${typeLabel}: "${actor.getIn(['attributes', 'title'])}"`,
+                        fields: [
+                          getActionConnectionField({
+                            actions: actor.getIn([viewSubject === 'actors' ? 'actionsByType' : 'targetingActionsByType', activeActiontypeId]),
+                            taxonomies,
+                            onEntityClick,
+                            connections: actionConnections,
+                            typeid: activeActiontypeId,
+                            columns: getActiontypeColumns(
+                              viewEntity,
+                              activeActiontypeId,
+                              viewSubject,
+                              intl,
+                            ),
+                          }),
+                        ],
+                      }}
+                    />
+                  </Box>
+                );
+              })}
+            </Box>
+          ))}
         </Box>
-      ))}
+      )}
+      {viewSubject === 'facts' && (
+        <CountryFacts
+          onUpdatePath={onUpdatePath}
+          indicators={indicators}
+          resources={actionConnections && actionConnections.get('resources')}
+        />
+      )}
     </Box>
   );
 }
 
 Activities.propTypes = {
   viewEntity: PropTypes.instanceOf(Map),
-  viewSubject: PropTypes.string,
-  viewActortype: PropTypes.instanceOf(Map),
   taxonomies: PropTypes.instanceOf(Map),
   actionConnections: PropTypes.instanceOf(Map),
   onSetActiontype: PropTypes.func,
   onEntityClick: PropTypes.func,
   viewActiontypeId: PropTypes.string,
-  hasMembers: PropTypes.bool,
   actionsByActiontype: PropTypes.instanceOf(Map),
   actionsAsTargetByActiontype: PropTypes.instanceOf(Map),
   actiontypes: PropTypes.instanceOf(Map),
   actionsAsMemberByActortype: PropTypes.instanceOf(Map),
   actionsAsTargetAsMemberByActortype: PropTypes.instanceOf(Map),
   intl: intlShape,
+  onUpdatePath: PropTypes.func,
+  subject: PropTypes.string,
+  onSetSubject: PropTypes.func,
+  actorConnections: PropTypes.instanceOf(Map),
+  indicators: PropTypes.instanceOf(Map),
+  membersByType: PropTypes.instanceOf(Map),
+  actortypes: PropTypes.instanceOf(Map),
+  isCountry: PropTypes.bool,
+  typeId: PropTypes.number,
 };
 
+const mapStateToProps = (state, { id }) => ({
+  indicators: selectActorIndicators(state, id),
+  actionsByActiontype: selectActionsByType(state, id),
+  actionsAsTargetByActiontype: selectActionsAsTargetByType(state, id),
+  actionsAsMemberByActortype: selectActionsAsMemberByActortype(state, id),
+  actionsAsTargetAsMemberByActortype: selectActionsAsTargetAsMemberByActortype(state, id),
+  actionConnections: selectActionConnections(state),
+  membersByType: selectMembersByType(state, id),
+  subject: selectSubjectQuery(state),
+  viewActiontypeId: selectActiontypeQuery(state),
+  actortypes: selectActortypes(state),
+  actiontypes: selectActiontypes(state),
+});
 
-export default injectIntl(Activities);
+function mapDispatchToProps(dispatch) {
+  return {
+    onUpdatePath: (path) => {
+      dispatch(updatePath(path));
+    },
+    onSetSubject: (type) => {
+      dispatch(setSubject(type));
+    },
+    onSetActiontype: (type) => {
+      dispatch(setActiontype(type));
+    },
+  };
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(Activities));

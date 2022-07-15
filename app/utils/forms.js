@@ -67,7 +67,10 @@ export const parentActionOption = (entity, activeParentId) => Map({
   label: getEntityTitle(entity),
   draft: entity.getIn(['attributes', 'draft']),
   checked: activeParentId ? entity.get('id') === activeParentId.toString() : false,
-});
+}).set(
+  'attributes',
+  entity.get('attributes'),
+);
 
 export const parentActionOptions = (entities, activeParentId) => entities
   ? entities.reduce((options, entity) => options.push(parentActionOption(entity, activeParentId)), List())
@@ -106,7 +109,27 @@ export const makeTagFilterGroups = (taxonomies, contextIntl) => taxonomies
     })).valueSeq().toArray(),
   })).toArray();
 
-export const renderActionControl = (entities, taxonomies, onCreateOption, contextIntl) => entities
+export const makeTypeFilter = (
+  types,
+  contextIntl,
+  attribute,
+  typeMessage
+) => ({
+  title: contextIntl.formatMessage(appMessages.attributes[attribute]),
+  attribute,
+  options: types.map((typeId) => ({
+    label: contextIntl.formatMessage(appMessages[typeMessage][typeId]),
+    value: typeId,
+  })),
+});
+
+export const renderActionControl = ({
+  entities,
+  taxonomies,
+  onCreateOption,
+  contextIntl,
+  types,
+}) => entities
   ? {
     id: 'actions',
     model: '.associatedActions',
@@ -117,6 +140,12 @@ export const renderActionControl = (entities, taxonomies, onCreateOption, contex
     advanced: true,
     selectAll: true,
     tagFilterGroups: makeTagFilterGroups(taxonomies, contextIntl),
+    typeFilter: types && makeTypeFilter(
+      types,
+      contextIntl,
+      'measuretype_id',
+      'actiontypes',
+    ),
     onCreate: onCreateOption
       ? () => onCreateOption({ path: API.ACTIONS })
       : null,
@@ -426,7 +455,13 @@ export const renderParentCategoryControl = (entities, label, activeParentId) => 
     options: parentCategoryOptions(entities, activeParentId),
   }
   : null;
-export const renderParentActionControl = (entities, label, activeParentId) => entities
+export const renderParentActionControl = ({
+  entities,
+  label,
+  activeParentId,
+  types,
+  contextIntl,
+}) => entities
   ? {
     id: 'associatedParent',
     model: '.associatedParent',
@@ -434,6 +469,12 @@ export const renderParentActionControl = (entities, label, activeParentId) => en
     label,
     controlType: 'multiselect',
     multiple: false,
+    typeFilter: types && makeTypeFilter(
+      types,
+      contextIntl,
+      'measuretype_id',
+      'actiontypes',
+    ),
     options: parentActionOptions(entities, activeParentId),
   }
   : null;

@@ -415,8 +415,7 @@ export function ActorActivitiesMap({
           indicator="actions"
           onActorClick={(id) => onEntityClick(id)}
           maxValue={maxValue}
-          includeActorMembers={includeActorMembers}
-          includeTargetMembers={includeTargetMembers}
+          includeSecondaryMembers={includeActorMembers || includeTargetMembers}
           mapSubject={mapSubject}
           fitBounds
           projection="gall-peters"

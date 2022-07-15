@@ -69,6 +69,8 @@ import {
   SET_INCLUDE_ACTOR_MEMBERS,
   SET_INCLUDE_TARGET_MEMBERS,
   SET_INCLUDE_MEMBERS_FORFILTERS,
+  SET_INCLUDE_TARGET_CHILDREN,
+  SET_INCLUDE_ACTOR_CHILDREN,
 } from './constants';
 
 export function submitInvalid(valid) {
@@ -500,5 +502,17 @@ export function openBookmark(bookmark) {
   return {
     type: OPEN_BOOKMARK,
     bookmark,
+  };
+}
+export function setIncludeActorChildren(value) {
+  return {
+    type: SET_INCLUDE_ACTOR_CHILDREN,
+    value,
+  };
+}
+export function setIncludeTargetChildren(value) {
+  return {
+    type: SET_INCLUDE_TARGET_CHILDREN,
+    value,
   };
 }

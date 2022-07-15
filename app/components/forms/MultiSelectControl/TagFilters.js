@@ -21,6 +21,7 @@ const Styled = styled.div`
 
 // padding: 0.75em 2em;
 const Group = styled(Button)`
+  min-height: 25px;
   padding: 0 0.5em;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: 0 0.5em;
@@ -34,10 +35,12 @@ const Dropdown = styled.div`
   position: absolute;
   left: 0;
   right: 0;
+  top: 100%;
+  margin-top: -5px;
   width: 100%;
   z-index: 2;
   background-color: ${palette('background', 0)};
-  box-shadow: 0 8px 8px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 0 8px 0 rgba(0,0,0,0.2);
   overflow-y: auto;
   max-height: 200px;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
@@ -59,66 +62,59 @@ const Label = styled.div`
 `;
 
 class TagFilters extends React.PureComponent {
-  constructor() {
-    super();
-    this.state = {
-      active: null,
-    };
-  }
-
-  toggleGroup = (groupId) => {
-    this.setState(
-      (prevState) => ({
-        active: prevState.active === groupId
-          ? null
-          : groupId,
-      })
-    );
-  };
-
   prepareOptions = (options, queryTags) => sortOptions(
     fromJS(options).map((option) => option.withMutations((o) => o.set('checked', queryTags.includes(option.get('value')))))
   );
 
   render() {
-    return this.props.tagFilterGroups.length === 0
-      ? null
-      : (
-        <Styled>
-          { this.props.tagFilterGroups.map((group, key) => group.options && group.options.length > 0
-            ? (
+    const {
+      openId,
+      setOpen,
+      tagFilterGroups,
+      onTagSelected,
+      queryTags,
+    } = this.props;
+    if (tagFilterGroups.length === 0) return null;
+    return (
+      <Styled>
+        {tagFilterGroups.map(
+          (group, key) => {
+            if (!group.options || group.options.length === 0) {
+              return null;
+            }
+            return (
               <GroupWrapper key={key}>
                 <Group
                   onClick={(evt) => {
                     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                    this.toggleGroup(key);
+                    setOpen(key === openId ? null : key);
                   }}
-                  active={key === this.state.active}
+                  active={key === openId}
                 >
                   <Label>
                     {group.title}
                   </Label>
-                  <Icon name={this.state.active === key ? 'dropdownClose' : 'dropdownOpen'} text textRight />
+                  <Icon name={openId === key ? 'dropdownClose' : 'dropdownOpen'} text textRight />
                 </Group>
-                { key === this.state.active
-                && (
+                {key === openId && (
                   <Dropdown>
                     <OptionList
                       secondary
-                      options={this.prepareOptions(group.options, this.props.queryTags)}
+                      options={this.prepareOptions(group.options, queryTags)}
                       onCheckboxChange={(active, tagOption) => {
-                        this.setState({ active: null });
-                        this.props.onTagSelected(active, tagOption);
+                        setOpen(null);
+                        onTagSelected(active, tagOption);
                       }}
                     />
                   </Dropdown>
                 )
                 }
               </GroupWrapper>
-            )
-            : null)}
-        </Styled>
-      );
+            );
+          }
+        )}
+      </Styled>
+    );
   }
 }
 
@@ -126,6 +122,8 @@ TagFilters.propTypes = {
   tagFilterGroups: PropTypes.array,
   queryTags: PropTypes.array,
   onTagSelected: PropTypes.func,
+  openId: PropTypes.number,
+  setOpen: PropTypes.func,
 };
 
 export default TagFilters;

@@ -12,6 +12,7 @@ import { palette } from 'styled-theme';
 import { reduce } from 'lodash/collection';
 import appMessage from 'utils/app-message';
 import { lowerCase } from 'utils/string';
+import { Box } from 'grommet';
 
 import Icon from 'components/Icon';
 import Button from 'components/buttons/Button';
@@ -22,9 +23,7 @@ import PrintOnly from 'components/styled/PrintOnly';
 
 import messages from './messages';
 
-const Search = styled.div`
-  display: flex;
-  flex-direction: row;
+const Search = styled((p) => <Box direction="row" align="center" {...p} />)`
   width: 100%;
   background-color: ${palette('background', 0)};
   color: ${palette('dark', 2)};
@@ -54,16 +53,10 @@ const SearchInput = styled(DebounceInput)`
     display: none;
   }
 `;
-const Tags = styled.div`
-  margin-top: -2px;
-  margin-bottom: -2px;
-`;
+const Tags = styled((p) => <Box direction="row" align="center" {...p} />)``;
 
 const Clear = styled(Button)`
   padding: ${(props) => props.small ? '4px 6px' : '8px 6px'};
-  position: absolute;
-  top: 0;
-  right: 0;
   background-color: ${palette('background', 4)};
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: ${(props) => props.small ? '4px 6px' : '8px 6px'};
@@ -136,67 +129,68 @@ export class TagSearch extends React.Component { // eslint-disable-line react/pr
             <FormattedMessage {...messages.labelPrintFilters} />
           </LabelPrint>
         )}
-        { filters.length > 0
-          && (
-            <Tags>
-              {
-                filters.map((filter, i) => filter.inverse
-                  ? (
-                    <ButtonTagFilterInverse
-                      key={i}
-                      onClick={filter.onClick}
-                      palette={filter.type || 'attributes'}
-                      paletteHover={`${filter.type || 'attributes'}Hover`}
-                      pIndex={parseInt(filter.id, 10) || 0}
-                      disabled={!filter.onClick}
-                    >
-                      {this.getFilterLabel(filter)}
-                      { filter.onClick
-                      && <Icon name="removeSmall" text textRight hidePrint />
-                      }
-                    </ButtonTagFilterInverse>
-                  )
-                  : (
-                    <ButtonTagFilter
-                      key={i}
-                      onClick={filter.onClick}
-                      palette={filter.type || 'attributes'}
-                      paletteHover={`${filter.type || 'attributes'}Hover`}
-                      pIndex={parseInt(filter.id, 10) || 0}
-                      disabled={!filter.onClick}
-                    >
-                      {this.getFilterLabel(filter)}
-                      { filter.onClick
-                      && <Icon name="removeSmall" text textRight hidePrint />
-                      }
-                    </ButtonTagFilter>
-                  ))
-              }
-            </Tags>
-          )
-        }
-        <SearchInput
-          id="search"
-          minLength={1}
-          debounceTimeout={500}
-          value={searchQuery || ''}
-          onChange={(e) => onSearch(e.target.value)}
-          onFocus={() => this.setState({ active: true })}
-          onBlur={() => this.setState({ active: false })}
-          placeholder={placeholder || (intl.formatMessage(
-            this.props.multiselect
-              ? messages.searchPlaceholderMultiSelect
-              : messages.searchPlaceholderEntities
-          ))}
-        />
-        { hasFilters && this.props.onClear && (
-          <Clear
-            onClick={this.props.onClear}
-            small={this.props.multiselect}
-          >
-            <Icon name="removeSmall" />
-          </Clear>
+        {filters.length > 0 && (
+          <Tags flex={{ shrink: 0 }}>
+            {filters.map((filter, i) => filter.inverse
+              ? (
+                <ButtonTagFilterInverse
+                  key={i}
+                  onClick={filter.onClick}
+                  palette={filter.type || 'attributes'}
+                  paletteHover={`${filter.type || 'attributes'}Hover`}
+                  pIndex={parseInt(filter.id, 10) || 0}
+                  disabled={!filter.onClick}
+                >
+                  {this.getFilterLabel(filter)}
+                  {filter.onClick && <Icon name="removeSmall" text textRight hidePrint />}
+                </ButtonTagFilterInverse>
+              )
+              : (
+                <ButtonTagFilter
+                  key={i}
+                  onClick={filter.onClick}
+                  palette={filter.type || 'attributes'}
+                  paletteHover={`${filter.type || 'attributes'}Hover`}
+                  pIndex={parseInt(filter.id, 10) || 0}
+                  disabled={!filter.onClick}
+                >
+                  {this.getFilterLabel(filter)}
+                  { filter.onClick
+                  && <Icon name="removeSmall" text textRight hidePrint />
+                  }
+                </ButtonTagFilter>
+              ))
+            }
+          </Tags>
         )}
+        <Box direction="row" align="center" fill="horizontal">
+          <Box fill="horizontal">
+            <SearchInput
+              id="search"
+              minLength={1}
+              debounceTimeout={500}
+              value={searchQuery || ''}
+              onChange={(e) => onSearch(e.target.value)}
+              onFocus={() => this.setState({ active: true })}
+              onBlur={() => this.setState({ active: false })}
+              placeholder={placeholder || (intl.formatMessage(
+                this.props.multiselect
+                  ? messages.searchPlaceholderMultiSelect
+                  : messages.searchPlaceholderEntities
+              ))}
+            />
+          </Box>
+          {hasFilters && this.props.onClear && (
+            <Box flex={{ shrink: 0 }}>
+              <Clear
+                onClick={this.props.onClear}
+                small={this.props.multiselect}
+              >
+                <Icon name="removeSmall" />
+              </Clear>
+            </Box>
+          )}
+        </Box>
         {searchQuery && (
           <LabelPrint>
             <FormattedMessage {...messages.labelPrintKeywords} />

@@ -187,6 +187,7 @@ class EntityForm extends React.Component { // eslint-disable-line react/prefer-s
     return (
       <FieldComponent
         id={id}
+        debounce={500}
         model={model || `.${id}`}
         {...props}
       >
