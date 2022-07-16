@@ -870,12 +870,18 @@ export const setActionConnections = ({
     actionCategories,
     categories,
   );
+  const entityChildren = actionConnections.get(API.ACTIONS).filter(
+    (connection) => qe(connection.getIn(['attributes', 'parent_id']), action.get('id'))
+  ).map(
+    (connection) => parseInt(connection.get('id'), 10)
+  );
   return action
     .set('categories', entityCategories)
     .set('actorsAttributes', actorActionsAttributes && actorActionsAttributes.get(parseInt(action.get('id'), 10)))
     .set('actorsByType', entityActorsByActortype)
     .set('targetsByType', entityTargetsByActortype)
-    .set('resourcesByType', entityResourcesByResourcetype);
+    .set('resourcesByType', entityResourcesByResourcetype)
+    .set('children', entityChildren);
 };
 
 export const setActorConnections = ({

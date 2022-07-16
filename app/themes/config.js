@@ -806,7 +806,6 @@ export const ACTIONTYPES_CONFIG = {
       {
         id: 'children',
         type: 'children',
-        showOnSingle: false,
       },
       {
         id: 'taxonomy-14',
