@@ -8,7 +8,7 @@ import {
   selectEntity,
   selectEntities,
   selectActorsCategorised,
-  selectActorTaxonomies,
+  selectActionsCategorised,
   selectActortypes,
   selectActorActionsGroupedByActionAttributes,
   selectActionActorsGroupedByAction,
@@ -69,6 +69,41 @@ export const selectParentOptions = createSelector(
     return null;
   }
 );
+export const selectChildrenByActiontype = createSelector(
+  selectViewEntity,
+  selectActionsCategorised,
+  selectActiontypes,
+  (viewAction, actions, actiontypes) => {
+    if (viewAction && actions && actiontypes) {
+      return actions.filter(
+        (action) => {
+          const self = qe(action.get('id'), viewAction.get('id'));
+          if (self) return false;
+          const type = actiontypes.find(
+            (at) => qe(
+              action.getIn(['attributes', 'measuretype_id']),
+              at.get('id'),
+            )
+          );
+          return type && type.getIn(['attributes', 'has_parent']);
+        }
+      ).map(
+        (action) => action.set(
+          'associated',
+          qe(viewAction.get('id'), action.getIn(['attributes', 'parent_id']))
+            ? viewAction.get('id')
+            : false,
+        ).set(
+          'association',
+          qe(viewAction.get('id'), action.getIn(['attributes', 'parent_id'])),
+        )
+      ).groupBy(
+        (action) => action.getIn(['attributes', 'measuretype_id']).toString()
+      );
+    }
+    return null;
+  }
+);
 
 export const selectTaxonomyOptions = createSelector(
   selectViewEntity,
@@ -114,7 +149,7 @@ export const selectTaxonomyOptions = createSelector(
 );
 
 export const selectConnectedTaxonomies = createSelector(
-  selectActorTaxonomies,
+  selectTaxonomiesSorted,
   selectCategories,
   (taxonomies, categories) => prepareTaxonomies(
     taxonomies,

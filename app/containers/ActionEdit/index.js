@@ -33,6 +33,7 @@ import {
   renderResourcesByResourcetypeControl,
   renderParentActionControl,
   parentActionOptions,
+  renderActionsByActiontypeControl,
 } from 'utils/forms';
 
 import {
@@ -91,6 +92,7 @@ import {
   selectTaxonomyOptions,
   selectActorsByActortype,
   selectTargetsByActortype,
+  selectChildrenByActiontype,
   selectResourcesByResourcetype,
   selectConnectedTaxonomies,
 } from './selectors';
@@ -137,6 +139,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       taxonomies,
       actorsByActortype,
       targetsByActortype,
+      childrenByActiontype,
       resourcesByResourcetype,
       parentOptions,
     } = props;
@@ -162,6 +165,9 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
           parentOptions,
           viewEntity.getIn(['attributes', 'parent_id']),
         ),
+        associatedChildrenByActiontype: childrenByActiontype
+          ? childrenByActiontype.map((actions) => entityOptions(actions, true))
+          : Map(),
 
       })
       : Map();
@@ -221,6 +227,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
     targetsByActortype,
     resourcesByResourcetype,
     parentOptions,
+    childrenByActiontype,
     onCreateOption,
     entityActorConnections,
   }) => {
@@ -294,6 +301,23 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
           ),
         })],
       });
+    }
+    if (childrenByActiontype) {
+      const actionConnections = renderActionsByActiontypeControl({
+        entitiesByActiontype: childrenByActiontype,
+        taxonomies: connectedTaxonomies,
+        onCreateOption,
+        contextIntl: intl,
+        model: 'associatedChildrenByActiontype',
+      });
+      if (actionConnections) {
+        groups.push(
+          {
+            label: intl.formatMessage(appMessages.entities.actions.children),
+            fields: actionConnections,
+          },
+        );
+      }
     }
     if (actorsByActortype) {
       let connectionAttributes = [];
@@ -437,6 +461,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
       onCreateOption,
       parentOptions,
       entityActorConnections,
+      childrenByActiontype,
     } = this.props;
     const { intl } = this.context;
     // const reference = this.props.params.id;
@@ -513,13 +538,15 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
                 model="actionEdit.form.data"
                 formData={viewDomain.getIn(['form', 'data'])}
                 saving={saveSending}
-                handleSubmit={(formData) => this.props.handleSubmit(
+                handleSubmit={(formData) => this.props.handleSubmit({
                   formData,
                   taxonomies,
                   actorsByActortype,
                   targetsByActortype,
                   resourcesByResourcetype,
-                )}
+                  childrenByActiontype,
+                  viewEntity,
+                })}
                 handleSubmitFail={this.props.handleSubmitFail}
                 handleCancel={this.props.handleCancel}
                 handleUpdate={this.props.handleUpdate}
@@ -539,6 +566,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
                       connectedTaxonomies,
                       actorsByActortype,
                       targetsByActortype,
+                      childrenByActiontype,
                       resourcesByResourcetype,
                       parentOptions,
                       onCreateOption,
@@ -582,6 +610,7 @@ ActionEdit.propTypes = {
   actorsByActortype: PropTypes.object,
   targetsByActortype: PropTypes.object,
   resourcesByResourcetype: PropTypes.object,
+  childrenByActiontype: PropTypes.object,
   onCreateOption: PropTypes.func,
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
@@ -592,19 +621,20 @@ ActionEdit.contextTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (state, props) => ({
+const mapStateToProps = (state, { params }) => ({
   viewDomain: selectDomain(state),
   isUserAdmin: selectIsUserAdmin(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   authReady: selectReadyForAuthCheck(state),
-  viewEntity: selectViewEntity(state, props.params.id),
-  taxonomies: selectTaxonomyOptions(state, props.params.id),
+  viewEntity: selectViewEntity(state, params.id),
+  taxonomies: selectTaxonomyOptions(state, params.id),
   connectedTaxonomies: selectConnectedTaxonomies(state),
-  actorsByActortype: selectActorsByActortype(state, props.params.id),
-  targetsByActortype: selectTargetsByActortype(state, props.params.id),
-  resourcesByResourcetype: selectResourcesByResourcetype(state, props.params.id),
-  parentOptions: selectParentOptions(state, props.params.id),
-  entityActorConnections: selectActorActionsForAction(state, props.params.id),
+  actorsByActortype: selectActorsByActortype(state, params.id),
+  targetsByActortype: selectTargetsByActortype(state, params.id),
+  resourcesByResourcetype: selectResourcesByResourcetype(state, params.id),
+  parentOptions: selectParentOptions(state, params.id),
+  childrenByActiontype: selectChildrenByActiontype(state, params.id),
+  entityActorConnections: selectActorActionsForAction(state, params.id),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -631,7 +661,15 @@ function mapDispatchToProps(dispatch, props) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, taxonomies, actorsByActortype, targetsByActortype, resourcesByResourcetype) => {
+    handleSubmit: ({
+      formData,
+      taxonomies,
+      actorsByActortype,
+      targetsByActortype,
+      resourcesByResourcetype,
+      childrenByActiontype,
+      viewEntity,
+    }) => {
       let saveData = formData.set(
         'actionCategories',
         getCategoryUpdatesFromFormData({
@@ -722,6 +760,41 @@ function mapDispatchToProps(dispatch, props) {
             )
         );
       }
+      if (childrenByActiontype) {
+        saveData = saveData.set(
+          'actionChildren',
+          childrenByActiontype.reduce(
+            (memo, children, typeid) => {
+              const formChildren = getCheckedValuesFromOptions(formData.getIn(['associatedChildrenByActiontype', typeid]));
+              // console.log('typeid', typeid)
+              // console.log('children', children && children.toJS())
+              // console.log('formChildren', formChildren && formChildren.toJS())
+              const changes = children.reduce(
+                (memo2, child) => {
+                  // removed
+                  if (!!child.get('associated') && !formChildren.includes(child.get('id'))) {
+                    return memo2.push(
+                      child.setIn(['attributes', 'parent_id'], null)
+                    );
+                  }
+                  if (!child.get('associated') && formChildren.includes(child.get('id'))) {
+                    return memo2.push(
+                      child.setIn(['attributes', 'parent_id'], viewEntity.get('id'))
+                    );
+                  }
+                  return memo2;
+                },
+                List(),
+              );
+              if (changes.size > 0) {
+                return memo.concat(changes);
+              }
+              return memo;
+            },
+            List(),
+          )
+        );
+      }
       // TODO: remove once have singleselect instead of multiselect
       const formParentIds = getCheckedValuesFromOptions(formData.get('associatedParent'));
       if (List.isList(formParentIds) && formParentIds.size) {
@@ -729,13 +802,13 @@ function mapDispatchToProps(dispatch, props) {
       } else {
         saveData = saveData.setIn(['attributes', 'parent_id'], null);
       }
+      // console.log(saveData && saveData.toJS())
       dispatch(save(saveData.toJS()));
     },
     handleCancel: () => {
       dispatch(updatePath(`${ROUTES.ACTION}/${props.params.id}`, { replace: true }));
     },
     handleUpdate: (formData) => {
-      // console.log(formData && formData.toJS())
       dispatch(updateEntityForm(formData));
     },
     handleDelete: () => {

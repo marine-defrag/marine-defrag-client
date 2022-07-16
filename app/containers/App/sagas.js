@@ -372,6 +372,17 @@ export function* saveEntitySaga({ data }, updateClient = true, multiple = false)
           },
         });
       }
+      // // update action-actors connections (targets)
+      if (data.entity.actionChildren) {
+        yield all(data.entity.actionChildren.map(
+          (child) => call(saveEntitySaga, {
+            data: {
+              path: API.ACTIONS,
+              entity: child,
+            },
+          })
+        ));
+      }
       // update memberships connections
       if (data.entity.memberships) {
         yield call(saveConnectionsSaga, {
