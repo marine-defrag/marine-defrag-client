@@ -132,9 +132,8 @@ export function ActorViewDetails(props) {
           taxonomies={taxonomies}
           viewActiontypeId={viewActiontypeId}
           onEntityClick={onEntityClick}
-          typeId={typeId}
-          hasMembers={hasMembers}
           actionConnections={actionConnections}
+          canBeMember={isCountry}
         />
       )}
       {viewSubject === 'targets' && (
@@ -144,9 +143,8 @@ export function ActorViewDetails(props) {
           taxonomies={taxonomies}
           viewActiontypeId={viewActiontypeId}
           onEntityClick={onEntityClick}
-          typeId={typeId}
-          hasMembers={hasMembers}
           actionConnections={actionConnections}
+          canBeMember={isCountry}
         />
       )}
       {viewSubject === 'facts' && (

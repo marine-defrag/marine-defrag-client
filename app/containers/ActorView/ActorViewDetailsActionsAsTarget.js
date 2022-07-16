@@ -27,7 +27,6 @@ import FieldGroup from 'components/fields/FieldGroup';
 import ButtonPill from 'components/buttons/ButtonPill';
 
 import { setActiontype } from 'containers/App/actions';
-import { selectActortypes } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
 import ActorActivitiesMap from './ActorActivitiesMap';
@@ -48,19 +47,13 @@ export function ActorViewDetailsActions({
   actionConnections,
   onSetActiontype,
   viewActiontypeId,
-  actortypes,
   onEntityClick,
-  typeId,
-  hasMembers,
   actionsByActiontype,
   actionsAsMemberByActortype,
   intl,
+  canBeMember,
 }) {
-  const viewActortype = actortypes && actortypes.find((type) => qe(type.get('id'), typeId));
-
   // figure out connected action types ##################################################
-  const canBeMember = viewActortype && !hasMembers;
-
   let actiontypesAsMember;
   let actiontypeIdsAsMember;
   // direct && indirect actiontypeids for selected subject
@@ -238,15 +231,13 @@ export function ActorViewDetailsActions({
 
 ActorViewDetailsActions.propTypes = {
   // id: PropTypes.string,
-  typeId: PropTypes.number,
   viewEntity: PropTypes.instanceOf(Map),
   taxonomies: PropTypes.instanceOf(Map),
   actionConnections: PropTypes.instanceOf(Map),
   onSetActiontype: PropTypes.func,
   onEntityClick: PropTypes.func,
   viewActiontypeId: PropTypes.string,
-  hasMembers: PropTypes.bool,
-  actortypes: PropTypes.instanceOf(Map),
+  canBeMember: PropTypes.bool,
   actionsByActiontype: PropTypes.instanceOf(Map),
   actionsAsMemberByActortype: PropTypes.instanceOf(Map),
   intl: intlShape,
@@ -255,7 +246,6 @@ ActorViewDetailsActions.propTypes = {
 const mapStateToProps = (state, { id }) => ({
   actionsByActiontype: selectActionsAsTargetByType(state, id),
   actionsAsMemberByActortype: selectActionsAsTargetAsMemberByActortype(state, id),
-  actortypes: selectActortypes(state),
 });
 
 function mapDispatchToProps(dispatch) {

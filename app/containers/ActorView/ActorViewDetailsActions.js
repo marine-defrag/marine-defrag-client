@@ -27,10 +27,7 @@ import FieldGroup from 'components/fields/FieldGroup';
 import ButtonPill from 'components/buttons/ButtonPill';
 
 import { setActiontype } from 'containers/App/actions';
-import {
-  selectActortypes,
-  selectActiontypes,
-} from 'containers/App/selectors';
+import { selectActiontypes } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
 import ActorActivitiesMap from './ActorActivitiesMap';
@@ -52,19 +49,12 @@ export function ActorViewDetailsActions({
   onSetActiontype,
   viewActiontypeId,
   actiontypes,
-  actortypes,
   onEntityClick,
-  typeId,
-  hasMembers,
+  canBeMember,
   actionsByActiontype,
   actionsAsMemberByActortype,
   intl,
 }) {
-  const viewActortype = actortypes && actortypes.find((type) => qe(type.get('id'), typeId));
-
-  // figure out connected action types ##################################################
-  const canBeMember = viewActortype && !hasMembers;
-
   let activeActiontypeId;
   let actiontypesAsMember;
   let actiontypeIdsAsMember;
@@ -246,7 +236,6 @@ export function ActorViewDetailsActions({
 
 ActorViewDetailsActions.propTypes = {
   // id: PropTypes.string,
-  typeId: PropTypes.number,
   viewEntity: PropTypes.instanceOf(Map),
   taxonomies: PropTypes.instanceOf(Map),
   actionConnections: PropTypes.instanceOf(Map),
@@ -254,8 +243,7 @@ ActorViewDetailsActions.propTypes = {
   onEntityClick: PropTypes.func,
   viewActiontypeId: PropTypes.string,
   actiontypes: PropTypes.instanceOf(Map),
-  hasMembers: PropTypes.bool,
-  actortypes: PropTypes.instanceOf(Map),
+  canBeMember: PropTypes.bool,
   actionsByActiontype: PropTypes.instanceOf(Map),
   actionsAsMemberByActortype: PropTypes.instanceOf(Map),
   intl: intlShape,
@@ -264,7 +252,6 @@ ActorViewDetailsActions.propTypes = {
 const mapStateToProps = (state, { id }) => ({
   actionsByActiontype: selectActionsByType(state, id),
   actionsAsMemberByActortype: selectActionsAsMemberByActortype(state, id),
-  actortypes: selectActortypes(state),
   actiontypes: selectActiontypes(state),
 });
 
