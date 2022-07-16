@@ -149,7 +149,7 @@ export function ActionViewDetailsActors({
                     <FieldGroup
                       group={{
                         title: `${prefix} ${typeLabel}: "${action.getIn(['attributes', 'title'])}"`,
-                        fields: action.get('actorsByType').reduce(
+                        fields: action.get('actorsByType') && action.get('actorsByType').reduce(
                           (memo, actors, typeid) => memo.concat([
                             getActorConnectionField({
                               actors,
