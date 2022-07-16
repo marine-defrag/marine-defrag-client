@@ -804,9 +804,15 @@ export const ACTIONTYPES_CONFIG = {
         attributes: ['title'],
       },
       {
+        id: 'children',
+        type: 'children',
+        showOnSingle: false,
+      },
+      {
         id: 'taxonomy-14',
         type: 'taxonomy',
         taxonomy_id: 14, // project types
+        showOnSingle: false,
       },
       {
         id: 'actors', // one row per type,

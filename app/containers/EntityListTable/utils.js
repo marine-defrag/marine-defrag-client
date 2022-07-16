@@ -95,6 +95,14 @@ export const prepareHeader = ({
           sortOrder: sortOrder || 'asc',
           onSort,
         });
+      case 'children':
+        return ({
+          ...col,
+          title: 'Child activities',
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
       case 'associations':
         return ({
           ...col,
@@ -396,6 +404,21 @@ export const prepareEntities = ({
                 single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
                 tooltip: relatedEntities && relatedEntities.size > 1
                   && relatedEntities.groupBy((t) => t.getIn(['attributes', 'actortype_id'])),
+                multiple: relatedEntities && relatedEntities.size > 1,
+                sortValue: getRelatedSortValue(relatedEntities),
+              },
+            };
+          case 'children':
+            temp = entity.get('children') || (entity.get('childrenByType') && entity.get('childrenByType').flatten());
+            relatedEntities = connections && getRelatedEntities(temp, connections.get('measures'), col);
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: getRelatedValue(relatedEntities, 'activities'),
+                single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
+                tooltip: relatedEntities && relatedEntities.size > 1
+                  && relatedEntities.groupBy((t) => t.getIn(['attributes', 'measuretype_id'])),
                 multiple: relatedEntities && relatedEntities.size > 1,
                 sortValue: getRelatedSortValue(relatedEntities),
               },
