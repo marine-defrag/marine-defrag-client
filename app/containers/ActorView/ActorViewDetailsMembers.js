@@ -6,6 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 // import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import { Box, Text } from 'grommet';
 import { Map } from 'immutable';
@@ -18,13 +19,12 @@ import {
 } from 'utils/fields';
 import qe from 'utils/quasi-equals';
 
-import { ACTORTYPES } from 'themes/config';
+import { ACTORTYPES, ROUTES } from 'themes/config';
 import FieldGroup from 'components/fields/FieldGroup';
 
-// import appMessages from 'containers/App/messages';
-// import ActorMap from './ActorMap';
 import MapContainer from 'containers/MapContainer';
-// import messages from './messages';
+
+import { selectMembersByType } from './selectors';
 
 const MapOuterWrapper = styled((p) => <Box {...p} />)`
   z-index: 0;
@@ -34,33 +34,19 @@ const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
   height: 400px;
 `;
 
-export function Members(props) {
+export function ActorViewDetailsMembers(props) {
   const {
-    // viewEntity,
-    // viewSubject,
     onEntityClick,
     membersByType,
-    // actiontypes,
     taxonomies,
     actorConnections,
-    // onSetActiontype,
-    // viewActiontypeId,
-    // actionsByActiontype,
-    // actionsAsTargetByActiontype,
-    // actionsAsMemberByActortype,
-    // actionsAsTargetAsMemberByActortype,
-    // viewActortype,
-    // hasMembers,
-    // intl,
   } = props;
   const countriesJSON = topojson.feature(
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
   );
   const countries = membersByType && membersByType.get(parseInt(ACTORTYPES.COUNTRY, 10));
-  const otherMembers = membersByType && membersByType.filter(
-    (type, typeId) => !qe(typeId, ACTORTYPES.COUNTRY),
-  );
+
   const countryData = countries && countries.size > 0 && countriesJSON.features.reduce(
     (memo, feature) => {
       const country = countries && countries.find(
@@ -97,59 +83,22 @@ export function Members(props) {
         </Box>
       )}
       {countries && countries.size > 0 && (
-        <Box>
-          <MapOuterWrapper hasHeader noOverflow>
-            <MapWrapper>
-              <MapContainer
-                countryData={countryData}
-                countryFeatures={countriesJSON.features}
-                styleType="members"
-                onActorClick={(id) => onEntityClick(id)}
-                fitBounds
-                projection="gall-peters"
-              />
-            </MapWrapper>
-          </MapOuterWrapper>
-          <FieldGroup
-            aside
-            group={{
-              fields: [
-                getActorConnectionField({
-                  actors: countries,
-                  onEntityClick,
-                  typeid: ACTORTYPES.COUNTRY,
-                  taxonomies,
-                  connections: actorConnections,
-                  columns: [
-                    {
-                      id: 'main',
-                      type: 'main',
-                      sort: 'title',
-                      attributes: ['code', 'title'],
-                    },
-                    {
-                      id: 'actorActions',
-                      type: 'actorActions',
-                      subject: 'actors',
-                      actions: 'actions',
-                    },
-                    {
-                      id: 'actorActionsTargets',
-                      type: 'actorActions',
-                      subject: 'targets',
-                      actions: 'targetingActions',
-                    },
-                  ],
-                }),
-              ],
-            }}
-          />
-        </Box>
+        <MapOuterWrapper hasHeader noOverflow>
+          <MapWrapper>
+            <MapContainer
+              countryData={countryData}
+              countryFeatures={countriesJSON.features}
+              styleType="members"
+              onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+              fitBounds
+              projection="gall-peters"
+            />
+          </MapWrapper>
+        </MapOuterWrapper>
       )}
-      {otherMembers && otherMembers.size > 0 && (
+      {membersByType && membersByType.size > 0 && (
         <Box>
           <FieldGroup
-            aside
             group={{
               fields: membersByType.reduce(
                 (memo, actors, typeid) => memo.concat([
@@ -159,6 +108,26 @@ export function Members(props) {
                     typeid,
                     taxonomies,
                     connections: actorConnections,
+                    columns: [
+                      {
+                        id: 'main',
+                        type: 'main',
+                        sort: 'title',
+                        attributes: ['code', 'title'],
+                      },
+                      {
+                        id: 'actorActions',
+                        type: 'actorActions',
+                        subject: 'actors',
+                        actions: 'actions',
+                      },
+                      {
+                        id: 'actorActionsTargets',
+                        type: 'actorActions',
+                        subject: 'targets',
+                        actions: 'targetingActions',
+                      },
+                    ],
                   }),
                 ]),
                 [],
@@ -171,12 +140,15 @@ export function Members(props) {
   );
 }
 
-Members.propTypes = {
+ActorViewDetailsMembers.propTypes = {
   onEntityClick: PropTypes.func,
   membersByType: PropTypes.instanceOf(Map),
   taxonomies: PropTypes.instanceOf(Map),
   actorConnections: PropTypes.instanceOf(Map),
 };
 
+const mapStateToProps = (state, { id }) => ({
+  membersByType: selectMembersByType(state, id),
+});
 
-export default Members;
+export default connect(mapStateToProps, null)(ActorViewDetailsMembers);

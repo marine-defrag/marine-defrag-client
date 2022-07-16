@@ -327,6 +327,7 @@ export const prepareEntities = ({
               },
             };
           case 'actors':
+            // only show real donors, not implementing partners or other roles
             if (
               ACTIONTYPE_ACTOR_ACTION_ROLES[entity.getIn(['attributes', 'measuretype_id'])]
               && ACTIONTYPE_ACTOR_ACTION_ROLES[entity.getIn(['attributes', 'measuretype_id'])].length > 0
