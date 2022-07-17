@@ -70,7 +70,7 @@ export function MapContainer({
   } = mapKey;
 
   const [showAsPoint, setShowAsPoint] = useState(false);
-
+  const isPercentage = unit && unit.indexOf('%') > -1;
   const countriesJSON = topojson.feature(
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
@@ -98,7 +98,7 @@ export function MapContainer({
         max !== null ? Math.max(max, feature.values[indicatorPoints]) : feature.values[indicatorPoints],
         min !== null ? Math.min(min, feature.values[indicatorPoints]) : feature.values[indicatorPoints],
       ]),
-      [null, null],
+      [isPercentage ? 100 : null, null],
     );
     minMaxValues.points = {
       max: maxValue,
@@ -153,12 +153,19 @@ export function MapContainer({
           countryFeatures={countriesJSON.features}
           indicator={indicator}
           onActorClick={(id) => onActorClick(id)}
-          maxValueCountries={minMaxValues.countries.max}
+          maxValueCountries={minMaxValues
+            && minMaxValues.countries
+            ? minMaxValues.countries.max
+            : null
+          }
           mapSubject={mapSubject}
           fitBounds={fitBounds}
           projection={projection}
           mapId={mapId}
-          circleLayerConfig={circleLayerConfig}
+          circleLayerConfig={{
+            ...circleLayerConfig,
+            rangeMax: minMaxValues && minMaxValues.points && minMaxValues.points.max,
+          }}
         />
       </MapInnerWrapper>
       {mapInfo && mapInfo.length > 0 && (
