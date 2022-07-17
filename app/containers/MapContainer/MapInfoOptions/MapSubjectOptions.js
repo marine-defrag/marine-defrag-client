@@ -6,9 +6,9 @@ import { Box, Text, Button } from 'grommet';
 // import ButtonFactory from 'components/buttons/ButtonFactory';
 
 const Styled = styled.div`
-  padding-bottom: ${({ inList }) => inList ? 2 : 8}px;
+  padding-bottom: ${({ inList }) => inList ? 2 : 10}px;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    padding-bottom: ${({ inList }) => inList ? 5 : 10}px;
+    padding-bottom: ${({ inList }) => inList ? 5 : 15}px;
   }
 `;
 const TypeButton = styled((p) => <Button plain {...p} />)`

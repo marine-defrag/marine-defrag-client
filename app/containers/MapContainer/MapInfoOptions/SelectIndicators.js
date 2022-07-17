@@ -43,6 +43,10 @@ const OptionButton = styled((p) => <Button plain {...p} />)`
   color: ${({ active }) => active ? palette('headerNavMainItem', 1) : 'inherit'};
 `;
 
+const SelectText = styled((p) => <Text {...p} />)`
+  opacity: ${({ noneOption }) => noneOption ? 0.5 : 1}
+`;
+
 export function SelectIndicators({ config }) {
   const {
     onUpdateFFIndicator,
@@ -64,13 +68,13 @@ export function SelectIndicators({ config }) {
         onClick={() => setShowOptions(!showOptions)}
       >
         <Box direction="row" justify="between" align="center">
-          <Text size="large">
+          <SelectText size="large" noneOption={qe(activeOption.value, '0')}>
             {truncateText(
               activeOption.label,
               TEXT_TRUNCATE.FF_SELECT,
               false
             )}
-          </Text>
+          </SelectText>
           <Box>
             {!showOptions && (
               <Icon name="dropdownOpen" text textRight size="1em" />
@@ -85,13 +89,13 @@ export function SelectIndicators({ config }) {
         <Drop
           target={buttonRef.current}
           stretch
-          align={{ top: 'bottom', left: 'left' }}
+          align={{ bottom: 'top', left: 'left' }}
           onClickOutside={() => setShowOptions(false)}
         >
-          <Box>
+          <Box pad={{ vertical: 'xsmall' }}>
             {ffOptions && ffOptions.map(
               (o) => (
-                <Box key={o.value}>
+                <Box key={o.value} flex={{ shrink: 0 }}>
                   <OptionButton
                     active={qe(o.value, ffActiveOptionId)}
                     noneOption={qe(o.value, '0')}

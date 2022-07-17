@@ -19,7 +19,7 @@ const Styled = styled.div`
   z-index: 50;
   bottom: 10px;
   width: 100%;
-  height: 230px;
+  height: 250px;
   left: 0;
   max-width: 380px;
   @media (min-width: 370px) {
@@ -102,10 +102,16 @@ export function MapInfoOptions({
       }
     );
   let activeIndicatorOption;
+  let showIndicatorInfo;
   if (activeTab.id === 'indicators') {
     activeIndicatorOption = activeTab.ffOptions.find(
       (o) => qe(o.value, activeTab.ffActiveOptionId || '0')
     );
+    showIndicatorInfo = activeIndicatorOption
+    && activeIndicatorOption.value !== '0'
+    && circleLayerConfig
+    && minMaxValues
+    && minMaxValues.points;
   }
   return (
     <Styled>
@@ -132,27 +138,27 @@ export function MapInfoOptions({
           {activeTab.id === 'indicators' && (
             <Box fill="horizontal">
               <SelectIndicators config={activeTab} />
-              {
-                activeIndicatorOption
-                && activeIndicatorOption.value !== '0'
-                && circleLayerConfig
-                && minMaxValues
-                && minMaxValues.points
-                && (
-                  <Box pad={{ top: 'medium' }} gap="medium">
-                    <MapKey
-                      maxValue={minMaxValues.points.max}
-                      minValue={minMaxValues.points.min}
-                      isIndicator
-                      type="circles"
-                      circleLayerConfig={circleLayerConfig}
-                    />
-                    {activeIndicatorOption.title && (
-                      <Title>{activeIndicatorOption.title}</Title>
-                    )}
-                  </Box>
-                )
-              }
+              {showIndicatorInfo && (
+                <Box pad={{ top: 'medium' }} gap="medium">
+                  <MapKey
+                    maxValue={minMaxValues.points.max}
+                    minValue={minMaxValues.points.min}
+                    isIndicator
+                    type="circles"
+                    circleLayerConfig={circleLayerConfig}
+                  />
+                  {activeIndicatorOption.title && (
+                    <Title>
+                      {activeIndicatorOption.title}
+                    </Title>
+                  )}
+                </Box>
+              )}
+              {!showIndicatorInfo && (
+                <Box pad={{ top: 'medium' }}>
+                  <SubTitle>Select an indicator to add it to the map</SubTitle>
+                </Box>
+              )}
             </Box>
           )}
           {activeTab.id === 'countries' && (
