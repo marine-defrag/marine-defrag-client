@@ -55,6 +55,9 @@ export function IndicatorLocationMap({
         );
         if (location) {
           const value = location.getIn(['actionValues', indicator.get('id')]);
+          if (!value && value !== 0) {
+            return memo;
+          }
           const stats = [
             {
               values: [
@@ -91,7 +94,7 @@ export function IndicatorLocationMap({
 
     // comment stores unit
     const keyTitle = indicator.getIn(['attributes', 'comment'])
-      ? `${indicator.getIn(['attributes', 'title'])} (${indicator.getIn(['attributes', 'comment'])})`
+      ? `${indicator.getIn(['attributes', 'title'])} [${indicator.getIn(['attributes', 'comment']).trim()}]`
       : indicator.getIn(['attributes', 'title']);
     const [maxValue, minValue] = locationData && locationData.reduce(
       ([max, min], feature) => ([
@@ -118,9 +121,6 @@ export function IndicatorLocationMap({
 
     return (
       <Styled hasHeader noOverflow>
-        <MapTitle>
-          <Text weight={600}>{indicator.getIn(['attributes', 'title'])}</Text>
-        </MapTitle>
         <MapWrapper>
           <MapContainer
             locationData={locationData}
@@ -134,10 +134,10 @@ export function IndicatorLocationMap({
             mapId="ll-indicator-location-map"
           />
         </MapWrapper>
+        <MapTitle>
+          <Text weight={600}>{keyTitle}</Text>
+        </MapTitle>
         <MapKeyWrapper>
-          <Box margin={{ bottom: 'xsmall' }}>
-            <Text size="small">{keyTitle}</Text>
-          </Box>
           <MapKey
             mapSubject={mapSubject}
             maxValue={maxValue}

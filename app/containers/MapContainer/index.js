@@ -292,58 +292,57 @@ export function MapContainer({
 
   // add countryData
   useEffect(() => {
-    if (countryData) {
-      countryOverlayGroupRef.current.clearLayers();
-      if (countryData.length > 0) {
-        const scale = mapSubject && scaleColorCount(maxValue, mapOptions.GRADIENT[mapSubject], indicator === 'indicator');
-        // treat 0 as no data when showing counts
-        const noDataThreshold = indicator === 'indicator' ? 0 : 1;
-        const jsonLayer = L.geoJSON(
-          countryData,
-          {
-            style: (f) => {
-              const defaultStyle = styleType && mapOptions.STYLE[styleType]
-                ? {
-                  ...mapOptions.DEFAULT_STYLE,
-                  ...mapOptions.STYLE[styleType],
-                }
-                : mapOptions.DEFAULT_STYLE;
-              const fstyle = f.isActive
-                ? {
-                  ...defaultStyle,
-                  ...mapOptions.STYLE.active,
-                }
-                : defaultStyle;
-              if (mapSubject) {
-                if (
-                  f.values
-                  && typeof f.values[indicator] !== 'undefined'
-                  && f.values[indicator] >= noDataThreshold
-                ) {
-                  return {
-                    ...fstyle,
-                    fillColor: scale(f.values[indicator]),
-                    ...f.style,
-                  };
-                }
+    countryOverlayGroupRef.current.clearLayers();
+    if (countryData && countryData.length > 0) {
+      const scale = mapSubject
+        && scaleColorCount(maxValue, mapOptions.GRADIENT[mapSubject], indicator === 'indicator');
+      // treat 0 as no data when showing counts
+      const noDataThreshold = indicator === 'indicator' ? 0 : 1;
+      const jsonLayer = L.geoJSON(
+        countryData,
+        {
+          style: (f) => {
+            const defaultStyle = styleType && mapOptions.STYLE[styleType]
+              ? {
+                ...mapOptions.DEFAULT_STYLE,
+                ...mapOptions.STYLE[styleType],
+              }
+              : mapOptions.DEFAULT_STYLE;
+            const fstyle = f.isActive
+              ? {
+                ...defaultStyle,
+                ...mapOptions.STYLE.active,
+              }
+              : defaultStyle;
+            if (mapSubject) {
+              if (
+                f.values
+                && typeof f.values[indicator] !== 'undefined'
+                && f.values[indicator] >= noDataThreshold
+              ) {
                 return {
                   ...fstyle,
-                  fillColor: mapOptions.NO_DATA_COLOR,
+                  fillColor: scale(f.values[indicator]),
                   ...f.style,
                 };
               }
               return {
                 ...fstyle,
+                fillColor: mapOptions.NO_DATA_COLOR,
                 ...f.style,
               };
-            },
+            }
+            return {
+              ...fstyle,
+              ...f.style,
+            };
           },
-        ).on({
-          click: (e) => onFeatureClick(e),
-          mouseout: () => onFeatureOver(),
-        });
-        countryOverlayGroupRef.current.addLayer(jsonLayer);
-      }
+        },
+      ).on({
+        click: (e) => onFeatureClick(e),
+        mouseout: () => onFeatureOver(),
+      });
+      countryOverlayGroupRef.current.addLayer(jsonLayer);
     }
   }, [countryData, indicator, tooltip, mapSubject]);
   // add zoom to countryData
@@ -381,55 +380,67 @@ export function MapContainer({
       }
     }
   }, [countryData]);
+  // add zoom to locationData
+  useEffect(() => {
+    if (
+      fitBounds
+      && locationData
+      && locationData.length > 0
+      && locationOverlayGroupRef
+      && locationOverlayGroupRef.current
+      && locationOverlayGroupRef.current.getLayers()
+      && locationOverlayGroupRef.current.getLayers().length > 0
+    ) {
+      const jsonLayer = locationOverlayGroupRef.current.getLayers()[0];
+      if (jsonLayer.getBounds) {
+        const boundsZoom = mapRef.current.getBoundsZoom(
+          jsonLayer.getBounds(),
+          false, // inside,
+          [20, 20], // padding in px
+        );
+        const boundsCenter = jsonLayer.getBounds().getCenter();
+        // add zoom level to account for custom proj issue
+        const ZOOM_OFFSET = 0;
+        const MAX_ZOOM = 7;
+        mapRef.current.setView(
+          boundsCenter,
+          Math.min(
+            Math.max(
+              boundsZoom - ZOOM_OFFSET,
+              0,
+            ),
+            MAX_ZOOM,
+          ),
+          {
+            animate: false,
+          },
+        );
+      }
+    }
+  }, [locationData]);
 
   // add locationData
   useEffect(() => {
-    if (locationData) {
-      locationOverlayGroupRef.current.clearLayers();
-      if (locationData.length > 0) {
-        const layer = L.featureGroup(null, { pane: 'overlayPane' });
-        const jsonLayer = getCircleLayer({
-          features: locationData,
-          config: layerConfig,
-          markerEvents: {
-            click: (e) => onFeatureClick(e),
-            mouseout: () => onFeatureOver(),
-          },
-        });
-        layer.addLayer(jsonLayer);
-        locationOverlayGroupRef.current.addLayer(layer);
-        if (fitBounds) {
-          const boundsZoom = mapRef.current.getBoundsZoom(
-            jsonLayer.getBounds(),
-            false, // inside,
-            [20, 20], // padding in px
-          );
-          const boundsCenter = jsonLayer.getBounds().getCenter();
-          // add zoom level to account for custom proj issue
-          const ZOOM_OFFSET = 0;
-          const MAX_ZOOM = 7;
-          mapRef.current.setView(
-            boundsCenter,
-            Math.min(
-              Math.max(
-                boundsZoom - ZOOM_OFFSET,
-                0,
-              ),
-              MAX_ZOOM,
-            ),
-            {
-              animate: false,
-            },
-          );
-        }
-      }
+    locationOverlayGroupRef.current.clearLayers();
+    if (locationData && locationData.length > 0) {
+      const layer = L.featureGroup(null, { pane: 'overlayPane' });
+      const jsonLayer = getCircleLayer({
+        features: locationData,
+        config: layerConfig,
+        markerEvents: {
+          click: (e) => onFeatureClick(e),
+          mouseout: () => onFeatureOver(),
+        },
+      });
+      layer.addLayer(jsonLayer);
+      locationOverlayGroupRef.current.addLayer(layer);
     }
-  }, [countryData, indicator, tooltip, mapSubject, layerConfig]);
+  }, [locationData, indicator, tooltip, mapSubject, layerConfig]);
 
   // highlight tooltip feature
   useEffect(() => {
     countryTooltipGroupRef.current.clearLayers();
-    if (tooltip && tooltip.features && tooltip.features.length > 0 && countryData) {
+    if (countryData && tooltip && tooltip.features && tooltip.features.length > 0) {
       tooltip.features.forEach(
         (ttFeature) => {
           const jsonLayer = L.geoJSON(
@@ -446,12 +457,16 @@ export function MapContainer({
       if (layer) {
         if (tooltip && tooltip.features && tooltip.features.length > 0) {
           const tooltipFeatureIds = tooltip.features.map((f) => f.id);
-          const features = layer && layer.getLayers() && layer.getLayers().filter(
-            (f) => tooltipFeatureIds.indexOf(f.feature.id) > -1
-          );
-          const feature = features && features[0];
-          feature.bringToFront();
-          feature.setStyle({ weight: 1.5 });
+          if (layer && layer.getLayers()) {
+            layer.getLayers().filter(
+              (f) => tooltipFeatureIds.indexOf(f.feature.id) > -1
+            ).forEach(
+              (f) => {
+                f.bringToFront();
+                f.setStyle({ weight: 1.5 });
+              }
+            );
+          }
         } else {
           layer.getLayers().forEach(
             (feature) => feature.setStyle({ weight: 0.5 })

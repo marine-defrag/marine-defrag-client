@@ -3,7 +3,7 @@
  * IndicatorCountryMap
  *
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import styled from 'styled-components';
@@ -19,9 +19,10 @@ import countryPointsJSON from 'data/country-points.json';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
 import MapContainer from 'containers/MapContainer';
+import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
 import TooltipContent from 'containers/MapContainer/TooltipContent';
 import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
-const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
+const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', top: 'xsmall', bottom: 'small' }} {...p} />)`
   max-width: 400px;
 `;
 // import messages from './messages';
@@ -34,16 +35,16 @@ const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
   position: relative;
   height: 500px;
 `;
+const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium', top: 'small' }} {...p} />)``;
 
 export function IndicatorCountryMap({
   countries,
   mapSubject,
   onCountryClick,
   indicator,
-  showAsPoint = false,
   // intl,
 }) {
-  // \\const [showAsPoint, setShowAsPoint] = useState(false)
+  const [showAsPoint, setShowAsPoint] = useState(false);
   // const { intl } = this.context;
   // let type;
   // const indicatorCountries = entities.get(parseInt(ACTORTYPES.COUNTRY, 10));
@@ -58,6 +59,7 @@ export function IndicatorCountryMap({
     );
 
     if (showAsPoint) {
+      countryData = null;
       locationData = countryPointsJSON.features.reduce(
         (memo, feature) => {
           const country = countries.find(
@@ -108,6 +110,7 @@ export function IndicatorCountryMap({
         [null, null],
       );
     } else {
+      locationData = null;
       countryData = countriesJSON.features.reduce(
         (memo, feature) => {
           const country = countries.find(
@@ -160,7 +163,7 @@ export function IndicatorCountryMap({
 
     // comment stores unit
     const keyTitle = indicator.getIn(['attributes', 'comment'])
-      ? `${indicator.getIn(['attributes', 'title'])} (${indicator.getIn(['attributes', 'comment'])})`
+      ? `${indicator.getIn(['attributes', 'title'])} [${indicator.getIn(['attributes', 'comment']).trim()}]`
       : indicator.getIn(['attributes', 'title']);
 
     const config = {
@@ -177,11 +180,11 @@ export function IndicatorCountryMap({
         fillOpacity: 0.3,
       },
     };
+    const hasPointOption = true;
+    // indicator.getIn(['attributes', 'comment'])
+    // && indicator.getIn(['attributes', 'comment']).indexOf('%') === -1;
     return (
       <Styled hasHeader noOverflow>
-        <MapTitle>
-          <Text weight={600}>{indicator.getIn(['attributes', 'title'])}</Text>
-        </MapTitle>
         <MapWrapper>
           <MapContainer
             countryData={countryData}
@@ -197,21 +200,34 @@ export function IndicatorCountryMap({
             layerConfig={config}
           />
         </MapWrapper>
+        <MapTitle>
+          <Text weight={600}>{keyTitle}</Text>
+        </MapTitle>
         <MapKeyWrapper>
-          <Box margin={{ bottom: 'xsmall' }}>
-            <Text size="small">{keyTitle}</Text>
-          </Box>
           <MapKey
             mapSubject={mapSubject}
             maxValue={maxValue}
             minValue={minValue}
             maxBinValue={0}
             isIndicator
-            type={showAsPoint ? 'circles' : 'gradient'}
+            type={hasPointOption && showAsPoint ? 'circles' : 'gradient'}
             unit={indicator.getIn(['attributes', 'comment'])}
             config={config}
           />
         </MapKeyWrapper>
+        {hasPointOption && (
+          <MapOptions>
+            <MapOption
+              option={{
+                active: showAsPoint,
+                onClick: () => setShowAsPoint(!showAsPoint),
+                label: 'Show as circles',
+                key: 'circle',
+              }}
+              type="as-point"
+            />
+          </MapOptions>
+        )}
       </Styled>
     );
   }
@@ -223,7 +239,6 @@ IndicatorCountryMap.propTypes = {
   countries: PropTypes.instanceOf(Map), // actors by actortype for current action
   onCountryClick: PropTypes.func,
   mapSubject: PropTypes.string,
-  showAsPoint: PropTypes.bool,
 };
 
 // const mapStateToProps = (state) => ({
