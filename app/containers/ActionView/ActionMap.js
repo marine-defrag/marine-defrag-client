@@ -37,8 +37,7 @@ import {
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
 import MapContainer from 'containers/MapContainer';
-import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOption';
-import MapChildrenOption from 'containers/MapContainer/MapInfoOptions/MapChildrenOption';
+import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
 
 // import messages from './messages';
 
@@ -254,10 +253,10 @@ export function ActionMap({
             </MapTitle>
           )}
           {memberOption && (
-            <MapMemberOption option={memberOption} />
+            <MapOption option={memberOption} type="member" />
           )}
           {childrenOption && (
-            <MapChildrenOption option={childrenOption} />
+            <MapOption option={childrenOption} type="children" />
           )}
         </MapOptions>
       )}

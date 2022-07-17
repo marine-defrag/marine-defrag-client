@@ -6,7 +6,7 @@ import { Box, Text } from 'grommet';
 
 import MapKey from './MapKey';
 import MapSubjectOptions from './MapSubjectOptions';
-import MapMemberOption from './MapMemberOption';
+import MapOption from './MapOption';
 
 const Title = styled((p) => <Text weight={600} {...p} />)``;
 const SubTitle = styled((p) => <Text size="small" {...p} />)``;
@@ -57,7 +57,7 @@ export function MapInfoOptions({
       </Box>
       {hasKey && <MapKey maxValue={maxValue} mapSubject={mapSubject} />}
       {memberOption && (
-        <MapMemberOption option={memberOption} />
+        <MapOption option={memberOption} type="member" />
       )}
     </Styled>
   );
