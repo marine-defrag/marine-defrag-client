@@ -414,7 +414,7 @@ export function ActorActivitiesMap({
           countryFeatures={countriesJSON.features}
           indicator="actions"
           onActorClick={(id) => onEntityClick(id)}
-          maxValue={maxValue}
+          maxValueCountries={maxValue}
           includeSecondaryMembers={includeActorMembers || includeTargetMembers}
           mapSubject={mapSubject}
           fitBounds

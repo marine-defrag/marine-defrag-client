@@ -80,11 +80,13 @@ export function MapContainer({
   let locationData = null;
   let maxValue;
   let minValue;
+  const minMaxValues = { points: null, countries: null };
 
   const showPointsOnly = hasPointOption && showAsPoint;
   if (
     reducePoints
       && indicatorPoints
+      && indicatorPoints !== '0'
       && (hasPointOverlay || showPointsOnly)
   ) {
     locationData = reducePoints && reducePoints(
@@ -98,6 +100,10 @@ export function MapContainer({
       ]),
       [null, null],
     );
+    minMaxValues.points = {
+      max: maxValue,
+      min: minValue,
+    };
   }
   if (
     reduceCountryAreas
@@ -115,6 +121,10 @@ export function MapContainer({
         [null, null],
       )
       : [0, 0];
+    minMaxValues.countries = {
+      max: maxValue,
+      min: minValue,
+    };
   }
 
   let allMapOptions = mapOptions;
@@ -143,7 +153,7 @@ export function MapContainer({
           countryFeatures={countriesJSON.features}
           indicator={indicator}
           onActorClick={(id) => onActorClick(id)}
-          maxValue={maxValue}
+          maxValueCountries={minMaxValues.countries.max}
           mapSubject={mapSubject}
           fitBounds={fitBounds}
           projection={projection}
@@ -151,13 +161,12 @@ export function MapContainer({
           circleLayerConfig={circleLayerConfig}
         />
       </MapInnerWrapper>
-      {mapInfo && Object.keys(mapInfo).length > 0 && (
+      {mapInfo && mapInfo.length > 0 && (
         <MapInfoOptions
-          config={{
-            ...mapInfo,
-            maxValue,
-          }}
-          mapSubject={mapSubject}
+          options={mapInfo}
+          minMaxValues={minMaxValues}
+          countryMapSubject={mapSubject}
+          circleLayerConfig={circleLayerConfig}
         />
       )}
       {mapKey && Object.keys(mapKey).length > 0 && (
@@ -202,7 +211,7 @@ MapContainer.propTypes = {
   reduceCountryAreas: PropTypes.func,
   mapData: PropTypes.object,
   mapKey: PropTypes.object,
-  mapInfo: PropTypes.object,
+  mapInfo: PropTypes.array,
   mapOptions: PropTypes.array,
   fullMap: PropTypes.bool,
 };

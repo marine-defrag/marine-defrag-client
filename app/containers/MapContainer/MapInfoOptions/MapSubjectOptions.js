@@ -12,9 +12,9 @@ const Styled = styled.div`
   }
 `;
 const TypeButton = styled((p) => <Button plain {...p} />)`
-  padding: ${({ inList }) => inList ? '0px 4px' : '2px 4px'};
+  padding: ${({ inList }) => inList ? '0px 2px' : '2px 2px'};
   border-bottom: 2px solid;
-  border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
+  border-bottom-color: ${({ active }) => active ? 'auto' : 'transparent'};
   background: none;
 `;
 

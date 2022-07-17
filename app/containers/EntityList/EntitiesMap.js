@@ -84,7 +84,7 @@ export function EntitiesMap({
   // locationQuery,
   // taxonomies,
 }) {
-  const [ffIndicatorId, setFFIndicatorId] = useState(null);
+  const [ffIndicatorId, setFFIndicatorId] = useState(0);
   // const { intl } = this.context;
   let type;
   let hasByTarget;
@@ -706,24 +706,34 @@ export function EntitiesMap({
             circleLayerConfig,
           }}
           onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
-          mapInfo={{
+          mapInfo={[{
+            id: 'countries',
+            tabTitle: 'Activities',
             title: infoTitle,
             subTitle: infoSubTitle,
             subjectOptions: hasByTarget && subjectOptions,
             memberOption,
+          },
+          {
+            id: 'indicators',
+            tabTitle: 'Facts & Figures',
             onUpdateFFIndicator: (id) => setFFIndicatorId(id),
-            ffActiveOption: ffIndicatorId,
+            ffActiveOptionId: ffIndicatorId,
             ffOptions: ffIndicators && ffIndicators.reduce(
               (memo, action, id) => [
                 ...memo,
                 {
                   label: action.getIn(['attributes', 'title']),
-                  id,
+                  title: `${action.getIn(['attributes', 'title'])} [${action.getIn(['attributes', 'comment'])}]`,
+                  value: id,
                 },
               ],
-              [],
+              [{
+                label: 'No indicator selected',
+                value: '0',
+              }],
             ),
-          }}
+          }]}
         />
       )}
       {viewOptions && viewOptions.length > 1 && (

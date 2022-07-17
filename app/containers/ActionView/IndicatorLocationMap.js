@@ -126,7 +126,6 @@ export function IndicatorLocationMap({
             locationData={locationData}
             countryFeatures={countriesJSON.features}
             indicator="indicator"
-            maxValue={maxValue}
             mapSubject={mapSubject}
             fitBounds
             projection="robinson"

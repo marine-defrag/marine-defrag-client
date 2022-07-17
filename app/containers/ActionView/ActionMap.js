@@ -232,7 +232,7 @@ export function ActionMap({
           countryFeatures={countriesJSON.features}
           indicator="actions"
           onActorClick={(id) => onActorClick(id)}
-          maxValue={1}
+          maxValueCountries={1}
           includeSecondaryMembers={
             includeActorMembers
             || includeTargetMembers

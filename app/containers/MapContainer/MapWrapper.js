@@ -96,7 +96,7 @@ export function MapWrapper({
   locationData,
   indicator,
   onActorClick,
-  maxValue,
+  maxValueCountries,
   includeSecondaryMembers,
   mapSubject,
   fitBounds,
@@ -295,7 +295,7 @@ export function MapWrapper({
     countryOverlayGroupRef.current.clearLayers();
     if (countryData && countryData.length > 0) {
       const scale = mapSubject
-        && scaleColorCount(maxValue, mapOptions.GRADIENT[mapSubject], indicator === 'indicator');
+        && scaleColorCount(maxValueCountries, mapOptions.GRADIENT[mapSubject], indicator === 'indicator');
       // treat 0 as no data when showing counts
       const noDataThreshold = indicator === 'indicator' ? 0 : 1;
       const jsonLayer = L.geoJSON(
@@ -537,7 +537,7 @@ MapWrapper.propTypes = {
   locationData: PropTypes.array, // location data overlay
   indicator: PropTypes.string,
   onActorClick: PropTypes.func,
-  maxValue: PropTypes.number,
+  maxValueCountries: PropTypes.number,
   includeSecondaryMembers: PropTypes.bool,
   fitBounds: PropTypes.bool,
   interactive: PropTypes.bool,
