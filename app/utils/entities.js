@@ -837,24 +837,27 @@ export const setActionConnections = ({
   actionCategories,
 }) => {
   // actors
-  const entityActors = actorActions.get(parseInt(action.get('id'), 10));
+  const entityActors = actorActions && actorActions.get(parseInt(action.get('id'), 10));
   const entityActorsByActortype = entityActors
+    && actionConnections
     && actionConnections.get(API.ACTORS)
     && entityActors
       .filter((actorId) => actionConnections.getIn([API.ACTORS, actorId.toString()]))
       .groupBy((actorId) => actionConnections.getIn([API.ACTORS, actorId.toString(), 'attributes', 'actortype_id']).toString())
       .sortBy((val, key) => key);
   // actors
-  const entityTargets = actionActors.get(parseInt(action.get('id'), 10));
+  const entityTargets = actionActors && actionActors.get(parseInt(action.get('id'), 10));
   const entityTargetsByActortype = entityTargets
+    && actionConnections
     && actionConnections.get(API.ACTORS)
     && entityTargets
       .filter((actorId) => actionConnections.getIn([API.ACTORS, actorId.toString()]))
       .groupBy((actorId) => actionConnections.getIn([API.ACTORS, actorId.toString(), 'attributes', 'actortype_id']).toString())
       .sortBy((val, key) => key);
   // resources
-  const entityResources = actionResources.get(parseInt(action.get('id'), 10));
+  const entityResources = actionResources && actionResources.get(parseInt(action.get('id'), 10));
   const entityResourcesByResourcetype = entityResources
+    && actionConnections
     && actionConnections.get(API.RESOURCES)
     && entityResources
       .filter((resId) => actionConnections.getIn([API.RESOURCES, resId.toString()]))
@@ -862,17 +865,23 @@ export const setActionConnections = ({
       .sortBy((val, key) => key);
 
   // categories
-  const entityCategories = getEntityCategories(
+  const entityCategories = actionCategories && categories && getEntityCategories(
     action.get('id'),
     actionCategories,
     categories,
+  );
+  const entityChildren = actionConnections.get(API.ACTIONS).filter(
+    (connection) => qe(connection.getIn(['attributes', 'parent_id']), action.get('id'))
+  ).map(
+    (connection) => parseInt(connection.get('id'), 10)
   );
   return action
     .set('categories', entityCategories)
     .set('actorsAttributes', actorActionsAttributes && actorActionsAttributes.get(parseInt(action.get('id'), 10)))
     .set('actorsByType', entityActorsByActortype)
     .set('targetsByType', entityTargetsByActortype)
-    .set('resourcesByType', entityResourcesByResourcetype);
+    .set('resourcesByType', entityResourcesByResourcetype)
+    .set('children', entityChildren);
 };
 
 export const setActorConnections = ({

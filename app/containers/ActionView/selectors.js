@@ -14,7 +14,7 @@ import {
   selectCategories,
   selectTaxonomiesSorted,
   selectActorConnections,
-  // selectActionConnections,
+  selectActionConnections,
   selectActions,
   selectActors,
   selectResources,
@@ -25,7 +25,7 @@ import {
   selectActorActionsGroupedByActionAttributes,
   selectActionActorsGroupedByActionAttributes,
   selectActorCategoriesGroupedByActor,
-  // selectActionCategoriesGroupedByAction,
+  selectActionCategoriesGroupedByAction,
   selectActionResourcesGroupedByAction,
   selectResourceConnections,
   selectActionResourcesGroupedByResource,
@@ -37,6 +37,7 @@ import {
   entitySetSingles,
   prepareTaxonomiesIsAssociated,
   setActorConnections,
+  setActionConnections,
   setResourceConnections,
 } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
@@ -88,11 +89,37 @@ const selectChildActions = createSelector(
 export const selectChildActionsByType = createSelector(
   (state) => selectReady(state, { path: DEPENDENCIES }),
   selectChildActions,
-  (ready, children) => {
-    if (!ready) return null;
-    return children && children.size > 0
-      ? children.groupBy((c) => c.getIn(['attributes', 'measuretype_id']))
-      : null;
+  selectActionConnections,
+  selectActorActionsGroupedByAction,
+  selectActorActionsGroupedByActionAttributes,
+  selectActionActorsGroupedByAction,
+  selectCategories,
+  selectActionCategoriesGroupedByAction,
+  (
+    ready,
+    children,
+    actionConnections,
+    actorActions,
+    actorActionsAttributes,
+    actionActors,
+    categories,
+    actionCategories,
+  ) => {
+    if (!ready || !children || children.size === 0) return null;
+
+    return children.map(
+      (action) => setActionConnections({
+        action,
+        actionConnections,
+        actorActions,
+        actorActionsAttributes,
+        actionActors,
+        categories,
+        actionCategories,
+      })
+    ).groupBy(
+      (action) => action.getIn(['attributes', 'measuretype_id'])
+    );
   }
 );
 export const selectParentAction = createSelector(

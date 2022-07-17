@@ -1,11 +1,12 @@
 /*
  *
- * CountryFacts
+ * ActorViewDetailsCountryFacts
  *
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 // import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import {
   Box,
@@ -24,7 +25,10 @@ import NumberField from 'components/fields/NumberField';
 
 import { ROUTES } from 'themes/config';
 
+import { updatePath } from 'containers/App/actions';
+
 import appMessages from 'containers/App/messages';
+import { selectActorIndicators } from './selectors';
 
 const ResourceButton = styled((p) => <Button plain {...p} />)``;
 const Group = styled(
@@ -50,7 +54,7 @@ const Indicator = styled((p) => <Box margin={{ top: 'medium' }} pad={{ top: 'med
   border-top: 1px solid ${({ theme }) => theme.global.colors.border.light};
 `;
 
-export function CountryFacts(props) {
+export function ActorViewDetailsCountryFacts(props) {
   const {
     indicators,
     resources,
@@ -160,7 +164,7 @@ export function CountryFacts(props) {
   );
 }
 
-CountryFacts.propTypes = {
+ActorViewDetailsCountryFacts.propTypes = {
   // viewEntity: PropTypes.instanceOf(Map),
   indicators: PropTypes.instanceOf(Map),
   resources: PropTypes.instanceOf(Map),
@@ -168,6 +172,16 @@ CountryFacts.propTypes = {
   // intl: intlShape,
 };
 
+const mapStateToProps = (state, { id }) => ({
+  indicators: selectActorIndicators(state, id),
+});
 
-// export default injectIntl(CountryFacts);
-export default CountryFacts;
+function mapDispatchToProps(dispatch) {
+  return {
+    onUpdatePath: (path) => {
+      dispatch(updatePath(path));
+    },
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ActorViewDetailsCountryFacts);

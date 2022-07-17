@@ -258,12 +258,14 @@ export const ACTIONTYPE_TARGETTYPES = {
     ACTORTYPES.GROUP,
     ACTORTYPES.REG,
     ACTORTYPES.CLASS,
+    ACTORTYPES.ORG,
   ],
   [ACTIONTYPES.INIT]: [
     ACTORTYPES.COUNTRY,
     ACTORTYPES.GROUP,
     ACTORTYPES.REG,
     ACTORTYPES.CLASS,
+    ACTORTYPES.ORG,
   ],
   [ACTIONTYPES.FACTS]: [],
 };
@@ -804,9 +806,14 @@ export const ACTIONTYPES_CONFIG = {
         attributes: ['title'],
       },
       {
+        id: 'children',
+        type: 'children',
+      },
+      {
         id: 'taxonomy-14',
         type: 'taxonomy',
         taxonomy_id: 14, // project types
+        showOnSingle: false,
       },
       {
         id: 'actors', // one row per type,

@@ -43,6 +43,7 @@ import {
   // filterTaxonomies,
   getTaxonomyCategories,
 } from 'utils/entities';
+import qe from 'utils/quasi-equals';
 
 import { API } from 'themes/config';
 
@@ -315,6 +316,11 @@ const selectActionsWithConnections = createSelector(
             ])
           ).sortBy((val, key) => key);
 
+          const entityChildren = connections.get(API.ACTIONS).filter(
+            (action) => qe(action.getIn(['attributes', 'parent_id']), entity.get('id'))
+          ).map(
+            (action) => parseInt(action.get('id'), 10)
+          );
           // the activity
           return entity
             // directly connected actors
@@ -338,7 +344,8 @@ const selectActionsWithConnections = createSelector(
             .set('targetsAssociationsByType', entityTargetsAssociationsByActortype)
             // directly connected resources
             .set('resources', entityResources)
-            .set('resourcesByType', entityResourcesByResourcetype);
+            .set('resourcesByType', entityResourcesByResourcetype)
+            .set('children', entityChildren);
         }
       );
     }
