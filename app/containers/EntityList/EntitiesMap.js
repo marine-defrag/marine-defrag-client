@@ -3,22 +3,23 @@
  * EntitiesMap
  *
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import * as topojson from 'topojson-client';
-// import { FormattedMessage } from 'react-intl';
-
-import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
-
-import { ACTORTYPES, ROUTES, ACTIONTYPES } from 'themes/config';
+import {
+  ACTORTYPES,
+  ROUTES,
+  ACTIONTYPES,
+  FF_ACTIONTYPE,
+} from 'themes/config';
 
 import {
   selectActors,
+  selectCountriesWithIndicators,
   selectActions,
   selectActortypeActors,
   selectActionActorsGroupedByAction,
@@ -34,7 +35,6 @@ import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 import { hasGroupActors } from 'utils/entities';
 import MapContainer from 'containers/MapContainer';
-import MapInfoOptions from 'containers/MapContainer/MapInfoOptions';
 import TooltipContent from 'containers/MapContainer/TooltipContent';
 // import messages from './messages';
 
@@ -78,18 +78,14 @@ export function EntitiesMap({
   actionActorsByAction,
   membershipsByAssociation,
   actorActionsByAction,
+  countriesWithIndicators,
   // connections,
   // connectedTaxonomies,
   // locationQuery,
   // taxonomies,
 }) {
+  const [ffIndicatorId, setFFIndicatorId] = useState(null);
   // const { intl } = this.context;
-  // let { countries } = this.props;
-  const countriesJSON = topojson.feature(
-    countriesTopo,
-    Object.values(countriesTopo.objects)[0],
-  );
-  let countryData;
   let type;
   let hasByTarget;
   let hasActions;
@@ -101,6 +97,11 @@ export function EntitiesMap({
   let actionsTotalShowing;
   let infoTitle;
   let infoSubTitle;
+  let reduceCountryAreas;
+  let reducePoints;
+  let ffIndicator;
+  let ffIndicators;
+  let circleLayerConfig;
   let mapSubjectClean = mapSubject || 'actors';
   const entitiesTotal = entities ? entities.size : 0;
   // let cleanMapSubject = 'actors';
@@ -178,7 +179,7 @@ export function EntitiesMap({
           single: intl.formatMessage(appMessages.entities[`actors_${typeId}`].single),
           plural: intl.formatMessage(appMessages.entities[`actors_${typeId}`].plural),
         };
-        countryData = countriesJSON.features.map((feature) => {
+        reduceCountryAreas = (features) => features.map((feature) => {
           const country = entities.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
           if (country) {
             const countActions = country.get('actions')
@@ -346,7 +347,7 @@ export function EntitiesMap({
           },
           countryActionIds,
         );
-        countryData = countriesJSON.features.map((feature) => {
+        reduceCountryAreas = (features) => features.map((feature) => {
           const country = countries.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
           if (country) {
             const actionIds = countryActionIds && countryActionIds.get(parseInt(country.get('id'), 10));
@@ -531,7 +532,7 @@ export function EntitiesMap({
         return [updated, total];
       }, [Map(), 0]);
 
-      countryData = countriesJSON.features.map((feature) => {
+      reduceCountryAreas = (features) => features.map((feature) => {
         const country = countries.find((e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3));
         if (country) {
           const cCounts = countryCounts.get(parseInt(country.get('id'), 10));
@@ -610,47 +611,128 @@ export function EntitiesMap({
       infoTitle = `No. of ${typeLabels[actionsTotalShowing === 1 ? 'single' : 'plural']} by Country`;
       infoSubTitle = `Showing ${actionsTotalShowing} of ${entities ? entities.size : 0} activities total${hasFilters ? ' (filtered)' : ''}`;
     }
-  }
-  let maxValue;
-  if (countryData) {
-    maxValue = countryData.reduce(
-      (max, f) => max ? Math.max(max, f.values[indicator]) : f.values[indicator],
-      null,
+    // facts && figures
+    ffIndicators = actions.filter(
+      (action) => {
+        if (!qe(FF_ACTIONTYPE, action.getIn(['attributes', 'measuretype_id']))) {
+          return false;
+        }
+        return countriesWithIndicators.some(
+          (country) => {
+            const val = country.getIn(['actionValues', action.get('id')]);
+            return val !== null && typeof val !== 'undefined';
+          }
+        );
+      }
     );
+    if (ffIndicatorId && countriesWithIndicators) {
+      // console.log(actions && actions.toJS())
+      // console.log(ffIndicatorId)
+      ffIndicator = actions.get(ffIndicatorId);
+      reducePoints = (features) => ffIndicator && features.reduce(
+        (memo, feature) => {
+          const country = countriesWithIndicators.find(
+            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
+          );
+          // console.log(country && country.toJS())
+          if (country) {
+            const value = country.getIn(['actionValues', ffIndicator.get('id')]);
+            if (!value && value !== 0) {
+              return memo;
+            }
+            const stats = [
+              {
+                values: [
+                  {
+                    unit: ffIndicator.getIn(['attributes', 'comment']),
+                    value,
+                  },
+                ],
+              },
+            ];
+            return [
+              ...memo,
+              {
+                ...feature,
+                id: country.get('id'),
+                attributes: country.get('attributes').toJS(),
+                tooltip: {
+                  id: country.get('id'),
+                  title: country.getIn(['attributes', 'title']),
+                  content: <TooltipContent stats={stats} />,
+                },
+                values: {
+                  [ffIndicatorId]: parseFloat(value, 10),
+                },
+              },
+            ];
+          }
+          return memo;
+        },
+        [],
+      );
+      circleLayerConfig = {
+        attribute: ffIndicatorId,
+        render: {
+          min: 2,
+          max: 30,
+          exp: 0.5,
+        },
+        style: {
+          color: '#000A40',
+          weight: 0.5,
+          fillColor: '#000A40',
+          fillOpacity: 0.3,
+        },
+      };
+    }
   }
-
   return (
     <Styled headerStyle="types" noOverflow>
-      <MapContainer
-        typeLabels={typeLabels}
-        countryFeatures={countriesJSON.features}
-        countryData={countryData}
-        indicator={indicator}
-        onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
-        maxValue={maxValue}
-        includeSecondaryMembers={includeActorMembers || includeTargetMembers}
-        mapSubject={mapSubjectClean}
-        scrollWheelZoom
-      />
-      {!dataReady && (
-        <LoadingWrap>
-          <Loading />
-        </LoadingWrap>
-      )}
-      {viewOptions && viewOptions.length > 1 && (
-        <EntityListViewOptions options={viewOptions} isOnMap />
-      )}
       {dataReady && (
-        <MapInfoOptions
-          config={{
+        <MapContainer
+          fullMap
+          reduceCountryAreas={reduceCountryAreas}
+          reducePoints={reducePoints}
+          mapData={{
+            typeLabels,
+            indicator,
+            indicatorPoints: ffIndicatorId,
+            includeSecondaryMembers: includeActorMembers || includeTargetMembers,
+            scrollWheelZoom: true,
+            mapSubject: mapSubjectClean,
+            hasPointOption: false,
+            hasPointOverlay: true,
+            circleLayerConfig,
+          }}
+          onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+          mapInfo={{
             title: infoTitle,
             subTitle: infoSubTitle,
             subjectOptions: hasByTarget && subjectOptions,
             memberOption,
-            maxValue,
+            onUpdateFFIndicator: (id) => setFFIndicatorId(id),
+            ffActiveOption: ffIndicatorId,
+            ffOptions: ffIndicators && ffIndicators.reduce(
+              (memo, action, id) => [
+                ...memo,
+                {
+                  label: action.getIn(['attributes', 'title']),
+                  id,
+                },
+              ],
+              [],
+            ),
           }}
-          mapSubject={mapSubjectClean}
         />
+      )}
+      {viewOptions && viewOptions.length > 1 && (
+        <EntityListViewOptions options={viewOptions} isOnMap />
+      )}
+      {!dataReady && (
+        <LoadingWrap>
+          <Loading />
+        </LoadingWrap>
       )}
     </Styled>
   );
@@ -666,13 +748,10 @@ EntitiesMap.propTypes = {
   actiontypes: PropTypes.instanceOf(Map),
   targettypes: PropTypes.instanceOf(Map),
   countries: PropTypes.instanceOf(Map),
+  countriesWithIndicators: PropTypes.instanceOf(Map),
   actionActorsByAction: PropTypes.instanceOf(Map),
   actorActionsByAction: PropTypes.instanceOf(Map),
   membershipsByAssociation: PropTypes.instanceOf(Map),
-  // taxonomies: PropTypes.instanceOf(Map),
-  // connectedTaxonomies: PropTypes.instanceOf(Map),
-  // locationQuery: PropTypes.instanceOf(Map),
-  // object/arrays
   viewOptions: PropTypes.array,
   // primitive
   dataReady: PropTypes.bool,
@@ -691,6 +770,7 @@ EntitiesMap.propTypes = {
 const mapStateToProps = (state) => ({
   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
   actors: selectActors(state),
+  countriesWithIndicators: selectCountriesWithIndicators(state),
   actions: selectActions(state),
   actionActorsByAction: selectActionActorsGroupedByAction(state), // for figuring out targeted countries
   actorActionsByAction: selectActorActionsGroupedByAction(state), // for figuring out targeted countries

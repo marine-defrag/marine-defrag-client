@@ -22,7 +22,7 @@ import qe from 'utils/quasi-equals';
 import { ACTORTYPES, ROUTES } from 'themes/config';
 import FieldGroup from 'components/fields/FieldGroup';
 
-import MapContainer from 'containers/MapContainer';
+import MapContainer from 'containers/MapContainer/MapWrapper';
 
 import { selectMembersByType } from './selectors';
 

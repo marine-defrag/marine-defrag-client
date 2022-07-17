@@ -18,7 +18,7 @@ import locationsJSON from 'data/locations.json';
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer';
+import MapContainer from 'containers/MapContainer/MapWrapper';
 import TooltipContent from 'containers/MapContainer/TooltipContent';
 import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
 const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
@@ -130,7 +130,7 @@ export function IndicatorLocationMap({
             mapSubject={mapSubject}
             fitBounds
             projection="robinson"
-            layerConfig={config}
+            circleLayerConfig={config}
             mapId="ll-indicator-location-map"
           />
         </MapWrapper>
@@ -144,7 +144,7 @@ export function IndicatorLocationMap({
             minValue={minValue}
             isIndicator
             type="circles"
-            config={config}
+            circleLayerConfig={config}
           />
         </MapKeyWrapper>
       </Styled>

@@ -3,39 +3,16 @@
  * IndicatorCountryMap
  *
  */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import styled from 'styled-components';
-import { Box, Text } from 'grommet';
 
-import * as topojson from 'topojson-client';
-// import { FormattedMessage } from 'react-intl';
-
-import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
-import countryPointsJSON from 'data/country-points.json';
 
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
 import MapContainer from 'containers/MapContainer';
-import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
 import TooltipContent from 'containers/MapContainer/TooltipContent';
-import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
-const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', top: 'xsmall', bottom: 'small' }} {...p} />)`
-  max-width: 400px;
-`;
-// import messages from './messages';
-
-const Styled = styled((p) => <Box {...p} />)`
-  z-index: 0;
-`;
-const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
-const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
-  position: relative;
-  height: 500px;
-`;
-const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium', top: 'small' }} {...p} />)``;
 
 export function IndicatorCountryMap({
   countries,
@@ -44,194 +21,138 @@ export function IndicatorCountryMap({
   indicator,
   // intl,
 }) {
-  const [showAsPoint, setShowAsPoint] = useState(false);
-  // const { intl } = this.context;
-  // let type;
-  // const indicatorCountries = entities.get(parseInt(ACTORTYPES.COUNTRY, 10));
-  let countryData;
-  let locationData;
-  let maxValue;
-  let minValue;
-  if (countries) {
-    const countriesJSON = topojson.feature(
-      countriesTopo,
-      Object.values(countriesTopo.objects)[0],
-    );
+  if (!countries) return null;
 
-    if (showAsPoint) {
-      countryData = null;
-      locationData = countryPointsJSON.features.reduce(
-        (memo, feature) => {
-          const country = countries.find(
-            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
-          );
-          if (country) {
-            const value = country.getIn(['actionValues', indicator.get('id')]);
-            if (!value && value !== 0) {
-              return memo;
-            }
-            const stats = [
-              {
-                values: [
-                  {
-                    label: indicator.getIn(['attributes', 'title']),
-                    unit: indicator.getIn(['attributes', 'comment']),
-                    value,
-                  },
-                ],
-              },
-            ];
-            return [
-              ...memo,
-              {
-                ...feature,
-                id: country.get('id'),
-                attributes: country.get('attributes').toJS(),
-                tooltip: {
-                  id: country.get('id'),
-                  title: country.getIn(['attributes', 'title']),
-                  content: <TooltipContent stats={stats} />,
-                },
-                values: {
-                  indicator: parseFloat(value, 10),
-                },
-              },
-            ];
-          }
+  const reducePoints = (features) => features.reduce(
+    (memo, feature) => {
+      const country = countries.find(
+        (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
+      );
+      if (country) {
+        const value = country.getIn(['actionValues', indicator.get('id')]);
+        if (!value && value !== 0) {
           return memo;
-        },
-        [],
-      );
-      [maxValue, minValue] = locationData && locationData.reduce(
-        ([max, min], feature) => ([
-          max !== null ? Math.max(max, feature.values.indicator) : feature.values.indicator,
-          min !== null ? Math.min(min, feature.values.indicator) : feature.values.indicator,
-        ]),
-        [null, null],
-      );
-    } else {
-      locationData = null;
-      countryData = countriesJSON.features.reduce(
-        (memo, feature) => {
-          const country = countries.find(
-            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-          );
-          if (country) {
-            const value = country.getIn(['actionValues', indicator.get('id')]);
-            if (!value && value !== 0) {
-              return memo;
-            }
-            const stats = [
+        }
+        const stats = [
+          {
+            values: [
               {
-                values: [
-                  {
-                    unit: indicator.getIn(['attributes', 'comment']),
-                    value,
-                  },
-                ],
+                unit: indicator.getIn(['attributes', 'comment']),
+                value,
               },
-            ];
-            return [
-              ...memo,
-              {
-                ...feature,
-                id: country.get('id'),
-                attributes: country.get('attributes').toJS(),
-                tooltip: {
-                  id: country.get('id'),
-                  title: country.getIn(['attributes', 'title']),
-                  content: <TooltipContent stats={stats} />,
-                },
-                values: {
-                  indicator: parseFloat(value, 10),
-                },
-              },
-            ];
-          }
+            ],
+          },
+        ];
+        return [
+          ...memo,
+          {
+            ...feature,
+            id: country.get('id'),
+            attributes: country.get('attributes').toJS(),
+            tooltip: {
+              id: country.get('id'),
+              title: country.getIn(['attributes', 'title']),
+              content: <TooltipContent stats={stats} />,
+            },
+            values: {
+              indicator: parseFloat(value, 10),
+            },
+          },
+        ];
+      }
+      return memo;
+    },
+    [],
+  );
+  const reduceCountryAreas = (features) => features.reduce(
+    (memo, feature) => {
+      const country = countries.find(
+        (c) => qe(c.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+      );
+      if (country) {
+        const value = country.getIn(['actionValues', indicator.get('id')]);
+        if (!value && value !== 0) {
           return memo;
-        },
-        [],
-      );
-      [maxValue, minValue] = countryData && countryData.reduce(
-        ([max, min], feature) => ([
-          max !== null ? Math.max(max, feature.values.indicator) : feature.values.indicator,
-          min !== null ? Math.min(min, feature.values.indicator) : feature.values.indicator,
-        ]),
-        [null, null],
-      );
-    }
+        }
+        const stats = [
+          {
+            values: [
+              {
+                label: indicator.getIn(['attributes', 'title']),
+                unit: indicator.getIn(['attributes', 'comment']),
+                value,
+              },
+            ],
+          },
+        ];
+        return [
+          ...memo,
+          {
+            ...feature,
+            id: country.get('id'),
+            attributes: country.get('attributes').toJS(),
+            tooltip: {
+              id: country.get('id'),
+              title: country.getIn(['attributes', 'title']),
+              content: <TooltipContent stats={stats} />,
+            },
+            values: {
+              indicator: parseFloat(value, 10),
+            },
+          },
+        ];
+      }
+      return memo;
+    },
+    [],
+  );
 
-    // comment stores unit
-    const keyTitle = indicator.getIn(['attributes', 'comment'])
-      ? `${indicator.getIn(['attributes', 'title'])} [${indicator.getIn(['attributes', 'comment']).trim()}]`
-      : indicator.getIn(['attributes', 'title']);
+  // comment stores unit
+  const keyTitle = indicator.getIn(['attributes', 'comment'])
+    ? `${indicator.getIn(['attributes', 'title'])} [${indicator.getIn(['attributes', 'comment']).trim()}]`
+    : indicator.getIn(['attributes', 'title']);
 
-    const config = {
-      attribute: 'indicator',
-      render: {
-        min: 2,
-        max: 30,
-        exp: 0.5,
-      },
-      style: {
-        color: '#000A40',
-        weight: 0.5,
-        fillColor: '#000A40',
-        fillOpacity: 0.3,
-      },
-    };
-    const hasPointOption = true;
-    // indicator.getIn(['attributes', 'comment'])
-    // && indicator.getIn(['attributes', 'comment']).indexOf('%') === -1;
-    return (
-      <Styled hasHeader noOverflow>
-        <MapWrapper>
-          <MapContainer
-            countryData={countryData}
-            locationData={locationData}
-            countryFeatures={countriesJSON.features}
-            indicator="indicator"
-            onActorClick={(id) => onCountryClick(id)}
-            maxValue={maxValue}
-            mapSubject={mapSubject}
-            fitBounds
-            projection="robinson"
-            mapId="ll-indicator-country-map"
-            layerConfig={config}
-          />
-        </MapWrapper>
-        <MapTitle>
-          <Text weight={600}>{keyTitle}</Text>
-        </MapTitle>
-        <MapKeyWrapper>
-          <MapKey
-            mapSubject={mapSubject}
-            maxValue={maxValue}
-            minValue={minValue}
-            maxBinValue={0}
-            isIndicator
-            type={hasPointOption && showAsPoint ? 'circles' : 'gradient'}
-            unit={indicator.getIn(['attributes', 'comment'])}
-            config={config}
-          />
-        </MapKeyWrapper>
-        {hasPointOption && (
-          <MapOptions>
-            <MapOption
-              option={{
-                active: showAsPoint,
-                onClick: () => setShowAsPoint(!showAsPoint),
-                label: 'Show as circles',
-                key: 'circle',
-              }}
-              type="as-point"
-            />
-          </MapOptions>
-        )}
-      </Styled>
-    );
-  }
-  return null;
+  const config = {
+    attribute: 'indicator',
+    render: {
+      min: 2,
+      max: 30,
+      exp: 0.5,
+    },
+    style: {
+      color: '#000A40',
+      weight: 0.5,
+      fillColor: '#000A40',
+      fillOpacity: 0.3,
+    },
+  };
+  // indicator.getIn(['attributes', 'comment'])
+  // && indicator.getIn(['attributes', 'comment']).indexOf('%') === -1;
+  return (
+    <MapContainer
+      mapKey={{
+        keyTitle,
+        isIndicator: true,
+        unit: indicator.getIn(['attributes', 'comment']).trim(),
+        maxBinValue: 0,
+      }}
+      mapData={{
+        countries,
+        indicator: 'indicator',
+        indicatorPoints: 'indicator',
+        mapId: 'll-indicator-country-map',
+        projection: 'robinson',
+        mapSubject,
+        circleLayerConfig: config,
+        fitBounds: true,
+        hasPointOption: true,
+      }}
+      mapOptions={[]}
+      onActorClick={(id) => onCountryClick(id)}
+      reducePoints={reducePoints}
+      reduceCountryAreas={reduceCountryAreas}
+    />
+  );
 }
 
 IndicatorCountryMap.propTypes = {
