@@ -6,7 +6,12 @@ import qe from 'utils/quasi-equals';
 import appMessage from 'utils/app-message';
 import { lowerCase } from 'utils/string';
 import appMessages from 'containers/App/messages';
-import { API, USER_ROLES } from 'themes/config';
+import {
+  API,
+  USER_ROLES,
+  ACTOR_ACTION_ROLES,
+  ACTIONTYPE_ACTOR_ACTION_ROLES,
+} from 'themes/config';
 
 export const prepareHeader = ({
   columns,
@@ -86,6 +91,14 @@ export const prepareHeader = ({
         return ({
           ...col,
           title: 'Actors',
+          sortActive: sortBy === col.id,
+          sortOrder: sortOrder || 'asc',
+          onSort,
+        });
+      case 'children':
+        return ({
+          ...col,
+          title: 'Child activities',
           sortActive: sortBy === col.id,
           sortOrder: sortOrder || 'asc',
           onSort,
@@ -276,10 +289,23 @@ export const prepareEntities = ({
                 ...col,
                 value: entity.get('actionValues')
                   && isNumber(temp)
-                    && formatNumber(
-                      temp, { intl, digits: parseFloat(temp, 10) > 1 ? 1 : 3 },
-                    ),
+                  && formatNumber(
+                    temp, { intl },
+                  ),
                 sortValue: parseFloat(temp, 10),
+              },
+            };
+          case 'relationship':
+            temp = entity.get('relationshipRole')
+              && entity.getIn(['relationshipRole', col.actionId]);
+            if (!temp) {
+              temp = 0;
+            }
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: intl.formatMessage(appMessages.actorroles[temp]),
               },
             };
           case 'date':
@@ -295,7 +321,7 @@ export const prepareEntities = ({
             };
           case 'targets':
             temp = entity.get('targets') || (entity.get('targetsByType') && entity.get('targetsByType').flatten());
-            relatedEntities = getRelatedEntities(temp, connections.get('actors'), col);
+            relatedEntities = connections && getRelatedEntities(temp, connections.get('actors'), col);
             return {
               ...memoEntity,
               [col.id]: {
@@ -309,8 +335,31 @@ export const prepareEntities = ({
               },
             };
           case 'actors':
-            temp = entity.get('actors') || (entity.get('actorsByType') && entity.get('actorsByType').flatten());
-            relatedEntities = getRelatedEntities(temp, connections.get('actors'), col);
+            // only show real donors, not implementing partners or other roles
+            if (
+              ACTIONTYPE_ACTOR_ACTION_ROLES[entity.getIn(['attributes', 'measuretype_id'])]
+              && ACTIONTYPE_ACTOR_ACTION_ROLES[entity.getIn(['attributes', 'measuretype_id'])].length > 0
+              && entity.get('actorsAttributes')
+            ) {
+              temp = entity.get('actorsAttributes')
+                .filter(
+                  (relationship) => {
+                    const roleId = relationship.get('relationshiptype_id');
+                    if (!roleId) return true;
+                    const role = Object.values(ACTOR_ACTION_ROLES).find(
+                      (r) => qe(r.value, roleId)
+                    );
+                    return typeof role.hideOnActionList === 'undefined'
+                      || role.hideOnActionList !== true;
+                  }
+                )
+                .map(
+                  (relationship) => relationship.get('actor_id')
+                );
+            } else {
+              temp = entity.get('actors') || (entity.get('actorsByType') && entity.get('actorsByType').flatten());
+            }
+            relatedEntities = connections && getRelatedEntities(temp, connections.get('actors'), col);
             return {
               ...memoEntity,
               [col.id]: {
@@ -359,9 +408,24 @@ export const prepareEntities = ({
                 sortValue: getRelatedSortValue(relatedEntities),
               },
             };
+          case 'children':
+            temp = entity.get('children') || (entity.get('childrenByType') && entity.get('childrenByType').flatten());
+            relatedEntities = connections && getRelatedEntities(temp, connections.get('measures'), col);
+            return {
+              ...memoEntity,
+              [col.id]: {
+                ...col,
+                value: getRelatedValue(relatedEntities, 'activities'),
+                single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
+                tooltip: relatedEntities && relatedEntities.size > 1
+                  && relatedEntities.groupBy((t) => t.getIn(['attributes', 'measuretype_id'])),
+                multiple: relatedEntities && relatedEntities.size > 1,
+                sortValue: getRelatedSortValue(relatedEntities),
+              },
+            };
           case 'taxonomy':
             // console.log(entity && entity.toJS())
-            relatedEntities = taxonomies.get(col.taxonomy_id.toString())
+            relatedEntities = taxonomies && taxonomies.get(col.taxonomy_id.toString())
               && getRelatedEntities(
                 entity.get('categories'),
                 taxonomies.get(col.taxonomy_id.toString()).get('categories'),
@@ -426,7 +490,7 @@ export const prepareEntities = ({
           case 'resourceActions':
             temp = entity.get('actions')
               || (entity.get('actionsByType') && entity.get('actionsByType').flatten());
-            relatedEntities = temp && getRelatedEntities(
+            relatedEntities = temp && connections && getRelatedEntities(
               temp,
               connections.get(API.ACTIONS),
               col,

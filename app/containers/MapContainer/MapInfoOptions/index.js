@@ -41,6 +41,7 @@ export function MapInfoOptions({
   const {
     title, maxValue, subjectOptions, memberOption, subTitle,
   } = config;
+  const hasKey = maxValue > 0;
   return (
     <Styled>
       {subjectOptions && (
@@ -54,7 +55,7 @@ export function MapInfoOptions({
           <SubTitle>{subTitle}</SubTitle>
         )}
       </Box>
-      {maxValue && <MapKey maxValue={maxValue} mapSubject={mapSubject} />}
+      {hasKey && <MapKey maxValue={maxValue} mapSubject={mapSubject} />}
       {memberOption && (
         <MapMemberOption option={memberOption} />
       )}

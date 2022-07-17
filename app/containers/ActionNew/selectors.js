@@ -28,12 +28,7 @@ export const selectParentOptions = createSelector(
     if (actiontypeId && actions && actiontypes) {
       const type = actiontypes.find((at) => qe(actiontypeId, at.get('id')));
       if (type && type.getIn(['attributes', 'has_parent'])) {
-        return actions.filter((action) => {
-          const sameType = qe(actiontypeId, action.getIn(['attributes', 'measuretype_id']));
-          // const hasParent = action.getIn(['attributes', 'parent_id']);
-          // todo: avoid circular dependencies
-          return sameType;
-        });
+        return actions;
       }
       return null;
     }

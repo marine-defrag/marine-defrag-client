@@ -370,6 +370,7 @@ export function ActorActivitiesMap({
                 id: country.get('id'),
                 attributes: country.get('attributes').toJS(),
                 tooltip: {
+                  id: country.get('id'),
                   title: country.getIn(['attributes', 'title']),
                 },
                 isActive,
@@ -412,10 +413,9 @@ export function ActorActivitiesMap({
           countryData={countryData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
-          onCountryClick={(id) => onEntityClick(id)}
+          onActorClick={(id) => onEntityClick(id)}
           maxValue={maxValue}
-          includeActorMembers={includeActorMembers}
-          includeTargetMembers={includeTargetMembers}
+          includeSecondaryMembers={includeActorMembers || includeTargetMembers}
           mapSubject={mapSubject}
           fitBounds
           projection="gall-peters"

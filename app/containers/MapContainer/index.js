@@ -14,10 +14,21 @@ import { merge } from 'lodash/object';
 import { MAP_OPTIONS } from 'themes/config';
 
 import qe from 'utils/quasi-equals';
+
 import Tooltip from './Tooltip';
 import { scaleColorCount, getCircleLayer } from './utils';
 
 const Styled = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: transparent;
+  z-index: 10;
+  overflow: hidden;
+`;
+const Map = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;
@@ -77,15 +88,16 @@ const getBBox = (bounds, xLat = 0.5, xLon = 180) => {
   });
 };
 
+const TOOLTIP_INITIAL = { features: [] };
+
 export function MapContainer({
   countryFeatures,
   countryData,
   locationData,
   indicator,
-  onCountryClick,
+  onActorClick,
   maxValue,
-  includeActorMembers,
-  includeTargetMembers,
+  includeSecondaryMembers,
   mapSubject,
   fitBounds,
   options = {},
@@ -139,7 +151,7 @@ export function MapContainer({
       worldCopyJump: false,
       attributionControl: false,
     };
-  const [tooltip, setTooltip] = useState(null);
+  const [tooltip, setTooltip] = useState(TOOLTIP_INITIAL);
   const [featureOver, setFeatureOver] = useState(null);
   const ref = useRef(null);
   const mapRef = useRef(null);
@@ -155,7 +167,7 @@ export function MapContainer({
     // },
     click: () => {
       // console.log('mapClick')
-      setTooltip(null);
+      setTooltip(TOOLTIP_INITIAL);
     },
     // mouseover: (a, b, c) => {
     //   console.log('mouseOver', a, b, c)
@@ -184,13 +196,25 @@ export function MapContainer({
     const { feature } = e.sourceTarget;
     if (e && L.DomEvent) L.DomEvent.stopPropagation(e);
     if (e && e.containerPoint && feature && feature.tooltip) {
+      const activeTT = tooltip.features.reduce(
+        (active, f) => f.id === feature.id || active,
+        false,
+      );
+      const newFeatures = activeTT
+        // remove
+        ? tooltip.features.reduce(
+          (memo, f) => f.id === feature.id ? memo : [...memo, f],
+          [],
+        )
+        // add
+        : [
+          feature,
+          ...tooltip.features,
+        ];
       setTooltip({
         anchor: e.containerPoint,
-        direction: {
-          x: 'left',
-          y: 'top',
-        },
-        feature,
+        direction: { x: 'left', y: 'top' },
+        features: newFeatures,
       });
     }
   };
@@ -272,6 +296,8 @@ export function MapContainer({
       countryOverlayGroupRef.current.clearLayers();
       if (countryData.length > 0) {
         const scale = mapSubject && scaleColorCount(maxValue, mapOptions.GRADIENT[mapSubject], indicator === 'indicator');
+        // treat 0 as no data when showing counts
+        const noDataThreshold = indicator === 'indicator' ? 0 : 1;
         const jsonLayer = L.geoJSON(
           countryData,
           {
@@ -289,7 +315,11 @@ export function MapContainer({
                 }
                 : defaultStyle;
               if (mapSubject) {
-                if (f.values && f.values[indicator] && f.values[indicator] > 0) {
+                if (
+                  f.values
+                  && typeof f.values[indicator] !== 'undefined'
+                  && f.values[indicator] >= noDataThreshold
+                ) {
                   return {
                     ...fstyle,
                     fillColor: scale(f.values[indicator]),
@@ -313,33 +343,44 @@ export function MapContainer({
           mouseout: () => onFeatureOver(),
         });
         countryOverlayGroupRef.current.addLayer(jsonLayer);
-        if (fitBounds) {
-          const boundsZoom = mapRef.current.getBoundsZoom(
-            jsonLayer.getBounds(),
-            false, // inside,
-            [20, 20], // padding in px
-          );
-          const boundsCenter = jsonLayer.getBounds().getCenter();
-          // add zoom level to account for custom proj issue
-          const ZOOM_OFFSET = 0;
-          const MAX_ZOOM = 7;
-          mapRef.current.setView(
-            boundsCenter,
-            Math.min(
-              Math.max(
-                boundsZoom - ZOOM_OFFSET,
-                0,
-              ),
-              MAX_ZOOM,
-            ),
-            {
-              animate: false,
-            },
-          );
-        }
       }
     }
   }, [countryData, indicator, tooltip, mapSubject]);
+  // add zoom to countryData
+  useEffect(() => {
+    if (
+      fitBounds
+      && countryData
+      && countryData.length > 0
+      && countryOverlayGroupRef
+      && countryOverlayGroupRef.current
+      && countryOverlayGroupRef.current.getLayers()
+      && countryOverlayGroupRef.current.getLayers().length > 0
+    ) {
+      const jsonLayer = countryOverlayGroupRef.current.getLayers()[0];
+      if (jsonLayer.getBounds) {
+        const boundsZoom = mapRef.current.getBoundsZoom(
+          jsonLayer.getBounds(),
+          false, // inside,
+          [20, 20], // padding in px
+        );
+        const boundsCenter = jsonLayer.getBounds().getCenter();
+        // add zoom level to account for custom proj issue
+        const ZOOM_OFFSET = 0;
+        const MAX_ZOOM = 7;
+        mapRef.current.setView(
+          boundsCenter,
+          Math.min(
+            Math.max(boundsZoom - ZOOM_OFFSET, 0),
+            MAX_ZOOM,
+          ),
+          {
+            animate: false,
+          },
+        );
+      }
+    }
+  }, [countryData]);
 
   // add locationData
   useEffect(() => {
@@ -388,32 +429,37 @@ export function MapContainer({
   // highlight tooltip feature
   useEffect(() => {
     countryTooltipGroupRef.current.clearLayers();
-    if (tooltip && countryData) {
-      const jsonLayer = L.geoJSON(
-        countryData.filter((f) => qe(f.id, tooltip.feature.id)),
-        {
-          style: mapOptions.TOOLTIP_STYLE,
-        },
+    if (tooltip && tooltip.features && tooltip.features.length > 0 && countryData) {
+      tooltip.features.forEach(
+        (ttFeature) => {
+          const jsonLayer = L.geoJSON(
+            countryData.filter((f) => qe(f.id, ttFeature.id)),
+            { style: mapOptions.TOOLTIP_STYLE },
+          );
+          countryTooltipGroupRef.current.addLayer(jsonLayer);
+        }
       );
-      countryTooltipGroupRef.current.addLayer(jsonLayer);
     }
     if (locationData && locationOverlayGroupRef.current && locationOverlayGroupRef.current.getLayers()) {
       const layerGroup = locationOverlayGroupRef.current.getLayers()[0];
       const layer = layerGroup && layerGroup.getLayers()[0];
-      if (tooltip && layer) {
-        const features = layer && layer.getLayers() && layer.getLayers().filter(
-          (f) => qe(f.feature.id, tooltip.feature.id)
-        );
-        const feature = features && features[0];
-        feature.bringToFront();
-        feature.setStyle({ weight: 1.5 });
-      } else if (layer) {
-        layer.getLayers().forEach(
-          (feature) => feature.setStyle({ weight: 0.5 })
-        );
+      if (layer) {
+        if (tooltip && tooltip.features && tooltip.features.length > 0) {
+          const tooltipFeatureIds = tooltip.features.map((f) => f.id);
+          const features = layer && layer.getLayers() && layer.getLayers().filter(
+            (f) => tooltipFeatureIds.indexOf(f.feature.id) > -1
+          );
+          const feature = features && features[0];
+          feature.bringToFront();
+          feature.setStyle({ weight: 1.5 });
+        } else {
+          layer.getLayers().forEach(
+            (feature) => feature.setStyle({ weight: 0.5 })
+          );
+        }
       }
     }
-  }, [tooltip, mapSubject, includeActorMembers, includeTargetMembers]);
+  }, [tooltip, mapSubject, includeSecondaryMembers]);
 
   useEffect(() => {
     countryOverGroupRef.current.clearLayers();
@@ -430,40 +476,43 @@ export function MapContainer({
   // update tooltip
   useEffect(() => {
     if (tooltip && countryData) {
-      const featureUpdated = countryData.find((f) => qe(f.id, tooltip.feature.id));
-      if (featureUpdated) {
+      if (tooltip.features && tooltip.features.length > 0) {
         setTooltip({
-          feature: featureUpdated,
+          features: tooltip.features.map(
+            (f) => countryData.find((c) => qe(c.id, f.id))
+          ).filter(
+            (f) => !!f
+          ),
         });
       } else {
-        setTooltip(null);
+        setTooltip(TOOLTIP_INITIAL);
       }
     } else {
-      setTooltip(null);
+      setTooltip(TOOLTIP_INITIAL);
     }
   }, [mapSubject, countryData]);
+
   return (
-    <>
-      <Styled id={mapId} ref={ref} styleType={styleType} />
-      {tooltip && tooltip.feature && tooltip.feature.tooltip && (
+    <Styled>
+      <Map id={mapId} ref={ref} styleType={styleType} />
+      {tooltip && tooltip.features && tooltip.features.length > 0 && (
         <Tooltip
+          isLocationData={!countryData && !!locationData}
+          mapRef={ref}
           position={null}
           direction={tooltip.direction}
-          feature={tooltip.feature.tooltip}
-          onClose={() => setTooltip(null)}
-          onFeatureClick={onCountryClick
-            ? (evt) => {
-              if (evt !== undefined && evt.stopPropagation) evt.stopPropagation();
-              setTooltip(null);
-              if (tooltip.feature && tooltip.feature.attributes) {
-                onCountryClick(tooltip.feature.id);
-              }
-            }
-            : null
-          }
+          features={tooltip.features && tooltip.features.map((f) => f && f.tooltip)}
+          onFeatureClick={onActorClick ? (id) => onActorClick(id) : null}
+          onClose={(id) => setTooltip({
+            ...tooltip,
+            features: tooltip.features.reduce(
+              (memo, f) => f.id === id ? memo : [...memo, f],
+              [],
+            ),
+          })}
         />
       )}
-    </>
+    </Styled>
   );
 }
 
@@ -472,10 +521,9 @@ MapContainer.propTypes = {
   countryData: PropTypes.array, // country data overlay
   locationData: PropTypes.array, // location data overlay
   indicator: PropTypes.string,
-  onCountryClick: PropTypes.func,
+  onActorClick: PropTypes.func,
   maxValue: PropTypes.number,
-  includeActorMembers: PropTypes.bool,
-  includeTargetMembers: PropTypes.bool,
+  includeSecondaryMembers: PropTypes.bool,
   fitBounds: PropTypes.bool,
   interactive: PropTypes.bool,
   scrollWheelZoom: PropTypes.bool,

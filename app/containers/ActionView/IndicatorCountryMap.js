@@ -38,11 +38,12 @@ const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
 export function IndicatorCountryMap({
   countries,
   mapSubject,
-  onEntityClick,
+  onCountryClick,
   indicator,
   showAsPoint = false,
   // intl,
 }) {
+  // \\const [showAsPoint, setShowAsPoint] = useState(false)
   // const { intl } = this.context;
   // let type;
   // const indicatorCountries = entities.get(parseInt(ACTORTYPES.COUNTRY, 10));
@@ -55,6 +56,7 @@ export function IndicatorCountryMap({
       countriesTopo,
       Object.values(countriesTopo.objects)[0],
     );
+
     if (showAsPoint) {
       locationData = countryPointsJSON.features.reduce(
         (memo, feature) => {
@@ -63,6 +65,9 @@ export function IndicatorCountryMap({
           );
           if (country) {
             const value = country.getIn(['actionValues', indicator.get('id')]);
+            if (!value && value !== 0) {
+              return memo;
+            }
             const stats = [
               {
                 values: [
@@ -81,12 +86,9 @@ export function IndicatorCountryMap({
                 id: country.get('id'),
                 attributes: country.get('attributes').toJS(),
                 tooltip: {
+                  id: country.get('id'),
                   title: country.getIn(['attributes', 'title']),
-                  content: (
-                    <TooltipContent
-                      stats={stats}
-                    />
-                  ),
+                  content: <TooltipContent stats={stats} />,
                 },
                 values: {
                   indicator: parseFloat(value, 10),
@@ -100,8 +102,8 @@ export function IndicatorCountryMap({
       );
       [maxValue, minValue] = locationData && locationData.reduce(
         ([max, min], feature) => ([
-          max ? Math.max(max, feature.values.indicator) : feature.values.indicator,
-          min ? Math.min(min, feature.values.indicator) : feature.values.indicator,
+          max !== null ? Math.max(max, feature.values.indicator) : feature.values.indicator,
+          min !== null ? Math.min(min, feature.values.indicator) : feature.values.indicator,
         ]),
         [null, null],
       );
@@ -113,11 +115,13 @@ export function IndicatorCountryMap({
           );
           if (country) {
             const value = country.getIn(['actionValues', indicator.get('id')]);
+            if (!value && value !== 0) {
+              return memo;
+            }
             const stats = [
               {
                 values: [
                   {
-                    label: indicator.getIn(['attributes', 'title']),
                     unit: indicator.getIn(['attributes', 'comment']),
                     value,
                   },
@@ -131,12 +135,9 @@ export function IndicatorCountryMap({
                 id: country.get('id'),
                 attributes: country.get('attributes').toJS(),
                 tooltip: {
+                  id: country.get('id'),
                   title: country.getIn(['attributes', 'title']),
-                  content: (
-                    <TooltipContent
-                      stats={stats}
-                    />
-                  ),
+                  content: <TooltipContent stats={stats} />,
                 },
                 values: {
                   indicator: parseFloat(value, 10),
@@ -150,8 +151,8 @@ export function IndicatorCountryMap({
       );
       [maxValue, minValue] = countryData && countryData.reduce(
         ([max, min], feature) => ([
-          max ? Math.max(max, feature.values.indicator) : feature.values.indicator,
-          min ? Math.min(min, feature.values.indicator) : feature.values.indicator,
+          max !== null ? Math.max(max, feature.values.indicator) : feature.values.indicator,
+          min !== null ? Math.min(min, feature.values.indicator) : feature.values.indicator,
         ]),
         [null, null],
       );
@@ -187,11 +188,12 @@ export function IndicatorCountryMap({
             locationData={locationData}
             countryFeatures={countriesJSON.features}
             indicator="indicator"
-            onCountryClick={(id) => onEntityClick(id)}
+            onActorClick={(id) => onCountryClick(id)}
             maxValue={maxValue}
             mapSubject={mapSubject}
             fitBounds
             projection="robinson"
+            mapId="ll-indicator-country-map"
             layerConfig={config}
           />
         </MapWrapper>
@@ -219,7 +221,7 @@ export function IndicatorCountryMap({
 IndicatorCountryMap.propTypes = {
   indicator: PropTypes.instanceOf(Map), // the action
   countries: PropTypes.instanceOf(Map), // actors by actortype for current action
-  onEntityClick: PropTypes.func,
+  onCountryClick: PropTypes.func,
   mapSubject: PropTypes.string,
   showAsPoint: PropTypes.bool,
 };

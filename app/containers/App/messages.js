@@ -16,6 +16,20 @@ export default defineMessages({
       defaultMessage: 'Samoa\'s home of human rights implementation',
     },
   },
+  actorroles: {
+    0: {
+      id: 'app.containers.App.actorroles.0',
+      defaultMessage: 'No role assigned',
+    },
+    1: {
+      id: 'app.containers.App.actorroles.1',
+      defaultMessage: 'Donor',
+    },
+    2: {
+      id: 'app.containers.App.actorroles.2',
+      defaultMessage: 'Implementing partner',
+    },
+  },
   actortypes: {
     single: {
       id: 'app.containers.App.actortypes.single',
@@ -551,6 +565,10 @@ export default defineMessages({
       id: 'app.containers.App.labels.groupedByTaxonomy',
       defaultMessage: ' (by {tax})',
     },
+    noIndicatorValue: {
+      id: 'app.containers.App.labels.noIndicatorValue',
+      defaultMessage: 'No data available',
+    },
     smart: {
       met: {
         id: 'app.containers.App.labels.smart.met',
@@ -793,6 +811,14 @@ export default defineMessages({
       id: 'app.containers.App.attributes.id',
       defaultMessage: 'ID',
     },
+    relationshiptype_id: {
+      id: 'app.containers.App.attributes.relationshiptype_id',
+      defaultMessage: 'Role',
+    },
+    value: {
+      id: 'app.containers.App.attributes.value',
+      defaultMessage: 'Value',
+    },
     actortype_id: {
       id: 'app.containers.App.attributes.actortype_id',
       defaultMessage: 'Actortype id',
@@ -931,7 +957,7 @@ export default defineMessages({
     },
     parent_id: {
       id: 'app.containers.App.attributes.parent_id',
-      defaultMessage: 'Predecessor',
+      defaultMessage: 'Parent/predecessor',
     },
     manager_id: {
       categories: {
@@ -1296,7 +1322,7 @@ export default defineMessages({
     actions: {
       parent: {
         id: 'app.containers.App.entities.actions.parent',
-        defaultMessage: 'Predecessor activity',
+        defaultMessage: 'Parent/predecessor activity',
       },
       children: {
         id: 'app.containers.App.entities.actions.children',
@@ -2114,6 +2140,32 @@ export default defineMessages({
         description: {
           id: 'app.containers.App.entities.taxonomies.13.description',
           defaultMessage: 'About tax 13',
+        },
+      },
+      14: {
+        single: {
+          id: 'app.containers.App.entities.taxonomies.14.single',
+          defaultMessage: 'Taxonomy 14',
+        },
+        plural: {
+          id: 'app.containers.App.entities.taxonomies.14.plural',
+          defaultMessage: 'Taxonomy 14',
+        },
+        empty: {
+          id: 'app.containers.App.entities.taxonomies.14.empty',
+          defaultMessage: 'No Taxonomy 14 assigned yet',
+        },
+        shortSingle: {
+          id: 'app.containers.App.entities.taxonomies.14.shortSingle',
+          defaultMessage: 'Taxonomy 14',
+        },
+        shortPlural: {
+          id: 'app.containers.App.entities.taxonomies.14.shortPlural',
+          defaultMessage: 'Taxonomy 14',
+        },
+        description: {
+          id: 'app.containers.App.entities.taxonomies.14.description',
+          defaultMessage: 'About tax 14',
         },
       },
     },

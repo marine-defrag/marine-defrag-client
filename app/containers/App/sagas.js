@@ -44,6 +44,8 @@ import {
   OPEN_BOOKMARK,
   SET_INCLUDE_ACTOR_MEMBERS,
   SET_INCLUDE_TARGET_MEMBERS,
+  SET_INCLUDE_ACTOR_CHILDREN,
+  SET_INCLUDE_TARGET_CHILDREN,
   SET_INCLUDE_MEMBERS_FORFILTERS,
 } from 'containers/App/constants';
 
@@ -276,17 +278,37 @@ function stampPayload(payload, type) {
 function* createConnectionsSaga({
   entityId, path, updates, keyPair,
 }) {
-  // make sure to use new entity id for full payload
-  // we should have either the one (actor_id) or the other (measure_id)
-  const updatesUpdated = updates;
-  if (updatesUpdated.create) {
-    updatesUpdated.create = updatesUpdated.create.map((create) => ({
-      [keyPair[0]]: create[keyPair[0]] || entityId,
-      [keyPair[1]]: create[keyPair[1]] || entityId,
-    }));
+  if (updates.create) {
+    const create = updates.create.reduce(
+      (memo, createX) => {
+        // get attributes other than key pair
+        const attributes = Object.keys(createX).reduce(
+          (m, key) => {
+            if (keyPair.indexOf(key) > -1) {
+              return m;
+            }
+            return ({
+              ...m,
+              [key]: createX[key],
+            });
+          },
+          {},
+        );
+        // make sure to use new entity id for full payload
+        // we should have either the one (actor_id) or the other (measure_id)
+        return ([
+          ...memo,
+          {
+            [keyPair[0]]: createX[keyPair[0]] || entityId,
+            [keyPair[1]]: createX[keyPair[1]] || entityId,
+            ...attributes,
+          },
+        ]);
+      },
+      [],
+    );
+    yield call(saveConnectionsSaga, { data: { path, updates: { create } } });
   }
-
-  yield call(saveConnectionsSaga, { data: { path, updates: updatesUpdated } });
 }
 
 export function* saveEntitySaga({ data }, updateClient = true, multiple = false) {
@@ -349,6 +371,17 @@ export function* saveEntitySaga({ data }, updateClient = true, multiple = false)
             updates: data.entity.actionResources,
           },
         });
+      }
+      // // update action-actors connections (targets)
+      if (data.entity.actionChildren) {
+        yield all(data.entity.actionChildren.map(
+          (child) => call(saveEntitySaga, {
+            data: {
+              path: API.ACTIONS,
+              entity: child,
+            },
+          })
+        ));
       }
       // update memberships connections
       if (data.entity.memberships) {
@@ -572,6 +605,7 @@ export function* saveConnectionsSaga({ data }) {
   if (data.updates && (
     (data.updates.create && data.updates.create.length > 0)
     || (data.updates.delete && data.updates.delete.length > 0)
+    || (data.updates.update && data.updates.update.length > 0)
   )) {
     const dataTS = stampPayload(data);
     try {
@@ -751,6 +785,32 @@ export function* setIncludeTargetMembersSaga({ value }) {
   );
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
+export function* setIncludeActorChildrenSaga({ value }) {
+  const location = yield select(selectLocation);
+  const queryNext = getNextQuery(
+    {
+      arg: 'ac',
+      value,
+      replace: true,
+    },
+    true, // extend
+    location,
+  );
+  yield put(push(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
+export function* setIncludeTargetChildrenSaga({ value }) {
+  const location = yield select(selectLocation);
+  const queryNext = getNextQuery(
+    {
+      arg: 'tc',
+      value,
+      replace: true,
+    },
+    true, // extend
+    location,
+  );
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
 export function* setIncludeMembersForFilterSaga({ value }) {
   const location = yield select(selectLocation);
   const queryNext = getNextQuery(
@@ -864,6 +924,8 @@ export default function* rootSaga() {
   yield takeEvery(SET_MAP_SUBJECT, setMapSubjectSaga);
   yield takeEvery(SET_INCLUDE_ACTOR_MEMBERS, setIncludeActorMembersSaga);
   yield takeEvery(SET_INCLUDE_TARGET_MEMBERS, setIncludeTargetMembersSaga);
+  yield takeEvery(SET_INCLUDE_ACTOR_CHILDREN, setIncludeActorChildrenSaga);
+  yield takeEvery(SET_INCLUDE_TARGET_CHILDREN, setIncludeTargetChildrenSaga);
   yield takeEvery(SET_INCLUDE_MEMBERS_FORFILTERS, setIncludeMembersForFilterSaga);
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);
   yield takeEvery(DISMISS_QUERY_MESSAGES, dismissQueryMessagesSaga);

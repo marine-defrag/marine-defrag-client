@@ -21,11 +21,15 @@ import {
   selectActortypeActors,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
+  selectIncludeActorChildren,
+  selectIncludeTargetChildren,
 } from 'containers/App/selectors';
 
 import {
   setIncludeActorMembers,
   setIncludeTargetMembers,
+  setIncludeActorChildren,
+  setIncludeTargetChildren,
 } from 'containers/App/actions';
 
 
@@ -34,6 +38,7 @@ import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
 import MapContainer from 'containers/MapContainer';
 import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOption';
+import MapChildrenOption from 'containers/MapContainer/MapInfoOptions/MapChildrenOption';
 
 // import messages from './messages';
 
@@ -49,90 +54,128 @@ const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
 `;
 
 export function ActionMap({
-  entities,
+  actorsByType,
   mapSubject,
   onSetIncludeActorMembers,
   onSetIncludeTargetMembers,
   includeActorMembers,
   includeTargetMembers,
-  onEntityClick,
+  onActorClick,
   countries,
   hasMemberOption,
+  onSetIncludeActorChildren,
+  onSetIncludeTargetChildren,
+  includeActorChildren,
+  includeTargetChildren,
   typeId,
+  childCountries,
   // intl,
 }) {
-  // const { intl } = this.context;
-  // let type;
+  // console.log('ActionMap')
+  // // const { intl } = this.context;
+  // // let type;
+  // console.log('childCountries', childCountries && childCountries.toJS());
   const countriesJSON = topojson.feature(
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
   );
-  const hasCountries = entities.get(parseInt(ACTORTYPES.COUNTRY, 10));
-  const hasAssociations = mapSubject === 'actors'
-    ? !!entities.get(parseInt(ACTORTYPES.GROUP, 10))
-    : !!(entities.get(parseInt(ACTORTYPES.GROUP, 10)) || entities.get(parseInt(ACTORTYPES.REG, 10)) || entities.get(parseInt(ACTORTYPES.CLASS, 10)));
-  if (!hasCountries && !hasAssociations) return null;
+  const hasChildCountries = childCountries && childCountries.size > 0;
+  let hasCountries;
+  let hasAssociations;
+  if (actorsByType) {
+    hasCountries = actorsByType.get(parseInt(ACTORTYPES.COUNTRY, 10));
+    hasAssociations = mapSubject === 'actors'
+      ? !!actorsByType.get(parseInt(ACTORTYPES.GROUP, 10))
+      : !!(actorsByType.get(parseInt(ACTORTYPES.GROUP, 10)) || actorsByType.get(parseInt(ACTORTYPES.REG, 10)) || actorsByType.get(parseInt(ACTORTYPES.CLASS, 10)));
+  }
+  if (!hasCountries && !hasAssociations && !hasChildCountries) return null;
   const includeMembers = mapSubject === 'actors'
     ? includeActorMembers
     : includeTargetMembers;
+  const includeChildActions = mapSubject === 'actors'
+    ? includeActorChildren
+    : includeTargetChildren;
 
-  const countriesVia = hasMemberOption && includeMembers && hasAssociations && entities.reduce(
-    (memo, typeActors, actortypeId) => {
-      // skip non group types
-      // TODO check actortypes db object
-      if (qe(actortypeId, ACTORTYPES.COUNTRY) || qe(actortypeId, ACTORTYPES.ORG)) {
-        return memo;
-      }
-      return memo.concat(typeActors.reduce(
-        (memo2, association) => {
-          if (association.getIn(['membersByType', ACTORTYPES.COUNTRY])) {
-            return memo2.concat(association.getIn(['membersByType', ACTORTYPES.COUNTRY]).toList());
-          }
-          return memo2;
-        },
-        List(),
-      ));
-    },
-    List(),
-  ).toSet(
-  ).map(
-    (countryId) => countries.get(countryId.toString())
-  );
-  const countryData = countriesJSON.features.reduce(
-    (memo, feature) => {
-      const countryDirect = hasCountries && entities.get(parseInt(ACTORTYPES.COUNTRY, 10)).find(
-        (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-      );
-      const countryVia = !countryDirect && hasAssociations && countriesVia && countriesVia.find(
-        (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-      );
-      const country = countryDirect || countryVia;
-
-      if (country) {
-        return [
-          ...memo,
-          {
-            ...feature,
-            id: country.get('id'),
-            attributes: country.get('attributes').toJS(),
-            tooltip: {
-              title: country.getIn(['attributes', 'title']),
-            },
-            values: {
-              actions: 1,
-            },
-            style: {
-              fillOpacity: countryDirect ? 1 : 0.6,
-            },
+  let countryData;
+  if (actorsByType || childCountries) {
+    const countriesViaMembership = actorsByType && hasMemberOption && includeMembers && hasAssociations && actorsByType.reduce(
+      (memo, typeActors, actortypeId) => {
+        // skip non group types
+        // TODO check actortypes db object
+        if (qe(actortypeId, ACTORTYPES.COUNTRY) || qe(actortypeId, ACTORTYPES.ORG)) {
+          return memo;
+        }
+        return memo.concat(typeActors.reduce(
+          (memo2, association) => {
+            if (association.getIn(['membersByType', ACTORTYPES.COUNTRY])) {
+              return memo2.concat(association.getIn(['membersByType', ACTORTYPES.COUNTRY]).toList());
+            }
+            return memo2;
           },
-        ];
-      }
-      return memo;
-    },
-    [],
-  );
+          List(),
+        ));
+      },
+      List(),
+    ).toSet(
+    ).map(
+      (countryId) => countries.get(countryId.toString())
+    );
 
+    countryData = countriesJSON.features.reduce(
+      (memo, feature) => {
+        const countryDirect = hasCountries && actorsByType.get(parseInt(ACTORTYPES.COUNTRY, 10)).find(
+          (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+        );
+        const countryViaChild = !countryDirect
+          && includeChildActions
+          && childCountries
+          && childCountries.find(
+            (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+          );
+        const countryViaMembership = !countryDirect
+          && !countryViaChild
+          && hasAssociations
+          && countriesViaMembership
+          && countriesViaMembership.find(
+            (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+          );
+        let opacity = 1;
+        if (countryViaChild) {
+          opacity = 0.6;
+        } else if (countryViaMembership) {
+          opacity = 0.3;
+        }
+        const country = countryDirect || countryViaMembership || countryViaChild;
+        if (country) {
+          return [
+            ...memo,
+            {
+              ...feature,
+              id: country.get('id'),
+              attributes: country.get('attributes').toJS(),
+              tooltip: {
+                id: country.get('id'),
+                title: country.getIn(['attributes', 'title']),
+              },
+              values: {
+                actions: 1,
+              },
+              style: {
+                fillOpacity: opacity,
+              },
+            },
+          ];
+        }
+        return memo;
+      },
+      [],
+    );
+  }
+  if (!countryData) return null;
+
+  // map title and map options
   let memberOption;
+  let childrenOption; // children option
   let mapTitle;
   if (mapSubject === 'targets') {
     mapTitle = qe(ACTIONTYPES.DONOR, typeId)
@@ -143,7 +186,18 @@ export function ActionMap({
       memberOption = {
         active: includeTargetMembers,
         onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
-        label: 'Include members of targeted regions, groups, classes',
+        label: 'Show members of targeted regions, groups or classes',
+        key: 'targets',
+      };
+    }
+    // console.log('childCountries', childCountries && childCountries.toJS())
+    // console.log('includeTargetChildren', includeTargetChildren)
+    if (childCountries) {
+      childrenOption = {
+        active: includeTargetChildren,
+        onClick: () => onSetIncludeTargetChildren(includeTargetChildren ? '0' : '1'),
+        label: 'Show countries targeted by child or successor activities',
+        key: 'targets',
       };
     }
   }
@@ -155,7 +209,18 @@ export function ActionMap({
       memberOption = {
         active: includeActorMembers,
         onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-        label: 'Include members of group actors',
+        label: 'Show members of group actors',
+        key: 'actors',
+      };
+    }
+    // console.log('childCountries', childCountries && childCountries.toJS())
+    // console.log('includeActorChildren', includeActorChildren)
+    if (childCountries) {
+      childrenOption = {
+        active: includeActorChildren,
+        onClick: () => onSetIncludeActorChildren(includeActorChildren ? '0' : '1'),
+        label: 'Show countries responsible for child or successor activities',
+        key: 'actors',
       };
     }
   }
@@ -167,16 +232,21 @@ export function ActionMap({
           countryData={countryData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
-          onCountryClick={(id) => onEntityClick(id)}
+          onActorClick={(id) => onActorClick(id)}
           maxValue={1}
-          includeActorMembers={includeActorMembers}
-          includeTargetMembers={includeTargetMembers}
+          includeSecondaryMembers={
+            includeActorMembers
+            || includeTargetMembers
+            || includeActorChildren
+            || includeTargetChildren
+          }
           mapSubject={mapSubject}
           fitBounds
           projection="gall-peters"
+          mapId="ll-action-map"
         />
       </MapWrapper>
-      {(memberOption || mapTitle) && (
+      {(memberOption || mapTitle || childrenOption) && (
         <MapOptions>
           {mapTitle && (
             <MapTitle>
@@ -186,6 +256,9 @@ export function ActionMap({
           {memberOption && (
             <MapMemberOption option={memberOption} />
           )}
+          {childrenOption && (
+            <MapChildrenOption option={childrenOption} />
+          )}
         </MapOptions>
       )}
     </Styled>
@@ -193,14 +266,19 @@ export function ActionMap({
 }
 
 ActionMap.propTypes = {
-  entities: PropTypes.instanceOf(Map), // actors by actortype for current action
+  actorsByType: PropTypes.instanceOf(Map), // actors by actortype for current action
+  childCountries: PropTypes.instanceOf(Map), // actors by actortype for current action
   countries: PropTypes.instanceOf(Map), // all countries needed for indirect connections
   onSetIncludeActorMembers: PropTypes.func,
   onSetIncludeTargetMembers: PropTypes.func,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
   hasMemberOption: PropTypes.bool,
-  onEntityClick: PropTypes.func,
+  onSetIncludeActorChildren: PropTypes.func,
+  onSetIncludeTargetChildren: PropTypes.func,
+  includeActorChildren: PropTypes.bool,
+  includeTargetChildren: PropTypes.bool,
+  onActorClick: PropTypes.func,
   mapSubject: PropTypes.string,
   typeId: PropTypes.oneOfType([
     PropTypes.string,
@@ -212,6 +290,8 @@ const mapStateToProps = (state) => ({
   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
+  includeActorChildren: selectIncludeActorChildren(state),
+  includeTargetChildren: selectIncludeTargetChildren(state),
 });
 function mapDispatchToProps(dispatch) {
   return {
@@ -220,6 +300,12 @@ function mapDispatchToProps(dispatch) {
     },
     onSetIncludeActorMembers: (active) => {
       dispatch(setIncludeActorMembers(active));
+    },
+    onSetIncludeTargetChildren: (active) => {
+      dispatch(setIncludeTargetChildren(active));
+    },
+    onSetIncludeActorChildren: (active) => {
+      dispatch(setIncludeActorChildren(active));
     },
   };
 }

@@ -8,9 +8,9 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import { List } from 'immutable';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
-import { Box, Text, Button } from 'grommet';
-import styled from 'styled-components';
+import { Box } from 'grommet';
 
 import {
   getTitleField,
@@ -25,7 +25,6 @@ import {
   getNumberField,
   getTaxonomyFields,
   hasTaxonomyCategories,
-  getActorConnectionField,
   getActionConnectionField,
   getResourceConnectionField,
 } from 'utils/fields';
@@ -40,15 +39,18 @@ import {
   loadEntitiesIfNeeded,
   updatePath,
   closeEntity,
-  setSubject,
 } from 'containers/App/actions';
 
 import {
+  selectReady,
+  selectIsUserManager,
+  selectResourceConnections,
+  selectTaxonomiesWithCategories,
+} from 'containers/App/selectors';
+
+import {
   ROUTES,
-  ACTIONTYPES,
   FF_ACTIONTYPE,
-  ACTORTYPES_CONFIG,
-  ACTORTYPES,
   RESOURCE_FIELDS,
 } from 'themes/config';
 
@@ -61,100 +63,21 @@ import ViewWrapper from 'components/EntityView/ViewWrapper';
 import ViewPanel from 'components/EntityView/ViewPanel';
 import ViewPanelInside from 'components/EntityView/ViewPanelInside';
 import FieldGroup from 'components/fields/FieldGroup';
-import ButtonDefault from 'components/buttons/ButtonDefault';
 
-import {
-  selectReady,
-  selectIsUserManager,
-  selectActorConnections,
-  selectResourceConnections,
-  selectTaxonomiesWithCategories,
-  selectSubjectQuery,
-  selectActiontypes,
-} from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
 import messages from './messages';
 
-import ActionMap from './ActionMap';
-import IndicatorCountryMap from './IndicatorCountryMap';
-import IndicatorLocationMap from './IndicatorLocationMap';
+import ActionViewDetails from './ActionViewDetails';
+
 import {
   selectViewEntity,
   selectViewTaxonomies,
-  selectActorsByType,
-  selectTargetsByType,
   selectResourcesByType,
-  selectChildActions,
-  selectParentActions,
+  selectParentAction,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
-
-const SubjectButton = styled((p) => <Button plain {...p} />)`
-  padding: 2px 4px;
-  border-bottom: 2px solid;
-  border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
-  background: none;
-`;
-
-const getActortypeColumns = (typeid, isIndicator, viewEntity) => {
-  let columns = [{
-    id: 'main',
-    type: 'main',
-    sort: 'title',
-    attributes: ['code', 'title'],
-    isIndicator,
-  }];
-  if (qe(typeid, ACTORTYPES.COUNTRY)) {
-    columns = [
-      ...columns,
-      {
-        id: 'classes',
-        type: 'associations',
-        actortype_id: ACTORTYPES.CLASS,
-        title: 'Classes',
-        isIndicator,
-      },
-    ];
-    if (isIndicator) {
-      columns = [
-        ...columns,
-        {
-          id: 'regions',
-          type: 'associations',
-          actortype_id: ACTORTYPES.REG,
-          title: 'Regions',
-          isIndicator,
-        },
-      ];
-    }
-  }
-  if (isIndicator) {
-    columns = [
-      ...columns,
-      {
-        id: 'indicator',
-        type: 'indicator',
-        indicatorId: viewEntity.get('id'),
-        title: viewEntity.getIn(['attributes', 'title']),
-        unit: viewEntity.getIn(['attributes', 'comment']),
-        align: 'end',
-        primary: true,
-      },
-    ];
-  }
-  if (
-    ACTORTYPES_CONFIG[parseInt(typeid, 10)]
-    && ACTORTYPES_CONFIG[parseInt(typeid, 10)].columns
-  ) {
-    columns = [
-      ...columns,
-      ...ACTORTYPES_CONFIG[parseInt(typeid, 10)].columns,
-    ];
-  }
-  return columns;
-};
 
 export function ActionView(props) {
   const {
@@ -163,23 +86,15 @@ export function ActionView(props) {
     isManager,
     taxonomies,
     viewTaxonomies,
-    actorsByActortype,
-    targetsByActortype,
     resourcesByResourcetype,
     onEntityClick,
-    actorConnections,
     resourceConnections,
-    children,
-    parents,
+    parent,
     onLoadData,
-    subject,
-    onSetSubject,
     intl,
     handleEdit,
     handleClose,
     params,
-    activitytypes,
-    handleImportConnection,
     handleTypeClick,
   } = props;
 
@@ -189,8 +104,8 @@ export function ActionView(props) {
   }, []);
 
   const typeId = viewEntity && viewEntity.getIn(['attributes', 'measuretype_id']);
-  const viewActivitytype = activitytypes && activitytypes.find((type) => qe(type.get('id'), typeId));
   const isIndicator = qe(typeId, FF_ACTIONTYPE);
+
   let buttons = [];
   if (dataReady) {
     buttons = [
@@ -220,18 +135,6 @@ export function ActionView(props) {
     ? `${pageTitle}: ${getEntityTitleTruncated(viewEntity)}`
     : `${pageTitle}: ${params.id}`;
 
-  const hasTarget = viewActivitytype && viewActivitytype.getIn(['attributes', 'has_target']);
-  const hasMemberOption = !!typeId && !qe(typeId, ACTIONTYPES.NATL);
-  const viewSubject = hasTarget && subject ? subject : 'actors';
-
-  const actortypesForSubject = !hasTarget || viewSubject === 'actors'
-    ? actorsByActortype
-    : targetsByActortype;
-
-  // action has a map
-  const hasCountryActionMap = !!typeId && !isIndicator;
-  const hasIndicatorCountryMap = !!typeId && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10));
-  const hasIndicatorLocationMap = !!typeId && actortypesForSubject && actortypesForSubject.get(parseInt(ACTORTYPES.POINT, 10));
   // && !qe(typeId, ACTIONTYPES.NATL);
   let hasLandbasedValue;
   if (viewEntity && checkActionAttribute(typeId, 'has_reference_landbased_ml')) {
@@ -266,6 +169,7 @@ export function ActionView(props) {
     const [de] = viewEntity.getIn(['attributes', 'date_end']).split('T');
     datesEqual = ds === de;
   }
+
   return (
     <div>
       <Helmet
@@ -360,153 +264,58 @@ export function ActionView(props) {
                       ],
                     }}
                   />
-                  <Box>
-                    {!isIndicator && (
-                      <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
-                        <SubjectButton
-                          onClick={() => onSetSubject('actors')}
-                          active={viewSubject === 'actors'}
-                        >
-                          <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Donors' : 'Actors'}</Text>
-                        </SubjectButton>
-                        {hasTarget && (
-                          <SubjectButton
-                            onClick={() => onSetSubject('targets')}
-                            active={viewSubject === 'targets'}
-                          >
-                            <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Recipients' : 'Targets'}</Text>
-                          </SubjectButton>
-                        )}
-                      </Box>
-                    )}
-                    {(!actortypesForSubject || actortypesForSubject.size === 0) && (
-                      <Box margin={{ vertical: 'small', horizontal: 'medium' }}>
-                        {viewSubject === 'actors' && (
-                          <Text>
-                            No actors for activity in database
-                          </Text>
-                        )}
-                        {viewSubject === 'targets' && (
-                          <Text>
-                            No activity targets in database
-                          </Text>
-                        )}
-                      </Box>
-                    )}
-                    <Box>
-                      {dataReady && actortypesForSubject && hasCountryActionMap && (
-                        <ActionMap
-                          entities={actortypesForSubject}
-                          mapSubject={viewSubject}
-                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
-                          hasMemberOption={hasMemberOption}
-                          typeId={typeId}
-                        />
-                      )}
-                      {dataReady && actortypesForSubject && hasIndicatorCountryMap && (
-                        <IndicatorCountryMap
-                          countries={actortypesForSubject.get(parseInt(ACTORTYPES.COUNTRY, 10))}
-                          mapSubject="actors"
-                          onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
-                          indicator={viewEntity}
-                        />
-                      )}
-                      {dataReady && actortypesForSubject && hasIndicatorLocationMap && (
-                        <IndicatorLocationMap
-                          locations={actortypesForSubject.get(parseInt(ACTORTYPES.POINT, 10))}
-                          mapSubject="actors"
-                          indicator={viewEntity}
-                        />
-                      )}
-                      {viewSubject === 'targets' && hasTarget && (
-                        <FieldGroup
-                          group={{
-                            fields: [
-                              checkActionAttribute(typeId, 'target_comment')
-                                && getMarkdownField(viewEntity, 'target_comment', true),
-                            ],
-                          }}
-                        />
-                      )}
-                      {actortypesForSubject && (
-                        <FieldGroup
-                          group={{
-                            fields: actortypesForSubject.reduce(
-                              (memo, actors, typeid) => memo.concat([
-                                getActorConnectionField({
-                                  actors,
-                                  taxonomies,
-                                  onEntityClick,
-                                  connections: actorConnections,
-                                  typeid,
-                                  columns: getActortypeColumns(typeid, isIndicator, viewEntity),
-                                  isIndicator,
-                                  sortBy: isIndicator ? 'indicator' : null,
-                                  sortOrder: isIndicator ? 'desc' : null,
-                                }),
-                              ]),
-                              [],
-                            ),
-                          }}
-                        />
-                      )}
-                      {isManager && isIndicator && (
-                        <Box
-                          margin={{ bottom: 'large', horizontal: 'medium' }}
-                          fill={false}
-                          alignContent="start"
-                          direction="row"
-                        >
-                          <ButtonDefault
-                            onClick={() => handleImportConnection()}
-                          >
-                            Import actor connections
-                          </ButtonDefault>
-                        </Box>
-                      )}
-                      {resourcesByResourcetype && (
-                        <FieldGroup
-                          group={{
-                            type: 'dark',
-                            label: appMessages.nav.resources,
-                            fields: resourcesByResourcetype.reduce(
-                              (memo, resources, resourcetypeid) => {
-                                let columns = [
+                  <ActionViewDetails
+                    id={params.id}
+                    viewEntity={viewEntity}
+                    isManager={isManager}
+                    taxonomies={taxonomies}
+                    onEntityClick={onEntityClick}
+                    typeId={typeId}
+                    isIndicator={isIndicator}
+                  />
+                  {resourcesByResourcetype && (
+                    <Box pad={{ top: 'medium', bottom: 'large' }}>
+                      <FieldGroup
+                        group={{
+                          type: 'dark',
+                          label: appMessages.nav.resources,
+                          fields: resourcesByResourcetype.reduce(
+                            (memo, resources, resourcetypeid) => {
+                              let columns = [
+                                {
+                                  id: 'main',
+                                  type: 'main',
+                                  sort: 'title',
+                                  attributes: ['title'],
+                                },
+                              ];
+                              if (RESOURCE_FIELDS.ATTRIBUTES.status.optional.indexOf(resourcetypeid.toString()) > -1) {
+                                columns = [
+                                  ...columns,
                                   {
-                                    id: 'main',
-                                    type: 'main',
-                                    sort: 'title',
-                                    attributes: ['title'],
+                                    id: 'attribute',
+                                    type: 'attribute',
+                                    attribute: 'status',
                                   },
                                 ];
-                                if (RESOURCE_FIELDS.ATTRIBUTES.status.optional.indexOf(resourcetypeid.toString()) > -1) {
-                                  columns = [
-                                    ...columns,
-                                    {
-                                      id: 'attribute',
-                                      type: 'attribute',
-                                      attribute: 'status',
-                                    },
-                                  ];
-                                }
-                                return memo.concat([
-                                  getResourceConnectionField({
-                                    resources,
-                                    taxonomies,
-                                    onEntityClick,
-                                    connections: resourceConnections,
-                                    typeid: resourcetypeid,
-                                    columns,
-                                  }),
-                                ]);
-                              },
-                              [],
-                            ),
-                          }}
-                        />
-                      )}
+                              }
+                              return memo.concat([
+                                getResourceConnectionField({
+                                  resources,
+                                  taxonomies,
+                                  onEntityClick,
+                                  connections: resourceConnections,
+                                  typeid: resourcetypeid,
+                                  columns,
+                                }),
+                              ]);
+                            },
+                            [],
+                          ),
+                        }}
+                      />
                     </Box>
-                  </Box>
+                  )}
                 </Main>
                 {!isIndicator && (
                   <Aside bottom>
@@ -562,31 +371,16 @@ export function ActionView(props) {
                         }}
                       />
                     )}
-                    {parents && parents.size > 0 && (
+                    {parent && (
                       <FieldGroup
                         aside
                         group={{
                           label: appMessages.entities.actions.parent,
                           fields: [
                             getActionConnectionField({
-                              actions: parents.toList(),
+                              actions: List().push(parent),
                               onEntityClick,
-                              typeid: typeId,
-                            }),
-                          ],
-                        }}
-                      />
-                    )}
-                    {children && children.size > 0 && (
-                      <FieldGroup
-                        aside
-                        group={{
-                          label: appMessages.entities.actions.children,
-                          fields: [
-                            getActionConnectionField({
-                              actions: children.toList(),
-                              onEntityClick,
-                              typeid: typeId,
+                              typeid: parent.getIn(['attributes', 'measuretype_id']),
                             }),
                           ],
                         }}
@@ -614,25 +408,12 @@ ActionView.propTypes = {
   isManager: PropTypes.bool,
   viewTaxonomies: PropTypes.object,
   taxonomies: PropTypes.object,
-  actorsByActortype: PropTypes.object,
-  targetsByActortype: PropTypes.object,
   resourcesByResourcetype: PropTypes.object,
-  actorConnections: PropTypes.object,
   resourceConnections: PropTypes.object,
-  activitytypes: PropTypes.object,
   params: PropTypes.object,
-  children: PropTypes.object,
-  parents: PropTypes.object,
-  onSetSubject: PropTypes.func,
-  handleImportConnection: PropTypes.func,
+  parent: PropTypes.object,
   intl: intlShape.isRequired,
-  subject: PropTypes.string,
 };
-
-ActionView.contextTypes = {
-  intl: PropTypes.object.isRequired,
-};
-
 
 const mapStateToProps = (state, props) => ({
   isManager: selectIsUserManager(state),
@@ -640,15 +421,9 @@ const mapStateToProps = (state, props) => ({
   viewEntity: selectViewEntity(state, props.params.id),
   viewTaxonomies: selectViewTaxonomies(state, props.params.id),
   taxonomies: selectTaxonomiesWithCategories(state),
-  actorsByActortype: selectActorsByType(state, props.params.id),
   resourcesByResourcetype: selectResourcesByType(state, props.params.id),
-  targetsByActortype: selectTargetsByType(state, props.params.id),
-  actorConnections: selectActorConnections(state),
   resourceConnections: selectResourceConnections(state),
-  children: selectChildActions(state, props.params.id),
-  parents: selectParentActions(state, props.params.id),
-  subject: selectSubjectQuery(state),
-  activitytypes: selectActiontypes(state),
+  parent: selectParentAction(state, props.params.id),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -662,17 +437,11 @@ function mapDispatchToProps(dispatch, props) {
     handleEdit: () => {
       dispatch(updatePath(`${ROUTES.ACTION}${ROUTES.EDIT}/${props.params.id}`, { replace: true }));
     },
-    handleImportConnection: () => {
-      dispatch(updatePath(`${ROUTES.ACTOR_ACTIONS}${ROUTES.IMPORT}/${props.params.id}`, { replace: true }));
-    },
     handleClose: (typeId) => {
       dispatch(closeEntity(`${ROUTES.ACTIONS}/${typeId}`));
     },
     handleTypeClick: (typeId) => {
       dispatch(updatePath(`${ROUTES.ACTIONS}/${typeId}`));
-    },
-    onSetSubject: (type) => {
-      dispatch(setSubject(type));
     },
   };
 }

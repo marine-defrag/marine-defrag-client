@@ -38,4 +38,5 @@ export const FORM_INITIAL = fromJS({
   associatedTargetsByActortype: {},
   associatedResourcesByResourcetype: {},
   associatedParent: [],
+  associatedChildrenByActiontype: {},
 });

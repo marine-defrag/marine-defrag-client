@@ -13,7 +13,8 @@
 export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
 const IS_DEV = true;
-export const version = '1.0.1';
+
+export const version = '1.0.7[dev:pilot-projects]';
 
 export const ENDPOINTS = {
   API: (
@@ -120,11 +121,6 @@ export const FF_ONLY_ACTORTYPES = [
   ACTORTYPES.POINT,
 ];
 
-export const ACTIONTYPE_DISCLAIMERS = [
-  ACTIONTYPES.INTL,
-  ACTIONTYPES.DONOR,
-];
-
 export const DEFAULT_ACTORTYPE = ACTORTYPES.COUNTRY;
 export const RESOURCETYPES = {
   REF: '1',
@@ -133,6 +129,29 @@ export const RESOURCETYPES = {
 };
 export const DEFAULT_RESOURCETYPE = RESOURCETYPES.REF;
 export const DEFAULT_TAXONOMY = '11';
+
+export const ACTOR_ACTION_ROLES = {
+  NONE: {
+    value: '0',
+    hideOnActionList: true,
+  },
+  DONOR: {
+    value: '1',
+    default: true,
+  },
+  PARTNER: {
+    value: '2',
+    hideOnActionList: true,
+  },
+};
+
+export const ACTIONTYPE_ACTOR_ACTION_ROLES = {
+  [ACTIONTYPES.DONOR]: [
+    ACTOR_ACTION_ROLES.NONE,
+    ACTOR_ACTION_ROLES.DONOR,
+    ACTOR_ACTION_ROLES.PARTNER,
+  ],
+};
 
 export const ACTIONTYPE_GROUPS = {
   // donor activities
@@ -239,12 +258,14 @@ export const ACTIONTYPE_TARGETTYPES = {
     ACTORTYPES.GROUP,
     ACTORTYPES.REG,
     ACTORTYPES.CLASS,
+    ACTORTYPES.ORG,
   ],
   [ACTIONTYPES.INIT]: [
     ACTORTYPES.COUNTRY,
     ACTORTYPES.GROUP,
     ACTORTYPES.REG,
     ACTORTYPES.CLASS,
+    ACTORTYPES.ORG,
   ],
   [ACTIONTYPES.FACTS]: [],
 };
@@ -783,6 +804,16 @@ export const ACTIONTYPES_CONFIG = {
         type: 'main',
         sort: 'title',
         attributes: ['title'],
+      },
+      {
+        id: 'children',
+        type: 'children',
+      },
+      {
+        id: 'taxonomy-14',
+        type: 'taxonomy',
+        taxonomy_id: 14, // project types
+        showOnSingle: false,
       },
       {
         id: 'actors', // one row per type,

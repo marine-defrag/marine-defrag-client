@@ -1,33 +1,67 @@
 /*
  *
- * CountryFacts
+ * ActorViewDetailsCountryFacts
  *
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 // import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
-import { Box, Text, Button } from 'grommet';
+import {
+  Box,
+  Text,
+  Button,
+  ResponsiveContext,
+} from 'grommet';
 import { Map } from 'immutable';
 import styled from 'styled-components';
+
 import qe from 'utils/quasi-equals';
 import isNumber from 'utils/is-number';
-import ButtonSimple from 'components/buttons/ButtonSimple';
+import { isMaxSize } from 'utils/responsive';
+
 import NumberField from 'components/fields/NumberField';
+
 import { ROUTES } from 'themes/config';
 
-const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
+import { updatePath } from 'containers/App/actions';
+
+import appMessages from 'containers/App/messages';
+import { selectActorIndicators } from './selectors';
+
+const ResourceButton = styled((p) => <Button plain {...p} />)``;
+const Group = styled(
+  (p) => (
+    <Box
+      margin={{ bottom: 'large', top: 'medium' }}
+      pad={{ vertical: 'small' }}
+      {...p}
+    />
+  )
+)``;
 const GroupTitle = styled.h5`
-  font-size: 14px;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
 `;
-export function CountryFacts(props) {
+const GroupTitleLabel = styled(GroupTitle)`
+  font-weight: 300;
+  color: ${({ theme }) => theme.global.colors.text.secondary};
+`;
+
+const Indicator = styled((p) => <Box margin={{ top: 'medium' }} pad={{ top: 'medium' }} {...p} />)`
+  border-top: 1px solid ${({ theme }) => theme.global.colors.border.light};
+`;
+
+export function ActorViewDetailsCountryFacts(props) {
   const {
     indicators,
     resources,
     onUpdatePath,
     // intl,
   } = props;
-
+  const size = React.useContext(ResponsiveContext);
   const indicatorsByResourceId = indicators && indicators.groupBy(
     (entity) => {
       if (entity.get('resourcesByType')) {
@@ -56,18 +90,37 @@ export function CountryFacts(props) {
               return (
                 <Group key={`res-${resourceId}`}>
                   {resource && (
-                    <ButtonSimple onClick={() => onUpdatePath(`${ROUTES.RESOURCE}/${resourceId}`)}>
-                      <GroupTitle>
-                        {resource.getIn(['attributes', 'title'])}
-                      </GroupTitle>
-                    </ButtonSimple>
+                    <Box
+                      direction={isMaxSize(size, 'medium') ? 'column' : 'row'}
+                      gap="xsmall"
+                    >
+                      <Box>
+                        <GroupTitleLabel>
+                          Publication
+                        </GroupTitleLabel>
+                      </Box>
+                      <Box>
+                        <ResourceButton
+                          as="a"
+                          href={`${ROUTES.RESOURCE}/${resourceId}`}
+                          onClick={(e) => {
+                            if (e) e.preventDefault();
+                            onUpdatePath(`${ROUTES.RESOURCE}/${resourceId}`);
+                          }}
+                        >
+                          <GroupTitle>
+                            {resource.getIn(['attributes', 'title'])}
+                          </GroupTitle>
+                        </ResourceButton>
+                      </Box>
+                    </Box>
                   )}
                   {!resource && (
                     <GroupTitle>
                       Without resource
                     </GroupTitle>
                   )}
-                  <Box gap="large">
+                  <Box>
                     {resourceIndicators && resourceIndicators.toList().map((indicator) => {
                       const path = `${ROUTES.ACTION}/${indicator.get('id')}`;
                       const value = isNumber(indicator.get('value'))
@@ -78,7 +131,7 @@ export function CountryFacts(props) {
                         digits = value > 1 ? 1 : 3;
                       }
                       return (
-                        <Box key={indicator.get('id')}>
+                        <Indicator key={indicator.get('id')}>
                           <Box direction="row">
                             <NumberField
                               field={{
@@ -86,19 +139,18 @@ export function CountryFacts(props) {
                                 unit: indicator.getIn(['attributes', 'comment']),
                                 value,
                                 digits,
+                                showEmpty: appMessages.labels.noIndicatorValue,
+                                titleLink: {
+                                  href: path,
+                                  onClick: (evt) => {
+                                    if (evt && evt.preventDefault) evt.preventDefault();
+                                    onUpdatePath(path);
+                                  },
+                                },
                               }}
                             />
                           </Box>
-                          <Button
-                            plain
-                            href={path}
-                            onClick={(evt) => {
-                              if (evt && evt.preventDefault) evt.preventDefault();
-                              onUpdatePath(path);
-                            }}
-                            label={<Text size="xsmall">{'See all values for indicator >'}</Text>}
-                          />
-                        </Box>
+                        </Indicator>
                       );
                     })}
                   </Box>
@@ -112,7 +164,7 @@ export function CountryFacts(props) {
   );
 }
 
-CountryFacts.propTypes = {
+ActorViewDetailsCountryFacts.propTypes = {
   // viewEntity: PropTypes.instanceOf(Map),
   indicators: PropTypes.instanceOf(Map),
   resources: PropTypes.instanceOf(Map),
@@ -120,6 +172,16 @@ CountryFacts.propTypes = {
   // intl: intlShape,
 };
 
+const mapStateToProps = (state, { id }) => ({
+  indicators: selectActorIndicators(state, id),
+});
 
-// export default injectIntl(CountryFacts);
-export default CountryFacts;
+function mapDispatchToProps(dispatch) {
+  return {
+    onUpdatePath: (path) => {
+      dispatch(updatePath(path));
+    },
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ActorViewDetailsCountryFacts);

@@ -10,8 +10,6 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Map } from 'immutable';
-import { Box, Text, Button } from 'grommet';
-import styled from 'styled-components';
 
 import {
   getTitleField,
@@ -33,8 +31,6 @@ import {
   loadEntitiesIfNeeded,
   updatePath,
   closeEntity,
-  setSubject,
-  setActiontype,
 } from 'containers/App/actions';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
@@ -55,41 +51,21 @@ import {
   selectReady,
   selectIsUserManager,
   selectTaxonomiesWithCategories,
-  selectActionConnections,
   selectActorConnections,
-  selectSubjectQuery,
-  selectActiontypeQuery,
-  selectActortypes,
-  selectActiontypes,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
 import messages from './messages';
-import Activities from './Activities';
-import Members from './Members';
+import ActorViewDetails from './ActorViewDetails';
 import CountryMap from './CountryMap';
-import CountryFacts from './CountryFacts';
 
 import {
   selectViewEntity,
   selectViewTaxonomies,
-  selectActionsByType,
-  selectActionsAsTargetByType,
-  selectMembersByType,
   selectAssociationsByType,
-  selectActionsAsMemberByActortype,
-  selectActionsAsTargetAsMemberByActortype,
-  selectActorIndicators,
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
-
-const SubjectButton = styled((p) => <Button plain {...p} />)`
-  padding: 2px 4px;
-  border-bottom: 2px solid;
-  border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
-  background: none;
-`;
 
 export function ActorView(props) {
   const {
@@ -105,22 +81,7 @@ export function ActorView(props) {
     viewTaxonomies,
     associationsByType,
     onEntityClick,
-    onUpdatePath,
-    subject,
-    onSetSubject,
-    membersByType,
-    actortypes,
     taxonomies,
-    actionConnections,
-    actorConnections,
-    onSetActiontype,
-    viewActiontypeId,
-    actionsByActiontype,
-    actionsAsTargetByActiontype,
-    actiontypes,
-    actionsAsMemberByActortype,
-    actionsAsTargetAsMemberByActortype,
-    indicators,
   } = props;
   useEffect(() => {
     // kick off loading of data
@@ -128,7 +89,6 @@ export function ActorView(props) {
   }, []);
 
   const typeId = viewEntity && viewEntity.getIn(['attributes', 'actortype_id']);
-  const viewActortype = actortypes && actortypes.find((type) => qe(type.get('id'), typeId));
 
   let buttons = [];
   if (dataReady) {
@@ -160,28 +120,7 @@ export function ActorView(props) {
     : `${pageTitle}: ${params.id}`;
 
   const isCountry = qe(typeId, ACTORTYPES.COUNTRY);
-  const isLocation = qe(typeId, ACTORTYPES.POINT);
-  const isTarget = !isLocation && viewActortype && viewActortype.getIn(['attributes', 'is_target']);
-  const isActive = !isLocation && viewActortype && viewActortype.getIn(['attributes', 'is_active']);
-  const hasMembers = viewActortype && viewActortype.getIn(['attributes', 'has_members']);
 
-  let viewSubject = subject || (hasMembers ? 'members' : 'actors');
-  const validViewSubjects = [];
-  if (isTarget) {
-    validViewSubjects.push('targets');
-  }
-  if (isActive) {
-    validViewSubjects.push('actors');
-  }
-  if (hasMembers) {
-    validViewSubjects.push('members');
-  }
-  if (isCountry || isLocation) {
-    validViewSubjects.push('facts');
-  }
-  if (validViewSubjects.indexOf(viewSubject) === -1) {
-    viewSubject = validViewSubjects.length > 0 ? validViewSubjects[0] : null;
-  }
   return (
     <div>
       <Helmet
@@ -257,75 +196,14 @@ export function ActorView(props) {
                       ],
                     }}
                   />
-                  <Box>
-                    <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
-                      {hasMembers && (
-                        <SubjectButton
-                          onClick={() => onSetSubject('members')}
-                          active={viewSubject === 'members'}
-                        >
-                          <Text size="large">Members</Text>
-                        </SubjectButton>
-                      )}
-                      {isActive && (
-                        <SubjectButton
-                          onClick={() => onSetSubject('actors')}
-                          active={viewSubject === 'actors'}
-                        >
-                          <Text size="large">Activities</Text>
-                        </SubjectButton>
-                      )}
-                      {isTarget && (
-                        <SubjectButton
-                          onClick={() => onSetSubject('targets')}
-                          active={viewSubject === 'targets'}
-                        >
-                          <Text size="large">Targeted by</Text>
-                        </SubjectButton>
-                      )}
-                      {(isCountry || isLocation) && (
-                        <SubjectButton
-                          onClick={() => onSetSubject('facts')}
-                          active={viewSubject === 'facts'}
-                        >
-                          <Text size="large">Facts & Figures</Text>
-                        </SubjectButton>
-                      )}
-                    </Box>
-                    {viewSubject === 'members' && hasMembers && (
-                      <Members
-                        membersByType={membersByType}
-                        onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
-                        taxonomies={taxonomies}
-                        actorConnections={actorConnections}
-                      />
-                    )}
-                    {(viewSubject === 'actors' || viewSubject === 'targets') && (
-                      <Activities
-                        viewEntity={viewEntity}
-                        onEntityClick={onEntityClick}
-                        viewActortype={viewActortype}
-                        viewSubject={viewSubject}
-                        taxonomies={taxonomies}
-                        actionConnections={actionConnections}
-                        hasMembers={hasMembers}
-                        onSetActiontype={onSetActiontype}
-                        viewActiontypeId={viewActiontypeId}
-                        actionsByActiontype={actionsByActiontype}
-                        actionsAsTargetByActiontype={actionsAsTargetByActiontype}
-                        actiontypes={actiontypes}
-                        actionsAsMemberByActortype={actionsAsMemberByActortype}
-                        actionsAsTargetAsMemberByActortype={actionsAsTargetAsMemberByActortype}
-                      />
-                    )}
-                    {viewSubject === 'facts' && (
-                      <CountryFacts
-                        onUpdatePath={onUpdatePath}
-                        indicators={indicators}
-                        resources={actionConnections && actionConnections.get('resources')}
-                      />
-                    )}
-                  </Box>
+                  <ActorViewDetails
+                    id={params.id}
+                    typeId={typeId}
+                    viewEntity={viewEntity}
+                    onEntityClick={onEntityClick}
+                    taxonomies={taxonomies}
+                    isCountry={isCountry}
+                  />
                 </Main>
                 <Aside bottom>
                   {isCountry && (
@@ -403,48 +281,23 @@ ActorView.propTypes = {
   handleClose: PropTypes.func,
   handleTypeClick: PropTypes.func,
   onEntityClick: PropTypes.func,
-  onUpdatePath: PropTypes.func,
   viewTaxonomies: PropTypes.instanceOf(Map),
-  indicators: PropTypes.instanceOf(Map),
   taxonomies: PropTypes.instanceOf(Map),
-  actionConnections: PropTypes.instanceOf(Map),
-  actorConnections: PropTypes.instanceOf(Map),
-  actionsByActiontype: PropTypes.instanceOf(Map),
-  actionsAsTargetByActiontype: PropTypes.instanceOf(Map),
-  membersByType: PropTypes.instanceOf(Map),
   associationsByType: PropTypes.instanceOf(Map),
   params: PropTypes.object,
   isManager: PropTypes.bool,
   intl: intlShape.isRequired,
-  subject: PropTypes.string,
-  viewActiontypeId: PropTypes.string,
-  onSetSubject: PropTypes.func,
-  onSetActiontype: PropTypes.func,
-  actortypes: PropTypes.instanceOf(Map),
-  actiontypes: PropTypes.instanceOf(Map),
-  actionsAsMemberByActortype: PropTypes.instanceOf(Map),
-  actionsAsTargetAsMemberByActortype: PropTypes.instanceOf(Map),
 };
+
 
 const mapStateToProps = (state, props) => ({
   isManager: selectIsUserManager(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   viewEntity: selectViewEntity(state, props.params.id),
-  indicators: selectActorIndicators(state, props.params.id),
   viewTaxonomies: selectViewTaxonomies(state, props.params.id),
   taxonomies: selectTaxonomiesWithCategories(state),
-  actionsByActiontype: selectActionsByType(state, props.params.id),
-  actionsAsTargetByActiontype: selectActionsAsTargetByType(state, props.params.id),
-  actionsAsMemberByActortype: selectActionsAsMemberByActortype(state, props.params.id),
-  actionsAsTargetAsMemberByActortype: selectActionsAsTargetAsMemberByActortype(state, props.params.id),
-  actionConnections: selectActionConnections(state),
   actorConnections: selectActorConnections(state),
-  membersByType: selectMembersByType(state, props.params.id),
   associationsByType: selectAssociationsByType(state, props.params.id),
-  subject: selectSubjectQuery(state),
-  viewActiontypeId: selectActiontypeQuery(state),
-  actortypes: selectActortypes(state),
-  actiontypes: selectActiontypes(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -463,15 +316,6 @@ function mapDispatchToProps(dispatch, props) {
     },
     onEntityClick: (id, path) => {
       dispatch(updatePath(`${path}/${id}`));
-    },
-    onUpdatePath: (path) => {
-      dispatch(updatePath(path));
-    },
-    onSetSubject: (type) => {
-      dispatch(setSubject(type));
-    },
-    onSetActiontype: (type) => {
-      dispatch(setActiontype(type));
     },
   };
 }

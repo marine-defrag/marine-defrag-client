@@ -18,4 +18,8 @@ export default defineMessages({
     id: 'app.containers.ActionView.notFound',
     defaultMessage: 'Sorry no action found',
   },
+  importActorConnections: {
+    id: 'app.containers.ActionView.importActorConnections',
+    defaultMessage: 'Import actor connections',
+  },
 });
