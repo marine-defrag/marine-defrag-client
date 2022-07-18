@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 // import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import { Box, Text, Button } from 'grommet';
+import InfoOverlay from 'components/InfoOverlay';
 
 import qe from 'utils/quasi-equals';
 
@@ -11,7 +12,9 @@ import MapSubjectOptions from './MapSubjectOptions';
 import MapOption from './MapOption';
 import SelectIndicators from './SelectIndicators';
 
-const Title = styled((p) => <Text weight={600} {...p} />)``;
+const Title = styled((p) => <Text weight={500} {...p} />)`
+  margin-right: ${({ hasInfo }) => hasInfo ? 8 : 0}px;
+`;
 const SubTitle = styled((p) => <Text size="small" {...p} />)``;
 
 const Styled = styled.div`
@@ -26,6 +29,12 @@ const Styled = styled.div`
     left: 10px;
     bottom: 50px;
   }
+`;
+const IndicatorButton = styled((p) => <Button plain {...p} />)`
+    color: #0077d8;
+    &:hover {
+      color: #0063b5;
+    }
 `;
 const Pane = styled((p) => <Box {...p} />)`
   position: absolute;
@@ -148,9 +157,35 @@ export function MapInfoOptions({
                     circleLayerConfig={circleLayerConfig}
                   />
                   {activeIndicatorOption.title && (
-                    <Title>
-                      {activeIndicatorOption.title}
-                    </Title>
+                    <div>
+                      {activeIndicatorOption.onClick && (
+                        <IndicatorButton
+                          as={activeIndicatorOption.href ? 'a' : 'button'}
+                          href={activeIndicatorOption.href}
+                          onClick={(evt) => {
+                            if (evt) evt.preventDefault();
+                            activeIndicatorOption.onClick();
+                          }}
+                        >
+                          <Title hasInfo={!!activeIndicatorOption.info}>
+                            {activeIndicatorOption.title}
+                          </Title>
+                        </IndicatorButton>
+                      )}
+                      {!activeIndicatorOption.onClick && (
+                        <Title hasInfo={!!activeIndicatorOption.info}>
+                          {activeIndicatorOption.title}
+                        </Title>
+                      )}
+                      {activeIndicatorOption.info && (
+                        <InfoOverlay
+                          title={activeIndicatorOption.title}
+                          content={activeIndicatorOption.info}
+                          tooltip
+                          inline
+                        />
+                      )}
+                    </div>
                   )}
                 </Box>
               )}
@@ -186,29 +221,6 @@ export function MapInfoOptions({
       </Pane>
     </Styled>
   );
-  // const {
-  //   title, maxValue, subjectOptions, memberOption, subTitle,
-  // } = config;
-  // const hasKey = maxValue > 0;
-  // return (
-  //   <Styled>
-  //     {subjectOptions && (
-  //       <MapSubjectOptions options={subjectOptions} />
-  //     )}
-  //     <Box gap="xsmall" margin={{ bottom: 'small' }}>
-  //       {title && (
-  //         <Title>{title}</Title>
-  //       )}
-  //       {subTitle && (
-  //         <SubTitle>{subTitle}</SubTitle>
-  //       )}
-  //     </Box>
-  //     {hasKey && <MapKey maxValue={maxValue} mapSubject={mapSubject} />}
-  //     {memberOption && (
-  //       <MapOption option={memberOption} type="member" />
-  //     )}
-  //   </Styled>
-  // );
 }
 
 MapInfoOptions.propTypes = {

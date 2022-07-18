@@ -28,7 +28,7 @@ import {
   selectFFOverlay,
 } from 'containers/App/selectors';
 
-import { setFFOverlay } from 'containers/App/actions';
+import { setFFOverlay, updatePath } from 'containers/App/actions';
 
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Loading from 'components/Loading';
@@ -83,6 +83,7 @@ export function EntitiesMap({
   countriesWithIndicators,
   ffIndicatorId,
   onSetFFOverlay,
+  onSelectAction,
   // connections,
   // connectedTaxonomies,
   // locationQuery,
@@ -723,6 +724,9 @@ export function EntitiesMap({
                 ...memo,
                 {
                   label: action.getIn(['attributes', 'title']),
+                  info: action.getIn(['attributes', 'description']),
+                  onClick: () => onSelectAction(id),
+                  href: `${ROUTES.ACTION}/${id}`,
                   title: `${action.getIn(['attributes', 'title'])} [${action.getIn(['attributes', 'comment'])}]`,
                   value: id,
                 },
@@ -774,6 +778,7 @@ EntitiesMap.propTypes = {
   hasFilters: PropTypes.bool,
   onEntityClick: PropTypes.func,
   onSetFFOverlay: PropTypes.func,
+  onSelectAction: PropTypes.func,
   ffIndicatorId: PropTypes.string,
   intl: intlShape.isRequired,
 };
@@ -793,6 +798,9 @@ function mapDispatchToProps(dispatch) {
   return {
     onSetFFOverlay: (value) => {
       dispatch(setFFOverlay(value));
+    },
+    onSelectAction: (id) => {
+      dispatch(updatePath(`${ROUTES.ACTION}/${id}`));
     },
   };
 }
