@@ -372,6 +372,13 @@ export function ActorActivitiesMap({
                 tooltip: {
                   id: country.get('id'),
                   title: country.getIn(['attributes', 'title']),
+                  isCount: true,
+                  stats: [{
+                    values: [{
+                      label: 'No of activities',
+                      value: actionCount || 0,
+                    }],
+                  }],
                 },
                 isActive,
                 values: {

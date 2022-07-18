@@ -37,6 +37,7 @@ export function IndicatorCountryMap({
           {
             values: [
               {
+                label: indicator.getIn(['attributes', 'title']),
                 unit: indicator.getIn(['attributes', 'comment']),
                 value,
               },

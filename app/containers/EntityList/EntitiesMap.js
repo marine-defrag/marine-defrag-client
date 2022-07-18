@@ -35,7 +35,6 @@ import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 import { hasGroupActors } from 'utils/entities';
 import MapContainer from 'containers/MapContainer';
-import TooltipContent from 'containers/MapContainer/TooltipContent';
 // import messages from './messages';
 
 const LoadingWrap = styled.div`
@@ -241,9 +240,9 @@ export function EntitiesMap({
               tooltip: {
                 id: country.get('id'),
                 title: country.getIn(['attributes', 'title']),
-                content: (
-                  <TooltipContent stats={stats} isCount />
-                ),
+                stats,
+                isCount: true,
+                isCountryData: true,
               },
               values: {
                 actions: countActions,
@@ -380,12 +379,9 @@ export function EntitiesMap({
               tooltip: {
                 id: country.get('id'),
                 title: country.getIn(['attributes', 'title']),
-                content: (
-                  <TooltipContent
-                    stats={stats}
-                    isCount
-                  />
-                ),
+                stats,
+                isCount: true,
+                isCountryData: true,
               },
               values: {
                 targetingActions: countTargetingActions,
@@ -576,6 +572,7 @@ export function EntitiesMap({
               },
             ];
           }
+
           return {
             ...feature,
             id: country.get('id'),
@@ -583,12 +580,9 @@ export function EntitiesMap({
             tooltip: {
               id: country.get('id'),
               title: country.getIn(['attributes', 'title']),
-              content: (
-                <TooltipContent
-                  stats={stats}
-                  isCount
-                />
-              ),
+              stats,
+              isCount: true,
+              isCountryData: true,
             },
             values: {
               actions: countActions,
@@ -626,7 +620,6 @@ export function EntitiesMap({
       }
     );
     if (ffIndicatorId && countriesWithIndicators) {
-      // console.log(actions && actions.toJS())
       // console.log(ffIndicatorId)
       ffIndicator = actions.get(ffIndicatorId);
       reducePoints = (features) => ffIndicator && features.reduce(
@@ -642,6 +635,7 @@ export function EntitiesMap({
             }
             const stats = [
               {
+                title: ffIndicator.getIn(['attributes', 'title']),
                 values: [
                   {
                     unit: ffIndicator.getIn(['attributes', 'comment']),
@@ -659,7 +653,8 @@ export function EntitiesMap({
                 tooltip: {
                   id: country.get('id'),
                   title: country.getIn(['attributes', 'title']),
-                  content: <TooltipContent stats={stats} />,
+                  stats,
+                  isLocationData: true,
                 },
                 values: {
                   [ffIndicatorId]: parseFloat(value, 10),

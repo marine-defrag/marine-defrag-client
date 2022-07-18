@@ -15,7 +15,9 @@ import { MAP_OPTIONS } from 'themes/config';
 
 import qe from 'utils/quasi-equals';
 
+
 import Tooltip from './Tooltip';
+import TooltipContent from './TooltipContent';
 import { scaleColorCount, getCircleLayer } from './utils';
 
 const Styled = styled.div`
@@ -200,17 +202,67 @@ export function MapWrapper({
         (active, f) => f.id === feature.id || active,
         false,
       );
-      const newFeatures = activeTT
-        // remove
-        ? tooltip.features.reduce(
+      let newFeatures;
+      // remove
+      if (activeTT) {
+        newFeatures = tooltip.features.reduce(
           (memo, f) => f.id === feature.id ? memo : [...memo, f],
           [],
-        )
-        // add
-        : [
-          feature,
+        );
+      } else {
+        // const newFeature = feature;
+        let content;
+        if (countryData && locationData) {
+          // add country Data
+          const countryF = countryData.find((fcd) => qe(fcd.id, feature.id));
+          if (countryF && feature.tooltip.isLocationData) {
+            content = [
+              countryF.tooltip.stats
+                ? <TooltipContent stats={countryF.tooltip.stats} isCount={countryF.tooltip.isCount} />
+                : countryF.tooltip.content,
+              feature.tooltip.stats
+                ? <TooltipContent stats={feature.tooltip.stats} isCount={feature.tooltip.isCount} />
+                : feature.tooltip.content,
+            ];
+          } else if (feature.tooltip.isCountryData) {
+            const locF = locationData.find((fcd) => qe(fcd.id, feature.id));
+            if (locF) {
+              content = [
+                countryF.tooltip.stats
+                  ? <TooltipContent stats={countryF.tooltip.stats} isCount={countryF.tooltip.isCount} />
+                  : feature.tooltip.content,
+                locF.tooltip.stats
+                  ? <TooltipContent stats={locF.tooltip.stats} isCount={locF.tooltip.isCount} />
+                  : locF.tooltip.content,
+              ];
+            }
+          }
+          if (!content) {
+            content = [
+              feature.tooltip.stats
+                ? <TooltipContent stats={feature.tooltip.stats} isCount={feature.tooltip.isCount} />
+                : feature.tooltip.content,
+            ];
+          }
+        } else {
+          content = [
+            feature.tooltip.stats
+              ? <TooltipContent stats={feature.tooltip.stats} isCount={feature.tooltip.isCount} />
+              : feature.tooltip.content,
+          ];
+        }
+        const newFeature = {
+          ...feature,
+          tooltip: {
+            ...feature.tooltip,
+            content,
+          },
+        };
+        newFeatures = [
+          newFeature,
           ...tooltip.features,
         ];
+      }
       setTooltip({
         anchor: e.containerPoint,
         direction: { x: 'left', y: 'top' },
