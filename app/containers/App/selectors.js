@@ -439,6 +439,10 @@ export const selectIncludeTargetChildren = createSelector(
     return true; // default
   }
 );
+export const selectFFOverlay = createSelector(
+  selectLocationQuery,
+  (locationQuery) => (locationQuery && locationQuery.get('ff')) || '0'
+);
 
 // database ////////////////////////////////////////////////////////////////////////
 

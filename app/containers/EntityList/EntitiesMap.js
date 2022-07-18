@@ -3,7 +3,7 @@
  * EntitiesMap
  *
  */
-import React, { useState } from 'react';
+import React from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
@@ -25,7 +25,10 @@ import {
   selectActionActorsGroupedByAction,
   selectActorActionsGroupedByAction,
   selectMembershipsGroupedByAssociation,
+  selectFFOverlay,
 } from 'containers/App/selectors';
+
+import { setFFOverlay } from 'containers/App/actions';
 
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Loading from 'components/Loading';
@@ -78,12 +81,13 @@ export function EntitiesMap({
   membershipsByAssociation,
   actorActionsByAction,
   countriesWithIndicators,
+  ffIndicatorId,
+  onSetFFOverlay,
   // connections,
   // connectedTaxonomies,
   // locationQuery,
   // taxonomies,
 }) {
-  const [ffIndicatorId, setFFIndicatorId] = useState(0);
   // const { intl } = this.context;
   let type;
   let hasByTarget;
@@ -712,7 +716,7 @@ export function EntitiesMap({
           {
             id: 'indicators',
             tabTitle: 'Facts & Figures',
-            onUpdateFFIndicator: (id) => setFFIndicatorId(id),
+            onUpdateFFIndicator: (id) => onSetFFOverlay(id),
             ffActiveOptionId: ffIndicatorId,
             ffOptions: ffIndicators && ffIndicators.reduce(
               (memo, action, id) => [
@@ -769,12 +773,15 @@ EntitiesMap.propTypes = {
   includeTargetMembers: PropTypes.bool,
   hasFilters: PropTypes.bool,
   onEntityClick: PropTypes.func,
+  onSetFFOverlay: PropTypes.func,
+  ffIndicatorId: PropTypes.string,
   intl: intlShape.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
   actors: selectActors(state),
+  ffIndicatorId: selectFFOverlay(state),
   countriesWithIndicators: selectCountriesWithIndicators(state),
   actions: selectActions(state),
   actionActorsByAction: selectActionActorsGroupedByAction(state), // for figuring out targeted countries
@@ -782,4 +789,12 @@ const mapStateToProps = (state) => ({
   membershipsByAssociation: selectMembershipsGroupedByAssociation(state),
 });
 
-export default connect(mapStateToProps, null)(injectIntl(EntitiesMap));
+function mapDispatchToProps(dispatch) {
+  return {
+    onSetFFOverlay: (value) => {
+      dispatch(setFFOverlay(value));
+    },
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(EntitiesMap));
