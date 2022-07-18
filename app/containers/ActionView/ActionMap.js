@@ -36,9 +36,8 @@ import {
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer';
-import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOption';
-import MapChildrenOption from 'containers/MapContainer/MapInfoOptions/MapChildrenOption';
+import MapContainer from 'containers/MapContainer/MapWrapper';
+import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
 
 // import messages from './messages';
 
@@ -233,7 +232,7 @@ export function ActionMap({
           countryFeatures={countriesJSON.features}
           indicator="actions"
           onActorClick={(id) => onActorClick(id)}
-          maxValue={1}
+          maxValueCountries={1}
           includeSecondaryMembers={
             includeActorMembers
             || includeTargetMembers
@@ -254,10 +253,10 @@ export function ActionMap({
             </MapTitle>
           )}
           {memberOption && (
-            <MapMemberOption option={memberOption} />
+            <MapOption option={memberOption} type="member" />
           )}
           {childrenOption && (
-            <MapChildrenOption option={childrenOption} />
+            <MapOption option={childrenOption} type="children" />
           )}
         </MapOptions>
       )}

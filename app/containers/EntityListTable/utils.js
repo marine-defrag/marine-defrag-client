@@ -50,7 +50,7 @@ export const prepareHeader = ({
       case 'indicator':
         return ({
           ...col,
-          title: col.unit ? `${col.title} (${col.unit})` : col.title,
+          title: col.unit ? `${col.title} [${col.unit}]` : col.title,
           sortActive: sortBy === col.id,
           sortOrder: sortOrder || 'asc',
           onSort,

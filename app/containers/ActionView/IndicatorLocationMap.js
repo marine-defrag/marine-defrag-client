@@ -18,7 +18,7 @@ import locationsJSON from 'data/locations.json';
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer';
+import MapContainer from 'containers/MapContainer/MapWrapper';
 import TooltipContent from 'containers/MapContainer/TooltipContent';
 import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
 const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
@@ -55,6 +55,9 @@ export function IndicatorLocationMap({
         );
         if (location) {
           const value = location.getIn(['actionValues', indicator.get('id')]);
+          if (!value && value !== 0) {
+            return memo;
+          }
           const stats = [
             {
               values: [
@@ -91,7 +94,7 @@ export function IndicatorLocationMap({
 
     // comment stores unit
     const keyTitle = indicator.getIn(['attributes', 'comment'])
-      ? `${indicator.getIn(['attributes', 'title'])} (${indicator.getIn(['attributes', 'comment'])})`
+      ? `${indicator.getIn(['attributes', 'title'])} [${indicator.getIn(['attributes', 'comment']).trim()}]`
       : indicator.getIn(['attributes', 'title']);
     const [maxValue, minValue] = locationData && locationData.reduce(
       ([max, min], feature) => ([
@@ -118,33 +121,29 @@ export function IndicatorLocationMap({
 
     return (
       <Styled hasHeader noOverflow>
-        <MapTitle>
-          <Text weight={600}>{indicator.getIn(['attributes', 'title'])}</Text>
-        </MapTitle>
         <MapWrapper>
           <MapContainer
             locationData={locationData}
             countryFeatures={countriesJSON.features}
             indicator="indicator"
-            maxValue={maxValue}
             mapSubject={mapSubject}
             fitBounds
             projection="robinson"
-            layerConfig={config}
+            circleLayerConfig={config}
             mapId="ll-indicator-location-map"
           />
         </MapWrapper>
+        <MapTitle>
+          <Text weight={600}>{keyTitle}</Text>
+        </MapTitle>
         <MapKeyWrapper>
-          <Box margin={{ bottom: 'xsmall' }}>
-            <Text size="small">{keyTitle}</Text>
-          </Box>
           <MapKey
             mapSubject={mapSubject}
             maxValue={maxValue}
             minValue={minValue}
             isIndicator
             type="circles"
-            config={config}
+            circleLayerConfig={config}
           />
         </MapKeyWrapper>
       </Styled>

@@ -78,6 +78,7 @@ export const SET_INCLUDE_TARGET_MEMBERS = 'impactoss/App/SET_INCLUDE_TARGET_MEMB
 export const SET_INCLUDE_MEMBERS_FORFILTERS = 'impactoss/App/SET_INCLUDE_MEMBERS_FORFILTERS';
 export const SET_INCLUDE_TARGET_CHILDREN = 'impactoss/App/SET_INCLUDE_TARGET_CHILDREN';
 export const SET_INCLUDE_ACTOR_CHILDREN = 'impactoss/App/SET_INCLUDE_ACTOR_CHILDREN';
+export const SET_FF_OVERLAY = 'impactoss/App/SET_FF_OVERLAY';
 
 export const FILTERS_PANEL = 'filters';
 export const EDIT_PANEL = 'edit';

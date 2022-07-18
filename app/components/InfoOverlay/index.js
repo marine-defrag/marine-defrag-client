@@ -67,33 +67,35 @@ const Markdown = styled(ReactMarkdown)`
 `;
 
 function InfoOverlay({
-  dark, content, tooltip, title, padButton, colorButton,
+  dark, content, tooltip, title, padButton, colorButton, inline,
 }) {
   const infoRef = useRef(null);
   const [info, showInfo] = useState(false);
   return (
     <>
       <Box
+        as={inline ? 'span' : 'div'}
         fill={false}
-        pad={padButton || { horizontal: 'small' }}
+        pad={inline ? null : (padButton || { horizontal: 'small' })}
         ref={infoRef}
-        flex={{ grow: 0, shrink: 0 }}
+        flex={inline ? false : { grow: 0, shrink: 0 }}
+        style={inline ? { width: 'auto', display: 'inline-block' } : null}
       >
         <Button
           plain
-          icon={(
-            <CircleInformation
-              color={colorButton || (dark ? 'light-5' : 'dark-5')}
-              size="21px"
-            />
-          )}
           fill={false}
           onMouseOver={() => tooltip && showInfo(true)}
           onMouseLeave={() => tooltip && showInfo(false)}
           onFocus={() => tooltip && showInfo(true)}
           onBlur={() => null}
           onClick={() => !tooltip && showInfo(!info)}
-        />
+          style={{ width: '25px' }}
+        >
+          <CircleInformation
+            color={colorButton || (dark ? 'light-5' : 'dark-5')}
+            size="21px"
+          />
+        </Button>
       </Box>
       {info && infoRef && tooltip && (
         <Drop
@@ -141,6 +143,7 @@ function InfoOverlay({
 InfoOverlay.propTypes = {
   dark: PropTypes.bool,
   tooltip: PropTypes.bool,
+  inline: PropTypes.bool,
   content: PropTypes.string,
   title: PropTypes.string,
   colorButton: PropTypes.string,

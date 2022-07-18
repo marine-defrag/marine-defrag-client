@@ -31,7 +31,7 @@ class NumberField extends React.PureComponent { // eslint-disable-line react/pre
     return (
       <FieldWrap>
         {!isCount && (
-          <Box gap="xsmall">
+          <Box>
             {!!label && (
               <Box direction="row" alignContent="start" justify="start" gap="xsmall" fill={false}>
                 {!field.titleLink && (

@@ -14,7 +14,7 @@ export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
 
 const IS_DEV = true;
 
-export const version = '1.0.7[dev:pilot-projects]';
+export const version = '1.1.0[dev:pilot-projects]';
 
 export const ENDPOINTS = {
   API: (
@@ -925,6 +925,8 @@ export const TEXT_TRUNCATE = {
   CONNECTION_POPUP: 80,
   LINK_FIELD: 30,
   TYPE_SELECT: 24,
+  FF_SELECT: 30,
+  FF_SELECT_OPTION: 40,
   GRACE: 2,
   META_TITLE: 20,
 };

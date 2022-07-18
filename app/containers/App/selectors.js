@@ -28,6 +28,7 @@ import {
   FF_ACTIONTYPE,
   ACTORTYPES_CONFIG,
   ACTIONTYPES_CONFIG,
+  ACTORTYPES,
 } from 'themes/config';
 
 import {
@@ -36,6 +37,7 @@ import {
   entitiesSetCategoryIds,
   prepareTaxonomies,
   prepareTaxonomiesTags,
+  // setActorConnections,
 } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
 import { PARAMS } from './constants';
@@ -437,6 +439,10 @@ export const selectIncludeTargetChildren = createSelector(
     return true; // default
   }
 );
+export const selectFFOverlay = createSelector(
+  selectLocationQuery,
+  (locationQuery) => (locationQuery && locationQuery.get('ff')) || '0'
+);
 
 // database ////////////////////////////////////////////////////////////////////////
 
@@ -476,6 +482,7 @@ export const selectActor = createSelector(
   (state, id) => selectEntity(state, { id, path: API.ACTORS }),
   (entity) => entity
 );
+
 // all resources
 export const selectResources = createSelector(
   (state) => selectEntities(state, API.RESOURCES),
@@ -515,7 +522,7 @@ export const selectActiontypes = createSelector(
       : sorted.filter((t) => !qe(t.get('id'), FF_ACTIONTYPE));
   }
 );
-// all action types
+// all facts action types
 export const selectFactsActiontype = createSelector(
   (state) => selectEntities(state, API.ACTIONTYPES),
   (entities) => entities && entities.find((t) => qe(t.get('id'), FF_ACTIONTYPE))
@@ -1474,4 +1481,32 @@ export const selectViewActorActortypeId = createSelector(
     }
     return null;
   }
+);
+
+export const selectCountriesWithIndicators = createSelector(
+  (state) => selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
+  (state) => selectActiontypeActions(state, { type: FF_ACTIONTYPE }),
+  selectActorActionsGroupedByActorAttributes,
+  (countries, actions, actorConnections) => countries
+    && actions
+    && actorConnections
+    && countries.map(
+      (country) => {
+        let actorActionValues = actorConnections.get(parseInt(country.get('id'), 10)) || null;
+        if (actorActionValues) {
+          actorActionValues = actorActionValues
+            .filter(
+              // make sure we have a connection to an ff-indicator
+              (connection) => !!actions.get(connection.get('measure_id').toString())
+            ).reduce(
+              (memo, connection) => memo.set(
+                connection.get('measure_id').toString(),
+                connection.get('value'),
+              ),
+              Map()
+            );
+        }
+        return country.set('actionValues', actorActionValues);
+      }
+    )
 );
