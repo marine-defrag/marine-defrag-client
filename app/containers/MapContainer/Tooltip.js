@@ -5,17 +5,20 @@ import { Box, Text, Button } from 'grommet';
 import { FormNext, FormClose } from 'grommet-icons';
 import { ROUTES } from 'themes/config';
 
+import asArray from 'utils/as-array';
+
 const Root = styled.div`
   position: absolute;
   top: ${({ position }) => position ? position.y : 50}px;
   left: 0;
   right: 0;
   z-index: 2501;
+  pointer-events: none;
   @media (min-width: ${({ theme }) => theme.breakpoints.large}) {
-    bottom: auto;
     right: auto;
-    top: ${({ position }) => position ? position.y : 10}px;
-    right: ${({ position }) => position ? 'auto' : '10px'};
+    bottom: 0;
+    top: ${({ position }) => position ? position.y : 0}px;
+    right: ${({ position }) => position ? 'auto' : '0px'};
     left: ${({ position }) => position ? position.x : 'auto'};
   }
 `;
@@ -26,22 +29,19 @@ const Anchor = styled.div``;
 // eslint-ebable prefer-template
 // border-right-color: ${({ dirLeft }) => (!dirLeft ? 'white' : 'transparent')};
 
-const TTContentWrap = styled((p) => <Box {...p} />)``;
 const ButtonWrap = styled((p) => <Box align="end" margin={{ top: 'xsmall' }} {...p} />)``;
 const Main = styled.div`
-  padding: 0 10px 10px;
-  min-height: 100px;
-  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.2);
+  pointer-events: all;
+  padding: 5px;
   display: block;
-  background: white;
   width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  max-height: ${({ h }) => h - 20}px;
+  max-height: ${({ h }) => h}px;
   @media (min-width: ${({ theme }) => theme.breakpoints.large}) {
     height: auto;
-    min-width: 280px;
-    max-width: 300px;
+    min-width: 290px;
+    max-width: 310px;
     pointer-events: all;
   }
 `;
@@ -62,17 +62,20 @@ const CountryButton = styled((p) => <Button {...p} />)`
 
 const Feature = styled((p) => (
   <Box
-    margin={{ top: 'small' }}
-    pad={{ top: 'small' }}
+    pad="small"
     {...p}
   />
 ))`
-  border-top: 1px solid ${({ theme }) => theme.global.colors.border.light};
+  min-height: 100px;
+  box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.2);
+  background: white;
   &:first-child {
     margin-top: 0px;
-    paddding-top: 0px;
-    border-top: 0px;
   }
+`;
+
+const TTContentWrap = styled((p) => <Box pad={{ vertical: 'xsmall' }} {...p} />)`
+  border-top: 1px solid ${({ theme }) => theme.global.colors.border.light};
 `;
 
 const Tooltip = ({
@@ -90,7 +93,7 @@ const Tooltip = ({
         dirLeft={direction && direction.x === 'left'}
         h={mapRef && mapRef.current ? mapRef.current.clientHeight : 300}
       >
-        <Box>
+        <Box gap="xsmall">
           {features.map((feature, i) => (
             <Feature key={i}>
               <Box direction="row" justify="between" align="center" margin={{ bottom: 'xsmall' }}>
@@ -104,9 +107,11 @@ const Tooltip = ({
                 />
               </Box>
               {feature.content && (
-                <TTContentWrap>
-                  {feature.content}
-                </TTContentWrap>
+                <Box>
+                  {asArray(feature.content).map(
+                    (c, j) => <TTContentWrap key={j}>{c}</TTContentWrap>
+                  )}
+                </Box>
               )}
               {onFeatureClick && feature.id && (
                 <ButtonWrap>

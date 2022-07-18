@@ -33,8 +33,8 @@ import {
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer';
-import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOption';
+import MapContainer from 'containers/MapContainer/MapWrapper';
+import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
 import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
 // import messages from './messages';
 
@@ -372,6 +372,13 @@ export function ActorActivitiesMap({
                 tooltip: {
                   id: country.get('id'),
                   title: country.getIn(['attributes', 'title']),
+                  isCount: true,
+                  stats: [{
+                    values: [{
+                      label: 'No of activities',
+                      value: actionCount || 0,
+                    }],
+                  }],
                 },
                 isActive,
                 values: {
@@ -414,7 +421,7 @@ export function ActorActivitiesMap({
           countryFeatures={countriesJSON.features}
           indicator="actions"
           onActorClick={(id) => onEntityClick(id)}
-          maxValue={maxValue}
+          maxValueCountries={maxValue}
           includeSecondaryMembers={includeActorMembers || includeTargetMembers}
           mapSubject={mapSubject}
           fitBounds
@@ -435,10 +442,10 @@ export function ActorActivitiesMap({
       {(memberOption || memberTargetOption) && (
         <MapOptions>
           {memberTargetOption && (
-            <MapMemberOption option={memberTargetOption} />
+            <MapOption option={memberTargetOption} type="member" />
           )}
           {memberOption && (
-            <MapMemberOption option={memberOption} />
+            <MapOption option={memberOption} type="member" />
           )}
         </MapOptions>
       )}

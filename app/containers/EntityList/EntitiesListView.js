@@ -28,7 +28,7 @@ import Content from 'components/styled/Content';
 import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
 import MapSubjectOptions from 'containers/MapContainer/MapInfoOptions/MapSubjectOptions';
-import MapMemberOption from 'containers/MapContainer/MapInfoOptions/MapMemberOption';
+import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
 import EntityListTable from 'containers/EntityListTable';
 import ButtonPill from 'components/buttons/ButtonPill';
 
@@ -154,7 +154,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
     let columns;
     let headerColumnsUtility;
     let mapSubjectClean = mapSubject;
-
+    let includeTargetMembersClean = includeTargetMembers;
     // ACTIONS =================================================================
 
     if (config.types === 'actiontypes' && dataReady) {
@@ -224,6 +224,10 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       // ACTORS ================================================================
       //
     } else if (config.types === 'actortypes' && dataReady) {
+      if (qe(typeId, ACTORTYPES.ORG)) {
+        includeTargetMembersClean = false;
+      }
+
       type = actortypes.find((at) => qe(at.get('id'), typeId));
       isTarget = type.getIn(['attributes', 'is_target']);
       isActive = type.getIn(['attributes', 'is_active']);
@@ -239,7 +243,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
         mapSubjectClean,
         typeId,
         includeActorMembers,
-        includeTargetMembers,
+        includeTargetMembersClean,
       );
       const typeColumns = ACTORTYPES_CONFIG[typeId].columns || [];
       columns = [
@@ -291,14 +295,14 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       }
       if (mapSubjectClean === 'targets' && qe(typeId, ACTORTYPES.COUNTRY)) {
         memberOption = {
-          active: includeTargetMembers,
-          onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
+          active: includeTargetMembersClean,
+          onClick: () => onSetIncludeTargetMembers(includeTargetMembersClean ? '0' : '1'),
           label: 'Include activities targeting regions, intergovernmental organisations and classes (countries belong to)',
         };
       } else if (mapSubjectClean === 'actors' && qe(typeId, ACTORTYPES.COUNTRY)) {
         memberOption = {
           active: includeActorMembers,
-          onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+          onClick: () => onSetIncludeActorMembers(includeTargetMembersClean ? '0' : '1'),
           label: 'Include activities of intergovernmental organisations (countries belong to)',
         };
       }
@@ -351,6 +355,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
     if (hasFilters) {
       headerSubTitle = `of ${allEntityCount} total`;
     }
+
     return (
       <ContainerWrapper headerStyle={headerStyle} ref={this.ScrollContainer}>
         {dataReady && viewOptions && viewOptions.length > 1 && (
@@ -411,7 +416,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                     </Box>
                     {memberOption && (
                       <Box>
-                        <MapMemberOption option={memberOption} />
+                        <MapOption option={memberOption} type="member" />
                       </Box>
                     )}
                     {entityActors.get(parseInt(viewType, 10)) && (
@@ -444,7 +449,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                             skip: !(memberOption
                               && (
                                 (mapSubject === 'actors' && includeActorMembers)
-                                || (mapSubject === 'targets' && includeTargetMembers)
+                                || (mapSubject === 'targets' && includeTargetMembersClean)
                               )),
                           },
                         ]}
@@ -505,7 +510,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                     hasSearch
                     columns={columns}
                     headerColumnsUtility={headerColumnsUtility}
-                    memberOption={memberOption && <MapMemberOption option={memberOption} />}
+                    memberOption={memberOption && <MapOption option={memberOption} type="member" />}
                     subjectOptions={subjectOptions && <MapSubjectOptions inList options={subjectOptions} />}
                     listUpdating={listUpdating}
                     entities={entities}
@@ -531,7 +536,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                     showCode={showCode}
                     includeMembers={mapSubjectClean === 'actors'
                       ? includeActorMembers
-                      : includeTargetMembers
+                      : includeTargetMembersClean
                     }
                   />
                 )}

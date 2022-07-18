@@ -2,17 +2,17 @@ import L from 'leaflet';
 import { scaleLinear, scalePow } from 'd3-scale';
 import { List } from 'immutable';
 
-export const getRange = (allFeatures, attribute) => allFeatures.reduce(
+export const getRange = (allFeatures, attribute, rangeMax) => allFeatures.reduce(
   (range, f) => {
     const val = f.values && parseFloat(f.values[attribute]);
     return {
       min: range.min ? Math.min(range.min, val) : val,
-      max: range.min ? Math.max(range.max, val) : val,
+      max: range.max ? Math.max(range.max, val) : val,
     };
   },
   {
     min: null,
-    max: null,
+    max: rangeMax || null,
   },
 );
 
@@ -67,7 +67,7 @@ export const getCircleLayer = ({ features, config, markerEvents }) => {
     mouseout: markerEvents.mouseout,
     click: markerEvents.click,
   };
-  const range = getRange(features, config.attribute);
+  const range = getRange(features, config.attribute, config.rangeMax);
   const jsonLayer = L.geoJSON(
     {
       features,

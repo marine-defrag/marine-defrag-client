@@ -71,6 +71,7 @@ import {
   SET_INCLUDE_MEMBERS_FORFILTERS,
   SET_INCLUDE_TARGET_CHILDREN,
   SET_INCLUDE_ACTOR_CHILDREN,
+  SET_FF_OVERLAY,
 } from './constants';
 
 export function submitInvalid(valid) {
@@ -513,6 +514,12 @@ export function setIncludeActorChildren(value) {
 export function setIncludeTargetChildren(value) {
   return {
     type: SET_INCLUDE_TARGET_CHILDREN,
+    value,
+  };
+}
+export function setFFOverlay(value) {
+  return {
+    type: SET_FF_OVERLAY,
     value,
   };
 }
