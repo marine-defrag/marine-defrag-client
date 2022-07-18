@@ -108,6 +108,7 @@ export function MapWrapper({
   mapId = 'll-map',
   interactive = true,
   scrollWheelZoom = false,
+  isLocationData = false, // real location data not country points
   circleLayerConfig = {},
 }) {
   const mapOptions = merge({}, options, MAP_OPTIONS);
@@ -564,7 +565,7 @@ export function MapWrapper({
       <Map id={mapId} ref={ref} styleType={styleType} />
       {tooltip && tooltip.features && tooltip.features.length > 0 && (
         <Tooltip
-          isLocationData={!countryData && !!locationData}
+          isLocationData={isLocationData}
           mapRef={ref}
           position={null}
           direction={tooltip.direction}
@@ -599,6 +600,7 @@ MapWrapper.propTypes = {
   styleType: PropTypes.string,
   mapId: PropTypes.string,
   options: PropTypes.object,
+  isLocationData: PropTypes.bool,
   circleLayerConfig: PropTypes.object,
   // onSetMapSubject: PropTypes.func,
 };

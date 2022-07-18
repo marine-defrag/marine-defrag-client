@@ -131,6 +131,7 @@ export function IndicatorLocationMap({
             projection="robinson"
             circleLayerConfig={config}
             mapId="ll-indicator-location-map"
+            isLocationData
           />
         </MapWrapper>
         <MapTitle>
