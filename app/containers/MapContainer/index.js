@@ -90,18 +90,25 @@ export function MapContainer({
       && (hasPointOverlay || showPointsOnly)
   ) {
     const ffUnit = unit || circleLayerConfig.unit || '';
-    const isPercentage = ffUnit && ffUnit.indexOf('%') > -1;
+    const isPercentage = ffUnit.indexOf('%') > -1;
     locationData = reducePoints && reducePoints(
       countryPointsJSON.features,
       showAsPoint,
     );
+
     [maxValue, minValue] = locationData && locationData.reduce(
-      ([max, min], feature) => ([
-        max !== null ? Math.max(max, feature.values[indicatorPoints]) : feature.values[indicatorPoints],
-        min !== null ? Math.min(min, feature.values[indicatorPoints]) : feature.values[indicatorPoints],
-      ]),
+      ([max, min], feature) => {
+        if (!feature || !feature.values) {
+          return [max, min];
+        }
+        return ([
+          max !== null ? Math.max(max, feature.values[indicatorPoints]) : feature.values[indicatorPoints],
+          min !== null ? Math.min(min, feature.values[indicatorPoints]) : feature.values[indicatorPoints],
+        ]);
+      },
       [isPercentage ? 100 : null, null],
     );
+
     minMaxValues.points = {
       max: maxValue,
       min: minValue,
