@@ -105,6 +105,7 @@ export function EntitiesMap({
   let reducePoints;
   let ffIndicator;
   let ffIndicators;
+  let ffUnit;
   let circleLayerConfig;
   let mapSubjectClean = mapSubject || 'actors';
   const entitiesTotal = entities ? entities.size : 0;
@@ -627,6 +628,8 @@ export function EntitiesMap({
     if (ffIndicatorId && countriesWithIndicators) {
       // console.log(ffIndicatorId)
       ffIndicator = actions.get(ffIndicatorId);
+      ffUnit = ffIndicator && ffIndicator.getIn(['attributes', 'comment']).trim();
+      const title = ffIndicator && ffIndicator.getIn(['attributes', 'title']);
       reducePoints = (features) => ffIndicator && features.reduce(
         (memo, feature) => {
           const country = countriesWithIndicators.find(
@@ -640,10 +643,10 @@ export function EntitiesMap({
             }
             const stats = [
               {
-                title: ffIndicator.getIn(['attributes', 'title']),
+                title,
                 values: [
                   {
-                    unit: ffIndicator.getIn(['attributes', 'comment']),
+                    unit: ffUnit,
                     value,
                   },
                 ],
@@ -673,6 +676,7 @@ export function EntitiesMap({
       );
       circleLayerConfig = {
         attribute: ffIndicatorId,
+        unit: ffUnit,
         render: {
           min: 2,
           max: 30,
