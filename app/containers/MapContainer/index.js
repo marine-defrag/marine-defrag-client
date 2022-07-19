@@ -70,7 +70,7 @@ export function MapContainer({
   } = mapKey;
 
   const [showAsPoint, setShowAsPoint] = useState(false);
-  const isPercentage = unit && unit.indexOf('%') > -1;
+
   const countriesJSON = topojson.feature(
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
@@ -89,6 +89,8 @@ export function MapContainer({
       && indicatorPoints !== '0'
       && (hasPointOverlay || showPointsOnly)
   ) {
+    const ffUnit = unit || circleLayerConfig.unit || '';
+    const isPercentage = ffUnit && ffUnit.indexOf('%') > -1;
     locationData = reducePoints && reducePoints(
       countryPointsJSON.features,
       showAsPoint,
@@ -139,7 +141,6 @@ export function MapContainer({
       ...mapOptions,
     ];
   }
-
   const MapInnerWrapper = getMapInnerWrapper(fullMap);
   return (
     <Styled>
