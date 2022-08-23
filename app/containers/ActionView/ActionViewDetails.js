@@ -81,7 +81,7 @@ export function ActionViewDetails({
   const hasTarget = viewActivitytype && viewActivitytype.getIn(['attributes', 'has_target']);
   const hasMemberOption = !!typeId && !qe(typeId, ACTIONTYPES.NATL);
   const hasChildren = childrenByType && childrenByType.size > 0;
-  let viewSubject = hasTarget && subject ? subject : 'actors';
+  let viewSubject = subject;
   const validViewSubjects = ['actors'];
   if (!isIndicator && hasTarget) {
     validViewSubjects.push('targets');
@@ -92,7 +92,6 @@ export function ActionViewDetails({
   if (validViewSubjects.indexOf(viewSubject) === -1) {
     viewSubject = validViewSubjects.length > 0 ? validViewSubjects[0] : null;
   }
-
   return (
     <Styled>
       {!isIndicator && (
