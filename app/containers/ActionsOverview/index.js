@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
-import { List } from 'immutable';
+import { Map } from 'immutable';
 import { Box, ResponsiveContext } from 'grommet';
 
 import styled from 'styled-components';
@@ -99,7 +99,7 @@ ActionsOverview.propTypes = {
   dataReady: PropTypes.bool,
   onLoadData: PropTypes.func.isRequired,
   onUpdatePath: PropTypes.func.isRequired,
-  types: PropTypes.instanceOf(List),
+  types: PropTypes.instanceOf(Map),
 };
 
 const mapStateToProps = createStructuredSelector({
