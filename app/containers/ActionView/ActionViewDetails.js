@@ -139,6 +139,7 @@ export function ActionViewDetails({
           taxonomies={taxonomies}
           isIndicator={isIndicator}
           typeId={typeId}
+          isManager={isManager}
         />
       )}
       {viewSubject === 'children' && hasChildren && (
@@ -151,7 +152,7 @@ export function ActionViewDetails({
       )}
       {isManager && isIndicator && (
         <Box
-          margin={{ bottom: 'large', horizontal: 'medium' }}
+          margin={{ top: 'medium', bottom: 'large', horizontal: 'medium' }}
           fill={false}
           alignContent="start"
           direction="row"
