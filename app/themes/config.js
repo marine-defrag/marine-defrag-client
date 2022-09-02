@@ -137,7 +137,7 @@ export const ACTOR_ACTION_ROLES = {
   },
   PARTNER: {
     value: '2',
-    hideOnActionList: true,
+    markOnActionList: true,
   },
 };
 

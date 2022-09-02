@@ -190,6 +190,25 @@ const getRelatedEntities = (relatedIDs, connections) => {
   }
   return null;
 };
+const getRelatedEntitiesWithMark = (related, connections) => {
+  if (related && related.size > 0) {
+    return related.reduce(
+      (memo, relatedItem) => {
+        const relatedID = relatedItem.get('id');
+        let connection = connections.get(relatedID.toString());
+        if (relatedItem.get('mark')) {
+          connection = connection.set('mark', true);
+        }
+        if (connection) {
+          return memo.set(relatedID, connection);
+        }
+        return memo;
+      },
+      Map(),
+    );
+  }
+  return null;
+};
 const getRelatedValue = (relatedEntities, typeLabel) => {
   if (relatedEntities && relatedEntities.size > 0) {
     if (relatedEntities.size > 1) {
@@ -354,12 +373,22 @@ export const prepareEntities = ({
                   }
                 )
                 .map(
-                  (relationship) => relationship.get('actor_id')
+                  (relationship) => {
+                    const roleId = relationship.get('relationshiptype_id');
+                    if (!roleId) return Map().set('id', relationship.get('actor_id'));
+                    const role = Object.values(ACTOR_ACTION_ROLES).find(
+                      (r) => qe(r.value, roleId)
+                    );
+                    return Map()
+                      .set('id', relationship.get('actor_id'))
+                      .set('mark', !!role.markOnActionList);
+                  }
                 );
+              relatedEntities = connections && getRelatedEntitiesWithMark(temp, connections.get('actors'), col);
             } else {
               temp = entity.get('actors') || (entity.get('actorsByType') && entity.get('actorsByType').flatten());
+              relatedEntities = connections && getRelatedEntities(temp, connections.get('actors'), col);
             }
-            relatedEntities = connections && getRelatedEntities(temp, connections.get('actors'), col);
             return {
               ...memoEntity,
               [col.id]: {

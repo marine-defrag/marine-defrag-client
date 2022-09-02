@@ -52,6 +52,8 @@ export function CellBodyActors({
 }) {
   const buttonRef = useRef();
   const [showContent, setShowContent] = useState(false);
+  const hasTooltipMark = showContent && entity.tooltip && entity.tooltip.flatten(true).some((a) => a.get('mark'));
+
   return (
     <Box alignContent={align}>
       {entity.single && (
@@ -97,7 +99,8 @@ export function CellBodyActors({
             style={{ minWidth: '240px' }}
             pad={{
               horizontal: 'small',
-              vertical: 'medium',
+              top: 'medium',
+              bottom: hasTooltipMark ? 'xsmall' : 'medium',
             }}
             gap="medium"
             flex={{ shrink: 0 }}
@@ -108,6 +111,14 @@ export function CellBodyActors({
               (type) => {
                 if (entity.tooltip.get(parseInt(type.id, 10))) {
                   const count = entity.tooltip.get(parseInt(type.id, 10)).size;
+                  const actors = entity.tooltip.get(parseInt(type.id, 10))
+                    .toList()
+                    .sort(
+                      (a, b) => a.getIn(['attributes', 'title'])
+                        > b.getIn(['attributes', 'title'])
+                        ? 1
+                        : -1
+                    );
                   return (
                     <Box key={type.id} flex={{ shrink: 0 }}>
                       <Box border="bottom" flex={{ shrink: 0 }} margin={{ bottom: 'small' }}>
@@ -116,36 +127,40 @@ export function CellBodyActors({
                         </Text>
                       </Box>
                       <Box flex={{ shrink: 0 }} gap="xsmall">
-                        {entity.tooltip.get(parseInt(type.id, 10))
-                          .toList()
-                          .sort(
-                            (a, b) => a.getIn(['attributes', 'title'])
-                              > b.getIn(['attributes', 'title'])
-                              ? 1
-                              : -1
-                          ).map(
-                            (actor) => (
-                              <Box key={actor.get('id')} flex={{ shrink: 0 }}>
-                                <LinkInTT
-                                  key={actor.get('id')}
-                                  href={getActorLink(actor)}
-                                  onClick={getActorOnClick(actor, onEntityClick)}
-                                  title={actor.getIn(['attributes', 'title'])}
-                                >
-                                  <LabelInTT>
-                                    {truncateText(actor.getIn(['attributes', 'title']), 30)}
-                                  </LabelInTT>
-                                </LinkInTT>
-                              </Box>
-                            )
+                        {actors.map(
+                          (actor) => (
+                            <Box key={actor.get('id')} flex={{ shrink: 0 }}>
+                              <LinkInTT
+                                key={actor.get('id')}
+                                href={getActorLink(actor)}
+                                onClick={getActorOnClick(actor, onEntityClick)}
+                                title={actor.getIn(['attributes', 'title'])}
+                              >
+                                <LabelInTT>
+                                  {truncateText(actor.getIn(['attributes', 'title']), 30)}
+                                  {actor.get('mark') && (
+                                    <Text color="dark-3" size="xxsmall">
+                                      {' *'}
+                                    </Text>
+                                  )}
+                                </LabelInTT>
+                              </LinkInTT>
+                            </Box>
                           )
-                        }
+                        )}
                       </Box>
                     </Box>
                   );
                 }
                 return null;
               }
+            )}
+            {hasTooltipMark && (
+              <Box>
+                <Text size="xxsmall" style={{ fontStyle: 'italic' }} color="dark-3">
+                  * Implementing Partner
+                </Text>
+              </Box>
             )}
           </Box>
         </Drop>
