@@ -1510,3 +1510,31 @@ export const selectCountriesWithIndicators = createSelector(
       }
     )
 );
+
+export const selectLocationsWithIndicators = createSelector(
+  (state) => selectActortypeActors(state, { type: ACTORTYPES.POINT }),
+  (state) => selectActiontypeActions(state, { type: FF_ACTIONTYPE }),
+  selectActorActionsGroupedByActorAttributes,
+  (countries, actions, actorConnections) => countries
+    && actions
+    && actorConnections
+    && countries.map(
+      (country) => {
+        let actorActionValues = actorConnections.get(parseInt(country.get('id'), 10)) || null;
+        if (actorActionValues) {
+          actorActionValues = actorActionValues
+            .filter(
+              // make sure we have a connection to an ff-indicator
+              (connection) => !!actions.get(connection.get('measure_id').toString())
+            ).reduce(
+              (memo, connection) => memo.set(
+                connection.get('measure_id').toString(),
+                connection.get('value'),
+              ),
+              Map()
+            );
+        }
+        return country.set('actionValues', actorActionValues);
+      }
+    )
+);

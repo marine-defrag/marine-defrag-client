@@ -66,7 +66,8 @@ const Feature = styled((p) => (
     {...p}
   />
 ))`
-  min-height: 100px;
+  position: relative;
+  min-height: 90px;
   box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.2);
   background: white;
   &:first-child {
@@ -74,8 +75,23 @@ const Feature = styled((p) => (
   }
 `;
 
-const TTContentWrap = styled((p) => <Box pad={{ vertical: 'xsmall' }} {...p} />)`
-  border-top: 1px solid ${({ theme }) => theme.global.colors.border.light};
+const TTContentWrap = styled((p) => <Box pad={{ vertical: 'xsmall' }} {...p} />)``;
+const TTTitleWrap = styled((p) => (
+  <Box
+    direction="row"
+    justify="between"
+    align="center"
+    margin={{ bottom: 'xsmall' }}
+    {...p}
+  />
+))`
+  border-bottom: 1px solid ${({ theme }) => theme.global.colors.border.light};
+`;
+
+const TTCloseFloat = styled.div`
+  position: absolute;
+  right: 10px;
+  top: 10px;
 `;
 
 const Tooltip = ({
@@ -96,16 +112,27 @@ const Tooltip = ({
         <Box gap="xsmall">
           {features.map((feature, i) => (
             <Feature key={i}>
-              <Box direction="row" justify="between" align="center" margin={{ bottom: 'xsmall' }}>
-                <Box>
-                  <TTTitle>{feature.title}</TTTitle>
-                </Box>
-                <Button
-                  plain
-                  icon={<FormClose size="small" />}
-                  onClick={() => onClose(feature.id)}
-                />
-              </Box>
+              {feature.title && (
+                <TTTitleWrap>
+                  <Box>
+                    <TTTitle>{feature.title}</TTTitle>
+                  </Box>
+                  <Button
+                    plain
+                    icon={<FormClose size="small" />}
+                    onClick={() => onClose(feature.id)}
+                  />
+                </TTTitleWrap>
+              )}
+              {!feature.title && (
+                <TTCloseFloat>
+                  <Button
+                    plain
+                    icon={<FormClose size="small" />}
+                    onClick={() => onClose(feature.id)}
+                  />
+                </TTCloseFloat>
+              )}
               {feature.content && (
                 <Box>
                   {asArray(feature.content).map(
@@ -113,7 +140,7 @@ const Tooltip = ({
                   )}
                 </Box>
               )}
-              {onFeatureClick && feature.id && (
+              {onFeatureClick && feature.id && feature.linkActor && (
                 <ButtonWrap>
                   <CountryButton
                     as="a"

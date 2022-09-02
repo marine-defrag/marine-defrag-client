@@ -12,7 +12,6 @@ import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
-import countryPointsJSON from 'data/country-points.json';
 
 // import appMessages from 'containers/App/messages';
 // import { hasGroupActors } from 'utils/entities';
@@ -91,10 +90,7 @@ export function MapContainer({
   ) {
     const ffUnit = unit || circleLayerConfig.unit || '';
     const isPercentage = ffUnit.indexOf('%') > -1;
-    locationData = reducePoints && reducePoints(
-      countryPointsJSON.features,
-      showAsPoint,
-    );
+    locationData = reducePoints && reducePoints();
 
     [maxValue, minValue] = locationData && locationData.reduce(
       ([max, min], feature) => {
