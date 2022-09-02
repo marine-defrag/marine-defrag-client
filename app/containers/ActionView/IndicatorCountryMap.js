@@ -14,6 +14,8 @@ import qe from 'utils/quasi-equals';
 import MapContainer from 'containers/MapContainer';
 import TooltipContent from 'containers/MapContainer/TooltipContent';
 
+import countryPointsJSON from 'data/country-points.json';
+
 export function IndicatorCountryMap({
   countries,
   mapSubject,
@@ -23,7 +25,7 @@ export function IndicatorCountryMap({
 }) {
   if (!countries) return null;
 
-  const reducePoints = (features) => features.reduce(
+  const reducePoints = () => countryPointsJSON.features.reduce(
     (memo, feature) => {
       const country = countries.find(
         (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)

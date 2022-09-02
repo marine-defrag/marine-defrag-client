@@ -47,12 +47,14 @@ export function ActionViewDetailsActors({
   typeId,
   isIndicator,
   hasMemberOption,
+  isManager,
 }) {
   // action has a map
   const hasCountryActionMap = !!typeId && !isIndicator;
   const hasIndicatorCountryMap = !!typeId && isIndicator && actorsByActortype && actorsByActortype.get(parseInt(ACTORTYPES.COUNTRY, 10));
   const hasIndicatorLocationMap = !!typeId && isIndicator && actorsByActortype && actorsByActortype.get(parseInt(ACTORTYPES.POINT, 10));
   // && !qe(typeId, ACTIONTYPES.NATL);
+  const showActors = !hasIndicatorLocationMap || isManager;
   return (
     <>
       {(actorsByActortype || childActionsByActiontypeWithActorsByType) && hasCountryActionMap && (
@@ -91,7 +93,7 @@ export function ActionViewDetailsActors({
           indicator={viewEntity}
         />
       )}
-      {actorsByActortype && (
+      {actorsByActortype && showActors && (
         <FieldGroup
           group={{
             fields: actorsByActortype.reduce(
@@ -192,6 +194,7 @@ ActionViewDetailsActors.propTypes = {
   childActionsByActiontypeWithActorsByType: PropTypes.instanceOf(Map),
   actorConnections: PropTypes.instanceOf(Map),
   intl: intlShape.isRequired,
+  isManager: PropTypes.bool,
 };
 
 const mapStateToProps = (state, { id }) => ({

@@ -10,6 +10,10 @@ import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+
+import countryPointsJSON from 'data/country-points.json';
+import locationsJSON from 'data/locations.json';
+
 import {
   ACTORTYPES,
   ROUTES,
@@ -20,6 +24,7 @@ import {
 import {
   selectActors,
   selectCountriesWithIndicators,
+  selectLocationsWithIndicators,
   selectActions,
   selectActortypeActors,
   selectActionActorsGroupedByAction,
@@ -81,6 +86,7 @@ export function EntitiesMap({
   membershipsByAssociation,
   actorActionsByAction,
   countriesWithIndicators,
+  locationsWithIndicators,
   ffIndicatorId,
   onSetFFOverlay,
   onSelectAction,
@@ -104,7 +110,8 @@ export function EntitiesMap({
   let reduceCountryAreas;
   let reducePoints;
   let ffIndicator;
-  let ffIndicators;
+  let ffCountryIndicators;
+  let ffLocationIndicators;
   let ffUnit;
   let circleLayerConfig;
   let mapSubjectClean = mapSubject || 'actors';
@@ -612,7 +619,7 @@ export function EntitiesMap({
       infoSubTitle = `Showing ${actionsTotalShowing} of ${entities ? entities.size : 0} activities total${hasFilters ? ' (filtered)' : ''}`;
     }
     // facts && figures
-    ffIndicators = actions.filter(
+    ffCountryIndicators = countriesWithIndicators && actions.filter(
       (action) => {
         if (!qe(FF_ACTIONTYPE, action.getIn(['attributes', 'measuretype_id']))) {
           return false;
@@ -625,12 +632,25 @@ export function EntitiesMap({
         );
       }
     );
-    if (ffIndicatorId && countriesWithIndicators) {
+    ffLocationIndicators = locationsWithIndicators && actions.filter(
+      (action) => {
+        if (!qe(FF_ACTIONTYPE, action.getIn(['attributes', 'measuretype_id']))) {
+          return false;
+        }
+        return locationsWithIndicators.some(
+          (location) => {
+            const val = location.getIn(['actionValues', action.get('id')]);
+            return val !== null && typeof val !== 'undefined';
+          }
+        );
+      }
+    );
+    if (ffIndicatorId && countriesWithIndicators && ffCountryIndicators.has(ffIndicatorId)) {
       // console.log(ffIndicatorId)
       ffIndicator = actions.get(ffIndicatorId);
       ffUnit = ffIndicator && ffIndicator.getIn(['attributes', 'comment']).trim();
       const title = ffIndicator && ffIndicator.getIn(['attributes', 'title']);
-      reducePoints = (features) => ffIndicator && features.reduce(
+      reducePoints = () => ffIndicator && countryPointsJSON.features.reduce(
         (memo, feature) => {
           const country = countriesWithIndicators.find(
             (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
@@ -690,7 +710,96 @@ export function EntitiesMap({
         },
       };
     }
+    if (ffIndicatorId && locationsWithIndicators && ffLocationIndicators.has(ffIndicatorId)) {
+      // console.log(ffIndicatorId)
+      ffIndicator = actions.get(ffIndicatorId);
+      ffUnit = ffIndicator && ffIndicator.getIn(['attributes', 'comment']).trim();
+      const title = ffIndicator && ffIndicator.getIn(['attributes', 'title']);
+      reducePoints = () => ffIndicator && locationsJSON.features.reduce(
+        (memo, feature) => {
+          const location = locationsWithIndicators.find(
+            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
+          );
+          // console.log(country && country.toJS())
+          if (location) {
+            const value = location.getIn(['actionValues', ffIndicator.get('id')]);
+            if (!value && value !== 0) {
+              return memo;
+            }
+            const stats = [
+              {
+                title,
+                values: [
+                  {
+                    unit: ffUnit,
+                    value,
+                  },
+                ],
+              },
+            ];
+            return [
+              ...memo,
+              {
+                ...feature,
+                id: location.get('id'),
+                attributes: location.get('attributes').toJS(),
+                tooltip: {
+                  id: location.get('id'),
+                  stats,
+                  isLocationData: true,
+                  linkActor: false,
+                },
+                values: {
+                  [ffIndicatorId]: parseFloat(value, 10),
+                },
+              },
+            ];
+          }
+          return memo;
+        },
+        [],
+      );
+      circleLayerConfig = {
+        attribute: ffIndicatorId,
+        unit: ffUnit,
+        render: {
+          min: 2,
+          max: 30,
+          exp: 0.5,
+        },
+        style: {
+          color: '#000A40',
+          weight: 0.5,
+          fillColor: '#000A40',
+          fillOpacity: 0.3,
+        },
+      };
+    }
   }
+  let ffAll = Map();
+  if (ffCountryIndicators) {
+    ffAll = ffCountryIndicators;
+  }
+  if (ffLocationIndicators) {
+    ffAll = ffAll.merge(ffLocationIndicators);
+  }
+  const ffOptions = ffAll && ffAll.reduce(
+    (memo, action, id) => [
+      ...memo,
+      {
+        label: action.getIn(['attributes', 'title']),
+        info: action.getIn(['attributes', 'description']),
+        onClick: () => onSelectAction(id),
+        href: `${ROUTES.ACTION}/${id}`,
+        title: `${action.getIn(['attributes', 'title'])} [${action.getIn(['attributes', 'comment'])}]`,
+        value: id,
+      },
+    ],
+    [{
+      label: 'No indicator selected',
+      value: '0',
+    }],
+  );
   return (
     <Styled headerStyle="types" noOverflow>
       {dataReady && (
@@ -723,23 +832,8 @@ export function EntitiesMap({
             tabTitle: 'Facts & Figures',
             onUpdateFFIndicator: (id) => onSetFFOverlay(id),
             ffActiveOptionId: ffIndicatorId,
-            ffOptions: ffIndicators && ffIndicators.reduce(
-              (memo, action, id) => [
-                ...memo,
-                {
-                  label: action.getIn(['attributes', 'title']),
-                  info: action.getIn(['attributes', 'description']),
-                  onClick: () => onSelectAction(id),
-                  href: `${ROUTES.ACTION}/${id}`,
-                  title: `${action.getIn(['attributes', 'title'])} [${action.getIn(['attributes', 'comment'])}]`,
-                  value: id,
-                },
-              ],
-              [{
-                label: 'No indicator selected',
-                value: '0',
-              }],
-            ),
+            ffOptions,
+            isLocationData: ffLocationIndicators && ffLocationIndicators.has(ffIndicatorId),
           }]}
         />
       )}
@@ -766,6 +860,7 @@ EntitiesMap.propTypes = {
   targettypes: PropTypes.instanceOf(Map),
   countries: PropTypes.instanceOf(Map),
   countriesWithIndicators: PropTypes.instanceOf(Map),
+  locationsWithIndicators: PropTypes.instanceOf(Map),
   actionActorsByAction: PropTypes.instanceOf(Map),
   actorActionsByAction: PropTypes.instanceOf(Map),
   membershipsByAssociation: PropTypes.instanceOf(Map),
@@ -792,6 +887,7 @@ const mapStateToProps = (state) => ({
   actors: selectActors(state),
   ffIndicatorId: selectFFOverlay(state),
   countriesWithIndicators: selectCountriesWithIndicators(state),
+  locationsWithIndicators: selectLocationsWithIndicators(state),
   actions: selectActions(state),
   actionActorsByAction: selectActionActorsGroupedByAction(state), // for figuring out targeted countries
   actorActionsByAction: selectActorActionsGroupedByAction(state), // for figuring out targeted countries

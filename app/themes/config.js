@@ -8,20 +8,16 @@
  * Images: images are stored in 'themes/media' folder
  *
  */
-
+import { version } from '../../package.json';
 // General ********************
-export const NODE_ENV = sessionStorage.NODE_ENV || 'production';
-
-const IS_DEV = false;
-
-export const version = '1.1.1';
+export const SERVER = (process && process.env && process.env.SERVER) || 'development';
+export const IS_DEV = SERVER !== 'production';
+export const VERSION = `${version}${IS_DEV ? ' [DEV]' : ''}`;
 
 export const ENDPOINTS = {
-  API: (
-    NODE_ENV === 'production' && !IS_DEV
-      ? 'https://67vn6.hatchboxapp.com'
-      : 'https://marine-defrag-api.herokuapp.com'
-  ), // server API endpoint
+  API: IS_DEV
+    ? 'https://marine-defrag-api.herokuapp.com'
+    : 'https://67vn6.hatchboxapp.com', // server API endpoint
   SIGN_IN: 'auth/sign_in',
   SIGN_OUT: 'auth/sign_out',
   PASSWORD: 'auth/password',
