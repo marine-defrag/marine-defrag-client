@@ -209,9 +209,9 @@ const getRelatedEntitiesWithMark = (related, connections) => {
   }
   return null;
 };
-const getRelatedValue = (relatedEntities, typeLabel) => {
+const getRelatedValue = (relatedEntities, typeLabel, minTooltipSize = 2) => {
   if (relatedEntities && relatedEntities.size > 0) {
-    if (relatedEntities.size > 1) {
+    if (relatedEntities.size >= minTooltipSize) {
       return typeLabel
         ? `${relatedEntities.size} ${lowerCase(typeLabel)}`
         : relatedEntities.size;
@@ -253,6 +253,7 @@ export const prepareEntities = ({
         let relatedEntities;
         let relatedEntityIds;
         let temp;
+        let colLabel;
         switch (col.type) {
           case 'main':
             return {
@@ -389,13 +390,17 @@ export const prepareEntities = ({
               temp = entity.get('actors') || (entity.get('actorsByType') && entity.get('actorsByType').flatten());
               relatedEntities = connections && getRelatedEntities(temp, connections.get('actors'), col);
             }
+            colLabel = col.labelSingle
+              && relatedEntities
+              && relatedEntities.size === 1
+              ? col.labelSingle
+              : col.label;
             return {
               ...memoEntity,
               [col.id]: {
                 ...col,
-                value: getRelatedValue(relatedEntities, col.label || 'actors'),
-                single: relatedEntities && relatedEntities.size === 1 && relatedEntities.first(),
-                tooltip: relatedEntities && relatedEntities.size > 1
+                value: getRelatedValue(relatedEntities, colLabel || 'actors', 0), // 0: min tooltip size
+                tooltip: relatedEntities
                   && relatedEntities.groupBy((t) => t.getIn(['attributes', 'actortype_id'])),
                 multiple: relatedEntities && relatedEntities.size > 1,
                 sortValue: getRelatedSortValue(relatedEntities),

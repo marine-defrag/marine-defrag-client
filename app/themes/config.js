@@ -815,6 +815,7 @@ export const ACTIONTYPES_CONFIG = {
         id: 'actors', // one row per type,
         type: 'actors', // one row per type,
         label: 'Donors',
+        labelSingle: 'Donor',
       },
       {
         id: 'targets', // one row per type,
