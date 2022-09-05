@@ -215,6 +215,7 @@ export function ActorViewDetailsActions({
                           activeActiontypeId,
                           'targets',
                           intl,
+                          false, // direct
                         ),
                       }),
                     ],
