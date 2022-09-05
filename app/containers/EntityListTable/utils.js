@@ -176,10 +176,12 @@ export const prepareHeader = ({
   }
 );
 
-const getRelatedEntities = (relatedIDs, connections) => {
-  if (relatedIDs && relatedIDs.size > 0) {
-    return relatedIDs.reduce(
-      (memo, relatedID) => {
+// relatedIDsOrEntities either a List of entity IDs or a Map of entity IDs pointing to "connection attributes"
+const getRelatedEntities = (relatedIDsOrEntities, connections) => {
+  if (relatedIDsOrEntities && relatedIDsOrEntities.size > 0) {
+    return relatedIDsOrEntities.reduce(
+      (memo, relatedIDorEntity, relatedIDkey) => {
+        const relatedID = isNumber(relatedIDorEntity) ? relatedIDorEntity : relatedIDkey;
         if (connections.get(relatedID.toString())) {
           return memo.set(relatedID, connections.get(relatedID.toString()));
         }
@@ -190,13 +192,13 @@ const getRelatedEntities = (relatedIDs, connections) => {
   }
   return null;
 };
-const getRelatedEntitiesWithMark = (related, connections) => {
-  if (related && related.size > 0) {
-    return related.reduce(
-      (memo, relatedItem) => {
-        const relatedID = relatedItem.get('id');
+const getRelatedEntitiesWithMark = (relatedEntities, connections) => {
+  if (relatedEntities && relatedEntities.size > 0) {
+    return relatedEntities.reduce(
+      (memo, entity) => {
+        const relatedID = entity.get('id');
         let connection = connections.get(relatedID.toString());
-        if (relatedItem.get('mark')) {
+        if (entity.get('mark')) {
           connection = connection.set('mark', true);
         }
         if (connection) {
@@ -492,11 +494,28 @@ export const prepareEntities = ({
           case 'actorActions':
             temp = entity.get(col.actions)
               || (entity.get(`${col.actions}ByType`) && entity.get(`${col.actions}ByType`).flatten());
+
+            temp = temp && temp.map(
+              (relationship) => {
+                if (isNumber(relationship)) return Map().set('id', relationship);
+                const roleId = relationship.get('relationshiptype_id');
+                if (!roleId) return Map().set('id', relationship.get('measure_id'));
+                const role = Object.values(ACTOR_ACTION_ROLES).find(
+                  (r) => qe(r.value, roleId)
+                );
+                return Map()
+                  .set('id', relationship.get('measure_id'))
+                  .set('mark', !!role.markOnActionList);
+              }
+            );
+            relatedEntities = getRelatedEntitiesWithMark(temp, connections.get('measures'), col);
             return {
               ...memoEntity,
               [col.id]: {
                 ...col,
                 value: temp && temp.size,
+                tooltip: relatedEntities && relatedEntities.size > 0
+                  && relatedEntities.groupBy((t) => t.getIn(['attributes', 'measuretype_id'])),
               },
             };
           case 'userrole':
@@ -549,6 +568,7 @@ export const prepareEntities = ({
                 .toList()
                 .toSet();
             }
+            relatedEntities = getRelatedEntities(relatedEntityIds.flatten(true), connections.get('measures'), col);
             return {
               ...memoEntity,
               [col.id]: {
@@ -556,6 +576,8 @@ export const prepareEntities = ({
                 value: relatedEntityIds && relatedEntityIds.size > 0
                   ? relatedEntityIds.size
                   : null,
+                tooltip: relatedEntities && relatedEntities.size > 0
+                  && relatedEntities.groupBy((t) => t.getIn(['attributes', 'measuretype_id'])),
               },
             };
           default:

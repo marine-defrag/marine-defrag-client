@@ -215,11 +215,11 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
         connections && connections.get('actors'),
         mapSubjectClean,
         mapSubjectClean === 'actors' ? includeActorMembers : includeTargetMembers,
+        mapSubjectClean === 'actors' && qe(ACTIONTYPES.DONOR, typeId), // trackAttributes
       );
       entityActors = entityActors && entityActors.groupBy(
         (actor) => actor.getIn(['attributes', 'actortype_id'])
       );
-
 
       // ACTORS ================================================================
       //

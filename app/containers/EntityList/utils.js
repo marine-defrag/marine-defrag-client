@@ -1,4 +1,5 @@
-import { Map, List } from 'immutable';
+import { Map } from 'immutable';
+import qe from 'utils/quasi-equals';
 
 // work out actors for entities and store activites both direct as well as indirect
 export const getActorsForEntities = (
@@ -6,6 +7,7 @@ export const getActorsForEntities = (
   actors,
   subject = 'actors',
   includeIndirect = true,
+  withConnectionAttributes,
 ) => {
   const actionAtt = subject === 'actors'
     ? 'actors'
@@ -19,76 +21,146 @@ export const getActorsForEntities = (
   const actorAttMembers = subject === 'actors'
     ? 'actionsMembers'
     : 'targetingActionsAsMember';
+  const actionConnectionAttributesAtt = 'actorsAttributes';
+  let actionActorConnectionAttributes;
+
   return actions && actions.reduce(
     (memo, action) => {
+      // memo: actors with actions
       const actionId = parseInt(action.get('id'), 10);
+      // get actors for action
       const actionActors = action.get(actionAtt);
-      const memoDirect = actionActors
+      if (withConnectionAttributes) {
+        actionActorConnectionAttributes = action.get(actionConnectionAttributesAtt);
+      }
+      // for each actor figure out related actions/ids
+      let result = actionActors
         ? actionActors.reduce(
           (memo2, actorId) => {
+            let result2 = memo2;
+            // memo2: actors with actions
             const sActorId = actorId.toString();
+            // if actor already stored, add actions/ids
             if (memo2.get(sActorId)) {
+              // if we already have an active list for actor, add it
               if (memo2.getIn([sActorId, actorAtt])) {
-                return memo2.setIn(
+                result2 = result2.setIn(
                   [sActorId, actorAtt],
-                  memo2.getIn([sActorId, actorAtt]).push(actionId),
+                  memo2.getIn([sActorId, actorAtt]).set(
+                    actionId,
+                    actionActorConnectionAttributes
+                      ? actionActorConnectionAttributes.find(
+                        (connection) => qe(connection.get('measure_id'), actionId)
+                          && qe(connection.get('actor_id'), sActorId)
+                      )
+                      : Map({ measure_id: actionId })
+                  ),
+                );
+              } else {
+                result2 = result2.setIn(
+                  [sActorId, actorAtt],
+                  Map().set(
+                    actionId,
+                    actionActorConnectionAttributes
+                      ? actionActorConnectionAttributes.find(
+                        (connection) => qe(connection.get('measure_id'), actionId)
+                          && qe(connection.get('actor_id'), sActorId)
+                      )
+                      : Map({ measure_id: actionId })
+                  ),
                 );
               }
-              // remove from indirect list if already added there
+              // remove from indirect/member list if already added there
               if (includeIndirect
                 && memo2.getIn([sActorId, actorAttMembers])
-                && memo2.getIn([sActorId, actorAttMembers]).includes(actionId)
+                && memo2.getIn([sActorId, actorAttMembers]).keySeq().includes(actionId)
               ) {
-                return memo2
-                  .setIn([sActorId, actorAtt], List().push(actionId))
-                  .setIn([sActorId, actorAttMembers], memo2.getIn([sActorId, actorAttMembers]).delete(actionId));
+                result2 = result2.setIn(
+                  [sActorId, actorAttMembers],
+                  memo2.getIn([sActorId, actorAttMembers]).delete(actionId),
+                );
               }
-              return memo2.setIn([sActorId, actorAtt], List().push(actionId));
+            } else {
+              const actor = actors.get(sActorId);
+              result2 = result2.set(
+                sActorId,
+                actor.set(
+                  actorAtt,
+                  Map().set(
+                    actionId,
+                    actionActorConnectionAttributes
+                      ? actionActorConnectionAttributes.find(
+                        (connection) => qe(connection.get('measure_id'), actionId)
+                          && qe(connection.get('actor_id'), sActorId)
+                      )
+                      : Map({ measure_id: actionId })
+                  )
+                )
+              );
             }
-            const actor = actors.get(sActorId);
-            return actor
-              ? memo2.set(sActorId, actor.set(actorAtt, List().push(actionId)))
-              : memo2;
+            return result2;
           },
           memo,
         )
         : memo;
       if (includeIndirect) {
         const actionActorsAsMember = action.get(actionAttMembers);
-        return actionActorsAsMember
+        result = actionActorsAsMember
           ? actionActorsAsMember.reduce(
             (memo2, actorId) => {
+              // memo2: actors with direct actions
+              let result2 = memo2;
+              // memo2: actors with actions
               const sActorId = actorId.toString();
               // makes sure not already included in direct action
               if (
                 !memo2.getIn([sActorId, actorAtt])
-                || !memo2.getIn([sActorId, actorAtt]).includes(actionId)
+                || !memo2.getIn([sActorId, actorAtt]).keySeq().includes(actionId)
               ) {
                 // if already present, add action id
                 if (memo2.get(sActorId)) {
                   if (memo2.getIn([sActorId, actorAttMembers])) {
-                    if (!memo2.getIn([sActorId, actorAttMembers]).includes(actionId)) {
-                      return memo2.setIn(
+                    if (!memo2.getIn([sActorId, actorAttMembers]).keySeq().includes(actionId)) {
+                      result2 = result2.setIn(
                         [sActorId, actorAttMembers],
-                        memo2.getIn([sActorId, actorAttMembers]).push(actionId),
+                        memo2.getIn([sActorId, actorAttMembers]).set(
+                          actionId,
+                          Map({ measure_id: actionId })
+                        ),
                       );
                     }
-                    return memo2;
+                  } else {
+                    result2 = result2.setIn(
+                      [sActorId, actorAttMembers],
+                      Map().set(
+                        actionId,
+                        Map({ measure_id: actionId })
+                      ),
+                    );
                   }
-                  return memo2.setIn([sActorId, actorAttMembers], List().push(actionId));
+                } else {
+                  const actor = actors.get(sActorId);
+                  result2 = actor
+                    ? result2.set(
+                      sActorId,
+                      actor.set(
+                        actorAttMembers,
+                        Map().set(
+                          actionId,
+                          Map({ measure_id: actionId }),
+                        ),
+                      ),
+                    )
+                    : result2;
                 }
-                const actor = actors.get(sActorId);
-                return actor
-                  ? memo2.set(sActorId, actor.set(actorAttMembers, List().push(actionId)))
-                  : memo2;
               }
-              return memo2;
+              return result2;
             },
-            memoDirect,
+            result,
           )
-          : memoDirect;
+          : result;
       }
-      return memoDirect;
+      return result;
     },
     Map(),
   ).toList();
