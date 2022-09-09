@@ -258,6 +258,9 @@ export function EntitiesTable({
                           issecondary={col.type === 'actorActions' && col.members}
                           subject={col.subject}
                           column={col}
+                          entityType="actions"
+                          onEntityClick={onEntityClick}
+                          rowConfig={entity[col.id]}
                         />
                       )}
                       {col.type === 'hasResources' && (

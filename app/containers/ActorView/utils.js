@@ -4,7 +4,13 @@ import {
 } from 'themes/config';
 import appMessages from 'containers/App/messages';
 
-export const getActiontypeColumns = (viewEntity, typeid, viewSubject, intl) => {
+export const getActiontypeColumns = (
+  viewEntity,
+  typeid,
+  viewSubject,
+  intl,
+  direct = true,
+) => {
   let columns = [{
     id: 'main',
     type: 'main',
@@ -29,7 +35,8 @@ export const getActiontypeColumns = (viewEntity, typeid, viewSubject, intl) => {
   }
   // relationship type
   if (
-    viewSubject === 'actors'
+    direct
+    && viewSubject === 'actors'
     && ACTIONTYPE_ACTOR_ACTION_ROLES[typeid]
     && ACTIONTYPE_ACTOR_ACTION_ROLES[typeid].length > 0
   ) {

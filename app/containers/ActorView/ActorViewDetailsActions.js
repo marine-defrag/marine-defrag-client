@@ -220,6 +220,7 @@ export function ActorViewDetailsActions({
                           activeActiontypeId,
                           'actors',
                           intl,
+                          false, // direct
                         ),
                       }),
                     ],
