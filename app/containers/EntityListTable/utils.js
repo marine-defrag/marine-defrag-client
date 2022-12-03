@@ -410,7 +410,7 @@ export const prepareEntities = ({
             };
           case 'members':
             temp = entity.get('members') || (entity.get('membersByType') && entity.get('membersByType').flatten());
-            relatedEntities = getRelatedEntities(temp, connections.get('actors'), col);
+            relatedEntities = connections && getRelatedEntities(temp, connections.get('actors'), col);
             return {
               ...memoEntity,
               [col.id]: {
@@ -424,7 +424,7 @@ export const prepareEntities = ({
               },
             };
           case 'associations':
-            relatedEntities = getRelatedEntities(
+            relatedEntities = connections && getRelatedEntities(
               entity.getIn(['associationsByType', col.actortype_id]),
               connections.get('actors'),
               col,
@@ -508,7 +508,7 @@ export const prepareEntities = ({
                   .set('mark', !!role.markOnActionList);
               }
             );
-            relatedEntities = getRelatedEntitiesWithMark(temp, connections.get('measures'), col);
+            relatedEntities = connections && getRelatedEntitiesWithMark(temp, connections.get('measures'), col);
             return {
               ...memoEntity,
               [col.id]: {
@@ -568,7 +568,7 @@ export const prepareEntities = ({
                 .toList()
                 .toSet();
             }
-            relatedEntities = getRelatedEntities(relatedEntityIds.flatten(true), connections.get('measures'), col);
+            relatedEntities = connections && getRelatedEntities(relatedEntityIds.flatten(true), connections.get('measures'), col);
             return {
               ...memoEntity,
               [col.id]: {

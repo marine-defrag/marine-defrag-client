@@ -106,7 +106,7 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
             ))}
           </Tags>
         )}
-        {hasFilters && filters.length > 1 && (
+        {this.props.onClear && hasFilters && filters.length > 1 && (
           <Clear
             onClick={this.props.onClear}
           >
