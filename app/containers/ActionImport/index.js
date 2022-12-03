@@ -185,6 +185,7 @@ function mapDispatchToProps(dispatch) {
     },
     handleSubmit: (formData) => {
       if (formData.get('import') !== null) {
+        // dispatch for each
         fromJS(formData.get('import').rows).forEach((row, index) => {
           const rowCleanColumns = row.mapKeys((k) => getColumnAttribute(k));
           const typeId = rowCleanColumns.get('measuretype_id');
