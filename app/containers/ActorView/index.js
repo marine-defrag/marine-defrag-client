@@ -67,22 +67,22 @@ import {
 
 import { DEPENDENCIES } from './constants';
 
-export function ActorView(props) {
-  const {
-    intl,
-    viewEntity,
-    dataReady,
-    isManager,
-    onLoadData,
-    params,
-    handleEdit,
-    handleClose,
-    handleTypeClick,
-    viewTaxonomies,
-    associationsByType,
-    onEntityClick,
-    taxonomies,
-  } = props;
+export function ActorView({
+  intl,
+  viewEntity,
+  dataReady,
+  isManager,
+  onLoadData,
+  params,
+  handleEdit,
+  handleClose,
+  handleTypeClick,
+  viewTaxonomies,
+  associationsByType,
+  onEntityClick,
+  taxonomies,
+  actorConnections,
+}) {
   useEffect(() => {
     // kick off loading of data
     onLoadData();
@@ -203,6 +203,7 @@ export function ActorView(props) {
                     onEntityClick={onEntityClick}
                     taxonomies={taxonomies}
                     isCountry={isCountry}
+                    actorConnections={actorConnections}
                   />
                 </Main>
                 <Aside bottom>
@@ -283,6 +284,7 @@ ActorView.propTypes = {
   onEntityClick: PropTypes.func,
   viewTaxonomies: PropTypes.instanceOf(Map),
   taxonomies: PropTypes.instanceOf(Map),
+  actorConnections: PropTypes.instanceOf(Map),
   associationsByType: PropTypes.instanceOf(Map),
   params: PropTypes.object,
   isManager: PropTypes.bool,
