@@ -25,6 +25,8 @@ import { jumpToComponent } from 'utils/scroll-to-component';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
 import Content from 'components/styled/Content';
+import BoxPrint from 'components/styled/BoxPrint';
+import PrintHide from 'components/styled/PrintHide';
 import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
 import MapSubjectOptions from 'containers/MapContainer/MapInfoOptions/MapSubjectOptions';
@@ -206,7 +208,10 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       } else if (mapSubjectClean === 'actors' && qe(viewType, ACTORTYPES.COUNTRY)) {
         memberOption = {
           active: includeActorMembers,
-          onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+          onClick: () => {
+            console.log('click', includeActorMembers);
+            onSetIncludeActorMembers(includeActorMembers ? '0' : '1');
+          },
           label: 'Include activities of intergovernmental organisations (countries belong to)',
         };
       }
@@ -302,7 +307,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       } else if (mapSubjectClean === 'actors' && qe(typeId, ACTORTYPES.COUNTRY)) {
         memberOption = {
           active: includeActorMembers,
-          onClick: () => onSetIncludeActorMembers(includeTargetMembersClean ? '0' : '1'),
+          onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
           label: 'Include activities of intergovernmental organisations (countries belong to)',
         };
       }
@@ -359,7 +364,9 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
     return (
       <ContainerWrapper headerStyle={headerStyle} ref={this.ScrollContainer}>
         {dataReady && viewOptions && viewOptions.length > 1 && (
-          <EntityListViewOptions options={viewOptions} />
+          <PrintHide>
+            <EntityListViewOptions options={viewOptions} />
+          </PrintHide>
         )}
         <Container ref={this.ScrollReference}>
           <Content>
@@ -382,7 +389,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 )}
                 {entityActors && (
                   <Box>
-                    <Box direction="row" gap="xsmall" margin={{ vertical: 'small' }} wrap>
+                    <BoxPrint hidePrint direction="row" gap="xsmall" margin={{ vertical: 'small' }} wrap>
                       {mapSubject === 'actors'
                         && ACTIONTYPE_ACTORTYPES[typeId].length > 1
                         && ACTIONTYPE_ACTORTYPES[typeId].map(
@@ -413,7 +420,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                             </ButtonPill>
                           )
                         )}
-                    </Box>
+                    </BoxPrint>
                     {memberOption && (
                       <Box>
                         <MapOption option={memberOption} type="member" />

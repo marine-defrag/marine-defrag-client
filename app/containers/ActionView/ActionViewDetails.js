@@ -30,6 +30,8 @@ import {
 } from 'themes/config';
 
 import ButtonDefault from 'components/buttons/ButtonDefault';
+import PrintHide from 'components/styled/PrintHide';
+import PrintOnly from 'components/styled/PrintOnly';
 
 import appMessages from 'containers/App/messages';
 
@@ -95,30 +97,47 @@ export function ActionViewDetails({
   return (
     <Styled>
       {!isIndicator && (
-        <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
-          <SubjectButton
-            onClick={() => onSetSubject('actors')}
-            active={viewSubject === 'actors'}
-          >
-            <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Donors' : 'Actors'}</Text>
-          </SubjectButton>
-          {hasTarget && (
+        <PrintHide>
+          <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
             <SubjectButton
-              onClick={() => onSetSubject('targets')}
-              active={viewSubject === 'targets'}
+              onClick={() => onSetSubject('actors')}
+              active={viewSubject === 'actors'}
             >
+              <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Donors' : 'Actors'}</Text>
+            </SubjectButton>
+            {hasTarget && (
+              <SubjectButton
+                onClick={() => onSetSubject('targets')}
+                active={viewSubject === 'targets'}
+              >
+                <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Recipients' : 'Targets'}</Text>
+              </SubjectButton>
+            )}
+            {hasChildren && (
+              <SubjectButton
+                onClick={() => onSetSubject('children')}
+                active={viewSubject === 'children'}
+              >
+                <Text size="large"><FormattedMessage {...appMessages.entities.actions.children} /></Text>
+              </SubjectButton>
+            )}
+          </Box>
+        </PrintHide>
+      )}
+      {!isIndicator && (
+        <PrintOnly>
+          <Box pad={{ bottom: 'small' }}>
+            {viewSubject === 'actors' && (
+              <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Donors' : 'Actors'}</Text>
+            )}
+            {hasTarget && viewSubject === 'targets' && (
               <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Recipients' : 'Targets'}</Text>
-            </SubjectButton>
-          )}
-          {hasChildren && (
-            <SubjectButton
-              onClick={() => onSetSubject('children')}
-              active={viewSubject === 'children'}
-            >
+            )}
+            {hasChildren && viewSubject === 'children' && (
               <Text size="large"><FormattedMessage {...appMessages.entities.actions.children} /></Text>
-            </SubjectButton>
-          )}
-        </Box>
+            )}
+          </Box>
+        </PrintOnly>
       )}
       {viewSubject === 'targets' && (
         <ActionViewDetailsTargets

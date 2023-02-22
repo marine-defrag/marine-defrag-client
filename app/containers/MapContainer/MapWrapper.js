@@ -29,6 +29,7 @@ const Styled = styled.div`
   background: transparent;
   z-index: 10;
   overflow: hidden;
+    border: 1px solid red;
 `;
 const Map = styled.div`
   position: absolute;
@@ -276,6 +277,25 @@ export function MapWrapper({
     if (!e || !feature || feature.id) setFeatureOver(null);
     if (feature && feature.id) setFeatureOver(feature.id);
   };
+
+  // useEffect(() => {
+  //   console.log('before print effect')
+  //   window.addEventListener(
+  //     'beforeprint',
+  //     () => {
+  //       console.log('beforeprint event')
+  //       mapRef.current.invalidateSize();
+  //     }
+  //   );
+  //   window.matchMedia('print').addListener(
+  //     (printView) => {
+  //       console.log('printView event')
+  //       if (printView.matches) {
+  //         mapRef.current.invalidateSize();
+  //       }
+  //     }
+  //   );
+  // });
   // useEffect(() => {
   //   /**
   //    * Alert if clicked on outside of element

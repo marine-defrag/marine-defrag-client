@@ -26,13 +26,15 @@ export function CellBodyMain({
   return (
     <Box direction="row" align="center" justify="start">
       {canEdit && (
-        <Select>
-          <input
-            type="checkbox"
-            checked={entity.selected}
-            onChange={(evt) => entity.onSelect(evt.target.checked)}
-          />
-        </Select>
+        <PrintHide>
+          <Select>
+            <input
+              type="checkbox"
+              checked={entity.selected}
+              onChange={(evt) => entity.onSelect(evt.target.checked)}
+            />
+          </Select>
+        </PrintHide>
       )}
       <Box>
         {Object.keys(entity.values).map((key) => (

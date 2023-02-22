@@ -147,7 +147,10 @@ const GlobalStyle = createGlobalStyle`
       p {
         &:first-child{
           font-size: 1.2em;
-          color: #6A7880;
+          color: ${({ theme }) => theme.global.colors.text.lead};
+          @media print {
+            color: ${({ theme }) => theme.global.colors.text.light};
+          }
         }
       }
     }

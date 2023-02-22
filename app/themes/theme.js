@@ -2,6 +2,8 @@ import coolorsToHex from 'coolors-to-hex';
 
 import headerLogo from 'themes/media/headerLogo.png';
 import headerLogo2x from 'themes/media/headerLogo@2x.png';
+import headerLogoPrint from 'themes/media/headerLogoPrint.png';
+import headerLogoPrint2x from 'themes/media/headerLogoPrint@2x.png';
 
 import graphicHome from 'themes/media/homeGraphic.png';
 import graphicHome2x from 'themes/media/homeGraphic@2x.png';
@@ -16,6 +18,7 @@ const theme = {};
 // or single image: src
 theme.media = {
   headerLogo: [headerLogo, headerLogo2x],
+  headerLogoPrint: [headerLogoPrint, headerLogoPrint2x],
   graphicHome: [graphicHome, graphicHome2x],
   // impactossLogo: [impactossLogo, impactossLogo2x],
 };
@@ -476,6 +479,7 @@ theme.global = {
       dark: '#FFFFFF', //  on dark background
       light: '#1c2121', // on light background (empowerment)
       secondary: '#777b7e', // on light background (empowerment)
+      lead: '#6A7880', // on light background (empowerment)
     },
     border: {
       light: '#CECED2',

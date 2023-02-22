@@ -50,6 +50,9 @@ const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
   position: relative;
   height: 400px;
   background: #F9F9FA;
+  @media print {
+    margin: 0;
+  }
 `;
 
 export function ActionMap({

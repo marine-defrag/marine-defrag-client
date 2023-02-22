@@ -17,8 +17,6 @@ import Messages from 'components/Messages';
 import Loading from 'components/Loading';
 
 import EntityListHeader from 'components/EntityListHeader';
-import EntityListPrintKey from 'components/EntityListPrintKey';
-import PrintOnly from 'components/styled/PrintOnly';
 
 import {
   selectHasUserRole,
@@ -440,16 +438,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
           />
-        )}
-        {hasList && dataReady && config.taxonomies && (
-          <PrintOnly>
-            <EntityListPrintKey
-              entities={entities}
-              taxonomies={taxonomies}
-              config={config}
-              locationQuery={locationQuery}
-            />
-          </PrintOnly>
         )}
         {isManager && (progress !== null && progress < 100) && (
           <Progress>

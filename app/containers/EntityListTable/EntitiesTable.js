@@ -20,11 +20,17 @@ const Table = styled.table`
   width: inherit;
   table-layout: fixed;
   width: 100%;
+  @media print {
+    page-break-inside: auto;
+  }
 `;
 const TableHeader = styled.thead``;
 const TableBody = styled.tbody``;
 const TableRow = styled.tr`
   height: 100%;
+  @media print {
+    page-break-inside: avoid;
+  }
 `;
 const getColWidth = ({
   col, count, isIndicator, colSpan = 1,

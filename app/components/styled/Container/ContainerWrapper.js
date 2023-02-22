@@ -18,5 +18,8 @@ const ContainerWrapper = styled.div`
   }
   z-index: 90;
   background-color: ${({ bg, theme }) => bg ? theme.global.colors.background : 'transparent'};
+  @media print {
+    background-color: transparent;
+  }
 `;
 export default ContainerWrapper;

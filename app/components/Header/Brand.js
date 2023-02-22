@@ -3,12 +3,13 @@ import styled from 'styled-components';
 export default styled.a`
   text-decoration: none;
   color: white;
-
   &:hover {
     color: white;
     opacity: 0.9;
   }
-
+  @media print {
+    color: ${({ theme }) => theme.global.colors.text.brand} !important;
+  }
   z-index: 110;
   overflow: hidden;
 

@@ -17,6 +17,9 @@ import {
   Text,
 } from 'grommet';
 import { CircleInformation, FormClose } from 'grommet-icons';
+
+import PrintHide from 'components/styled/PrintHide';
+
 const DropContent = styled((p) => (
   <Box
     pad="small"
@@ -72,7 +75,7 @@ function InfoOverlay({
   const infoRef = useRef(null);
   const [info, showInfo] = useState(false);
   return (
-    <>
+    <PrintHide>
       <Box
         as={inline ? 'span' : 'div'}
         fill={false}
@@ -136,7 +139,7 @@ function InfoOverlay({
           </LayerWrap>
         </Layer>
       )}
-    </>
+    </PrintHide>
   );
 }
 

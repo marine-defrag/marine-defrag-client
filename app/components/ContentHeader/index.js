@@ -28,6 +28,9 @@ const Styled = styled.div`
     return '3em 0 1em';
   }};
   }
+  @media print {
+    padding-top: 60pt;
+  }
 `;
 
 // const TitleLarge = styled.h1`
@@ -38,6 +41,9 @@ const TitleMedium = styled.h3`
   line-height: 1;
   margin: 15px 0;
   display: inline-block;
+  @media print {
+    margin-bottom: 5px;
+  }
 `;
 const ButtonWrap = styled.span`
   padding: 0 0.3em;
@@ -66,14 +72,13 @@ const ButtonGroup = styled((p) => <Box align="center" direction="row" {...p} />)
 const SubTitle = styled.p`
   font-size: 1.1em;
   @media print {
-    display: none;
+    font-size: 0.9em;
   }
 `;
 const TitleWrap = styled(Box)``;
 
 const renderTitle = (type, title) => {
   switch (type) {
-    case CONTENT_PAGE:
     case CONTENT_MODAL:
     case CONTENT_SINGLE:
       return (

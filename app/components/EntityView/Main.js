@@ -12,8 +12,8 @@ const Main = styled(Section)`
     width: ${(props) => props.hasAside ? '70%' : '100%'};
   }
   @media print {
-    display: ${({ hasAside, bottom }) => (hasAside && !bottom) ? 'table-cell' : 'block'};
-    width: ${({ hasAside, bottom }) => (hasAside && !bottom) ? '70%' : '100%'};
+    display: ${({ hasAside }) => hasAside ? 'table-cell' : 'block'};
+    width: ${({ hasAside }) => hasAside ? '70%' : '100%'};
     border-right-style: none;
   }
 `;

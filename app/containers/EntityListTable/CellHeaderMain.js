@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Box, Text } from 'grommet';
+import { Box } from 'grommet';
 import IndeterminateCheckbox from 'components/forms/IndeterminateCheckbox';
 import PrintHide from 'components/styled/PrintHide';
+import BoxPrint from 'components/styled/BoxPrint';
+import TextPrint from 'components/styled/TextPrint';
 import ButtonFlatIconOnly from 'components/buttons/ButtonFlatIconOnly';
 import Icon from 'components/Icon';
 import { SORT_ORDER_OPTIONS } from 'containers/App/constants';
@@ -27,9 +29,9 @@ const SortButton = styled(ButtonFlatIconOnly)`
   }
 `;
 
-
 export function CellHeaderMain({ column, canEdit }) {
   const sortOrderOption = column.onSort && SORT_ORDER_OPTIONS.find((option) => column.sortOrder === option.value);
+  /* eslint-disable jsx-a11y/label-has-for */
   return (
     <Box direction="row" align="center" justify="start">
       {canEdit && (
@@ -45,18 +47,20 @@ export function CellHeaderMain({ column, canEdit }) {
       )}
       <Box>
         {canEdit && (
-          <Text as="label" htmlFor="select-all" weight={500} size="small">
-            {column.title}
-          </Text>
+          <label htmlFor="select-all">
+            <TextPrint weight={500} size="small">
+              {column.title}
+            </TextPrint>
+          </label>
         )}
         {!canEdit && (
-          <Text weight={500} size="small">
+          <TextPrint weight={500} size="small">
             {column.title}
-          </Text>
+          </TextPrint>
         )}
       </Box>
       {column.onSort && (
-        <Box pad={{ left: 'medium' }}>
+        <BoxPrint hidePrint pad={{ left: 'medium' }}>
           <SortButton
             onClick={() => {
               if (column.sortActive) {
@@ -78,7 +82,7 @@ export function CellHeaderMain({ column, canEdit }) {
               size="20px"
             />
           </SortButton>
-        </Box>
+        </BoxPrint>
       )}
     </Box>
   );

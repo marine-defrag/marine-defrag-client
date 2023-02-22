@@ -23,6 +23,8 @@ import {
 } from 'containers/App/selectors';
 
 import { setSubject } from 'containers/App/actions';
+import PrintHide from 'components/styled/PrintHide';
+import PrintOnly from 'components/styled/PrintOnly';
 
 import ActorViewDetailsActions from './ActorViewDetailsActions';
 import ActorViewDetailsActionsAsTarget from './ActorViewDetailsActionsAsTarget';
@@ -83,40 +85,58 @@ export function ActorViewDetails(props) {
 
   return (
     <Styled>
-      <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
-        {hasMembers && (
-          <SubjectButton
-            onClick={() => onSetSubject('members')}
-            active={viewSubject === 'members'}
-          >
+      <PrintHide>
+        <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
+          {hasMembers && (
+            <SubjectButton
+              onClick={() => onSetSubject('members')}
+              active={viewSubject === 'members'}
+            >
+              <Text size="large">Members</Text>
+            </SubjectButton>
+          )}
+          {isActive && (
+            <SubjectButton
+              onClick={() => onSetSubject('actors')}
+              active={viewSubject === 'actors'}
+            >
+              <Text size="large">Activities</Text>
+            </SubjectButton>
+          )}
+          {isTarget && (
+            <SubjectButton
+              onClick={() => onSetSubject('targets')}
+              active={viewSubject === 'targets'}
+            >
+              <Text size="large">Targeted by</Text>
+            </SubjectButton>
+          )}
+          {(isCountry || isLocation) && (
+            <SubjectButton
+              onClick={() => onSetSubject('facts')}
+              active={viewSubject === 'facts'}
+            >
+              <Text size="large">Facts & Figures</Text>
+            </SubjectButton>
+          )}
+        </Box>
+      </PrintHide>
+      <PrintOnly>
+        <Box pad={{ bottom: 'small' }}>
+          {hasMembers && viewSubject === 'members' && (
             <Text size="large">Members</Text>
-          </SubjectButton>
-        )}
-        {isActive && (
-          <SubjectButton
-            onClick={() => onSetSubject('actors')}
-            active={viewSubject === 'actors'}
-          >
+          )}
+          {isTarget && viewSubject === 'targets' && (
             <Text size="large">Activities</Text>
-          </SubjectButton>
-        )}
-        {isTarget && (
-          <SubjectButton
-            onClick={() => onSetSubject('targets')}
-            active={viewSubject === 'targets'}
-          >
+          )}
+          {isActive && viewSubject === 'actors' && (
             <Text size="large">Targeted by</Text>
-          </SubjectButton>
-        )}
-        {(isCountry || isLocation) && (
-          <SubjectButton
-            onClick={() => onSetSubject('facts')}
-            active={viewSubject === 'facts'}
-          >
+          )}
+          {(isCountry || isLocation) && viewSubject === 'facts' && (
             <Text size="large">Facts & Figures</Text>
-          </SubjectButton>
-        )}
-      </Box>
+          )}
+        </Box>
+      </PrintOnly>
       {viewSubject === 'members' && hasMembers && (
         <ActorViewDetailsMembers
           id={id}

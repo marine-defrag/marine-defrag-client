@@ -5,6 +5,9 @@ import { Box, Text, ResponsiveContext } from 'grommet';
 
 import { VERSION } from 'themes/config';
 import Container from 'components/styled/Container';
+import PrintHide from 'components/styled/PrintHide';
+import BoxPrint from 'components/styled/BoxPrint';
+
 import { isMinSize } from 'utils/responsive';
 
 import appMessages from 'containers/App/messages';
@@ -15,8 +18,9 @@ const FooterMain = styled.div`
   color: white;
   padding: 0;
   @media print {
-    color: black;
+    color: ${({ theme }) => theme.global.colors.text.secondary} !important;
     background: transparent;
+    border-top: 1px solid;
   }
 `;
 
@@ -26,6 +30,9 @@ const FooterLink = styled.a`
   &:hover {
     color: white;
     text-decoration: underline;
+  }
+  @media print {
+    color: ${({ theme }) => theme.global.colors.text.secondary} !important;
   }
 `;
 
@@ -55,16 +62,30 @@ function Footer({
     <FooterMain>
       <Container noPaddingBottom>
         <Box direction={isMinSize(size, 'medium') ? 'row' : 'column'} fill="vertical">
-          <Box pad="medium" fill basis="1/2">
+          <BoxPrint
+            pad="medium"
+            padPrintHorizontal="none"
+            fill
+            basis="1/2"
+          >
             <Text size="small">
               {appTitle}
             </Text>
             <Text size="xsmall">
               {`Version: ${VERSION}`}
             </Text>
-          </Box>
-          <Between direction={isMinSize(size, 'medium') ? 'row' : 'column'} />
-          <Box pad="medium" fill basis="1/2" gap="small" style={{ minHeight: '150px' }}>
+          </BoxPrint>
+          <PrintHide>
+            <Between direction={isMinSize(size, 'medium') ? 'row' : 'column'} />
+          </PrintHide>
+          <BoxPrint
+            pad="medium"
+            padPrintHorizontal={0}
+            fill
+            basis="1/2"
+            gap="small"
+            style={{ minHeight: '150px' }}
+          >
             <Text size="small">
               <FormattedMessage {...messages.disclaimer} />
             </Text>
@@ -93,7 +114,7 @@ function Footer({
                 }}
               />
             </Text>
-          </Box>
+          </BoxPrint>
         </Box>
       </Container>
     </FooterMain>

@@ -13,15 +13,17 @@ export function MapOption({ option, type = 'option' }) {
     active, onClick, label, key = 0,
   } = option;
   return (
-    <Styled>
-      <input
-        id={`map-${type}-${key}`}
-        type="checkbox"
-        checked={active}
-        onChange={onClick}
-      />
-      <Text as="label" htmlFor={`map-${type}-${key}`} size="xsmall">{label}</Text>
-    </Styled>
+    <>
+      <Styled>
+        <input
+          id={`map-${type}-${key}`}
+          type="checkbox"
+          checked={active}
+          onChange={onClick}
+        />
+        <Text as="label" htmlFor={`map-${type}-${key}`} size="xsmall">{label}</Text>
+      </Styled>
+    </>
   );
 }
 
