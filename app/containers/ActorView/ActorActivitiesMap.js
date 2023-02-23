@@ -41,15 +41,29 @@ import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
 `;
-const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
+const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
+  @media print {
+    margin-left: 0;
+  }
+`;
 const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
   max-width: 400px;
+  @media print {
+    margin-left: 0;
+  }
 `;
-const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)``;
+const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+  @media print {
+    margin-left: 0;
+  }
+`;
 const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
   height: 400px;
   background: #F9F9FA;
+  @media print {
+    margin-left: 0;
+  }
 `;
 
 const addToList = (list, countryId, actionId) => {

@@ -81,7 +81,11 @@ class FieldFactory extends React.PureComponent { // eslint-disable-line react/pr
       // or showEmpty
       || (typeof field.showEmpty !== 'undefined' && field.showEmpty))
       ? (
-        <Field nested={nested} noPadding={field.type === 'reference'}>
+        <Field
+          nested={nested}
+          noPadding={field.type === 'reference'}
+          printHide={field.printHide}
+        >
           {this.renderField(field)}
         </Field>
       )

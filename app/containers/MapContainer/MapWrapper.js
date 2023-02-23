@@ -29,7 +29,9 @@ const Styled = styled.div`
   background: transparent;
   z-index: 10;
   overflow: hidden;
-    border: 1px solid red;
+  @media print {
+    bottom: ${({ hasInfo }) => hasInfo ? '200px' : 0};
+  }
 `;
 const Map = styled.div`
   position: absolute;
@@ -111,6 +113,7 @@ export function MapWrapper({
   scrollWheelZoom = false,
   isLocationData = false, // real location data not country points
   circleLayerConfig = {},
+  hasInfo,
 }) {
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
@@ -581,7 +584,7 @@ export function MapWrapper({
   }, [mapSubject, countryData]);
 
   return (
-    <Styled>
+    <Styled hasInfo={hasInfo}>
       <Map id={mapId} ref={ref} styleType={styleType} />
       {tooltip && tooltip.features && tooltip.features.length > 0 && (
         <Tooltip
@@ -621,6 +624,7 @@ MapWrapper.propTypes = {
   mapId: PropTypes.string,
   options: PropTypes.object,
   isLocationData: PropTypes.bool,
+  hasInfo: PropTypes.bool,
   circleLayerConfig: PropTypes.object,
   // onSetMapSubject: PropTypes.func,
 };

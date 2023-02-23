@@ -11,6 +11,7 @@ import Helmet from 'react-helmet';
 import { List } from 'immutable';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Box } from 'grommet';
+import styled from 'styled-components';
 
 import {
   getTitleField,
@@ -78,6 +79,11 @@ import {
 } from './selectors';
 
 import { DEPENDENCIES } from './constants';
+
+const ResourcesWrapper = styled((p) => <Box pad={{ top: 'medium', bottom: 'large' }} {...p} />)`
+  border-top: 1px solid;
+  border-color: #f1f0f1;
+`;
 
 export function ActionView(props) {
   const {
@@ -274,7 +280,7 @@ export function ActionView(props) {
                     isIndicator={isIndicator}
                   />
                   {resourcesByResourcetype && (
-                    <Box pad={{ top: 'medium', bottom: 'large' }}>
+                    <ResourcesWrapper>
                       <FieldGroup
                         group={{
                           type: 'dark',
@@ -314,7 +320,7 @@ export function ActionView(props) {
                           ),
                         }}
                       />
-                    </Box>
+                    </ResourcesWrapper>
                   )}
                 </Main>
                 {!isIndicator && (

@@ -8,6 +8,12 @@ const Styled = styled((p) => <Box direction="row" align="center" gap="small" {..
   padding: 5px 0;
 `;
 
+const StyledText = styled((p) => <Text as="label" size="xsmall" {...p} />)`
+  @media print {
+    font-size: 9pt;
+  }
+`;
+
 export function MapOption({ option, type = 'option' }) {
   const {
     active, onClick, label, key = 0,
@@ -21,7 +27,9 @@ export function MapOption({ option, type = 'option' }) {
           checked={active}
           onChange={onClick}
         />
-        <Text as="label" htmlFor={`map-${type}-${key}`} size="xsmall">{label}</Text>
+        <StyledText htmlFor={`map-${type}-${key}`}>
+          {label}
+        </StyledText>
       </Styled>
     </>
   );

@@ -3,19 +3,13 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 // import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import { Box, Text, Button } from 'grommet';
-import InfoOverlay from 'components/InfoOverlay';
 
 import qe from 'utils/quasi-equals';
+import PrintHide from 'components/styled/PrintHide';
+import PrintOnly from 'components/styled/PrintOnly';
 
-import MapKey from './MapKey';
-import MapSubjectOptions from './MapSubjectOptions';
-import MapOption from './MapOption';
-import SelectIndicators from './SelectIndicators';
-
-const Title = styled((p) => <Text weight={500} {...p} />)`
-  margin-right: ${({ hasInfo }) => hasInfo ? 8 : 0}px;
-`;
-const SubTitle = styled((p) => <Text size="small" {...p} />)``;
+import CountriesTab from './CountriesTab';
+import IndicatorsTab from './IndicatorsTab';
 
 const Styled = styled.div`
   position: absolute;
@@ -29,13 +23,17 @@ const Styled = styled.div`
     left: 10px;
     bottom: 50px;
   }
+  @media print {
+    height: 200px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    border-top: 1px solid #f1f0f1;
+  }
 `;
-const IndicatorButton = styled((p) => <Button plain {...p} />)`
-    color: #0077d8;
-    &:hover {
-      color: #0063b5;
-    }
-`;
+
 const Pane = styled((p) => <Box {...p} />)`
   position: absolute;
   z-index: 51;
@@ -110,115 +108,78 @@ export function MapInfoOptions({
         );
       }
     );
-  let activeIndicatorOption;
-  let showIndicatorInfo;
-  if (activeTab.id === 'indicators') {
-    activeIndicatorOption = activeTab.ffOptions.find(
-      (o) => qe(o.value, activeTab.ffActiveOptionId || '0')
-    );
-    showIndicatorInfo = activeIndicatorOption
-    && activeIndicatorOption.value !== '0'
-    && circleLayerConfig
-    && minMaxValues
-    && minMaxValues.points;
-  }
   return (
     <Styled>
-      <Pane>
-        <Box fill="horizontal" direction="row" style={{ zIndex: 1 }}>
-          {renderTabs(true)}
-        </Box>
-        <Box flex={{ grow: 1 }} direction="row" elevation="medium" background="white" style={{ zIndex: 2 }} />
-      </Pane>
-      <Pane>
-        <Box fill="horizontal" direction="row">
-          {renderTabs(false)}
-        </Box>
+      <PrintHide>
+        <Pane>
+          <Box fill="horizontal" direction="row" style={{ zIndex: 1 }}>
+            {renderTabs(true)}
+          </Box>
+          <Box flex={{ grow: 1 }} direction="row" elevation="medium" background="white" style={{ zIndex: 2 }} />
+        </Pane>
+      </PrintHide>
+      <PrintHide>
+        <Pane>
+          <Box fill="horizontal" direction="row">
+            {renderTabs(false)}
+          </Box>
+          <Box
+            flex={{ grow: 1 }}
+            direction="row"
+            background="white"
+            align="start"
+            pad={{
+              horizontal: 'small',
+              top: 'ms',
+            }}
+          >
+            {activeTab.id === 'indicators' && (
+              <IndicatorsTab
+                config={activeTab}
+                minMaxValues={minMaxValues}
+                circleLayerConfig={circleLayerConfig}
+              />
+            )}
+            {activeTab.id === 'countries' && (
+              <CountriesTab
+                config={activeTab}
+                minMaxValues={minMaxValues}
+                countryMapSubject={countryMapSubject}
+              />
+            )}
+          </Box>
+        </Pane>
+      </PrintHide>
+      <PrintOnly>
         <Box
           flex={{ grow: 1 }}
           direction="row"
-          background="white"
-          align="start"
-          pad={{
-            horizontal: 'small',
-            top: 'ms',
-          }}
+          pad={{ top: 'small' }}
+          gap="small"
         >
-          {activeTab.id === 'indicators' && (
-            <Box fill="horizontal">
-              <SelectIndicators config={activeTab} />
-              {showIndicatorInfo && (
-                <Box pad={{ top: 'medium' }} gap="medium">
-                  <MapKey
-                    maxValue={minMaxValues.points.max}
-                    minValue={minMaxValues.points.min}
-                    isIndicator
-                    type="circles"
+          {options && options.map(
+            (option) => (
+              <Box key={option.id} basis="1/2" pad={{ horizontal: 'small' }}>
+                {option.id === 'countries' && (
+                  <CountriesTab
+                    config={option}
+                    minMaxValues={minMaxValues}
+                    countryMapSubject={countryMapSubject}
+                    isPrint
+                  />
+                )}
+                {option.id === 'indicators' && (
+                  <IndicatorsTab
+                    config={option}
+                    minMaxValues={minMaxValues}
                     circleLayerConfig={circleLayerConfig}
                   />
-                  {activeIndicatorOption.title && (
-                    <div>
-                      {activeIndicatorOption.onClick && (
-                        <IndicatorButton
-                          as={activeIndicatorOption.href ? 'a' : 'button'}
-                          href={activeIndicatorOption.href}
-                          onClick={(evt) => {
-                            if (evt) evt.preventDefault();
-                            activeIndicatorOption.onClick();
-                          }}
-                        >
-                          <Title hasInfo={!!activeIndicatorOption.info}>
-                            {activeIndicatorOption.title}
-                          </Title>
-                        </IndicatorButton>
-                      )}
-                      {!activeIndicatorOption.onClick && (
-                        <Title hasInfo={!!activeIndicatorOption.info}>
-                          {activeIndicatorOption.title}
-                        </Title>
-                      )}
-                      {activeIndicatorOption.info && (
-                        <InfoOverlay
-                          title={activeIndicatorOption.title}
-                          content={activeIndicatorOption.info}
-                          tooltip
-                          inline
-                        />
-                      )}
-                    </div>
-                  )}
-                </Box>
-              )}
-              {!showIndicatorInfo && (
-                <Box pad={{ top: 'medium' }}>
-                  <SubTitle>Select an indicator to add it to the map</SubTitle>
-                </Box>
-              )}
-            </Box>
-          )}
-          {activeTab.id === 'countries' && (
-            <Box>
-              {activeTab.subjectOptions && (
-                <MapSubjectOptions options={activeTab.subjectOptions} />
-              )}
-              {minMaxValues.countries.max > 0 && (
-                <MapKey maxValue={minMaxValues.countries.max} mapSubject={countryMapSubject} />
-              )}
-              <Box gap="xsmall" margin={{ vertical: 'small' }}>
-                {activeTab.title && (
-                  <Title>{activeTab.title}</Title>
-                )}
-                {activeTab.subTitle && (
-                  <SubTitle>{activeTab.subTitle}</SubTitle>
                 )}
               </Box>
-              {activeTab.memberOption && (
-                <MapOption option={activeTab.memberOption} type="member" />
-              )}
-            </Box>
+            )
           )}
         </Box>
-      </Pane>
+      </PrintOnly>
     </Styled>
   );
 }

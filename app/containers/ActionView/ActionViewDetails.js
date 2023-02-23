@@ -32,6 +32,7 @@ import {
 import ButtonDefault from 'components/buttons/ButtonDefault';
 import PrintHide from 'components/styled/PrintHide';
 import PrintOnly from 'components/styled/PrintOnly';
+import BoxPrint from 'components/styled/BoxPrint';
 
 import appMessages from 'containers/App/messages';
 
@@ -44,7 +45,6 @@ import messages from './messages';
 
 const Styled = styled((p) => <Box pad={{ top: 'medium', bottom: 'large' }} {...p} />)`
   border-top: 1px solid;
-  border-bottom: 1px solid;
   border-color: #f1f0f1;
 `;
 
@@ -170,16 +170,17 @@ export function ActionViewDetails({
         />
       )}
       {isManager && isIndicator && (
-        <Box
+        <BoxPrint
           margin={{ top: 'medium', bottom: 'large', horizontal: 'medium' }}
           fill={false}
           alignContent="start"
           direction="row"
+          hidePrint
         >
           <ButtonDefault onClick={() => handleImportConnection()}>
             <FormattedMessage {...messages.importActorConnections} />
           </ButtonDefault>
-        </Box>
+        </BoxPrint>
       )}
     </Styled>
   );

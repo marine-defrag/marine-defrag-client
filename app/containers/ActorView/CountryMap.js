@@ -22,6 +22,9 @@ import MapContainer from 'containers/MapContainer/MapWrapper';
 
 const Styled = styled((p) => <Box margin={{ horizontal: 'small' }} {...p} />)`
   z-index: 0;
+  @media print {
+    margin-right: 0;
+  }
 `;
 const MapWrapper = styled((p) => <Box {...p} />)`
   position: relative;

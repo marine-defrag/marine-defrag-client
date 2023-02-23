@@ -21,6 +21,12 @@ const TitleButton = styled((p) => <Button {...p} />)`
   }
 `;
 
+const TextPrint = styled((p) => <Text {...p} />)`
+  @media print {
+    font-size: 12pt;
+  }
+`;
+
 class NumberField extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
     const { field, intl } = this.props;
@@ -62,12 +68,14 @@ class NumberField extends React.PureComponent { // eslint-disable-line react/pre
             )}
             {(typeof field.value !== 'undefined' && field.value !== null) && (
               <Box margin={{ vertical: 'xsmall' }}>
-                {isNumber(field.value) && formatNumber(field.value, {
-                  intl,
-                  unit: field.unit,
-                  unitBefore: field.unitBefore,
-                })}
-                {!isNumber(field.value) && field.value}
+                <TextPrint size="large">
+                  {isNumber(field.value) && formatNumber(field.value, {
+                    intl,
+                    unit: field.unit,
+                    unitBefore: field.unitBefore,
+                  })}
+                  {!isNumber(field.value) && field.value}
+                </TextPrint>
               </Box>
             )}
             {!field.value && field.showEmpty && (

@@ -7,10 +7,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+import { intlShape, injectIntl } from 'react-intl';
 import { Box, Text } from 'grommet';
 import { List, Map } from 'immutable';
-import styled from 'styled-components';
 
 import {
   getActionConnectionField,
@@ -24,12 +23,13 @@ import {
 } from 'themes/config';
 
 import FieldGroup from 'components/fields/FieldGroup';
-import ButtonPill from 'components/buttons/ButtonPill';
 
 import { setActiontype } from 'containers/App/actions';
 
 import appMessages from 'containers/App/messages';
 import ActorActivitiesMap from './ActorActivitiesMap';
+import TypeSelectBox from './TypeSelectBox';
+
 import { getActiontypeColumns } from './utils';
 
 import {
@@ -37,10 +37,7 @@ import {
   selectActionsAsTargetAsMemberByActortype,
 } from './selectors';
 
-const TypeSelectBox = styled((p) => <Box {...p} />)``;
-const TypeButton = styled((p) => <ButtonPill {...p} />)`
-  margin-bottom: 5px;
-`;
+
 export function ActorViewDetailsActions({
   viewEntity,
   taxonomies,
@@ -127,31 +124,11 @@ export function ActorViewDetailsActions({
       )}
       {actiontypeIdsOptions && actiontypeIdsOptions.size > 0 && (
         <TypeSelectBox
-          direction="row"
-          gap="xxsmall"
-          margin={{ top: 'small', horizontal: 'medium', bottom: 'medium' }}
-          wrap
-        >
-          {actiontypeIdsOptions.map(
-            (id) => (
-              <TypeButton
-                key={id}
-                onClick={() => onSetActiontype(id)}
-                active={qe(activeActiontypeId, id) || actiontypeIdsOptions.size === 1}
-                listItems={actiontypeIdsOptions.size}
-              >
-                <Text size="small">
-                  {actiontypeIdsOptions.size > 4 && (
-                    <FormattedMessage {...appMessages.entities[`actions_${id}`].pluralShort} />
-                  )}
-                  {actiontypeIdsOptions.size <= 4 && (
-                    <FormattedMessage {...appMessages.entities[`actions_${id}`].plural} />
-                  )}
-                </Text>
-              </TypeButton>
-            )
-          )}
-        </TypeSelectBox>
+          options={actiontypeIdsOptions}
+          onSelectType={onSetActiontype}
+          activeOptionId={activeActiontypeId}
+          type="actions"
+        />
       )}
       {viewEntity && actiontypeIdsOptions && actiontypeIdsOptions.size > 0 && (
         <Box>

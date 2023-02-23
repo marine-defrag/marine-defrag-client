@@ -26,6 +26,7 @@ import {
   selectReady,
   selectEntitiesWhere,
   selectNewEntityModal,
+  selectPrintQuery,
 } from './selectors';
 
 import {
@@ -40,25 +41,32 @@ import { DEPENDENCIES } from './constants';
 import messages from './messages';
 
 const Main = styled.div`
-  position: ${(props) => props.isHome ? 'relative' : 'absolute'};
-  top: ${(props) => props.isHome
+  position: ${({ isHome, isPrintView }) => {
+    if (isPrintView) {
+      return 'absolute';
+    }
+    if (isHome) {
+      return 'relative';
+    }
+    return 'absolute';
+  }};
+  top: ${({ isHome, theme }) => isHome
     ? 0
-    : props.theme.sizes.header.banner.heightMobile
+    : theme.sizes.header.banner.heightMobile
 }px;
   left: 0;
   right: 0;
   bottom:0;
-  background-color: transparent;
   overflow: hidden;
-
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    top: ${(props) => props.isHome
+  width: ${({ isPrintView }) => (isPrintView ? '520pt' : 'auto')};
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+    top: ${({ isHome, theme }) => isHome
     ? 0
-    : props.theme.sizes.header.banner.height
+    : theme.sizes.header.banner.height
 }px;
   }
   @media print {
-    background: white;
+    background: transparent;
     position: static;
   }
 `;
@@ -143,6 +151,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       newEntityModal,
       user,
       children,
+      isPrintView,
     } = this.props;
 
     const { intl } = this.context;
@@ -154,7 +163,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       || location.pathname.startsWith(ROUTES.UNAUTHORISED);
     const isHomeOrAuth = isHome || isAuth;
     return (
-      <div id="app">
+      <div id="app-inner">
         <Helmet titleTemplate={`%s - ${title}`} defaultTitle={title} />
         {!isHome && (
           <Header
@@ -181,7 +190,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             currentPath={location.pathname}
           />
         )}
-        <Main isHome={isHomeOrAuth}>
+        <Main isHome={isHomeOrAuth} isPrintView={isPrintView}>
           {React.Children.toArray(children)}
         </Main>
         {newEntityModal
@@ -218,6 +227,7 @@ App.propTypes = {
   isUserSignedIn: PropTypes.bool,
   isManager: PropTypes.bool,
   isAnalyst: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   user: PropTypes.object,
   pages: PropTypes.object,
   validateToken: PropTypes.func,
@@ -237,6 +247,7 @@ const mapStateToProps = (state) => ({
   isAnalyst: selectIsUserAnalyst(state),
   isUserSignedIn: selectIsSignedIn(state),
   user: selectSessionUserAttributes(state),
+  isPrintView: selectPrintQuery(state),
   pages: selectEntitiesWhere(state, {
     path: API.PAGES,
     where: { draft: false },

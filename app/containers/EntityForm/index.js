@@ -256,48 +256,40 @@ class EntityForm extends React.Component { // eslint-disable-line react/prefer-s
 
   renderGroup = (group, hasEntityNewModal, scrollContainer) => (
     <FieldGroupWrapper>
-      { group.label
-        && (
-          <FieldGroupLabel>
-            <GroupLabel>
-              {group.label}
-            </GroupLabel>
-            { group.icon
-            && (
-              <GroupIcon>
-                <Icon name={group.icon} />
-              </GroupIcon>
-            )
-            }
-          </FieldGroupLabel>
+      {group.label && (
+        <FieldGroupLabel>
+          <GroupLabel>
+            {group.label}
+          </GroupLabel>
+          {group.icon && (
+            <GroupIcon>
+              <Icon name={group.icon} />
+            </GroupIcon>
+          )}
+        </FieldGroupLabel>
+      )}
+      {group.fields.map((field, i) => field
+        ? (
+          <Field labelledGroup={!!group.label} key={i} printHide={field.printHide}>
+            {this.renderFormField(
+              field,
+              false,
+              hasEntityNewModal,
+              scrollContainer,
+            )}
+            {field.errorMessages && (
+              <ErrorWrapper>
+                <Errors
+                  className="errors"
+                  model={field.model}
+                  show={(fieldValue) => fieldValue.touched || !fieldValue.pristine}
+                  messages={field.errorMessages}
+                />
+              </ErrorWrapper>
+            )}
+          </Field>
         )
-      }
-      {
-        group.fields.map((field, i) => field
-          ? (
-            <Field labelledGroup={!!group.label} key={i}>
-              {this.renderFormField(
-                field,
-                false,
-                hasEntityNewModal,
-                scrollContainer,
-              )}
-              {
-                field.errorMessages
-                && (
-                  <ErrorWrapper>
-                    <Errors
-                      className="errors"
-                      model={field.model}
-                      show={(fieldValue) => fieldValue.touched || !fieldValue.pristine}
-                      messages={field.errorMessages}
-                    />
-                  </ErrorWrapper>
-                )
-              }
-            </Field>
-          )
-          : null)
+        : null)
       }
     </FieldGroupWrapper>
   )
@@ -369,7 +361,6 @@ class EntityForm extends React.Component { // eslint-disable-line react/prefer-s
       scrollContainer,
     } = this.props;
     const hasEntityNewModal = !!newEntityModal;
-
     return (
       <FormWrapper withoutShadow={inModal} hasMarginBottom={!inModal}>
         <StyledForm

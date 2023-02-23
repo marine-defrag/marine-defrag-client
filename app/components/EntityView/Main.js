@@ -14,7 +14,7 @@ const Main = styled(Section)`
   @media print {
     display: ${({ hasAside }) => hasAside ? 'table-cell' : 'block'};
     width: ${({ hasAside }) => hasAside ? '70%' : '100%'};
-    border-right-style: none;
+    border-right-style: ${(props) => props.hasAside ? 'solid' : 'none'};
   }
 `;
 

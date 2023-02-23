@@ -57,7 +57,7 @@ const LoadingWrap = styled.div`
   background: none;
 `;
 
-const Styled = styled(ContainerWrapper)`
+const Styled = styled((p) => <ContainerWrapper printAbsolute {...p} />)`
   background: white;
 `;
 

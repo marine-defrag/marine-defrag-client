@@ -32,7 +32,6 @@ const GlobalStyle = createGlobalStyle`
     min-height: 100%;
     min-width: 100%;
   }
-
   button {
     background: transparent;
     border: none;
@@ -280,6 +279,9 @@ const GlobalStyle = createGlobalStyle`
           }
         }
       }
+    }
+    .leaflet-control-container {
+      display: none;
     }
   }
 `;

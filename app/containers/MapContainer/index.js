@@ -170,6 +170,7 @@ export function MapContainer({
             ...circleLayerConfig,
             rangeMax: minMaxValues && minMaxValues.points && minMaxValues.points.max,
           }}
+          hasInfo={mapInfo && mapInfo.length > 0}
         />
       </MapInnerWrapper>
       {mapInfo && mapInfo.length > 0 && (

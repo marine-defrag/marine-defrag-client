@@ -49,7 +49,6 @@ export function ActionViewDetailsChildren({
 }) {
   return (
     <FieldGroup
-      aside
       group={{
         fields: childrenByType.reduce(
           (memo, children, typeid) => memo.concat(

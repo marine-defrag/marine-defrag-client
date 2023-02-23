@@ -13,12 +13,10 @@ const ContainerWrapper = styled.div`
   right: 0;
   overflow-x: hidden;
   overflow-y: ${({ noOverflow }) => noOverflow ? 'hidden' : 'auto'};
-  @media print {
-    position: static;
-  }
   z-index: 90;
-  background-color: ${({ bg, theme }) => bg ? theme.global.colors.background : 'transparent'};
+  background-color: ${({ bg }) => bg ? '#f1f0f1' : 'transparent'};
   @media print {
+    position: ${({ printAbsolute }) => printAbsolute ? 'absolute' : 'static'};
     background-color: transparent;
   }
 `;

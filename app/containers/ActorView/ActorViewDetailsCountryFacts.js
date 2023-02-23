@@ -44,6 +44,9 @@ const GroupTitle = styled.h5`
   font-size: 18px;
   font-weight: 500;
   margin: 0;
+  @media print {
+    font-size: 12pt;
+  }
 `;
 const GroupTitleLabel = styled(GroupTitle)`
   font-weight: 300;
@@ -52,6 +55,12 @@ const GroupTitleLabel = styled(GroupTitle)`
 
 const Indicator = styled((p) => <Box margin={{ top: 'medium' }} pad={{ top: 'medium' }} {...p} />)`
   border-top: 1px solid ${({ theme }) => theme.global.colors.border.light};
+`;
+
+const StyledBox = styled((p) => (<Box margin={{ vertical: 'small', horizontal: 'medium' }} {...p} />))`
+  @media print {
+    margin-left: 0;
+  }
 `;
 
 export function ActorViewDetailsCountryFacts(props) {
@@ -73,14 +82,14 @@ export function ActorViewDetailsCountryFacts(props) {
   return (
     <Box>
       {(!indicators || indicators.size === 0) && (
-        <Box margin={{ vertical: 'small', horizontal: 'medium' }}>
+        <StyledBox>
           <Text>
             No indicators for actor in database
           </Text>
-        </Box>
+        </StyledBox>
       )}
       {indicators && indicators.size > 0 && (
-        <Box margin={{ vertical: 'small', horizontal: 'medium' }}>
+        <StyledBox>
           {indicatorsByResourceId && indicatorsByResourceId.keySeq().map(
             (resourceId) => {
               const resource = !qe(resourceId, 'without')
@@ -93,6 +102,7 @@ export function ActorViewDetailsCountryFacts(props) {
                     <Box
                       direction={isMaxSize(size, 'medium') ? 'column' : 'row'}
                       gap="xsmall"
+                      wrap
                     >
                       <Box>
                         <GroupTitleLabel>
@@ -158,7 +168,7 @@ export function ActorViewDetailsCountryFacts(props) {
               );
             }
           )}
-        </Box>
+        </StyledBox>
       )}
     </Box>
   );

@@ -15,7 +15,7 @@ const FieldGroupWrapper = styled.div`
     padding-bottom: ${({ seamless, theme }) => seamless ? '20px' : theme.global.edgeSize.medium};
   }
   @media print {
-    padding: ${({ aside, bottom }) => (aside && !bottom) ? '15px 0 10px 20px' : '15px 0 10px'};
+    padding: ${({ aside }) => (aside) ? '15px 0 10px 20px' : '15px 20px 10px 0'};
     background-color: transparent;
   }
 `;

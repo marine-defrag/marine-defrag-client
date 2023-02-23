@@ -126,10 +126,10 @@ export function ActorViewDetails(props) {
           {hasMembers && viewSubject === 'members' && (
             <Text size="large">Members</Text>
           )}
-          {isTarget && viewSubject === 'targets' && (
+          {isActive && viewSubject === 'actors' && (
             <Text size="large">Activities</Text>
           )}
-          {isActive && viewSubject === 'actors' && (
+          {isTarget && viewSubject === 'targets' && (
             <Text size="large">Targeted by</Text>
           )}
           {(isCountry || isLocation) && viewSubject === 'facts' && (

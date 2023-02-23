@@ -1,26 +1,32 @@
 import styled from 'styled-components';
 
 const Field = styled.div`
-  display: ${(props) => props.nested ? 'inline-block' : 'block'};
-  padding-bottom: ${(props) => {
-    if (props.nested || props.noPadding) {
+  display: ${({ nested }) => nested ? 'inline-block' : 'block'};
+  padding-bottom: ${({ nested, noPadding, labelledGroup }) => {
+    if (nested || noPadding) {
       return 0;
     }
-    if (props.labelledGroup) {
+    if (labelledGroup) {
       return 7;
     }
     return 15;
   }}px;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    padding-bottom: ${(props) => {
-    if (props.nested || props.noPadding) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+    padding-bottom: ${({ nested, noPadding, labelledGroup }) => {
+    if (nested || noPadding) {
       return 0;
     }
-    if (props.labelledGroup) {
+    if (labelledGroup) {
       return 15;
     }
     return 30;
   }}px;
+  }
+  @media print {
+    display: ${({ nested, printHide }) => {
+    if (printHide) return 'none !important';
+    return nested ? 'inline-block' : 'block';
+  }};
   }
 `;
 

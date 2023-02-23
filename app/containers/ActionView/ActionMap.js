@@ -44,14 +44,22 @@ import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
 `;
-const MapTitle = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)``;
-const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)``;
+const MapTitle = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)`
+  @media print {
+    margin-left: 0;
+  }
+`;
+const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+  @media print {
+    margin-left: 0;
+  }
+`;
 const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
   height: 400px;
   background: #F9F9FA;
   @media print {
-    margin: 0;
+    margin-left: 0;
   }
 `;
 

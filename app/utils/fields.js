@@ -129,6 +129,7 @@ export const getStatusField = (
 ) => (defaultValue || checkEmpty(entity.getIn(['attributes', attribute]))) && ({
   controlType: 'info',
   type: 'status',
+  printHide: true,
   value: (
     entity
     && entity.getIn(['attributes', attribute]) !== null

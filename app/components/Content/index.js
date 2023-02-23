@@ -5,7 +5,7 @@ import Container from 'components/styled/Container';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 
 const Content = React.forwardRef((props, ref) => (
-  <ContainerWrapper bg={props.isSingle} ref={ref} isStatic={props.withoutHeaderNav || props.isStatic} content>
+  <ContainerWrapper bg={props.isSingle} ref={ref} isStatic={props.withoutHeaderNav || props.isStatic} isContent>
     <Container inModal={props.inModal} isSingle={props.isSingle}>
       {props.children}
     </Container>
