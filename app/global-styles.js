@@ -167,6 +167,7 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
+  .print-modal,
   .new-entity-modal {
     position: absolute;
     top: 10px;
@@ -182,6 +183,10 @@ const GlobalStyle = createGlobalStyle`
     margin-left: auto;
     max-width: 1170px;
   }
+  .print-modal {
+    max-width: 800px;
+    border: 1px solid red;
+  }
   @media (min-width: 769px) {
     .new-entity-modal {
       padding: 20px;
@@ -190,8 +195,16 @@ const GlobalStyle = createGlobalStyle`
       right: 40px;
       bottom: 40px;
     }
+    .print-modal {
+      padding: 20px;
+      top: 80px;
+      left: 80px;
+      right: 80px;
+      bottom: 80px;
+    }
   }
 
+  .print-modal-overlay,
   .new-entity-modal-overlay {
     position: fixed;
     top: 0;

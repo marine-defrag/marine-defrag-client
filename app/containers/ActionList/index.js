@@ -10,7 +10,11 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { List, Map, fromJS } from 'immutable';
 
-import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
+import {
+  loadEntitiesIfNeeded,
+  updatePath,
+  setPrintModal,
+} from 'containers/App/actions';
 import {
   selectReady,
   selectActiontypeTaxonomiesWithCats,
@@ -22,9 +26,11 @@ import {
   selectTargettypesForActiontype,
   selectResourcetypesForActiontype,
   selectActiontypeActions,
+  selectPrintQuery,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
+import { PRINT_TYPES } from 'containers/App/constants';
 
 import { checkActionAttribute } from 'utils/entities';
 import qe from 'utils/quasi-equals';
@@ -54,6 +60,14 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if (!prevProps.dataReady && this.props.dataReady) {
+      if (this.props.isPrintView) {
+        window.print();
+      }
+    }
+  }
+
   prepareTypeOptions = (types, activeId) => {
     const { intl } = this.context;
     return types.toList().toJS().map((type) => ({
@@ -80,6 +94,7 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
       targettypes,
       resourcetypes,
       onSelectType,
+      openPrintModal,
     } = this.props;
     const { intl } = this.context;
     const typeId = params.id;
@@ -105,7 +120,10 @@ export class ActionList extends React.PureComponent { // eslint-disable-line rea
     if (window.print) {
       headerOptions.actions.push({
         type: 'icon',
-        onClick: () => window.print(),
+        // onClick: () => window.print(),
+        onClick: () => openPrintModal({
+          type: PRINT_TYPES.LIST,
+        }),
         title: 'Print',
         icon: 'print',
       });
@@ -176,6 +194,7 @@ ActionList.propTypes = {
   handleNew: PropTypes.func,
   handleImport: PropTypes.func,
   onSelectType: PropTypes.func,
+  openPrintModal: PropTypes.func,
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   entities: PropTypes.instanceOf(List).isRequired,
@@ -189,6 +208,7 @@ ActionList.propTypes = {
   allEntities: PropTypes.instanceOf(Map),
   location: PropTypes.object,
   isAnalyst: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   params: PropTypes.object,
 };
 
@@ -209,6 +229,7 @@ const mapStateToProps = (state, props) => ({
   targettypes: selectTargettypesForActiontype(state, { type: props.params.id }),
   resourcetypes: selectResourcetypesForActiontype(state, { type: props.params.id }),
   allEntities: selectActiontypeActions(state, { type: props.params.id }),
+  isPrintView: selectPrintQuery(state),
 });
 function mapDispatchToProps(dispatch) {
   return {
@@ -220,6 +241,9 @@ function mapDispatchToProps(dispatch) {
     },
     handleImport: () => {
       dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.IMPORT}`));
+    },
+    openPrintModal: (options) => {
+      dispatch(setPrintModal({ options }));
     },
     onSelectType: (typeId) => {
       dispatch(updatePath(

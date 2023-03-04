@@ -33,6 +33,7 @@ import {
   ENTITIES_REQUESTED,
   INVALIDATE_ENTITIES,
   OPEN_NEW_ENTITY_MODAL,
+  SET_PRINT_MODAL,
 } from './constants';
 
 // The initial state of the App
@@ -57,6 +58,7 @@ const initialState = fromJS({
     isSignedIn: isSignedIn(),
   },
   newEntityModal: null,
+  printModal: null,
 });
 
 function appReducer(state = initialState, payload) {
@@ -146,6 +148,11 @@ function appReducer(state = initialState, payload) {
         .set('entities', fromJS(initialState.toJS().entities));
     case OPEN_NEW_ENTITY_MODAL:
       return state.set('newEntityModal', fromJS(payload.args));
+    case SET_PRINT_MODAL:
+      return state.set(
+        'printModal',
+        payload.args ? fromJS(payload.args) : payload.args,
+      );
     default:
       return state;
   }

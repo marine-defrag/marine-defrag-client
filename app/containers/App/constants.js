@@ -65,6 +65,7 @@ export const UPDATE_ENTITY_FORM = 'impactoss/App/UPDATE_ENTITY_FORM';
 export const CLOSE_ENTITY = 'impactoss/App/CLOSE_ENTITY';
 
 export const OPEN_NEW_ENTITY_MODAL = 'impactoss/App/OPEN_NEW_ENTITY_MODAL';
+export const SET_PRINT_MODAL = 'impactoss/App/SET_PRINT_MODAL';
 export const SUBMIT_INVALID = 'impactoss/App/SUBMIT_INVALID';
 
 export const DISMISS_QUERY_MESSAGES = 'impactoss/App/DISMISS_QUERY_MESSAGES';
@@ -79,6 +80,7 @@ export const SET_INCLUDE_MEMBERS_FORFILTERS = 'impactoss/App/SET_INCLUDE_MEMBERS
 export const SET_INCLUDE_TARGET_CHILDREN = 'impactoss/App/SET_INCLUDE_TARGET_CHILDREN';
 export const SET_INCLUDE_ACTOR_CHILDREN = 'impactoss/App/SET_INCLUDE_ACTOR_CHILDREN';
 export const SET_FF_OVERLAY = 'impactoss/App/SET_FF_OVERLAY';
+export const PRINT_VIEW = 'impactoss/App/PRINT_VIEW';
 
 export const FILTERS_PANEL = 'filters';
 export const EDIT_PANEL = 'edit';
@@ -122,4 +124,9 @@ export const VIEWPORTS = {
   SMALL: 2,
   MEDIUM: 3,
   LARGE: 4,
+};
+
+export const PRINT_TYPES = {
+  LIST: 1,
+  SINGLE: 2,
 };

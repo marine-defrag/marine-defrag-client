@@ -70,6 +70,10 @@ export const selectNewEntityModal = createSelector(
   getGlobal,
   (globalState) => globalState.get('newEntityModal')
 );
+export const selectPrintModal = createSelector(
+  getGlobal,
+  (globalState) => globalState.get('printModal')
+);
 
 // users and user authentication ///////////////////////////////////////////////
 

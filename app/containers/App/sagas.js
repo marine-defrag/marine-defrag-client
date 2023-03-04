@@ -48,6 +48,7 @@ import {
   SET_INCLUDE_TARGET_CHILDREN,
   SET_INCLUDE_MEMBERS_FORFILTERS,
   SET_FF_OVERLAY,
+  PRINT_VIEW,
 } from 'containers/App/constants';
 
 import {
@@ -838,6 +839,64 @@ export function* setFFOverlaySaga({ value }) {
   );
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
+export function* printViewSaga({ config }) {
+  const location = yield select(selectLocation);
+  let queryArgs = [];
+  if (config.pages) {
+    queryArgs = [
+      {
+        arg: 'items',
+        value: config.pages,
+        replace: true,
+      },
+      ...queryArgs,
+    ];
+  }
+  if (config.printTabs) {
+    queryArgs = [
+      {
+        arg: 'ptabs',
+        value: config.printTabs,
+        replace: true,
+      },
+      ...queryArgs,
+    ];
+  }
+  if (config.printSize) {
+    queryArgs = [
+      {
+        arg: 'psize',
+        value: config.printSize,
+        replace: true,
+      },
+      ...queryArgs,
+    ];
+  }
+  if (config.printOrientation) {
+    queryArgs = [
+      {
+        arg: 'porient',
+        value: config.printOrientation,
+        replace: true,
+      },
+      ...queryArgs,
+    ];
+  }
+  const queryNext = getNextQuery(
+    [
+      {
+        arg: 'print',
+        value: '1',
+        replace: true,
+      },
+      ...queryArgs,
+    ],
+    true, // extend
+    location,
+  );
+  const url = `${location.get('pathname')}?${getNextQueryString(queryNext)}`;
+  window.open(url, '_blank').focus();
+}
 
 export function* openBookmarkSaga({ bookmark }) {
   const path = bookmark.getIn(['attributes', 'view', 'path']);
@@ -944,6 +1003,7 @@ export default function* rootSaga() {
   yield takeEvery(SET_FF_OVERLAY, setFFOverlaySaga);
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);
   yield takeEvery(DISMISS_QUERY_MESSAGES, dismissQueryMessagesSaga);
+  yield takeEvery(PRINT_VIEW, printViewSaga);
 
   yield takeEvery(CLOSE_ENTITY, closeEntitySaga);
 }

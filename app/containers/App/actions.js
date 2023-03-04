@@ -57,6 +57,7 @@ import {
   UPDATE_ENTITY_FORM,
   CLOSE_ENTITY,
   OPEN_NEW_ENTITY_MODAL,
+  SET_PRINT_MODAL,
   RESET_PROGRESS,
   SUBMIT_INVALID,
   DISMISS_QUERY_MESSAGES,
@@ -72,6 +73,7 @@ import {
   SET_INCLUDE_TARGET_CHILDREN,
   SET_INCLUDE_ACTOR_CHILDREN,
   SET_FF_OVERLAY,
+  PRINT_VIEW,
 } from './constants';
 
 export function submitInvalid(valid) {
@@ -444,6 +446,12 @@ export function openNewEntityModal(args) {
     args,
   };
 }
+export function setPrintModal(args) {
+  return {
+    type: SET_PRINT_MODAL,
+    args,
+  };
+}
 
 export function dismissQueryMessages() {
   return {
@@ -521,5 +529,11 @@ export function setFFOverlay(value) {
   return {
     type: SET_FF_OVERLAY,
     value,
+  };
+}
+export function printView(config) {
+  return {
+    type: PRINT_VIEW,
+    config,
   };
 }

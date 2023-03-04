@@ -14,6 +14,7 @@ import GlobalStyle from 'global-styles';
 import styled from 'styled-components';
 import Header from 'components/Header';
 import EntityNew from 'containers/EntityNew';
+import PrintModal from 'containers/PrintModal';
 
 import { sortEntities } from 'utils/sort';
 import { ROUTES, API } from 'themes/config';
@@ -27,6 +28,7 @@ import {
   selectEntitiesWhere,
   selectNewEntityModal,
   selectPrintQuery,
+  selectPrintModal,
 } from './selectors';
 
 import {
@@ -34,6 +36,7 @@ import {
   loadEntitiesIfNeeded,
   updatePath,
   openNewEntityModal,
+  setPrintModal,
 } from './actions';
 
 import { DEPENDENCIES } from './constants';
@@ -152,8 +155,10 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       user,
       children,
       isPrintView,
+      onCloseModal,
+      onClosePrintModal,
+      printModal,
     } = this.props;
-
     const { intl } = this.context;
     const title = intl.formatMessage(messages.app.title);
     const isHome = location.pathname === '/';
@@ -193,29 +198,46 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
         <Main isHome={isHomeOrAuth} isPrintView={isPrintView}>
           {React.Children.toArray(children)}
         </Main>
-        {newEntityModal
-          && (
-            <ReactModal
-              isOpen
-              contentLabel={newEntityModal.get('path')}
-              onRequestClose={this.props.onCloseModal}
-              className="new-entity-modal"
-              overlayClassName="new-entity-modal-overlay"
-              style={{
-                overlay: { zIndex: 99999999 },
-              }}
-              appElement={document.getElementById('app')}
-            >
-              <EntityNew
-                path={newEntityModal.get('path')}
-                attributes={newEntityModal.get('attributes')}
-                onSaveSuccess={this.props.onCloseModal}
-                onCancel={this.props.onCloseModal}
-                inModal
-              />
-            </ReactModal>
-          )
-        }
+        {newEntityModal && (
+          <ReactModal
+            isOpen
+            contentLabel={newEntityModal.get('path')}
+            onRequestClose={onCloseModal}
+            className="new-entity-modal"
+            overlayClassName="new-entity-modal-overlay"
+            style={{
+              overlay: { zIndex: 99999999 },
+            }}
+            appElement={document.getElementById('app')}
+          >
+            <EntityNew
+              path={newEntityModal.get('path')}
+              attributes={newEntityModal.get('attributes')}
+              onSaveSuccess={onCloseModal}
+              onCancel={onCloseModal}
+              inModal
+            />
+          </ReactModal>
+        )}
+        {printModal && (
+          <ReactModal
+            isOpen
+            contentLabel="Print"
+            onRequestClose={onClosePrintModal}
+            className="print-modal"
+            overlayClassName="print-modal-overlay"
+            style={{
+              overlay: { zIndex: 99999999 },
+            }}
+            appElement={document.getElementById('app')}
+          >
+            <PrintModal
+              args={printModal}
+              location={location}
+              close={onClosePrintModal}
+            />
+          </ReactModal>
+        )}
         <GlobalStyle />
       </div>
     );
@@ -236,6 +258,8 @@ App.propTypes = {
   location: PropTypes.object.isRequired,
   newEntityModal: PropTypes.object,
   onCloseModal: PropTypes.func,
+  printModal: PropTypes.object,
+  onClosePrintModal: PropTypes.func,
 };
 App.contextTypes = {
   intl: PropTypes.object.isRequired,
@@ -253,6 +277,7 @@ const mapStateToProps = (state) => ({
     where: { draft: false },
   }),
   newEntityModal: selectNewEntityModal(state),
+  printModal: selectPrintModal(state),
 });
 
 export function mapDispatchToProps(dispatch) {
@@ -268,6 +293,9 @@ export function mapDispatchToProps(dispatch) {
     },
     onCloseModal: () => {
       dispatch(openNewEntityModal(null));
+    },
+    onClosePrintModal: () => {
+      dispatch(setPrintModal(null));
     },
   };
 }

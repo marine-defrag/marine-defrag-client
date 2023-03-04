@@ -73,6 +73,9 @@ const Feature = styled((p) => (
   &:first-child {
     margin-top: 0px;
   }
+  @media print {
+    box-shadow: none;
+  }
 `;
 
 const TTContentWrap = styled((p) => <Box pad={{ vertical: 'xsmall' }} {...p} />)``;
