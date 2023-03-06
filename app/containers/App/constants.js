@@ -81,6 +81,8 @@ export const SET_INCLUDE_TARGET_CHILDREN = 'impactoss/App/SET_INCLUDE_TARGET_CHI
 export const SET_INCLUDE_ACTOR_CHILDREN = 'impactoss/App/SET_INCLUDE_ACTOR_CHILDREN';
 export const SET_FF_OVERLAY = 'impactoss/App/SET_FF_OVERLAY';
 export const PRINT_VIEW = 'impactoss/App/PRINT_VIEW';
+export const SET_MAP_LOADING = 'impactoss/App/SET_MAP_LOADING';
+export const SET_MAP_LOADED = 'impactoss/App/SET_MAP_LOADED';
 
 export const FILTERS_PANEL = 'filters';
 export const EDIT_PANEL = 'edit';

@@ -67,6 +67,8 @@ import {
   SET_VIEW,
   SET_SUBJECT,
   SET_MAP_SUBJECT,
+  SET_MAP_LOADING,
+  SET_MAP_LOADED,
   SET_INCLUDE_ACTOR_MEMBERS,
   SET_INCLUDE_TARGET_MEMBERS,
   SET_INCLUDE_MEMBERS_FORFILTERS,
@@ -487,6 +489,18 @@ export function setMapSubject(subject) {
   return {
     type: SET_MAP_SUBJECT,
     subject,
+  };
+}
+export function setMapLoading(mapId) {
+  return {
+    type: SET_MAP_LOADING,
+    mapId,
+  };
+}
+export function setMapLoaded(mapId) {
+  return {
+    type: SET_MAP_LOADED,
+    mapId,
   };
 }
 export function setIncludeActorMembers(value) {

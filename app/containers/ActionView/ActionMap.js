@@ -79,6 +79,7 @@ export function ActionMap({
   includeTargetChildren,
   typeId,
   childCountries,
+  mapId = 'll-action-map',
   // intl,
 }) {
   // console.log('ActionMap')
@@ -253,7 +254,7 @@ export function ActionMap({
           mapSubject={mapSubject}
           fitBounds
           projection="gall-peters"
-          mapId="ll-action-map"
+          mapId={mapId}
         />
       </MapWrapper>
       {(memberOption || mapTitle || childrenOption) && (
@@ -290,6 +291,7 @@ ActionMap.propTypes = {
   includeTargetChildren: PropTypes.bool,
   onActorClick: PropTypes.func,
   mapSubject: PropTypes.string,
+  mapId: PropTypes.string,
   typeId: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,

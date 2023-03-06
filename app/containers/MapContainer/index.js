@@ -5,6 +5,7 @@
  */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Box, Text } from 'grommet';
 
@@ -12,7 +13,7 @@ import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
-
+import { setMapLoaded } from 'containers/App/actions';
 // import appMessages from 'containers/App/messages';
 // import { hasGroupActors } from 'utils/entities';
 import MapWrapper from './MapWrapper';
@@ -45,6 +46,7 @@ export function MapContainer({
   reducePoints,
   reduceCountryAreas,
   fullMap,
+  onSetMapLoaded,
   // intl,
 }) {
   const {
@@ -171,6 +173,7 @@ export function MapContainer({
             rangeMax: minMaxValues && minMaxValues.points && minMaxValues.points.max,
           }}
           hasInfo={mapInfo && mapInfo.length > 0}
+          setMapLoaded={onSetMapLoaded}
         />
       </MapInnerWrapper>
       {mapInfo && mapInfo.length > 0 && (
@@ -221,6 +224,7 @@ MapContainer.propTypes = {
   onActorClick: PropTypes.func,
   reducePoints: PropTypes.func,
   reduceCountryAreas: PropTypes.func,
+  onSetMapLoaded: PropTypes.func,
   mapData: PropTypes.object,
   mapKey: PropTypes.object,
   mapInfo: PropTypes.array,
@@ -228,4 +232,12 @@ MapContainer.propTypes = {
   fullMap: PropTypes.bool,
 };
 
-export default MapContainer;
+function mapDispatchToProps(dispatch) {
+  return {
+    onSetMapLoaded: (mapId) => {
+      dispatch(setMapLoaded(mapId));
+    },
+  };
+}
+
+export default connect(null, mapDispatchToProps)(MapContainer);

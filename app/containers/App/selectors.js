@@ -74,6 +74,10 @@ export const selectPrintModal = createSelector(
   getGlobal,
   (globalState) => globalState.get('printModal')
 );
+export const selectMapLoading = createSelector(
+  getGlobal,
+  (globalState) => globalState.get('mapLoading').size > 0,
+);
 
 // users and user authentication ///////////////////////////////////////////////
 

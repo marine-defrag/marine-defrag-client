@@ -59,6 +59,7 @@ export function ActionViewDetailsActors({
     <>
       {(actorsByActortype || childActionsByActiontypeWithActorsByType) && hasCountryActionMap && (
         <ActionMap
+          mapId="ll-action-actors"
           actorsByType={actorsByActortype}
           childCountries={
             childActionsByActiontypeWithActorsByType

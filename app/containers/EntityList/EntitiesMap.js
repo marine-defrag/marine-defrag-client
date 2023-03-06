@@ -3,7 +3,7 @@
  * EntitiesMap
  *
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
@@ -33,7 +33,11 @@ import {
   selectFFOverlay,
 } from 'containers/App/selectors';
 
-import { setFFOverlay, updatePath } from 'containers/App/actions';
+import {
+  setFFOverlay,
+  updatePath,
+  setMapLoading,
+} from 'containers/App/actions';
 
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Loading from 'components/Loading';
@@ -90,11 +94,15 @@ export function EntitiesMap({
   ffIndicatorId,
   onSetFFOverlay,
   onSelectAction,
+  onSetMapLoading,
   // connections,
   // connectedTaxonomies,
   // locationQuery,
   // taxonomies,
 }) {
+  useEffect(() => {
+    onSetMapLoading('ll-map-list');
+  }, []); // once
   // const { intl } = this.context;
   let type;
   let hasByTarget;
@@ -808,6 +816,7 @@ export function EntitiesMap({
           reduceCountryAreas={reduceCountryAreas}
           reducePoints={reducePoints}
           mapData={{
+            mapId: 'll-map-list',
             typeLabels,
             indicator,
             indicatorPoints: ffIndicatorId,
@@ -878,6 +887,7 @@ EntitiesMap.propTypes = {
   onEntityClick: PropTypes.func,
   onSetFFOverlay: PropTypes.func,
   onSelectAction: PropTypes.func,
+  onSetMapLoading: PropTypes.func,
   ffIndicatorId: PropTypes.string,
   intl: intlShape.isRequired,
 };
@@ -898,6 +908,9 @@ function mapDispatchToProps(dispatch) {
   return {
     onSetFFOverlay: (value) => {
       dispatch(setFFOverlay(value));
+    },
+    onSetMapLoading: (mapId) => {
+      dispatch(setMapLoading(mapId));
     },
     onSelectAction: (id) => {
       dispatch(updatePath(`${ROUTES.ACTION}/${id}`));

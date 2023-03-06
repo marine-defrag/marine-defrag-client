@@ -114,6 +114,7 @@ export function MapWrapper({
   isLocationData = false, // real location data not country points
   circleLayerConfig = {},
   hasInfo,
+  setMapLoaded,
 }) {
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
@@ -334,7 +335,12 @@ export function MapWrapper({
     countryTooltipGroupRef.current.addTo(mapRef.current);
     countryOverGroupRef.current = L.layerGroup();
     countryOverGroupRef.current.addTo(mapRef.current);
-    //
+    // notify app when loaded
+    if (setMapLoaded) {
+      mapRef.current.on('load', () => {
+        setMapLoaded(mapId);
+      });
+    }
     // mapRef.current.on('zoomend', () => {
     //   setZoom(mapRef.current.getZoom());
     // });
@@ -421,6 +427,12 @@ export function MapWrapper({
       countryOverlayGroupRef.current.addLayer(jsonLayer);
     }
   }, [countryData, indicator, tooltip, mapSubject]);
+  // useEffect(() => {
+  //   if (countryData && countryData.length > 0) {
+  //     console.log('countryData x')
+  //     setMapLoading(false);
+  //   }
+  // }, [countryData]);
   // add zoom to countryData
   useEffect(() => {
     if (
@@ -626,6 +638,7 @@ MapWrapper.propTypes = {
   isLocationData: PropTypes.bool,
   hasInfo: PropTypes.bool,
   circleLayerConfig: PropTypes.object,
+  setMapLoaded: PropTypes.func,
   // onSetMapSubject: PropTypes.func,
 };
 

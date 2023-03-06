@@ -139,7 +139,7 @@ export function ActionViewDetails({
           </Box>
         </PrintOnly>
       )}
-      {viewSubject === 'targets' && (
+      {viewSubject === 'actors' && (
         <ActionViewDetailsTargets
           id={id}
           viewEntity={viewEntity}

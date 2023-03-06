@@ -133,6 +133,7 @@ export function IndicatorCountryMap({
   // && indicator.getIn(['attributes', 'comment']).indexOf('%') === -1;
   return (
     <MapContainer
+      mapId="ll-indicator-country-map"
       mapKey={{
         keyTitle,
         isIndicator: true,
