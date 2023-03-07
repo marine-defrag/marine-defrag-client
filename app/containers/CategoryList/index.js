@@ -27,7 +27,7 @@ import appMessages from 'containers/App/messages';
 // components
 import ContainerWithSidebar from 'components/styled/Container/ContainerWithSidebar';
 import Container from 'components/styled/Container';
-import Content from 'components/styled/Content';
+import Content from 'components/styled/ContentSimple';
 import Loading from 'components/Loading';
 
 import ContentHeader from 'components/ContentHeader';

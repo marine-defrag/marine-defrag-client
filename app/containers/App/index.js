@@ -27,7 +27,7 @@ import {
   selectReady,
   selectEntitiesWhere,
   selectNewEntityModal,
-  selectPrintQuery,
+  selectIsPrintView,
   selectPrintModal,
 } from './selectors';
 
@@ -49,7 +49,7 @@ const Main = styled.div`
       return 'absolute';
     }
     if (isHome) {
-      return 'relative';
+      return 'absolute';
     }
     return 'absolute';
   }};
@@ -60,8 +60,8 @@ const Main = styled.div`
   left: 0;
   right: 0;
   bottom:0;
-  overflow: hidden;
-  width: ${({ isPrintView }) => (isPrintView ? '520pt' : 'auto')};
+  overflow: ${({ isPrint }) => isPrint ? 'auto' : 'hidden'};
+  width: auto;
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     top: ${({ isHome, theme }) => isHome
     ? 0
@@ -73,6 +73,54 @@ const Main = styled.div`
     position: static;
   }
 `;
+// A4 595 × 842
+// box-shadow: ${({ isPrint }) => isPrint ? '0px 0px 5px 0px rgb(0 0 0 / 50%)' : 'none'};
+const PrintWrapper = styled.div`
+  position: ${({ isPrint }) => isPrint ? 'absolute' : 'absolute'};
+  top: ${({ isPrint }) => isPrint ? 200 : 0}px;
+  left: 0;
+  right: 0;
+  padding-bottom: ${({ isPrint }) => isPrint ? 40 : 0}px;
+  margin-right: ${({ isPrint }) => isPrint ? 40 : 0}px;
+  margin-left: ${({ isPrint }) => isPrint ? 40 : 0}px;
+  bottom: ${({ isPrint, fixed = false }) => {
+    if (isPrint) {
+      return 'auto';
+    }
+    if (fixed) {
+      return 'auto';
+    }
+    return '0px';
+  }};
+  width: ${({ isPrint, orientation = 'portrait', format = 'a4' }) => {
+    if (isPrint) {
+      if (orientation === 'portrait' && format === 'a4') {
+        return '520pt';
+      }
+      if (orientation === 'landscape' && format === 'a4') {
+        return '820pt';
+      }
+    }
+    return 'auto';
+  }};
+  height: ${({
+    isPrint,
+    orientation = 'portrait',
+    format = 'a4',
+    fixed = false,
+  }) => {
+    if (fixed && isPrint) {
+      if (orientation === 'portrait' && format === 'a4') {
+        return '820pt';
+      }
+      if (orientation === 'landscape' && format === 'a4') {
+        return '520pt';
+      }
+    }
+    return 'auto';
+  }};
+`;
+
 // overflow: ${(props) => props.isHome ? 'auto' : 'hidden'};
 
 class App extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
@@ -174,9 +222,10 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           <Header
             isSignedIn={isUserSignedIn}
             isAnalyst={isAnalyst}
+            isPrintView={isPrintView}
             user={user}
-            pages={pages && this.preparePageMenuPages(pages, location.pathname)}
-            navItems={this.prepareMainMenuItems(
+            pages={!isPrintView && pages && this.preparePageMenuPages(pages, location.pathname)}
+            navItems={!isPrintView && this.prepareMainMenuItems(
               isUserSignedIn && isManager,
               isUserSignedIn && isAnalyst,
               location.pathname,
@@ -195,8 +244,10 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             currentPath={location.pathname}
           />
         )}
-        <Main isHome={isHomeOrAuth} isPrintView={isPrintView}>
-          {React.Children.toArray(children)}
+        <Main isHome={isHomeOrAuth} isPrint={isPrintView}>
+          <PrintWrapper isPrint={isPrintView} orientation="landscape">
+            {React.Children.toArray(children)}
+          </PrintWrapper>
         </Main>
         {newEntityModal && (
           <ReactModal
@@ -271,7 +322,7 @@ const mapStateToProps = (state) => ({
   isAnalyst: selectIsUserAnalyst(state),
   isUserSignedIn: selectIsSignedIn(state),
   user: selectSessionUserAttributes(state),
-  isPrintView: selectPrintQuery(state),
+  isPrintView: selectIsPrintView(state),
   pages: selectEntitiesWhere(state, {
     path: API.PAGES,
     where: { draft: false },

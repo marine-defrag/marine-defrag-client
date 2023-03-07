@@ -13,6 +13,7 @@ const Content = React.forwardRef(
       onClose,
       inModal,
       children,
+      isPrint,
     },
     ref,
   ) => (
@@ -21,6 +22,7 @@ const Content = React.forwardRef(
       ref={ref}
       isStatic={withoutHeaderNav || isStatic}
       isContent
+      isPrint={isPrint}
       onClick={(e) => {
         if (inModal && onClose) {
           if (e.currentTarget !== e.target) return;
@@ -28,7 +30,11 @@ const Content = React.forwardRef(
         }
       }}
     >
-      <Container inModal={inModal} isSingle={isSingle}>
+      <Container
+        inModal={inModal}
+        isSingle={isSingle}
+        isPrint={isPrint}
+      >
         {children}
       </Container>
     </ContainerWrapper>
@@ -41,6 +47,7 @@ Content.propTypes = {
   withoutHeaderNav: PropTypes.bool,
   isStatic: PropTypes.bool,
   isSingle: PropTypes.bool,
+  isPrint: PropTypes.bool,
   onClose: PropTypes.func,
 };
 

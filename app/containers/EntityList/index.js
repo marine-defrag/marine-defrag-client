@@ -27,6 +27,7 @@ import {
   selectMapSubjectQuery,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
+  selectIsPrintView,
 } from 'containers/App/selectors';
 
 import {
@@ -233,6 +234,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       handleEditSubmit,
       onCreateOption,
       allEntityCount,
+      isPrintView,
     } = this.props;
     // detect print to avoid expensive rendering
     const printing = !!(
@@ -350,10 +352,12 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             includeMembers={includeMembers}
             onSetFilterMemberOption={onSetFilterMemberOption}
             headerActions={headerOptions && headerOptions.actions}
+            isPrintView={isPrintView}
           />
         )}
         {showList && (
           <EntitiesListView
+            isPrintView={isPrintView}
             headerOptions={headerOptions}
             allEntityCount={allEntityCount}
             viewOptions={viewOptions}
@@ -437,6 +441,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onSetIncludeTargetMembers={onSetIncludeTargetMembers}
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
+            isPrintView={isPrintView}
           />
         )}
         {isManager && (progress !== null && progress < 100) && (
@@ -570,6 +575,7 @@ EntityList.propTypes = {
   onSetIncludeTargetMembers: PropTypes.func,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   allEntityCount: PropTypes.number,
 };
 
@@ -591,6 +597,7 @@ const mapStateToProps = (state) => ({
   mapSubject: selectMapSubjectQuery(state),
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
+  isPrintView: selectIsPrintView(state),
 });
 
 function mapDispatchToProps(dispatch, props) {

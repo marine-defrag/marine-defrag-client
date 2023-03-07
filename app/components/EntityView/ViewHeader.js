@@ -11,6 +11,7 @@ import ViewPanelInside from './ViewPanelInside';
 import Main from './Main';
 
 const Styled = styled.div`
+  display: ${({ isPrint }) => isPrint ? 'none' : 'block'};
   @media print {
     padding-top: 40pt;
   }
@@ -41,9 +42,10 @@ function ViewHeader({
   buttons,
   onClose,
   onTypeClick,
+  isPrintView,
 }) {
   return (
-    <Styled>
+    <Styled isPrint={isPrintView}>
       <ViewPanel>
         <ViewPanelInside>
           <Main>
@@ -104,6 +106,7 @@ function ViewHeader({
 
 ViewHeader.propTypes = {
   title: PropTypes.string,
+  isPrintView: PropTypes.bool,
   buttons: PropTypes.oneOfType([
     PropTypes.array,
     PropTypes.bool,

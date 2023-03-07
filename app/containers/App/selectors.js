@@ -452,7 +452,7 @@ export const selectFFOverlay = createSelector(
   (locationQuery) => (locationQuery && locationQuery.get('ff')) || '0'
 );
 
-export const selectPrintQuery = createSelector(
+export const selectIsPrintView = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('print') ? locationQuery.get('print') !== '' : false
 );

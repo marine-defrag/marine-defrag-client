@@ -34,7 +34,7 @@ import SidebarHeader from 'components/styled/SidebarHeader';
 import SidebarGroupLabel from 'components/styled/SidebarGroupLabel';
 import SupTitle from 'components/SupTitle';
 import Component from 'components/styled/Component';
-import Content from 'components/styled/Content';
+import Content from 'components/styled/ContentSimple';
 import EntityListItem from 'components/EntityListItem';
 import PrintHide from 'components/styled/PrintHide';
 

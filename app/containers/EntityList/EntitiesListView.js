@@ -24,7 +24,7 @@ import { CONTENT_LIST } from 'containers/App/constants';
 import { jumpToComponent } from 'utils/scroll-to-component';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
-import Content from 'components/styled/Content';
+import Content from 'components/styled/ContentSimple';
 import BoxPrint from 'components/styled/BoxPrint';
 import PrintHide from 'components/styled/PrintHide';
 import Loading from 'components/Loading';
@@ -35,6 +35,8 @@ import EntityListTable from 'containers/EntityListTable';
 import ButtonPill from 'components/buttons/ButtonPill';
 
 import ContentHeader from 'components/ContentHeader';
+import HeaderPrint from 'components/Header/HeaderPrint';
+
 import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
 
@@ -144,6 +146,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       resourcetypes,
       allEntityCount,
       headerOptions,
+      isPrintView,
     } = this.props;
     const { viewType } = this.state;
     let type;
@@ -209,7 +212,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
         memberOption = {
           active: includeActorMembers,
           onClick: () => {
-            console.log('click', includeActorMembers);
             onSetIncludeActorMembers(includeActorMembers ? '0' : '1');
           },
           label: 'Include activities of intergovernmental organisations (countries belong to)',
@@ -362,10 +364,17 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
     }
 
     return (
-      <ContainerWrapper headerStyle={headerStyle} ref={this.ScrollContainer}>
+      <ContainerWrapper
+        headerStyle={headerStyle}
+        ref={this.ScrollContainer}
+        isPrint={isPrintView}
+      >
+        {isPrintView && (
+          <HeaderPrint />
+        )}
         {dataReady && viewOptions && viewOptions.length > 1 && (
           <PrintHide>
-            <EntityListViewOptions options={viewOptions} />
+            <EntityListViewOptions isPrintView={isPrintView} options={viewOptions} />
           </PrintHide>
         )}
         <Container ref={this.ScrollReference}>
@@ -557,6 +566,15 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
 }
 
 EntitiesListView.propTypes = {
+  hasFilters: PropTypes.bool,
+  isPrintView: PropTypes.bool,
+  showCode: PropTypes.bool,
+  dataReady: PropTypes.bool,
+  isManager: PropTypes.bool,
+  isAnalyst: PropTypes.bool,
+  includeActorMembers: PropTypes.bool,
+  includeTargetMembers: PropTypes.bool,
+  listUpdating: PropTypes.bool,
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
@@ -574,16 +592,8 @@ EntitiesListView.propTypes = {
   headerOptions: PropTypes.object, // single/plural
   intl: intlShape.isRequired,
   // primitive
-  dataReady: PropTypes.bool,
-  isManager: PropTypes.bool,
-  isAnalyst: PropTypes.bool,
-  includeActorMembers: PropTypes.bool,
-  includeTargetMembers: PropTypes.bool,
-  listUpdating: PropTypes.bool,
   headerStyle: PropTypes.string,
-  hasFilters: PropTypes.bool,
   typeId: PropTypes.string,
-  showCode: PropTypes.bool,
   mapSubject: PropTypes.string,
   allEntityCount: PropTypes.number,
   // functions

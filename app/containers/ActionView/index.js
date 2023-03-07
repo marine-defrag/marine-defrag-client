@@ -47,6 +47,7 @@ import {
   selectIsUserManager,
   selectResourceConnections,
   selectTaxonomiesWithCategories,
+  selectIsPrintView,
 } from 'containers/App/selectors';
 
 import {
@@ -102,6 +103,7 @@ export function ActionView(props) {
     handleClose,
     params,
     handleTypeClick,
+    isPrintView,
   } = props;
 
   useEffect(() => {
@@ -184,7 +186,7 @@ export function ActionView(props) {
           { name: 'description', content: intl.formatMessage(messages.metaDescription) },
         ]}
       />
-      <Content isSingle>
+      <Content isSingle isPrint={isPrintView}>
         { !dataReady
           && <Loading />
         }
@@ -196,8 +198,9 @@ export function ActionView(props) {
           )
         }
         { viewEntity && dataReady && (
-          <ViewWrapper>
+          <ViewWrapper isPrint={isPrintView}>
             <ViewHeader
+              isPrintView={isPrintView}
               title={typeId
                 ? intl.formatMessage(appMessages.actiontypes[typeId])
                 : intl.formatMessage(appMessages.entities.actions.plural)
@@ -404,20 +407,21 @@ export function ActionView(props) {
 }
 
 ActionView.propTypes = {
-  viewEntity: PropTypes.object,
-  onLoadData: PropTypes.func,
-  handleTypeClick: PropTypes.func,
   dataReady: PropTypes.bool,
-  handleEdit: PropTypes.func,
-  handleClose: PropTypes.func,
-  onEntityClick: PropTypes.func,
   isManager: PropTypes.bool,
+  isPrintView: PropTypes.bool,
+  viewEntity: PropTypes.object,
   viewTaxonomies: PropTypes.object,
   taxonomies: PropTypes.object,
   resourcesByResourcetype: PropTypes.object,
   resourceConnections: PropTypes.object,
   params: PropTypes.object,
   parent: PropTypes.object,
+  onLoadData: PropTypes.func,
+  handleTypeClick: PropTypes.func,
+  handleEdit: PropTypes.func,
+  handleClose: PropTypes.func,
+  onEntityClick: PropTypes.func,
   intl: intlShape.isRequired,
 };
 
@@ -430,6 +434,7 @@ const mapStateToProps = (state, props) => ({
   resourcesByResourcetype: selectResourcesByType(state, props.params.id),
   resourceConnections: selectResourceConnections(state),
   parent: selectParentAction(state, props.params.id),
+  isPrintView: selectIsPrintView(state),
 });
 
 function mapDispatchToProps(dispatch, props) {

@@ -45,7 +45,9 @@ import { makeActiveEditOptions } from './editOptionsFactory';
 
 import messages from './messages';
 
-const Styled = styled(PrintHide)``;
+const Styled = styled(PrintHide)`
+  display: ${({ isPrint }) => isPrint ? 'none' : 'block'};
+`;
 
 const TheHeader = styled((p) => <Box direction="row" {...p} />)`
   height: ${({ theme }) => theme.sizes.headerList.banner.height}px;
@@ -308,6 +310,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       includeMembers,
       onSetFilterMemberOption,
       headerActions,
+      isPrintView,
     } = this.props;
     const { intl } = this.context;
     const { activeOption } = this.state;
@@ -452,7 +455,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Styled>
+          <Styled isPrint={isPrintView}>
             <TheHeader align="center">
               {config.types && typeOptions && (
                 <HeaderSection noBorder>
@@ -742,6 +745,7 @@ EntityListHeader.propTypes = {
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   includeMembers: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   typeOptions: PropTypes.array,
   onSelectType: PropTypes.func,
   onSetFilterMemberOption: PropTypes.func,

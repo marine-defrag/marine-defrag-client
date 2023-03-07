@@ -14,7 +14,7 @@ import { injectIntl, intlShape } from 'react-intl';
 import {
   loadEntitiesIfNeeded,
   updatePath,
-  setPrintModal,
+  printView,
 } from 'containers/App/actions';
 import {
   selectReady,
@@ -27,12 +27,12 @@ import {
   selectTargettypesForActiontype,
   selectResourcetypesForActiontype,
   selectActiontypeActions,
-  selectPrintQuery,
-  selectMapLoading,
+  // selectIsPrintView,
+  // selectMapLoading,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
-import { PRINT_TYPES } from 'containers/App/constants';
+// import { PRINT_TYPES } from 'containers/App/constants';
 
 import { checkActionAttribute } from 'utils/entities';
 import qe from 'utils/quasi-equals';
@@ -98,23 +98,23 @@ export function ActionList({
   targettypes,
   resourcetypes,
   onSelectType,
-  openPrintModal,
+  onSetPrintView,
   intl,
   handleImport,
   handleNew,
-  isMapLoading,
+  // isMapLoading,
   onLoadEntitiesIfNeeded,
-  isPrintView,
+  // isPrintView,
 }) {
   useEffect(() => {
     if (!dataReady) onLoadEntitiesIfNeeded();
   }, [dataReady]);
 
-  useEffect(() => {
-    if (window.print && isPrintView && dataReady && !isMapLoading) {
-      window.print();
-    }
-  }, [dataReady, isMapLoading]);
+  // useEffect(() => {
+  //   if (window.print && isPrintView && dataReady && !isMapLoading) {
+  //     window.print();
+  //   }
+  // }, [dataReady, isMapLoading]);
 
   const typeId = params.id;
   const type = `actions_${typeId}`;
@@ -140,9 +140,7 @@ export function ActionList({
     headerOptions.actions.push({
       type: 'icon',
       // onClick: () => window.print(),
-      onClick: () => openPrintModal({
-        type: PRINT_TYPES.LIST,
-      }),
+      onClick: () => onSetPrintView(),
       title: 'Print',
       icon: 'print',
     });
@@ -208,13 +206,13 @@ export function ActionList({
 }
 
 ActionList.propTypes = {
-  onLoadEntitiesIfNeeded: PropTypes.func,
-  handleNew: PropTypes.func,
-  handleImport: PropTypes.func,
-  onSelectType: PropTypes.func,
-  openPrintModal: PropTypes.func,
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
+  isAnalyst: PropTypes.bool,
+  location: PropTypes.object,
+  params: PropTypes.object,
+  // isPrintView: PropTypes.bool,
+  // isMapLoading: PropTypes.bool,
   entities: PropTypes.instanceOf(List).isRequired,
   taxonomies: PropTypes.instanceOf(Map),
   connectedTaxonomies: PropTypes.instanceOf(Map),
@@ -224,11 +222,11 @@ ActionList.propTypes = {
   targettypes: PropTypes.instanceOf(Map),
   resourcetypes: PropTypes.instanceOf(Map),
   allEntities: PropTypes.instanceOf(Map),
-  location: PropTypes.object,
-  isAnalyst: PropTypes.bool,
-  isPrintView: PropTypes.bool,
-  isMapLoading: PropTypes.bool,
-  params: PropTypes.object,
+  onLoadEntitiesIfNeeded: PropTypes.func,
+  handleNew: PropTypes.func,
+  handleImport: PropTypes.func,
+  onSelectType: PropTypes.func,
+  onSetPrintView: PropTypes.func,
   intl: intlShape,
 };
 
@@ -249,8 +247,8 @@ const mapStateToProps = (state, props) => ({
   targettypes: selectTargettypesForActiontype(state, { type: props.params.id }),
   resourcetypes: selectResourcetypesForActiontype(state, { type: props.params.id }),
   allEntities: selectActiontypeActions(state, { type: props.params.id }),
-  isPrintView: selectPrintQuery(state),
-  isMapLoading: selectMapLoading(state),
+  // isPrintView: selectIsPrintView(state),
+  // isMapLoading: selectMapLoading(state),
 });
 function mapDispatchToProps(dispatch) {
   return {
@@ -263,8 +261,8 @@ function mapDispatchToProps(dispatch) {
     handleImport: () => {
       dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.IMPORT}`));
     },
-    openPrintModal: (options) => {
-      dispatch(setPrintModal({ options }));
+    onSetPrintView: () => {
+      dispatch(printView());
     },
     onSelectType: (typeId) => {
       dispatch(updatePath(

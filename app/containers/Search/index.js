@@ -30,7 +30,7 @@ import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Loading from 'components/Loading';
 import ContentHeader from 'components/ContentHeader';
 import TagSearch from 'components/TagSearch';
-import Content from 'components/styled/Content';
+import Content from 'components/styled/ContentSimple';
 
 import EntityListItem from 'components/EntityListItem';
 

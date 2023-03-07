@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Content = styled.div`
+const ContentSimple = styled.div`
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
     padding: 0 16px;
   }
@@ -11,4 +11,4 @@ const Content = styled.div`
     padding: 0;
   }
 `;
-export default Content;
+export default ContentSimple;

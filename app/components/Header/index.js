@@ -10,9 +10,6 @@ import { isMinSize } from 'utils/responsive';
 import appMessages from 'containers/App/messages';
 import Icon from 'components/Icon';
 import ScreenReaderOnly from 'components/styled/ScreenReaderOnly';
-import PrintOnly from 'components/styled/PrintOnly';
-import PrintHide from 'components/styled/PrintHide';
-import BoxPrint from 'components/styled/BoxPrint';
 
 import Brand from './Brand';
 import Logo from './Logo';
@@ -37,9 +34,6 @@ const BrandTitle = styled((p) => <Heading level={1} {...p} />)`
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.theme.text.large.size};
     line-height: ${(props) => props.theme.text.large.size};
-  }
-  @media print {
-    font-size: ${(props) => props.theme.sizes.header.print.title};
   }
 `;
 
@@ -71,11 +65,7 @@ const Styled = styled.div`
   box-shadow: ${(props) => props.hasShadow ? '0px 0px 5px 0px rgba(0,0,0,0.5)' : 'none'};
   z-index: 101;
   @media print {
-    display: block;
-    height: ${({ theme }) => theme.sizes.header.banner.height}px;
-    position: static;
-    box-shadow: none;
-    background: white;
+    display: none;
   }
 `;
 
@@ -118,7 +108,7 @@ const Section = styled((p) => <Box {...p} />)`
   }
 `;
 
-const MainMenu = styled((p) => <BoxPrint hidePrint {...p} />)`
+const MainMenu = styled((p) => <Box {...p} />)`
   position: ${({ wide }) => !wide ? 'absolute' : 'static'};
   left: ${({ wide }) => !wide ? 0 : 'auto'};
   right: ${({ wide }) => !wide ? 0 : 'auto'};
@@ -183,7 +173,14 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
 
   render() {
     const {
-      isAuth, navItems, search, isSignedIn, user, currentPath, isAnalyst,
+      isAuth,
+      isPrintView,
+      navItems,
+      search,
+      isSignedIn,
+      user,
+      currentPath,
+      isAnalyst,
     } = this.props;
     const { intl } = this.context;
     const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
@@ -208,12 +205,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                     title={appTitle}
                   >
                     <Box direction="row" align="center">
-                      <PrintHide>
-                        <Logo src={this.props.theme.media.headerLogo} alt={appTitle} />
-                      </PrintHide>
-                      <PrintOnly>
-                        <Logo src={this.props.theme.media.headerLogoPrint} alt={appTitle} />
-                      </PrintOnly>
+                      <Logo src={this.props.theme.media.headerLogo} alt={appTitle} />
                       <Box fill="vertical" pad={{ left: 'small' }} justify="center" gap="xxsmall">
                         <Claim>
                           <FormattedMessage {...appMessages.app.claim} />
@@ -225,185 +217,187 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                     </Box>
                   </Brand>
                 </Box>
-                {!wide && !this.state.showMenu && (
-                  <BoxPrint
-                    hidePrint
-                    flex={{ grow: 1 }}
-                    direction="row"
-                    align="center"
-                    justify="end"
-                    pad={{ right: 'small' }}
-                  >
-                    <ToggleMenu
-                      onClick={this.onShowMenu}
-                    >
-                      <ScreenReaderOnly>
-                        <FormattedMessage {...appMessages.buttons.showSecondaryNavigation} />
-                      </ScreenReaderOnly>
-                      <Icon name="menu" hasStroke size="39px" />
-                    </ToggleMenu>
-                  </BoxPrint>
-                )}
-                {!wide && this.state.showMenu && (
-                  <BoxPrint
-                    hidePrint
-                    flex={{ grow: 1 }}
-                    direction="row"
-                    align="center"
-                    justify="end"
-                    pad={{ right: 'small' }}
-                  >
-                    <ToggleMenu
-                      onClick={this.onHideMenu}
-                    >
-                      <ScreenReaderOnly>
-                        <FormattedMessage {...appMessages.buttons.showSecondaryNavigation} />
-                      </ScreenReaderOnly>
-                      <Icon name="close" size="39px" />
-                    </ToggleMenu>
-                  </BoxPrint>
-                )}
-                {(wide || this.state.showMenu) && (
-                  <MainMenu
-                    flex={{ grow: 1 }}
-                    direction={wide ? 'row' : 'column'}
-                    align={wide ? 'center' : 'end'}
-                    justify={wide ? 'end' : 'center'}
-                    wide={wide}
-                    elevation={wide ? 'none' : 'medium'}
-                  >
-                    {search && (
-                      <Section
-                        fill={wide ? 'vertical' : 'horizontal'}
-                        justify={wide ? 'center' : 'end'}
-                        align={wide ? 'end' : 'center'}
-                        direction={wide ? 'row' : 'column'}
-                        wide={wide}
+                {!isPrintView && (
+                  <>
+                    {!wide && !this.state.showMenu && (
+                      <Box
+                        flex={{ grow: 1 }}
+                        direction="row"
+                        align="center"
+                        justify="end"
+                        pad={{ right: 'small' }}
                       >
-                        <LinkPage
-                          href={search.path}
-                          active={search.active}
-                          onClick={(evt) => this.onClick(evt, search.path)}
-                          title={search.title}
-                          wide={wide}
+                        <ToggleMenu
+                          onClick={this.onShowMenu}
                         >
-                          {search.title}
-                          {search.icon
-                            && <Icon title={search.title} name={search.icon} text textRight size="1em" />
-                          }
-                        </LinkPage>
-                      </Section>
+                          <ScreenReaderOnly>
+                            <FormattedMessage {...appMessages.buttons.showSecondaryNavigation} />
+                          </ScreenReaderOnly>
+                          <Icon name="menu" hasStroke size="39px" />
+                        </ToggleMenu>
+                      </Box>
                     )}
-                    {this.props.pages && this.props.pages.length > 0 && (
-                      <Section
-                        fill={wide ? 'vertical' : 'horizontal'}
-                        justify={wide ? 'center' : 'end'}
-                        align={wide ? 'end' : 'center'}
-                        direction={wide ? 'row' : 'column'}
-                        wide={wide}
+                    {!wide && this.state.showMenu && (
+                      <Box
+                        flex={{ grow: 1 }}
+                        direction="row"
+                        align="center"
+                        justify="end"
+                        pad={{ right: 'small' }}
                       >
-                        {this.props.pages.map((page, i) => (
-                          <LinkPage
-                            key={i}
-                            href={page.path}
-                            active={page.active || this.props.currentPath === page.path}
-                            onClick={(evt) => this.onClick(evt, page.path)}
+                        <ToggleMenu
+                          onClick={this.onHideMenu}
+                        >
+                          <ScreenReaderOnly>
+                            <FormattedMessage {...appMessages.buttons.showSecondaryNavigation} />
+                          </ScreenReaderOnly>
+                          <Icon name="close" size="39px" />
+                        </ToggleMenu>
+                      </Box>
+                    )}
+                    {(wide || this.state.showMenu) && (
+                      <MainMenu
+                        flex={{ grow: 1 }}
+                        direction={wide ? 'row' : 'column'}
+                        align={wide ? 'center' : 'end'}
+                        justify={wide ? 'end' : 'center'}
+                        wide={wide}
+                        elevation={wide ? 'none' : 'medium'}
+                      >
+                        {search && (
+                          <Section
+                            fill={wide ? 'vertical' : 'horizontal'}
+                            justify={wide ? 'center' : 'end'}
+                            align={wide ? 'end' : 'center'}
+                            direction={wide ? 'row' : 'column'}
                             wide={wide}
                           >
-                            {page.title}
-                          </LinkPage>
-                        ))}
-                      </Section>
-                    )}
-                    {navItems && navItems.length > 0 && (
-                      <Section
-                        fill={wide ? 'vertical' : 'horizontal'}
-                        justify={wide ? 'center' : 'end'}
-                        align={wide ? 'end' : 'center'}
-                        direction={wide ? 'row' : 'column'}
-                        wide={wide}
-                      >
-                        {navItems.map((item, i) => (
-                          <LinkPage
-                            key={i}
-                            href={item.path}
-                            active={item.active}
-                            onClick={(evt) => {
-                              evt.stopPropagation();
-                              this.onHideMenu();
-                              this.onClick(evt, item.path);
-                            }}
+                            <LinkPage
+                              href={search.path}
+                              active={search.active}
+                              onClick={(evt) => this.onClick(evt, search.path)}
+                              title={search.title}
+                              wide={wide}
+                            >
+                              {search.title}
+                              {search.icon
+                                && <Icon title={search.title} name={search.icon} text textRight size="1em" />
+                              }
+                            </LinkPage>
+                          </Section>
+                        )}
+                        {this.props.pages && this.props.pages.length > 0 && (
+                          <Section
+                            fill={wide ? 'vertical' : 'horizontal'}
+                            justify={wide ? 'center' : 'end'}
+                            align={wide ? 'end' : 'center'}
+                            direction={wide ? 'row' : 'column'}
                             wide={wide}
                           >
-                            {item.title}
-                          </LinkPage>
-                        ))}
-                      </Section>
+                            {this.props.pages.map((page, i) => (
+                              <LinkPage
+                                key={i}
+                                href={page.path}
+                                active={page.active || this.props.currentPath === page.path}
+                                onClick={(evt) => this.onClick(evt, page.path)}
+                                wide={wide}
+                              >
+                                {page.title}
+                              </LinkPage>
+                            ))}
+                          </Section>
+                        )}
+                        {navItems && navItems.length > 0 && (
+                          <Section
+                            fill={wide ? 'vertical' : 'horizontal'}
+                            justify={wide ? 'center' : 'end'}
+                            align={wide ? 'end' : 'center'}
+                            direction={wide ? 'row' : 'column'}
+                            wide={wide}
+                          >
+                            {navItems.map((item, i) => (
+                              <LinkPage
+                                key={i}
+                                href={item.path}
+                                active={item.active}
+                                onClick={(evt) => {
+                                  evt.stopPropagation();
+                                  this.onHideMenu();
+                                  this.onClick(evt, item.path);
+                                }}
+                                wide={wide}
+                              >
+                                {item.title}
+                              </LinkPage>
+                            ))}
+                          </Section>
+                        )}
+                        <Section
+                          fill={wide ? 'vertical' : 'horizontal'}
+                          justify={wide ? 'center' : 'end'}
+                          align={wide ? 'end' : 'center'}
+                          direction={wide ? 'row' : 'column'}
+                          wide={wide}
+                        >
+                          {isSignedIn && isAnalyst && (
+                            <LinkAccount
+                              href={ROUTES.BOOKMARKS}
+                              active={currentPath === ROUTES.BOOKMARKS}
+                              onClick={(evt) => this.onClick(evt, ROUTES.BOOKMARKS)}
+                              wide={wide}
+                            >
+                              <FormattedMessage {...appMessages.nav.bookmarks} />
+                            </LinkAccount>
+                          )}
+                          {isSignedIn && user && (
+                            <LinkAccount
+                              href={userPath}
+                              active={currentPath === userPath}
+                              onClick={(evt) => this.onClick(evt, userPath)}
+                              wide={wide}
+                            >
+                              Profile
+                            </LinkAccount>
+                          )}
+                          {isSignedIn && !user && wide && (
+                            <LinkAccount wide>
+                              <FormattedMessage {...messages.userLoading} />
+                            </LinkAccount>
+                          )}
+                          {isSignedIn && (
+                            <LinkAccount
+                              href={ROUTES.LOGOUT}
+                              active={currentPath === ROUTES.LOGOUT}
+                              onClick={(evt) => this.onClick(evt, ROUTES.LOGOUT)}
+                              wide={wide}
+                            >
+                              <FormattedMessage {...appMessages.nav.logout} />
+                            </LinkAccount>
+                          )}
+                          {!isSignedIn && (
+                            <LinkAccount
+                              href={ROUTES.REGISTER}
+                              active={currentPath === ROUTES.REGISTER}
+                              onClick={(evt) => this.onClick(evt, ROUTES.REGISTER, currentPath)}
+                              wide={wide}
+                            >
+                              <FormattedMessage {...appMessages.nav.register} />
+                            </LinkAccount>
+                          )}
+                          {!isSignedIn && (
+                            <LinkAccount
+                              href={ROUTES.LOGIN}
+                              active={currentPath === ROUTES.LOGIN}
+                              onClick={(evt) => this.onClick(evt, ROUTES.LOGIN, currentPath)}
+                              wide={wide}
+                            >
+                              <FormattedMessage {...appMessages.nav.login} />
+                            </LinkAccount>
+                          )}
+                        </Section>
+                      </MainMenu>
                     )}
-                    <Section
-                      fill={wide ? 'vertical' : 'horizontal'}
-                      justify={wide ? 'center' : 'end'}
-                      align={wide ? 'end' : 'center'}
-                      direction={wide ? 'row' : 'column'}
-                      wide={wide}
-                    >
-                      {isSignedIn && isAnalyst && (
-                        <LinkAccount
-                          href={ROUTES.BOOKMARKS}
-                          active={currentPath === ROUTES.BOOKMARKS}
-                          onClick={(evt) => this.onClick(evt, ROUTES.BOOKMARKS)}
-                          wide={wide}
-                        >
-                          <FormattedMessage {...appMessages.nav.bookmarks} />
-                        </LinkAccount>
-                      )}
-                      {isSignedIn && user && (
-                        <LinkAccount
-                          href={userPath}
-                          active={currentPath === userPath}
-                          onClick={(evt) => this.onClick(evt, userPath)}
-                          wide={wide}
-                        >
-                          Profile
-                        </LinkAccount>
-                      )}
-                      {isSignedIn && !user && wide && (
-                        <LinkAccount wide>
-                          <FormattedMessage {...messages.userLoading} />
-                        </LinkAccount>
-                      )}
-                      {isSignedIn && (
-                        <LinkAccount
-                          href={ROUTES.LOGOUT}
-                          active={currentPath === ROUTES.LOGOUT}
-                          onClick={(evt) => this.onClick(evt, ROUTES.LOGOUT)}
-                          wide={wide}
-                        >
-                          <FormattedMessage {...appMessages.nav.logout} />
-                        </LinkAccount>
-                      )}
-                      {!isSignedIn && (
-                        <LinkAccount
-                          href={ROUTES.REGISTER}
-                          active={currentPath === ROUTES.REGISTER}
-                          onClick={(evt) => this.onClick(evt, ROUTES.REGISTER, currentPath)}
-                          wide={wide}
-                        >
-                          <FormattedMessage {...appMessages.nav.register} />
-                        </LinkAccount>
-                      )}
-                      {!isSignedIn && (
-                        <LinkAccount
-                          href={ROUTES.LOGIN}
-                          active={currentPath === ROUTES.LOGIN}
-                          onClick={(evt) => this.onClick(evt, ROUTES.LOGIN, currentPath)}
-                          wide={wide}
-                        >
-                          <FormattedMessage {...appMessages.nav.login} />
-                        </LinkAccount>
-                      )}
-                    </Section>
-                  </MainMenu>
+                  </>
                 )}
               </Box>
             </Styled>
@@ -420,15 +414,22 @@ Header.contextTypes = {
 
 Header.propTypes = {
   isSignedIn: PropTypes.bool,
-  user: PropTypes.object,
-  currentPath: PropTypes.string,
-  pages: PropTypes.array,
-  navItems: PropTypes.array,
-  onPageLink: PropTypes.func.isRequired,
+  isPrintView: PropTypes.bool,
   isAuth: PropTypes.bool, // not shown on home page
+  isAnalyst: PropTypes.bool,
+  currentPath: PropTypes.string,
+  navItems: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.bool,
+  ]),
+  pages: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.bool,
+  ]),
+  user: PropTypes.object,
   theme: PropTypes.object.isRequired,
   search: PropTypes.object,
-  isAnalyst: PropTypes.bool,
+  onPageLink: PropTypes.func.isRequired,
 };
 
 export default withTheme(Header);
