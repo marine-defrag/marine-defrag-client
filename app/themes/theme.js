@@ -471,7 +471,8 @@ theme.global = {
     brand: '#183863',
     highlight: '#0070cc',
     highlightHover: '#0063b5',
-    background: '#f1f0f1',
+    background: '#ffffff', // global grommet background
+    backgroundX: '#f1f0f1', // other  background where needed
     backgroundLight: '#fcfcfc',
     inactive: '#f1f0f1', // on light background (empowerment)
     text: {

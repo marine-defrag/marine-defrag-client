@@ -29,10 +29,11 @@ import {
   selectActiontypeActions,
   // selectIsPrintView,
   // selectMapLoading,
+  selectViewQuery,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
-// import { PRINT_TYPES } from 'containers/App/constants';
+import { PRINT_TYPES } from 'containers/App/constants';
 
 import { checkActionAttribute } from 'utils/entities';
 import qe from 'utils/quasi-equals';
@@ -105,6 +106,7 @@ export function ActionList({
   // isMapLoading,
   onLoadEntitiesIfNeeded,
   // isPrintView,
+  view,
 }) {
   useEffect(() => {
     if (!dataReady) onLoadEntitiesIfNeeded();
@@ -118,6 +120,14 @@ export function ActionList({
 
   const typeId = params.id;
   const type = `actions_${typeId}`;
+
+  const showMap = typeId
+    && CONFIG.views
+    && CONFIG.views.map
+    && CONFIG.views.map.types
+    && CONFIG.views.map.types.indexOf(typeId) > -1
+    && view === 'map';
+
   const headerOptions = {
     supTitle: intl.formatMessage(messages.pageTitle),
     actions: [],
@@ -140,7 +150,12 @@ export function ActionList({
     headerOptions.actions.push({
       type: 'icon',
       // onClick: () => window.print(),
-      onClick: () => onSetPrintView(),
+      onClick: () => onSetPrintView({
+        printType: PRINT_TYPES.LIST,
+        // pitems: null,
+        printOrientation: showMap ? 'landscape' : 'portrait',
+        printSize: 'A4',
+      }),
       title: 'Print',
       icon: 'print',
     });
@@ -211,6 +226,7 @@ ActionList.propTypes = {
   isAnalyst: PropTypes.bool,
   location: PropTypes.object,
   params: PropTypes.object,
+  view: PropTypes.string,
   // isPrintView: PropTypes.bool,
   // isMapLoading: PropTypes.bool,
   entities: PropTypes.instanceOf(List).isRequired,
@@ -249,6 +265,7 @@ const mapStateToProps = (state, props) => ({
   allEntities: selectActiontypeActions(state, { type: props.params.id }),
   // isPrintView: selectIsPrintView(state),
   // isMapLoading: selectMapLoading(state),
+  view: selectViewQuery(state),
 });
 function mapDispatchToProps(dispatch) {
   return {
@@ -261,8 +278,8 @@ function mapDispatchToProps(dispatch) {
     handleImport: () => {
       dispatch(updatePath(`${ROUTES.ACTIONS}${ROUTES.IMPORT}`));
     },
-    onSetPrintView: () => {
-      dispatch(printView());
+    onSetPrintView: (config) => {
+      dispatch(printView(config));
     },
     onSelectType: (typeId) => {
       dispatch(updatePath(

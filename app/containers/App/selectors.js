@@ -70,10 +70,6 @@ export const selectNewEntityModal = createSelector(
   getGlobal,
   (globalState) => globalState.get('newEntityModal')
 );
-export const selectPrintModal = createSelector(
-  getGlobal,
-  (globalState) => globalState.get('printModal')
-);
 export const selectMapLoading = createSelector(
   getGlobal,
   (globalState) => globalState.get('mapLoading').size > 0,
@@ -454,7 +450,19 @@ export const selectFFOverlay = createSelector(
 
 export const selectIsPrintView = createSelector(
   selectLocationQuery,
-  (locationQuery) => locationQuery && locationQuery.get('print') ? locationQuery.get('print') !== '' : false
+  (locationQuery) => locationQuery && locationQuery.get('print') ? qe(locationQuery.get('print'), 1) : false
+);
+
+export const selectPrintArgs = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && ({
+    isPrint: locationQuery.get('print') && qe(locationQuery.get('print'), 1),
+    pages: locationQuery.get('pitems'),
+    printTabs: locationQuery.get('ptabs'),
+    printType: locationQuery.get('ptype'),
+    printSize: locationQuery.get('psize'),
+    printOrientation: locationQuery.get('porient'),
+  })
 );
 
 // database ////////////////////////////////////////////////////////////////////////

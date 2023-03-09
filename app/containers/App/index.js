@@ -14,7 +14,7 @@ import GlobalStyle from 'global-styles';
 import styled from 'styled-components';
 import Header from 'components/Header';
 import EntityNew from 'containers/EntityNew';
-import PrintModal from 'containers/PrintModal';
+import PrintUI from 'containers/PrintUI';
 
 import { sortEntities } from 'utils/sort';
 import { ROUTES, API } from 'themes/config';
@@ -28,7 +28,7 @@ import {
   selectEntitiesWhere,
   selectNewEntityModal,
   selectIsPrintView,
-  selectPrintModal,
+  selectPrintArgs,
 } from './selectors';
 
 import {
@@ -36,7 +36,6 @@ import {
   loadEntitiesIfNeeded,
   updatePath,
   openNewEntityModal,
-  setPrintModal,
 } from './actions';
 
 import { DEPENDENCIES } from './constants';
@@ -74,12 +73,9 @@ const Main = styled.div`
   }
 `;
 // A4 595 × 842
-// box-shadow: ${({ isPrint }) => isPrint ? '0px 0px 5px 0px rgb(0 0 0 / 50%)' : 'none'};
+// A3 842 x 1190
 const PrintWrapper = styled.div`
-  position: ${({ isPrint }) => isPrint ? 'absolute' : 'absolute'};
-  top: ${({ isPrint }) => isPrint ? 200 : 0}px;
-  left: 0;
-  right: 0;
+  position: static;
   padding-bottom: ${({ isPrint }) => isPrint ? 40 : 0}px;
   margin-right: ${({ isPrint }) => isPrint ? 40 : 0}px;
   margin-left: ${({ isPrint }) => isPrint ? 40 : 0}px;
@@ -92,33 +88,49 @@ const PrintWrapper = styled.div`
     }
     return '0px';
   }};
-  width: ${({ isPrint, orientation = 'portrait', format = 'a4' }) => {
+  width: ${({ isPrint, orient = 'portrait', size = 'A4' }) => {
     if (isPrint) {
-      if (orientation === 'portrait' && format === 'a4') {
+      if (orient === 'portrait' && size === 'A4') {
         return '520pt';
       }
-      if (orientation === 'landscape' && format === 'a4') {
+      if (
+        (orient === 'landscape' && size === 'A4')
+        || (orient === 'portrait' && size === 'A3')
+      ) {
         return '820pt';
+      }
+      if (orient === 'landscape' && size === 'A3') {
+        return '1190pt';
       }
     }
     return 'auto';
   }};
   height: ${({
     isPrint,
-    orientation = 'portrait',
-    format = 'a4',
+    orient = 'portrait',
+    size = 'A4',
     fixed = false,
   }) => {
     if (fixed && isPrint) {
-      if (orientation === 'portrait' && format === 'a4') {
+      if (orient === 'portrait' && size === 'A4') {
         return '820pt';
       }
-      if (orientation === 'landscape' && format === 'a4') {
+      if (orient === 'landscape' && size === 'A4') {
         return '520pt';
+      }
+      if (orient === 'portrait' && size === 'A3') {
+        return '1190pt';
+      }
+      if (orient === 'landscape' && size === 'A3') {
+        return '820pt';
       }
     }
     return 'auto';
   }};
+  @media print {
+    padding: 0;
+    margin: 0;
+  }
 `;
 
 // overflow: ${(props) => props.isHome ? 'auto' : 'hidden'};
@@ -204,8 +216,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       children,
       isPrintView,
       onCloseModal,
-      onClosePrintModal,
-      printModal,
+      printArgs,
     } = this.props;
     const { intl } = this.context;
     const title = intl.formatMessage(messages.app.title);
@@ -245,7 +256,12 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           />
         )}
         <Main isHome={isHomeOrAuth} isPrint={isPrintView}>
-          <PrintWrapper isPrint={isPrintView} orientation="landscape">
+          {isPrintView && (<PrintUI />)}
+          <PrintWrapper
+            isPrint={isPrintView}
+            orient={printArgs.printOrientation}
+            size={printArgs.printSize}
+          >
             {React.Children.toArray(children)}
           </PrintWrapper>
         </Main>
@@ -270,25 +286,6 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             />
           </ReactModal>
         )}
-        {printModal && (
-          <ReactModal
-            isOpen
-            contentLabel="Print"
-            onRequestClose={onClosePrintModal}
-            className="print-modal"
-            overlayClassName="print-modal-overlay"
-            style={{
-              overlay: { zIndex: 99999999 },
-            }}
-            appElement={document.getElementById('app')}
-          >
-            <PrintModal
-              args={printModal}
-              location={location}
-              close={onClosePrintModal}
-            />
-          </ReactModal>
-        )}
         <GlobalStyle />
       </div>
     );
@@ -308,9 +305,8 @@ App.propTypes = {
   onPageLink: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
   newEntityModal: PropTypes.object,
+  printArgs: PropTypes.object,
   onCloseModal: PropTypes.func,
-  printModal: PropTypes.object,
-  onClosePrintModal: PropTypes.func,
 };
 App.contextTypes = {
   intl: PropTypes.object.isRequired,
@@ -327,8 +323,8 @@ const mapStateToProps = (state) => ({
     path: API.PAGES,
     where: { draft: false },
   }),
+  printArgs: selectPrintArgs(state),
   newEntityModal: selectNewEntityModal(state),
-  printModal: selectPrintModal(state),
 });
 
 export function mapDispatchToProps(dispatch) {
@@ -344,9 +340,6 @@ export function mapDispatchToProps(dispatch) {
     },
     onCloseModal: () => {
       dispatch(openNewEntityModal(null));
-    },
-    onClosePrintModal: () => {
-      dispatch(setPrintModal(null));
     },
   };
 }

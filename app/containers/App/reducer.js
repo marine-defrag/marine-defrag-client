@@ -33,7 +33,6 @@ import {
   ENTITIES_REQUESTED,
   INVALIDATE_ENTITIES,
   OPEN_NEW_ENTITY_MODAL,
-  SET_PRINT_MODAL,
   SET_MAP_LOADING,
   SET_MAP_LOADED,
 } from './constants';
@@ -60,7 +59,6 @@ const initialState = fromJS({
     isSignedIn: isSignedIn(),
   },
   newEntityModal: null,
-  printModal: null,
   mapLoading: {},
 });
 
@@ -155,11 +153,6 @@ function appReducer(state = initialState, payload) {
       return state.setIn(['mapLoading', payload.mapId], true);
     case SET_MAP_LOADED:
       return state.deleteIn(['mapLoading', payload.mapId]);
-    case SET_PRINT_MODAL:
-      return state.set(
-        'printModal',
-        payload.args ? fromJS(payload.args) : payload.args,
-      );
     default:
       return state;
   }

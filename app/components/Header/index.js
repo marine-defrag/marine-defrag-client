@@ -10,6 +10,9 @@ import { isMinSize } from 'utils/responsive';
 import appMessages from 'containers/App/messages';
 import Icon from 'components/Icon';
 import ScreenReaderOnly from 'components/styled/ScreenReaderOnly';
+import PrintOnly from 'components/styled/PrintOnly';
+import PrintHide from 'components/styled/PrintHide';
+import BoxPrint from 'components/styled/BoxPrint';
 
 import Brand from './Brand';
 import Logo from './Logo';
@@ -34,6 +37,9 @@ const BrandTitle = styled((p) => <Heading level={1} {...p} />)`
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.theme.text.large.size};
     line-height: ${(props) => props.theme.text.large.size};
+  }
+  @media print {
+    font-size: ${(props) => props.theme.sizes.header.print.title};
   }
 `;
 
@@ -61,11 +67,15 @@ const Styled = styled.div`
     return 0;
   }}px;
   }
-  background-color: #183863;
+  background-color: ${({ isPrint }) => isPrint ? '#333333' : '#183863'};
   box-shadow: ${(props) => props.hasShadow ? '0px 0px 5px 0px rgba(0,0,0,0.5)' : 'none'};
   z-index: 101;
   @media print {
-    display: none;
+    display: ${({ isPrint }) => isPrint ? 'none' : 'block'};
+    height: ${({ theme }) => theme.sizes.header.banner.height}px;
+    position: static;
+    box-shadow: none;
+    background: white;
   }
 `;
 
@@ -108,7 +118,7 @@ const Section = styled((p) => <Box {...p} />)`
   }
 `;
 
-const MainMenu = styled((p) => <Box {...p} />)`
+const MainMenu = styled((p) => <BoxPrint hidePrint {...p} />)`
   position: ${({ wide }) => !wide ? 'absolute' : 'static'};
   left: ${({ wide }) => !wide ? 0 : 'auto'};
   right: ${({ wide }) => !wide ? 0 : 'auto'};
@@ -196,6 +206,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
               hasShadow={!isAuth}
               hasNav={!isAuth}
               hasBrand
+              isPrint={isPrintView}
             >
               <Box direction="row" fill>
                 <Box>
@@ -205,7 +216,12 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                     title={appTitle}
                   >
                     <Box direction="row" align="center">
-                      <Logo src={this.props.theme.media.headerLogo} alt={appTitle} />
+                      <PrintHide>
+                        <Logo src={this.props.theme.media.headerLogo} alt={appTitle} />
+                      </PrintHide>
+                      <PrintOnly>
+                        <Logo src={this.props.theme.media.headerLogoPrint} alt={appTitle} />
+                      </PrintOnly>
                       <Box fill="vertical" pad={{ left: 'small' }} justify="center" gap="xxsmall">
                         <Claim>
                           <FormattedMessage {...appMessages.app.claim} />
@@ -220,7 +236,8 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                 {!isPrintView && (
                   <>
                     {!wide && !this.state.showMenu && (
-                      <Box
+                      <BoxPrint
+                        hidePrint
                         flex={{ grow: 1 }}
                         direction="row"
                         align="center"
@@ -235,10 +252,11 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                           </ScreenReaderOnly>
                           <Icon name="menu" hasStroke size="39px" />
                         </ToggleMenu>
-                      </Box>
+                      </BoxPrint>
                     )}
                     {!wide && this.state.showMenu && (
-                      <Box
+                      <BoxPrint
+                        hidePrint
                         flex={{ grow: 1 }}
                         direction="row"
                         align="center"
@@ -253,7 +271,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                           </ScreenReaderOnly>
                           <Icon name="close" size="39px" />
                         </ToggleMenu>
-                      </Box>
+                      </BoxPrint>
                     )}
                     {(wide || this.state.showMenu) && (
                       <MainMenu

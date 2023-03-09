@@ -49,6 +49,7 @@ import {
   SET_INCLUDE_MEMBERS_FORFILTERS,
   SET_FF_OVERLAY,
   PRINT_VIEW,
+  CLOSE_PRINT_VIEW,
 } from 'containers/App/constants';
 
 import {
@@ -845,7 +846,7 @@ export function* printViewSaga({ config }) {
   if (config.pages) {
     queryArgs = [
       {
-        arg: 'items',
+        arg: 'pitems',
         value: config.pages,
         replace: true,
       },
@@ -857,6 +858,16 @@ export function* printViewSaga({ config }) {
       {
         arg: 'ptabs',
         value: config.printTabs,
+        replace: true,
+      },
+      ...queryArgs,
+    ];
+  }
+  if (config.printType) {
+    queryArgs = [
+      {
+        arg: 'ptype',
+        value: config.printType,
         replace: true,
       },
       ...queryArgs,
@@ -894,8 +905,24 @@ export function* printViewSaga({ config }) {
     true, // extend
     location,
   );
-  const url = `${location.get('pathname')}?${getNextQueryString(queryNext)}`;
-  window.open(url, '_blank').focus();
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
+export function* closePrintViewSaga() {
+  const location = yield select(selectLocation);
+  const queryArgs = [
+    { arg: 'pitems', remove: true },
+    { arg: 'ptype', remove: true },
+    { arg: 'ptabs', remove: true },
+    { arg: 'psize', remove: true },
+    { arg: 'porient', remove: true },
+    { arg: 'print', remove: true },
+  ];
+  const queryNext = getNextQuery(
+    queryArgs,
+    true, // extend
+    location,
+  );
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
 
 export function* openBookmarkSaga({ bookmark }) {
@@ -1004,6 +1031,7 @@ export default function* rootSaga() {
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);
   yield takeEvery(DISMISS_QUERY_MESSAGES, dismissQueryMessagesSaga);
   yield takeEvery(PRINT_VIEW, printViewSaga);
+  yield takeEvery(CLOSE_PRINT_VIEW, closePrintViewSaga);
 
   yield takeEvery(CLOSE_ENTITY, closeEntitySaga);
 }
