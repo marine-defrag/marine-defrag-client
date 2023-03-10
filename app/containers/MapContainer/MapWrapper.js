@@ -15,9 +15,7 @@ import { MAP_OPTIONS } from 'themes/config';
 
 import qe from 'utils/quasi-equals';
 
-
 import Tooltip from './Tooltip';
-import TooltipContent from './TooltipContent';
 import { scaleColorCount, getCircleLayer } from './utils';
 
 const Styled = styled.div`
@@ -95,7 +93,69 @@ const getBBox = (bounds, xLat = 0.5, xLon = 180) => {
   });
 };
 
-const TOOLTIP_INITIAL = { features: [] };
+const getTooltipFeatures = (mapTooltips, countryData, locationData) => {
+  // console.log(countryData, locationData)
+  if (countryData && locationData) {
+    // add country Data
+    return mapTooltips.reduce(
+      (memo, fid) => {
+        let content;
+        const countryF = countryData.find((fcd) => qe(fcd.id, fid));
+        const locF = locationData.find((fcd) => qe(fcd.id, fid));
+        const feature = locF || countryF;
+        if (feature) {
+          if (countryF && locF) {
+            content = [
+              countryF.tooltip.stats
+                ? {
+                  stats: countryF.tooltip.stats,
+                  isCount: countryF.tooltip.isCount,
+                }
+                : countryF.tooltip.content,
+              locF.tooltip.stats
+                ? {
+                  stats: locF.tooltip.stats,
+                  isCount: locF.tooltip.isCount,
+                }
+                : locF.tooltip.content,
+            ];
+          } else if (countryF) {
+            content = [
+              countryF.tooltip.stats
+                ? {
+                  stats: countryF.tooltip.stats,
+                  isCount: countryF.tooltip.isCount,
+                }
+                : countryF.tooltip.content,
+            ];
+          } else if (locF) {
+            content = [
+              locF.tooltip.stats
+                ? {
+                  stats: locF.tooltip.stats,
+                  isCount: locF.tooltip.isCount,
+                }
+                : locF.tooltip.content,
+            ];
+          }
+          return [
+            ...memo,
+            {
+              ...feature,
+              tooltip: {
+                ...feature.tooltip,
+                content,
+              },
+            },
+          ];
+        }
+        return memo;
+      },
+      [],
+    );
+  }
+  return mapTooltips;
+};
 
 export function MapWrapper({
   countryFeatures,
@@ -118,6 +178,8 @@ export function MapWrapper({
   hasInfo,
   setMapLoaded,
   isPrintView,
+  mapTooltips,
+  setMapTooltips,
 }) {
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
@@ -162,7 +224,8 @@ export function MapWrapper({
       worldCopyJump: false,
       attributionControl: false,
     };
-  const [tooltip, setTooltip] = useState(TOOLTIP_INITIAL);
+  // const [tooltip, setTooltip] = useState(TOOLTIP_INITIAL);
+  const [refHeight, setRefHeight] = useState(null);
   const [featureOver, setFeatureOver] = useState(null);
   const ref = useRef(null);
   const mapRef = useRef(null);
@@ -178,7 +241,7 @@ export function MapWrapper({
     // },
     click: () => {
       // console.log('mapClick')
-      setTooltip(TOOLTIP_INITIAL);
+      setMapTooltips();
     },
     // mouseover: (a, b, c) => {
     //   console.log('mouseOver', a, b, c)
@@ -203,80 +266,25 @@ export function MapWrapper({
     //   // setTooltip(null)
     // },
   };
-  const onFeatureClick = (e) => {
+  const onFeatureClickTT = (e) => {
     const { feature } = e.sourceTarget;
     if (e && L.DomEvent) L.DomEvent.stopPropagation(e);
     if (e && e.containerPoint && feature && feature.tooltip) {
-      const activeTT = tooltip.features.reduce(
-        (active, f) => f.id === feature.id || active,
-        false,
-      );
-      let newFeatures;
-      // remove
+      const featureId = feature.id.toString();
+      const activeTT = mapTooltips.indexOf(featureId) > -1;
+      let ttNew = [];
       if (activeTT) {
-        newFeatures = tooltip.features.reduce(
-          (memo, f) => f.id === feature.id ? memo : [...memo, f],
+        ttNew = mapTooltips.reduce(
+          (memo, fid) => fid === featureId ? memo : [...memo, fid],
           [],
         );
       } else {
-        // const newFeature = feature;
-        let content;
-        if (countryData && locationData) {
-          // add country Data
-          const countryF = countryData.find((fcd) => qe(fcd.id, feature.id));
-          if (countryF && feature.tooltip.isLocationData) {
-            content = [
-              countryF.tooltip.stats
-                ? <TooltipContent stats={countryF.tooltip.stats} isCount={countryF.tooltip.isCount} />
-                : countryF.tooltip.content,
-              feature.tooltip.stats
-                ? <TooltipContent stats={feature.tooltip.stats} isCount={feature.tooltip.isCount} />
-                : feature.tooltip.content,
-            ];
-          } else if (feature.tooltip.isCountryData) {
-            const locF = locationData.find((fcd) => qe(fcd.id, feature.id));
-            if (locF) {
-              content = [
-                countryF.tooltip.stats
-                  ? <TooltipContent stats={countryF.tooltip.stats} isCount={countryF.tooltip.isCount} />
-                  : feature.tooltip.content,
-                locF.tooltip.stats
-                  ? <TooltipContent stats={locF.tooltip.stats} isCount={locF.tooltip.isCount} />
-                  : locF.tooltip.content,
-              ];
-            }
-          }
-          if (!content) {
-            content = [
-              feature.tooltip.stats
-                ? <TooltipContent stats={feature.tooltip.stats} isCount={feature.tooltip.isCount} />
-                : feature.tooltip.content,
-            ];
-          }
-        } else {
-          content = [
-            feature.tooltip.stats
-              ? <TooltipContent stats={feature.tooltip.stats} isCount={feature.tooltip.isCount} />
-              : feature.tooltip.content,
-          ];
-        }
-        const newFeature = {
-          ...feature,
-          tooltip: {
-            ...feature.tooltip,
-            content,
-          },
-        };
-        newFeatures = [
-          newFeature,
-          ...tooltip.features,
+        ttNew = [
+          featureId,
+          ...mapTooltips,
         ];
       }
-      setTooltip({
-        anchor: e.containerPoint,
-        direction: { x: 'left', y: 'top' },
-        features: newFeatures,
-      });
+      setMapTooltips(ttNew);
     }
   };
   const onFeatureOver = (e, feature) => {
@@ -322,6 +330,9 @@ export function MapWrapper({
   //     document.removeEventListener('mousedown', handleClickOutside);
   //   };
   // }, [ref]);
+  useEffect(() => {
+    setRefHeight(ref && ref.current ? ref.current.clientHeight : 300);
+  }, [ref]);
   useEffect(() => {
     mapRef.current = L.map(mapId, leafletOptions).on(mapEvents);
     // create an orange rectangle
@@ -424,12 +435,12 @@ export function MapWrapper({
           },
         },
       ).on({
-        click: (e) => onFeatureClick(e),
+        click: (e) => onFeatureClickTT(e),
         mouseout: () => onFeatureOver(),
       });
       countryOverlayGroupRef.current.addLayer(jsonLayer);
     }
-  }, [countryData, indicator, tooltip, mapSubject]);
+  }, [countryData, indicator, mapTooltips, mapSubject]);
   // useEffect(() => {
   //   if (countryData && countryData.length > 0) {
   //     console.log('countryData x')
@@ -519,23 +530,24 @@ export function MapWrapper({
         features: locationData,
         config: circleLayerConfig,
         markerEvents: {
-          click: (e) => onFeatureClick(e),
+          click: (e) => onFeatureClickTT(e),
           mouseout: () => onFeatureOver(),
         },
       });
       layer.addLayer(jsonLayer);
       locationOverlayGroupRef.current.addLayer(layer);
     }
-  }, [locationData, indicator, tooltip, mapSubject, circleLayerConfig]);
+    // TODO
+  }, [locationData, indicator, mapTooltips, mapSubject, circleLayerConfig]);
 
   // highlight tooltip feature
   useEffect(() => {
     countryTooltipGroupRef.current.clearLayers();
-    if (countryData && tooltip && tooltip.features && tooltip.features.length > 0) {
-      tooltip.features.forEach(
-        (ttFeature) => {
+    if (countryData && mapTooltips && mapTooltips && mapTooltips.length > 0) {
+      mapTooltips.forEach(
+        (fid) => {
           const jsonLayer = L.geoJSON(
-            countryData.filter((f) => qe(f.id, ttFeature.id)),
+            countryData.filter((f) => qe(f.id, fid)),
             { style: mapOptions.TOOLTIP_STYLE },
           );
           countryTooltipGroupRef.current.addLayer(jsonLayer);
@@ -546,11 +558,11 @@ export function MapWrapper({
       const layerGroup = locationOverlayGroupRef.current.getLayers()[0];
       const layer = layerGroup && layerGroup.getLayers()[0];
       if (layer) {
-        if (tooltip && tooltip.features && tooltip.features.length > 0) {
-          const tooltipFeatureIds = tooltip.features.map((f) => f.id);
+        // TODO
+        if (mapTooltips && mapTooltips.length > 0) {
           if (layer && layer.getLayers()) {
             layer.getLayers().filter(
-              (f) => tooltipFeatureIds.indexOf(f.feature.id) > -1
+              (f) => mapTooltips.indexOf(f.feature.id) > -1
             ).forEach(
               (f) => {
                 f.bringToFront();
@@ -565,7 +577,7 @@ export function MapWrapper({
         }
       }
     }
-  }, [tooltip, mapSubject, includeSecondaryMembers]);
+  }, [mapTooltips, mapSubject, includeSecondaryMembers]);
 
   useEffect(() => {
     countryOverGroupRef.current.clearLayers();
@@ -579,25 +591,35 @@ export function MapWrapper({
       countryOverGroupRef.current.addLayer(jsonLayer);
     }
   }, [featureOver]);
-  // update tooltip
-  useEffect(() => {
-    if (tooltip && countryData) {
-      if (tooltip.features && tooltip.features.length > 0) {
-        setTooltip({
-          features: tooltip.features.map(
-            (f) => countryData.find((c) => qe(c.id, f.id))
-          ).filter(
-            (f) => !!f
-          ),
-        });
-      } else {
-        setTooltip(TOOLTIP_INITIAL);
-      }
-    } else {
-      setTooltip(TOOLTIP_INITIAL);
-    }
-  }, [mapSubject, countryData]);
-
+  // // update tooltip
+  // useEffect(() => {
+  //   if (tooltip && countryData) {
+  //     if (tooltip.features && tooltip.features.length > 0) {
+  //       setTooltip({
+  //         features: tooltip.features.map(
+  //           (f) => countryData.find((c) => qe(c.id, f.id))
+  //         ).filter(
+  //           (f) => !!f
+  //         ),
+  //       });
+  //     } else {
+  //       setTooltip(TOOLTIP_INITIAL);
+  //     }
+  //   } else {
+  //     setTooltip(TOOLTIP_INITIAL);
+  //   }
+  // }, [mapSubject, countryData]);
+  let tooltip;
+  if (mapTooltips) {
+    tooltip = {
+      direction: { x: 'left', y: 'top' },
+      features: getTooltipFeatures(
+        mapTooltips,
+        countryData,
+        locationData,
+      ),
+    };
+  }
   return (
     <Styled hasInfo={hasInfo} isPrint={isPrintView}>
       <Map id={mapId} ref={ref} styleType={styleType} />
@@ -605,18 +627,17 @@ export function MapWrapper({
         <Tooltip
           isPrintView={isPrintView}
           isLocationData={isLocationData}
-          mapRef={ref}
+          h={refHeight}
           position={null}
           direction={tooltip.direction}
           features={tooltip.features && tooltip.features.map((f) => f && f.tooltip)}
           onFeatureClick={onActorClick ? (id) => onActorClick(id) : null}
-          onClose={(id) => setTooltip({
-            ...tooltip,
-            features: tooltip.features.reduce(
-              (memo, f) => f.id === id ? memo : [...memo, f],
+          onClose={(id) => setMapTooltips(
+            mapTooltips.reduce(
+              (memo, fid) => qe(fid, id) ? memo : [...memo, fid],
               [],
-            ),
-          })}
+            )
+          )}
         />
       )}
     </Styled>
@@ -644,6 +665,8 @@ MapWrapper.propTypes = {
   isPrintView: PropTypes.bool,
   circleLayerConfig: PropTypes.object,
   setMapLoaded: PropTypes.func,
+  mapTooltips: PropTypes.array,
+  setMapTooltips: PropTypes.func,
   // onSetMapSubject: PropTypes.func,
 };
 

@@ -76,6 +76,7 @@ import {
   SET_FF_OVERLAY,
   PRINT_VIEW,
   CLOSE_PRINT_VIEW,
+  SET_MAP_TOOLTIPS,
 } from './constants';
 
 export function submitInvalid(valid) {
@@ -548,5 +549,11 @@ export function printView(config) {
 export function closePrintView() {
   return {
     type: CLOSE_PRINT_VIEW,
+  };
+}
+export function setMapTooltips(values) {
+  return {
+    type: SET_MAP_TOOLTIPS,
+    values,
   };
 }

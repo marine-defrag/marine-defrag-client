@@ -50,6 +50,7 @@ import {
   SET_FF_OVERLAY,
   PRINT_VIEW,
   CLOSE_PRINT_VIEW,
+  SET_MAP_TOOLTIPS,
 } from 'containers/App/constants';
 
 import {
@@ -840,6 +841,36 @@ export function* setFFOverlaySaga({ value }) {
   );
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
+export function* setMapTooltipsSaga({ values }) {
+  const location = yield select(selectLocation);
+  let queryNext = [];
+  let value;
+  if (Array.isArray(values)) {
+    value = values.join(';');
+  }
+  if (typeof values === 'string') {
+    value = values;
+  }
+  if (value) {
+    queryNext = getNextQuery(
+      [{
+        arg: 'mtt',
+        value,
+        replace: true,
+      }],
+      true, // extend
+      location,
+    );
+  } else {
+    queryNext = getNextQuery(
+      [{ arg: 'mtt', remove: true }],
+      true, // extend
+      location,
+    );
+  }
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
+
 export function* printViewSaga({ config }) {
   const location = yield select(selectLocation);
   let queryArgs = [];
@@ -1033,6 +1064,7 @@ export default function* rootSaga() {
   yield takeEvery(SET_VIEW, setViewSaga);
   yield takeEvery(SET_SUBJECT, setSubjectSaga);
   yield takeEvery(SET_MAP_SUBJECT, setMapSubjectSaga);
+  yield takeEvery(SET_MAP_TOOLTIPS, setMapTooltipsSaga);
   yield takeEvery(SET_INCLUDE_ACTOR_MEMBERS, setIncludeActorMembersSaga);
   yield takeEvery(SET_INCLUDE_TARGET_MEMBERS, setIncludeTargetMembersSaga);
   yield takeEvery(SET_INCLUDE_ACTOR_CHILDREN, setIncludeActorChildrenSaga);

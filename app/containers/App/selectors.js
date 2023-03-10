@@ -465,6 +465,13 @@ export const selectPrintArgs = createSelector(
     fixed: locationQuery.get('pfixed'),
   })
 );
+export const selectMapTooltips = createSelector(
+  selectLocationQuery,
+  (locationQuery) => (locationQuery && locationQuery.get('mtt'))
+    ? locationQuery.get('mtt').split(';')
+    : []
+);
+
 
 // database ////////////////////////////////////////////////////////////////////////
 

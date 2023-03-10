@@ -13,7 +13,8 @@ import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
-import { setMapLoaded } from 'containers/App/actions';
+import { setMapLoaded, setMapTooltips } from 'containers/App/actions';
+import { selectMapTooltips } from 'containers/App/selectors';
 // import appMessages from 'containers/App/messages';
 // import { hasGroupActors } from 'utils/entities';
 import MapWrapper from './MapWrapper';
@@ -48,6 +49,8 @@ export function MapContainer({
   fullMap,
   onSetMapLoaded,
   isPrintView,
+  mapTooltips,
+  onSetMapTooltips,
   // intl,
 }) {
   const {
@@ -176,6 +179,8 @@ export function MapContainer({
           }}
           hasInfo={mapInfo && mapInfo.length > 0}
           setMapLoaded={onSetMapLoaded}
+          mapTooltips={mapTooltips}
+          setMapTooltips={onSetMapTooltips}
         />
       </MapInnerWrapper>
       {mapInfo && mapInfo.length > 0 && (
@@ -228,20 +233,29 @@ MapContainer.propTypes = {
   reducePoints: PropTypes.func,
   reduceCountryAreas: PropTypes.func,
   onSetMapLoaded: PropTypes.func,
+  onSetMapTooltips: PropTypes.func,
   mapData: PropTypes.object,
   mapKey: PropTypes.object,
   mapInfo: PropTypes.array,
   mapOptions: PropTypes.array,
+  mapTooltips: PropTypes.array,
   fullMap: PropTypes.bool,
   isPrintView: PropTypes.bool,
 };
+
+const mapStateToProps = (state) => ({
+  mapTooltips: selectMapTooltips(state),
+});
 
 function mapDispatchToProps(dispatch) {
   return {
     onSetMapLoaded: (mapId) => {
       dispatch(setMapLoaded(mapId));
     },
+    onSetMapTooltips: (items) => {
+      dispatch(setMapTooltips(items));
+    },
   };
 }
 
-export default connect(null, mapDispatchToProps)(MapContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(MapContainer);

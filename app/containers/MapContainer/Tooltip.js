@@ -8,6 +8,7 @@ import { ROUTES } from 'themes/config';
 import PrintHide from 'components/styled/PrintHide';
 
 import asArray from 'utils/as-array';
+import TooltipContent from './TooltipContent';
 
 const Root = styled.div`
   position: absolute;
@@ -109,16 +110,16 @@ const Tooltip = ({
   direction,
   features,
   onClose,
-  mapRef,
   onFeatureClick,
   isLocationData,
   isPrintView,
+  h,
 }) => (
   <Root position={position} isPrint={isPrintView}>
     <Anchor dirLeft={direction && direction.x === 'left'} xy={{ x: 0, y: 0 }}>
       <Main
         dirLeft={direction && direction.x === 'left'}
-        h={mapRef && mapRef.current ? mapRef.current.clientHeight : 300}
+        h={h}
       >
         <Box gap="xsmall">
           {features.map((feature, i) => (
@@ -151,7 +152,13 @@ const Tooltip = ({
               {feature.content && (
                 <Box>
                   {asArray(feature.content).map(
-                    (c, j) => <TTContentWrap key={j}>{c}</TTContentWrap>
+                    (c, j) => (
+                      <TTContentWrap key={j}>
+                        {(c.stats || c.isCount) && (
+                          <TooltipContent stats={c.stats} isCount={c.isCount} />
+                        )}
+                      </TTContentWrap>
+                    )
                   )}
                 </Box>
               )}
@@ -187,7 +194,7 @@ Tooltip.propTypes = {
   isPrintView: PropTypes.bool,
   position: PropTypes.object,
   direction: PropTypes.object, // x, y
-  mapRef: PropTypes.object,
+  h: PropTypes.number,
   features: PropTypes.array,
   onClose: PropTypes.func,
   onFeatureClick: PropTypes.func,
