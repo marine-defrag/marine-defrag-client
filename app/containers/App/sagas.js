@@ -853,6 +853,16 @@ export function* printViewSaga({ config }) {
       ...queryArgs,
     ];
   }
+  if (config.fixed) {
+    queryArgs = [
+      {
+        arg: 'pfixed',
+        value: config.fixed,
+        replace: true,
+      },
+      ...queryArgs,
+    ];
+  }
   if (config.printTabs) {
     queryArgs = [
       {
@@ -873,16 +883,16 @@ export function* printViewSaga({ config }) {
       ...queryArgs,
     ];
   }
-  if (config.printSize) {
-    queryArgs = [
-      {
-        arg: 'psize',
-        value: config.printSize,
-        replace: true,
-      },
-      ...queryArgs,
-    ];
-  }
+  // if (config.printSize) {
+  //   queryArgs = [
+  //     {
+  //       arg: 'psize',
+  //       value: config.printSize,
+  //       replace: true,
+  //     },
+  //     ...queryArgs,
+  //   ];
+  // }
   if (config.printOrientation) {
     queryArgs = [
       {
@@ -911,6 +921,7 @@ export function* closePrintViewSaga() {
   const location = yield select(selectLocation);
   const queryArgs = [
     { arg: 'pitems', remove: true },
+    { arg: 'pfixed', remove: true },
     { arg: 'ptype', remove: true },
     { arg: 'ptabs', remove: true },
     { arg: 'psize', remove: true },

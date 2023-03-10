@@ -48,7 +48,7 @@ const StyledForm = styled.form`
   position: relative;
   display: table;
   width: 100%;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   @media print {
     display: none;
   }
@@ -59,6 +59,34 @@ const StyledGroupLabel = styled(GroupLabel)`
     font-size: ${(props) => props.theme.sizes.print.large};
   }
 `;
+
+// <Field>
+//   <FormFieldWrap>
+//     <FieldLabel>
+//       <FormattedMessage {...messages.formatOption} />
+//     </FieldLabel>
+//   </FormFieldWrap>
+//   <FormFieldWrap>
+//     <Box direction="row" gap="medium">
+//       <RadioButton
+//         name="radio-format-1"
+//         checked={printSize === 'A4'}
+//         label="A4"
+//         onChange={() => onPrint({
+//           printSize: 'A4',
+//         })}
+//       />
+//       <RadioButton
+//         name="radio-format-2"
+//         checked={printSize === 'A3'}
+//         label="A3"
+//         onChange={() => onPrint({
+//           printSize: 'A3',
+//         })}
+//       />
+//     </Box>
+//   </FormFieldWrap>
+// </Field>
 
 export function PrintUI({
   args,
@@ -71,7 +99,7 @@ export function PrintUI({
   const {
     printType,
     printTabs,
-    printSize,
+    // printSize,
     printOrientation,
     pages,
   } = args;
@@ -87,33 +115,6 @@ export function PrintUI({
                 <FormattedMessage {...messages.title} />
               </StyledGroupLabel>
             </FieldGroupLabel>
-            <Field>
-              <FormFieldWrap>
-                <FieldLabel>
-                  <FormattedMessage {...messages.formatOption} />
-                </FieldLabel>
-              </FormFieldWrap>
-              <FormFieldWrap>
-                <Box direction="row" gap="medium">
-                  <RadioButton
-                    name="radio-format-1"
-                    checked={printSize === 'A4'}
-                    label="A4"
-                    onChange={() => onPrint({
-                      printSize: 'A4',
-                    })}
-                  />
-                  <RadioButton
-                    name="radio-format-2"
-                    checked={printSize === 'A3'}
-                    label="A3"
-                    onChange={() => onPrint({
-                      printSize: 'A3',
-                    })}
-                  />
-                </Box>
-              </FormFieldWrap>
-            </Field>
             <Field>
               <FormFieldWrap>
                 <FieldLabel>

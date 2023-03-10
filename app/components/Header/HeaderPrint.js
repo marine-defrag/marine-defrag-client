@@ -17,7 +17,7 @@ const Brand = styled.div`
 `;
 const Styled = styled.div`
   display: block;
-  height: ${({ theme }) => theme.sizes.header.banner.height}px;
+  height: ${({ theme }) => theme.sizes.header.banner.heightPrint}px;
   position: relative;
   box-shadow: none;
   background: white;
@@ -25,6 +25,7 @@ const Styled = styled.div`
   left: 0;
   right: 0;
   margin-bottom: 50px;
+  border-bottom: 1px solid #CECED2;
 `;
 const Claim = styled((p) => <Text {...p} />)`
   font-family: ${(props) => props.theme.fonts.title};

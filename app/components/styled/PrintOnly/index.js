@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const PrintOnly = styled.div`
-  display: none;
+  display: ${({ isPrint, displayProp }) => isPrint ? (displayProp || 'block') : 'none'};
   @media print {
     display: ${({ displayProp }) => displayProp || 'block'};
   }

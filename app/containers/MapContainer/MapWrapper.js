@@ -22,17 +22,19 @@ import { scaleColorCount, getCircleLayer } from './utils';
 
 const Styled = styled.div`
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: ${({ theme, isPrint }) => isPrint ? theme.sizes.header.banner.heightPrint : 0}px;
+  bottom: ${({ hasInfo, isPrint }) => isPrint && hasInfo ? '200px' : 0};
   right: 0;
   left: 0;
   background: transparent;
   z-index: 10;
   overflow: hidden;
   @media print {
+    top: ${({ theme }) => theme.sizes.header.banner.heightPrint}px;
     bottom: ${({ hasInfo }) => hasInfo ? '200px' : 0};
   }
 `;
+// box-shadow: inset 0px 0px 5px 0px rgb(0 0 0 / 50%);
 const Map = styled.div`
   position: absolute;
   top: 0;
@@ -115,6 +117,7 @@ export function MapWrapper({
   circleLayerConfig = {},
   hasInfo,
   setMapLoaded,
+  isPrintView,
 }) {
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
@@ -596,10 +599,11 @@ export function MapWrapper({
   }, [mapSubject, countryData]);
 
   return (
-    <Styled hasInfo={hasInfo}>
+    <Styled hasInfo={hasInfo} isPrint={isPrintView}>
       <Map id={mapId} ref={ref} styleType={styleType} />
       {tooltip && tooltip.features && tooltip.features.length > 0 && (
         <Tooltip
+          isPrintView={isPrintView}
           isLocationData={isLocationData}
           mapRef={ref}
           position={null}
@@ -637,6 +641,7 @@ MapWrapper.propTypes = {
   options: PropTypes.object,
   isLocationData: PropTypes.bool,
   hasInfo: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   circleLayerConfig: PropTypes.object,
   setMapLoaded: PropTypes.func,
   // onSetMapSubject: PropTypes.func,

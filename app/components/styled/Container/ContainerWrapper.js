@@ -15,7 +15,6 @@ const ContainerWrapper = styled.div`
   overflow-y: ${({ noOverflow }) => noOverflow ? 'hidden' : 'auto'};
   z-index: 90;
   background-color: ${({ bg, isPrint }) => (bg && !isPrint) ? '#f1f0f1' : 'transparent'};
-  box-shadow: ${({ isPrint }) => isPrint ? '0px 0px 5px 0px rgb(0 0 0 / 50%)' : 'none'};
   padding: ${({ isPrint }) => isPrint ? 20 : 0}px;
   @media print {
     box-shadow: none;
@@ -25,3 +24,4 @@ const ContainerWrapper = styled.div`
   }
 `;
 export default ContainerWrapper;
+// box-shadow: ${({ isPrint }) => isPrint ? '0px 0px 5px 0px rgb(0 0 0 / 50%)' : 'none'};

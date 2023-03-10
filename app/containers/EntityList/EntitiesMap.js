@@ -40,6 +40,7 @@ import {
 } from 'containers/App/actions';
 
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
+import HeaderPrint from 'components/Header/HeaderPrint';
 import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
 
@@ -61,8 +62,10 @@ const LoadingWrap = styled.div`
   background: none;
 `;
 
-const Styled = styled((p) => <ContainerWrapper printAbsolute {...p} />)`
+const Styled = styled((p) => <ContainerWrapper {...p} />)`
   background: white;
+  box-shadow: none;
+  padding: 0;
 `;
 
 export function EntitiesMap({
@@ -95,6 +98,7 @@ export function EntitiesMap({
   onSetFFOverlay,
   onSelectAction,
   onSetMapLoading,
+  isPrintView,
   // connections,
   // connectedTaxonomies,
   // locationQuery,
@@ -728,7 +732,6 @@ export function EntitiesMap({
           const location = locationsWithIndicators.find(
             (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
           );
-          // console.log(country && country.toJS())
           if (location) {
             const value = location.getIn(['actionValues', ffIndicator.get('id')]);
             if (!value && value !== 0) {
@@ -809,9 +812,13 @@ export function EntitiesMap({
     }],
   );
   return (
-    <Styled headerStyle="types" noOverflow>
+    <Styled headerStyle="types" noOverflow isPrint={isPrintView}>
+      {isPrintView && (
+        <HeaderPrint />
+      )}
       {dataReady && (
         <MapContainer
+          isPrintView={isPrintView}
           fullMap
           reduceCountryAreas={reduceCountryAreas}
           reducePoints={reducePoints}
@@ -846,7 +853,7 @@ export function EntitiesMap({
           }]}
         />
       )}
-      {viewOptions && viewOptions.length > 1 && (
+      {viewOptions && viewOptions.length > 1 && !isPrintView && (
         <EntityListViewOptions options={viewOptions} isOnMap />
       )}
       {!dataReady && (
@@ -883,6 +890,7 @@ EntitiesMap.propTypes = {
   onSetIncludeTargetMembers: PropTypes.func,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   hasFilters: PropTypes.bool,
   onEntityClick: PropTypes.func,
   onSetFFOverlay: PropTypes.func,

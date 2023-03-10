@@ -152,7 +152,7 @@ export function ActionList({
       // onClick: () => window.print(),
       onClick: () => onSetPrintView({
         printType: PRINT_TYPES.LIST,
-        // pitems: null,
+        fixed: showMap,
         printOrientation: showMap ? 'landscape' : 'portrait',
         printSize: 'A4',
       }),

@@ -5,11 +5,18 @@ import { Box, Text, Button } from 'grommet';
 import { FormNext, FormClose } from 'grommet-icons';
 import { ROUTES } from 'themes/config';
 
+import PrintHide from 'components/styled/PrintHide';
+
 import asArray from 'utils/as-array';
 
 const Root = styled.div`
   position: absolute;
-  top: ${({ position }) => position ? position.y : 50}px;
+  top: ${({ position, isPrint }) => {
+    if (isPrint) {
+      return 0;
+    }
+    return position ? position.y : 50;
+  }}px;
   left: 0;
   right: 0;
   z-index: 2501;
@@ -20,6 +27,9 @@ const Root = styled.div`
     top: ${({ position }) => position ? position.y : 0}px;
     right: ${({ position }) => position ? 'auto' : '0px'};
     left: ${({ position }) => position ? position.x : 'auto'};
+  }
+  @media print {
+    left: auto;
   }
 `;
 
@@ -73,9 +83,6 @@ const Feature = styled((p) => (
   &:first-child {
     margin-top: 0px;
   }
-  @media print {
-    box-shadow: none;
-  }
 `;
 
 const TTContentWrap = styled((p) => <Box pad={{ vertical: 'xsmall' }} {...p} />)``;
@@ -105,8 +112,9 @@ const Tooltip = ({
   mapRef,
   onFeatureClick,
   isLocationData,
+  isPrintView,
 }) => (
-  <Root position={position}>
+  <Root position={position} isPrint={isPrintView}>
     <Anchor dirLeft={direction && direction.x === 'left'} xy={{ x: 0, y: 0 }}>
       <Main
         dirLeft={direction && direction.x === 'left'}
@@ -120,21 +128,25 @@ const Tooltip = ({
                   <Box>
                     <TTTitle>{feature.title}</TTTitle>
                   </Box>
-                  <Button
-                    plain
-                    icon={<FormClose size="small" />}
-                    onClick={() => onClose(feature.id)}
-                  />
+                  <PrintHide>
+                    <Button
+                      plain
+                      icon={<FormClose size="small" />}
+                      onClick={() => onClose(feature.id)}
+                    />
+                  </PrintHide>
                 </TTTitleWrap>
               )}
               {!feature.title && (
-                <TTCloseFloat>
-                  <Button
-                    plain
-                    icon={<FormClose size="small" />}
-                    onClick={() => onClose(feature.id)}
-                  />
-                </TTCloseFloat>
+                <PrintHide>
+                  <TTCloseFloat>
+                    <Button
+                      plain
+                      icon={<FormClose size="small" />}
+                      onClick={() => onClose(feature.id)}
+                    />
+                  </TTCloseFloat>
+                </PrintHide>
               )}
               {feature.content && (
                 <Box>
@@ -172,6 +184,7 @@ const Tooltip = ({
 
 Tooltip.propTypes = {
   isLocationData: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   position: PropTypes.object,
   direction: PropTypes.object, // x, y
   mapRef: PropTypes.object,

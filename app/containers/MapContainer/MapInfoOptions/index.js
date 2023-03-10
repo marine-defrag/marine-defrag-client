@@ -14,21 +14,22 @@ import IndicatorsTab from './IndicatorsTab';
 const Styled = styled.div`
   position: absolute;
   z-index: 50;
-  bottom: 10px;
-  width: 100%;
-  height: 250px;
+  bottom: ${({ isPrint }) => isPrint ? 0 : 10}px;
+  width: ${({ isPrint }) => isPrint ? 'auto' : '100%'};
+  height: ${({ isPrint }) => isPrint ? 200 : 250}px;
   left: 0;
-  max-width: 380px;
+  right: ${({ isPrint }) => isPrint ? 0 : 'auto'};
+  max-width: ${({ isPrint }) => isPrint ? '100%' : '380px'};
+  border-top: ${({ isPrint }) => isPrint ? '1px solid #f1f0f1' : 'none'};
   @media (min-width: 370px) {
-    left: 10px;
-    bottom: 50px;
+    left: ${({ isPrint }) => isPrint ? 0 : 10}px;
+    bottom: ${({ isPrint }) => isPrint ? 0 : 50}px;
   }
   @media print {
     height: 200px;
-    left: 0;
     right: 0;
+    left: 0;
     bottom: 0;
-    width: 100%;
     max-width: 100%;
     border-top: 1px solid #f1f0f1;
   }
@@ -73,6 +74,7 @@ export function MapInfoOptions({
   countryMapSubject,
   minMaxValues,
   circleLayerConfig,
+  isPrintView,
 }) {
   if (!options) return null;
   const [tab, setTab] = useState(options[0].id);
@@ -109,8 +111,8 @@ export function MapInfoOptions({
       }
     );
   return (
-    <Styled>
-      <PrintHide>
+    <Styled isPrint={isPrintView}>
+      <PrintHide isPrint={isPrintView}>
         <Pane>
           <Box fill="horizontal" direction="row" style={{ zIndex: 1 }}>
             {renderTabs(true)}
@@ -118,7 +120,7 @@ export function MapInfoOptions({
           <Box flex={{ grow: 1 }} direction="row" elevation="medium" background="white" style={{ zIndex: 2 }} />
         </Pane>
       </PrintHide>
-      <PrintHide>
+      <PrintHide isPrint={isPrintView}>
         <Pane>
           <Box fill="horizontal" direction="row">
             {renderTabs(false)}
@@ -150,7 +152,7 @@ export function MapInfoOptions({
           </Box>
         </Pane>
       </PrintHide>
-      <PrintOnly>
+      <PrintOnly isPrint={isPrintView}>
         <Box
           flex={{ grow: 1 }}
           direction="row"
@@ -162,14 +164,15 @@ export function MapInfoOptions({
               <Box key={option.id} basis="1/2" pad={{ horizontal: 'small' }}>
                 {option.id === 'countries' && (
                   <CountriesTab
+                    isPrintView
                     config={option}
                     minMaxValues={minMaxValues}
                     countryMapSubject={countryMapSubject}
-                    isPrint
                   />
                 )}
                 {option.id === 'indicators' && (
                   <IndicatorsTab
+                    isPrintView
                     config={option}
                     minMaxValues={minMaxValues}
                     circleLayerConfig={circleLayerConfig}
@@ -189,6 +192,7 @@ MapInfoOptions.propTypes = {
   minMaxValues: PropTypes.object,
   circleLayerConfig: PropTypes.object,
   countryMapSubject: PropTypes.string,
+  isPrintView: PropTypes.bool,
 };
 
 export default MapInfoOptions;

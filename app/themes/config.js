@@ -1042,3 +1042,25 @@ export const MAP_OPTIONS = {
     },
   },
 };
+
+
+export const PRINT = {
+  SIZES: {
+    // actual
+    // A4: { W: 595, H: 842 }, // pt
+    // A3: { W: 842, H: 1190 }, // pt
+    // rendering
+    A4: {
+      portrait: { W: 520, H: 720 }, // pt
+      landscape: { H: 500, W: 760 }, // pt
+      // portrait: { W: 760, H: 1050 }, // pt
+      // landscape: { H: 720, W: 1100 }, // pt
+    },
+    A3: {
+      portrait: { W: 760, H: 1100 }, // pt
+      landscape: { H: 720, W: 1100 }, // pt
+    },
+    portrait: { W: 760, H: 1080 }, // pt
+    landscape: { H: 720, W: 1100 }, // pt
+  },
+};

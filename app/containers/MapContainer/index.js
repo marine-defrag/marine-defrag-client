@@ -47,6 +47,7 @@ export function MapContainer({
   reduceCountryAreas,
   fullMap,
   onSetMapLoaded,
+  isPrintView,
   // intl,
 }) {
   const {
@@ -151,6 +152,7 @@ export function MapContainer({
     <Styled>
       <MapInnerWrapper>
         <MapWrapper
+          isPrintView={isPrintView}
           scrollWheelZoom={scrollWheelZoom}
           typeLabels={typeLabels}
           includeSecondaryMembers={includeSecondaryMembers}
@@ -178,6 +180,7 @@ export function MapContainer({
       </MapInnerWrapper>
       {mapInfo && mapInfo.length > 0 && (
         <MapInfoOptions
+          isPrintView={isPrintView}
           options={mapInfo}
           minMaxValues={minMaxValues}
           countryMapSubject={mapSubject}
@@ -230,6 +233,7 @@ MapContainer.propTypes = {
   mapInfo: PropTypes.array,
   mapOptions: PropTypes.array,
   fullMap: PropTypes.bool,
+  isPrintView: PropTypes.bool,
 };
 
 function mapDispatchToProps(dispatch) {

@@ -26,7 +26,7 @@ export function CountriesTab({
   config,
   minMaxValues,
   countryMapSubject,
-  isPrint,
+  isPrintView,
 }) {
   const {
     subjectOptions,
@@ -37,7 +37,7 @@ export function CountriesTab({
   const subjectOption = subjectOptions && subjectOptions.find((option) => option.active);
   return (
     <Box>
-      <PrintOnly>
+      <PrintOnly isPrint={isPrintView}>
         <Text size="small">
           {config.tabTitle}
         </Text>
@@ -54,7 +54,7 @@ export function CountriesTab({
         </Box>
       </PrintOnly>
       {subjectOptions && (
-        <PrintHide>
+        <PrintHide isPrint={isPrintView}>
           <MapSubjectOptions options={subjectOptions} />
         </PrintHide>
       )}
@@ -62,10 +62,10 @@ export function CountriesTab({
         <MapKey
           maxValue={minMaxValues.countries.max}
           mapSubject={countryMapSubject}
-          isPrint={isPrint}
+          isPrint={isPrintView}
         />
       )}
-      <PrintHide>
+      <PrintHide isPrint={isPrintView}>
         <Box gap="xsmall" margin={{ vertical: 'small' }}>
           {title && (
             <Title>{title}</Title>
@@ -86,7 +86,7 @@ CountriesTab.propTypes = {
   config: PropTypes.object,
   minMaxValues: PropTypes.object,
   countryMapSubject: PropTypes.string,
-  isPrint: PropTypes.bool,
+  isPrintView: PropTypes.bool,
 };
 
 export default CountriesTab;

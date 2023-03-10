@@ -17,7 +17,7 @@ import EntityNew from 'containers/EntityNew';
 import PrintUI from 'containers/PrintUI';
 
 import { sortEntities } from 'utils/sort';
-import { ROUTES, API } from 'themes/config';
+import { ROUTES, API, PRINT } from 'themes/config';
 
 import {
   selectIsSignedIn,
@@ -70,68 +70,84 @@ const Main = styled.div`
   @media print {
     background: transparent;
     position: static;
+    overflow: hidden;
   }
 `;
 // A4 595 × 842
 // A3 842 x 1190
+/* eslint-disable prefer-template */
+const getPrintHeight = ({
+  isPrint,
+  orient = 'portrait',
+  fixed = false,
+}) => {
+  if (fixed && isPrint) {
+    return PRINT.SIZES[orient].H + 'pt';
+  }
+  if (isPrint) {
+    return 'auto';
+  }
+  return '100%';
+};
+
+const getPrintWidth = ({ isPrint, orient = 'portrait' }) => {
+  if (isPrint) {
+    return PRINT.SIZES[orient].W + 'pt';
+  }
+  return '100%';
+};
+const PrintWrapperInner = styled.div`
+  position: ${({ isPrint, fixed = false }) => (isPrint && fixed) ? 'absolute' : 'static'};
+  top: ${({ isPrint }) => isPrint ? 20 : 0}px;
+  bottom: ${({ isPrint, fixed = false }) => {
+    if (isPrint && fixed) {
+      return '20px';
+    }
+    if (isPrint) {
+      return 'auto';
+    }
+    return 0;
+  }};
+  right: ${({ isPrint }) => isPrint ? 20 : 0}px;
+  left: ${({ isPrint }) => isPrint ? 20 : 0}px;
+  @media print {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: ${(props) => props.fixed ? getPrintWidth(props) : '100%'};
+    height: ${(props) => getPrintHeight(props)};;
+  }
+`;
 const PrintWrapper = styled.div`
-  position: static;
-  padding-bottom: ${({ isPrint }) => isPrint ? 40 : 0}px;
+  position: relative;
+  margin-bottom: ${({ isPrint }) => isPrint ? 40 : 0}px;
   margin-right: ${({ isPrint }) => isPrint ? 40 : 0}px;
   margin-left: ${({ isPrint }) => isPrint ? 40 : 0}px;
   bottom: ${({ isPrint, fixed = false }) => {
+    if (isPrint && fixed) {
+      return 0;
+    }
     if (isPrint) {
       return 'auto';
     }
-    if (fixed) {
-      return 'auto';
-    }
-    return '0px';
+    return 0;
   }};
-  width: ${({ isPrint, orient = 'portrait', size = 'A4' }) => {
-    if (isPrint) {
-      if (orient === 'portrait' && size === 'A4') {
-        return '520pt';
-      }
-      if (
-        (orient === 'landscape' && size === 'A4')
-        || (orient === 'portrait' && size === 'A3')
-      ) {
-        return '820pt';
-      }
-      if (orient === 'landscape' && size === 'A3') {
-        return '1190pt';
-      }
-    }
-    return 'auto';
-  }};
-  height: ${({
-    isPrint,
-    orient = 'portrait',
-    size = 'A4',
-    fixed = false,
-  }) => {
-    if (fixed && isPrint) {
-      if (orient === 'portrait' && size === 'A4') {
-        return '820pt';
-      }
-      if (orient === 'landscape' && size === 'A4') {
-        return '520pt';
-      }
-      if (orient === 'portrait' && size === 'A3') {
-        return '1190pt';
-      }
-      if (orient === 'landscape' && size === 'A3') {
-        return '820pt';
-      }
-    }
-    return 'auto';
-  }};
+  width: ${(props) => getPrintWidth(props)};
+  height: ${(props) => getPrintHeight(props)};
+  box-shadow: ${({ isPrint }) => isPrint ? '0px 0px 5px 0px rgb(0 0 0 / 50%)' : 'none'};
+  padding: ${({ isPrint }) => isPrint ? 20 : 0}px;
   @media print {
+    position: static;
+    box-shadow: none;
     padding: 0;
     margin: 0;
+    bottom: 0;
+    background: transparent;
   }
 `;
+// overflow: hidden;
 
 // overflow: ${(props) => props.isHome ? 'auto' : 'hidden'};
 
@@ -259,10 +275,18 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
           {isPrintView && (<PrintUI />)}
           <PrintWrapper
             isPrint={isPrintView}
+            fixed={printArgs.fixed}
             orient={printArgs.printOrientation}
             size={printArgs.printSize}
           >
-            {React.Children.toArray(children)}
+            <PrintWrapperInner
+              isPrint={isPrintView}
+              fixed={printArgs.fixed}
+              orient={printArgs.printOrientation}
+              size={printArgs.printSize}
+            >
+              {React.Children.toArray(children)}
+            </PrintWrapperInner>
           </PrintWrapper>
         </Main>
         {newEntityModal && (

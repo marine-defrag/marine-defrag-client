@@ -460,8 +460,9 @@ export const selectPrintArgs = createSelector(
     pages: locationQuery.get('pitems'),
     printTabs: locationQuery.get('ptabs'),
     printType: locationQuery.get('ptype'),
-    printSize: locationQuery.get('psize'),
+    printSize: 'A3',
     printOrientation: locationQuery.get('porient'),
+    fixed: locationQuery.get('pfixed'),
   })
 );
 
@@ -1536,12 +1537,12 @@ export const selectLocationsWithIndicators = createSelector(
   (state) => selectActortypeActors(state, { type: ACTORTYPES.POINT }),
   (state) => selectActiontypeActions(state, { type: FF_ACTIONTYPE }),
   selectActorActionsGroupedByActorAttributes,
-  (countries, actions, actorConnections) => countries
+  (actors, actions, actorConnections) => actors
     && actions
     && actorConnections
-    && countries.map(
-      (country) => {
-        let actorActionValues = actorConnections.get(parseInt(country.get('id'), 10)) || null;
+    && actors.map(
+      (actor) => {
+        let actorActionValues = actorConnections.get(parseInt(actor.get('id'), 10)) || null;
         if (actorActionValues) {
           actorActionValues = actorActionValues
             .filter(
@@ -1555,7 +1556,7 @@ export const selectLocationsWithIndicators = createSelector(
               Map()
             );
         }
-        return country.set('actionValues', actorActionValues);
+        return actor.set('actionValues', actorActionValues);
       }
     )
 );
