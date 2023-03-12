@@ -74,6 +74,12 @@ export const selectMapLoading = createSelector(
   getGlobal,
   (globalState) => globalState.get('mapLoading').size > 0,
 );
+export const selectMapViewFromState = createSelector(
+  (state, mapId) => mapId,
+  getGlobal,
+  (mapId, globalState) => globalState.getIn(['mapView', mapId])
+    && globalState.getIn(['mapView', mapId]).toJS(),
+);
 
 // users and user authentication ///////////////////////////////////////////////
 
@@ -470,6 +476,19 @@ export const selectMapTooltips = createSelector(
   (locationQuery) => (locationQuery && locationQuery.get('mtt'))
     ? locationQuery.get('mtt').split(';')
     : []
+);
+export const selectMapView = createSelector(
+  selectLocationQuery,
+  (locationQuery) => {
+    if (locationQuery && locationQuery.get('mvw')) {
+      const [zoom, lat, lng] = locationQuery.get('mvw').split('|');
+      return {
+        zoom: parseInt(zoom, 10),
+        center: { lat: parseFloat(lat), lng: parseFloat(lng) },
+      };
+    }
+    return null;
+  }
 );
 
 

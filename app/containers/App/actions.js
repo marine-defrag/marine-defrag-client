@@ -67,6 +67,7 @@ import {
   SET_SUBJECT,
   SET_MAP_SUBJECT,
   SET_MAP_LOADING,
+  SET_MAP_VIEW,
   SET_MAP_LOADED,
   SET_INCLUDE_ACTOR_MEMBERS,
   SET_INCLUDE_TARGET_MEMBERS,
@@ -486,18 +487,7 @@ export function setMapSubject(subject) {
     subject,
   };
 }
-export function setMapLoading(mapId) {
-  return {
-    type: SET_MAP_LOADING,
-    mapId,
-  };
-}
-export function setMapLoaded(mapId) {
-  return {
-    type: SET_MAP_LOADED,
-    mapId,
-  };
-}
+
 export function setIncludeActorMembers(value) {
   return {
     type: SET_INCLUDE_ACTOR_MEMBERS,
@@ -555,5 +545,24 @@ export function setMapTooltips(values) {
   return {
     type: SET_MAP_TOOLTIPS,
     values,
+  };
+}
+export function setMapLoading(mapId) {
+  return {
+    type: SET_MAP_LOADING,
+    mapId,
+  };
+}
+export function setMapView(view, mapId) {
+  return {
+    type: SET_MAP_VIEW,
+    mapId,
+    view,
+  };
+}
+export function setMapLoaded(mapId) {
+  return {
+    type: SET_MAP_LOADED,
+    mapId,
   };
 }

@@ -29,8 +29,13 @@ const Root = styled.div`
     right: ${({ position }) => position ? 'auto' : '0px'};
     left: ${({ position }) => position ? position.x : 'auto'};
   }
+  width: ${({ isPrint, orient }) => {
+    if (isPrint) return orient === 'portrait' ? '33%' : '25%';
+    return 'auto';
+  }};
   @media print {
     left: auto;
+    width: ${({ orient }) => orient === 'portrait' ? 33 : 25}%;
   }
 `;
 
@@ -51,9 +56,12 @@ const Main = styled.div`
   max-height: ${({ h }) => h}px;
   @media (min-width: ${({ theme }) => theme.breakpoints.large}) {
     height: auto;
-    min-width: 290px;
-    max-width: 310px;
+    min-width: ${({ isPrint }) => isPrint ? 'auto' : '290px'};
+    max-width: ${({ isPrint }) => isPrint ? 'auto' : '310px'};
     pointer-events: all;
+  }
+  @media print {
+    width: 100%;
   }
 `;
 
@@ -114,10 +122,17 @@ const Tooltip = ({
   isLocationData,
   isPrintView,
   h,
+  printArgs,
 }) => (
-  <Root position={position} isPrint={isPrintView}>
+  <Root
+    position={position}
+    isPrint={isPrintView}
+    orient={printArgs.printOrientation}
+  >
     <Anchor dirLeft={direction && direction.x === 'left'} xy={{ x: 0, y: 0 }}>
       <Main
+        isPrint={isPrintView}
+        orient={printArgs.printOrientation}
         dirLeft={direction && direction.x === 'left'}
         h={h}
       >
@@ -193,6 +208,7 @@ Tooltip.propTypes = {
   isLocationData: PropTypes.bool,
   isPrintView: PropTypes.bool,
   position: PropTypes.object,
+  printArgs: PropTypes.object,
   direction: PropTypes.object, // x, y
   h: PropTypes.number,
   features: PropTypes.array,

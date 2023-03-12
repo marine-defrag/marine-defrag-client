@@ -51,6 +51,7 @@ import {
   PRINT_VIEW,
   CLOSE_PRINT_VIEW,
   SET_MAP_TOOLTIPS,
+  SET_MAP_VIEW,
 } from 'containers/App/constants';
 
 import {
@@ -870,6 +871,29 @@ export function* setMapTooltipsSaga({ values }) {
   }
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
+export function* setMapViewSaga({ view }) {
+  const location = yield select(selectLocation);
+  let queryNext = [];
+
+  if (view) {
+    queryNext = getNextQuery(
+      [{
+        arg: 'mvw',
+        value: `${view.zoom}|${view.center.lat}|${view.center.lng}`,
+        replace: true,
+      }],
+      true, // extend
+      location,
+    );
+  } else {
+    queryNext = getNextQuery(
+      [{ arg: 'mvw', remove: true }],
+      true, // extend
+      location,
+    );
+  }
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
 
 export function* printViewSaga({ config }) {
   const location = yield select(selectLocation);
@@ -1065,6 +1089,7 @@ export default function* rootSaga() {
   yield takeEvery(SET_SUBJECT, setSubjectSaga);
   yield takeEvery(SET_MAP_SUBJECT, setMapSubjectSaga);
   yield takeEvery(SET_MAP_TOOLTIPS, setMapTooltipsSaga);
+  yield takeEvery(SET_MAP_VIEW, setMapViewSaga);
   yield takeEvery(SET_INCLUDE_ACTOR_MEMBERS, setIncludeActorMembersSaga);
   yield takeEvery(SET_INCLUDE_TARGET_MEMBERS, setIncludeTargetMembersSaga);
   yield takeEvery(SET_INCLUDE_ACTOR_CHILDREN, setIncludeActorChildrenSaga);

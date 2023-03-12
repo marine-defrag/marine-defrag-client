@@ -1016,7 +1016,10 @@ export const MAP_OPTIONS = {
     weight: 0.5,
     color: '#DEE1E3',
   },
-  CENTER: [20, 0],
+  CENTER: {
+    lat: 20,
+    lng: 0,
+  },
   ZOOM: {
     INIT: 1,
     MIN: 0,

@@ -35,6 +35,7 @@ import {
   OPEN_NEW_ENTITY_MODAL,
   SET_MAP_LOADING,
   SET_MAP_LOADED,
+  // SET_MAP_VIEW,
 } from './constants';
 
 // The initial state of the App
@@ -153,6 +154,8 @@ function appReducer(state = initialState, payload) {
       return state.setIn(['mapLoading', payload.mapId], true);
     case SET_MAP_LOADED:
       return state.deleteIn(['mapLoading', payload.mapId]);
+    // case SET_MAP_VIEW:
+    //   return state.setIn(['mapView', payload.mapId], fromJS(payload.view));
     default:
       return state;
   }

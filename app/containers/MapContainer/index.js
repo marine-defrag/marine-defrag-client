@@ -13,8 +13,16 @@ import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
-import { setMapLoaded, setMapTooltips } from 'containers/App/actions';
-import { selectMapTooltips } from 'containers/App/selectors';
+import {
+  setMapLoaded,
+  setMapTooltips,
+  setMapView,
+} from 'containers/App/actions';
+import {
+  selectMapTooltips,
+  selectPrintArgs,
+  selectMapView,
+} from 'containers/App/selectors';
 // import appMessages from 'containers/App/messages';
 // import { hasGroupActors } from 'utils/entities';
 import MapWrapper from './MapWrapper';
@@ -51,6 +59,9 @@ export function MapContainer({
   isPrintView,
   mapTooltips,
   onSetMapTooltips,
+  printArgs,
+  mapView,
+  onSetMapView,
   // intl,
 }) {
   const {
@@ -73,7 +84,6 @@ export function MapContainer({
     unit,
     maxBinValue,
   } = mapKey;
-
   const [showAsPoint, setShowAsPoint] = useState(false);
 
   const countriesJSON = topojson.feature(
@@ -155,6 +165,7 @@ export function MapContainer({
     <Styled>
       <MapInnerWrapper>
         <MapWrapper
+          printArgs={printArgs}
           isPrintView={isPrintView}
           scrollWheelZoom={scrollWheelZoom}
           typeLabels={typeLabels}
@@ -181,6 +192,8 @@ export function MapContainer({
           setMapLoaded={onSetMapLoaded}
           mapTooltips={mapTooltips}
           setMapTooltips={onSetMapTooltips}
+          mapView={mapView}
+          onSetMapView={(view) => onSetMapView(view, mapId, mapView)}
         />
       </MapInnerWrapper>
       {mapInfo && mapInfo.length > 0 && (
@@ -234,7 +247,10 @@ MapContainer.propTypes = {
   reduceCountryAreas: PropTypes.func,
   onSetMapLoaded: PropTypes.func,
   onSetMapTooltips: PropTypes.func,
+  onSetMapView: PropTypes.func,
+  printArgs: PropTypes.object,
   mapData: PropTypes.object,
+  mapView: PropTypes.object,
   mapKey: PropTypes.object,
   mapInfo: PropTypes.array,
   mapOptions: PropTypes.array,
@@ -243,8 +259,10 @@ MapContainer.propTypes = {
   isPrintView: PropTypes.bool,
 };
 
-const mapStateToProps = (state) => ({
-  mapTooltips: selectMapTooltips(state),
+const mapStateToProps = (state, { mapData }) => ({
+  mapTooltips: selectMapTooltips(state, mapData && mapData.mapId),
+  mapView: selectMapView(state, mapData && mapData.mapId),
+  printArgs: selectPrintArgs(state),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -252,8 +270,11 @@ function mapDispatchToProps(dispatch) {
     onSetMapLoaded: (mapId) => {
       dispatch(setMapLoaded(mapId));
     },
-    onSetMapTooltips: (items) => {
-      dispatch(setMapTooltips(items));
+    onSetMapTooltips: (items, mapId) => {
+      dispatch(setMapTooltips(items, mapId));
+    },
+    onSetMapView: (view, mapId) => {
+      dispatch(setMapView(view, mapId));
     },
   };
 }

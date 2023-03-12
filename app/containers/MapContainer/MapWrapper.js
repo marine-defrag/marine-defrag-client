@@ -3,7 +3,12 @@
  * MapWrapper
  *
  */
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import L from 'leaflet';
@@ -94,15 +99,14 @@ const getBBox = (bounds, xLat = 0.5, xLon = 180) => {
 };
 
 const getTooltipFeatures = (mapTooltips, countryData, locationData) => {
-  // console.log(countryData, locationData)
-  if (countryData && locationData) {
+  if (countryData || locationData) {
     // add country Data
     return mapTooltips.reduce(
       (memo, fid) => {
         let content;
-        const countryF = countryData.find((fcd) => qe(fcd.id, fid));
-        const locF = locationData.find((fcd) => qe(fcd.id, fid));
-        const feature = locF || countryF;
+        const countryF = countryData && countryData.find((fcd) => qe(fcd.id, fid));
+        const locF = locationData && locationData.find((fcd) => qe(fcd.id, fid));
+        const feature = countryF || locF;
         if (feature) {
           if (countryF && locF) {
             content = [
@@ -154,9 +158,36 @@ const getTooltipFeatures = (mapTooltips, countryData, locationData) => {
       [],
     );
   }
-  return mapTooltips;
+  return [];
+};
+// const usePrevious = (value) => {
+//   const ref = useRef();
+//   useEffect(() => {
+//     ref.current = value; // assign the value of ref to the argument
+//   }, [value]); // this code will run when the value of 'value' changes
+//   return ref.current; // in the end, return the current ref value.
+// };
+const getCenterLatLng = (center) => {
+  if (!center) {
+    return MAP_OPTIONS.CENTER;
+  }
+  if (Array.isArray(center)) {
+    return {
+      lat: center[0],
+      lng: center[1],
+    };
+  }
+  return {
+    lat: center.lat,
+    lng: center.lng,
+  };
 };
 
+const TOOLTIP_INITIAL = { features: [] };
+const VIEW_INITIAL = {
+  center: MAP_OPTIONS.CENTER,
+  zoom: MAP_OPTIONS.ZOOM.INIT,
+};
 export function MapWrapper({
   countryFeatures,
   countryData,
@@ -166,7 +197,7 @@ export function MapWrapper({
   maxValueCountries,
   includeSecondaryMembers,
   mapSubject,
-  fitBounds,
+  fitBounds = true,
   options = {},
   projection = 'robinson',
   styleType,
@@ -176,10 +207,13 @@ export function MapWrapper({
   isLocationData = false, // real location data not country points
   circleLayerConfig = {},
   hasInfo,
-  setMapLoaded,
+  // setMapLoaded,
   isPrintView,
   mapTooltips,
   setMapTooltips,
+  onSetMapView,
+  mapView,
+  printArgs,
 }) {
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
@@ -210,6 +244,8 @@ export function MapWrapper({
       continuousWorld: customMapProjection.continuousWorld || false,
       worldCopyJump: false,
       attributionControl: false,
+      center: mapView ? mapView.center : VIEW_INITIAL.center,
+      zoom: mapView ? mapView.zoom : VIEW_INITIAL.zoom,
     }
     : {
       // center: mapOptions.CENTER,
@@ -223,8 +259,10 @@ export function MapWrapper({
       continuousWorld: true,
       worldCopyJump: false,
       attributionControl: false,
+      center: mapView ? mapView.center : VIEW_INITIAL.center,
+      zoom: mapView ? mapView.zoom : VIEW_INITIAL.zoom,
     };
-  // const [tooltip, setTooltip] = useState(TOOLTIP_INITIAL);
+
   const [refHeight, setRefHeight] = useState(null);
   const [featureOver, setFeatureOver] = useState(null);
   const ref = useRef(null);
@@ -241,7 +279,7 @@ export function MapWrapper({
     // },
     click: () => {
       // console.log('mapClick')
-      setMapTooltips();
+      // setMapTooltips();
     },
     // mouseover: (a, b, c) => {
     //   console.log('mouseOver', a, b, c)
@@ -249,14 +287,31 @@ export function MapWrapper({
     // mousemove: (a, b, c) => {
     //   console.log('mousemove', a, b, c)
     // },
-    // zoomstart: () => {
+    // zoomend: (e) => {
     //   // console.log('zoomstart')
-    //   setTooltip(null);
+    //   if (mapRef.current) {
+    //     console.log('zoomend: update mapview state', e)
+    //     onSetMapView(
+    //       {
+    //         center: getCenterLatLng(mapRef.current.getCenter()),
+    //         zoom: mapRef.current.getZoom(),
+    //       },
+    //       mapId,
+    //     );
+    //   }
     // },
-    // movestart: () => {
-    //   // console.log('movestart')
-    //   setTooltip(null);
-    // },
+    moveend: () => {
+      // console.log('moveend')
+      if (mapRef.current && onSetMapView) {
+        onSetMapView(
+          {
+            center: getCenterLatLng(mapRef.current.getCenter()),
+            zoom: mapRef.current.getZoom(),
+          },
+          mapId,
+        );
+      }
+    },
     // layeradd: () => {
     //   // console.log('layerAdd', layer)
     //   // setTooltip(null)
@@ -294,24 +349,6 @@ export function MapWrapper({
   };
 
   // useEffect(() => {
-  //   console.log('before print effect')
-  //   window.addEventListener(
-  //     'beforeprint',
-  //     () => {
-  //       console.log('beforeprint event')
-  //       mapRef.current.invalidateSize();
-  //     }
-  //   );
-  //   window.matchMedia('print').addListener(
-  //     (printView) => {
-  //       console.log('printView event')
-  //       if (printView.matches) {
-  //         mapRef.current.invalidateSize();
-  //       }
-  //     }
-  //   );
-  // });
-  // useEffect(() => {
   //   /**
   //    * Alert if clicked on outside of element
   //    */
@@ -330,48 +367,67 @@ export function MapWrapper({
   //     document.removeEventListener('mousedown', handleClickOutside);
   //   };
   // }, [ref]);
-  useEffect(() => {
+  useLayoutEffect(() => {
     setRefHeight(ref && ref.current ? ref.current.clientHeight : 300);
   }, [ref]);
-  useEffect(() => {
-    mapRef.current = L.map(mapId, leafletOptions).on(mapEvents);
-    // create an orange rectangle
-    if (customMapProjection && customMapProjection.addBBox) {
-      L.geoJSON(getBBox(customMapProjection.bounds), mapOptions.BBOX_STYLE).addTo(mapRef.current);
-    }
-    countryLayerGroupRef.current = L.layerGroup();
-    countryLayerGroupRef.current.addTo(mapRef.current);
-    countryOverlayGroupRef.current = L.layerGroup();
-    countryOverlayGroupRef.current.addTo(mapRef.current);
-    locationOverlayGroupRef.current = L.layerGroup();
-    locationOverlayGroupRef.current.addTo(mapRef.current);
-    countryTooltipGroupRef.current = L.layerGroup();
-    countryTooltipGroupRef.current.addTo(mapRef.current);
-    countryOverGroupRef.current = L.layerGroup();
-    countryOverGroupRef.current.addTo(mapRef.current);
-    // notify app when loaded
-    if (setMapLoaded) {
-      mapRef.current.on('load', () => {
-        setMapLoaded(mapId);
-      });
-    }
-    // mapRef.current.on('zoomend', () => {
-    //   setZoom(mapRef.current.getZoom());
-    // });
-    // mapRef.current.on('moveend', () => {
-    //   onMapMove(getNWSE(mapRef.current));
-    // });
-    mapRef.current.setView(
-      mapOptions.CENTER,
-      mapOptions.ZOOM.INIT,
-    );
-    if (mapRef.current.zoomControl) {
-      mapRef.current.zoomControl.setPosition('topleft');
+  useLayoutEffect(() => {
+    // console.log('mapwrapper: add map', mapRef.current, mapId, mapView)
+    if (!mapRef.current) {
+      mapRef.current = L.map(
+        mapId,
+        leafletOptions,
+      ).on(mapEvents);
+
+      // create an orange rectangle
+      if (customMapProjection && customMapProjection.addBBox) {
+        L.geoJSON(getBBox(customMapProjection.bounds), mapOptions.BBOX_STYLE).addTo(mapRef.current);
+      }
+      countryLayerGroupRef.current = L.layerGroup();
+      countryLayerGroupRef.current.addTo(mapRef.current);
+      countryOverlayGroupRef.current = L.layerGroup();
+      countryOverlayGroupRef.current.addTo(mapRef.current);
+      locationOverlayGroupRef.current = L.layerGroup();
+      locationOverlayGroupRef.current.addTo(mapRef.current);
+      countryTooltipGroupRef.current = L.layerGroup();
+      countryTooltipGroupRef.current.addTo(mapRef.current);
+      countryOverGroupRef.current = L.layerGroup();
+      countryOverGroupRef.current.addTo(mapRef.current);
+      // notify app when loaded
+      // if (setMapLoaded) {
+      //   mapRef.current.on('load', () => {
+      //     setMapLoaded(mapId);
+      //   });
+      // }
+      if (mapRef.current.zoomControl) {
+        mapRef.current.zoomControl.setPosition('topleft');
+      }
     }
   }, []);
-
+  // useLayoutEffect(() => {
+  //   if (mapView && mapRef.current) {
+  //     const centerCurrent = mapRef.current.getCenter();
+  //     const zoomCurrent = mapRef.current.getZoom();
+  //     if (zoomCurrent !== mapView.zoom) {
+  //       console.log('update map zoom from props')
+  //       mapRef.current.setZoom(
+  //         mapView.zoom,
+  //         { animate: false },
+  //       );
+  //     }
+  //     if (
+  //       (centerCurrent.lat !== mapView.center.lat)
+  //       || (centerCurrent.lng !== mapView.center.lng)
+  //     ) {
+  //       console.log('update map center from props')
+  //       mapRef.current.panTo(
+  //         mapView.center,
+  //         { duration: 0 },
+  //       );
+  //     }
+  //   }
+  // }, [mapView]);
   // add countryFeatures basemap
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (countryFeatures) {
       countryLayerGroupRef.current.clearLayers();
       const jsonLayer = L.geoJSON(
@@ -387,7 +443,7 @@ export function MapWrapper({
   }, [countryFeatures]);
 
   // add countryData
-  useEffect(() => {
+  useLayoutEffect(() => {
     countryOverlayGroupRef.current.clearLayers();
     if (countryData && countryData.length > 0) {
       const scale = mapSubject
@@ -440,8 +496,9 @@ export function MapWrapper({
       });
       countryOverlayGroupRef.current.addLayer(jsonLayer);
     }
-  }, [countryData, indicator, mapTooltips, mapSubject]);
-  // useEffect(() => {
+  }, [countryData, indicator, mapSubject]);
+  // }, [countryData, indicator, mapTooltips, mapSubject]);
+  // useLayoutEffect(() => {
   //   if (countryData && countryData.length > 0) {
   //     console.log('countryData x')
   //     setMapLoading(false);
@@ -450,13 +507,19 @@ export function MapWrapper({
   // add zoom to countryData
   useEffect(() => {
     if (
-      fitBounds
+      mapRef
+      && mapRef.current
+      && fitBounds
       && countryData
       && countryData.length > 0
       && countryOverlayGroupRef
       && countryOverlayGroupRef.current
       && countryOverlayGroupRef.current.getLayers()
       && countryOverlayGroupRef.current.getLayers().length > 0
+      && !mapView
+      // && mapView.zoom === VIEW_INITIAL.zoom
+      // && mapView.center.lng === VIEW_INITIAL.center.lng
+      // && mapView.center.lat === VIEW_INITIAL.center.lat
     ) {
       const jsonLayer = countryOverlayGroupRef.current.getLayers()[0];
       if (jsonLayer.getBounds) {
@@ -466,24 +529,44 @@ export function MapWrapper({
           [20, 20], // padding in px
         );
         const boundsCenter = jsonLayer.getBounds().getCenter();
-        // add zoom level to account for custom proj issue
-        const ZOOM_OFFSET = 0;
-        const MAX_ZOOM = 7;
-        mapRef.current.setView(
-          boundsCenter,
-          Math.min(
-            Math.max(boundsZoom - ZOOM_OFFSET, 0),
-            MAX_ZOOM,
-          ),
-          {
-            animate: false,
-          },
-        );
+        const currentCenter = mapRef.current.getCenter();
+        const currentZoom = mapRef.current.getZoom();
+        if (
+          (boundsZoom !== currentZoom)
+          || !qe(currentCenter.lat, boundsCenter.lat)
+          || !qe(currentCenter.lng, boundsCenter.lng)
+        ) {
+          // if (mapRef.current.getCenter())
+          // add zoom level to account for custom proj issue
+          const ZOOM_OFFSET = 0;
+          const MAX_ZOOM = 7;
+          if (onSetMapView) {
+            onSetMapView(
+              {
+                center: getCenterLatLng(boundsCenter),
+                zoom: Math.min(
+                  Math.max(boundsZoom - ZOOM_OFFSET, 0),
+                  MAX_ZOOM,
+                ),
+              },
+              mapId,
+            );
+          } else {
+            mapRef.current.setView(
+              boundsCenter,
+              Math.min(
+                Math.max(boundsZoom - ZOOM_OFFSET, 0),
+                MAX_ZOOM,
+              ),
+              { animate: false },
+            );
+          }
+        }
       }
     }
   }, [countryData]);
   // add zoom to locationData
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (
       fitBounds
       && locationData
@@ -504,25 +587,33 @@ export function MapWrapper({
         // add zoom level to account for custom proj issue
         const ZOOM_OFFSET = 0;
         const MAX_ZOOM = 7;
-        mapRef.current.setView(
-          boundsCenter,
-          Math.min(
-            Math.max(
-              boundsZoom - ZOOM_OFFSET,
-              0,
+        if (onSetMapView) {
+          onSetMapView(
+            {
+              center: getCenterLatLng(boundsCenter),
+              zoom: Math.min(
+                Math.max(boundsZoom - ZOOM_OFFSET, 0),
+                MAX_ZOOM,
+              ),
+            },
+            mapId,
+          );
+        } else {
+          mapRef.current.setView(
+            boundsCenter,
+            Math.min(
+              Math.max(boundsZoom - ZOOM_OFFSET, 0),
+              MAX_ZOOM,
             ),
-            MAX_ZOOM,
-          ),
-          {
-            animate: false,
-          },
-        );
+            { animate: false },
+          );
+        }
       }
     }
   }, [locationData]);
 
   // add locationData
-  useEffect(() => {
+  useLayoutEffect(() => {
     locationOverlayGroupRef.current.clearLayers();
     if (locationData && locationData.length > 0) {
       const layer = L.featureGroup(null, { pane: 'overlayPane' });
@@ -540,8 +631,8 @@ export function MapWrapper({
     // TODO
   }, [locationData, indicator, mapTooltips, mapSubject, circleLayerConfig]);
 
-  // highlight tooltip feature
-  useEffect(() => {
+  // // highlight tooltip feature
+  useLayoutEffect(() => {
     countryTooltipGroupRef.current.clearLayers();
     if (countryData && mapTooltips && mapTooltips && mapTooltips.length > 0) {
       mapTooltips.forEach(
@@ -579,7 +670,7 @@ export function MapWrapper({
     }
   }, [mapTooltips, mapSubject, includeSecondaryMembers]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     countryOverGroupRef.current.clearLayers();
     if (featureOver && countryData) {
       const jsonLayer = L.geoJSON(
@@ -591,25 +682,8 @@ export function MapWrapper({
       countryOverGroupRef.current.addLayer(jsonLayer);
     }
   }, [featureOver]);
-  // // update tooltip
-  // useEffect(() => {
-  //   if (tooltip && countryData) {
-  //     if (tooltip.features && tooltip.features.length > 0) {
-  //       setTooltip({
-  //         features: tooltip.features.map(
-  //           (f) => countryData.find((c) => qe(c.id, f.id))
-  //         ).filter(
-  //           (f) => !!f
-  //         ),
-  //       });
-  //     } else {
-  //       setTooltip(TOOLTIP_INITIAL);
-  //     }
-  //   } else {
-  //     setTooltip(TOOLTIP_INITIAL);
-  //   }
-  // }, [mapSubject, countryData]);
-  let tooltip;
+  let tooltip = TOOLTIP_INITIAL;
+  // update tooltip
   if (mapTooltips) {
     tooltip = {
       direction: { x: 'left', y: 'top' },
@@ -620,12 +694,14 @@ export function MapWrapper({
       ),
     };
   }
+  // if (mapRef) onSetMapRef(mapRef, mapId);
   return (
-    <Styled hasInfo={hasInfo} isPrint={isPrintView}>
-      <Map id={mapId} ref={ref} styleType={styleType} />
+    <Styled hasInfo={hasInfo} ref={ref} isPrint={isPrintView}>
+      <Map id={mapId} styleType={styleType} />
       {tooltip && tooltip.features && tooltip.features.length > 0 && (
         <Tooltip
           isPrintView={isPrintView}
+          printArgs={printArgs}
           isLocationData={isLocationData}
           h={refHeight}
           position={null}
@@ -664,9 +740,11 @@ MapWrapper.propTypes = {
   hasInfo: PropTypes.bool,
   isPrintView: PropTypes.bool,
   circleLayerConfig: PropTypes.object,
-  setMapLoaded: PropTypes.func,
+  printArgs: PropTypes.object,
   mapTooltips: PropTypes.array,
   setMapTooltips: PropTypes.func,
+  mapView: PropTypes.object,
+  onSetMapView: PropTypes.func,
   // onSetMapSubject: PropTypes.func,
 };
 

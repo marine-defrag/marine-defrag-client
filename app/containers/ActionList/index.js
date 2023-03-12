@@ -112,12 +112,6 @@ export function ActionList({
     if (!dataReady) onLoadEntitiesIfNeeded();
   }, [dataReady]);
 
-  // useEffect(() => {
-  //   if (window.print && isPrintView && dataReady && !isMapLoading) {
-  //     window.print();
-  //   }
-  // }, [dataReady, isMapLoading]);
-
   const typeId = params.id;
   const type = `actions_${typeId}`;
 

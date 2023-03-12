@@ -3,7 +3,8 @@
  * EntitiesMap
  *
  */
-import React, { useEffect } from 'react';
+import React from 'react';
+// import React, { useEffect } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
@@ -36,7 +37,7 @@ import {
 import {
   setFFOverlay,
   updatePath,
-  setMapLoading,
+  // setMapLoading,
 } from 'containers/App/actions';
 
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
@@ -68,45 +69,46 @@ const Styled = styled((p) => <ContainerWrapper {...p} />)`
   padding: 0;
 `;
 
-export function EntitiesMap({
-  dataReady,
-  viewOptions,
-  config,
-  entities,
-  actortypes,
-  actiontypes,
-  targettypes,
-  typeId,
-  mapSubject,
-  onSetMapSubject,
-  onSetIncludeActorMembers,
-  onSetIncludeTargetMembers,
-  includeActorMembers,
-  includeTargetMembers,
-  countries,
-  actors,
-  actions,
-  onEntityClick,
-  intl,
-  hasFilters,
-  actionActorsByAction,
-  membershipsByAssociation,
-  actorActionsByAction,
-  countriesWithIndicators,
-  locationsWithIndicators,
-  ffIndicatorId,
-  onSetFFOverlay,
-  onSelectAction,
-  onSetMapLoading,
-  isPrintView,
-  // connections,
-  // connectedTaxonomies,
-  // locationQuery,
-  // taxonomies,
-}) {
-  useEffect(() => {
-    onSetMapLoading('ll-map-list');
-  }, []); // once
+export function EntitiesMap(props) {
+  const {
+    dataReady,
+    viewOptions,
+    config,
+    entities,
+    actortypes,
+    actiontypes,
+    targettypes,
+    typeId,
+    mapSubject,
+    onSetMapSubject,
+    onSetIncludeActorMembers,
+    onSetIncludeTargetMembers,
+    includeActorMembers,
+    includeTargetMembers,
+    countries,
+    actors,
+    actions,
+    onEntityClick,
+    intl,
+    hasFilters,
+    actionActorsByAction,
+    membershipsByAssociation,
+    actorActionsByAction,
+    countriesWithIndicators,
+    locationsWithIndicators,
+    ffIndicatorId,
+    onSetFFOverlay,
+    onSelectAction,
+    // onSetMapLoading,
+    isPrintView,
+    // connections,
+    // connectedTaxonomies,
+    // locationQuery,
+    // taxonomies,
+  } = props;
+  // useEffect(() => {
+  //   onSetMapLoading('ll-map-list');
+  // }, []); // once
   // const { intl } = this.context;
   let type;
   let hasByTarget;
@@ -895,7 +897,7 @@ EntitiesMap.propTypes = {
   onEntityClick: PropTypes.func,
   onSetFFOverlay: PropTypes.func,
   onSelectAction: PropTypes.func,
-  onSetMapLoading: PropTypes.func,
+  // onSetMapLoading: PropTypes.func,
   ffIndicatorId: PropTypes.string,
   intl: intlShape.isRequired,
 };
@@ -917,9 +919,9 @@ function mapDispatchToProps(dispatch) {
     onSetFFOverlay: (value) => {
       dispatch(setFFOverlay(value));
     },
-    onSetMapLoading: (mapId) => {
-      dispatch(setMapLoading(mapId));
-    },
+    // onSetMapLoading: (mapId) => {
+    //   dispatch(setMapLoading(mapId));
+    // },
     onSelectAction: (id) => {
       dispatch(updatePath(`${ROUTES.ACTION}/${id}`));
     },

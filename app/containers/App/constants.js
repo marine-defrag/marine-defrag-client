@@ -84,6 +84,7 @@ export const CLOSE_PRINT_VIEW = 'impactoss/App/CLOSE_PRINT_VIEW';
 export const SET_MAP_LOADING = 'impactoss/App/SET_MAP_LOADING';
 export const SET_MAP_LOADED = 'impactoss/App/SET_MAP_LOADED';
 export const SET_MAP_TOOLTIPS = 'impactoss/App/SET_MAP_TOOLTIPS';
+export const SET_MAP_VIEW = 'impactoss/App/SET_MAP_VIEW';
 
 export const FILTERS_PANEL = 'filters';
 export const EDIT_PANEL = 'edit';
