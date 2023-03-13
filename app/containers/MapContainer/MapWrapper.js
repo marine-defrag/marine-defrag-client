@@ -196,6 +196,7 @@ export function MapWrapper({
   includeSecondaryMembers,
   mapSubject,
   fitBounds = false,
+  fitBoundsData = false,
   options = {},
   projection = 'robinson',
   styleType,
@@ -508,6 +509,46 @@ export function MapWrapper({
       mapRef
       && mapRef.current
       && fitBounds
+      && !fitBoundsData
+      && !mapView
+    ) {
+      const bounds = (customMapProjection && customMapProjection.bounds)
+        ? L.latLngBounds(customMapProjection.bounds)
+        : L.latLngBounds([[90, -180], [-90, 180]]);
+      const boundsZoom = mapRef.current.getBoundsZoom(
+        bounds,
+        false, // inside,
+        [20, 20], // padding in px
+      );
+      const boundsCenter = bounds.getCenter();
+      const currentCenter = mapRef.current.getCenter();
+      const currentZoom = mapRef.current.getZoom();
+      if (
+        (boundsZoom !== currentZoom)
+        || !qe(currentCenter.lat, boundsCenter.lat)
+        || !qe(currentCenter.lng, boundsCenter.lng)
+      ) {
+        // if (mapRef.current.getCenter())
+        // add zoom level to account for custom proj issue
+        const ZOOM_OFFSET = 0;
+        const MAX_ZOOM = 7;
+        mapRef.current.setView(
+          boundsCenter,
+          Math.min(
+            Math.max(boundsZoom - ZOOM_OFFSET, 0),
+            MAX_ZOOM,
+          ),
+          { animate: false },
+        );
+      }
+    }
+  }, []);
+  useEffect(() => {
+    if (
+      mapRef
+      && mapRef.current
+      && !fitBounds
+      && fitBoundsData
       && countryData
       && countryData.length > 0
       && countryOverlayGroupRef
@@ -553,7 +594,9 @@ export function MapWrapper({
   // add zoom to locationData
   useLayoutEffect(() => {
     if (
-      fitBounds
+      mapRef
+      && mapRef.current
+      && fitBoundsData
       && locationData
       && locationData.length > 0
       && locationOverlayGroupRef
@@ -703,6 +746,7 @@ MapWrapper.propTypes = {
   maxValueCountries: PropTypes.number,
   includeSecondaryMembers: PropTypes.bool,
   fitBounds: PropTypes.bool,
+  fitBoundsData: PropTypes.bool,
   interactive: PropTypes.bool,
   scrollWheelZoom: PropTypes.bool,
   mapSubject: PropTypes.string,

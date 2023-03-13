@@ -3,7 +3,7 @@
  * IndicatorCountryMap
  *
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 
@@ -12,7 +12,7 @@ import { Map } from 'immutable';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
 import MapContainer from 'containers/MapContainer';
-import TooltipContent from 'containers/MapContainer/TooltipContent';
+// import TooltipContent from 'containers/MapContainer/TooltipContent';
 
 import countryPointsJSON from 'data/country-points.json';
 
@@ -24,7 +24,7 @@ export function IndicatorCountryMap({
   // intl,
 }) {
   if (!countries) return null;
-
+  const [mapView, setMapView] = useState(null);
   const reducePoints = () => countryPointsJSON.features.reduce(
     (memo, feature) => {
       const country = countries.find(
@@ -55,7 +55,8 @@ export function IndicatorCountryMap({
             tooltip: {
               id: country.get('id'),
               title: country.getIn(['attributes', 'title']),
-              content: <TooltipContent stats={stats} />,
+              stats,
+              isCountryData: true,
             },
             values: {
               indicator: parseFloat(value, 10),
@@ -97,7 +98,8 @@ export function IndicatorCountryMap({
             tooltip: {
               id: country.get('id'),
               title: country.getIn(['attributes', 'title']),
-              content: <TooltipContent stats={stats} />,
+              stats,
+              isCountryData: true,
             },
             values: {
               indicator: parseFloat(value, 10),
@@ -155,6 +157,8 @@ export function IndicatorCountryMap({
       onActorClick={(id) => onCountryClick(id)}
       reducePoints={reducePoints}
       reduceCountryAreas={reduceCountryAreas}
+      mapViewLocal={mapView}
+      onSetMapViewLocal={setMapView}
     />
   );
 }

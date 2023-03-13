@@ -90,7 +90,7 @@ export function ActorViewDetailsMembers(props) {
               countryFeatures={countriesJSON.features}
               styleType="members"
               onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
-              fitBounds
+              fitBoundsData
               projection="gall-peters"
             />
           </MapWrapper>

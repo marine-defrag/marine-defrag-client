@@ -44,7 +44,8 @@ const getMapOuterWrapper = (fullMap) => fullMap
   ? styled.div``
   : styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
     position: relative;
-    height: 500px;
+    overflow: hidden;
+    padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
 `;
 export function MapContainer({
   mapKey = {},
@@ -62,6 +63,8 @@ export function MapContainer({
   printArgs,
   mapView,
   onSetMapView,
+  mapViewLocal,
+  onSetMapViewLocal,
   // intl,
 }) {
   const {
@@ -74,6 +77,7 @@ export function MapContainer({
     hasPointOption,
     hasPointOverlay,
     fitBounds,
+    fitBoundsData,
     typeLabels,
     includeSecondaryMembers,
     scrollWheelZoom,
@@ -163,7 +167,10 @@ export function MapContainer({
   const MapOuterWrapper = getMapOuterWrapper(fullMap);
   return (
     <Styled>
-      <MapOuterWrapper>
+      <MapOuterWrapper
+        isPrint={isPrintView}
+        orient={printArgs && printArgs.printOrientation}
+      >
         <MapWrapper
           printArgs={printArgs}
           isPrintView={isPrintView}
@@ -182,6 +189,7 @@ export function MapContainer({
           }
           mapSubject={mapSubject}
           fitBounds={fitBounds}
+          fitBoundsData={fitBoundsData}
           fullMap={fullMap}
           projection={projection}
           mapId={mapId}
@@ -193,8 +201,14 @@ export function MapContainer({
           setMapLoaded={onSetMapLoaded}
           mapTooltips={mapTooltips}
           setMapTooltips={onSetMapTooltips}
-          mapView={fullMap ? mapView : null}
-          onSetMapView={(view) => fullMap && onSetMapView(view, mapId, mapView)}
+          mapView={mapViewLocal || (fullMap ? mapView : null)}
+          onSetMapView={(view) => {
+            if (onSetMapViewLocal) {
+              onSetMapViewLocal(view);
+            } else if (fullMap) {
+              onSetMapView(view, mapId, mapView);
+            }
+          }}
         />
       </MapOuterWrapper>
       {mapInfo && mapInfo.length > 0 && (
@@ -249,9 +263,11 @@ MapContainer.propTypes = {
   onSetMapLoaded: PropTypes.func,
   onSetMapTooltips: PropTypes.func,
   onSetMapView: PropTypes.func,
+  onSetMapViewLocal: PropTypes.func,
   printArgs: PropTypes.object,
   mapData: PropTypes.object,
   mapView: PropTypes.object,
+  mapViewLocal: PropTypes.object,
   mapKey: PropTypes.object,
   mapInfo: PropTypes.array,
   mapOptions: PropTypes.array,

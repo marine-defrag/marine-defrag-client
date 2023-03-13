@@ -58,9 +58,9 @@ const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
 `;
 const MapOuterWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
-  height: 400px;
   background: #F9F9FA;
   overflow: hidden;
+  padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
   @media print {
     margin-left: 0;
     display: block;
@@ -68,6 +68,7 @@ const MapOuterWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {..
     break-inside: avoid;
   }
 `;
+/* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
 
 export function ActionMap({
   actorsByType,
@@ -86,6 +87,8 @@ export function ActionMap({
   typeId,
   childCountries,
   mapId = 'll-action-map',
+  isPrintView,
+  printArgs,
   // intl,
 }) {
   const [mapTooltips, setMapTooltips] = useState([]);
@@ -245,7 +248,10 @@ export function ActionMap({
   }
   return (
     <Styled hasHeader noOverflow>
-      <MapOuterWrapper>
+      <MapOuterWrapper
+        isPrint={isPrintView}
+        orient={printArgs && printArgs.printOrientation}
+      >
         <MapWrapper
           countryData={countryData}
           countryFeatures={countriesJSON.features}
@@ -259,7 +265,7 @@ export function ActionMap({
             || includeTargetChildren
           }
           mapSubject={mapSubject}
-          fitBounds
+          fitBoundsData
           projection="gall-peters"
           mapId={mapId}
           mapTooltips={mapTooltips}
@@ -307,6 +313,8 @@ ActionMap.propTypes = {
     PropTypes.string,
     PropTypes.number,
   ]),
+  isPrintView: PropTypes.bool,
+  printArgs: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
