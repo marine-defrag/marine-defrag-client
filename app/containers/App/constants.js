@@ -133,4 +133,5 @@ export const VIEWPORTS = {
 export const PRINT_TYPES = {
   LIST: 1,
   SINGLE: 2,
+  FF: 3,
 };

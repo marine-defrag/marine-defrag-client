@@ -86,7 +86,6 @@ const Feature = styled((p) => (
   />
 ))`
   position: relative;
-  min-height: 90px;
   box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.2);
   background: white;
   &:first-child {
@@ -104,7 +103,8 @@ const TTTitleWrap = styled((p) => (
     {...p}
   />
 ))`
-  border-bottom: 1px solid ${({ theme }) => theme.global.colors.border.light};
+  border-bottom: ${({ hasContent }) => hasContent ? '1px solid' : 'none'};
+  border-bottom-color: ${({ theme }) => theme.global.colors.border.light};
 `;
 
 const TTCloseFloat = styled.div`
@@ -127,12 +127,12 @@ const Tooltip = ({
   <Root
     position={position}
     isPrint={isPrintView}
-    orient={printArgs.printOrientation}
+    orient={printArgs && printArgs.printOrientation}
   >
     <Anchor dirLeft={direction && direction.x === 'left'} xy={{ x: 0, y: 0 }}>
       <Main
         isPrint={isPrintView}
-        orient={printArgs.printOrientation}
+        orient={printArgs && printArgs.printOrientation}
         dirLeft={direction && direction.x === 'left'}
         h={h}
       >
@@ -164,7 +164,7 @@ const Tooltip = ({
                   </TTCloseFloat>
                 </PrintHide>
               )}
-              {feature.content && (
+              {feature.content && asArray(feature.content).length > 0 && (
                 <Box>
                   {asArray(feature.content).map(
                     (c, j) => (

@@ -40,7 +40,7 @@ const Styled = styled((p) => <Box {...p} />)`
 const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
 const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium', top: 'small' }} {...p} />)``;
 
-const getMapInnerWrapper = (fullMap) => fullMap
+const getMapOuterWrapper = (fullMap) => fullMap
   ? styled.div``
   : styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
     position: relative;
@@ -160,10 +160,10 @@ export function MapContainer({
       ...mapOptions,
     ];
   }
-  const MapInnerWrapper = getMapInnerWrapper(fullMap);
+  const MapOuterWrapper = getMapOuterWrapper(fullMap);
   return (
     <Styled>
-      <MapInnerWrapper>
+      <MapOuterWrapper>
         <MapWrapper
           printArgs={printArgs}
           isPrintView={isPrintView}
@@ -182,6 +182,7 @@ export function MapContainer({
           }
           mapSubject={mapSubject}
           fitBounds={fitBounds}
+          fullMap={fullMap}
           projection={projection}
           mapId={mapId}
           circleLayerConfig={{
@@ -192,10 +193,10 @@ export function MapContainer({
           setMapLoaded={onSetMapLoaded}
           mapTooltips={mapTooltips}
           setMapTooltips={onSetMapTooltips}
-          mapView={mapView}
-          onSetMapView={(view) => onSetMapView(view, mapId, mapView)}
+          mapView={fullMap ? mapView : null}
+          onSetMapView={(view) => fullMap && onSetMapView(view, mapId, mapView)}
         />
-      </MapInnerWrapper>
+      </MapOuterWrapper>
       {mapInfo && mapInfo.length > 0 && (
         <MapInfoOptions
           isPrintView={isPrintView}

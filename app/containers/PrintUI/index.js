@@ -103,7 +103,6 @@ export function PrintUI({
     printOrientation,
     pages,
   } = args;
-
   const printAllPages = pages === 'all' || pageItems === 'all';
   return (
     <Styled>

@@ -25,15 +25,16 @@ import { scaleColorCount, getCircleLayer } from './utils';
 
 const Styled = styled.div`
   position: absolute;
-  top: ${({ theme, isPrint }) => isPrint ? theme.sizes.header.banner.heightPrint : 0}px;
+  top: ${({ theme, isPrint, fullMap }) => (isPrint && fullMap) ? theme.sizes.header.banner.heightPrint : 0}px;
   bottom: ${({ hasInfo, isPrint }) => isPrint && hasInfo ? '200px' : 0};
   right: 0;
   left: 0;
   background: transparent;
   z-index: 10;
   overflow: hidden;
+  width: 100%;
   @media print {
-    top: ${({ theme }) => theme.sizes.header.banner.heightPrint}px;
+    top: ${({ theme, fullMap }) => fullMap ? theme.sizes.header.banner.heightPrint : 0}px;
     bottom: ${({ hasInfo }) => hasInfo ? '200px' : 0};
   }
 `;
@@ -46,6 +47,7 @@ const Map = styled.div`
   left: 0;
   background: transparent;
   z-index: 10;
+  width: 100%;
 `;
 
 // const PROJ[projection] = {
@@ -103,28 +105,18 @@ const getTooltipFeatures = (mapTooltips, countryData, locationData) => {
     // add country Data
     return mapTooltips.reduce(
       (memo, fid) => {
-        let content;
+        let content = [];
         const countryF = countryData && countryData.find((fcd) => qe(fcd.id, fid));
         const locF = locationData && locationData.find((fcd) => qe(fcd.id, fid));
         const feature = countryF || locF;
         if (feature) {
-          if (countryF && locF) {
+          if (
+            countryF
+            && countryF.tooltip
+            && (countryF.tooltip.stats || countryF.tooltip.content)
+          ) {
             content = [
-              countryF.tooltip.stats
-                ? {
-                  stats: countryF.tooltip.stats,
-                  isCount: countryF.tooltip.isCount,
-                }
-                : countryF.tooltip.content,
-              locF.tooltip.stats
-                ? {
-                  stats: locF.tooltip.stats,
-                  isCount: locF.tooltip.isCount,
-                }
-                : locF.tooltip.content,
-            ];
-          } else if (countryF) {
-            content = [
+              ...content,
               countryF.tooltip.stats
                 ? {
                   stats: countryF.tooltip.stats,
@@ -132,8 +124,14 @@ const getTooltipFeatures = (mapTooltips, countryData, locationData) => {
                 }
                 : countryF.tooltip.content,
             ];
-          } else if (locF) {
+          }
+          if (
+            locF
+            && locF.tooltip
+            && (locF.tooltip.stats || locF.tooltip.content)
+          ) {
             content = [
+              ...content,
               locF.tooltip.stats
                 ? {
                   stats: locF.tooltip.stats,
@@ -197,7 +195,7 @@ export function MapWrapper({
   maxValueCountries,
   includeSecondaryMembers,
   mapSubject,
-  fitBounds = true,
+  fitBounds = false,
   options = {},
   projection = 'robinson',
   styleType,
@@ -214,6 +212,7 @@ export function MapWrapper({
   onSetMapView,
   mapView,
   printArgs,
+  fullMap,
 }) {
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
@@ -301,7 +300,6 @@ export function MapWrapper({
     //   }
     // },
     moveend: () => {
-      // console.log('moveend')
       if (mapRef.current && onSetMapView) {
         onSetMapView(
           {
@@ -324,7 +322,7 @@ export function MapWrapper({
   const onFeatureClickTT = (e) => {
     const { feature } = e.sourceTarget;
     if (e && L.DomEvent) L.DomEvent.stopPropagation(e);
-    if (e && e.containerPoint && feature && feature.tooltip) {
+    if (setMapTooltips && e && e.containerPoint && feature && feature.tooltip) {
       const featureId = feature.id.toString();
       const activeTT = mapTooltips.indexOf(featureId) > -1;
       let ttNew = [];
@@ -540,27 +538,14 @@ export function MapWrapper({
           // add zoom level to account for custom proj issue
           const ZOOM_OFFSET = 0;
           const MAX_ZOOM = 7;
-          if (onSetMapView) {
-            onSetMapView(
-              {
-                center: getCenterLatLng(boundsCenter),
-                zoom: Math.min(
-                  Math.max(boundsZoom - ZOOM_OFFSET, 0),
-                  MAX_ZOOM,
-                ),
-              },
-              mapId,
-            );
-          } else {
-            mapRef.current.setView(
-              boundsCenter,
-              Math.min(
-                Math.max(boundsZoom - ZOOM_OFFSET, 0),
-                MAX_ZOOM,
-              ),
-              { animate: false },
-            );
-          }
+          mapRef.current.setView(
+            boundsCenter,
+            Math.min(
+              Math.max(boundsZoom - ZOOM_OFFSET, 0),
+              MAX_ZOOM,
+            ),
+            { animate: false },
+          );
         }
       }
     }
@@ -575,6 +560,7 @@ export function MapWrapper({
       && locationOverlayGroupRef.current
       && locationOverlayGroupRef.current.getLayers()
       && locationOverlayGroupRef.current.getLayers().length > 0
+      && !mapView
     ) {
       const jsonLayer = locationOverlayGroupRef.current.getLayers()[0];
       if (jsonLayer.getBounds) {
@@ -587,27 +573,14 @@ export function MapWrapper({
         // add zoom level to account for custom proj issue
         const ZOOM_OFFSET = 0;
         const MAX_ZOOM = 7;
-        if (onSetMapView) {
-          onSetMapView(
-            {
-              center: getCenterLatLng(boundsCenter),
-              zoom: Math.min(
-                Math.max(boundsZoom - ZOOM_OFFSET, 0),
-                MAX_ZOOM,
-              ),
-            },
-            mapId,
-          );
-        } else {
-          mapRef.current.setView(
-            boundsCenter,
-            Math.min(
-              Math.max(boundsZoom - ZOOM_OFFSET, 0),
-              MAX_ZOOM,
-            ),
-            { animate: false },
-          );
-        }
+        mapRef.current.setView(
+          boundsCenter,
+          Math.min(
+            Math.max(boundsZoom - ZOOM_OFFSET, 0),
+            MAX_ZOOM,
+          ),
+          { animate: false },
+        );
       }
     }
   }, [locationData]);
@@ -694,9 +667,10 @@ export function MapWrapper({
       ),
     };
   }
+  // console.log(tooltip)
   // if (mapRef) onSetMapRef(mapRef, mapId);
   return (
-    <Styled hasInfo={hasInfo} ref={ref} isPrint={isPrintView}>
+    <Styled hasInfo={hasInfo} ref={ref} isPrint={isPrintView} fullMap={fullMap}>
       <Map id={mapId} styleType={styleType} />
       {tooltip && tooltip.features && tooltip.features.length > 0 && (
         <Tooltip
@@ -738,6 +712,7 @@ MapWrapper.propTypes = {
   options: PropTypes.object,
   isLocationData: PropTypes.bool,
   hasInfo: PropTypes.bool,
+  fullMap: PropTypes.bool,
   isPrintView: PropTypes.bool,
   circleLayerConfig: PropTypes.object,
   printArgs: PropTypes.object,

@@ -16,7 +16,7 @@ const Styled = styled.div`
   z-index: 50;
   bottom: ${({ isPrint }) => isPrint ? 0 : 10}px;
   width: ${({ isPrint }) => isPrint ? 'auto' : '100%'};
-  height: ${({ isPrint }) => isPrint ? 200 : 250}px;
+  height: ${({ isPrint }) => isPrint ? 'auto' : 250}px;
   left: 0;
   right: ${({ isPrint }) => isPrint ? 0 : 'auto'};
   max-width: ${({ isPrint }) => isPrint ? '100%' : '380px'};
@@ -26,7 +26,7 @@ const Styled = styled.div`
     bottom: ${({ isPrint }) => isPrint ? 0 : 50}px;
   }
   @media print {
-    height: 200px;
+    height: auto;
     right: 0;
     left: 0;
     bottom: 0;

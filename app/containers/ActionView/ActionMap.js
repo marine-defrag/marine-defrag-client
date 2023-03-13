@@ -3,7 +3,7 @@
  * ActionMap
  *
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
@@ -23,6 +23,7 @@ import {
   selectIncludeTargetMembers,
   selectIncludeActorChildren,
   selectIncludeTargetChildren,
+  // selectMapTooltips,
 } from 'containers/App/selectors';
 
 import {
@@ -30,13 +31,14 @@ import {
   setIncludeTargetMembers,
   setIncludeActorChildren,
   setIncludeTargetChildren,
+  // setMapTooltips,
 } from 'containers/App/actions';
 
 
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer/MapWrapper';
+import MapWrapper from 'containers/MapContainer/MapWrapper';
 import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
 
 // import messages from './messages';
@@ -54,12 +56,16 @@ const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
     margin-left: 0;
   }
 `;
-const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+const MapOuterWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
   height: 400px;
   background: #F9F9FA;
+  overflow: hidden;
   @media print {
     margin-left: 0;
+    display: block;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 `;
 
@@ -82,6 +88,8 @@ export function ActionMap({
   mapId = 'll-action-map',
   // intl,
 }) {
+  const [mapTooltips, setMapTooltips] = useState([]);
+  const [mapView, setMapView] = useState(null);
   // console.log('ActionMap')
   // // const { intl } = this.context;
   // // let type;
@@ -235,11 +243,10 @@ export function ActionMap({
       };
     }
   }
-
   return (
     <Styled hasHeader noOverflow>
-      <MapWrapper>
-        <MapContainer
+      <MapOuterWrapper>
+        <MapWrapper
           countryData={countryData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
@@ -255,8 +262,12 @@ export function ActionMap({
           fitBounds
           projection="gall-peters"
           mapId={mapId}
+          mapTooltips={mapTooltips}
+          setMapTooltips={setMapTooltips}
+          mapView={mapView}
+          onSetMapView={setMapView}
         />
-      </MapWrapper>
+      </MapOuterWrapper>
       {(memberOption || mapTitle || childrenOption) && (
         <MapOptions>
           {mapTitle && (
@@ -304,6 +315,7 @@ const mapStateToProps = (state) => ({
   includeTargetMembers: selectIncludeTargetMembers(state),
   includeActorChildren: selectIncludeActorChildren(state),
   includeTargetChildren: selectIncludeTargetChildren(state),
+  // mapTooltips: selectMapTooltips(state, mapId),
 });
 function mapDispatchToProps(dispatch) {
   return {
@@ -319,6 +331,9 @@ function mapDispatchToProps(dispatch) {
     onSetIncludeActorChildren: (active) => {
       dispatch(setIncludeActorChildren(active));
     },
+    // onSetMapTooltips: (items, mapId) => {
+    //   dispatch(setMapTooltips(items, mapId));
+    // },
   };
 }
 

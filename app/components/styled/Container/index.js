@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-
+/* eslint-disable prefer-template */
 const Container = styled.div`
   margin-right: auto;
   margin-left: auto;
@@ -17,8 +17,11 @@ const Container = styled.div`
     padding-left: ${({ inModal, isPrint }) => (isPrint || inModal) ? 0 : 12}px;
   }
   @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
-    max-width: ${(props) => props.isNarrow ? '960' : (parseInt(props.theme.breakpoints.xlarge, 10) - 30)}px;
-  }
+    max-width: ${({ isNarrow, isPrint, theme }) => {
+    if (isPrint) return '100%';
+    return isNarrow ? '960px' : (parseInt(theme.breakpoints.xlarge, 10) - 30) + 'px';
+  }};
+}
   @media print {
     max-width: 100%;
     width: 100%;

@@ -40,6 +40,7 @@ import {
   loadEntitiesIfNeeded,
   updatePath,
   closeEntity,
+  printView,
 } from 'containers/App/actions';
 
 import {
@@ -55,7 +56,7 @@ import {
   FF_ACTIONTYPE,
   RESOURCE_FIELDS,
 } from 'themes/config';
-
+import { PRINT_TYPES } from 'containers/App/constants';
 import Loading from 'components/Loading';
 import Content from 'components/Content';
 import ViewHeader from 'components/EntityView/ViewHeader';
@@ -65,7 +66,7 @@ import ViewWrapper from 'components/EntityView/ViewWrapper';
 import ViewPanel from 'components/EntityView/ViewPanel';
 import ViewPanelInside from 'components/EntityView/ViewPanelInside';
 import FieldGroup from 'components/fields/FieldGroup';
-
+import HeaderPrint from 'components/Header/HeaderPrint';
 
 import appMessages from 'containers/App/messages';
 import messages from './messages';
@@ -86,26 +87,25 @@ const ResourcesWrapper = styled((p) => <Box pad={{ top: 'medium', bottom: 'large
   border-color: #f1f0f1;
 `;
 
-export function ActionView(props) {
-  const {
-    viewEntity,
-    dataReady,
-    isManager,
-    taxonomies,
-    viewTaxonomies,
-    resourcesByResourcetype,
-    onEntityClick,
-    resourceConnections,
-    parent,
-    onLoadData,
-    intl,
-    handleEdit,
-    handleClose,
-    params,
-    handleTypeClick,
-    isPrintView,
-  } = props;
-
+export function ActionView({
+  viewEntity,
+  dataReady,
+  isManager,
+  taxonomies,
+  viewTaxonomies,
+  resourcesByResourcetype,
+  onEntityClick,
+  resourceConnections,
+  parent,
+  onLoadData,
+  intl,
+  handleEdit,
+  handleClose,
+  params,
+  handleTypeClick,
+  isPrintView,
+  onSetPrintView,
+}) {
   useEffect(() => {
     // kick off loading of data
     onLoadData();
@@ -116,15 +116,22 @@ export function ActionView(props) {
 
   let buttons = [];
   if (dataReady) {
-    buttons = [
-      ...buttons,
-      {
-        type: 'icon',
-        onClick: () => window.print(),
-        title: 'Print',
-        icon: 'print',
-      },
-    ];
+    if (window.print) {
+      buttons = [
+        ...buttons,
+        {
+          type: 'icon',
+          // onClick: () => window.print(),
+          onClick: () => onSetPrintView({
+            printType: isIndicator ? PRINT_TYPES.FF : PRINT_TYPES.SINGLE,
+            printOrientation: 'portrait',
+            printSize: 'A4',
+          }),
+          title: 'Print',
+          icon: 'print',
+        },
+      ];
+    }
     if (isManager) {
       buttons = [
         ...buttons,
@@ -177,7 +184,6 @@ export function ActionView(props) {
     const [de] = viewEntity.getIn(['attributes', 'date_end']).split('T');
     datesEqual = ds === de;
   }
-
   return (
     <div>
       <Helmet
@@ -199,6 +205,9 @@ export function ActionView(props) {
         }
         { viewEntity && dataReady && (
           <ViewWrapper isPrint={isPrintView}>
+            {isPrintView && (
+              <HeaderPrint />
+            )}
             <ViewHeader
               isPrintView={isPrintView}
               title={typeId
@@ -422,6 +431,7 @@ ActionView.propTypes = {
   handleEdit: PropTypes.func,
   handleClose: PropTypes.func,
   onEntityClick: PropTypes.func,
+  onSetPrintView: PropTypes.func,
   intl: intlShape.isRequired,
 };
 
@@ -453,6 +463,9 @@ function mapDispatchToProps(dispatch, props) {
     },
     handleTypeClick: (typeId) => {
       dispatch(updatePath(`${ROUTES.ACTIONS}/${typeId}`));
+    },
+    onSetPrintView: (config) => {
+      dispatch(printView(config));
     },
   };
 }

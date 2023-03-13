@@ -15,7 +15,6 @@ const ContainerWrapper = styled.div`
   overflow-y: ${({ noOverflow }) => noOverflow ? 'hidden' : 'auto'};
   z-index: 90;
   background-color: ${({ bg, isPrint }) => (bg && !isPrint) ? '#f1f0f1' : 'transparent'};
-  padding: ${({ isPrint }) => isPrint ? 20 : 0}px;
   @media print {
     box-shadow: none;
     position: ${({ printAbsolute }) => printAbsolute ? 'absolute' : 'static'};

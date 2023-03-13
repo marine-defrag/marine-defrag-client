@@ -20,6 +20,8 @@ import {
 import {
   selectSubjectQuery,
   selectActiontypes,
+  selectIsPrintView,
+  selectPrintArgs,
 } from 'containers/App/selectors';
 
 import qe from 'utils/quasi-equals';
@@ -68,6 +70,8 @@ export function ActionViewDetails({
   typeId,
   isIndicator,
   onSetSubject,
+  isPrintView,
+  printArgs,
 }) {
   // console.log('childActionsByActiontypeWithActorsByType', childActionsByActiontypeWithActorsByType && childActionsByActiontypeWithActorsByType.toJS())
   // console.log('childActionsByActiontypeWithActorsByType', childActionsByActiontypeWithActorsByType && childActionsByActiontypeWithActorsByType.flatten(1).toJS())
@@ -94,10 +98,11 @@ export function ActionViewDetails({
   if (validViewSubjects.indexOf(viewSubject) === -1) {
     viewSubject = validViewSubjects.length > 0 ? validViewSubjects[0] : null;
   }
+  const showAllTabs = isPrintView && printArgs.printTabs === 'all';
   return (
     <Styled>
-      {!isIndicator && (
-        <PrintHide>
+      {!isIndicator && !showAllTabs && (
+        <PrintHide isPrint={isPrintView}>
           <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
             <SubjectButton
               onClick={() => onSetSubject('actors')}
@@ -124,32 +129,14 @@ export function ActionViewDetails({
           </Box>
         </PrintHide>
       )}
-      {!isIndicator && (
-        <PrintOnly>
+      {!isIndicator && (showAllTabs || viewSubject === 'actors') && (
+        <PrintOnly isPrint={isPrintView}>
           <Box pad={{ bottom: 'small' }}>
-            {viewSubject === 'actors' && (
-              <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Donors' : 'Actors'}</Text>
-            )}
-            {hasTarget && viewSubject === 'targets' && (
-              <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Recipients' : 'Targets'}</Text>
-            )}
-            {hasChildren && viewSubject === 'children' && (
-              <Text size="large"><FormattedMessage {...appMessages.entities.actions.children} /></Text>
-            )}
+            <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Donors' : 'Actors'}</Text>
           </Box>
         </PrintOnly>
       )}
-      {viewSubject === 'actors' && (
-        <ActionViewDetailsTargets
-          id={id}
-          viewEntity={viewEntity}
-          onEntityClick={onEntityClick}
-          hasMemberOption={hasMemberOption}
-          taxonomies={taxonomies}
-          typeId={typeId}
-        />
-      )}
-      {viewSubject === 'actors' && (
+      {(showAllTabs || viewSubject === 'actors') && (
         <ActionViewDetailsActors
           id={id}
           viewEntity={viewEntity}
@@ -161,7 +148,31 @@ export function ActionViewDetails({
           isManager={isManager}
         />
       )}
-      {viewSubject === 'children' && hasChildren && (
+      {!isIndicator && hasTarget && (showAllTabs || viewSubject === 'targets') && (
+        <PrintOnly isPrint={isPrintView}>
+          <Box pad={{ bottom: 'small' }}>
+            <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Recipients' : 'Targets'}</Text>
+          </Box>
+        </PrintOnly>
+      )}
+      {(showAllTabs || viewSubject === 'targets') && (
+        <ActionViewDetailsTargets
+          id={id}
+          viewEntity={viewEntity}
+          onEntityClick={onEntityClick}
+          hasMemberOption={hasMemberOption}
+          taxonomies={taxonomies}
+          typeId={typeId}
+        />
+      )}
+      {!isIndicator && hasChildren && (showAllTabs || viewSubject === 'children') && (
+        <PrintOnly isPrint={isPrintView}>
+          <Box pad={{ bottom: 'small' }}>
+            <Text size="large"><FormattedMessage {...appMessages.entities.actions.children} /></Text>
+          </Box>
+        </PrintOnly>
+      )}
+      {hasChildren && (showAllTabs || viewSubject === 'children') && (
         <ActionViewDetailsChildren
           id={id}
           onEntityClick={onEntityClick}
@@ -197,14 +208,18 @@ ActionViewDetails.propTypes = {
   onSetSubject: PropTypes.func,
   subject: PropTypes.string,
   isIndicator: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   typeId: PropTypes.number,
   id: PropTypes.string,
+  printArgs: PropTypes.object,
 };
 
 const mapStateToProps = (state, { id }) => ({
   subject: selectSubjectQuery(state),
   childrenByType: selectChildActionsByType(state, id),
   activitytypes: selectActiontypes(state),
+  isPrintView: selectIsPrintView(state),
+  printArgs: selectPrintArgs(state),
 });
 
 function mapDispatchToProps(dispatch, { id }) {

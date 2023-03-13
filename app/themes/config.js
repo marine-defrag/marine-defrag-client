@@ -1064,6 +1064,6 @@ export const PRINT = {
       landscape: { H: 720, W: 1100 }, // pt
     },
     portrait: { W: 760, H: 1080 }, // pt
-    landscape: { H: 720, W: 1100 }, // pt
+    landscape: { H: 680, W: 1100 }, // pt
   },
 };
