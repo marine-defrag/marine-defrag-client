@@ -34,7 +34,7 @@ import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
 import EntityListTable from 'containers/EntityListTable';
 import ButtonPill from 'components/buttons/ButtonPill';
 
-import ContentHeader from 'components/ContentHeader';
+import ContentHeader from 'containers/ContentHeader';
 import HeaderPrint from 'components/Header/HeaderPrint';
 
 import qe from 'utils/quasi-equals';

@@ -40,7 +40,7 @@ import {
 } from 'containers/App/selectors';
 
 import Content from 'components/Content';
-import ContentHeader from 'components/ContentHeader';
+import ContentHeader from 'containers/ContentHeader';
 import ImportEntitiesForm from 'components/forms/ImportEntitiesForm';
 
 import {

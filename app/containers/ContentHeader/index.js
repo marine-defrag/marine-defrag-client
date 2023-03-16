@@ -1,19 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { Box, ResponsiveContext } from 'grommet';
+import { Box, Text, ResponsiveContext } from 'grommet';
+import ReactMarkdown from 'react-markdown';
 
 import { isMinSize } from 'utils/responsive';
 
 import {
   CONTENT_SINGLE, CONTENT_PAGE, CONTENT_MODAL,
 } from 'containers/App/constants';
+import {
+  selectIsPrintView,
+} from 'containers/App/selectors';
 
 import SupTitle from 'components/SupTitle';
 import InfoOverlay from 'components/InfoOverlay';
-// import Icon from 'components/Icon';
-
 import ButtonFactory from 'components/buttons/ButtonFactory';
+import BoxPrint from 'components/styled/BoxPrint';
 
 const Styled = styled.div`
   padding: ${({ isModal, hasViewOptions }) => {
@@ -21,7 +25,7 @@ const Styled = styled.div`
     if (hasViewOptions) return '0.5em 0 0.5em';
     return '1em 0 0.5em';
   }};
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     padding: ${({ isModal, hasViewOptions }) => {
     if (isModal) return '20px 0 20px 40px';
     if (hasViewOptions) return '0 0 1em';
@@ -55,7 +59,7 @@ const ButtonWrap = styled.span`
   }
 `;
 const TitleButtonWrap = styled((p) => <Box align="center" direction="row" {...p} />)`
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     min-height: 62px;
     width: 100%;
   }
@@ -64,7 +68,7 @@ const TitleButtonWrap = styled((p) => <Box align="center" direction="row" {...p}
 const ButtonGroup = styled((p) => <Box align="center" direction="row" {...p} />)`
   text-align: left;
   margin-bottom: 10px;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     margin-bottom: -4px;
   }
 `;
@@ -76,6 +80,15 @@ const SubTitle = styled.p`
   }
 `;
 const TitleWrap = styled(Box)``;
+
+const MarkdownPrintOnly = styled(ReactMarkdown)`
+  font-size: ${({ theme }) => theme.sizes.print.smaller};
+  line-height: ${({ theme }) => theme.sizes.print.default};
+`;
+const InfoTitlePrintOnly = styled(Text)`
+  font-size: ${({ theme }) => theme.sizes.print.smaller};
+`;
+
 
 const renderTitle = (type, title) => {
   switch (type) {
@@ -97,6 +110,7 @@ export function ContentHeader({
   subTitle,
   hasViewOptions,
   info,
+  isPrintView,
 }) {
   const size = React.useContext(ResponsiveContext);
   return (
@@ -114,7 +128,7 @@ export function ContentHeader({
                 {renderTitle(type, title)}
               </Box>
             )}
-            {info && (
+            {info && !isPrintView && (
               <InfoOverlay
                 title={info.title}
                 content={info.content}
@@ -132,6 +146,18 @@ export function ContentHeader({
           )}
         </TitleButtonWrap>
         {subTitle && <SubTitle>{subTitle}</SubTitle>}
+        {info && (
+          <BoxPrint isPrint={isPrintView} printOnly>
+            <Box>
+              {info.title && (<InfoTitlePrintOnly>{info.title}</InfoTitlePrintOnly>)}
+            </Box>
+            <Box width={{ max: 'large' }}>
+              {info.content && (
+                <MarkdownPrintOnly source={info.content} className="react-markdown" />
+              )}
+            </Box>
+          </BoxPrint>
+        )}
       </TitleWrap>
       {buttons && !isMinSize(size, 'medium') && (
         <ButtonGroup justify="end">
@@ -157,6 +183,11 @@ ContentHeader.propTypes = {
   info: PropTypes.object,
   type: PropTypes.string,
   hasViewOptions: PropTypes.bool,
+  isPrintView: PropTypes.bool,
 };
 
-export default ContentHeader;
+const mapStateToProps = (state) => ({
+  isPrintView: selectIsPrintView(state),
+});
+
+export default connect(mapStateToProps, null)(ContentHeader);

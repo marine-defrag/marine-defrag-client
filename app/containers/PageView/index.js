@@ -25,7 +25,7 @@ import Footer from 'containers/Footer';
 import Loading from 'components/Loading';
 import Container from 'components/styled/Container';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
-import ContentHeader from 'components/ContentHeader';
+import ContentHeader from 'containers/ContentHeader';
 import EntityView from 'components/EntityView';
 
 import {
