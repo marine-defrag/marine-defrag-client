@@ -22,11 +22,12 @@ export function CellBodyMain({
   entity,
   // column,
   canEdit,
+  isPrintView,
 }) {
   return (
     <Box direction="row" align="center" justify="start">
       {canEdit && (
-        <PrintHide>
+        <PrintHide isPrint={isPrintView}>
           <Select>
             <input
               type="checkbox"
@@ -76,6 +77,7 @@ CellBodyMain.propTypes = {
   entity: PropTypes.object,
   // column: PropTypes.object,
   canEdit: PropTypes.bool,
+  isPrintView: PropTypes.bool,
 };
 
 export default CellBodyMain;

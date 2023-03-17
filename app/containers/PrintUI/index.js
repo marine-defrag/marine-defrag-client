@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import {
   selectViewQuery,
-  selectPrintArgs,
+  selectPrintConfig,
   selectPageItemsQuery,
 } from 'containers/App/selectors';
 import {
@@ -89,7 +89,7 @@ const StyledGroupLabel = styled(GroupLabel)`
 // </Field>
 
 export function PrintUI({
-  args,
+  printConfig,
   close,
   onPrint,
   view,
@@ -101,9 +101,9 @@ export function PrintUI({
     printTabs,
     // printSize,
     printOrientation,
-    pages,
-  } = args;
-  const printAllPages = pages === 'all' || pageItems === 'all';
+    printItems,
+  } = printConfig;
+  const printAllPages = printItems === 'all' || pageItems === 'all';
   return (
     <Styled>
       <StyledForm>
@@ -155,7 +155,7 @@ export function PrintUI({
                       checked={!printAllPages}
                       label={intl.formatMessage(messages.pagesCurrent)}
                       onChange={() => onPrint({
-                        pages: 'current',
+                        printItems: 'current',
                       })}
                     />
                     <RadioButton
@@ -163,7 +163,7 @@ export function PrintUI({
                       checked={printAllPages}
                       label={intl.formatMessage(messages.pagesAll)}
                       onChange={() => onPrint({
-                        pages: 'all',
+                        printItems: 'all',
                       })}
                     />
                   </Box>
@@ -218,7 +218,7 @@ export function PrintUI({
 }
 
 PrintUI.propTypes = {
-  args: PropTypes.object,
+  printConfig: PropTypes.object,
   pageItems: PropTypes.object,
   view: PropTypes.string,
   close: PropTypes.func,
@@ -228,7 +228,7 @@ PrintUI.propTypes = {
 
 const mapStateToProps = (state) => ({
   view: selectViewQuery(state),
-  args: selectPrintArgs(state),
+  printConfig: selectPrintConfig(state),
   pageItems: selectPageItemsQuery(state),
 });
 

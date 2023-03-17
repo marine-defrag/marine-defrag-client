@@ -120,6 +120,7 @@ export function EntitiesTable({
   headerColumnsUtility,
   memberOption,
   subjectOptions,
+  isPrintView,
 }) {
   const size = React.useContext(ResponsiveContext);
   return (
@@ -177,11 +178,12 @@ export function EntitiesTable({
                       {col.type === 'main' && (
                         <CellHeaderMain
                           column={col}
-                          canEdit={canEdit}
+                          canEdit={canEdit && !isPrintView}
+                          isPrintView={isPrintView}
                         />
                       )}
                       {isMinSize(size, 'large') && col.type !== 'main' && (
-                        <CellHeaderPlain column={col} />
+                        <CellHeaderPlain column={col} isPrintView={isPrintView} />
                       )}
                     </TableCellHeaderInner>
                   </TableCellHeader>
@@ -208,7 +210,7 @@ export function EntitiesTable({
                       {col.type === 'main' && (
                         <CellBodyMain
                           entity={entity[col.id]}
-                          canEdit={canEdit}
+                          canEdit={canEdit && !isPrintView}
                           column={col}
                         />
                       )}
@@ -298,6 +300,7 @@ EntitiesTable.propTypes = {
   onEntityClick: PropTypes.func,
   memberOption: PropTypes.node,
   subjectOptions: PropTypes.node,
+  isPrintView: PropTypes.bool,
 };
 
 export default EntitiesTable;

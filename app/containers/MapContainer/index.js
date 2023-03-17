@@ -20,7 +20,7 @@ import {
 } from 'containers/App/actions';
 import {
   selectMapTooltips,
-  selectPrintArgs,
+  selectPrintConfig,
   selectMapView,
 } from 'containers/App/selectors';
 // import appMessages from 'containers/App/messages';
@@ -279,7 +279,7 @@ MapContainer.propTypes = {
 const mapStateToProps = (state, { mapData }) => ({
   mapTooltips: selectMapTooltips(state, mapData && mapData.mapId),
   mapView: selectMapView(state, mapData && mapData.mapId),
-  printArgs: selectPrintArgs(state),
+  printArgs: selectPrintConfig(state),
 });
 
 function mapDispatchToProps(dispatch) {

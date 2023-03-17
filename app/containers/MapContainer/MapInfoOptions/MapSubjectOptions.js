@@ -8,7 +8,7 @@ import PrintOnly from 'components/styled/PrintOnly';
 
 const Styled = styled.div`
   padding-bottom: ${({ inList }) => inList ? 2 : 10}px;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     padding-bottom: ${({ inList }) => inList ? 5 : 15}px;
   }
 `;
@@ -19,51 +19,49 @@ const TypeButton = styled((p) => <Button plain {...p} />)`
   background: none;
 `;
 
-class MapSubjectOptions extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  render() {
-    const { options, inList } = this.props;
-    return (
-      <Styled inList={inList}>
-        <PrintHide>
-          {options && (
-            <Box direction="row" gap="small">
-              {
-                options.map((option, i) => option && (
-                  <Box key={i}>
-                    <TypeButton active={option.active} onClick={option.onClick} inList={inList}>
-                      <Text size={inList ? 'medium' : 'large'}>
-                        {option.title}
-                      </Text>
-                    </TypeButton>
-                  </Box>
-                ))
-              }
-            </Box>
-          )}
-        </PrintHide>
-        <PrintOnly>
-          {options && (
-            <Box direction="row" gap="small">
-              {
-                options.filter((option) => option && option.active).map((option, i) => (
-                  <Box key={i}>
+function MapSubjectOptions({ options, inList, isPrintView }) {
+  return (
+    <Styled inList={inList}>
+      <PrintHide isPrint={isPrintView}>
+        {options && (
+          <Box direction="row" gap="small">
+            {
+              options.map((option, i) => option && (
+                <Box key={i}>
+                  <TypeButton active={option.active} onClick={option.onClick} inList={inList}>
                     <Text size={inList ? 'medium' : 'large'}>
                       {option.title}
                     </Text>
-                  </Box>
-                ))
-              }
-            </Box>
-          )}
-        </PrintOnly>
-      </Styled>
-    );
-  }
+                  </TypeButton>
+                </Box>
+              ))
+            }
+          </Box>
+        )}
+      </PrintHide>
+      <PrintOnly isPrint={isPrintView}>
+        {options && (
+          <Box direction="row" gap="small">
+            {
+              options.filter((option) => option && option.active).map((option, i) => (
+                <Box key={i}>
+                  <Text size={inList ? 'medium' : 'large'}>
+                    {option.title}
+                  </Text>
+                </Box>
+              ))
+            }
+          </Box>
+        )}
+      </PrintOnly>
+    </Styled>
+  );
 }
 
 MapSubjectOptions.propTypes = {
   options: PropTypes.array,
   inList: PropTypes.bool,
+  isPrintView: PropTypes.bool,
 };
 
 export default MapSubjectOptions;

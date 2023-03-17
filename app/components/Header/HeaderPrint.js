@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import styled, { withTheme } from 'styled-components';
-import {
-  Box, Text, Heading,
-} from 'grommet';
+import { Box, Text, Heading } from 'grommet';
 import appMessages from 'containers/App/messages';
+
 import Logo from './Logo';
+import messages from './messages';
 
 const Brand = styled.div`
   color: ${({ theme }) => theme.global.colors.text.brand} !important;
@@ -49,40 +49,65 @@ const BrandTitle = styled((p) => <Heading level={1} {...p} />)`
   }
 `;
 
-class HeaderPrint extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  render() {
-    const { intl } = this.context;
-    const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
-    return (
-      <Styled>
-        <Box direction="row" fill>
-          <Box>
-            <Brand>
-              <Box direction="row" align="center">
-                <Logo src={this.props.theme.media.headerLogoPrint} alt={appTitle} />
-                <Box fill="vertical" pad={{ left: 'small' }} justify="center" gap="xxsmall">
-                  <Claim>
-                    <FormattedMessage {...appMessages.app.claim} />
-                  </Claim>
-                  <BrandTitle>
-                    <FormattedMessage {...appMessages.app.title} />
-                  </BrandTitle>
-                </Box>
-              </Box>
-            </Brand>
-          </Box>
-        </Box>
-      </Styled>
-    );
+const Link = styled.a`
+  color: ${({ theme }) => theme.global.colors.text.secondary};
+  font-size: ${(props) => props.theme.sizes.print.smaller};
+  :hover {
+    color: ${({ theme }) => theme.global.colors.text.secondary};
   }
+`;
+const Meta = styled.div`
+  color: ${({ theme }) => theme.global.colors.text.secondary};
+  font-size: ${(props) => props.theme.sizes.print.smaller};
+  line-height: ${(props) => props.theme.sizes.print.large};
+  text-align: right;
+`;
+
+function HeaderPrint({ theme, intl }) {
+  const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
+  const now = new Date();
+  let url = window && window.location
+    && `${window.location.origin}${window.location.pathname}`;
+  if (url && window.location.search) {
+    url = `${url}${window.location.search}`;
+  }
+  return (
+    <Styled>
+      <Box direction="row" fill justify="between" align="center">
+        <Box flex={{ shrink: 0 }}>
+          <Brand>
+            <Box direction="row" align="center">
+              <Logo src={theme.media.headerLogoPrint} alt={appTitle} />
+              <Box fill="vertical" pad={{ left: 'small' }} justify="center" gap="xxsmall">
+                <Claim>
+                  <FormattedMessage {...appMessages.app.claim} />
+                </Claim>
+                <BrandTitle>
+                  <FormattedMessage {...appMessages.app.title} />
+                </BrandTitle>
+              </Box>
+            </Box>
+          </Brand>
+        </Box>
+        <Box align="end" gap="xsmall">
+          <Meta>
+            {`${intl.formatMessage(messages.dateLabelPrint)} ${intl.formatDate(now)}, ${intl.formatTime(now)}`}
+          </Meta>
+          <Meta>
+            {`${intl.formatMessage(messages.urlLabelPrint)} `}
+            <Link href={url} title="link">
+              {url}
+            </Link>
+          </Meta>
+        </Box>
+      </Box>
+    </Styled>
+  );
 }
 
-HeaderPrint.contextTypes = {
-  intl: PropTypes.object.isRequired,
-};
-
 HeaderPrint.propTypes = {
+  intl: intlShape.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withTheme(HeaderPrint);
+export default withTheme(injectIntl(HeaderPrint));

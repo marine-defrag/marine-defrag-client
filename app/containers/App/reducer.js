@@ -35,6 +35,8 @@ import {
   OPEN_NEW_ENTITY_MODAL,
   SET_MAP_LOADING,
   SET_MAP_LOADED,
+  PRINT_VIEW,
+  CLOSE_PRINT_VIEW,
   // SET_MAP_VIEW,
 } from './constants';
 
@@ -61,6 +63,7 @@ const initialState = fromJS({
   },
   newEntityModal: null,
   mapLoading: {},
+  printConfig: null,
 });
 
 function appReducer(state = initialState, payload) {
@@ -154,6 +157,15 @@ function appReducer(state = initialState, payload) {
       return state.setIn(['mapLoading', payload.mapId], true);
     case SET_MAP_LOADED:
       return state.deleteIn(['mapLoading', payload.mapId]);
+    case PRINT_VIEW:
+      return state.set(
+        'printConfig', {
+          ...state.get('printConfig'),
+          ...payload.config,
+        }
+      );
+    case CLOSE_PRINT_VIEW:
+      return state.set('printConfig', null);
     // case SET_MAP_VIEW:
     //   return state.setIn(['mapView', payload.mapId], fromJS(payload.view));
     default:

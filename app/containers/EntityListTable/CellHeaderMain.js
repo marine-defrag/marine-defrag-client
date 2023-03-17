@@ -29,13 +29,17 @@ const SortButton = styled(ButtonFlatIconOnly)`
   }
 `;
 
-export function CellHeaderMain({ column, canEdit }) {
+export function CellHeaderMain({
+  column,
+  canEdit,
+  isPrintView,
+}) {
   const sortOrderOption = column.onSort && SORT_ORDER_OPTIONS.find((option) => column.sortOrder === option.value);
   /* eslint-disable jsx-a11y/label-has-for */
   return (
     <Box direction="row" align="center" justify="start">
       {canEdit && (
-        <Box>
+        <BoxPrint printHide>
           <Select>
             <Checkbox
               id="select-all"
@@ -43,7 +47,7 @@ export function CellHeaderMain({ column, canEdit }) {
               onChange={column.onSelect}
             />
           </Select>
-        </Box>
+        </BoxPrint>
       )}
       <Box>
         {canEdit && (
@@ -60,7 +64,7 @@ export function CellHeaderMain({ column, canEdit }) {
         )}
       </Box>
       {column.onSort && (
-        <BoxPrint hidePrint pad={{ left: 'medium' }}>
+        <BoxPrint isPrint={isPrintView} printHide pad={{ left: 'medium' }}>
           <SortButton
             onClick={() => {
               if (column.sortActive) {
@@ -78,7 +82,7 @@ export function CellHeaderMain({ column, canEdit }) {
               }
               palette="dark"
               paletteIndex={column.sortActive ? 1 : 4}
-              hidePrint={!column.sortActive}
+              printHide={!column.sortActive}
               size="20px"
             />
           </SortButton>
@@ -91,6 +95,7 @@ export function CellHeaderMain({ column, canEdit }) {
 CellHeaderMain.propTypes = {
   column: PropTypes.object,
   canEdit: PropTypes.bool,
+  isPrintView: PropTypes.bool,
 };
 
 export default CellHeaderMain;

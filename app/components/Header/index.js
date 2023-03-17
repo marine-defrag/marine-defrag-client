@@ -118,7 +118,7 @@ const Section = styled((p) => <Box {...p} />)`
   }
 `;
 
-const MainMenu = styled((p) => <BoxPrint hidePrint {...p} />)`
+const MainMenu = styled((p) => <BoxPrint printHide {...p} />)`
   position: ${({ wide }) => !wide ? 'absolute' : 'static'};
   left: ${({ wide }) => !wide ? 0 : 'auto'};
   right: ${({ wide }) => !wide ? 0 : 'auto'};
@@ -237,7 +237,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                   <>
                     {!wide && !this.state.showMenu && (
                       <BoxPrint
-                        hidePrint
+                        printHide
                         flex={{ grow: 1 }}
                         direction="row"
                         align="center"
@@ -256,7 +256,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                     )}
                     {!wide && this.state.showMenu && (
                       <BoxPrint
-                        hidePrint
+                        printHide
                         flex={{ grow: 1 }}
                         direction="row"
                         align="center"

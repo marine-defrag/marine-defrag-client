@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Box } from 'grommet';
 import ButtonFlatIconOnly from 'components/buttons/ButtonFlatIconOnly';
 import TextPrint from 'components/styled/TextPrint';
+import BoxPrint from 'components/styled/BoxPrint';
 import Icon from 'components/Icon';
 import { SORT_ORDER_OPTIONS } from 'containers/App/constants';
 
@@ -17,7 +18,7 @@ const SortButton = styled(ButtonFlatIconOnly)`
 `;
 
 
-export function CellHeaderPlain({ column }) {
+export function CellHeaderPlain({ column, isPrintView }) {
   const sortOrderOption = column.onSort && SORT_ORDER_OPTIONS.find(
     (option) => column.sortOrder === option.value
   );
@@ -30,7 +31,7 @@ export function CellHeaderPlain({ column }) {
         </TextPrint>
       </Box>
       {column.onSort && (
-        <Box pad={{ left: 'xxsmall' }}>
+        <BoxPrint printHide isPrint={isPrintView} pad={{ left: 'xxsmall' }}>
           <SortButton
             onClick={() => {
               if (column.sortActive) {
@@ -50,11 +51,11 @@ export function CellHeaderPlain({ column }) {
               }
               palette="dark"
               paletteIndex={column.sortActive ? 1 : 4}
-              hidePrint={!column.sortActive}
+              printHide={!column.sortActive}
               size="20px"
             />
           </SortButton>
-        </Box>
+        </BoxPrint>
       )}
     </Box>
   );
@@ -62,6 +63,7 @@ export function CellHeaderPlain({ column }) {
 
 CellHeaderPlain.propTypes = {
   column: PropTypes.object,
+  isPrintView: PropTypes.bool,
 };
 
 export default CellHeaderPlain;

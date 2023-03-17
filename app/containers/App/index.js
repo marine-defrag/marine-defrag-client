@@ -24,21 +24,21 @@ import {
   selectIsUserManager,
   selectIsUserAnalyst,
   selectSessionUserAttributes,
-  selectReady,
+  // selectReady,
   selectEntitiesWhere,
   selectNewEntityModal,
   selectIsPrintView,
-  selectPrintArgs,
+  selectPrintConfig,
 } from './selectors';
 
 import {
   validateToken,
-  loadEntitiesIfNeeded,
+  // loadEntitiesIfNeeded,
   updatePath,
   openNewEntityModal,
 } from './actions';
 
-import { DEPENDENCIES } from './constants';
+// import { DEPENDENCIES } from './constants';
 
 import messages from './messages';
 
@@ -154,14 +154,6 @@ const PrintWrapper = styled.div`
 class App extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   UNSAFE_componentWillMount() {
     this.props.validateToken();
-    this.props.loadEntitiesIfNeeded();
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    // reload entities if invalidated
-    if (!nextProps.dataReady) {
-      this.props.loadEntitiesIfNeeded();
-    }
   }
 
   preparePageMenuPages = (pages, currentPath) => sortEntities(
@@ -325,7 +317,7 @@ App.propTypes = {
   user: PropTypes.object,
   pages: PropTypes.object,
   validateToken: PropTypes.func,
-  loadEntitiesIfNeeded: PropTypes.func,
+  // loadEntitiesIfNeeded: PropTypes.func,
   onPageLink: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
   newEntityModal: PropTypes.object,
@@ -337,7 +329,7 @@ App.contextTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  dataReady: selectReady(state, { path: DEPENDENCIES }),
+  // dataReady: selectReady(state, { path: DEPENDENCIES }),
   isManager: selectIsUserManager(state),
   isAnalyst: selectIsUserAnalyst(state),
   isUserSignedIn: selectIsSignedIn(state),
@@ -347,7 +339,7 @@ const mapStateToProps = (state) => ({
     path: API.PAGES,
     where: { draft: false },
   }),
-  printArgs: selectPrintArgs(state),
+  printArgs: selectPrintConfig(state),
   newEntityModal: selectNewEntityModal(state),
 });
 
@@ -356,9 +348,9 @@ export function mapDispatchToProps(dispatch) {
     validateToken: () => {
       dispatch(validateToken()); // Maybe this could move to routes.js or App wrapper
     },
-    loadEntitiesIfNeeded: () => {
-      DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
-    },
+    // loadEntitiesIfNeeded: () => {
+    //   DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
+    // },
     onPageLink: (path, args) => {
       dispatch(updatePath(path, args));
     },

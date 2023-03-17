@@ -392,13 +392,20 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 {config.types === 'actiontypes' && (
                   <Box>
                     {subjectOptions && (
-                      <MapSubjectOptions options={subjectOptions} />
+                      <MapSubjectOptions options={subjectOptions} isPrintView={isPrintView} />
                     )}
                   </Box>
                 )}
                 {entityActors && (
                   <Box>
-                    <BoxPrint hidePrint direction="row" gap="xsmall" margin={{ vertical: 'small' }} wrap>
+                    <BoxPrint
+                      isPrint={isPrintView}
+                      printHide
+                      direction="row"
+                      gap="xsmall"
+                      margin={{ vertical: 'small' }}
+                      wrap
+                    >
                       {mapSubject === 'actors'
                         && ACTIONTYPE_ACTORTYPES[typeId].length > 1
                         && ACTIONTYPE_ACTORTYPES[typeId].map(
@@ -527,7 +534,13 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                     columns={columns}
                     headerColumnsUtility={headerColumnsUtility}
                     memberOption={memberOption && <MapOption option={memberOption} type="member" />}
-                    subjectOptions={subjectOptions && <MapSubjectOptions inList options={subjectOptions} />}
+                    subjectOptions={subjectOptions && (
+                      <MapSubjectOptions
+                        inList
+                        isPrintView={isPrintView}
+                        options={subjectOptions}
+                      />
+                    )}
                     listUpdating={listUpdating}
                     entities={entities}
                     errors={errors}

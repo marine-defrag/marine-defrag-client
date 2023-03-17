@@ -102,7 +102,7 @@ class CategoryListHeader extends React.PureComponent { // eslint-disable-line re
                 && (
                   <SortWrapper>
                     <SortButton onClick={col.onClick}>
-                      <Icon name={col.sortIcon} hidePrint={!col.active} />
+                      <Icon name={col.sortIcon} printHide={!col.active} />
                     </SortButton>
                   </SortWrapper>
                 )

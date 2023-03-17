@@ -455,21 +455,13 @@ export const selectFFOverlay = createSelector(
 );
 
 export const selectIsPrintView = createSelector(
-  selectLocationQuery,
-  (locationQuery) => locationQuery && locationQuery.get('print') ? qe(locationQuery.get('print'), 1) : false
+  getGlobal,
+  (state) => !!state.get('printConfig')
 );
 
-export const selectPrintArgs = createSelector(
-  selectLocationQuery,
-  (locationQuery) => locationQuery && ({
-    isPrint: locationQuery.get('print') && qe(locationQuery.get('print'), 1),
-    pages: locationQuery.get('pitems'),
-    printTabs: locationQuery.get('ptabs'),
-    printType: locationQuery.get('ptype'),
-    printSize: 'A3',
-    printOrientation: locationQuery.get('porient'),
-    fixed: locationQuery.get('pfixed'),
-  })
+export const selectPrintConfig = createSelector(
+  getGlobal,
+  (state) => state.get('printConfig') || {}
 );
 export const selectMapTooltips = createSelector(
   selectLocationQuery,

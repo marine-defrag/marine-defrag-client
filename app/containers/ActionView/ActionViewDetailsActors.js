@@ -13,7 +13,7 @@ import { Box, Text } from 'grommet';
 
 import {
   selectActorConnections,
-  selectPrintArgs,
+  selectPrintConfig,
   selectIsPrintView,
 } from 'containers/App/selectors';
 
@@ -214,7 +214,7 @@ const mapStateToProps = (state, { id }) => ({
   actorsByActortype: selectActorsByType(state, id),
   childActionsByActiontypeWithActorsByType: selectChildActionsByTypeWithActorsByType(state, id),
   actorConnections: selectActorConnections(state),
-  printArgs: selectPrintArgs(state),
+  printArgs: selectPrintConfig(state),
   isPrintView: selectIsPrintView(state),
 });
 

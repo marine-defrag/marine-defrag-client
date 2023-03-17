@@ -9,16 +9,20 @@ const complexMixin = css`
 `;
 
 const BoxPrint = styled((p) => <Box {...p} />)`
-  ${({ isPrint, hidePrint }) => isPrint
-    && hidePrint
-    && 'display: none !important;'
-}
+  ${({ isPrint, printHide, printOnly }) => {
+    if (isPrint) {
+      if (printHide) return 'display: none !important;';
+      if (printOnly) return 'display: flex !important;';
+    }
+    if (printOnly) return 'display: none !important;';
+    return 'display: flex;';
+  }}
   ${({ isPrint, padPrintHorizontal }) => isPrint
     && padPrintHorizontal === 'none'
     && complexMixin
 }
   @media print {
-    ${({ hidePrint }) => hidePrint && 'display: none !important;'}
+    ${({ printHide }) => printHide && 'display: none !important;'}
     ${({ padPrintHorizontal }) => padPrintHorizontal === 'none' && complexMixin}
   }
 `;

@@ -48,7 +48,7 @@ export function IndicatorsTab({
   return (
     <BoxPrint
       fill="horizontal"
-      hidePrint={!showIndicatorInfo}
+      printHide={!showIndicatorInfo}
       isPrint={isPrintView}
     >
       <PrintOnly isPrint={isPrintView}>

@@ -237,7 +237,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       isPrintView,
     } = this.props;
     // detect print to avoid expensive rendering
-    const printing = !!(
+    const printing = isPrintView || !!(
       typeof window !== 'undefined'
       && window.matchMedia
       && window.matchMedia('print').matches

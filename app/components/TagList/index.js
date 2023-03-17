@@ -77,7 +77,7 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
     const hasFilters = filters.length > 0;
     const groupedFilters = groupBy(filters, 'group');
     return (
-      <Styled hidePrint={!hasFilters}>
+      <Styled printHide={!hasFilters}>
         {hasFilters && (
           <Tags gap="xsmall">
             {Object.keys(groupedFilters).map((group, i) => (
@@ -97,7 +97,7 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
                     >
                       {getFilterLabel(filter, intl, long)}
                       { filter.onClick
-                      && <Icon name="removeSmall" text textRight hidePrint />
+                      && <Icon name="removeSmall" text textRight printHide />
                       }
                     </ButtonTagFilter>
                   ))}

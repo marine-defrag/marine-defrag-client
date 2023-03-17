@@ -37,7 +37,7 @@ const Search = styled((p) => <Box direction="row" align="center" {...p} />)`
     border: none;
     box-shadow: none;
     padding: 0;
-    display: ${({ hidePrint }) => hidePrint ? 'none' : 'block'};
+    display: ${({ printHide }) => printHide ? 'none' : 'block'};
   }
 `;
 const SearchInput = styled(DebounceInput)`
@@ -122,7 +122,7 @@ export class TagSearch extends React.Component { // eslint-disable-line react/pr
       <Search
         active={this.state.active}
         small={this.props.multiselect}
-        hidePrint={!hasFilters}
+        printHide={!hasFilters}
       >
         {filters.length > 0 && (
           <LabelPrint>
@@ -142,7 +142,7 @@ export class TagSearch extends React.Component { // eslint-disable-line react/pr
                   disabled={!filter.onClick}
                 >
                   {this.getFilterLabel(filter)}
-                  {filter.onClick && <Icon name="removeSmall" text textRight hidePrint />}
+                  {filter.onClick && <Icon name="removeSmall" text textRight printHide />}
                 </ButtonTagFilterInverse>
               )
               : (
@@ -156,7 +156,7 @@ export class TagSearch extends React.Component { // eslint-disable-line react/pr
                 >
                   {this.getFilterLabel(filter)}
                   { filter.onClick
-                  && <Icon name="removeSmall" text textRight hidePrint />
+                  && <Icon name="removeSmall" text textRight printHide />
                   }
                 </ButtonTagFilter>
               ))

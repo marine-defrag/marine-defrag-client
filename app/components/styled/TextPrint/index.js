@@ -4,7 +4,7 @@ import { Text } from 'grommet';
 
 const TextPrint = styled((p) => <Text {...p} />)`
   @media print {
-    font-size: 10pt;
+    font-size: ${({ theme, size = 'medium' }) => theme.sizes.print[size]};
     ${({ padPrint }) => padPrint && 'padding-right: 5px;'}
   }
 `;

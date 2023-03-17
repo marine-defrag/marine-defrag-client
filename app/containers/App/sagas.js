@@ -48,8 +48,6 @@ import {
   SET_INCLUDE_TARGET_CHILDREN,
   SET_INCLUDE_MEMBERS_FORFILTERS,
   SET_FF_OVERLAY,
-  PRINT_VIEW,
-  CLOSE_PRINT_VIEW,
   SET_MAP_TOOLTIPS,
   SET_MAP_VIEW,
 } from 'containers/App/constants';
@@ -895,102 +893,6 @@ export function* setMapViewSaga({ view }) {
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
 
-export function* printViewSaga({ config }) {
-  const location = yield select(selectLocation);
-  let queryArgs = [];
-  if (config.pages) {
-    queryArgs = [
-      {
-        arg: 'pitems',
-        value: config.pages,
-        replace: true,
-      },
-      ...queryArgs,
-    ];
-  }
-  if (config.fixed) {
-    queryArgs = [
-      {
-        arg: 'pfixed',
-        value: config.fixed,
-        replace: true,
-      },
-      ...queryArgs,
-    ];
-  }
-  if (config.printTabs) {
-    queryArgs = [
-      {
-        arg: 'ptabs',
-        value: config.printTabs,
-        replace: true,
-      },
-      ...queryArgs,
-    ];
-  }
-  if (config.printType) {
-    queryArgs = [
-      {
-        arg: 'ptype',
-        value: config.printType,
-        replace: true,
-      },
-      ...queryArgs,
-    ];
-  }
-  // if (config.printSize) {
-  //   queryArgs = [
-  //     {
-  //       arg: 'psize',
-  //       value: config.printSize,
-  //       replace: true,
-  //     },
-  //     ...queryArgs,
-  //   ];
-  // }
-  if (config.printOrientation) {
-    queryArgs = [
-      {
-        arg: 'porient',
-        value: config.printOrientation,
-        replace: true,
-      },
-      ...queryArgs,
-    ];
-  }
-  const queryNext = getNextQuery(
-    [
-      {
-        arg: 'print',
-        value: '1',
-        replace: true,
-      },
-      ...queryArgs,
-    ],
-    true, // extend
-    location,
-  );
-  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
-}
-export function* closePrintViewSaga() {
-  const location = yield select(selectLocation);
-  const queryArgs = [
-    { arg: 'pitems', remove: true },
-    { arg: 'pfixed', remove: true },
-    { arg: 'ptype', remove: true },
-    { arg: 'ptabs', remove: true },
-    { arg: 'psize', remove: true },
-    { arg: 'porient', remove: true },
-    { arg: 'print', remove: true },
-  ];
-  const queryNext = getNextQuery(
-    queryArgs,
-    true, // extend
-    location,
-  );
-  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
-}
-
 export function* openBookmarkSaga({ bookmark }) {
   const path = bookmark.getIn(['attributes', 'view', 'path']);
   const queryString = getNextQueryString(
@@ -1098,8 +1000,8 @@ export default function* rootSaga() {
   yield takeEvery(SET_FF_OVERLAY, setFFOverlaySaga);
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);
   yield takeEvery(DISMISS_QUERY_MESSAGES, dismissQueryMessagesSaga);
-  yield takeEvery(PRINT_VIEW, printViewSaga);
-  yield takeEvery(CLOSE_PRINT_VIEW, closePrintViewSaga);
+  // yield takeEvery(PRINT_VIEW, printViewSaga);
+  // yield takeEvery(CLOSE_PRINT_VIEW, closePrintViewSaga);
 
   yield takeEvery(CLOSE_ENTITY, closeEntitySaga);
 }

@@ -284,12 +284,17 @@ theme.sizes = {
     listItemBottom: '7pt',
     markdown: '10pt',
     smallest: '7pt', // used for labels
+    xxsmall: '7pt', // used for labels
     smaller: '8pt', // used for labels
+    xsmall: '8pt', // used for labels
     small: '9pt', // used for labels
     default: '10pt', // used for labels
+    medium: '10pt', // used for labels
     large: '11pt', // used for labels
     larger: '12pt', // used for labels
+    xlarge: '12pt', // used for labels
     largest: '14pt', // used for labels
+    xxlarge: '14pt', // used for labels
   },
   // px only
   aside: {

@@ -21,7 +21,7 @@ import {
   selectSubjectQuery,
   selectActiontypes,
   selectIsPrintView,
-  selectPrintArgs,
+  selectPrintConfig,
 } from 'containers/App/selectors';
 
 import qe from 'utils/quasi-equals';
@@ -186,7 +186,7 @@ export function ActionViewDetails({
           fill={false}
           alignContent="start"
           direction="row"
-          hidePrint
+          printHide
         >
           <ButtonDefault onClick={() => handleImportConnection()}>
             <FormattedMessage {...messages.importActorConnections} />
@@ -219,7 +219,7 @@ const mapStateToProps = (state, { id }) => ({
   childrenByType: selectChildActionsByType(state, id),
   activitytypes: selectActiontypes(state),
   isPrintView: selectIsPrintView(state),
-  printArgs: selectPrintArgs(state),
+  printArgs: selectPrintConfig(state),
 });
 
 function mapDispatchToProps(dispatch, { id }) {
