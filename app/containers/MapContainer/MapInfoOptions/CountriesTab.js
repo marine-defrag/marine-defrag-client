@@ -54,7 +54,7 @@ export function CountriesTab({
         </Box>
       </PrintOnly>
       {subjectOptions && (
-        <PrintHide isPrint={isPrintView}>
+        <PrintHide>
           <MapSubjectOptions options={subjectOptions} />
         </PrintHide>
       )}
@@ -65,7 +65,7 @@ export function CountriesTab({
           isPrint={isPrintView}
         />
       )}
-      <PrintHide isPrint={isPrintView}>
+      <PrintHide>
         <Box gap="xsmall" margin={{ vertical: 'small' }}>
           {title && (
             <Title>{title}</Title>

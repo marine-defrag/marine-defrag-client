@@ -19,10 +19,10 @@ const TypeButton = styled((p) => <Button plain {...p} />)`
   background: none;
 `;
 
-function MapSubjectOptions({ options, inList, isPrintView }) {
+function MapSubjectOptions({ options, inList }) {
   return (
     <Styled inList={inList}>
-      <PrintHide isPrint={isPrintView}>
+      <PrintHide>
         {options && (
           <Box direction="row" gap="small">
             {
@@ -39,7 +39,7 @@ function MapSubjectOptions({ options, inList, isPrintView }) {
           </Box>
         )}
       </PrintHide>
-      <PrintOnly isPrint={isPrintView}>
+      <PrintOnly>
         {options && (
           <Box direction="row" gap="small">
             {
@@ -61,7 +61,6 @@ function MapSubjectOptions({ options, inList, isPrintView }) {
 MapSubjectOptions.propTypes = {
   options: PropTypes.array,
   inList: PropTypes.bool,
-  isPrintView: PropTypes.bool,
 };
 
 export default MapSubjectOptions;

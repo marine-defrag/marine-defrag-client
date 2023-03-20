@@ -33,7 +33,6 @@ import {
   selectIsUserAdmin,
   selectIsUserAnalyst,
   selectIsUserManager,
-  selectIsPrintView,
 } from 'containers/App/selectors';
 
 import {
@@ -98,7 +97,6 @@ export class PageView extends React.PureComponent { // eslint-disable-line react
       isAdmin,
       isAnalyst,
       isManager,
-      isPrintView,
     } = this.props;
     const buttons = [];
     if (dataReady) {
@@ -125,7 +123,6 @@ export class PageView extends React.PureComponent { // eslint-disable-line react
         />
         <StyledContainerWrapper
           className={`content-${CONTENT_PAGE}`}
-          isPrint={isPrintView}
         >
           <ViewContainer isNarrow={!isAnalyst}>
             <ContentHeader
@@ -133,24 +130,18 @@ export class PageView extends React.PureComponent { // eslint-disable-line react
               type={CONTENT_PAGE}
               buttons={buttons}
             />
-            { !dataReady
-              && <Loading />
-            }
-            { !page && dataReady
-              && (
-                <div>
-                  <FormattedMessage {...messages.notFound} />
-                </div>
-              )
-            }
-            { page && dataReady
-              && (
-                <EntityView
-                  fields={this.getFields(page, isManager)}
-                  seamless
-                />
-              )
-            }
+            {!dataReady && <Loading />}
+            {!page && dataReady && (
+              <div>
+                <FormattedMessage {...messages.notFound} />
+              </div>
+            )}
+            {page && dataReady && (
+              <EntityView
+                fields={this.getFields(page, isManager)}
+                seamless
+              />
+            )}
           </ViewContainer>
           <Footer />
         </StyledContainerWrapper>
@@ -169,7 +160,6 @@ PageView.propTypes = {
   isAnalyst: PropTypes.bool,
   isManager: PropTypes.bool,
   params: PropTypes.object,
-  isPrintView: PropTypes.bool,
 };
 
 PageView.contextTypes = {
@@ -183,7 +173,6 @@ const mapStateToProps = (state, props) => ({
   isAnalyst: selectIsUserAnalyst(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   page: selectViewEntity(state, props.params.id),
-  isPrintView: selectIsPrintView(state),
 });
 
 function mapDispatchToProps(dispatch, props) {

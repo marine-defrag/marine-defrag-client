@@ -31,9 +31,19 @@ import {
   loadEntitiesIfNeeded,
   updatePath,
   closeEntity,
+  printView,
 } from 'containers/App/actions';
 
-import { CONTENT_SINGLE } from 'containers/App/constants';
+
+import {
+  selectReady,
+  selectIsUserManager,
+  selectTaxonomiesWithCategories,
+  selectActorConnections,
+  selectIsPrintView,
+} from 'containers/App/selectors';
+
+import { CONTENT_SINGLE, PRINT_TYPES } from 'containers/App/constants';
 import { ROUTES, ACTORTYPES } from 'themes/config';
 
 import Loading from 'components/Loading';
@@ -46,13 +56,7 @@ import ViewWrapper from 'components/EntityView/ViewWrapper';
 import ViewPanel from 'components/EntityView/ViewPanel';
 import ViewPanelInside from 'components/EntityView/ViewPanelInside';
 import FieldGroup from 'components/fields/FieldGroup';
-
-import {
-  selectReady,
-  selectIsUserManager,
-  selectTaxonomiesWithCategories,
-  selectActorConnections,
-} from 'containers/App/selectors';
+import HeaderPrint from 'components/Header/HeaderPrint';
 
 import appMessages from 'containers/App/messages';
 import messages from './messages';
@@ -82,6 +86,8 @@ export function ActorView({
   onEntityClick,
   taxonomies,
   actorConnections,
+  isPrintView,
+  onSetPrintView,
 }) {
   useEffect(() => {
     // kick off loading of data
@@ -92,15 +98,22 @@ export function ActorView({
 
   let buttons = [];
   if (dataReady) {
-    buttons = [
-      ...buttons,
-      {
-        type: 'icon',
-        onClick: () => window.print(),
-        title: 'Print',
-        icon: 'print',
-      },
-    ];
+    if (window.print) {
+      buttons = [
+        ...buttons,
+        {
+          type: 'icon',
+          // onClick: () => window.print(),
+          onClick: () => onSetPrintView({
+            printType: PRINT_TYPES.SINGLE,
+            printOrientation: 'portrait',
+            printSize: 'A4',
+          }),
+          title: 'Print',
+          icon: 'print',
+        },
+      ];
+    }
     if (isManager) {
       buttons = [
         ...buttons,
@@ -129,7 +142,7 @@ export function ActorView({
           { name: 'description', content: intl.formatMessage(messages.metaDescription) },
         ]}
       />
-      <Content isSingle>
+      <Content isSingle isPrint={isPrintView}>
         { !dataReady
           && <Loading />
         }
@@ -141,8 +154,12 @@ export function ActorView({
           )
         }
         { viewEntity && dataReady && (
-          <ViewWrapper>
+          <ViewWrapper isPrint={isPrintView}>
+            {isPrintView && (
+              <HeaderPrint />
+            )}
             <ViewHeader
+              isPrintView={isPrintView}
               title={typeId
                 ? intl.formatMessage(appMessages.actortypes[typeId])
                 : intl.formatMessage(appMessages.entities.actors.plural)
@@ -289,6 +306,8 @@ ActorView.propTypes = {
   params: PropTypes.object,
   isManager: PropTypes.bool,
   intl: intlShape.isRequired,
+  isPrintView: PropTypes.bool,
+  onSetPrintView: PropTypes.func,
 };
 
 
@@ -300,6 +319,7 @@ const mapStateToProps = (state, props) => ({
   taxonomies: selectTaxonomiesWithCategories(state),
   actorConnections: selectActorConnections(state),
   associationsByType: selectAssociationsByType(state, props.params.id),
+  isPrintView: selectIsPrintView(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -318,6 +338,9 @@ function mapDispatchToProps(dispatch, props) {
     },
     onEntityClick: (id, path) => {
       dispatch(updatePath(`${path}/${id}`));
+    },
+    onSetPrintView: (config) => {
+      dispatch(printView(config));
     },
   };
 }

@@ -227,6 +227,7 @@ export function MapContainer({
           </MapTitle>
           <MapKeyWrapper>
             <MapKey
+              isPrint={isPrintView}
               mapSubject={mapSubject}
               maxValue={maxValue}
               minValue={minValue}

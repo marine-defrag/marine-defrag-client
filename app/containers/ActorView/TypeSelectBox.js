@@ -8,6 +8,7 @@ import PrintOnly from 'components/styled/PrintOnly';
 import ButtonPill from 'components/buttons/ButtonPill';
 import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
+import { usePrint } from 'containers/App/PrintContext';
 
 const Styled = styled((p) => (
   <Box
@@ -34,6 +35,7 @@ export function TypeSelectBox({
   activeOptionId,
   type,
 }) {
+  const isPrint = usePrint();
   return (
     <>
       <PrintHide>
@@ -59,7 +61,7 @@ export function TypeSelectBox({
           )}
         </Styled>
       </PrintHide>
-      <PrintOnly>
+      <PrintOnly isPrint={isPrint}>
         <StyledPrint>
           {options.filter(
             (id) => (qe(activeOptionId, id) || options.size === 1)

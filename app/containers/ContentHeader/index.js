@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Box, Text, ResponsiveContext } from 'grommet';
 import ReactMarkdown from 'react-markdown';
@@ -10,14 +9,12 @@ import { isMinSize } from 'utils/responsive';
 import {
   CONTENT_SINGLE, CONTENT_PAGE, CONTENT_MODAL,
 } from 'containers/App/constants';
-import {
-  selectIsPrintView,
-} from 'containers/App/selectors';
 
 import SupTitle from 'components/SupTitle';
 import InfoOverlay from 'components/InfoOverlay';
 import ButtonFactory from 'components/buttons/ButtonFactory';
 import BoxPrint from 'components/styled/BoxPrint';
+import { usePrint } from 'containers/App/PrintContext';
 
 const Styled = styled.div`
   padding: ${({ isModal, hasViewOptions }) => {
@@ -31,9 +28,6 @@ const Styled = styled.div`
     if (hasViewOptions) return '0 0 1em';
     return '3em 0 1em';
   }};
-  }
-  @media print {
-    padding-top: 60pt;
   }
 `;
 
@@ -110,8 +104,8 @@ export function ContentHeader({
   subTitle,
   hasViewOptions,
   info,
-  isPrintView,
 }) {
+  const isPrintView = usePrint();
   const size = React.useContext(ResponsiveContext);
   return (
     <Styled
@@ -147,7 +141,7 @@ export function ContentHeader({
         </TitleButtonWrap>
         {subTitle && <SubTitle>{subTitle}</SubTitle>}
         {info && (
-          <BoxPrint isPrint={isPrintView} printOnly>
+          <BoxPrint printOnly>
             <Box>
               {info.title && (<InfoTitlePrintOnly>{info.title}</InfoTitlePrintOnly>)}
             </Box>
@@ -183,11 +177,6 @@ ContentHeader.propTypes = {
   info: PropTypes.object,
   type: PropTypes.string,
   hasViewOptions: PropTypes.bool,
-  isPrintView: PropTypes.bool,
 };
 
-const mapStateToProps = (state) => ({
-  isPrintView: selectIsPrintView(state),
-});
-
-export default connect(mapStateToProps, null)(ContentHeader);
+export default ContentHeader;

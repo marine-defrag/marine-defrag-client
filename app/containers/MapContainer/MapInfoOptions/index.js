@@ -16,7 +16,7 @@ const Styled = styled.div`
   z-index: 50;
   bottom: ${({ isPrint }) => isPrint ? 0 : 10}px;
   width: ${({ isPrint }) => isPrint ? 'auto' : '100%'};
-  height: ${({ isPrint }) => isPrint ? 'auto' : 250}px;
+  height: ${({ isPrint }) => isPrint ? 'auto' : '250px'};
   left: 0;
   right: ${({ isPrint }) => isPrint ? 0 : 'auto'};
   max-width: ${({ isPrint }) => isPrint ? '100%' : '380px'};
@@ -112,7 +112,7 @@ export function MapInfoOptions({
     );
   return (
     <Styled isPrint={isPrintView}>
-      <PrintHide isPrint={isPrintView}>
+      <PrintHide>
         <Pane>
           <Box fill="horizontal" direction="row" style={{ zIndex: 1 }}>
             {renderTabs(true)}
@@ -120,7 +120,7 @@ export function MapInfoOptions({
           <Box flex={{ grow: 1 }} direction="row" elevation="medium" background="white" style={{ zIndex: 2 }} />
         </Pane>
       </PrintHide>
-      <PrintHide isPrint={isPrintView}>
+      <PrintHide>
         <Pane>
           <Box fill="horizontal" direction="row">
             {renderTabs(false)}
@@ -152,7 +152,7 @@ export function MapInfoOptions({
           </Box>
         </Pane>
       </PrintHide>
-      <PrintOnly isPrint={isPrintView}>
+      <PrintOnly>
         <Box
           flex={{ grow: 1 }}
           direction="row"

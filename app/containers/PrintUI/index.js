@@ -219,7 +219,7 @@ export function PrintUI({
 
 PrintUI.propTypes = {
   printConfig: PropTypes.object,
-  pageItems: PropTypes.object,
+  pageItems: PropTypes.string,
   view: PropTypes.string,
   close: PropTypes.func,
   onPrint: PropTypes.func,

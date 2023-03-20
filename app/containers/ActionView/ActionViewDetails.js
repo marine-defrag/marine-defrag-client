@@ -102,7 +102,7 @@ export function ActionViewDetails({
   return (
     <Styled>
       {!isIndicator && !showAllTabs && (
-        <PrintHide isPrint={isPrintView}>
+        <PrintHide>
           <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
             <SubjectButton
               onClick={() => onSetSubject('actors')}
@@ -130,7 +130,7 @@ export function ActionViewDetails({
         </PrintHide>
       )}
       {!isIndicator && (showAllTabs || viewSubject === 'actors') && (
-        <PrintOnly isPrint={isPrintView}>
+        <PrintOnly>
           <Box pad={{ bottom: 'small' }}>
             <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Donors' : 'Actors'}</Text>
           </Box>
@@ -149,7 +149,7 @@ export function ActionViewDetails({
         />
       )}
       {!isIndicator && hasTarget && (showAllTabs || viewSubject === 'targets') && (
-        <PrintOnly isPrint={isPrintView}>
+        <PrintOnly>
           <Box pad={{ bottom: 'small' }}>
             <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Recipients' : 'Targets'}</Text>
           </Box>
@@ -166,7 +166,7 @@ export function ActionViewDetails({
         />
       )}
       {!isIndicator && hasChildren && (showAllTabs || viewSubject === 'children') && (
-        <PrintOnly isPrint={isPrintView}>
+        <PrintOnly>
           <Box pad={{ bottom: 'small' }}>
             <Text size="large"><FormattedMessage {...appMessages.entities.actions.children} /></Text>
           </Box>

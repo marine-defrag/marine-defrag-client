@@ -1,6 +1,8 @@
 import styled from 'styled-components';
+import React from 'react';
+import { usePrint } from 'containers/App/PrintContext';
 
-const ContainerWrapper = styled.div`
+const Styled = styled.div`
   position: ${({ isStatic, isPrint }) => (isPrint || isStatic) ? 'static' : 'absolute'};
   top: ${({ headerStyle, theme }) => {
     if (headerStyle === 'types') {
@@ -22,5 +24,11 @@ const ContainerWrapper = styled.div`
     padding: 0;
   }
 `;
+
+export function ContainerWrapper(props) {
+  const isPrint = usePrint();
+  return <Styled isPrint={isPrint} {...props} />;
+}
+
 export default ContainerWrapper;
 // box-shadow: ${({ isPrint }) => isPrint ? '0px 0px 5px 0px rgb(0 0 0 / 50%)' : 'none'};

@@ -1,14 +1,15 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-
 import { Box } from 'grommet';
+
+import { usePrint } from 'containers/App/PrintContext';
 
 const complexMixin = css`
   padding-left: 0 !important;
   padding-right: 0 !important;
 `;
 
-const BoxPrint = styled((p) => <Box {...p} />)`
+const Styled = styled((p) => <Box {...p} />)`
   ${({ isPrint, printHide, printOnly }) => {
     if (isPrint) {
       if (printHide) return 'display: none !important;';
@@ -26,5 +27,11 @@ const BoxPrint = styled((p) => <Box {...p} />)`
     ${({ padPrintHorizontal }) => padPrintHorizontal === 'none' && complexMixin}
   }
 `;
+
+export function BoxPrint(props) {
+  const isPrint = usePrint();
+  return <Styled isPrint={isPrint} {...props} />;
+}
+
 
 export default BoxPrint;

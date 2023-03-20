@@ -10,9 +10,9 @@ import messages from './messages';
 
 const Brand = styled.div`
   color: ${({ theme }) => theme.global.colors.text.brand} !important;
-  height: ${(props) => props.theme.sizes.header.banner.heightMobile}px;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    height: ${(props) => props.theme.sizes.header.banner.height}px;
+  height: ${({ theme }) => theme.sizes.header.banner.heightMobile}px;
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+    height: ${({ theme }) => theme.sizes.header.banner.height}px;
   }
 `;
 const Styled = styled.div`
@@ -24,42 +24,42 @@ const Styled = styled.div`
   top: 0;
   left: 0;
   right: 0;
-  margin-bottom: 50px;
+  margin-bottom: 0;
   border-bottom: 1px solid #CECED2;
 `;
 const Claim = styled((p) => <Text {...p} />)`
-  font-family: ${(props) => props.theme.fonts.title};
-  font-size: ${(props) => props.theme.text.xxsmall.size};
-  line-height: ${(props) => props.theme.text.xxsmall.size};
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    font-size: ${(props) => props.theme.text.xsmall.size};
-    line-height: ${(props) => props.theme.text.xsmall.size};
+  font-family: ${({ theme }) => theme.fonts.title};
+  font-size: ${({ theme }) => theme.text.xxsmall.size};
+  line-height: ${({ theme }) => theme.text.xxsmall.size};
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+    font-size: ${({ theme }) => theme.text.xsmall.size};
+    line-height: ${({ theme }) => theme.text.xsmall.size};
   }
 `;
 const BrandTitle = styled((p) => <Heading level={1} {...p} />)`
   margin: 0;
-  font-family: ${(props) => props.theme.fonts.title};
-  font-size: ${(props) => props.theme.sizes.header.print.title};
-  line-height: ${(props) => props.theme.text.small.size};
+  font-family: ${({ theme }) => theme.fonts.title};
+  font-size: ${({ theme }) => theme.sizes.header.print.title};
+  line-height: ${({ theme }) => theme.text.small.size};
   font-weight: 500;
   padding: 0;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    font-size: ${(props) => props.theme.text.large.size};
-    line-height: ${(props) => props.theme.text.large.size};
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+    font-size: ${({ theme }) => theme.text.large.size};
+    line-height: ${({ theme }) => theme.text.large.size};
   }
 `;
 
 const Link = styled.a`
   color: ${({ theme }) => theme.global.colors.text.secondary};
-  font-size: ${(props) => props.theme.sizes.print.smaller};
+  font-size: ${({ theme }) => theme.sizes.print.smaller};
   :hover {
     color: ${({ theme }) => theme.global.colors.text.secondary};
   }
 `;
 const Meta = styled.div`
   color: ${({ theme }) => theme.global.colors.text.secondary};
-  font-size: ${(props) => props.theme.sizes.print.smaller};
-  line-height: ${(props) => props.theme.sizes.print.large};
+  font-size: ${({ theme }) => theme.sizes.print.smaller};
+  line-height: ${({ theme }) => theme.sizes.print.large};
   text-align: right;
 `;
 

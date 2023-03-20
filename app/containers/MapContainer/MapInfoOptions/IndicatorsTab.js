@@ -31,7 +31,6 @@ export function IndicatorsTab({
   config,
   minMaxValues,
   circleLayerConfig,
-  isPrintView,
 }) {
   const {
     ffOptions,
@@ -49,9 +48,8 @@ export function IndicatorsTab({
     <BoxPrint
       fill="horizontal"
       printHide={!showIndicatorInfo}
-      isPrint={isPrintView}
     >
-      <PrintOnly isPrint={isPrintView}>
+      <PrintOnly>
         <Text size="small">
           {config.tabTitle}
         </Text>
@@ -61,7 +59,7 @@ export function IndicatorsTab({
           </Title>
         </Box>
       </PrintOnly>
-      <PrintHide isPrint={isPrintView}>
+      <PrintHide>
         <SelectIndicators config={config} />
       </PrintHide>
       {showIndicatorInfo && (
@@ -74,7 +72,7 @@ export function IndicatorsTab({
             circleLayerConfig={circleLayerConfig}
           />
           {activeIndicatorOption.title && (
-            <PrintHide isPrint={isPrintView}>
+            <PrintHide>
               {activeIndicatorOption.onClick && (
                 <IndicatorButton
                   as={activeIndicatorOption.href ? 'a' : 'button'}
@@ -119,7 +117,6 @@ IndicatorsTab.propTypes = {
   config: PropTypes.object,
   minMaxValues: PropTypes.object,
   circleLayerConfig: PropTypes.object,
-  isPrintView: PropTypes.bool,
 };
 
 export default IndicatorsTab;

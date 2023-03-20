@@ -12,11 +12,11 @@ const Container = styled.div`
     if (isPrint) return 0;
     return isSingle ? 50 : 0;
   }}px;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     padding-right: ${({ inModal, isPrint }) => (isPrint || inModal) ? 0 : 12}px;
     padding-left: ${({ inModal, isPrint }) => (isPrint || inModal) ? 0 : 12}px;
   }
-  @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.xlarge}) {
     max-width: ${({ isNarrow, isPrint, theme }) => {
     if (isPrint) return '100%';
     return isNarrow ? '960px' : (parseInt(theme.breakpoints.xlarge, 10) - 30) + 'px';

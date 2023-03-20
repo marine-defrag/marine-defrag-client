@@ -24,7 +24,7 @@ import { CONTENT_LIST } from 'containers/App/constants';
 import { jumpToComponent } from 'utils/scroll-to-component';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
-import Content from 'components/styled/ContentSimple';
+import ContentSimple from 'components/styled/ContentSimple';
 import BoxPrint from 'components/styled/BoxPrint';
 import PrintHide from 'components/styled/PrintHide';
 import Loading from 'components/Loading';
@@ -362,7 +362,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
     if (hasFilters) {
       headerSubTitle = `of ${allEntityCount} total`;
     }
-
     return (
       <ContainerWrapper
         headerStyle={headerStyle}
@@ -377,8 +376,8 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
             <EntityListViewOptions isPrintView={isPrintView} options={viewOptions} />
           </PrintHide>
         )}
-        <Container ref={this.ScrollReference}>
-          <Content>
+        <Container ref={this.ScrollReference} isPrint={isPrintView}>
+          <ContentSimple isPrint={isPrintView}>
             {!dataReady && <Loading />}
             {dataReady && (
               <div>
@@ -571,7 +570,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 )}
               </div>
             )}
-          </Content>
+          </ContentSimple>
         </Container>
       </ContainerWrapper>
     );

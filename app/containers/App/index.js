@@ -40,6 +40,7 @@ import {
 
 // import { DEPENDENCIES } from './constants';
 
+import { PrintContext } from './PrintContext';
 import messages from './messages';
 
 const Main = styled.div`
@@ -111,13 +112,7 @@ const PrintWrapperInner = styled.div`
   right: ${({ isPrint }) => isPrint ? 20 : 0}px;
   left: ${({ isPrint }) => isPrint ? 20 : 0}px;
   @media print {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: ${(props) => props.fixed ? getPrintWidth(props) : '100%'};
-    height: ${(props) => getPrintHeight(props)};;
+    position: static;
   }
 `;
 const PrintWrapper = styled.div`
@@ -136,6 +131,7 @@ const PrintWrapper = styled.div`
   }};
   width: ${(props) => getPrintWidth(props)};
   height: ${(props) => getPrintHeight(props)};
+  min-height: ${(props) => props.isPrint ? getPrintHeight({ ...props, fixed: true }) : 'auto'};
   box-shadow: ${({ isPrint }) => isPrint ? '0px 0px 5px 0px rgb(0 0 0 / 50%)' : 'none'};
   padding: ${({ isPrint }) => isPrint ? 20 : 0}px;
   @media print {
@@ -235,7 +231,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       || location.pathname.startsWith(ROUTES.UNAUTHORISED);
     const isHomeOrAuth = isHome || isAuth;
     return (
-      <div id="app-inner">
+      <div id="app-inner" className={isPrintView ? 'print-view' : ''}>
         <Helmet titleTemplate={`%s - ${title}`} defaultTitle={title} />
         {!isHome && (
           <Header
@@ -277,7 +273,9 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
               orient={printArgs.printOrientation}
               size={printArgs.printSize}
             >
-              {React.Children.toArray(children)}
+              <PrintContext.Provider value={isPrintView}>
+                {React.Children.toArray(children)}
+              </PrintContext.Provider>
             </PrintWrapperInner>
           </PrintWrapper>
         </Main>
@@ -302,7 +300,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             />
           </ReactModal>
         )}
-        <GlobalStyle />
+        <GlobalStyle isPrint={isPrintView} />
       </div>
     );
   }

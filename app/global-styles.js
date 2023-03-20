@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle, css } from 'styled-components';
 
 /* eslint no-unused-expressions: 0 */
 const GlobalStyle = createGlobalStyle`
@@ -146,7 +146,7 @@ const GlobalStyle = createGlobalStyle`
       p {
         &:first-child{
           font-size: 1.2em;
-          color: ${({ theme }) => theme.global.colors.text.lead};
+          color: ${({ theme, isPrint }) => theme.global.colors.text[isPrint ? 'light' : 'lead']};
           @media print {
             color: ${({ theme }) => theme.global.colors.text.light};
           }
@@ -167,7 +167,6 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
-  .print-modal,
   .new-entity-modal {
     position: absolute;
     top: 10px;
@@ -183,10 +182,6 @@ const GlobalStyle = createGlobalStyle`
     margin-left: auto;
     max-width: 1170px;
   }
-  .print-modal {
-    max-width: 800px;
-    border: 1px solid red;
-  }
   @media (min-width: 769px) {
     .new-entity-modal {
       padding: 20px;
@@ -195,16 +190,7 @@ const GlobalStyle = createGlobalStyle`
       right: 40px;
       bottom: 40px;
     }
-    .print-modal {
-      padding: 20px;
-      top: 80px;
-      left: 80px;
-      right: 80px;
-      bottom: 80px;
-    }
   }
-
-  .print-modal-overlay,
   .new-entity-modal-overlay {
     position: fixed;
     top: 0;
@@ -297,6 +283,69 @@ const GlobalStyle = createGlobalStyle`
       display: none;
     }
   }
+  ${({ isPrint }) => isPrint && css`
+    body {
+      font-size: 10pt;
+    }
+    button, input, select, textarea {
+      font-size: 10pt;
+      page-break-inside: avoid;
+    }
+    a {
+      page-break-inside: avoid;
+    }
+    #app {
+      background-color: white;
+    }
+    h1 {
+      font-size: 20pt;
+    }
+    h2 {
+      font-size: 16pt;
+    }
+    h3 {
+      font-size: 13pt;
+    }
+    h4 {
+      font-size: 11pt;
+    }
+    h5 {
+      font-size: 10pt;
+    }
+    h6 {
+      font-size: 9pt;
+    }
+    blockquote {
+      page-break-inside: avoid;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      page-break-after: avoid;
+      page-break-inside: avoid;
+    }
+    img {
+      page-break-inside: avoid;
+      page-break-after: avoid;
+    }
+    table, pre {
+      page-break-inside: avoid;
+    }
+    ul, ol, dl {
+      page-break-before: avoid;
+    }
+
+    .content-page {
+      .react-markdown {
+        p {
+          &:first-child{
+            font-size: 12pt;
+          }
+        }
+      }
+    }
+    .leaflet-control-container {
+      display: none;
+    }
+  `}
 `;
 
 export default GlobalStyle;

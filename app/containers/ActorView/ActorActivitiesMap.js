@@ -7,7 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Box, Text } from 'grommet';
 
 import * as topojson from 'topojson-client';
@@ -37,22 +37,26 @@ import MapContainer from 'containers/MapContainer/MapWrapper';
 import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
 import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
 // import messages from './messages';
+import { usePrint } from 'containers/App/PrintContext';
 
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
 `;
 const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
   @media print {
     margin-left: 0;
   }
 `;
 const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
   max-width: 400px;
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
   @media print {
     margin-left: 0;
   }
 `;
 const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
   @media print {
     margin-left: 0;
   }
@@ -61,6 +65,7 @@ const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
   position: relative;
   height: 400px;
   background: #F9F9FA;
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
   @media print {
     margin-left: 0;
   }
@@ -142,6 +147,7 @@ export function ActorActivitiesMap({
   actorCanBeMember,
   // intl,
 }) {
+  const isPrint = usePrint();
   // console.log('actions', actions && actions.toJS())
   // console.log('actionsAsMember', actionsAsMember && actionsAsMember.toJS())
   // console.log('actiontypeHasTarget', actiontypeHasTarget)
@@ -429,8 +435,9 @@ export function ActorActivitiesMap({
   );
   return (
     <Styled hasHeader noOverflow>
-      <MapWrapper>
+      <MapWrapper isPrint={isPrint}>
         <MapContainer
+          isPrint={isPrint}
           countryData={countryData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
@@ -443,18 +450,18 @@ export function ActorActivitiesMap({
         />
       </MapWrapper>
       {mapTitle && (
-        <MapTitle>
+        <MapTitle isPrint={isPrint}>
           <Text weight={600}>{mapTitle}</Text>
         </MapTitle>
       )}
       {maxValue > 1 && (
-        <MapKeyWrapper>
+        <MapKeyWrapper isPrint={isPrint}>
           <Text size="small">{keyTitle}</Text>
           <MapKey mapSubject={mapSubject} maxValue={maxValue} maxBinValue={0} />
         </MapKeyWrapper>
       )}
       {(memberOption || memberTargetOption) && (
-        <MapOptions>
+        <MapOptions isPrint={isPrint}>
           {memberTargetOption && (
             <MapOption option={memberTargetOption} type="member" />
           )}

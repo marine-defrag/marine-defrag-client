@@ -25,6 +25,7 @@ import {
 import { setSubject } from 'containers/App/actions';
 import PrintHide from 'components/styled/PrintHide';
 import PrintOnly from 'components/styled/PrintOnly';
+import { usePrint } from 'containers/App/PrintContext';
 
 import ActorViewDetailsActions from './ActorViewDetailsActions';
 import ActorViewDetailsActionsAsTarget from './ActorViewDetailsActionsAsTarget';
@@ -82,11 +83,15 @@ export function ActorViewDetails(props) {
   if (validViewSubjects.indexOf(viewSubject) === -1) {
     viewSubject = validViewSubjects.length > 0 ? validViewSubjects[0] : null;
   }
-
+  const isPrint = usePrint();
   return (
     <Styled>
       <PrintHide>
-        <Box direction="row" gap="small" margin={{ vertical: 'small', horizontal: 'medium' }}>
+        <Box
+          direction="row"
+          gap="small"
+          margin={{ vertical: 'small', horizontal: 'medium' }}
+        >
           {hasMembers && (
             <SubjectButton
               onClick={() => onSetSubject('members')}
@@ -121,7 +126,7 @@ export function ActorViewDetails(props) {
           )}
         </Box>
       </PrintHide>
-      <PrintOnly>
+      <PrintOnly isPrint={isPrint}>
         <Box pad={{ bottom: 'small' }}>
           {hasMembers && viewSubject === 'members' && (
             <Text size="large">Members</Text>

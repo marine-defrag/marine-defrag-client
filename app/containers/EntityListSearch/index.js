@@ -104,7 +104,7 @@ export class EntityListSearch extends React.Component { // eslint-disable-line r
     // }}
     return (
       <>
-        <PrintHide isPrint={isPrint}>
+        <PrintHide>
           <EntityListSearchWrapper>
             <Search
               active={this.state.active}

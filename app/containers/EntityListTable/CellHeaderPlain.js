@@ -18,7 +18,7 @@ const SortButton = styled(ButtonFlatIconOnly)`
 `;
 
 
-export function CellHeaderPlain({ column, isPrintView }) {
+export function CellHeaderPlain({ column }) {
   const sortOrderOption = column.onSort && SORT_ORDER_OPTIONS.find(
     (option) => column.sortOrder === option.value
   );
@@ -31,7 +31,7 @@ export function CellHeaderPlain({ column, isPrintView }) {
         </TextPrint>
       </Box>
       {column.onSort && (
-        <BoxPrint printHide isPrint={isPrintView} pad={{ left: 'xxsmall' }}>
+        <BoxPrint printHide pad={{ left: 'xxsmall' }}>
           <SortButton
             onClick={() => {
               if (column.sortActive) {
@@ -63,7 +63,6 @@ export function CellHeaderPlain({ column, isPrintView }) {
 
 CellHeaderPlain.propTypes = {
   column: PropTypes.object,
-  isPrintView: PropTypes.bool,
 };
 
 export default CellHeaderPlain;

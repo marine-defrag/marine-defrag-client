@@ -93,7 +93,6 @@ function EntityListFooter({
   onPageSelect,
   onPageItemsSelect,
   pageSize,
-  isPrintView,
   intl,
 }) {
   const perPageOptions = PAGE_ITEM_OPTIONS.map((option) => ({
@@ -110,12 +109,12 @@ function EntityListFooter({
           <Box />
         )}
         {pager && pager.pages && pager.pages.length > 1 && (
-          <BoxPrint printOnly isPrint={isPrintView}>
+          <BoxPrint printOnly>
             <TextPrint size="xsmall">{`Showing page ${pager.currentPage} of ${pager.totalPages} list pages total`}</TextPrint>
           </BoxPrint>
         )}
         {pager && pager.pages && pager.pages.length > 1 && (
-          <BoxPrint printHide isPrint={isPrintView}>
+          <BoxPrint printHide>
             <ListInline>
               <ListInlineItem>
                 { pager.currentPage > 1 && (
@@ -214,7 +213,7 @@ function EntityListFooter({
             </ListInline>
           </BoxPrint>
         )}
-        <BoxPrint printHide isPrint={isPrintView}>
+        <BoxPrint printHide>
           <SelectWrapper>
             <SelectReset
               value={pageSize.toString()}
@@ -236,7 +235,6 @@ EntityListFooter.propTypes = {
   pager: PropTypes.object,
   onPageSelect: PropTypes.func,
   onPageItemsSelect: PropTypes.func,
-  isPrintView: PropTypes.bool,
   intl: intlShape.isRequired,
 };
 
