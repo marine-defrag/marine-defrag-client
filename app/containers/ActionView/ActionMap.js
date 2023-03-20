@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Box, Text } from 'grommet';
 
 import * as topojson from 'topojson-client';
@@ -47,16 +47,19 @@ const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
 `;
 const MapTitle = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)`
-  @media print {
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+@media print {
     margin-left: 0;
   }
 `;
 const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
   @media print {
     margin-left: 0;
   }
 `;
 const MapOuterWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
   position: relative;
   background: #F9F9FA;
   overflow: hidden;
@@ -247,12 +250,13 @@ export function ActionMap({
     }
   }
   return (
-    <Styled hasHeader noOverflow>
+    <Styled hasHeader noOverflow isPrint={isPrintView}>
       <MapOuterWrapper
         isPrint={isPrintView}
         orient={printArgs && printArgs.printOrientation}
       >
         <MapWrapper
+          isPrint={isPrintView}
           countryData={countryData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
@@ -275,7 +279,7 @@ export function ActionMap({
         />
       </MapOuterWrapper>
       {(memberOption || mapTitle || childrenOption) && (
-        <MapOptions>
+        <MapOptions isPrint={isPrintView}>
           {mapTitle && (
             <MapTitle>
               <Text weight={600}>{mapTitle}</Text>

@@ -26,7 +26,7 @@ import { scaleColorCount, getCircleLayer } from './utils';
 const Styled = styled.div`
   position: absolute;
   top: ${({ theme, isPrint, fullMap }) => (isPrint && fullMap) ? theme.sizes.header.banner.heightPrint : 0}px;
-  bottom: ${({ hasInfo, isPrint }) => isPrint && hasInfo ? '200px' : 0};
+  bottom: ${({ hasInfo, isPrint }) => isPrint && hasInfo ? '180px' : 0};
   right: 0;
   left: 0;
   background: transparent;
@@ -35,7 +35,7 @@ const Styled = styled.div`
   width: 100%;
   @media print {
     top: ${({ theme, fullMap }) => fullMap ? theme.sizes.header.banner.heightPrint : 0}px;
-    bottom: ${({ hasInfo }) => hasInfo ? '200px' : 0};
+    bottom: ${({ hasInfo }) => hasInfo ? '180px' : 0};
   }
 `;
 // box-shadow: inset 0px 0px 5px 0px rgb(0 0 0 / 50%);

@@ -35,6 +35,8 @@ const Root = styled.div`
   }};
   @media print {
     left: auto;
+    top: 0;
+    bottom: 0;
     width: ${({ orient }) => orient === 'portrait' ? 33 : 25}%;
   }
 `;
@@ -61,6 +63,7 @@ const Main = styled.div`
     pointer-events: all;
   }
   @media print {
+    min-width: auto;
     width: 100%;
   }
 `;

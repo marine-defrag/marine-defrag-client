@@ -25,10 +25,10 @@ const Styled = styled.div`
   }
 `;
 
-export function ContainerWrapper(props) {
+const ContainerWrapper = React.forwardRef((props, ref) => {
   const isPrint = usePrint();
-  return <Styled isPrint={isPrint} {...props} />;
-}
+  return <Styled ref={ref} isPrint={isPrint} {...props} />;
+});
 
 export default ContainerWrapper;
 // box-shadow: ${({ isPrint }) => isPrint ? '0px 0px 5px 0px rgb(0 0 0 / 50%)' : 'none'};

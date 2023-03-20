@@ -112,7 +112,13 @@ const PrintWrapperInner = styled.div`
   right: ${({ isPrint }) => isPrint ? 20 : 0}px;
   left: ${({ isPrint }) => isPrint ? 20 : 0}px;
   @media print {
-    position: static;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: ${(props) => props.fixed ? getPrintWidth(props) : '100%'};
+    height: ${(props) => getPrintHeight(props)};;
   }
 `;
 const PrintWrapper = styled.div`
