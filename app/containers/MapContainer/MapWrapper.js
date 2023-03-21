@@ -121,7 +121,7 @@ export function MapWrapper({
 
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
-  const leafletOptions = customMapProjection
+  let leafletOptions = customMapProjection
     ? {
       crs: new L.Proj.CRS(
         customMapProjection.crs,
@@ -149,6 +149,7 @@ export function MapWrapper({
       attributionControl: false,
       center: mapView ? mapView.center : VIEW_INITIAL.center,
       zoom: mapView ? mapView.zoom : VIEW_INITIAL.zoom,
+      debounceMoveend: true,
     }
     : {
       // center: mapOptions.CENTER,
@@ -164,8 +165,15 @@ export function MapWrapper({
       attributionControl: false,
       center: mapView ? mapView.center : VIEW_INITIAL.center,
       zoom: mapView ? mapView.zoom : VIEW_INITIAL.zoom,
+      debounceMoveend: true,
     };
-
+  if (isPrintView) {
+    leafletOptions = {
+      ...leafletOptions,
+      preferCanvas: true,
+      renderer: L.canvas(),
+    };
+  }
   const mapEvents = {
     // resize: () => {
     //   console.log('resize')
@@ -198,7 +206,18 @@ export function MapWrapper({
     //     );
     //   }
     // },
-    moveend: () => {
+    zoomend: () => {
+      if (mapRef.current && onSetMapView) {
+        onSetMapView(
+          {
+            center: getCenterLatLng(mapRef.current.getCenter()),
+            zoom: mapRef.current.getZoom(),
+          },
+          mapId,
+        );
+      }
+    },
+    dragend: () => {
       if (mapRef.current && onSetMapView) {
         onSetMapView(
           {
@@ -268,7 +287,7 @@ export function MapWrapper({
     setRefHeight(ref && ref.current ? ref.current.clientHeight : 300);
   }, [ref]);
   useLayoutEffect(() => {
-    if (mapRef.current && printArgs && Object.keys(printArgs).length > 0) {
+    if (mapRef.current) {
       mapRef.current.invalidateSize();
     }
   }, [printArgs]);

@@ -48,6 +48,10 @@ import messages from './messages';
 const Styled = styled((p) => <Box pad={{ top: 'medium', bottom: 'large' }} {...p} />)`
   border-top: 1px solid;
   border-color: #f1f0f1;
+  @media print {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 `;
 
 const SubjectButton = styled((p) => <Button plain {...p} />)`

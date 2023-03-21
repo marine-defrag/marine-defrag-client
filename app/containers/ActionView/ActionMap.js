@@ -51,6 +51,10 @@ const Styled = styled(
 )`
   z-index: 0;
   position: relative;
+  @media print {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 `;
 const MapTitle = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)`
   ${({ isPrint }) => isPrint && css`margin-left: 0`};

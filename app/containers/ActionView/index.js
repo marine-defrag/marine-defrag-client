@@ -220,7 +220,7 @@ export function ActionView({
             />
             <ViewPanel>
               <ViewPanelInside>
-                <Main hasAside={isManager && !isIndicator}>
+                <Main hasAside={isManager && !isIndicator && !isPrintView}>
                   <FieldGroup
                     group={{ // fieldGroup
                       fields: [

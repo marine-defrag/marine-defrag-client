@@ -1055,15 +1055,15 @@ export const PRINT = {
     // rendering
     A4: {
       portrait: { W: 520, H: 720 }, // pt
-      landscape: { H: 500, W: 760 }, // pt
+      landscape: { W: 760, H: 500 }, // pt
       // portrait: { W: 760, H: 1050 }, // pt
       // landscape: { H: 720, W: 1100 }, // pt
     },
     A3: {
       portrait: { W: 760, H: 1100 }, // pt
-      landscape: { H: 720, W: 1100 }, // pt
+      landscape: { W: 1100, H: 720 }, // pt
     },
     portrait: { W: 760, H: 1080 }, // pt
-    landscape: { H: 680, W: 1100 }, // pt
+    landscape: { W: 1100, H: 680 }, // pt
   },
 };
