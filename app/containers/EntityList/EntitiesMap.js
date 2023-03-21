@@ -835,6 +835,7 @@ export function EntitiesMap(props) {
             hasPointOption: false,
             hasPointOverlay: true,
             circleLayerConfig,
+            fitBounds: true,
           }}
           onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
           mapInfo={[{

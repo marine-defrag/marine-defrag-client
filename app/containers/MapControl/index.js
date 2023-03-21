@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Box, Text } from 'grommet';
 
 import * as topojson from 'topojson-client';
@@ -23,33 +23,58 @@ import {
   selectPrintConfig,
   selectMapView,
 } from 'containers/App/selectors';
+import { usePrint } from 'containers/App/PrintContext';
+
 // import appMessages from 'containers/App/messages';
 // import { hasGroupActors } from 'utils/entities';
+// import SimpleMapContainer from './SimpleMapContainer';
 import MapWrapperLeaflet from './MapWrapperLeaflet';
 import MapOption from './MapInfoOptions/MapOption';
 import MapKey from './MapInfoOptions/MapKey';
 import MapInfoOptions from './MapInfoOptions';
-const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', top: 'xsmall', bottom: 'small' }} {...p} />)`
-  max-width: 400px;
-`;
 // import messages from './messages';
 
 const Styled = styled(
   React.forwardRef((p, ref) => <Box {...p} ref={ref} />)
 )`
   z-index: 0;
+  @media print {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 `;
-const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
-const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium', top: 'small' }} {...p} />)``;
-
+// position: relative;
+const MapTitle = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)``;
+const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+  @media print {
+    margin-left: 0;
+  }
+`;
+const MapKeyWrapper = styled((p) => (
+  <Box margin={{ horizontal: 'medium', top: 'xsmall', bottom: 'small' }} {...p} />
+))`
+  max-width: 400px;
+`;
 const getMapContainer = (fullMap) => fullMap
   ? styled.div``
   : styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+    ${({ isPrint }) => isPrint && css`margin-left: 0;`}
+    ${({ isPrint }) => isPrint && css`margin-right: 0;`}
     position: relative;
     overflow: hidden;
     padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
-    height: ${({ w, orient }) => (orient) === 'landscape' ? w * 0.5 : w * 0.5625}px;
-`;
+    @media print {
+      margin-left: 0;
+      margin-right: 0;
+      display: block;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+  `;
+
+// height: ${({ w, orient }) => (orient) === 'landscape' ? w * 0.5 : w * 0.5625}px;
+
 export function MapControl({
   mapKey = {},
   mapInfo,
@@ -60,7 +85,6 @@ export function MapControl({
   reduceCountryAreas,
   fullMap,
   onSetMapLoaded,
-  isPrintView,
   mapTooltips,
   onSetMapTooltips,
   printArgs,
@@ -168,7 +192,9 @@ export function MapControl({
     ];
   }
   // const ref = useRef();
+  const isPrintView = usePrint();
   const MapContainer = getMapContainer(fullMap);
+  // const ref = React.useRef();
   return (
     <Styled>
       <MapContainer
@@ -225,7 +251,7 @@ export function MapControl({
         />
       )}
       {mapKey && Object.keys(mapKey).length > 0 && (
-        <>
+        <MapOptions isPrint={isPrintView}>
           <MapTitle>
             <Text weight={600}>{keyTitle}</Text>
           </MapTitle>
@@ -242,7 +268,7 @@ export function MapControl({
               circleLayerConfig={circleLayerConfig}
             />
           </MapKeyWrapper>
-        </>
+        </MapOptions>
       )}
       {allMapOptions && allMapOptions.length > 0 && (
         <MapOptions>
@@ -278,7 +304,6 @@ MapControl.propTypes = {
   mapOptions: PropTypes.array,
   mapTooltips: PropTypes.array,
   fullMap: PropTypes.bool,
-  isPrintView: PropTypes.bool,
 };
 
 const mapStateToProps = (state, { mapData }) => ({

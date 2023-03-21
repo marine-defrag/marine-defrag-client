@@ -5,12 +5,14 @@ import { Box } from 'grommet';
 
 const Styled = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   ${({ isPrint }) => isPrint && css`margin-left: 0;`}
+  ${({ isPrint }) => isPrint && css`margin-right: 0;`}
   position: relative;
-  background: #F9F9FA;
+  background: ${({ nobg }) => nobg ? 'transparent' : '#F9F9FA'};
   overflow: hidden;
   padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
   @media print {
     margin-left: 0;
+    margin-right: 0;
     display: block;
     page-break-inside: avoid;
     break-inside: avoid;

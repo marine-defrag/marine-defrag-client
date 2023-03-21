@@ -35,7 +35,9 @@ const Styled = styled((p) => <Box {...p} />)`
   }
 `;
 
-const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
+const MapTitle = styled((p) => (
+  <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />
+))``;
 // const MapContainer = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
 //   position: relative;
 //   padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
@@ -139,6 +141,7 @@ export function IndicatorLocationMap({
       <Styled>
         <SimpleMapContainer
           orient={printArgs && printArgs.printOrientation}
+          nobg
         >
           <MapWrapperLeaflet
             printArgs={printArgs}

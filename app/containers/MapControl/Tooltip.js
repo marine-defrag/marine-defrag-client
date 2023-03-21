@@ -156,17 +156,6 @@ const Tooltip = ({
                   </PrintHide>
                 </TTTitleWrap>
               )}
-              {!feature.title && (
-                <PrintHide>
-                  <TTCloseFloat>
-                    <Button
-                      plain
-                      icon={<FormClose size="small" />}
-                      onClick={() => onClose(feature.id)}
-                    />
-                  </TTCloseFloat>
-                </PrintHide>
-              )}
               {feature.content && asArray(feature.content).length > 0 && (
                 <Box>
                   {asArray(feature.content).map(
@@ -179,6 +168,17 @@ const Tooltip = ({
                     )
                   )}
                 </Box>
+              )}
+              {!feature.title && (
+                <PrintHide>
+                  <TTCloseFloat>
+                    <Button
+                      plain
+                      icon={<FormClose size="small" />}
+                      onClick={() => onClose(feature.id)}
+                    />
+                  </TTCloseFloat>
+                </PrintHide>
               )}
               {onFeatureClick && feature.id && feature.linkActor && (
                 <ButtonWrap>

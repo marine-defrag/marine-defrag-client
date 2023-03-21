@@ -121,7 +121,21 @@ export function MapWrapperLeaflet({
 
   const mapOptions = merge({}, options, MAP_OPTIONS);
   const customMapProjection = mapOptions.PROJ[projection];
-  let leafletOptions = customMapProjection
+  let leafletOptions = {
+    dragging: interactive,
+    doubleClickZoom: interactive,
+    scrollWheelZoom,
+    minZoom: mapOptions.ZOOM.MIN,
+    maxZoom: mapOptions.ZOOM.MAX,
+    worldCopyJump: false,
+    attributionControl: false,
+    center: mapView ? mapView.center : VIEW_INITIAL.center,
+    zoom: mapView ? mapView.zoom : VIEW_INITIAL.zoom,
+    debounceMoveend: true,
+    // center: mapOptions.CENTER,
+    // zoom: size === 'small' ? mapOptions.ZOOM.MIN : mapOptions.ZOOM.INIT,
+  };
+  leafletOptions = customMapProjection
     ? {
       crs: new L.Proj.CRS(
         customMapProjection.crs,
@@ -132,40 +146,18 @@ export function MapWrapperLeaflet({
           bounds: customMapProjection.bounds,
         },
       ),
-      // center: mapOptions.CENTER,
-      // zoom: size === 'small' ? mapOptions.ZOOM.MIN : mapOptions.ZOOM.INIT,
+      ...leafletOptions,
       zoomControl: size !== 'small' && interactive,
-      dragging: interactive,
-      doubleClickZoom: interactive,
-      scrollWheelZoom,
-      minZoom: mapOptions.ZOOM.MIN,
-      maxZoom: mapOptions.ZOOM.MAX,
+      continuousWorld: customMapProjection.continuousWorld || false,
       // maxBounds: [
       //   [mapOptions.BOUNDS.N, mapOptions.BOUNDS.W],
       //   [mapOptions.BOUNDS.S, mapOptions.BOUNDS.E],
       // ],
-      continuousWorld: customMapProjection.continuousWorld || false,
-      worldCopyJump: false,
-      attributionControl: false,
-      center: mapView ? mapView.center : VIEW_INITIAL.center,
-      zoom: mapView ? mapView.zoom : VIEW_INITIAL.zoom,
-      debounceMoveend: true,
     }
     : {
-      // center: mapOptions.CENTER,
-      // zoom: size === 'small' ? mapOptions.ZOOM.MIN : mapOptions.ZOOM.INIT,
+      ...leafletOptions,
       zoomControl: interactive,
-      dragging: interactive,
-      doubleClickZoom: interactive,
-      scrollWheelZoom,
-      minZoom: mapOptions.ZOOM.MIN,
-      maxZoom: mapOptions.ZOOM.MAX,
       continuousWorld: true,
-      worldCopyJump: false,
-      attributionControl: false,
-      center: mapView ? mapView.center : VIEW_INITIAL.center,
-      zoom: mapView ? mapView.zoom : VIEW_INITIAL.zoom,
-      debounceMoveend: true,
     };
   if (isPrintView) {
     leafletOptions = {
@@ -505,12 +497,30 @@ export function MapWrapperLeaflet({
       }
     }
   }, [countryData]);
+  // add locationData
+  useLayoutEffect(() => {
+    locationOverlayGroupRef.current.clearLayers();
+    if (locationData && locationData.length > 0) {
+      const layer = L.featureGroup(null, { pane: 'overlayPane' });
+      const jsonLayer = getCircleLayer({
+        features: locationData,
+        config: circleLayerConfig,
+        markerEvents: {
+          click: (e) => onFeatureClickTT(e),
+          mouseout: () => onFeatureOver(),
+        },
+      });
+      layer.addLayer(jsonLayer);
+      locationOverlayGroupRef.current.addLayer(layer);
+    }
+    // TODO
+  }, [locationData, indicator, mapTooltips, mapSubject, circleLayerConfig]);
+
   // add zoom to locationData
   useLayoutEffect(() => {
     if (
       mapRef
       && mapRef.current
-      && fitBoundsToCountryOverlay
       && locationData
       && locationData.length > 0
       && locationOverlayGroupRef
@@ -541,25 +551,6 @@ export function MapWrapperLeaflet({
       }
     }
   }, [locationData]);
-
-  // add locationData
-  useLayoutEffect(() => {
-    locationOverlayGroupRef.current.clearLayers();
-    if (locationData && locationData.length > 0) {
-      const layer = L.featureGroup(null, { pane: 'overlayPane' });
-      const jsonLayer = getCircleLayer({
-        features: locationData,
-        config: circleLayerConfig,
-        markerEvents: {
-          click: (e) => onFeatureClickTT(e),
-          mouseout: () => onFeatureOver(),
-        },
-      });
-      layer.addLayer(jsonLayer);
-      locationOverlayGroupRef.current.addLayer(layer);
-    }
-    // TODO
-  }, [locationData, indicator, mapTooltips, mapSubject, circleLayerConfig]);
 
   // // highlight tooltip feature
   useLayoutEffect(() => {
