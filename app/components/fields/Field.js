@@ -1,9 +1,19 @@
 import styled from 'styled-components';
+import React from 'react';
+import { usePrint } from 'containers/App/PrintContext';
 
-const Field = styled.div`
-  display: ${({ nested }) => nested ? 'inline-block' : 'block'};
-  padding-bottom: ${({ nested, noPadding, labelledGroup }) => {
-    if (nested || noPadding) {
+const Styled = styled.div`
+  display: ${({ nested, printHide, isPrint }) => {
+    if (isPrint && printHide) return 'none';
+    return nested ? 'inline-block' : 'block';
+  }};
+  padding-bottom: ${({
+    nested,
+    noPadding,
+    labelledGroup,
+    isPrint,
+  }) => {
+    if (nested || noPadding || isPrint) {
       return 0;
     }
     if (labelledGroup) {
@@ -12,8 +22,13 @@ const Field = styled.div`
     return 15;
   }}px;
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
-    padding-bottom: ${({ nested, noPadding, labelledGroup }) => {
-    if (nested || noPadding) {
+    padding-bottom: ${({
+    nested,
+    noPadding,
+    labelledGroup,
+    isPrint,
+  }) => {
+    if (nested || noPadding || isPrint) {
       return 0;
     }
     if (labelledGroup) {
@@ -29,5 +44,9 @@ const Field = styled.div`
   }};
   }
 `;
+export function Field(props) {
+  const isPrint = usePrint();
+  return <Styled isPrint={isPrint} {...props} />;
+}
 
 export default Field;

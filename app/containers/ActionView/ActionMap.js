@@ -3,7 +3,7 @@
  * ActionMap
  *
  */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
@@ -17,12 +17,15 @@ import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
 
 import { ACTORTYPES, ACTIONTYPES } from 'themes/config';
 
+import { usePrint } from 'containers/App/PrintContext';
+
 import {
   selectActortypeActors,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
   selectIncludeActorChildren,
   selectIncludeTargetChildren,
+  selectPrintConfig,
   // selectMapTooltips,
 } from 'containers/App/selectors';
 
@@ -43,8 +46,11 @@ import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
 
 // import messages from './messages';
 
-const Styled = styled((p) => <Box {...p} />)`
+const Styled = styled(
+  React.forwardRef((p, ref) => <Box {...p} ref={ref} />)
+)`
   z-index: 0;
+  position: relative;
 `;
 const MapTitle = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)`
   ${({ isPrint }) => isPrint && css`margin-left: 0`};
@@ -59,7 +65,7 @@ const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
   }
 `;
 const MapOuterWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
-  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+  ${({ isPrint }) => isPrint && css`margin-left: 0;`}
   position: relative;
   background: #F9F9FA;
   overflow: hidden;
@@ -71,6 +77,12 @@ const MapOuterWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {..
     break-inside: avoid;
   }
 `;
+// const MapSpacer = styled.div`
+//   height: ${({ w, orient }) => (orient) === 'landscape' ? w * 0.5 : w * 0.5625}px;
+//   display: block;
+//   width: 1px;
+// `;
+
 /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
 
 export function ActionMap({
@@ -90,12 +102,14 @@ export function ActionMap({
   typeId,
   childCountries,
   mapId = 'll-action-map',
-  isPrintView,
+  // isPrintView,
   printArgs,
   // intl,
 }) {
   const [mapTooltips, setMapTooltips] = useState([]);
   const [mapView, setMapView] = useState(null);
+  const isPrintView = usePrint();
+
   // console.log('ActionMap')
   // // const { intl } = this.context;
   // // let type;
@@ -249,33 +263,42 @@ export function ActionMap({
       };
     }
   }
+  const ref = useRef();
+  // console.log('printArgs', printArgs)
+  // <MapSpacer
+  // isPrint={isPrintView}
+  // w={ref && ref.current && ref.current.clientWidth}
+  // orient={printArgs && printArgs.printOrientation}
+  // />
   return (
-    <Styled hasHeader noOverflow isPrint={isPrintView}>
+    <Styled ref={ref} hasHeader noOverflow isPrint={isPrintView}>
       <MapOuterWrapper
         isPrint={isPrintView}
+        w={ref && ref.current && ref.current.clientWidth}
         orient={printArgs && printArgs.printOrientation}
       >
         <MapWrapper
-          isPrint={isPrintView}
+          printArgs={printArgs}
+          isPrintView={isPrintView}
           countryData={countryData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
-          onActorClick={(id) => onActorClick(id)}
+          mapSubject={mapSubject}
           maxValueCountries={1}
+          fitBoundsToCountryOverlay
+          projection="gall-peters"
           includeSecondaryMembers={
             includeActorMembers
             || includeTargetMembers
             || includeActorChildren
             || includeTargetChildren
           }
-          mapSubject={mapSubject}
-          fitBoundsData
-          projection="gall-peters"
           mapId={mapId}
           mapTooltips={mapTooltips}
-          setMapTooltips={setMapTooltips}
           mapView={mapView}
+          setMapTooltips={setMapTooltips}
           onSetMapView={setMapView}
+          onActorClick={(id) => onActorClick(id)}
         />
       </MapOuterWrapper>
       {(memberOption || mapTitle || childrenOption) && (
@@ -317,7 +340,6 @@ ActionMap.propTypes = {
     PropTypes.string,
     PropTypes.number,
   ]),
-  isPrintView: PropTypes.bool,
   printArgs: PropTypes.object,
 };
 
@@ -327,7 +349,7 @@ const mapStateToProps = (state) => ({
   includeTargetMembers: selectIncludeTargetMembers(state),
   includeActorChildren: selectIncludeActorChildren(state),
   includeTargetChildren: selectIncludeTargetChildren(state),
-  // mapTooltips: selectMapTooltips(state, mapId),
+  printArgs: selectPrintConfig(state),
 });
 function mapDispatchToProps(dispatch) {
   return {

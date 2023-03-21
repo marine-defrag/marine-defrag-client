@@ -234,7 +234,7 @@ export function ActionView({
                     }}
                   />
                 </Main>
-                {isManager && (
+                {isManager && !isPrintView && (
                   <Aside>
                     <FieldGroup
                       group={{

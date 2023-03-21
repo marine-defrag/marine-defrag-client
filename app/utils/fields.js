@@ -176,6 +176,7 @@ export const getMetaField = (entity) => {
   return {
     controlType: 'info',
     type: 'meta',
+    printHide: true,
     fields,
   };
 };

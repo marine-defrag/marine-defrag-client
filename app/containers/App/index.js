@@ -80,10 +80,11 @@ const Main = styled.div`
 const getPrintHeight = ({
   isPrint,
   orient = 'portrait',
+  size = 'A4',
   fixed = false,
 }) => {
   if (fixed && isPrint) {
-    return PRINT.SIZES[orient].H + 'pt';
+    return PRINT.SIZES[size][orient].H + 'pt';
   }
   if (isPrint) {
     return 'auto';
@@ -91,9 +92,13 @@ const getPrintHeight = ({
   return '100%';
 };
 
-const getPrintWidth = ({ isPrint, orient = 'portrait' }) => {
+const getPrintWidth = ({
+  isPrint,
+  orient = 'portrait',
+  size = 'A4',
+}) => {
   if (isPrint) {
-    return PRINT.SIZES[orient].W + 'pt';
+    return PRINT.SIZES[size][orient].W + 'pt';
   }
   return '100%';
 };

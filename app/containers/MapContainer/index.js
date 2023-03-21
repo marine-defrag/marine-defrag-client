@@ -34,7 +34,9 @@ const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', top: 'x
 `;
 // import messages from './messages';
 
-const Styled = styled((p) => <Box {...p} />)`
+const Styled = styled(
+  React.forwardRef((p, ref) => <Box {...p} ref={ref} />)
+)`
   z-index: 0;
 `;
 const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
@@ -46,6 +48,7 @@ const getMapOuterWrapper = (fullMap) => fullMap
     position: relative;
     overflow: hidden;
     padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
+    height: ${({ w, orient }) => (orient) === 'landscape' ? w * 0.5 : w * 0.5625}px;
 `;
 export function MapContainer({
   mapKey = {},
@@ -164,6 +167,7 @@ export function MapContainer({
       ...mapOptions,
     ];
   }
+  // const ref = useRef();
   const MapOuterWrapper = getMapOuterWrapper(fullMap);
   return (
     <Styled>
@@ -174,34 +178,33 @@ export function MapContainer({
         <MapWrapper
           printArgs={printArgs}
           isPrintView={isPrintView}
-          scrollWheelZoom={scrollWheelZoom}
-          typeLabels={typeLabels}
-          includeSecondaryMembers={includeSecondaryMembers}
           countryData={countryData}
           locationData={locationData}
           countryFeatures={countriesJSON.features}
           indicator={indicator}
-          onActorClick={(id) => onActorClick(id)}
+          mapSubject={mapSubject}
+          scrollWheelZoom={scrollWheelZoom}
+          typeLabels={typeLabels}
+          includeSecondaryMembers={includeSecondaryMembers}
           maxValueCountries={minMaxValues
             && minMaxValues.countries
             ? minMaxValues.countries.max
             : null
           }
-          mapSubject={mapSubject}
-          fitBounds={fitBounds}
-          fitBoundsData={fitBoundsData}
-          fullMap={fullMap}
-          projection={projection}
-          mapId={mapId}
           circleLayerConfig={{
             ...circleLayerConfig,
             rangeMax: minMaxValues && minMaxValues.points && minMaxValues.points.max,
           }}
+          fitBounds={fitBounds}
+          fitBoundsToCountryOverlay={fitBoundsData}
+          fullMap={fullMap}
+          projection={projection}
+          mapId={mapId}
           hasInfo={mapInfo && mapInfo.length > 0}
-          setMapLoaded={onSetMapLoaded}
           mapTooltips={mapTooltips}
-          setMapTooltips={onSetMapTooltips}
           mapView={mapViewLocal || (fullMap ? mapView : null)}
+          setMapLoaded={onSetMapLoaded}
+          setMapTooltips={onSetMapTooltips}
           onSetMapView={(view) => {
             if (onSetMapViewLocal) {
               onSetMapViewLocal(view);
@@ -209,6 +212,7 @@ export function MapContainer({
               onSetMapView(view, mapId, mapView);
             }
           }}
+          onActorClick={(id) => onActorClick(id)}
         />
       </MapOuterWrapper>
       {mapInfo && mapInfo.length > 0 && (

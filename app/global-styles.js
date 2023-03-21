@@ -59,47 +59,19 @@ const GlobalStyle = createGlobalStyle`
     font-size: 2em;
   }
   h2 {
-    font-size: 1.6em;
+    font-size: 1.9em;
   }
   h3 {
-    font-size: 1.3em;
+    font-size: 1.7em;
   }
   h4 {
-    font-size: 1.1em;
+    font-size: 1.4em;
   }
   h5 {
-    font-size: 1em;
+    font-size: 1.25em;
   }
   h6 {
-    font-size: 0.9em;
-  }
-  @media (min-width: 769px) {
-    h1 {
-      font-size: 2.3em;
-    }
-    h2 {
-      font-size: 2.15em;
-    }
-    h3 {
-      font-size: 1.9em;
-    }
-    h4 {
-      font-size: 1.5em;
-    }
-    h5 {
-      font-size: 1.25em;
-    }
-    h6 {
-      font-size: 1em;
-    }
-  }
-  @media (min-width: 1200px) {
-    h1 {
-      font-size: 2.6em;
-    }
-    h2 {
-      font-size: 2.25em;
-    }
+    font-size: 1em;
   }
 
   p {
@@ -341,9 +313,6 @@ const GlobalStyle = createGlobalStyle`
           }
         }
       }
-    }
-    .leaflet-control-container {
-      display: none;
     }
   `}
 `;

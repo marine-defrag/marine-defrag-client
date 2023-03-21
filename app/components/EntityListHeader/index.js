@@ -117,7 +117,7 @@ const LinkTitle = styled.div`
   }
 `;
 
-const TypeOptions = styled(PrintHide)`
+const TypeOptions = styled.div`
   display: none;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     position: absolute;
@@ -510,20 +510,22 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                     </SelectType>
                   )}
                   {this.state.showTypes && typeOptions && (
-                    <TypeOptions ref={this.typeWrapperRef}>
-                      {typeOptions.map((option) => (
-                        <TypeOption
-                          key={option.value}
-                          active={option.active}
-                          onClick={() => {
-                            this.onHideTypes();
-                            onSelectType(option.value);
-                          }}
-                        >
-                          {option.label}
-                        </TypeOption>
-                      ))}
-                    </TypeOptions>
+                    <PrintHide>
+                      <TypeOptions ref={this.typeWrapperRef}>
+                        {typeOptions.map((option) => (
+                          <TypeOption
+                            key={option.value}
+                            active={option.active}
+                            onClick={() => {
+                              this.onHideTypes();
+                              onSelectType(option.value);
+                            }}
+                          >
+                            {option.label}
+                          </TypeOption>
+                        ))}
+                      </TypeOptions>
+                    </PrintHide>
                   )}
                 </HeaderSectionType>
               )}

@@ -139,7 +139,7 @@ export function IndicatorLocationMap({
             countryFeatures={countriesJSON.features}
             indicator="indicator"
             mapSubject={mapSubject}
-            fitBoundsData
+            fitBoundsToCountryOverlay
             projection="robinson"
             circleLayerConfig={config}
             mapId="ll-indicator-location-map"

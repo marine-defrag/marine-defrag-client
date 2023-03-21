@@ -2,6 +2,9 @@ import L from 'leaflet';
 import { scaleLinear, scalePow } from 'd3-scale';
 import { List } from 'immutable';
 
+import { MAP_OPTIONS } from 'themes/config';
+import qe from 'utils/quasi-equals';
+
 export const getRange = (allFeatures, attribute, rangeMax) => allFeatures.reduce(
   (range, f) => {
     const val = f.values && parseFloat(f.values[attribute]);
@@ -90,4 +93,118 @@ export const getCircleLayer = ({ features, config, markerEvents }) => {
     },
   );
   return jsonLayer;
+};
+
+export const getCenterLatLng = (center) => {
+  if (!center) {
+    return MAP_OPTIONS.CENTER;
+  }
+  if (Array.isArray(center)) {
+    return {
+      lat: center[0],
+      lng: center[1],
+    };
+  }
+  return {
+    lat: center.lat,
+    lng: center.lng,
+  };
+};
+
+export const getTooltipFeatures = (mapTooltips, countryData, locationData) => {
+  if (countryData || locationData) {
+    // add country Data
+    return mapTooltips.reduce(
+      (memo, fid) => {
+        let content = [];
+        const countryF = countryData && countryData.find((fcd) => qe(fcd.id, fid));
+        const locF = locationData && locationData.find((fcd) => qe(fcd.id, fid));
+        const feature = countryF || locF;
+        if (feature) {
+          if (
+            countryF
+            && countryF.tooltip
+            && (countryF.tooltip.stats || countryF.tooltip.content)
+          ) {
+            content = [
+              ...content,
+              countryF.tooltip.stats
+                ? {
+                  stats: countryF.tooltip.stats,
+                  isCount: countryF.tooltip.isCount,
+                }
+                : countryF.tooltip.content,
+            ];
+          }
+          if (
+            locF
+            && locF.tooltip
+            && (locF.tooltip.stats || locF.tooltip.content)
+          ) {
+            content = [
+              ...content,
+              locF.tooltip.stats
+                ? {
+                  stats: locF.tooltip.stats,
+                  isCount: locF.tooltip.isCount,
+                }
+                : locF.tooltip.content,
+            ];
+          }
+          return [
+            ...memo,
+            {
+              ...feature,
+              tooltip: {
+                ...feature.tooltip,
+                content,
+              },
+            },
+          ];
+        }
+        return memo;
+      },
+      [],
+    );
+  }
+  return [];
+};
+
+export const getBBox = (bounds, xLat = 0.5, xLon = 180) => {
+  const nw = bounds[0];
+  const se = bounds[1];
+  const n = nw[0]; // 90
+  const w = nw[1]; // -180
+  const s = se[0]; // -90
+  const e = se[1]; // 180
+  const coordinates = [];
+  // South: SE >> SW
+  for (let lon = e; lon >= w; lon -= xLon) {
+    coordinates.push([lon, s]);
+  }
+  // SW >> NW
+  for (let lat = s; lat <= n; lat += xLat) {
+    coordinates.push([w, lat]);
+  }
+  // NW >> NE
+  for (let lon = w; lon <= e; lon += xLon) {
+    coordinates.push([lon, n]);
+  }
+  // NE >> SE
+  for (let lat = n; lat >= s; lat -= xLat) {
+    coordinates.push([e, lat]);
+  }
+
+  return ({
+    type: 'FeatureCollection',
+    features: [
+      {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [coordinates],
+        },
+      },
+    ],
+  });
 };

@@ -61,7 +61,7 @@ export function CountryMap({
           countryData={countryData}
           countryFeatures={countriesJSON.features}
           styleType="country"
-          fitBoundsData
+          fitBoundsToCountryOverlay
           projection="gall-peters"
         />
       </MapWrapper>

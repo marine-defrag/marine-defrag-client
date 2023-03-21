@@ -99,7 +99,7 @@ export function PrintUI({
   const {
     printType,
     printTabs,
-    // printSize,
+    printSize,
     printOrientation,
     printItems,
   } = printConfig;
@@ -136,6 +136,33 @@ export function PrintUI({
                     label={intl.formatMessage(messages.orientationLandscape)}
                     onChange={() => onPrint({
                       printOrientation: 'landscape',
+                    })}
+                  />
+                </Box>
+              </FormFieldWrap>
+            </Field>
+            <Field>
+              <FormFieldWrap>
+                <FieldLabel>
+                  Size
+                </FieldLabel>
+              </FormFieldWrap>
+              <FormFieldWrap>
+                <Box direction="row" gap="medium">
+                  <RadioButton
+                    name="radio-size-1"
+                    checked={printSize === 'A4'}
+                    label="A4"
+                    onChange={() => onPrint({
+                      printSize: 'A4',
+                    })}
+                  />
+                  <RadioButton
+                    name="radio-size-2"
+                    checked={printSize === 'A3'}
+                    label="A3"
+                    onChange={() => onPrint({
+                      printSize: 'A3',
                     })}
                   />
                 </Box>

@@ -4,8 +4,15 @@ import styled from 'styled-components';
 
 import { Box, Text } from 'grommet';
 
+import { usePrint } from 'containers/App/PrintContext';
+
 const Styled = styled((p) => <Box direction="row" align="center" gap="small" {...p} />)`
   padding: 5px 0;
+  display: ${({ isPrint, active }) => (isPrint && !active) ? 'none' : 'flex'};
+  pointer-events: ${({ isPrint }) => isPrint ? 'none' : 'all'};
+  @media print {
+    display: ${({ active }) => active ? 'flex' : 'none'};
+  }
 `;
 
 const StyledText = styled((p) => <Text as="label" size="xsmall" {...p} />)`
@@ -16,11 +23,15 @@ const StyledText = styled((p) => <Text as="label" size="xsmall" {...p} />)`
 
 export function MapOption({ option, type = 'option' }) {
   const {
-    active, onClick, label, key = 0,
+    active,
+    onClick,
+    label,
+    key = 0,
   } = option;
+  const isPrint = usePrint();
   return (
     <>
-      <Styled>
+      <Styled isPrint={isPrint} active={active}>
         <input
           id={`map-${type}-${key}`}
           type="checkbox"

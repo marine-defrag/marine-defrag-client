@@ -37,7 +37,7 @@ export function CountriesTab({
   const subjectOption = subjectOptions && subjectOptions.find((option) => option.active);
   return (
     <Box>
-      <PrintOnly isPrint={isPrintView}>
+      <PrintOnly>
         <Text size="small">
           {config.tabTitle}
         </Text>
