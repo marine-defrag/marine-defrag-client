@@ -48,7 +48,7 @@ import EntityListViewOptions from 'components/EntityListViewOptions';
 import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer';
+import MapControl from 'containers/MapControl';
 // import messages from './messages';
 
 const LoadingWrap = styled.div`
@@ -819,7 +819,7 @@ export function EntitiesMap(props) {
         <HeaderPrint />
       )}
       {dataReady && (
-        <MapContainer
+        <MapControl
           isPrintView={isPrintView}
           fullMap
           reduceCountryAreas={reduceCountryAreas}

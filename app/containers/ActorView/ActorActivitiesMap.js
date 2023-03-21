@@ -33,9 +33,9 @@ import {
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer/MapWrapper';
-import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
-import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
+import MapControl from 'containers/MapControl/MapWrapperLeaflet';
+import MapOption from 'containers/MapControl/MapInfoOptions/MapOption';
+import MapKey from 'containers/MapControl/MapInfoOptions/MapKey';
 // import messages from './messages';
 import { usePrint } from 'containers/App/PrintContext';
 
@@ -61,7 +61,7 @@ const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
     margin-left: 0;
   }
 `;
-const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+const MapWrapperLeaflet = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
   height: 400px;
   background: #F9F9FA;
@@ -435,8 +435,8 @@ export function ActorActivitiesMap({
   );
   return (
     <Styled hasHeader noOverflow>
-      <MapWrapper isPrint={isPrint}>
-        <MapContainer
+      <MapWrapperLeaflet isPrint={isPrint}>
+        <MapControl
           isPrint={isPrint}
           countryData={countryData}
           countryFeatures={countriesJSON.features}
@@ -448,7 +448,7 @@ export function ActorActivitiesMap({
           fitBounds
           projection="gall-peters"
         />
-      </MapWrapper>
+      </MapWrapperLeaflet>
       {mapTitle && (
         <MapTitle isPrint={isPrint}>
           <Text weight={600}>{mapTitle}</Text>

@@ -1,6 +1,6 @@
 /*
  *
- * MapContainer
+ * MapControl
  *
  */
 import React, { useState } from 'react';
@@ -25,7 +25,7 @@ import {
 } from 'containers/App/selectors';
 // import appMessages from 'containers/App/messages';
 // import { hasGroupActors } from 'utils/entities';
-import MapWrapper from './MapWrapper';
+import MapWrapperLeaflet from './MapWrapperLeaflet';
 import MapOption from './MapInfoOptions/MapOption';
 import MapKey from './MapInfoOptions/MapKey';
 import MapInfoOptions from './MapInfoOptions';
@@ -50,7 +50,7 @@ const getMapOuterWrapper = (fullMap) => fullMap
     padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
     height: ${({ w, orient }) => (orient) === 'landscape' ? w * 0.5 : w * 0.5625}px;
 `;
-export function MapContainer({
+export function MapControl({
   mapKey = {},
   mapInfo,
   mapOptions = [],
@@ -175,7 +175,7 @@ export function MapContainer({
         isPrint={isPrintView}
         orient={printArgs && printArgs.printOrientation}
       >
-        <MapWrapper
+        <MapWrapperLeaflet
           printArgs={printArgs}
           isPrintView={isPrintView}
           countryData={countryData}
@@ -261,7 +261,7 @@ export function MapContainer({
   );
 }
 
-MapContainer.propTypes = {
+MapControl.propTypes = {
   onActorClick: PropTypes.func,
   reducePoints: PropTypes.func,
   reduceCountryAreas: PropTypes.func,
@@ -301,4 +301,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(MapControl);

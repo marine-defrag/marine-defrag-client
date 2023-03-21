@@ -41,8 +41,8 @@ import {
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapWrapper from 'containers/MapContainer/MapWrapper';
-import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
+import MapWrapperLeaflet from 'containers/MapControl/MapWrapperLeaflet';
+import MapOption from 'containers/MapControl/MapInfoOptions/MapOption';
 
 // import messages from './messages';
 
@@ -281,7 +281,7 @@ export function ActionMap({
         w={ref && ref.current && ref.current.clientWidth}
         orient={printArgs && printArgs.printOrientation}
       >
-        <MapWrapper
+        <MapWrapperLeaflet
           printArgs={printArgs}
           isPrintView={isPrintView}
           countryData={countryData}

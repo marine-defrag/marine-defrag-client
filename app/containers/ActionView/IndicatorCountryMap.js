@@ -11,8 +11,8 @@ import { Map } from 'immutable';
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer';
-// import TooltipContent from 'containers/MapContainer/TooltipContent';
+import MapControl from 'containers/MapControl';
+// import TooltipContent from 'containers/MapControl/TooltipContent';
 
 import countryPointsJSON from 'data/country-points.json';
 
@@ -134,7 +134,7 @@ export function IndicatorCountryMap({
   // indicator.getIn(['attributes', 'comment'])
   // && indicator.getIn(['attributes', 'comment']).indexOf('%') === -1;
   return (
-    <MapContainer
+    <MapControl
       mapId="ll-indicator-country-map"
       mapKey={{
         keyTitle,

@@ -17,7 +17,7 @@ import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer/MapWrapper';
+import MapControl from 'containers/MapControl/MapWrapperLeaflet';
 // import messages from './messages';
 
 const Styled = styled((p) => <Box margin={{ horizontal: 'small' }} {...p} />)`
@@ -26,7 +26,7 @@ const Styled = styled((p) => <Box margin={{ horizontal: 'small' }} {...p} />)`
     margin-right: 0;
   }
 `;
-const MapWrapper = styled((p) => <Box {...p} />)`
+const MapWrapperLeaflet = styled((p) => <Box {...p} />)`
   position: relative;
   height: 300px;
   background: #F9F9FA;
@@ -55,8 +55,8 @@ export function CountryMap({
   );
   return (
     <Styled hasHeader noOverflow>
-      <MapWrapper>
-        <MapContainer
+      <MapWrapperLeaflet>
+        <MapControl
           mapId="ll-map-country"
           countryData={countryData}
           countryFeatures={countriesJSON.features}
@@ -64,7 +64,7 @@ export function CountryMap({
           fitBoundsToCountryOverlay
           projection="gall-peters"
         />
-      </MapWrapper>
+      </MapWrapperLeaflet>
     </Styled>
   );
 }

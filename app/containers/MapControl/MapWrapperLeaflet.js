@@ -1,6 +1,6 @@
 /*
  *
- * MapWrapper
+ * MapWrapperLeaflet
  *
  */
 import React, {
@@ -79,7 +79,7 @@ const VIEW_INITIAL = {
   center: MAP_OPTIONS.CENTER,
   zoom: MAP_OPTIONS.ZOOM.INIT,
 };
-export function MapWrapper({
+export function MapWrapperLeaflet({
   countryFeatures,
   countryData,
   locationData,
@@ -651,7 +651,7 @@ export function MapWrapper({
   );
 }
 
-MapWrapper.propTypes = {
+MapWrapperLeaflet.propTypes = {
   countryFeatures: PropTypes.array, // country basemap
   countryData: PropTypes.array, // country data overlay
   locationData: PropTypes.array, // location data overlay
@@ -681,4 +681,4 @@ MapWrapper.propTypes = {
   // onSetMapSubject: PropTypes.func,
 };
 
-export default MapWrapper;
+export default MapWrapperLeaflet;

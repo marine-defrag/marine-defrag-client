@@ -18,8 +18,8 @@ import locationsJSON from 'data/locations.json';
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapWrapper from 'containers/MapContainer/MapWrapper';
-import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
+import MapWrapperLeaflet from 'containers/MapControl/MapWrapperLeaflet';
+import MapKey from 'containers/MapControl/MapInfoOptions/MapKey';
 const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
   max-width: 400px;
 `;
@@ -134,7 +134,7 @@ export function IndicatorLocationMap({
           isPrint={isPrintView}
           orient={printArgs && printArgs.printOrientation}
         >
-          <MapWrapper
+          <MapWrapperLeaflet
             locationData={locationData}
             countryFeatures={countriesJSON.features}
             indicator="indicator"

@@ -22,14 +22,14 @@ import qe from 'utils/quasi-equals';
 import { ACTORTYPES, ROUTES } from 'themes/config';
 import FieldGroup from 'components/fields/FieldGroup';
 
-import MapContainer from 'containers/MapContainer/MapWrapper';
+import MapControl from 'containers/MapControl/MapWrapperLeaflet';
 
 import { selectMembersByType } from './selectors';
 
 const MapOuterWrapper = styled((p) => <Box {...p} />)`
   z-index: 0;
 `;
-const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+const MapWrapperLeaflet = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
   height: 400px;
 `;
@@ -84,8 +84,8 @@ export function ActorViewDetailsMembers(props) {
       )}
       {countries && countries.size > 0 && (
         <MapOuterWrapper hasHeader noOverflow>
-          <MapWrapper>
-            <MapContainer
+          <MapWrapperLeaflet>
+            <MapControl
               countryData={countryData}
               countryFeatures={countriesJSON.features}
               styleType="members"
@@ -93,7 +93,7 @@ export function ActorViewDetailsMembers(props) {
               fitBoundsToCountryOverlay
               projection="gall-peters"
             />
-          </MapWrapper>
+          </MapWrapperLeaflet>
         </MapOuterWrapper>
       )}
       {membersByType && membersByType.size > 0 && (

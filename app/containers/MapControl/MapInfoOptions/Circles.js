@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import { Box } from 'grommet';
 import { intlShape, injectIntl } from 'react-intl';
 
-// import { scaleCircle, valueOfCircle } from 'containers/MapContainer/utils';
-import { scaleCircle } from 'containers/MapContainer/utils';
+// import { scaleCircle, valueOfCircle } from 'containers/MapControl/utils';
+import { scaleCircle } from 'containers/MapControl/utils';
 import { formatNumber } from 'utils/fields';
 
 import KeyCircle from './KeyCircle';
