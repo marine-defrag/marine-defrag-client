@@ -42,7 +42,7 @@ const Styled = styled(
 const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
 const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium', top: 'small' }} {...p} />)``;
 
-const getMapOuterWrapper = (fullMap) => fullMap
+const getMapContainer = (fullMap) => fullMap
   ? styled.div``
   : styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
     position: relative;
@@ -168,10 +168,10 @@ export function MapControl({
     ];
   }
   // const ref = useRef();
-  const MapOuterWrapper = getMapOuterWrapper(fullMap);
+  const MapContainer = getMapContainer(fullMap);
   return (
     <Styled>
-      <MapOuterWrapper
+      <MapContainer
         isPrint={isPrintView}
         orient={printArgs && printArgs.printOrientation}
       >
@@ -214,7 +214,7 @@ export function MapControl({
           }}
           onActorClick={(id) => onActorClick(id)}
         />
-      </MapOuterWrapper>
+      </MapContainer>
       {mapInfo && mapInfo.length > 0 && (
         <MapInfoOptions
           isPrintView={isPrintView}

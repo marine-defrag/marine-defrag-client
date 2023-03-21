@@ -14,33 +14,41 @@ import styled from 'styled-components';
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
 import * as topojson from 'topojson-client';
 
+import { usePrint } from 'containers/App/PrintContext';
+
 import {
   getActorConnectionField,
 } from 'utils/fields';
 import qe from 'utils/quasi-equals';
-
+import {
+  selectPrintConfig,
+} from 'containers/App/selectors';
 import { ACTORTYPES, ROUTES } from 'themes/config';
 import FieldGroup from 'components/fields/FieldGroup';
 
-import MapControl from 'containers/MapControl/MapWrapperLeaflet';
+import MapWrapperLeaflet from 'containers/MapControl/MapWrapperLeaflet';
+import SimpleMapContainer from 'containers/MapControl/SimpleMapContainer';
 
 import { selectMembersByType } from './selectors';
 
-const MapOuterWrapper = styled((p) => <Box {...p} />)`
+const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
-`;
-const MapWrapperLeaflet = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
-  height: 400px;
+  @media print {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 `;
 
-export function ActorViewDetailsMembers(props) {
-  const {
-    onEntityClick,
-    membersByType,
-    taxonomies,
-    actorConnections,
-  } = props;
+export function ActorViewDetailsMembers({
+  onEntityClick,
+  membersByType,
+  taxonomies,
+  actorConnections,
+  printArgs,
+}) {
+  const [mapTooltips, setMapTooltips] = React.useState([]);
+
   const countriesJSON = topojson.feature(
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
@@ -72,9 +80,10 @@ export function ActorViewDetailsMembers(props) {
     },
     [],
   );
+  const isPrintView = usePrint();
 
   return (
-    <Box>
+    <Styled>
       {(!membersByType || membersByType.size === 0) && (
         <Box margin={{ vertical: 'small', horizontal: 'medium' }}>
           <Text>
@@ -83,18 +92,22 @@ export function ActorViewDetailsMembers(props) {
         </Box>
       )}
       {countries && countries.size > 0 && (
-        <MapOuterWrapper hasHeader noOverflow>
-          <MapWrapperLeaflet>
-            <MapControl
-              countryData={countryData}
-              countryFeatures={countriesJSON.features}
-              styleType="members"
-              onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
-              fitBoundsToCountryOverlay
-              projection="gall-peters"
-            />
-          </MapWrapperLeaflet>
-        </MapOuterWrapper>
+        <SimpleMapContainer
+          orient={printArgs && printArgs.printOrientation}
+        >
+          <MapWrapperLeaflet
+            printArgs={printArgs}
+            isPrintView={isPrintView}
+            countryData={countryData}
+            countryFeatures={countriesJSON.features}
+            styleType="members"
+            onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+            fitBoundsToCountryOverlay
+            projection="gall-peters"
+            mapTooltips={mapTooltips}
+            setMapTooltips={setMapTooltips}
+          />
+        </SimpleMapContainer>
       )}
       {membersByType && membersByType.size > 0 && (
         <Box>
@@ -136,7 +149,7 @@ export function ActorViewDetailsMembers(props) {
           />
         </Box>
       )}
-    </Box>
+    </Styled>
   );
 }
 
@@ -145,10 +158,12 @@ ActorViewDetailsMembers.propTypes = {
   membersByType: PropTypes.instanceOf(Map),
   taxonomies: PropTypes.instanceOf(Map),
   actorConnections: PropTypes.instanceOf(Map),
+  printArgs: PropTypes.object,
 };
 
 const mapStateToProps = (state, { id }) => ({
   membersByType: selectMembersByType(state, id),
+  printArgs: selectPrintConfig(state),
 });
 
 export default connect(mapStateToProps, null)(ActorViewDetailsMembers);

@@ -291,7 +291,7 @@ export function MapWrapperLeaflet({
       mapRef.current.invalidateSize();
     }
   }, [printArgs]);
-
+  // map init
   useLayoutEffect(() => {
     if (!mapRef.current) {
       mapRef.current = L.map(mapId, leafletOptions).on(mapEvents);
@@ -416,7 +416,6 @@ export function MapWrapperLeaflet({
     }
   }, [countryData, indicator, mapSubject]);
   // }, [countryData, indicator, mapTooltips, mapSubject]);
-
   // add zoom to countryData
   useEffect(() => {
     if (
@@ -481,6 +480,7 @@ export function MapWrapperLeaflet({
           false, // inside,
           [20, 20], // padding in px
         );
+        // L.rectangle(jsonLayer.getBounds(), { color: '#ff7800', weight: 1 }).addTo(mapRef.current);
         const boundsCenter = jsonLayer.getBounds().getCenter();
         const currentCenter = mapRef.current.getCenter();
         const currentZoom = mapRef.current.getZoom();
@@ -624,7 +624,7 @@ export function MapWrapperLeaflet({
       ),
     };
   }
-  // console.log(tooltip)
+
   // if (mapRef) onSetMapRef(mapRef, mapId);
   return (
     <Styled hasInfo={hasInfo} ref={ref} isPrint={isPrintView} fullMap={fullMap}>

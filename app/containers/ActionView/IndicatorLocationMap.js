@@ -19,6 +19,7 @@ import locationsJSON from 'data/locations.json';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
 import MapWrapperLeaflet from 'containers/MapControl/MapWrapperLeaflet';
+import SimpleMapContainer from 'containers/MapControl/SimpleMapContainer';
 import MapKey from 'containers/MapControl/MapInfoOptions/MapKey';
 const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
   max-width: 400px;
@@ -27,19 +28,25 @@ const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertica
 
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
-`;
-const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
-const MapOuterWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
-  padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
-  overflow: hidden;
   @media print {
-    margin-left: 0;
-    display: block;
     page-break-inside: avoid;
     break-inside: avoid;
   }
 `;
+
+const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
+// const MapContainer = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+//   position: relative;
+//   padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
+//   overflow: hidden;
+//   @media print {
+//     margin-left: 0;
+//     display: block;
+//     page-break-inside: avoid;
+//     break-inside: avoid;
+//   }
+// `;
 
 export function IndicatorLocationMap({
   locations,
@@ -129,12 +136,13 @@ export function IndicatorLocationMap({
     };
 
     return (
-      <Styled hasHeader noOverflow>
-        <MapOuterWrapper
-          isPrint={isPrintView}
+      <Styled>
+        <SimpleMapContainer
           orient={printArgs && printArgs.printOrientation}
         >
           <MapWrapperLeaflet
+            printArgs={printArgs}
+            isPrintView={isPrintView}
             locationData={locationData}
             countryFeatures={countriesJSON.features}
             indicator="indicator"
@@ -149,7 +157,7 @@ export function IndicatorLocationMap({
             mapTooltips={mapTooltips}
             setMapTooltips={setMapTooltips}
           />
-        </MapOuterWrapper>
+        </SimpleMapContainer>
         <MapTitle>
           <Text weight={600}>{keyTitle}</Text>
         </MapTitle>

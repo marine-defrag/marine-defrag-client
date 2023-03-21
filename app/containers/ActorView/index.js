@@ -41,6 +41,7 @@ import {
   selectTaxonomiesWithCategories,
   selectActorConnections,
   selectIsPrintView,
+  selectPrintConfig,
 } from 'containers/App/selectors';
 
 import { CONTENT_SINGLE, PRINT_TYPES } from 'containers/App/constants';
@@ -88,6 +89,7 @@ export function ActorView({
   actorConnections,
   isPrintView,
   onSetPrintView,
+  printArgs,
 }) {
   useEffect(() => {
     // kick off loading of data
@@ -134,6 +136,9 @@ export function ActorView({
 
   const isCountry = qe(typeId, ACTORTYPES.COUNTRY);
 
+  const hasAsideBottom = isCountry
+    || hasTaxonomyCategories(viewTaxonomies)
+    || associationsByType;
   return (
     <div>
       <Helmet
@@ -171,7 +176,7 @@ export function ActorView({
             />
             <ViewPanel>
               <ViewPanelInside>
-                <Main hasAside={isManager}>
+                <Main hasAside={isManager && !isPrintView}>
                   <FieldGroup
                     group={{ // fieldGroup
                       fields: [
@@ -185,7 +190,7 @@ export function ActorView({
                     }}
                   />
                 </Main>
-                {isManager && (
+                {isManager && !isPrintView && (
                   <Aside>
                     <FieldGroup
                       group={{
@@ -202,7 +207,7 @@ export function ActorView({
             </ViewPanel>
             <ViewPanel>
               <ViewPanelInside>
-                <Main hasAside bottom>
+                <Main hasAside={hasAsideBottom} bottom>
                   <FieldGroup
                     group={{
                       fields: [
@@ -223,65 +228,69 @@ export function ActorView({
                     actorConnections={actorConnections}
                   />
                 </Main>
-                <Aside bottom>
-                  {isCountry && (
-                    <CountryMap actor={viewEntity} />
-                  )}
-                  <FieldGroup
-                    aside
-                    group={{
-                      fields: [
-                        checkActorAttribute(typeId, 'url')
-                          && getLinkField(viewEntity),
-                        checkActorAttribute(typeId, 'gdp')
-                          && getNumberField(
-                            viewEntity,
-                            'gdp',
-                            {
-                              unit: 'US$',
-                              unitBefore: true,
-                              info: appMessages.attributeInfo.gdp && intl.formatMessage(appMessages.attributeInfo.gdp),
-                            },
+                {hasAsideBottom && (
+                  <Aside bottom>
+                    {isCountry && (
+                      <CountryMap actor={viewEntity} printArgs={printArgs} />
+                    )}
+                    {isCountry && (
+                      <FieldGroup
+                        aside
+                        group={{
+                          fields: [
+                            checkActorAttribute(typeId, 'url')
+                              && getLinkField(viewEntity),
+                            checkActorAttribute(typeId, 'gdp')
+                              && getNumberField(
+                                viewEntity,
+                                'gdp',
+                                {
+                                  unit: 'US$',
+                                  unitBefore: true,
+                                  info: appMessages.attributeInfo.gdp && intl.formatMessage(appMessages.attributeInfo.gdp),
+                                },
+                              ),
+                            checkActorAttribute(typeId, 'population')
+                              && getNumberField(
+                                viewEntity,
+                                'population',
+                                {
+                                  info: appMessages.attributeInfo.population && intl.formatMessage(appMessages.attributeInfo.population),
+                                },
+                              ),
+                          ],
+                        }}
+                      />
+                    )}
+                    {hasTaxonomyCategories(viewTaxonomies) && (
+                      <FieldGroup
+                        aside
+                        group={{ // fieldGroup
+                          label: appMessages.entities.taxonomies.plural,
+                          fields: getTaxonomyFields(viewTaxonomies),
+                        }}
+                      />
+                    )}
+                    {associationsByType && (
+                      <FieldGroup
+                        aside
+                        group={{
+                          label: appMessages.nav.associations,
+                          fields: associationsByType.reduce(
+                            (memo, actors, typeid) => memo.concat([
+                              getActorConnectionField({
+                                actors,
+                                onEntityClick,
+                                typeid,
+                              }),
+                            ]),
+                            [],
                           ),
-                        checkActorAttribute(typeId, 'population')
-                          && getNumberField(
-                            viewEntity,
-                            'population',
-                            {
-                              info: appMessages.attributeInfo.population && intl.formatMessage(appMessages.attributeInfo.population),
-                            },
-                          ),
-                      ],
-                    }}
-                  />
-                  {hasTaxonomyCategories(viewTaxonomies) && (
-                    <FieldGroup
-                      aside
-                      group={{ // fieldGroup
-                        label: appMessages.entities.taxonomies.plural,
-                        fields: getTaxonomyFields(viewTaxonomies),
-                      }}
-                    />
-                  )}
-                  {associationsByType && (
-                    <FieldGroup
-                      aside
-                      group={{
-                        label: appMessages.nav.associations,
-                        fields: associationsByType.reduce(
-                          (memo, actors, typeid) => memo.concat([
-                            getActorConnectionField({
-                              actors,
-                              onEntityClick,
-                              typeid,
-                            }),
-                          ]),
-                          [],
-                        ),
-                      }}
-                    />
-                  )}
-                </Aside>
+                        }}
+                      />
+                    )}
+                  </Aside>
+                )}
               </ViewPanelInside>
             </ViewPanel>
           </ViewWrapper>
@@ -308,6 +317,7 @@ ActorView.propTypes = {
   intl: intlShape.isRequired,
   isPrintView: PropTypes.bool,
   onSetPrintView: PropTypes.func,
+  printArgs: PropTypes.object,
 };
 
 
@@ -320,6 +330,7 @@ const mapStateToProps = (state, props) => ({
   actorConnections: selectActorConnections(state),
   associationsByType: selectAssociationsByType(state, props.params.id),
   isPrintView: selectIsPrintView(state),
+  printArgs: selectPrintConfig(state),
 });
 
 function mapDispatchToProps(dispatch, props) {

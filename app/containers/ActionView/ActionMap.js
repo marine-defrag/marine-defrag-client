@@ -3,7 +3,7 @@
  * ActionMap
  *
  */
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
@@ -42,13 +42,12 @@ import {
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
 import MapWrapperLeaflet from 'containers/MapControl/MapWrapperLeaflet';
+import SimpleMapContainer from 'containers/MapControl/SimpleMapContainer';
 import MapOption from 'containers/MapControl/MapInfoOptions/MapOption';
 
 // import messages from './messages';
 
-const Styled = styled(
-  React.forwardRef((p, ref) => <Box {...p} ref={ref} />)
-)`
+const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
   position: relative;
   @media print {
@@ -68,19 +67,19 @@ const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
     margin-left: 0;
   }
 `;
-const MapOuterWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
-  ${({ isPrint }) => isPrint && css`margin-left: 0;`}
-  position: relative;
-  background: #F9F9FA;
-  overflow: hidden;
-  padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
-  @media print {
-    margin-left: 0;
-    display: block;
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-`;
+// const MapContainer = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+//   ${({ isPrint }) => isPrint && css`margin-left: 0;`}
+//   position: relative;
+//   background: #F9F9FA;
+//   overflow: hidden;
+//   padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
+//   @media print {
+//     margin-left: 0;
+//     display: block;
+//     page-break-inside: avoid;
+//     break-inside: avoid;
+//   }
+// `;
 // const MapSpacer = styled.div`
 //   height: ${({ w, orient }) => (orient) === 'landscape' ? w * 0.5 : w * 0.5625}px;
 //   display: block;
@@ -267,18 +266,16 @@ export function ActionMap({
       };
     }
   }
-  const ref = useRef();
-  // console.log('printArgs', printArgs)
   // <MapSpacer
   // isPrint={isPrintView}
   // w={ref && ref.current && ref.current.clientWidth}
   // orient={printArgs && printArgs.printOrientation}
   // />
+  // const ref = useRef();
+  // w={ref && ref.current && ref.current.clientWidth}
   return (
-    <Styled ref={ref} hasHeader noOverflow isPrint={isPrintView}>
-      <MapOuterWrapper
-        isPrint={isPrintView}
-        w={ref && ref.current && ref.current.clientWidth}
+    <Styled>
+      <SimpleMapContainer
         orient={printArgs && printArgs.printOrientation}
       >
         <MapWrapperLeaflet
@@ -298,13 +295,13 @@ export function ActionMap({
             || includeTargetChildren
           }
           mapId={mapId}
-          mapTooltips={mapTooltips}
           mapView={mapView}
+          mapTooltips={mapTooltips}
           setMapTooltips={setMapTooltips}
           onSetMapView={setMapView}
           onActorClick={(id) => onActorClick(id)}
         />
-      </MapOuterWrapper>
+      </SimpleMapContainer>
       {(memberOption || mapTitle || childrenOption) && (
         <MapOptions isPrint={isPrintView}>
           {mapTitle && (
