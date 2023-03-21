@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Box, Text } from 'grommet';
 
 import * as topojson from 'topojson-client';
@@ -21,7 +21,7 @@ import qe from 'utils/quasi-equals';
 import MapWrapperLeaflet from 'containers/MapControl/MapWrapperLeaflet';
 import SimpleMapContainer from 'containers/MapControl/SimpleMapContainer';
 import MapKey from 'containers/MapControl/MapInfoOptions/MapKey';
-const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
+const MapKeyWrapper = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)`
   max-width: 400px;
 `;
 // import messages from './messages';
@@ -34,10 +34,18 @@ const Styled = styled((p) => <Box {...p} />)`
     break-inside: avoid;
   }
 `;
-
-const MapTitle = styled((p) => (
-  <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />
-))``;
+const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+  @media print {
+    margin-left: 0;
+  }
+`;
+const MapTitle = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+@media print {
+    margin-left: 0;
+  }
+`;
 // const MapContainer = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
 //   position: relative;
 //   padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
@@ -161,19 +169,21 @@ export function IndicatorLocationMap({
             setMapTooltips={setMapTooltips}
           />
         </SimpleMapContainer>
-        <MapTitle>
-          <Text weight={600}>{keyTitle}</Text>
-        </MapTitle>
-        <MapKeyWrapper>
-          <MapKey
-            mapSubject={mapSubject}
-            maxValue={maxValue}
-            minValue={minValue}
-            isIndicator
-            type="circles"
-            circleLayerConfig={config}
-          />
-        </MapKeyWrapper>
+        <MapOptions isPrint={isPrintView}>
+          <MapTitle>
+            <Text weight={600}>{keyTitle}</Text>
+          </MapTitle>
+          <MapKeyWrapper>
+            <MapKey
+              mapSubject={mapSubject}
+              maxValue={maxValue}
+              minValue={minValue}
+              isIndicator
+              type="circles"
+              circleLayerConfig={config}
+            />
+          </MapKeyWrapper>
+        </MapOptions>
       </Styled>
     );
   }
