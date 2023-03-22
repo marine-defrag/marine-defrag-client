@@ -143,7 +143,7 @@ const Tooltip = ({
           {features.map((feature, i) => (
             <Feature key={i}>
               {feature.title && (
-                <TTTitleWrap>
+                <TTTitleWrap hasContent={feature.content && asArray(feature.content).length > 0}>
                   <Box>
                     <TTTitle>{feature.title}</TTTitle>
                   </Box>
@@ -180,25 +180,27 @@ const Tooltip = ({
                   </TTCloseFloat>
                 </PrintHide>
               )}
-              {onFeatureClick && feature.id && feature.linkActor && (
-                <ButtonWrap>
-                  <CountryButton
-                    as="a"
-                    plain
-                    href={`${ROUTES.ACTOR}/${feature.id}`}
-                    onClick={(evt) => {
-                      if (evt && evt.preventDefault) evt.preventDefault();
-                      if (evt && evt.stopPropagation) evt.stopPropagation();
-                      onFeatureClick(feature.id);
-                    }}
-                  >
-                    <Box direction="row" align="center">
-                      <Text size="small">{isLocationData ? 'Location details' : 'Country details'}</Text>
-                      <FormNext size="xsmall" style={{ stroke: 'inherit' }} />
-                    </Box>
-                  </CountryButton>
-                </ButtonWrap>
-              )}
+              <PrintHide>
+                {onFeatureClick && feature.id && feature.linkActor && (
+                  <ButtonWrap>
+                    <CountryButton
+                      as="a"
+                      plain
+                      href={`${ROUTES.ACTOR}/${feature.id}`}
+                      onClick={(evt) => {
+                        if (evt && evt.preventDefault) evt.preventDefault();
+                        if (evt && evt.stopPropagation) evt.stopPropagation();
+                        onFeatureClick(feature.id);
+                      }}
+                    >
+                      <Box direction="row" align="center">
+                        <Text size="small">{isLocationData ? 'Location details' : 'Country details'}</Text>
+                        <FormNext size="xsmall" style={{ stroke: 'inherit' }} />
+                      </Box>
+                    </CountryButton>
+                  </ButtonWrap>
+                )}
+              </PrintHide>
             </Feature>
           ))}
         </Box>

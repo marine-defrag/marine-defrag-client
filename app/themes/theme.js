@@ -481,6 +481,8 @@ theme.global = {
     backgroundX: '#f1f0f1', // other  background where needed
     backgroundLight: '#fcfcfc',
     inactive: '#f1f0f1', // on light background (empowerment)
+    borderLight: '#CECED2',
+    hint: '#777b7e', // on light background (empowerment)
     text: {
       brand: '#183863',
       dark: '#FFFFFF', //  on dark background
@@ -550,6 +552,10 @@ theme.table = {
       vertical: 'xsmall',
     },
   },
+};
+
+theme.radioButton = {
+  size: '18px',
 };
 
 export default theme;

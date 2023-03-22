@@ -589,7 +589,7 @@
   "app.containers.App.entities.taxonomies.9.shortPlural": "Types of class",
   "app.containers.App.entities.taxonomies.9.description": "Worldwide classifications for grouping countries",
   "app.containers.App.entities.taxonomies.10.single": "Country status",
-  "app.containers.App.entities.taxonomies.10.plural": "Country statuses",
+  "app.containers.App.entities.taxonomies.10.plural": "Country Status",
   "app.containers.App.entities.taxonomies.10.empty": "No country status assigned yet",
   "app.containers.App.entities.taxonomies.10.shortSingle": "Country status",
   "app.containers.App.entities.taxonomies.10.shortPlural": "Country status",

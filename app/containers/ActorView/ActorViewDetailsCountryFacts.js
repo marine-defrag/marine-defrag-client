@@ -15,7 +15,7 @@ import {
   ResponsiveContext,
 } from 'grommet';
 import { Map } from 'immutable';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import qe from 'utils/quasi-equals';
 import isNumber from 'utils/is-number';
@@ -26,6 +26,7 @@ import NumberField from 'components/fields/NumberField';
 import { ROUTES } from 'themes/config';
 
 import { updatePath } from 'containers/App/actions';
+import { usePrint } from 'containers/App/PrintContext';
 
 import appMessages from 'containers/App/messages';
 import { selectActorIndicators } from './selectors';
@@ -58,18 +59,21 @@ const Indicator = styled((p) => <Box margin={{ top: 'medium' }} pad={{ top: 'med
 `;
 
 const StyledBox = styled((p) => (<Box margin={{ vertical: 'small', horizontal: 'medium' }} {...p} />))`
+  ${({ isPrint }) => isPrint && css`margin-left: 0;`}
+  ${({ isPrint }) => isPrint && css`margin-right: 0;`}
   @media print {
     margin-left: 0;
+    margin-right: 0;
   }
 `;
 
-export function ActorViewDetailsCountryFacts(props) {
-  const {
-    indicators,
-    resources,
-    onUpdatePath,
-    // intl,
-  } = props;
+export function ActorViewDetailsCountryFacts({
+  indicators,
+  resources,
+  onUpdatePath,
+  // intl,
+}) {
+  const isPrint = usePrint();
   const size = React.useContext(ResponsiveContext);
   const indicatorsByResourceId = indicators && indicators.groupBy(
     (entity) => {
@@ -82,14 +86,14 @@ export function ActorViewDetailsCountryFacts(props) {
   return (
     <Box>
       {(!indicators || indicators.size === 0) && (
-        <StyledBox>
+        <StyledBox isPrint={isPrint}>
           <Text>
             No indicators for actor in database
           </Text>
         </StyledBox>
       )}
       {indicators && indicators.size > 0 && (
-        <StyledBox>
+        <StyledBox isPrint={isPrint}>
           {indicatorsByResourceId && indicatorsByResourceId.keySeq().map(
             (resourceId) => {
               const resource = !qe(resourceId, 'without')

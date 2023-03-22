@@ -48,10 +48,6 @@ import messages from './messages';
 const Styled = styled((p) => <Box pad={{ top: 'medium', bottom: 'large' }} {...p} />)`
   border-top: 1px solid;
   border-color: #f1f0f1;
-  @media print {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
 `;
 
 const SubjectButton = styled((p) => <Button plain {...p} />)`
@@ -60,6 +56,9 @@ const SubjectButton = styled((p) => <Button plain {...p} />)`
   border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
   background: none;
 `;
+const PrintSectionTitleWrapper = styled(
+  (p) => <Box margin={{ top: 'large', bottom: 'small' }} pad={{ bottom: 'small' }} border="bottom" {...p} />
+)``;
 
 export function ActionViewDetails({
   id,
@@ -133,56 +132,63 @@ export function ActionViewDetails({
           </Box>
         </PrintHide>
       )}
-      {!isIndicator && (showAllTabs || viewSubject === 'actors') && (
-        <PrintOnly>
-          <Box pad={{ bottom: 'small' }}>
-            <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Donors' : 'Actors'}</Text>
-          </Box>
-        </PrintOnly>
-      )}
       {(showAllTabs || viewSubject === 'actors') && (
-        <ActionViewDetailsActors
-          id={id}
-          viewEntity={viewEntity}
-          onEntityClick={onEntityClick}
-          hasMemberOption={hasMemberOption}
-          taxonomies={taxonomies}
-          isIndicator={isIndicator}
-          typeId={typeId}
-          isManager={isManager}
-        />
+        <>
+          {!isIndicator && (
+            <PrintOnly>
+              <PrintSectionTitleWrapper>
+                <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Donors' : 'Actors'}</Text>
+              </PrintSectionTitleWrapper>
+            </PrintOnly>
+          )}
+          <ActionViewDetailsActors
+            id={id}
+            viewEntity={viewEntity}
+            onEntityClick={onEntityClick}
+            hasMemberOption={hasMemberOption}
+            taxonomies={taxonomies}
+            isIndicator={isIndicator}
+            typeId={typeId}
+            isManager={isManager}
+          />
+        </>
       )}
-      {!isIndicator && hasTarget && (showAllTabs || viewSubject === 'targets') && (
-        <PrintOnly>
-          <Box pad={{ bottom: 'small' }}>
-            <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Recipients' : 'Targets'}</Text>
-          </Box>
-        </PrintOnly>
-      )}
-      {(showAllTabs || viewSubject === 'targets') && (
-        <ActionViewDetailsTargets
-          id={id}
-          viewEntity={viewEntity}
-          onEntityClick={onEntityClick}
-          hasMemberOption={hasMemberOption}
-          taxonomies={taxonomies}
-          typeId={typeId}
-        />
-      )}
-      {!isIndicator && hasChildren && (showAllTabs || viewSubject === 'children') && (
-        <PrintOnly>
-          <Box pad={{ bottom: 'small' }}>
-            <Text size="large"><FormattedMessage {...appMessages.entities.actions.children} /></Text>
-          </Box>
-        </PrintOnly>
+      {(showAllTabs || viewSubject === 'targets') && hasTarget && (
+        <>
+          {!isIndicator && (
+            <PrintOnly>
+              <PrintSectionTitleWrapper>
+                <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Recipients' : 'Targets'}</Text>
+              </PrintSectionTitleWrapper>
+            </PrintOnly>
+          )}
+          <ActionViewDetailsTargets
+            id={id}
+            viewEntity={viewEntity}
+            onEntityClick={onEntityClick}
+            hasMemberOption={hasMemberOption}
+            taxonomies={taxonomies}
+            typeId={typeId}
+          />
+        </>
       )}
       {hasChildren && (showAllTabs || viewSubject === 'children') && (
-        <ActionViewDetailsChildren
-          id={id}
-          onEntityClick={onEntityClick}
-          taxonomies={taxonomies}
-          childrenByType={childrenByType}
-        />
+        <>
+          {!isIndicator && (
+            <PrintOnly>
+              <PrintSectionTitleWrapper>
+                <Text size="large"><FormattedMessage {...appMessages.entities.actions.children} /></Text>
+                <Text size="large">{qe(ACTIONTYPES.DONOR, typeId) ? 'Recipients' : 'Targets'}</Text>
+              </PrintSectionTitleWrapper>
+            </PrintOnly>
+          )}
+          <ActionViewDetailsChildren
+            id={id}
+            onEntityClick={onEntityClick}
+            taxonomies={taxonomies}
+            childrenByType={childrenByType}
+          />
+        </>
       )}
       {isManager && isIndicator && (
         <BoxPrint

@@ -5,6 +5,7 @@ import { Box, Text, Button } from 'grommet';
 
 import PrintHide from 'components/styled/PrintHide';
 import PrintOnly from 'components/styled/PrintOnly';
+import { usePrint } from 'containers/App/PrintContext';
 
 const Styled = styled.div`
   padding-bottom: ${({ inList }) => inList ? 2 : 10}px;
@@ -20,6 +21,12 @@ const TypeButton = styled((p) => <Button plain {...p} />)`
 `;
 
 function MapSubjectOptions({ options, inList }) {
+  const isPrint = usePrint();
+  const optionActiveForPrint = isPrint && options
+    ? options.find(
+      (option) => option && option.active && !option.printHide
+    )
+    : null;
   return (
     <Styled inList={inList}>
       <PrintHide>
@@ -40,17 +47,11 @@ function MapSubjectOptions({ options, inList }) {
         )}
       </PrintHide>
       <PrintOnly>
-        {options && (
+        {optionActiveForPrint && (
           <Box direction="row" gap="small">
-            {
-              options.filter((option) => option && option.active).map((option, i) => (
-                <Box key={i}>
-                  <Text size={inList ? 'medium' : 'large'}>
-                    {option.title}
-                  </Text>
-                </Box>
-              ))
-            }
+            <Text size={inList ? 'medium' : 'large'}>
+              {optionActiveForPrint.title}
+            </Text>
           </Box>
         )}
       </PrintOnly>

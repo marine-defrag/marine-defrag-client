@@ -179,6 +179,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
             title: 'Activities',
             onClick: () => onSetMapSubject(),
             active: !mapSubjectClean,
+            printHide: true,
             disabled: !mapSubjectClean,
           },
           {
@@ -391,7 +392,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 {config.types === 'actiontypes' && (
                   <Box>
                     {subjectOptions && (
-                      <MapSubjectOptions options={subjectOptions} isPrintView={isPrintView} />
+                      <MapSubjectOptions options={subjectOptions} />
                     )}
                   </Box>
                 )}

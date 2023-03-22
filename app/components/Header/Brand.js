@@ -5,7 +5,7 @@ export default styled.a`
   color: white;
   &:hover {
     color: white;
-    opacity: 0.9;
+    opacity: ${({ isPrint }) => isPrint ? 1 : 0.9};
   }
   @media print {
     color: ${({ theme }) => theme.global.colors.text.brand} !important;

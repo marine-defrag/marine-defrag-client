@@ -96,6 +96,7 @@ export function ActorViewDetailsMembers({
           orient={printArgs && printArgs.printOrientation}
         >
           <MapWrapperLeaflet
+            mapId="ll-map-actor-members"
             printArgs={printArgs}
             isPrintView={isPrintView}
             countryData={countryData}

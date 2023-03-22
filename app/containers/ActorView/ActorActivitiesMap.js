@@ -144,6 +144,7 @@ export function ActorActivitiesMap({
   memberships,
   actorCanBeMember,
   printArgs,
+  mapId,
   // intl,
 }) {
   const isPrint = usePrint();
@@ -443,6 +444,7 @@ export function ActorActivitiesMap({
         <MapWrapperLeaflet
           printArgs={printArgs}
           isPrintView={isPrint}
+          isSingle
           countryData={countryData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
@@ -454,6 +456,7 @@ export function ActorActivitiesMap({
           fitBoundsToCountryOverlay
           mapTooltips={mapTooltips}
           setMapTooltips={setMapTooltips}
+          mapId={mapId}
         />
       </SimpleMapContainer>
       {mapTitle && (
@@ -497,6 +500,7 @@ ActorActivitiesMap.propTypes = {
   onEntityClick: PropTypes.func,
   mapSubject: PropTypes.string,
   actiontypeId: PropTypes.string,
+  mapId: PropTypes.string,
   printArgs: PropTypes.object,
 };
 

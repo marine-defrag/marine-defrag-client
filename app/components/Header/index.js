@@ -211,9 +211,13 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
               <Box direction="row" fill>
                 <Box>
                   <Brand
-                    href="/"
-                    onClick={(evt) => this.onClick(evt, '/')}
+                    as={isPrintView ? 'div' : 'a'}
+                    href={isPrintView ? '' : '/'}
+                    onClick={(evt) => {
+                      if (!isPrintView) this.onClick(evt, '/');
+                    }}
                     title={appTitle}
+                    isPrint={isPrintView}
                   >
                     <Box direction="row" align="center">
                       <PrintHide>

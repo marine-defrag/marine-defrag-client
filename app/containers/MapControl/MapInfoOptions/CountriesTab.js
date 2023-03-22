@@ -33,19 +33,19 @@ export function CountriesTab({
     title,
     subTitle,
     memberOption,
+    titlePrint,
   } = config;
-  const subjectOption = subjectOptions && subjectOptions.find((option) => option.active);
   return (
     <Box>
       <PrintOnly>
         <Text size="small">
           {config.tabTitle}
         </Text>
-        <Box gap="xsmall" margin={{ top: 'xsmall', bottom: 'medium' }}>
-          {title && subjectOption && (
-            <Title>{`${subjectOption.title}: ${title}`}</Title>
+        <Box gap="xsmall" margin={{ top: 'xsmall', bottom: 'small' }}>
+          {titlePrint && (
+            <Title>{titlePrint}</Title>
           )}
-          {title && !subjectOption && (
+          {title && !titlePrint && (
             <Title>{title}</Title>
           )}
           {subTitle && (

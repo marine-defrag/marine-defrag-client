@@ -14,9 +14,11 @@ import IndicatorsTab from './IndicatorsTab';
 const Styled = styled.div`
   position: absolute;
   z-index: 50;
+  background: ${({ isPrint }) => isPrint ? 'white' : 'transparent'};
   bottom: ${({ isPrint }) => isPrint ? 0 : 10}px;
   width: ${({ isPrint }) => isPrint ? 'auto' : '100%'};
   height: ${({ isPrint }) => isPrint ? 'auto' : '250px'};
+  min-height: ${({ isPrint }) => isPrint ? '180px' : 'auto'};
   left: 0;
   right: ${({ isPrint }) => isPrint ? 0 : 'auto'};
   max-width: ${({ isPrint }) => isPrint ? '100%' : '380px'};

@@ -337,6 +337,14 @@ export function ActionView({
                 </Main>
                 {!isIndicator && (
                   <Aside bottom>
+                    {hasTaxonomyCategories(viewTaxonomies) && (
+                      <FieldGroup
+                        aside
+                        group={{
+                          fields: getTaxonomyFields(viewTaxonomies),
+                        }}
+                      />
+                    )}
                     <FieldGroup
                       aside
                       group={{
@@ -379,16 +387,6 @@ export function ActionView({
                         ],
                       }}
                     />
-                    {hasTaxonomyCategories(viewTaxonomies) && (
-                      <FieldGroup
-                        aside
-                        group={{
-                          label: appMessages.entities.taxonomies.plural,
-                          icon: 'categories',
-                          fields: getTaxonomyFields(viewTaxonomies),
-                        }}
-                      />
-                    )}
                     {parent && (
                       <FieldGroup
                         aside

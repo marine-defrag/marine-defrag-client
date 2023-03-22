@@ -52,7 +52,7 @@ const BrandTitle = styled((p) => <Heading level={1} {...p} />)`
 const Link = styled.a`
   color: ${({ theme }) => theme.global.colors.text.secondary};
   font-size: ${({ theme }) => theme.sizes.print.smaller};
-  :hover {
+  &:hover {
     color: ${({ theme }) => theme.global.colors.text.secondary};
   }
 `;
@@ -77,7 +77,7 @@ function HeaderPrint({ theme, intl }) {
         <Box flex={{ shrink: 0 }}>
           <Brand>
             <Box direction="row" align="center">
-              <Logo src={theme.media.headerLogoPrint} alt={appTitle} />
+              <Logo src={theme.media.headerLogoPrint} alt={appTitle} isPrint />
               <Box fill="vertical" pad={{ left: 'small' }} justify="center" gap="xxsmall">
                 <Claim>
                   <FormattedMessage {...appMessages.app.claim} />

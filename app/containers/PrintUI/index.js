@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Box, RadioButton } from 'grommet';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { Box, RadioButton, Text } from 'grommet';
 import styled from 'styled-components';
 
 import {
@@ -40,8 +40,14 @@ const StyledFieldGroupWrapper = styled(FieldGroupWrapper)`
   }
 `;
 
-const Styled = styled((p) => <Container isNarrow {...p} />)`
-  margin-left: 40px;
+const Styled = styled.div`
+  position: relative;
+  z-index: 96;
+  margin: 0 auto 40px;
+`;
+
+const StyledContainer = styled((p) => <Container isNarrow {...p} />)`
+  padding-bottom: 0px;
 `;
 
 const StyledForm = styled.form`
@@ -59,6 +65,8 @@ const StyledGroupLabel = styled(GroupLabel)`
     font-size: ${(props) => props.theme.sizes.print.large};
   }
 `;
+
+const Label = styled((p) => <Text size="small" {...p} />)``;
 
 // <Field>
 //   <FormFieldWrap>
@@ -99,147 +107,229 @@ export function PrintUI({
   const {
     printType,
     printTabs,
+    printAllTypes,
     printSize,
     printOrientation,
     printItems,
   } = printConfig;
   const printAllPages = printItems === 'all' || pageItems === 'all';
+  const hasContentOptions = qe(printType, PRINT_TYPES.SINGLE)
+    || (qe(printType, PRINT_TYPES.LIST) && view === 'list');
   return (
     <Styled>
-      <StyledForm>
-        <FormBody>
-          <StyledFieldGroupWrapper>
+      <StyledContainer>
+        <Box>
+          <h2>
+            <FormattedMessage {...messages.title} />
+          </h2>
+        </Box>
+        <Box margin={{ bottom: 'medium' }}>
+          <Text size="large">
+            <FormattedMessage {...messages.hint} />
+          </Text>
+        </Box>
+        <StyledForm>
+          <FormBody>
             <FieldGroupLabel>
               <StyledGroupLabel>
-                <FormattedMessage {...messages.title} />
+                <FormattedMessage {...messages.titleFormat} />
               </StyledGroupLabel>
             </FieldGroupLabel>
-            <Field>
-              <FormFieldWrap>
-                <FieldLabel>
-                  <FormattedMessage {...messages.orientationOption} />
-                </FieldLabel>
-              </FormFieldWrap>
-              <FormFieldWrap>
-                <Box direction="row" gap="medium">
-                  <RadioButton
-                    name="radio-orient-1"
-                    checked={printOrientation === 'portrait'}
-                    label={intl.formatMessage(messages.orientationPortrait)}
-                    onChange={() => onPrint({
-                      printOrientation: 'portrait',
-                    })}
-                  />
-                  <RadioButton
-                    name="radio-orient-2"
-                    checked={printOrientation === 'landscape'}
-                    label={intl.formatMessage(messages.orientationLandscape)}
-                    onChange={() => onPrint({
-                      printOrientation: 'landscape',
-                    })}
-                  />
-                </Box>
-              </FormFieldWrap>
-            </Field>
-            <Field>
-              <FormFieldWrap>
-                <FieldLabel>
-                  Size
-                </FieldLabel>
-              </FormFieldWrap>
-              <FormFieldWrap>
-                <Box direction="row" gap="medium">
-                  <RadioButton
-                    name="radio-size-1"
-                    checked={printSize === 'A4'}
-                    label="A4"
-                    onChange={() => onPrint({
-                      printSize: 'A4',
-                    })}
-                  />
-                  <RadioButton
-                    name="radio-size-2"
-                    checked={printSize === 'A3'}
-                    label="A3"
-                    onChange={() => onPrint({
-                      printSize: 'A3',
-                    })}
-                  />
-                </Box>
-              </FormFieldWrap>
-            </Field>
-            {qe(printType, PRINT_TYPES.LIST) && view === 'list' && (
-              <Field>
-                <FormFieldWrap>
-                  <FieldLabel>
-                    <FormattedMessage {...messages.pagesOption} />
-                  </FieldLabel>
-                </FormFieldWrap>
-                <FormFieldWrap>
-                  <Box direction="row" gap="medium">
-                    <RadioButton
-                      name="radio-pages-1"
-                      checked={!printAllPages}
-                      label={intl.formatMessage(messages.pagesCurrent)}
-                      onChange={() => onPrint({
-                        printItems: 'current',
-                      })}
-                    />
-                    <RadioButton
-                      name="radio-pages-2"
-                      checked={printAllPages}
-                      label={intl.formatMessage(messages.pagesAll)}
-                      onChange={() => onPrint({
-                        printItems: 'all',
-                      })}
-                    />
+            <Box direction="row" fill="horizontal">
+              <Box basis="1/2">
+                <StyledFieldGroupWrapper>
+                  <Field>
+                    <FormFieldWrap>
+                      <FieldLabel>
+                        <FormattedMessage {...messages.orientationOption} />
+                      </FieldLabel>
+                    </FormFieldWrap>
+                    <FormFieldWrap>
+                      <Box direction="row" gap="medium">
+                        <RadioButton
+                          name="radio-orient-1"
+                          checked={printOrientation === 'portrait'}
+                          label={<Label>{intl.formatMessage(messages.orientationPortrait)}</Label>}
+                          onChange={() => onPrint({
+                            printOrientation: 'portrait',
+                          })}
+                        />
+                        <RadioButton
+                          name="radio-orient-2"
+                          checked={printOrientation === 'landscape'}
+                          label={<Label>{intl.formatMessage(messages.orientationLandscape)}</Label>}
+                          onChange={() => onPrint({
+                            printOrientation: 'landscape',
+                          })}
+                        />
+                      </Box>
+                    </FormFieldWrap>
+                  </Field>
+                  <Field>
+                    <FormFieldWrap>
+                      <FieldLabel>
+                        Size
+                      </FieldLabel>
+                    </FormFieldWrap>
+                    <FormFieldWrap>
+                      <Box direction="row" gap="medium">
+                        <RadioButton
+                          name="radio-size-1"
+                          checked={printSize === 'A4'}
+                          label={<Label>A4</Label>}
+                          onChange={() => onPrint({
+                            printSize: 'A4',
+                          })}
+                        />
+                        <RadioButton
+                          name="radio-size-2"
+                          checked={printSize === 'A3'}
+                          label={<Label>A3</Label>}
+                          onChange={() => onPrint({
+                            printSize: 'A3',
+                          })}
+                        />
+                      </Box>
+                    </FormFieldWrap>
+                  </Field>
+                </StyledFieldGroupWrapper>
+              </Box>
+              <Box basis="1/2">
+                <StyledFieldGroupWrapper>
+                  <Text size="xsmall" color="hint">
+                    <FormattedMessage {...messages.hintFormat} />
+                  </Text>
+                </StyledFieldGroupWrapper>
+              </Box>
+            </Box>
+            {hasContentOptions && (
+              <Box>
+                <FieldGroupLabel>
+                  <StyledGroupLabel>
+                    <FormattedMessage {...messages.titleContent} />
+                  </StyledGroupLabel>
+                </FieldGroupLabel>
+                <Box direction="row" fill="horizontal">
+                  <Box basis="1/2">
+                    <StyledFieldGroupWrapper>
+                      {qe(printType, PRINT_TYPES.LIST) && view === 'list' && (
+                        <Field>
+                          <FormFieldWrap>
+                            <FieldLabel>
+                              <FormattedMessage {...messages.pagesOption} />
+                            </FieldLabel>
+                          </FormFieldWrap>
+                          <FormFieldWrap>
+                            <Box direction="row" gap="medium">
+                              <RadioButton
+                                name="radio-pages-1"
+                                checked={!printAllPages}
+                                label={<Label>{intl.formatMessage(messages.pagesCurrent)}</Label>}
+                                onChange={() => onPrint({
+                                  printItems: 'current',
+                                })}
+                              />
+                              <RadioButton
+                                name="radio-pages-2"
+                                checked={printAllPages}
+                                label={<Label>{intl.formatMessage(messages.pagesAll)}</Label>}
+                                onChange={() => onPrint({
+                                  printItems: 'all',
+                                })}
+                              />
+                            </Box>
+                          </FormFieldWrap>
+                        </Field>
+                      )}
+                      {qe(printType, PRINT_TYPES.SINGLE) && (
+                        <Field>
+                          <FormFieldWrap>
+                            <FieldLabel>
+                              <FormattedMessage {...messages.tabOption} />
+                            </FieldLabel>
+                          </FormFieldWrap>
+                          <FormFieldWrap>
+                            <Box direction="row" gap="medium">
+                              <RadioButton
+                                name="radio-tabs-1"
+                                checked={printTabs !== 'all'}
+                                label={<Label>{intl.formatMessage(messages.tabsCurrent)}</Label>}
+                                onChange={() => onPrint({
+                                  printTabs: 'current',
+                                })}
+                              />
+                              <RadioButton
+                                name="radio-tabs-2"
+                                checked={printTabs === 'all'}
+                                label={<Label>{intl.formatMessage(messages.tabsAll)}</Label>}
+                                onChange={() => onPrint({
+                                  printTabs: 'all',
+                                })}
+                              />
+                            </Box>
+                          </FormFieldWrap>
+                        </Field>
+                      )}
+                      {qe(printType, PRINT_TYPES.SINGLE) && (
+                        <Field>
+                          <FormFieldWrap>
+                            <FieldLabel>
+                              <FormattedMessage {...messages.typesOption} />
+                            </FieldLabel>
+                          </FormFieldWrap>
+                          <FormFieldWrap>
+                            <Box direction="row" gap="medium">
+                              <RadioButton
+                                name="radio-types-1"
+                                checked={printAllTypes !== 'all'}
+                                label={<Label>{intl.formatMessage(messages.typesCurrent)}</Label>}
+                                onChange={() => onPrint({
+                                  printAllTypes: 'current',
+                                })}
+                              />
+                              <RadioButton
+                                name="radio-types-2"
+                                checked={printAllTypes === 'all'}
+                                label={<Label>{intl.formatMessage(messages.typesAll)}</Label>}
+                                onChange={() => onPrint({
+                                  printAllTypes: 'all',
+                                })}
+                              />
+                            </Box>
+                          </FormFieldWrap>
+                        </Field>
+                      )}
+                    </StyledFieldGroupWrapper>
                   </Box>
-                </FormFieldWrap>
-              </Field>
-            )}
-            {qe(printType, PRINT_TYPES.SINGLE) && (
-              <Field>
-                <FormFieldWrap>
-                  <FieldLabel>
-                    <FormattedMessage {...messages.tabOption} />
-                  </FieldLabel>
-                </FormFieldWrap>
-                <FormFieldWrap>
-                  <Box direction="row" gap="medium">
-                    <RadioButton
-                      name="radio-tabs-1"
-                      checked={printTabs !== 'all'}
-                      label={intl.formatMessage(messages.tabsCurrent)}
-                      onChange={() => onPrint({
-                        printTabs: 'current',
-                      })}
-                    />
-                    <RadioButton
-                      name="radio-tabs-2"
-                      checked={printTabs === 'all'}
-                      label={intl.formatMessage(messages.tabsAll)}
-                      onChange={() => onPrint({
-                        printTabs: 'all',
-                      })}
-                    />
+                  <Box basis="1/2">
+                    <StyledFieldGroupWrapper>
+                      <Text size="xsmall" color="hint">
+                        {qe(printType, PRINT_TYPES.LIST) && (
+                          <FormattedMessage {...messages.hintContentList} />
+                        )}
+                        {qe(printType, PRINT_TYPES.SINGLE) && (
+                          <FormattedMessage {...messages.hintContentSingle} />
+                        )}
+                      </Text>
+                    </StyledFieldGroupWrapper>
                   </Box>
-                </FormFieldWrap>
-              </Field>
+                </Box>
+              </Box>
             )}
-          </StyledFieldGroupWrapper>
-        </FormBody>
-        <Box direction="row" justify="end">
-          <ButtonCancel type="button" onClick={close}>
-            <FormattedMessage {...appMessages.buttons.cancel} />
-          </ButtonCancel>
-          <ButtonSubmit
-            type="button"
-            onClick={() => window.print && window.print()}
-          >
-            <FormattedMessage {...messages.buttonPrint} />
-          </ButtonSubmit>
-        </Box>
-      </StyledForm>
+          </FormBody>
+          <Box direction="row" justify="end" border="top" pad={{ top: 'small' }}>
+            <ButtonCancel type="button" onClick={close}>
+              <FormattedMessage {...appMessages.buttons.cancel} />
+            </ButtonCancel>
+            <ButtonSubmit
+              type="button"
+              onClick={() => window.print && window.print()}
+            >
+              <FormattedMessage {...messages.buttonPrint} />
+            </ButtonSubmit>
+          </Box>
+        </StyledForm>
+      </StyledContainer>
     </Styled>
   );
 }

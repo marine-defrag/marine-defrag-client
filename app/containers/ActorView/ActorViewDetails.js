@@ -20,6 +20,7 @@ import {
   selectSubjectQuery,
   selectActiontypeQuery,
   selectActortypes,
+  selectPrintConfig,
 } from 'containers/App/selectors';
 
 import { setSubject } from 'containers/App/actions';
@@ -43,22 +44,26 @@ const SubjectButton = styled((p) => <Button plain {...p} />)`
   border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
   background: none;
 `;
+const PrintSectionTitleWrapper = styled(
+  (p) => <Box margin={{ top: 'large', bottom: 'small' }} pad={{ bottom: 'small' }} border="bottom" {...p} />
+)``;
 
-export function ActorViewDetails(props) {
-  const {
-    viewEntity,
-    taxonomies,
-    actionConnections,
-    viewActiontypeId,
-    onEntityClick,
-    isCountry,
-    typeId,
-    subject,
-    onSetSubject,
-    actorConnections,
-    actortypes,
-    id,
-  } = props;
+
+export function ActorViewDetails({
+  viewEntity,
+  taxonomies,
+  actionConnections,
+  viewActiontypeId,
+  onEntityClick,
+  isCountry,
+  typeId,
+  subject,
+  onSetSubject,
+  actorConnections,
+  actortypes,
+  id,
+  printArgs,
+}) {
   const viewActortype = actortypes && actortypes.find((type) => qe(type.get('id'), typeId));
 
   const isLocation = qe(typeId, ACTORTYPES.POINT);
@@ -84,6 +89,7 @@ export function ActorViewDetails(props) {
     viewSubject = validViewSubjects.length > 0 ? validViewSubjects[0] : null;
   }
   const isPrint = usePrint();
+  const showAllTabs = isPrint && printArgs.printTabs === 'all';
   return (
     <Styled>
       <PrintHide>
@@ -126,57 +132,71 @@ export function ActorViewDetails(props) {
           )}
         </Box>
       </PrintHide>
-      <PrintOnly isPrint={isPrint}>
-        <Box pad={{ bottom: 'small' }}>
-          {hasMembers && viewSubject === 'members' && (
-            <Text size="large">Members</Text>
-          )}
-          {isActive && viewSubject === 'actors' && (
-            <Text size="large">Activities</Text>
-          )}
-          {isTarget && viewSubject === 'targets' && (
-            <Text size="large">Targeted by</Text>
-          )}
-          {(isCountry || isLocation) && viewSubject === 'facts' && (
-            <Text size="large">Facts & Figures</Text>
-          )}
-        </Box>
-      </PrintOnly>
-      {viewSubject === 'members' && hasMembers && (
-        <ActorViewDetailsMembers
-          id={id}
-          onEntityClick={onEntityClick}
-          taxonomies={taxonomies}
-          actorConnections={actorConnections}
-        />
+      {(showAllTabs || viewSubject === 'members') && hasMembers && (
+        <>
+          <PrintOnly>
+            <PrintSectionTitleWrapper>
+              <Text size="large">Members</Text>
+            </PrintSectionTitleWrapper>
+          </PrintOnly>
+          <ActorViewDetailsMembers
+            id={id}
+            onEntityClick={onEntityClick}
+            taxonomies={taxonomies}
+            actorConnections={actorConnections}
+          />
+        </>
       )}
-      {viewSubject === 'actors' && (
-        <ActorViewDetailsActions
-          id={id}
-          viewEntity={viewEntity}
-          taxonomies={taxonomies}
-          viewActiontypeId={viewActiontypeId}
-          onEntityClick={onEntityClick}
-          actionConnections={actionConnections}
-          canBeMember={isCountry}
-        />
+      {(showAllTabs || viewSubject === 'actors') && isActive && (
+        <>
+          <PrintOnly>
+            <PrintSectionTitleWrapper>
+              <Text size="large">Activities</Text>
+            </PrintSectionTitleWrapper>
+          </PrintOnly>
+          <ActorViewDetailsActions
+            id={id}
+            viewEntity={viewEntity}
+            taxonomies={taxonomies}
+            viewActiontypeId={viewActiontypeId}
+            onEntityClick={onEntityClick}
+            actionConnections={actionConnections}
+            canBeMember={isCountry}
+            printArgs={printArgs}
+          />
+        </>
       )}
-      {viewSubject === 'targets' && (
-        <ActorViewDetailsActionsAsTarget
-          id={id}
-          viewEntity={viewEntity}
-          taxonomies={taxonomies}
-          viewActiontypeId={viewActiontypeId}
-          onEntityClick={onEntityClick}
-          actionConnections={actionConnections}
-          canBeMember={isCountry}
-        />
+      {(showAllTabs || viewSubject === 'targets') && isTarget && (
+        <>
+          <PrintOnly>
+            <PrintSectionTitleWrapper>
+              <Text size="large">Targeted by</Text>
+            </PrintSectionTitleWrapper>
+          </PrintOnly>
+          <ActorViewDetailsActionsAsTarget
+            id={id}
+            viewEntity={viewEntity}
+            taxonomies={taxonomies}
+            viewActiontypeId={viewActiontypeId}
+            onEntityClick={onEntityClick}
+            actionConnections={actionConnections}
+            canBeMember={isCountry}
+            printArgs={printArgs}
+          />
+        </>
       )}
-      {viewSubject === 'facts' && (
-        <ActorViewDetailsCountryFacts
-          id={id}
-          resources={actionConnections && actionConnections.get('resources')}
-        />
+      {(showAllTabs || viewSubject === 'facts') && (isCountry || isLocation) && (
+        <>
+          <PrintOnly>
+            <PrintSectionTitleWrapper>
+              <Text size="large">Facts & Figures</Text>
+            </PrintSectionTitleWrapper>
+          </PrintOnly>
+          <ActorViewDetailsCountryFacts
+            id={id}
+            resources={actionConnections && actionConnections.get('resources')}
+          />
+        </>
       )}
     </Styled>
   );
@@ -195,6 +215,7 @@ ActorViewDetails.propTypes = {
   isCountry: PropTypes.bool,
   typeId: PropTypes.number,
   id: PropTypes.string,
+  printArgs: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
@@ -202,6 +223,7 @@ const mapStateToProps = (state) => ({
   subject: selectSubjectQuery(state),
   viewActiontypeId: selectActiontypeQuery(state),
   actortypes: selectActortypes(state),
+  printArgs: selectPrintConfig(state),
 });
 
 function mapDispatchToProps(dispatch) {

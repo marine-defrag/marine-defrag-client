@@ -128,9 +128,9 @@ const PrintWrapperInner = styled.div`
 `;
 const PrintWrapper = styled.div`
   position: relative;
-  margin-bottom: ${({ isPrint }) => isPrint ? 40 : 0}px;
-  margin-right: ${({ isPrint }) => isPrint ? 40 : 0}px;
-  margin-left: ${({ isPrint }) => isPrint ? 40 : 0}px;
+  margin-bottom: ${({ isPrint }) => isPrint ? '40px' : '0px'};
+  margin-right: ${({ isPrint }) => isPrint ? 'auto' : '0px'};
+  margin-left: ${({ isPrint }) => isPrint ? 'auto' : '0px'};
   bottom: ${({ isPrint, fixed = false }) => {
     if (isPrint && fixed) {
       return 0;

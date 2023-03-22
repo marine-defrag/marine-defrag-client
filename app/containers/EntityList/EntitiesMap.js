@@ -120,6 +120,7 @@ export function EntitiesMap(props) {
   let indicator = includeActorMembers ? 'actionsTotal' : 'actions';
   let actionsTotalShowing;
   let infoTitle;
+  let infoTitlePrint;
   let infoSubTitle;
   let reduceCountryAreas;
   let reducePoints;
@@ -270,6 +271,7 @@ export function EntitiesMap(props) {
                 stats,
                 isCount: true,
                 isCountryData: true,
+                linkActor: true,
               },
               values: {
                 actions: countActions,
@@ -291,6 +293,8 @@ export function EntitiesMap(props) {
         });
         infoTitle = typeLabels.plural;
         infoSubTitle = `for ${entitiesTotal} ${typeLabelsFor[entitiesTotal === 1 ? 'single' : 'plural']}${hasFilters ? ' (filtered)' : ''}`;
+        const subjectOption = subjectOptions && subjectOptions.find((option) => option.active);
+        infoTitlePrint = subjectOption.title;
       } else if (hasActions) {
         // entities are orgs
         // figure out action ids for each country
@@ -409,6 +413,7 @@ export function EntitiesMap(props) {
                 stats,
                 isCount: true,
                 isCountryData: true,
+                linkActor: true,
               },
               values: {
                 targetingActions: countTargetingActions,
@@ -436,6 +441,7 @@ export function EntitiesMap(props) {
         };
         infoTitle = `${typeLabels.plural}${hasFilters ? ' (filtered)' : ''}`;
         infoSubTitle = `targeting ${countriesTotal} ${typeLabelsFor[countriesTotal === 1 ? 'single' : 'plural']}`;
+        infoTitlePrint = infoTitle;
       }
 
     // actions ===================================================
@@ -610,6 +616,7 @@ export function EntitiesMap(props) {
               stats,
               isCount: true,
               isCountryData: true,
+              linkActor: true,
             },
             values: {
               actions: countActions,
@@ -629,7 +636,9 @@ export function EntitiesMap(props) {
           },
         };
       });
-      infoTitle = `No. of ${typeLabels[actionsTotalShowing === 1 ? 'single' : 'plural']} by Country`;
+      infoTitle = `No. of ${typeLabels.plural} by Country`;
+      const subjectOption = subjectOptions && subjectOptions.find((option) => option.active);
+      infoTitlePrint = subjectOption ? `${subjectOption.title}: No. of ${typeLabels.plural}` : infoTitle;
       infoSubTitle = `Showing ${actionsTotalShowing} of ${entities ? entities.size : 0} activities total${hasFilters ? ' (filtered)' : ''}`;
     }
     // facts && figures
@@ -697,6 +706,7 @@ export function EntitiesMap(props) {
                   title: country.getIn(['attributes', 'title']),
                   stats,
                   isLocationData: true,
+                  linkActor: true,
                 },
                 values: {
                   [ffIndicatorId]: parseFloat(value, 10),
@@ -842,6 +852,7 @@ export function EntitiesMap(props) {
             id: 'countries',
             tabTitle: 'Activities',
             title: infoTitle,
+            titlePrint: infoTitlePrint,
             subTitle: infoSubTitle,
             subjectOptions: hasByTarget && subjectOptions,
             memberOption,

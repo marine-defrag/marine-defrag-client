@@ -230,8 +230,16 @@ export function ActorView({
                 </Main>
                 {hasAsideBottom && (
                   <Aside bottom>
-                    {isCountry && (
+                    {isCountry && !isPrintView && (
                       <CountryMap actor={viewEntity} printArgs={printArgs} />
+                    )}
+                    {hasTaxonomyCategories(viewTaxonomies) && (
+                      <FieldGroup
+                        aside
+                        group={{ // fieldGroup
+                          fields: getTaxonomyFields(viewTaxonomies),
+                        }}
+                      />
                     )}
                     {isCountry && (
                       <FieldGroup
@@ -259,15 +267,6 @@ export function ActorView({
                                 },
                               ),
                           ],
-                        }}
-                      />
-                    )}
-                    {hasTaxonomyCategories(viewTaxonomies) && (
-                      <FieldGroup
-                        aside
-                        group={{ // fieldGroup
-                          label: appMessages.entities.taxonomies.plural,
-                          fields: getTaxonomyFields(viewTaxonomies),
                         }}
                       />
                     )}

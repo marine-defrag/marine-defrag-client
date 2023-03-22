@@ -7,31 +7,71 @@ export default defineMessages({
   },
   title: {
     id: 'app.containers.PrintUI.title',
-    defaultMessage: 'Print options',
+    defaultMessage: 'Print export',
+  },
+  titleFormat: {
+    id: 'app.containers.PrintUI.titleFormat',
+    defaultMessage: 'Configure layout',
+  },
+  titleContent: {
+    id: 'app.containers.PrintUI.titleContent',
+    defaultMessage: 'Configure content',
   },
   hint: {
-    id: 'app.containers.PrintUI.title',
-    defaultMessage: 'Print options hint',
+    id: 'app.containers.PrintUI.hint',
+    defaultMessage: "Print this page or save as PDF using your browser's print feature",
+  },
+  hintFormat: {
+    id: 'app.containers.PrintUI.hintFormat',
+    defaultMessage: "Configure the page layout - for best results this should match the settings of the browser's print feature (in the next step)",
+  },
+  hintContentList: {
+    id: 'app.containers.PrintUI.hintContentList',
+    defaultMessage: 'Configure the page content - optionally show all list items (if not already selected)',
+  },
+  hintContentSingle: {
+    id: 'app.containers.PrintUI.hintContentSingle',
+    defaultMessage: 'Configure the page content - optionally show content from all tabs and for all action types (where available)',
   },
   pagesOption: {
     id: 'app.containers.PrintUI.pagesOption',
-    defaultMessage: 'Pages: all or current',
-  },
-  pagesCurrent: {
-    id: 'app.containers.PrintUI.pagesCurrent',
-    defaultMessage: 'Current',
-  },
-  tabsAll: {
-    id: 'app.containers.PrintUI.tabsAll',
-    defaultMessage: 'All',
-  },
-  tabsCurrent: {
-    id: 'app.containers.PrintUI.tabsCurrent',
-    defaultMessage: 'Current',
+    defaultMessage: 'Configure list pages',
   },
   pagesAll: {
     id: 'app.containers.PrintUI.pagesAll',
-    defaultMessage: 'All',
+    defaultMessage: 'All pages',
+  },
+  pagesCurrent: {
+    id: 'app.containers.PrintUI.pagesCurrent',
+    defaultMessage: 'As selected',
+  },
+  tabOption: {
+    id: 'app.containers.PrintUI.formatOption',
+    defaultMessage: 'Configure content tabs',
+  },
+  tabsAll: {
+    id: 'app.containers.PrintUI.tabsAll',
+    defaultMessage: 'All content tabs',
+  },
+  tabOptionHint: {
+    id: 'app.containers.PrintUI.tabOptionHint',
+    defaultMessage: 'Tabs hint',
+  },
+  tabsCurrent: {
+    id: 'app.containers.PrintUI.tabsCurrent',
+    defaultMessage: 'As selected',
+  },
+  typesOption: {
+    id: 'app.containers.PrintUI.typesOption',
+    defaultMessage: 'Configure types of action',
+  },
+  typesAll: {
+    id: 'app.containers.PrintUI.typesAll',
+    defaultMessage: 'All action types',
+  },
+  typesCurrent: {
+    id: 'app.containers.PrintUI.typesCurrent',
+    defaultMessage: 'As selected',
   },
   formatOption: {
     id: 'app.containers.PrintUI.formatOption',
@@ -52,13 +92,5 @@ export default defineMessages({
   formatOptionHint: {
     id: 'app.containers.PrintUI.formatOptionHint',
     defaultMessage: 'Format & orientation hint',
-  },
-  tabOption: {
-    id: 'app.containers.PrintUI.formatOption',
-    defaultMessage: 'Tabs: all or current',
-  },
-  tabOptionHint: {
-    id: 'app.containers.PrintUI.tabOptionHint',
-    defaultMessage: 'Tabs hint',
   },
 });

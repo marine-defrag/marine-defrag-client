@@ -29,10 +29,6 @@ const MapKeyWrapper = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} 
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
   position: relative;
-  @media print {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
 `;
 const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   ${({ isPrint }) => isPrint && css`margin-left: 0`};

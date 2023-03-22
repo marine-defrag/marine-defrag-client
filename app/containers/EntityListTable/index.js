@@ -139,7 +139,7 @@ export function EntityListTable({
       searchAttributes,
     );
   }
-  const activeColumns = columns.filter((col) => !col.skip);
+  const activeColumns = columns.filter((col) => !col.skip && !(isPrintView && col.printHideOnSingle));
 
   // warning converting List to Array
   const entityRows = prepareEntities({
