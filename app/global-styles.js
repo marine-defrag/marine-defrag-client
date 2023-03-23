@@ -118,7 +118,7 @@ const GlobalStyle = createGlobalStyle`
       p {
         &:first-child{
           font-size: 1.2em;
-          color: ${({ theme, isPrint }) => theme.global.colors.text[isPrint ? 'light' : 'lead']};
+          color: ${({ theme, isPrint }) => theme.global.colors.text[isPrint ? 'light' : 'lead']}
           @media print {
             color: ${({ theme }) => theme.global.colors.text.light};
           }
@@ -131,7 +131,7 @@ const GlobalStyle = createGlobalStyle`
       .react-markdown {
         p {
           &:first-child{
-            font-size: 1.5em;
+            font-size: 1.2em;
             padding-bottom: 20px;
           }
         }
