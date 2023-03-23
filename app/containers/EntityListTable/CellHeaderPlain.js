@@ -26,7 +26,7 @@ export function CellHeaderPlain({ column }) {
   return (
     <Box direction="row" align="center" justify={align}>
       <Box>
-        <TextPrint weight={500} size="small" textAlign={align} wordBreak="keep-all">
+        <TextPrint weight={500} size="xsmallTight" textAlign={align} wordBreak="keep-all">
           {column.label || column.title}
         </TextPrint>
       </Box>

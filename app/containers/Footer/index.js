@@ -7,6 +7,7 @@ import { VERSION } from 'themes/config';
 import Container from 'components/styled/Container';
 import PrintHide from 'components/styled/PrintHide';
 import BoxPrint from 'components/styled/BoxPrint';
+import { usePrint } from 'containers/App/PrintContext';
 
 import { isMinSize } from 'utils/responsive';
 
@@ -14,19 +15,21 @@ import appMessages from 'containers/App/messages';
 import messages from './messages';
 
 const FooterMain = styled.div`
-  background-color: #183863;
-  color: white;
+  background-color: ${({ isPrint }) => isPrint ? 'transparent' : '#183863'};
+  color: ${({ isPrint, theme }) => isPrint ? theme.global.colors.text.secondary : 'white'};
+  border-top: 1px solid;
+  border-color: ${({ isPrint, theme }) => isPrint ? theme.global.colors.text.secondary : 'transparent'};
   padding: 0;
   @media print {
     color: ${({ theme }) => theme.global.colors.text.secondary} !important;
+    border-color: ${({ theme }) => theme.global.colors.text.secondary};
     background: transparent;
-    border-top: 1px solid;
   }
 `;
 
 const FooterLink = styled.a`
   font-weight: bold;
-  color: white;
+  color: ${({ isPrint, theme }) => isPrint ? theme.global.colors.text.secondary : 'white'};
   &:hover {
     color: white;
     text-decoration: underline;
@@ -57,9 +60,9 @@ function Footer({
 }) {
   const size = React.useContext(ResponsiveContext);
   const appTitle = `${intl.formatMessage(appMessages.app.claim)} - ${intl.formatMessage(appMessages.app.title)}`;
-
+  const isPrint = usePrint();
   return (
-    <FooterMain>
+    <FooterMain isPrint={isPrint}>
       <Container noPaddingBottom>
         <Box direction={isMinSize(size, 'medium') ? 'row' : 'column'} fill="vertical">
           <BoxPrint
@@ -95,6 +98,7 @@ function Footer({
                 values={{
                   contact1: (
                     <FooterLink
+                      isPrint={isPrint}
                       target="_blank"
                       href={`mailto:${intl.formatMessage(messages.contact.email)}`}
                       title={intl.formatMessage(messages.contact.anchor)}
@@ -104,6 +108,7 @@ function Footer({
                   ),
                   contact2: (
                     <FooterLink
+                      isPrint={isPrint}
                       target="_blank"
                       href={`mailto:${intl.formatMessage(messages.contact2.email)}`}
                       title={intl.formatMessage(messages.contact2.anchor)}

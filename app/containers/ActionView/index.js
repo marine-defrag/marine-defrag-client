@@ -124,6 +124,7 @@ export function ActionView({
           // onClick: () => window.print(),
           onClick: () => onSetPrintView({
             printType: isIndicator ? PRINT_TYPES.FF : PRINT_TYPES.SINGLE,
+            printContentOptions: isIndicator ? null : { tabs: true },
             printOrientation: 'portrait',
             printSize: 'A4',
           }),

@@ -19,11 +19,11 @@ export default defineMessages({
   },
   hint: {
     id: 'app.containers.PrintUI.hint',
-    defaultMessage: "Print this page or save as PDF using your browser's print feature",
+    defaultMessage: "This is a print-optimised layout for printing this page or exporting it as PDF using your browser's print feature. In addition to configuring the page layout and content elements, you can also still adjust any map extent within the page. For any other adjustments, go back to the regular page view by clicking 'Cancel'.",
   },
   hintFormat: {
     id: 'app.containers.PrintUI.hintFormat',
-    defaultMessage: "Configure the page layout - for best results this should match the settings of the browser's print feature (in the next step)",
+    defaultMessage: "Configure the page layout - for best results this should match the settings of the browser's print feature (that you can configure in the next step)",
   },
   hintContentList: {
     id: 'app.containers.PrintUI.hintContentList',

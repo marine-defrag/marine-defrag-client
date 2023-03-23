@@ -146,6 +146,7 @@ export function ActionList({
       // onClick: () => window.print(),
       onClick: () => onSetPrintView({
         printType: PRINT_TYPES.LIST,
+        printContentOptions: showMap ? null : { pages: true },
         fixed: showMap,
         printOrientation: showMap ? 'landscape' : 'portrait',
         printSize: 'A4',
@@ -238,10 +239,6 @@ ActionList.propTypes = {
   onSelectType: PropTypes.func,
   onSetPrintView: PropTypes.func,
   intl: intlShape,
-};
-
-ActionList.contextTypes = {
-  intl: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state, props) => ({

@@ -245,6 +245,7 @@ const GlobalStyle = createGlobalStyle`
     .content-page {
       .react-markdown {
         p {
+          font-size: 10pt;
           &:first-child{
             font-size: 12pt;
           }
@@ -308,6 +309,7 @@ const GlobalStyle = createGlobalStyle`
     .content-page {
       .react-markdown {
         p {
+          font-size: 10pt;
           &:first-child{
             font-size: 12pt;
           }

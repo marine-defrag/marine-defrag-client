@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Text } from 'grommet';
+import { Box } from 'grommet';
+import TextPrint from 'components/styled/TextPrint';
 
 export function CellBodyPlain({
   entity,
@@ -9,9 +10,14 @@ export function CellBodyPlain({
   const { align = 'start', primary } = column;
   return (
     <Box>
-      <Text size="xsmall" weight={primary ? 500 : 300} wordBreak="keep-all" textAlign={align}>
+      <TextPrint
+        size="xsmallTight"
+        weight={primary ? 500 : 300}
+        wordBreak="keep-all"
+        textAlign={align}
+      >
         {entity.value}
-      </Text>
+      </TextPrint>
     </Box>
   );
 }

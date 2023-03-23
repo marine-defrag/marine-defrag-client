@@ -15,17 +15,17 @@ import { palette } from 'styled-theme';
 import {
   loadEntitiesIfNeeded,
   updatePath,
+  printView,
   // closeEntity
 } from 'containers/App/actions';
 
-import { CONTENT_PAGE } from 'containers/App/constants';
+import { CONTENT_PAGE, PRINT_TYPES } from 'containers/App/constants';
 import { ROUTES } from 'themes/config';
 
 import Footer from 'containers/Footer';
 import Loading from 'components/Loading';
 import Container from 'components/styled/Container';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
-import ContentHeader from 'containers/ContentHeader';
 import EntityView from 'components/EntityView';
 
 import {
@@ -33,6 +33,7 @@ import {
   selectIsUserAdmin,
   selectIsUserAnalyst,
   selectIsUserManager,
+  selectIsPrintView,
 } from 'containers/App/selectors';
 
 import {
@@ -50,7 +51,7 @@ const StyledContainerWrapper = styled((p) => <ContainerWrapper {...p} />)`
 `;
 
 const ViewContainer = styled(Container)`
-  min-height: 85vH;
+  min-height: ${({ isPrint }) => isPrint ? '50vH' : '85vH'};
   @media print {
     min-height: 50vH;
   }
@@ -79,10 +80,10 @@ export class PageView extends React.PureComponent { // eslint-disable-line react
     fields: [getMarkdownField(entity, 'content', false)],
   }]);
 
-  getFields = (entity, isAdmin) => ({
+  getFields = (entity, isAdmin, isPrint) => ({
     body: {
       main: this.getBodyMainFields(entity),
-      aside: isAdmin
+      aside: (isAdmin && !isPrint)
         ? this.getBodyAsideFields(entity)
         : null,
     },
@@ -97,15 +98,27 @@ export class PageView extends React.PureComponent { // eslint-disable-line react
       isAdmin,
       isAnalyst,
       isManager,
+      isPrintView,
+      onSetPrintView,
     } = this.props;
-    const buttons = [];
+    let buttons = [];
     if (dataReady) {
-      buttons.push({
-        type: 'icon',
-        onClick: () => window.print(),
-        title: 'Print',
-        icon: 'print',
-      });
+      if (window.print) {
+        buttons = [
+          ...buttons,
+          {
+            type: 'icon',
+            // onClick: () => window.print(),
+            onClick: () => onSetPrintView({
+              printType: PRINT_TYPES.SINGLE,
+              printOrientation: 'portrait',
+              printSize: 'A4',
+            }),
+            title: 'Print',
+            icon: 'print',
+          },
+        ];
+      }
       if (isAdmin) {
         buttons.push({
           type: 'edit',
@@ -124,12 +137,7 @@ export class PageView extends React.PureComponent { // eslint-disable-line react
         <StyledContainerWrapper
           className={`content-${CONTENT_PAGE}`}
         >
-          <ViewContainer isNarrow={!isAnalyst}>
-            <ContentHeader
-              title={page ? page.getIn(['attributes', 'title']) : ''}
-              type={CONTENT_PAGE}
-              buttons={buttons}
-            />
+          <ViewContainer isNarrow={!isAnalyst} isPrint={isPrintView}>
             {!dataReady && <Loading />}
             {!page && dataReady && (
               <div>
@@ -138,7 +146,12 @@ export class PageView extends React.PureComponent { // eslint-disable-line react
             )}
             {page && dataReady && (
               <EntityView
-                fields={this.getFields(page, isManager)}
+                header={{
+                  title: page ? page.getIn(['attributes', 'title']) : '',
+                  type: CONTENT_PAGE,
+                  buttons,
+                }}
+                fields={this.getFields(page, isManager, isPrintView)}
                 seamless
               />
             )}
@@ -153,12 +166,13 @@ export class PageView extends React.PureComponent { // eslint-disable-line react
 PageView.propTypes = {
   loadEntitiesIfNeeded: PropTypes.func,
   handleEdit: PropTypes.func,
-  // handleClose: PropTypes.func,
+  onSetPrintView: PropTypes.func,
   page: PropTypes.object,
   dataReady: PropTypes.bool,
   isAdmin: PropTypes.bool,
   isAnalyst: PropTypes.bool,
   isManager: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   params: PropTypes.object,
 };
 
@@ -173,6 +187,7 @@ const mapStateToProps = (state, props) => ({
   isAnalyst: selectIsUserAnalyst(state),
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   page: selectViewEntity(state, props.params.id),
+  isPrintView: selectIsPrintView(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -182,6 +197,9 @@ function mapDispatchToProps(dispatch, props) {
     },
     handleEdit: () => {
       dispatch(updatePath(`${ROUTES.PAGES}${ROUTES.EDIT}/${props.params.id}`, { replace: true }));
+    },
+    onSetPrintView: (config) => {
+      dispatch(printView(config));
     },
   };
 }

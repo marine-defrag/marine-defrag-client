@@ -6,7 +6,6 @@ import { Box, RadioButton, Text } from 'grommet';
 import styled from 'styled-components';
 
 import {
-  selectViewQuery,
   selectPrintConfig,
   selectPageItemsQuery,
 } from 'containers/App/selectors';
@@ -33,6 +32,19 @@ import qe from 'utils/quasi-equals';
 
 import messages from './messages';
 
+
+const Styled = styled.div`
+  position: relative;
+  z-index: 96;
+  margin: 40px auto;
+  @media print {
+    display: none;
+  }
+`;
+
+const StyledContainer = styled((p) => <Container isNarrow {...p} />)`
+  padding-bottom: 0px;
+`;
 const StyledFieldGroupWrapper = styled(FieldGroupWrapper)`
   padding: 15px 0;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
@@ -40,24 +52,11 @@ const StyledFieldGroupWrapper = styled(FieldGroupWrapper)`
   }
 `;
 
-const Styled = styled.div`
-  position: relative;
-  z-index: 96;
-  margin: 0 auto 40px;
-`;
-
-const StyledContainer = styled((p) => <Container isNarrow {...p} />)`
-  padding-bottom: 0px;
-`;
-
 const StyledForm = styled.form`
   position: relative;
   display: table;
   width: 100%;
   margin-bottom: 20px;
-  @media print {
-    display: none;
-  }
 `;
 const StyledGroupLabel = styled(GroupLabel)`
   font-size: 1.2em;
@@ -100,7 +99,6 @@ export function PrintUI({
   printConfig,
   close,
   onPrint,
-  view,
   intl,
   pageItems,
 }) {
@@ -111,10 +109,11 @@ export function PrintUI({
     printSize,
     printOrientation,
     printItems,
+    printContentOptions,
   } = printConfig;
   const printAllPages = printItems === 'all' || pageItems === 'all';
-  const hasContentOptions = qe(printType, PRINT_TYPES.SINGLE)
-    || (qe(printType, PRINT_TYPES.LIST) && view === 'list');
+  // qe(printType, PRINT_TYPES.SINGLE)
+  //   || (qe(printType, PRINT_TYPES.LIST) && view === 'list');
   return (
     <Styled>
       <StyledContainer>
@@ -202,7 +201,7 @@ export function PrintUI({
                 </StyledFieldGroupWrapper>
               </Box>
             </Box>
-            {hasContentOptions && (
+            {!!printContentOptions && (
               <Box>
                 <FieldGroupLabel>
                   <StyledGroupLabel>
@@ -212,7 +211,7 @@ export function PrintUI({
                 <Box direction="row" fill="horizontal">
                   <Box basis="1/2">
                     <StyledFieldGroupWrapper>
-                      {qe(printType, PRINT_TYPES.LIST) && view === 'list' && (
+                      {printContentOptions.pages && (
                         <Field>
                           <FormFieldWrap>
                             <FieldLabel>
@@ -241,7 +240,7 @@ export function PrintUI({
                           </FormFieldWrap>
                         </Field>
                       )}
-                      {qe(printType, PRINT_TYPES.SINGLE) && (
+                      {printContentOptions.tabs && (
                         <Field>
                           <FormFieldWrap>
                             <FieldLabel>
@@ -270,7 +269,7 @@ export function PrintUI({
                           </FormFieldWrap>
                         </Field>
                       )}
-                      {qe(printType, PRINT_TYPES.SINGLE) && (
+                      {printContentOptions.types && (
                         <Field>
                           <FormFieldWrap>
                             <FieldLabel>
@@ -337,14 +336,12 @@ export function PrintUI({
 PrintUI.propTypes = {
   printConfig: PropTypes.object,
   pageItems: PropTypes.string,
-  view: PropTypes.string,
   close: PropTypes.func,
   onPrint: PropTypes.func,
   intl: intlShape.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  view: selectViewQuery(state),
   printConfig: selectPrintConfig(state),
   pageItems: selectPageItemsQuery(state),
 });

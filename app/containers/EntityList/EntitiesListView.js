@@ -392,7 +392,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 {config.types === 'actiontypes' && (
                   <Box>
                     {subjectOptions && (
-                      <MapSubjectOptions options={subjectOptions} />
+                      <MapSubjectOptions inList options={subjectOptions} />
                     )}
                   </Box>
                 )}
@@ -438,7 +438,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                         )}
                     </BoxPrint>
                     {memberOption && (
-                      <Box>
+                      <Box margin={{ bottom: 'small' }}>
                         <MapOption option={memberOption} type="member" />
                       </Box>
                     )}
@@ -533,10 +533,11 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                     hasSearch
                     columns={columns}
                     headerColumnsUtility={headerColumnsUtility}
-                    memberOption={memberOption && <MapOption option={memberOption} type="member" />}
+                    memberOption={memberOption && <MapOption align="end" option={memberOption} type="member" />}
                     subjectOptions={subjectOptions && (
                       <MapSubjectOptions
                         inList
+                        align="end"
                         isPrintView={isPrintView}
                         options={subjectOptions}
                       />

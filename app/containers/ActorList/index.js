@@ -126,6 +126,7 @@ export function ActorList({
       // onClick: () => window.print(),
       onClick: () => onSetPrintView({
         printType: PRINT_TYPES.LIST,
+        printContentOptions: showMap ? null : { pages: true },
         fixed: showMap,
         printOrientation: showMap ? 'landscape' : 'portrait',
         printSize: 'A4',

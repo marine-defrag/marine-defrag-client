@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { ROUTES } from 'themes/config';
 
 import DropEntityList from './DropEntityList';
+import LinkTT from './LinkTT';
 
 const Value = styled.div`
   width: 30px !important;
@@ -53,11 +54,9 @@ const BarButton = styled((p) => <Button plain {...p} />)`
   }};
 `;
 
-const LinkTT = styled(
-  React.forwardRef((p, ref) => <Button plain {...p} ref={ref} />)
+const StyledLinkTT = styled(
+  React.forwardRef((p, ref) => <LinkTT plain {...p} ref={ref} />)
 )`
-  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
-  line-height: 12px;
   padding: 0 4px;
 `;
 
@@ -85,7 +84,7 @@ export function CellBodyBarChart({
               </Text>
             )}
             {rowConfig.tooltip && (
-              <LinkTT
+              <StyledLinkTT
                 onClick={() => showInfo(!info)}
                 onMouseOver={() => isHover(true)}
                 onMouseLeave={() => isHover(false)}
@@ -96,7 +95,7 @@ export function CellBodyBarChart({
                 <Text size="small" weight={500} textAlign="end" wordBreak="keep-all">
                   {value}
                 </Text>
-              </LinkTT>
+              </StyledLinkTT>
             )}
           </Value>
           <BarWrapper>

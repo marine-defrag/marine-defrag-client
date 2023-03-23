@@ -1,30 +1,15 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from 'react-intl';
-import {
-  Box, Text, Button, Drop,
-} from 'grommet';
+import { Box, Text, Drop } from 'grommet';
 import styled from 'styled-components';
 import { truncateText } from 'utils/string';
 
 import appMessages from 'containers/App/messages';
+import Label from './Label';
+import LabelTT from './LabelTT';
+import LinkTT from './LinkTT';
 
-const Label = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
-  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
-  line-height: 12px;
-`;
-
-const LinkTT = styled(
-  React.forwardRef((p, ref) => <Button plain {...p} ref={ref} />)
-)`
-  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
-  line-height: 12px;
-`;
-const LabelTT = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
-  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
-  font-style: italic;
-  line-height: 12px;
-`;
 const LabelInTT = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
   line-height: 13px;
 `;

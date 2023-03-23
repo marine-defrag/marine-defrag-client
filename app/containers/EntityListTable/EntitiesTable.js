@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, ResponsiveContext } from 'grommet';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { isMinSize } from 'utils/responsive';
 
 import CellBodyMain from './CellBodyMain';
@@ -20,6 +20,7 @@ const Table = styled.table`
   width: inherit;
   table-layout: fixed;
   width: 100%;
+  ${({ isPrint }) => isPrint && css`pointer-events: none;`}
   @media print {
     page-break-inside: auto;
   }
@@ -77,8 +78,8 @@ const TableCellHeader = styled.th`
     if (utility) return 'transparent';
     return 'rgba(0,0,0,0.33)';
   }};
-  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 16 : 8}px;
-  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 16 : 8}px;
+  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 16 : 0}px;
+  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 16 : 0}px;
   padding-top: 6px;
   padding-bottom: 6px;
   width: 100%;
@@ -96,8 +97,8 @@ const TableCellBody = styled.td`
   height: 100%;
   text-align: start;
   border-bottom: solid 1px #DADADA;
-  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 20 : 8}px;
-  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 20 : 8}px;
+  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 16 : 0}px;
+  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 16 : 0}px;
   padding-top: 6px;
   padding-bottom: 6px;
   word-wrap:break-word;
@@ -125,7 +126,7 @@ export function EntitiesTable({
   const size = React.useContext(ResponsiveContext);
   return (
     <Box fill="horizontal">
-      <Table>
+      <Table isPrint={isPrintView}>
         {headerColumns && (
           <TableHeader>
             {headerColumnsUtility && isMinSize(size, 'large') && (
@@ -144,14 +145,14 @@ export function EntitiesTable({
                       utility
                     >
                       {col.type === 'options' && (
-                        <Box>
+                        <Box justify="end" fill="horizontal">
                           {subjectOptions && (
-                            <Box>
+                            <Box justify="end" fill="horizontal">
                               {subjectOptions}
                             </Box>
                           )}
                           {memberOption && (
-                            <Box>
+                            <Box justify="end" fill="horizontal">
                               {memberOption}
                             </Box>
                           )}

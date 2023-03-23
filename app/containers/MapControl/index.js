@@ -54,6 +54,7 @@ const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
 const MapKeyWrapper = styled((p) => (
   <Box margin={{ horizontal: 'medium', top: 'xsmall', bottom: 'small' }} {...p} />
 ))`
+  ${({ padLeft }) => !padLeft && css`margin-left: 0`};
   max-width: 400px;
 `;
 const getMapContainer = (fullMap) => fullMap
@@ -186,6 +187,7 @@ export function MapControl({
         active: showAsPoint,
         onClick: () => setShowAsPoint(!showAsPoint),
         label: 'Show as circles',
+        printHide: true,
         key: 'circle',
       },
       ...mapOptions,
@@ -255,7 +257,7 @@ export function MapControl({
           <MapTitle>
             <Text weight={600}>{keyTitle}</Text>
           </MapTitle>
-          <MapKeyWrapper>
+          <MapKeyWrapper padLeft={!showAsPoint}>
             <MapKey
               isPrint={isPrintView}
               mapSubject={mapSubject}
@@ -271,7 +273,7 @@ export function MapControl({
         </MapOptions>
       )}
       {allMapOptions && allMapOptions.length > 0 && (
-        <MapOptions>
+        <MapOptions isPrint={isPrintView}>
           {allMapOptions.map(
             (option, id) => (
               <MapOption

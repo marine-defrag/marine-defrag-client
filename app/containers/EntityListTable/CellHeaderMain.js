@@ -51,13 +51,13 @@ export function CellHeaderMain({
       <Box>
         {canEdit && (
           <label htmlFor="select-all">
-            <TextPrint weight={500} size="small">
+            <TextPrint weight={500} size="xsmallTight">
               {column.title}
             </TextPrint>
           </label>
         )}
         {!canEdit && (
-          <TextPrint weight={500} size="small">
+          <TextPrint weight={500} size="xsmallTight">
             {column.title}
           </TextPrint>
         )}

@@ -108,6 +108,7 @@ export function ActorView({
           // onClick: () => window.print(),
           onClick: () => onSetPrintView({
             printType: PRINT_TYPES.SINGLE,
+            printContentOptions: { tabs: true, types: true },
             printOrientation: 'portrait',
             printSize: 'A4',
           }),

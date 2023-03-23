@@ -11,7 +11,7 @@
  */
 
 import { fromJS } from 'immutable';
-
+import { LOCATION_CHANGE } from 'react-router-redux';
 import { checkResponseError } from 'utils/request';
 import { isSignedIn } from 'utils/api-request';
 import qe from 'utils/quasi-equals';
@@ -168,6 +168,8 @@ function appReducer(state = initialState, payload) {
       return state.set('printConfig', null);
     // case SET_MAP_VIEW:
     //   return state.setIn(['mapView', payload.mapId], fromJS(payload.view));
+    case LOCATION_CHANGE:
+      return state.set('printConfig', null);
     default:
       return state;
   }
