@@ -31,6 +31,7 @@ import {
 } from 'containers/App/selectors';
 
 import { checkActionAttribute } from 'utils/entities';
+import { keydownHandlerPrint } from 'utils/print';
 import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
 import { ROUTES, ACTORTYPES, FF_ONLY_ACTORTYPES } from 'themes/config';
@@ -92,6 +93,8 @@ export function ActorList({
   useEffect(() => {
     if (!dataReady) onLoadEntitiesIfNeeded();
   }, [dataReady]);
+
+
   const typeId = params.id;
   const type = `actors_${typeId}`;
 
@@ -101,6 +104,22 @@ export function ActorList({
     && CONFIG.views.map.types
     && CONFIG.views.map.types.indexOf(typeId) > -1
     && view === 'map';
+  const mySetPrintView = () => onSetPrintView({
+    printType: PRINT_TYPES.LIST,
+    printContentOptions: showMap ? null : { pages: true },
+    fixed: showMap,
+    printOrientation: showMap ? 'landscape' : 'portrait',
+    printSize: 'A4',
+  });
+  const keydownHandler = (e) => {
+    keydownHandlerPrint(e, mySetPrintView);
+  };
+  useEffect(() => {
+    document.addEventListener('keydown', keydownHandler);
+    return () => {
+      document.removeEventListener('keydown', keydownHandler);
+    };
+  }, []);
 
   const headerOptions = {
     supTitle: intl.formatMessage(messages.pageTitle),
@@ -124,13 +143,7 @@ export function ActorList({
     headerOptions.actions.push({
       type: 'icon',
       // onClick: () => window.print(),
-      onClick: () => onSetPrintView({
-        printType: PRINT_TYPES.LIST,
-        printContentOptions: showMap ? null : { pages: true },
-        fixed: showMap,
-        printOrientation: showMap ? 'landscape' : 'portrait',
-        printSize: 'A4',
-      }),
+      onClick: mySetPrintView,
       title: 'Print',
       icon: 'print',
     });

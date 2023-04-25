@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import React from 'react';
+import styled from 'styled-components';
 import { usePrint } from 'containers/App/PrintContext';
 
 const Styled = styled.div`

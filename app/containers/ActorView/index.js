@@ -24,6 +24,7 @@ import {
   getActorConnectionField,
 } from 'utils/fields';
 import qe from 'utils/quasi-equals';
+import { keydownHandlerPrint } from 'utils/print';
 
 import { getEntityTitleTruncated, checkActorAttribute } from 'utils/entities';
 
@@ -95,7 +96,21 @@ export function ActorView({
     // kick off loading of data
     onLoadData();
   }, []);
-
+  const mySetPrintView = () => onSetPrintView({
+    printType: PRINT_TYPES.SINGLE,
+    printContentOptions: { tabs: true, types: true },
+    printOrientation: 'portrait',
+    printSize: 'A4',
+  });
+  const keydownHandler = (e) => {
+    keydownHandlerPrint(e, mySetPrintView);
+  };
+  useEffect(() => {
+    document.addEventListener('keydown', keydownHandler);
+    return () => {
+      document.removeEventListener('keydown', keydownHandler);
+    };
+  }, []);
   const typeId = viewEntity && viewEntity.getIn(['attributes', 'actortype_id']);
 
   let buttons = [];
@@ -106,12 +121,7 @@ export function ActorView({
         {
           type: 'icon',
           // onClick: () => window.print(),
-          onClick: () => onSetPrintView({
-            printType: PRINT_TYPES.SINGLE,
-            printContentOptions: { tabs: true, types: true },
-            printOrientation: 'portrait',
-            printSize: 'A4',
-          }),
+          onClick: mySetPrintView,
           title: 'Print',
           icon: 'print',
         },

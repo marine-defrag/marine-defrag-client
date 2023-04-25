@@ -36,6 +36,7 @@ import appMessages from 'containers/App/messages';
 import { PRINT_TYPES } from 'containers/App/constants';
 
 import { checkActionAttribute } from 'utils/entities';
+import { keydownHandlerPrint } from 'utils/print';
 import qe from 'utils/quasi-equals';
 
 import { ROUTES, FF_ACTIONTYPE } from 'themes/config';
@@ -51,32 +52,6 @@ import {
 
 import messages from './messages';
 
-// UNSAFE_componentWillMount() {
-//   this.props.loadEntitiesIfNeeded();
-// }
-//
-// UNSAFE_componentWillReceiveProps(nextProps) {
-//   // reload entities if invalidated
-//   if (!nextProps.dataReady) {
-//     this.props.loadEntitiesIfNeeded();
-//   }
-// }
-// componentDidUpdate() {
-//   if (
-//     this.props.dataReady
-//     && !this.props.isMapLoading
-//   ) {
-//     console.log('data ready', this.props.dataReady, this.props.isMapLoading);
-//     if (this.props.isPrintView) {
-//       console.log('print')
-//       window.print();
-//       // setTimeout(
-//       //   () => window.print(),
-//       //   1000,
-//       // );
-//     }
-//   }
-// }
 const prepareTypeOptions = (types, activeId, intl) => types.toList().toJS().map((type) => ({
   value: type.id,
   label: intl.formatMessage(appMessages.actiontypes[type.id]),
@@ -122,6 +97,23 @@ export function ActionList({
     && CONFIG.views.map.types.indexOf(typeId) > -1
     && view === 'map';
 
+  const mySetPrintView = () => onSetPrintView({
+    printType: PRINT_TYPES.LIST,
+    printContentOptions: showMap ? null : { pages: true },
+    fixed: showMap,
+    printOrientation: showMap ? 'landscape' : 'portrait',
+    printSize: 'A4',
+  });
+  const keydownHandler = (e) => {
+    keydownHandlerPrint(e, mySetPrintView);
+  };
+  useEffect(() => {
+    document.addEventListener('keydown', keydownHandler);
+    return () => {
+      document.removeEventListener('keydown', keydownHandler);
+    };
+  }, []);
+
   const headerOptions = {
     supTitle: intl.formatMessage(messages.pageTitle),
     actions: [],
@@ -143,14 +135,7 @@ export function ActionList({
   if (window.print) {
     headerOptions.actions.push({
       type: 'icon',
-      // onClick: () => window.print(),
-      onClick: () => onSetPrintView({
-        printType: PRINT_TYPES.LIST,
-        printContentOptions: showMap ? null : { pages: true },
-        fixed: showMap,
-        printOrientation: showMap ? 'landscape' : 'portrait',
-        printSize: 'A4',
-      }),
+      onClick: mySetPrintView,
       title: 'Print',
       icon: 'print',
     });

@@ -129,7 +129,7 @@ export function ContentHeader({
               />
             )}
           </Box>
-          {buttons && isMinSize(size, 'medium') && (
+          {buttons && isMinSize(size, 'medium') && !isPrintView && (
             <ButtonGroup>
               {buttons.map((button, i) => (
                 <ButtonWrap key={i}>

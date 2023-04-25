@@ -23,6 +23,7 @@ import Field from 'components/fields/Field';
 import GroupLabel from 'components/fields/GroupLabel';
 import FieldLabel from 'components/forms/Label';
 // import ControlRadio from 'components/forms/ControlRadio';
+import ButtonForm from 'components/buttons/ButtonForm';
 import ButtonCancel from 'components/buttons/ButtonCancel';
 import ButtonSubmit from 'components/buttons/ButtonSubmit';
 import Container from 'components/styled/Container';
@@ -66,6 +67,28 @@ const StyledGroupLabel = styled(GroupLabel)`
 `;
 
 const Label = styled((p) => <Text size="small" {...p} />)``;
+
+const Footer = styled.div`
+  position: fixed;
+  width: 100%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333333;
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+`;
+
+const FooterContainer = styled((p) => <Container isNarrow {...p} />)`
+  padding-bottom: 0px;
+`;
+
+const StyledButtonCancel = styled(ButtonForm)`
+  color: white;
+  opacity: 0.9;
+  &:hover {
+    opacity: 0.8;
+  }
+`;
 
 // <Field>
 //   <FormFieldWrap>
@@ -329,6 +352,21 @@ export function PrintUI({
           </Box>
         </StyledForm>
       </StyledContainer>
+      <Footer>
+        <FooterContainer>
+          <Box direction="row" justify="end">
+            <StyledButtonCancel type="button" onClick={close}>
+              <FormattedMessage {...appMessages.buttons.cancel} />
+            </StyledButtonCancel>
+            <ButtonSubmit
+              type="button"
+              onClick={() => window.print && window.print()}
+            >
+              <FormattedMessage {...messages.buttonPrint} />
+            </ButtonSubmit>
+          </Box>
+        </FooterContainer>
+      </Footer>
     </Styled>
   );
 }

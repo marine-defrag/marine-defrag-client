@@ -3,11 +3,11 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
   buttonPrint: {
     id: 'app.containers.PrintUI.buttonPrint',
-    defaultMessage: 'Print',
+    defaultMessage: 'Continue',
   },
   title: {
     id: 'app.containers.PrintUI.title',
-    defaultMessage: 'Print export',
+    defaultMessage: 'Print settings',
   },
   titleFormat: {
     id: 'app.containers.PrintUI.titleFormat',

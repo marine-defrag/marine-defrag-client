@@ -35,7 +35,7 @@ import {
   getEntityTitleTruncated,
   checkActionAttribute,
 } from 'utils/entities';
-
+import { keydownHandlerPrint } from 'utils/print';
 import {
   loadEntitiesIfNeeded,
   updatePath,
@@ -110,7 +110,21 @@ export function ActionView({
     // kick off loading of data
     onLoadData();
   }, []);
-
+  const mySetPrintView = () => onSetPrintView({
+    printType: isIndicator ? PRINT_TYPES.FF : PRINT_TYPES.SINGLE,
+    printContentOptions: isIndicator ? null : { tabs: true },
+    printOrientation: 'portrait',
+    printSize: 'A4',
+  });
+  const keydownHandler = (e) => {
+    keydownHandlerPrint(e, mySetPrintView);
+  };
+  useEffect(() => {
+    document.addEventListener('keydown', keydownHandler);
+    return () => {
+      document.removeEventListener('keydown', keydownHandler);
+    };
+  }, []);
   const typeId = viewEntity && viewEntity.getIn(['attributes', 'measuretype_id']);
   const isIndicator = qe(typeId, FF_ACTIONTYPE);
 
@@ -122,12 +136,7 @@ export function ActionView({
         {
           type: 'icon',
           // onClick: () => window.print(),
-          onClick: () => onSetPrintView({
-            printType: isIndicator ? PRINT_TYPES.FF : PRINT_TYPES.SINGLE,
-            printContentOptions: isIndicator ? null : { tabs: true },
-            printOrientation: 'portrait',
-            printSize: 'A4',
-          }),
+          onClick: mySetPrintView,
           title: 'Print',
           icon: 'print',
         },
@@ -206,9 +215,7 @@ export function ActionView({
         }
         { viewEntity && dataReady && (
           <ViewWrapper isPrint={isPrintView}>
-            {isPrintView && (
-              <HeaderPrint />
-            )}
+            {isPrintView && <HeaderPrint />}
             <ViewHeader
               isPrintView={isPrintView}
               title={typeId
