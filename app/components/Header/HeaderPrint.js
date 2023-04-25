@@ -63,13 +63,19 @@ const Meta = styled.div`
   text-align: right;
 `;
 
+const CLEANUP = ['mvw'];
+
 function HeaderPrint({ theme, intl }) {
   const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
   const now = new Date();
   let url = window && window.location
     && `${window.location.origin}${window.location.pathname}`;
   if (url && window.location.search) {
-    url = `${url}${window.location.search}`;
+    const params = new URLSearchParams(window.location.search);
+    CLEANUP.forEach((p) => {
+      params.delete(p);
+    });
+    url = `${url}?${params.toString()}`;
   }
   return (
     <Styled>
