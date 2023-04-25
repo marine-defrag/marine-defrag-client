@@ -22,6 +22,7 @@ const Table = styled.table`
   width: 100%;
   ${({ isPrint }) => isPrint && css`pointer-events: none;`}
   @media print {
+    display: block;
     page-break-inside: auto;
   }
 `;
@@ -30,6 +31,7 @@ const TableBody = styled.tbody``;
 const TableRow = styled.tr`
   height: 100%;
   @media print {
+    height: auto;
     page-break-inside: avoid;
   }
 `;
@@ -165,7 +167,7 @@ export function EntitiesTable({
             )}
             <TableRow>
               {headerColumns.map(
-                (col, i) => (isMinSize(size, 'large') || col.type === 'main') && (
+                (col, i) => (isMinSize(size, 'large') || isPrintView || col.type === 'main') && (
                   <TableCellHeader
                     key={i}
                     scope="col"
@@ -183,7 +185,7 @@ export function EntitiesTable({
                           isPrintView={isPrintView}
                         />
                       )}
-                      {isMinSize(size, 'large') && col.type !== 'main' && (
+                      {(isMinSize(size, 'large') || isPrintView) && col.type !== 'main' && (
                         <CellHeaderPlain column={col} isPrintView={isPrintView} />
                       )}
                     </TableCellHeaderInner>
@@ -197,7 +199,7 @@ export function EntitiesTable({
           {entities.length > 0 && entities.map((entity, key) => (
             <TableRow key={key}>
               {columns.map((col, i) => entity[col.id]
-                && (isMinSize(size, 'large') || col.type === 'main')
+                && (isMinSize(size, 'large') || isPrintView || col.type === 'main')
                 && (
                   <TableCellBody
                     key={i}
