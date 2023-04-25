@@ -45,6 +45,12 @@ const StyledPrint = styled.div`
   margin-left: 0;
   margin-bottom: 16px;
 `;
+const MapWrapper = styled.div`
+  @media print {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+`;
 export function ActorViewDetailsActions({
   viewEntity,
   taxonomies,
@@ -145,14 +151,14 @@ export function ActorViewDetailsActions({
           }
           return (
             <div key={typeId}>
-              <PrintOnly>
-                <StyledPrint>
-                  <Text size="small" style={{ textDecoration: 'underline' }}>
-                    <FormattedMessage {...appMessages.entities[`actions_${typeId}`].plural} />
-                  </Text>
-                </StyledPrint>
-              </PrintOnly>
-              <Box>
+              <MapWrapper>
+                <PrintOnly>
+                  <StyledPrint>
+                    <Text size="small" style={{ textDecoration: 'underline' }}>
+                      <FormattedMessage {...appMessages.entities[`actions_${typeId}`].plural} />
+                    </Text>
+                  </StyledPrint>
+                </PrintOnly>
                 <ActorActivitiesMap
                   mapId={`ll-map-target-actions-${typeId}`}
                   actor={viewEntity}
@@ -166,7 +172,7 @@ export function ActorViewDetailsActions({
                   actiontypeId={typeId}
                   actorCanBeMember={canBeMember}
                 />
-              </Box>
+              </MapWrapper>
               {activeActiontypeActions && (
                 <Box>
                   <FieldGroup

@@ -3,12 +3,15 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import { Box, Button, Text } from 'grommet';
 import { FormNext } from 'grommet-icons';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { palette } from 'styled-theme';
+
+import { usePrint } from 'containers/App/PrintContext';
 
 import FieldWrap from 'components/fields/FieldWrap';
 import Label from 'components/fields/Label';
 import EmptyHint from 'components/fields/EmptyHint';
+import PrintHide from 'components/styled/PrintHide';
 import InfoOverlay from 'components/InfoOverlay';
 import isNumber from 'utils/is-number';
 import { formatNumber } from 'utils/fields';
@@ -19,6 +22,10 @@ const TitleButton = styled((p) => <Button {...p} />)`
   stroke: ${({ theme }) => theme.global.colors.a};
   &:hover {
     stroke: ${({ theme }) => theme.global.colors.aHover};
+  }
+  ${({ isPrint }) => isPrint && css`color: #1c2121;`}
+  @media print {
+    color: color: #1c2121;
   }
 `;
 
@@ -34,6 +41,7 @@ export function NumberField({ field, intl, secondary }) {
     ? intl.formatMessage(field.label)
     : field.title;
   const { isCount } = field;
+  const isPrint = usePrint();
   return (
     <FieldWrap>
       {!isCount && (
@@ -49,10 +57,13 @@ export function NumberField({ field, intl, secondary }) {
                   plain
                   href={field.titleLink.href}
                   onClick={field.titleLink.onClick}
+                  isPrint={isPrint}
                 >
                   <Box direction="row" align="center">
                     <Text size="small">{label}</Text>
-                    <FormNext size="xsmall" style={{ stroke: 'inherit' }} />
+                    <PrintHide>
+                      <FormNext size="xsmall" style={{ stroke: 'inherit' }} />
+                    </PrintHide>
                   </Box>
                 </TitleButton>
               )}

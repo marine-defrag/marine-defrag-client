@@ -35,7 +35,6 @@ import ActorViewDetailsCountryFacts from './ActorViewDetailsCountryFacts';
 
 const Styled = styled((p) => <Box pad={{ top: 'medium', bottom: 'large' }} {...p} />)`
   border-top: 1px solid;
-  border-bottom: 1px solid;
   border-color: #f1f0f1;
 `;
 const SubjectButton = styled((p) => <Button plain {...p} />)`

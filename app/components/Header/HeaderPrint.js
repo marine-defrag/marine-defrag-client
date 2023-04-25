@@ -79,7 +79,7 @@ function HeaderPrint({ theme, intl }) {
   }
   return (
     <Styled>
-      <Box direction="row" fill justify="between" align="center">
+      <Box direction="row" fill justify="between" align="center" gap="xsmall">
         <Box flex={{ shrink: 0 }}>
           <Brand>
             <Box direction="row" align="center">

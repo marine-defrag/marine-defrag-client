@@ -12,14 +12,12 @@ import {
   Box,
   Text,
   Button,
-  ResponsiveContext,
 } from 'grommet';
 import { Map } from 'immutable';
 import styled, { css } from 'styled-components';
 
 import qe from 'utils/quasi-equals';
 import isNumber from 'utils/is-number';
-import { isMaxSize } from 'utils/responsive';
 
 import NumberField from 'components/fields/NumberField';
 
@@ -31,7 +29,12 @@ import { usePrint } from 'containers/App/PrintContext';
 import appMessages from 'containers/App/messages';
 import { selectActorIndicators } from './selectors';
 
-const ResourceButton = styled((p) => <Button plain {...p} />)``;
+const ResourceButton = styled((p) => <Button plain {...p} />)`
+  ${({ isPrint }) => isPrint && css`color: #1c2121;`}
+  @media print {
+    color: color: #1c2121;
+  }
+`;
 const Group = styled(
   (p) => (
     <Box
@@ -40,7 +43,12 @@ const Group = styled(
       {...p}
     />
   )
-)``;
+)`
+  @media print {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+`;
 const GroupTitle = styled.h5`
   font-size: 18px;
   font-weight: 500;
@@ -52,6 +60,7 @@ const GroupTitle = styled.h5`
 const GroupTitleLabel = styled(GroupTitle)`
   font-weight: 300;
   color: ${({ theme }) => theme.global.colors.text.secondary};
+  font-size: 11px;
 `;
 
 const Indicator = styled((p) => <Box margin={{ top: 'medium' }} pad={{ top: 'medium' }} {...p} />)`
@@ -61,6 +70,7 @@ const Indicator = styled((p) => <Box margin={{ top: 'medium' }} pad={{ top: 'med
 const StyledBox = styled((p) => (<Box margin={{ vertical: 'small', horizontal: 'medium' }} {...p} />))`
   ${({ isPrint }) => isPrint && css`margin-left: 0;`}
   ${({ isPrint }) => isPrint && css`margin-right: 0;`}
+  ${({ isPrint }) => isPrint && css`pointer-events: none;`}
   @media print {
     margin-left: 0;
     margin-right: 0;
@@ -74,7 +84,6 @@ export function ActorViewDetailsCountryFacts({
   // intl,
 }) {
   const isPrint = usePrint();
-  const size = React.useContext(ResponsiveContext);
   const indicatorsByResourceId = indicators && indicators.groupBy(
     (entity) => {
       if (entity.get('resourcesByType')) {
@@ -103,14 +112,10 @@ export function ActorViewDetailsCountryFacts({
               return (
                 <Group key={`res-${resourceId}`}>
                   {resource && (
-                    <Box
-                      direction={isMaxSize(size, 'medium') ? 'column' : 'row'}
-                      gap="xsmall"
-                      wrap
-                    >
+                    <Box gap="xsmall">
                       <Box>
                         <GroupTitleLabel>
-                          Publication
+                          Resource
                         </GroupTitleLabel>
                       </Box>
                       <Box>
@@ -121,6 +126,7 @@ export function ActorViewDetailsCountryFacts({
                             if (e) e.preventDefault();
                             onUpdatePath(`${ROUTES.RESOURCE}/${resourceId}`);
                           }}
+                          isPrint={isPrint}
                         >
                           <GroupTitle>
                             {resource.getIn(['attributes', 'title'])}
