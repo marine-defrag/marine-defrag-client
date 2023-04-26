@@ -55,7 +55,7 @@ export function FilterOptionList({
                     disabled={!filter.onClick}
                   >
                     {getFilterLabel(filter, intl, true)}
-                    {filter.onClick && <Icon name="removeSmall" text textRight hidePrint />}
+                    {filter.onClick && <Icon name="removeSmall" text textRight printHide />}
                   </ButtonTagFilter>
                 </Box>
               );

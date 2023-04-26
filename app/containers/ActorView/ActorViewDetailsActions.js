@@ -8,9 +8,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+import styled from 'styled-components';
 import { Box, Text } from 'grommet';
 import { List, Map } from 'immutable';
-import styled from 'styled-components';
 
 import {
   getActionConnectionField,
@@ -22,15 +22,17 @@ import {
   ACTIONTYPES,
   ACTIONTYPES_CONFIG,
 } from 'themes/config';
-
+import PrintHide from 'components/styled/PrintHide';
+import PrintOnly from 'components/styled/PrintOnly';
 import FieldGroup from 'components/fields/FieldGroup';
-import ButtonPill from 'components/buttons/ButtonPill';
 
 import { setActiontype } from 'containers/App/actions';
+import { usePrint } from 'containers/App/PrintContext';
 import { selectActiontypes } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
 import ActorActivitiesMap from './ActorActivitiesMap';
+import TypeSelectBox from './TypeSelectBox';
 import { getActiontypeColumns } from './utils';
 
 import {
@@ -38,9 +40,16 @@ import {
   selectActionsAsMemberByActortype,
 } from './selectors';
 
-const TypeSelectBox = styled((p) => <Box {...p} />)``;
-const TypeButton = styled((p) => <ButtonPill {...p} />)`
-  margin-bottom: 5px;
+const StyledPrint = styled.div`
+  margin-left: 0;
+  margin-bottom: 16px;
+`;
+
+const MapWrapper = styled.div`
+  @media print {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 `;
 export function ActorViewDetailsActions({
   viewEntity,
@@ -54,15 +63,16 @@ export function ActorViewDetailsActions({
   actionsByActiontype,
   actionsAsMemberByActortype,
   intl,
+  printArgs,
 }) {
+  const isPrint = usePrint();
   let activeActiontypeId;
-  let actiontypesAsMember;
-  let actiontypeIdsAsMember;
   // direct && indirect actiontypeids for selected subject
   let actiontypeIdsOptions = actionsByActiontype
     && actionsByActiontype.entrySeq().map(([id]) => id.toString());
   // any indirect actions present for selected subject and type?
   // indirect actions by type for selected subject
+  let actiontypeIdsAsMember;
   if (canBeMember) {
     // indirect actiontypeids for selected subject
     actiontypeIdsAsMember = actionsAsMemberByActortype.reduce(
@@ -81,7 +91,6 @@ export function ActorViewDetailsActions({
         : actiontypeIdsAsMember.toSet();
     }
   }
-
   // sort
   actiontypeIdsOptions = actiontypeIdsOptions
     && actiontypeIdsOptions.sort((a, b) => {
@@ -95,31 +104,6 @@ export function ActorViewDetailsActions({
   if (actiontypeIdsOptions && !actiontypeIdsOptions.includes(viewActiontypeId.toString())) {
     activeActiontypeId = actiontypeIdsOptions.first();
   }
-  // figure out actions for active action type #################################################
-
-  // direct actions for selected subject and type
-  const activeActiontypeActions = actionsByActiontype && actionsByActiontype.get(parseInt(activeActiontypeId, 10));
-  if (canBeMember) {
-    // figure out inactive action types
-    actiontypesAsMember = actionsAsMemberByActortype.reduce(
-      (memo, typeActors, id) => {
-        const typeActorsForActiveType = typeActors.filter(
-          (actor) => actor.get('actionsByType')
-          && actor.getIn(['actionsByType', activeActiontypeId])
-          && actor.getIn(['actionsByType', activeActiontypeId]).size > 0
-        );
-        if (typeActorsForActiveType && typeActorsForActiveType.size > 0) {
-          return memo.merge(Map().set(id, typeActorsForActiveType));
-        }
-        return memo;
-      },
-      Map(),
-    );
-  }
-  // figure out if we have a map and what to show #################################################
-  const hasMemberOption = activeActiontypeId && !qe(activeActiontypeId, ACTIONTYPES.NATL);
-  const activeActionType = actiontypes && activeActiontypeId && actiontypes.get(activeActiontypeId.toString());
-  const hasTarget = activeActionType && activeActionType.getIn(['attributes', 'has_target']);
   return (
     <Box>
       {(!actiontypeIdsOptions || actiontypeIdsOptions.size === 0) && (
@@ -130,107 +114,132 @@ export function ActorViewDetailsActions({
         </Box>
       )}
       {actiontypeIdsOptions && actiontypeIdsOptions.size > 0 && (
-        <TypeSelectBox
-          direction="row"
-          gap="xxsmall"
-          margin={{ top: 'small', horizontal: 'medium', bottom: 'medium' }}
-          wrap
-        >
-          {actiontypeIdsOptions.map(
-            (id) => (
-              <TypeButton
-                key={id}
-                onClick={() => onSetActiontype(id)}
-                active={qe(activeActiontypeId, id) || actiontypeIdsOptions.size === 1}
-                listItems={actiontypeIdsOptions.size}
-              >
-                <Text size="small">
-                  {actiontypeIdsOptions.size > 4 && (
-                    <FormattedMessage {...appMessages.entities[`actions_${id}`].pluralShort} />
-                  )}
-                  {actiontypeIdsOptions.size <= 4 && (
-                    <FormattedMessage {...appMessages.entities[`actions_${id}`].plural} />
-                  )}
-                </Text>
-              </TypeButton>
-            )
-          )}
-        </TypeSelectBox>
-      )}
-      {viewEntity && actiontypeIdsOptions && actiontypeIdsOptions.size > 0 && (
-        <Box>
-          <ActorActivitiesMap
-            actor={viewEntity}
-            actions={activeActiontypeActions}
-            actionsAsMember={actiontypesAsMember}
-            hasMemberOption={hasMemberOption}
-            viewSubject="actors"
-            mapSubject="targets"
-            actiontypeHasTarget={hasTarget}
-            dataReady
-            onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
-            actiontypeId={activeActiontypeId}
-            actorCanBeMember={canBeMember}
+        <PrintHide>
+          <TypeSelectBox
+            options={actiontypeIdsOptions}
+            onSelectType={onSetActiontype}
+            activeOptionId={activeActiontypeId}
+            type="actions"
           />
-        </Box>
+        </PrintHide>
       )}
-      {actionsByActiontype && activeActiontypeActions && actionsByActiontype.size > 0 && (
-        <Box>
-          <FieldGroup
-            group={{
-              title: 'Individually',
-              fields: [
-                getActionConnectionField({
-                  actions: activeActiontypeActions,
-                  taxonomies,
-                  onEntityClick,
-                  connections: actionConnections,
-                  typeid: activeActiontypeId,
-                  columns: getActiontypeColumns(
-                    viewEntity,
-                    activeActiontypeId,
-                    'actors',
-                    intl,
-                  ),
-                }),
-              ],
-            }}
-          />
-        </Box>
-      )}
-      {canBeMember && actiontypesAsMember.entrySeq().map(([actortypeId, typeActors]) => (
-        <Box key={actortypeId}>
-          {typeActors.entrySeq().map(([actorId, actor]) => {
-            const typeLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeId}`].singleShort);
-            const prefix = 'As member of ';
-            return (
-              <Box key={actorId}>
-                <FieldGroup
-                  group={{
-                    title: `${prefix} ${typeLabel}: "${actor.getIn(['attributes', 'title'])}"`,
-                    fields: [
-                      getActionConnectionField({
-                        actions: actor.getIn(['actionsByType', activeActiontypeId]),
-                        taxonomies,
-                        onEntityClick,
-                        connections: actionConnections,
-                        typeid: activeActiontypeId,
-                        columns: getActiontypeColumns(
-                          viewEntity,
-                          activeActiontypeId,
-                          'actors',
-                          intl,
-                          false, // direct
-                        ),
-                      }),
-                    ],
-                  }}
-                />
-              </Box>
+      {viewEntity
+        && actiontypes
+        && activeActiontypeId
+        && actiontypeIdsOptions
+        && actiontypeIdsOptions.size > 0
+        && actiontypeIdsOptions.filter(
+          (typeId) => qe(typeId, activeActiontypeId) || (isPrint && printArgs.printAllTypes === 'all')
+        ).map((typeId) => {
+          const activeActionType = actiontypes.get(typeId.toString());
+          const hasTarget = activeActionType && activeActionType.getIn(['attributes', 'has_target']);
+          const hasMemberOption = activeActiontypeId && !qe(activeActiontypeId, ACTIONTYPES.NATL);
+          // direct actions for selected subject and type
+          const activeActiontypeActions = actionsByActiontype && actionsByActiontype.get(parseInt(typeId, 10));
+          let actiontypesAsMember;
+          if (canBeMember) {
+            // figure out inactive action types
+            actiontypesAsMember = actionsAsMemberByActortype.reduce(
+              (memo, typeActors, id) => {
+                const typeActorsForActiveType = typeActors.filter(
+                  (actor) => actor.get('actionsByType')
+                  && actor.getIn(['actionsByType', typeId])
+                  && actor.getIn(['actionsByType', typeId]).size > 0
+                );
+                if (typeActorsForActiveType && typeActorsForActiveType.size > 0) {
+                  return memo.merge(Map().set(id, typeActorsForActiveType));
+                }
+                return memo;
+              },
+              Map(),
             );
-          })}
-        </Box>
-      ))}
+          }
+          return (
+            <div key={typeId}>
+              <MapWrapper>
+                <PrintOnly>
+                  <StyledPrint>
+                    <Text size="small" style={{ textDecoration: 'underline' }}>
+                      <FormattedMessage {...appMessages.entities[`actions_${typeId}`].plural} />
+                    </Text>
+                  </StyledPrint>
+                </PrintOnly>
+                <ActorActivitiesMap
+                  mapId={`ll-map-actor-actions-${typeId}`}
+                  actor={viewEntity}
+                  actions={activeActiontypeActions}
+                  actionsAsMember={actiontypesAsMember}
+                  hasMemberOption={hasMemberOption}
+                  viewSubject="actors"
+                  mapSubject="targets"
+                  actiontypeHasTarget={hasTarget}
+                  dataReady
+                  onEntityClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+                  actiontypeId={typeId}
+                  actorCanBeMember={canBeMember}
+                />
+              </MapWrapper>
+              {activeActiontypeActions && (
+                <Box>
+                  <FieldGroup
+                    group={{
+                      title: 'Individually',
+                      fields: [
+                        getActionConnectionField({
+                          actions: activeActiontypeActions,
+                          taxonomies,
+                          onEntityClick,
+                          connections: actionConnections,
+                          typeid: typeId,
+                          columns: getActiontypeColumns(
+                            viewEntity,
+                            typeId,
+                            'actors',
+                            intl,
+                          ),
+                        }),
+                      ],
+                    }}
+                  />
+                </Box>
+              )}
+              {canBeMember && actiontypesAsMember.entrySeq().map(([actortypeId, typeActors]) => (
+                <Box key={actortypeId}>
+                  {typeActors.entrySeq().map(([actorId, actor]) => {
+                    const typeLabel = intl.formatMessage(appMessages.entities[`actors_${actortypeId}`].singleShort);
+                    const prefix = 'As member of ';
+                    return (
+                      <Box key={actorId}>
+                        <FieldGroup
+                          group={{
+                            title: `${prefix} ${typeLabel}: "${actor.getIn(['attributes', 'title'])}"`,
+                            fields: [
+                              getActionConnectionField({
+                                actions: actor.getIn(['actionsByType', typeId]),
+                                taxonomies,
+                                onEntityClick,
+                                connections: actionConnections,
+                                typeid: typeId,
+                                columns: getActiontypeColumns(
+                                  viewEntity,
+                                  typeId,
+                                  'actors',
+                                  intl,
+                                  false, // direct
+                                ),
+                              }),
+                            ],
+                          }}
+                        />
+                      </Box>
+                    );
+                  })}
+                </Box>
+              ))}
+            </div>
+          );
+        })
+      }
     </Box>
   );
 }
@@ -247,6 +256,7 @@ ActorViewDetailsActions.propTypes = {
   canBeMember: PropTypes.bool,
   actionsByActiontype: PropTypes.instanceOf(Map),
   actionsAsMemberByActortype: PropTypes.instanceOf(Map),
+  printArgs: PropTypes.object,
   intl: intlShape,
 };
 

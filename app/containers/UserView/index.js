@@ -4,11 +4,11 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 
 import {
   getTitleField,
@@ -18,17 +18,21 @@ import {
   getTaxonomyFields,
   getHighestUserRoleId,
 } from 'utils/fields';
-
 import { getEntityTitle } from 'utils/entities';
+import { keydownHandlerPrint } from 'utils/print';
 
-import { loadEntitiesIfNeeded, updatePath, closeEntity } from 'containers/App/actions';
+import {
+  loadEntitiesIfNeeded,
+  updatePath,
+  closeEntity,
+  printView,
+} from 'containers/App/actions';
 
-import { CONTENT_SINGLE } from 'containers/App/constants';
+import { PRINT_TYPES } from 'containers/App/constants';
 import { USER_ROLES, ROUTES } from 'themes/config';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
-import ContentHeader from 'components/ContentHeader';
 import EntityView from 'components/EntityView';
 
 import {
@@ -47,34 +51,72 @@ import {
 
 import { DEPENDENCIES } from './constants';
 
-export class UserView extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  UNSAFE_componentWillMount() {
-    this.props.loadEntitiesIfNeeded();
-  }
+const getHeaderMainFields = (entity, isManager) => ([{ // fieldGroup
+  fields: [getTitleField(entity, isManager, 'name', appMessages.attributes.name)],
+}]);
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    // reload entities if not ready or no longer ready (eg invalidated)
-    if (!nextProps.dataReady) {
-      this.props.loadEntitiesIfNeeded();
-    }
-  }
+const getHeaderAsideFields = (entity) => ([{
+  fields: [
+    getRoleField(entity),
+    getMetaField(entity),
+  ],
+}]);
 
-  getButtons = ({
-    user,
-    sessionUserId,
-    sessionUserHighestRoleId,
-    handleEdit,
-    handleClose,
-    handleEditPassword,
-    dataReady,
-  }) => {
-    const { intl } = this.context;
+const getBodyMainFields = (entity) => ([{
+  fields: [getEmailField(entity)],
+}]);
+
+const getBodyAsideFields = (taxonomies) => ([
+  { // fieldGroup
+    fields: getTaxonomyFields(taxonomies),
+  },
+]);
+
+function UserView({
+  user,
+  dataReady,
+  sessionUserHighestRoleId,
+  taxonomies,
+  intl,
+  params,
+  sessionUserId,
+  handleEditPassword,
+  handleEdit,
+  handleClose,
+  onLoadEntitiesIfNeeded,
+  onSetPrintView,
+}) {
+  useEffect(() => {
+    // kick off loading of data
+    onLoadEntitiesIfNeeded();
+  }, []);
+  const mySetPrintView = () => onSetPrintView({
+    printType: PRINT_TYPES.SINGLE,
+    printOrientation: 'portrait',
+    printSize: 'A4',
+  });
+  const keydownHandler = (e) => {
+    keydownHandlerPrint(e, mySetPrintView);
+  };
+  useEffect(() => {
+    document.addEventListener('keydown', keydownHandler);
+    return () => {
+      document.removeEventListener('keydown', keydownHandler);
+    };
+  }, []);
+  const isManager = sessionUserHighestRoleId <= USER_ROLES.MANAGER.value;
+
+  const pageTitle = intl.formatMessage(messages.pageTitle);
+  const metaTitle = user
+    ? `${pageTitle}: ${getEntityTitle(user)}`
+    : `${pageTitle} ${params.id}`;
+  const buttons = [];
+  if (user) {
     const userId = user.get('id') || user.getIn(['attributes', 'id']);
-    const buttons = [];
     if (dataReady) {
       buttons.push({
         type: 'icon',
-        onClick: () => window.print(),
+        onClick: mySetPrintView,
         title: 'Print',
         icon: 'print',
       });
@@ -95,106 +137,60 @@ export class UserView extends React.PureComponent { // eslint-disable-line react
         onClick: () => handleEdit(userId),
       });
     }
-    buttons.push({
-      type: 'close',
-      onClick: handleClose,
-    });
-    return buttons;
-  };
-
-  getHeaderMainFields = (entity, isManager) => ([{ // fieldGroup
-    fields: [getTitleField(entity, isManager, 'name', appMessages.attributes.name)],
-  }]);
-
-  getHeaderAsideFields = (entity) => ([{
-    fields: [
-      getRoleField(entity),
-      getMetaField(entity),
-    ],
-  }]);
-
-  getBodyMainFields = (entity) => ([{
-    fields: [getEmailField(entity)],
-  }]);
-
-  getBodyAsideFields = (taxonomies) => ([
-    { // fieldGroup
-      fields: getTaxonomyFields(taxonomies),
-    },
-  ]);
-
-  render() {
-    const { intl } = this.context;
-    const {
-      user, dataReady, sessionUserHighestRoleId, taxonomies,
-    } = this.props;
-    const isManager = sessionUserHighestRoleId <= USER_ROLES.MANAGER.value;
-
-    const pageTitle = intl.formatMessage(messages.pageTitle);
-    const metaTitle = user
-      ? `${pageTitle}: ${getEntityTitle(user)}`
-      : `${pageTitle} ${this.props.params.id}`;
-
-    return (
-      <div>
-        <Helmet
-          title={metaTitle}
-          meta={[
-            { name: 'description', content: intl.formatMessage(messages.metaDescription) },
-          ]}
-        />
-        <Content isSingle>
-          <ContentHeader
-            title={pageTitle}
-            type={CONTENT_SINGLE}
-            icon="users"
-            buttons={user && this.getButtons(this.props)}
-          />
-          { !user && !dataReady
-            && <Loading />
-          }
-          { !user && dataReady
-            && (
-              <div>
-                <FormattedMessage {...messages.notFound} />
-              </div>
-            )
-          }
-          { user && dataReady && (
-            <EntityView
-              fields={{
-                header: {
-                  main: this.getHeaderMainFields(user, isManager),
-                  aside: isManager && this.getHeaderAsideFields(user),
-                },
-                body: {
-                  main: this.getBodyMainFields(user),
-                  aside: isManager && this.getBodyAsideFields(taxonomies),
-                },
-              }}
-            />
-          )}
-        </Content>
-      </div>
-    );
   }
+
+  return (
+    <div>
+      <Helmet
+        title={metaTitle}
+        meta={[
+          { name: 'description', content: intl.formatMessage(messages.metaDescription) },
+        ]}
+      />
+      <Content isSingle>
+        {!user && !dataReady && <Loading />}
+        {!user && dataReady && (
+          <div>
+            <FormattedMessage {...messages.notFound} />
+          </div>
+        )}
+        {user && dataReady && (
+          <EntityView
+            header={{
+              title: pageTitle,
+              onClose: handleClose,
+              buttons,
+            }}
+            fields={{
+              header: {
+                main: getHeaderMainFields(user, isManager),
+                aside: isManager && getHeaderAsideFields(user),
+              },
+              body: {
+                main: getBodyMainFields(user),
+                aside: isManager && getBodyAsideFields(taxonomies),
+              },
+            }}
+          />
+        )}
+      </Content>
+    </div>
+  );
 }
 
 UserView.propTypes = {
-  loadEntitiesIfNeeded: PropTypes.func,
-  // handleEdit: PropTypes.func,
-  // handleEditPassword: PropTypes.func,
-  // handleClose: PropTypes.func,
+  onLoadEntitiesIfNeeded: PropTypes.func,
+  handleEdit: PropTypes.func,
+  handleEditPassword: PropTypes.func,
+  handleClose: PropTypes.func,
+  onSetPrintView: PropTypes.func,
   user: PropTypes.object,
   taxonomies: PropTypes.object,
   dataReady: PropTypes.bool,
   sessionUserHighestRoleId: PropTypes.number,
   params: PropTypes.object,
-  // sessionUserId: PropTypes.string,
-};
-
-UserView.contextTypes = {
-  intl: PropTypes.object.isRequired,
+  sessionUserId: PropTypes.string,
+  intl: intlShape.isRequired,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -208,7 +204,7 @@ const mapStateToProps = (state, props) => ({
 
 function mapDispatchToProps(dispatch) {
   return {
-    loadEntitiesIfNeeded: () => {
+    onLoadEntitiesIfNeeded: () => {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
     handleEdit: (userId) => {
@@ -220,7 +216,10 @@ function mapDispatchToProps(dispatch) {
     handleClose: () => {
       dispatch(closeEntity(ROUTES.USERS));
     },
+    onSetPrintView: (config) => {
+      dispatch(printView(config));
+    },
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserView);
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(UserView));

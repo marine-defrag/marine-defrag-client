@@ -35,7 +35,7 @@ import {
 
 // import Loading from 'components/Loading';
 import Content from 'components/Content';
-import ContentHeader from 'components/ContentHeader';
+import ContentHeader from 'containers/ContentHeader';
 import ImportActorActionsForm from 'components/forms/ImportActorActionsForm';
 
 import {

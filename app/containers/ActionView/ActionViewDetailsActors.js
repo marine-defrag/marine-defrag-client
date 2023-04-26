@@ -13,6 +13,8 @@ import { Box, Text } from 'grommet';
 
 import {
   selectActorConnections,
+  selectPrintConfig,
+  selectIsPrintView,
 } from 'containers/App/selectors';
 
 import { getActorConnectionField } from 'utils/fields';
@@ -48,6 +50,8 @@ export function ActionViewDetailsActors({
   isIndicator,
   hasMemberOption,
   isManager,
+  isPrintView,
+  printArgs,
 }) {
   // action has a map
   const hasCountryActionMap = !!typeId && !isIndicator;
@@ -59,6 +63,7 @@ export function ActionViewDetailsActors({
     <>
       {(actorsByActortype || childActionsByActiontypeWithActorsByType) && hasCountryActionMap && (
         <ActionMap
+          mapId="ll-action-actors"
           actorsByType={actorsByActortype}
           childCountries={
             childActionsByActiontypeWithActorsByType
@@ -76,6 +81,8 @@ export function ActionViewDetailsActors({
           onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
           hasMemberOption={hasMemberOption}
           typeId={typeId}
+          isPrintView={isPrintView}
+          printArgs={printArgs}
         />
       )}
       {actorsByActortype && hasIndicatorCountryMap && (
@@ -84,6 +91,8 @@ export function ActionViewDetailsActors({
           mapSubject="actors"
           onCountryClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
           indicator={viewEntity}
+          isPrintView={isPrintView}
+          printArgs={printArgs}
         />
       )}
       {actorsByActortype && hasIndicatorLocationMap && (
@@ -91,6 +100,8 @@ export function ActionViewDetailsActors({
           locations={actorsByActortype.get(parseInt(ACTORTYPES.POINT, 10))}
           mapSubject="actors"
           indicator={viewEntity}
+          isPrintView={isPrintView}
+          printArgs={printArgs}
         />
       )}
       {actorsByActortype && showActors && (
@@ -195,12 +206,16 @@ ActionViewDetailsActors.propTypes = {
   actorConnections: PropTypes.instanceOf(Map),
   intl: intlShape.isRequired,
   isManager: PropTypes.bool,
+  isPrintView: PropTypes.bool,
+  printArgs: PropTypes.object,
 };
 
 const mapStateToProps = (state, { id }) => ({
   actorsByActortype: selectActorsByType(state, id),
   childActionsByActiontypeWithActorsByType: selectChildActionsByTypeWithActorsByType(state, id),
   actorConnections: selectActorConnections(state),
+  printArgs: selectPrintConfig(state),
+  isPrintView: selectIsPrintView(state),
 });
 
 export default connect(mapStateToProps, null)(injectIntl(ActionViewDetailsActors));

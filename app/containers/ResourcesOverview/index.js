@@ -10,13 +10,14 @@ import { Box, ResponsiveContext } from 'grommet';
 import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
+import { usePrint } from 'containers/App/PrintContext';
 
 import { ROUTES, RESOURCETYPE_GROUPS } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import { selectReady } from 'containers/App/selectors';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
-import Content from 'components/styled/Content';
+import Content from 'components/styled/ContentSimple';
 import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
 import { isMaxSize } from 'utils/responsive';
@@ -32,7 +33,7 @@ const GroupTitle = styled.h5`
   color: ${({ theme }) => theme.global.colors.text.brand};
 `;
 const ViewContainer = styled(Container)`
-  min-height: 85vH;
+  min-height: ${({ isPrint }) => isPrint ? '50vH' : '85vH'};
   @media print {
     min-height: 50vH;
   }
@@ -45,10 +46,10 @@ export function ResourcesOverview({
     onLoadData();
   }, []);
   const size = React.useContext(ResponsiveContext);
-
+  const isPrint = usePrint();
   return (
     <ContainerWrapper bg>
-      <ViewContainer>
+      <ViewContainer isPrint={isPrint}>
         <Content>
           {Object.keys(RESOURCETYPE_GROUPS).map((key) => (
             <Group key={key}>

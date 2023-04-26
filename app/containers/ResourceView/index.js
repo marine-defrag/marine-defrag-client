@@ -22,9 +22,16 @@ import {
 // import { qe } from 'utils/quasi-equals';
 import { getEntityTitleTruncated, checkResourceAttribute } from 'utils/entities';
 
-import { loadEntitiesIfNeeded, updatePath, closeEntity } from 'containers/App/actions';
+import {
+  loadEntitiesIfNeeded,
+  updatePath,
+  closeEntity,
+  printView,
+} from 'containers/App/actions';
 
 import { ROUTES } from 'themes/config';
+import { PRINT_TYPES } from 'containers/App/constants';
+// import { usePrint } from 'containers/App/PrintContext';
 
 import Loading from 'components/Loading';
 import Content from 'components/Content';
@@ -154,19 +161,27 @@ export class ResourceView extends React.PureComponent { // eslint-disable-line r
       handleTypeClick,
       handleEdit,
       handleClose,
+      onSetPrintView,
     } = this.props;
     const typeId = viewEntity && viewEntity.getIn(['attributes', 'resourcetype_id']);
     let buttons = [];
     if (dataReady) {
-      buttons = [
-        ...buttons,
-        {
-          type: 'icon',
-          onClick: () => window.print(),
-          title: 'Print',
-          icon: 'print',
-        },
-      ];
+      if (window.print) {
+        buttons = [
+          ...buttons,
+          {
+            type: 'icon',
+            // onClick: () => window.print(),
+            onClick: () => onSetPrintView({
+              printType: PRINT_TYPES.SINGLE,
+              printOrientation: 'portrait',
+              printSize: 'A4',
+            }),
+            title: 'Print',
+            icon: 'print',
+          },
+        ];
+      }
       if (isManager) {
         buttons = [
           ...buttons,
@@ -184,7 +199,7 @@ export class ResourceView extends React.PureComponent { // eslint-disable-line r
     const metaTitle = viewEntity
       ? `${pageTitle}: ${getEntityTitleTruncated(viewEntity)}`
       : `${pageTitle}: ${this.props.params.id}`;
-
+    // const isPrint = usePrint();
     return (
       <div>
         <Helmet
@@ -243,6 +258,7 @@ export class ResourceView extends React.PureComponent { // eslint-disable-line r
 ResourceView.propTypes = {
   viewEntity: PropTypes.object,
   loadEntitiesIfNeeded: PropTypes.func,
+  onSetPrintView: PropTypes.func,
   dataReady: PropTypes.bool,
   handleEdit: PropTypes.func,
   handleClose: PropTypes.func,
@@ -284,6 +300,9 @@ function mapDispatchToProps(dispatch, props) {
     },
     onEntityClick: (id, path) => {
       dispatch(updatePath(`${path}/${id}`));
+    },
+    onSetPrintView: (config) => {
+      dispatch(printView(config));
     },
   };
 }

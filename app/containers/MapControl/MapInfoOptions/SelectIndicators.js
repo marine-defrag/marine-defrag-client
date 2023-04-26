@@ -98,7 +98,7 @@ export function SelectIndicators({ config }) {
       <Box flex={{ shrink: 0 }} pad={{ left: 'ms' }}>
         {!isNoneOption && (
           <Reset onClick={() => onUpdateFFIndicator()}>
-            <Icon name="removeSmall" text hidePrint />
+            <Icon name="removeSmall" text printHide />
           </Reset>
         )}
         {isNoneOption && (

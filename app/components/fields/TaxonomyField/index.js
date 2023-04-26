@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Box } from 'grommet';
 
 import FieldWrap from 'components/fields/FieldWrap';
@@ -11,14 +11,17 @@ import ListLabelWrap from 'components/fields/ListLabelWrap';
 import ListLink from 'components/fields/ListLink';
 import EmptyHint from 'components/fields/EmptyHint';
 import InfoOverlay from 'components/InfoOverlay';
+import { usePrint } from 'containers/App/PrintContext';
 
 const StyledFieldWrap = styled(FieldWrap)`
   padding-top: 15px;
+  ${({ isPrint }) => isPrint && css`pointer-events: none;`}
 `;
 
 function TaxonomyField({ field, intl }) {
+  const isPrint = usePrint();
   return (
-    <StyledFieldWrap>
+    <StyledFieldWrap isPrint={isPrint}>
       <ListLabelWrap>
         <Box>
           <ListLabel>

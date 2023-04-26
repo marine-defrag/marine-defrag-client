@@ -2,6 +2,8 @@ import coolorsToHex from 'coolors-to-hex';
 
 import headerLogo from 'themes/media/headerLogo.png';
 import headerLogo2x from 'themes/media/headerLogo@2x.png';
+import headerLogoPrint from 'themes/media/headerLogoPrint.png';
+import headerLogoPrint2x from 'themes/media/headerLogoPrint@2x.png';
 
 import graphicHome from 'themes/media/homeGraphic.png';
 import graphicHome2x from 'themes/media/homeGraphic@2x.png';
@@ -16,6 +18,7 @@ const theme = {};
 // or single image: src
 theme.media = {
   headerLogo: [headerLogo, headerLogo2x],
+  headerLogoPrint: [headerLogoPrint, headerLogoPrint2x],
   graphicHome: [graphicHome, graphicHome2x],
   // impactossLogo: [impactossLogo, impactossLogo2x],
 };
@@ -281,12 +284,17 @@ theme.sizes = {
     listItemBottom: '7pt',
     markdown: '10pt',
     smallest: '7pt', // used for labels
+    xxsmall: '7pt', // used for labels
     smaller: '8pt', // used for labels
+    xsmall: '8pt', // used for labels
     small: '9pt', // used for labels
     default: '10pt', // used for labels
+    medium: '10pt', // used for labels
     large: '11pt', // used for labels
     larger: '12pt', // used for labels
+    xlarge: '12pt', // used for labels
     largest: '14pt', // used for labels
+    xxlarge: '14pt', // used for labels
   },
   // px only
   aside: {
@@ -322,6 +330,7 @@ theme.sizes = {
   header: {
     banner: {
       height: 50,
+      heightPrint: 66,
       heightMobile: 50,
     },
     nav: {
@@ -468,14 +477,18 @@ theme.global = {
     brand: '#183863',
     highlight: '#0070cc',
     highlightHover: '#0063b5',
-    background: '#f1f0f1',
+    background: '#ffffff', // global grommet background
+    backgroundX: '#f1f0f1', // other  background where needed
     backgroundLight: '#fcfcfc',
     inactive: '#f1f0f1', // on light background (empowerment)
+    borderLight: '#CECED2',
+    hint: '#777b7e', // on light background (empowerment)
     text: {
       brand: '#183863',
       dark: '#FFFFFF', //  on dark background
       light: '#1c2121', // on light background (empowerment)
       secondary: '#777b7e', // on light background (empowerment)
+      lead: '#6A7880', // on light background (empowerment)
     },
     border: {
       light: '#CECED2',
@@ -512,8 +525,25 @@ theme.text = {
   mediumTall: { size: '16px', height: '23px', maxWidth: '800px' },
   mediumTight: { size: '16px', height: '18px', maxWidth: '800px' },
   small: { size: '14px', height: '18px', maxWidth: '700px' },
+  smallTight: { size: '14px', height: '16px', maxWidth: '700px' },
   xsmall: { size: '13px', height: '16px', maxWidth: '600px' },
+  xsmallTight: { size: '13px', height: '14px', maxWidth: '600px' },
   xxsmall: { size: '12px', height: '14px', maxWidth: '500px' },
+};
+theme.textPrint = {
+  xxxlarge: { size: '24pt', height: '32pt' },
+  xxlarge: { size: '14pt', height: '18pt' },
+  xlarge: { size: '12pt', height: '16pt' },
+  large: { size: '11pt', height: '14.5pt' },
+  largeTall: { size: '11pt', height: '16pt' },
+  medium: { size: '10pt', height: '14pt' },
+  mediumTall: { size: '10pt', height: '16pt' },
+  mediumTight: { size: '10pt', height: '11pt' },
+  small: { size: '9pt', height: '12pt' },
+  smallTight: { size: '9pt', height: '10.5pt' },
+  xsmall: { size: '8pt', height: '10.5pt' },
+  xsmallTight: { size: '8pt', height: '9pt' },
+  xxsmall: { size: '7pt', height: '8.5pt' },
 };
 
 theme.icon = {
@@ -539,6 +569,10 @@ theme.table = {
       vertical: 'xsmall',
     },
   },
+};
+
+theme.radioButton = {
+  size: '18px',
 };
 
 export default theme;

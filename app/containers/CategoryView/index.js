@@ -4,11 +4,11 @@
  *
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 
 import {
   getTitleField,
@@ -34,12 +34,14 @@ import {
   getEntityReference,
 } from 'utils/entities';
 
-// import qe from 'utils/quasi-equals';
+import { keydownHandlerPrint } from 'utils/print';
 
-import { loadEntitiesIfNeeded, updatePath, closeEntity } from 'containers/App/actions';
+import {
+  loadEntitiesIfNeeded, updatePath, closeEntity, printView,
+} from 'containers/App/actions';
 
 import { ROUTES } from 'themes/config';
-
+import { PRINT_TYPES } from 'containers/App/constants';
 import Loading from 'components/Loading';
 import Content from 'components/Content';
 import EntityView from 'components/EntityView';
@@ -68,333 +70,332 @@ import {
 
 import { DEPENDENCIES } from './constants';
 
-export class CategoryView extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  UNSAFE_componentWillMount() {
-    this.props.loadEntitiesIfNeeded();
-  }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    // reload entities if invalidated
-    if (!nextProps.dataReady) {
-      this.props.loadEntitiesIfNeeded();
-    }
-  }
+const getHeaderMainFields = (entity, isManager) => {
+  const groups = [];
+  groups.push(
+    { // fieldGroup
+      fields: [
+        // getReferenceField(entity, isManager),
+        getTitleField(entity, isManager),
+        getCategoryShortTitleField(entity, isManager),
+      ],
+    },
+  );
+  return groups;
+};
 
-  getHeaderMainFields = (entity, isManager) => {
-    const groups = [];
-    groups.push(
-      { // fieldGroup
+const getHeaderAsideFields = (entity, isManager, parentTaxonomy, intl) => {
+  const groups = isManager
+    ? [
+      {
         fields: [
-          // getReferenceField(entity, isManager),
-          getTitleField(entity, isManager),
-          getCategoryShortTitleField(entity, isManager),
+          isManager && getStatusField(entity),
+          getMetaField(entity),
         ],
       },
-    );
-    return groups;
-  };
+    ]
+    : []; // fieldGroups
 
-  getHeaderAsideFields = (entity, isManager, parentTaxonomy) => {
-    const { intl } = this.context;
-    const groups = isManager
-      ? [
-        {
-          fields: [
-            isManager && getStatusField(entity),
-            getMetaField(entity),
-          ],
-        },
-      ]
-      : []; // fieldGroups
-
-    if (
-      entity.getIn(['taxonomy', 'attributes', 'tags_users'])
-      && entity.getIn(['attributes', 'user_only'])
-    ) {
-      groups.push({
-        type: 'dark',
-        fields: [{
-          type: 'text',
-          value: intl.formatMessage(appMessages.textValues.user_only),
-          label: appMessages.attributes.user_only,
-        }],
-      });
-    }
-    // include parent link
-    if (entity.get('category') && parentTaxonomy) {
-      groups.push({
-        label: appMessages.entities.taxonomies.parent,
-        icon: 'categories',
-        fields: [
-          getEntityLinkField(
-            entity.get('category'),
-            ROUTES.CATEGORY,
-            '',
-            getEntityTitle(parentTaxonomy)
-          ),
-        ],
-      });
-    }
-    return groups.length > 0 ? groups : null;
-  }
-
-  getBodyMainFields = (
-    entity,
-    taxonomies,
-    actorsByActortype,
-    actionsByActiontype,
-    childActorsByActortype,
-    childActionsByActiontype,
-    actorConnections,
-    actionConnections,
-    onEntityClick,
-  ) => {
-    // console.log(entity && entity.toJS())
-    // console.log(childActorsByActortype && childActorsByActortype.toJS())
-    const fields = [];
-    // own attributes
-    fields.push({
-      fields: [getMarkdownField(entity, 'description', true)],
+  if (
+    entity.getIn(['taxonomy', 'attributes', 'tags_users'])
+    && entity.getIn(['attributes', 'user_only'])
+  ) {
+    groups.push({
+      type: 'dark',
+      fields: [{
+        type: 'text',
+        value: intl.formatMessage(appMessages.textValues.user_only),
+        label: appMessages.attributes.user_only,
+      }],
     });
-    // connections
-    if (!entity.getIn(['attributes', 'user_only'])) {
-      // child taxonomies tag actors
-      // child categories related actors
-      const actorConnectionsLocal = [];
-      // show actors of child categories
-      if (childActorsByActortype && childActorsByActortype.size > 0) {
-        childActorsByActortype.forEach((actors, actortypeid) => {
-          actorConnectionsLocal.push(
-            getActorConnectionField({
-              actors,
-              taxonomies,
-              onEntityClick,
-              connections: actorConnections,
-              typeid: actortypeid,
-            }),
-          );
-        });
-      // show actors of category
-      // } else if (entity.getIn(['taxonomy', 'attributes', 'tags_actors']) && actorsByActortype) {
-      } else if (actorsByActortype) {
-        actorsByActortype.forEach((actors, actortypeid) => {
-          actorConnectionsLocal.push(
-            getActorConnectionField({
-              actors,
-              taxonomies,
-              onEntityClick,
-              connections: actorConnections,
-              typeid: actortypeid,
-            }),
-          );
-        });
-      }
-      fields.push({
-        label: appMessages.nav.actors,
-        fields: actorConnectionsLocal,
-      });
+  }
+  // include parent link
+  if (entity.get('category') && parentTaxonomy) {
+    groups.push({
+      label: appMessages.entities.taxonomies.parent,
+      icon: 'categories',
+      fields: [
+        getEntityLinkField(
+          entity.get('category'),
+          ROUTES.CATEGORY,
+          '',
+          getEntityTitle(parentTaxonomy)
+        ),
+      ],
+    });
+  }
+  return groups.length > 0 ? groups : null;
+};
 
-      const actionConnectionsLocal = [];
-      // show actors of child categories
-      if (childActionsByActiontype && childActionsByActiontype.size > 0) {
-        childActionsByActiontype.forEach((actions, actiontypeid) => {
-          actionConnectionsLocal.push(
-            getActionConnectionField({
-              actions,
-              taxonomies,
-              onEntityClick,
-              connections: actionConnections,
-              typeid: actiontypeid,
-            }),
-          );
-        });
-      // show actors of category
-      } else if (actionsByActiontype) {
-        actionsByActiontype.forEach((actions, actiontypeid) => {
-          actionConnectionsLocal.push(
-            getActionConnectionField({
-              actions,
-              taxonomies,
-              onEntityClick,
-              connections: actionConnections,
-              typeid: actiontypeid,
-            }),
-          );
-        });
-      }
-      fields.push({
-        label: appMessages.nav.actions,
-        fields: actionConnectionsLocal,
+const getBodyMainFields = (
+  entity,
+  taxonomies,
+  actorsByActortype,
+  actionsByActiontype,
+  childActorsByActortype,
+  childActionsByActiontype,
+  actorConnections,
+  actionConnections,
+  onEntityClick,
+) => {
+  // console.log(entity && entity.toJS())
+  // console.log(childActorsByActortype && childActorsByActortype.toJS())
+  const fields = [];
+  // own attributes
+  fields.push({
+    fields: [getMarkdownField(entity, 'description', true)],
+  });
+  // connections
+  if (!entity.getIn(['attributes', 'user_only'])) {
+    // child taxonomies tag actors
+    // child categories related actors
+    const actorConnectionsLocal = [];
+    // show actors of child categories
+    if (childActorsByActortype && childActorsByActortype.size > 0) {
+      childActorsByActortype.forEach((actors, actortypeid) => {
+        actorConnectionsLocal.push(
+          getActorConnectionField({
+            actors,
+            taxonomies,
+            onEntityClick,
+            connections: actorConnections,
+            typeid: actortypeid,
+          }),
+        );
+      });
+    // show actors of category
+    // } else if (entity.getIn(['taxonomy', 'attributes', 'tags_actors']) && actorsByActortype) {
+    } else if (actorsByActortype) {
+      actorsByActortype.forEach((actors, actortypeid) => {
+        actorConnectionsLocal.push(
+          getActorConnectionField({
+            actors,
+            taxonomies,
+            onEntityClick,
+            connections: actorConnections,
+            typeid: actortypeid,
+          }),
+        );
       });
     }
-    return fields;
+    fields.push({
+      label: appMessages.nav.actors,
+      fields: actorConnectionsLocal,
+    });
+
+    const actionConnectionsLocal = [];
+    // show actors of child categories
+    if (childActionsByActiontype && childActionsByActiontype.size > 0) {
+      childActionsByActiontype.forEach((actions, actiontypeid) => {
+        actionConnectionsLocal.push(
+          getActionConnectionField({
+            actions,
+            taxonomies,
+            onEntityClick,
+            connections: actionConnections,
+            typeid: actiontypeid,
+          }),
+        );
+      });
+    // show actors of category
+    } else if (actionsByActiontype) {
+      actionsByActiontype.forEach((actions, actiontypeid) => {
+        actionConnectionsLocal.push(
+          getActionConnectionField({
+            actions,
+            taxonomies,
+            onEntityClick,
+            connections: actionConnections,
+            typeid: actiontypeid,
+          }),
+        );
+      });
+    }
+    fields.push({
+      label: appMessages.nav.actions,
+      fields: actionConnectionsLocal,
+    });
+  }
+  return fields;
+};
+
+const getBodyAsideFields = (entity, isManager, childTaxonomies) => {
+  const fields = [];
+  // include children links
+  if (childTaxonomies && hasTaxonomyCategories(childTaxonomies)) {
+    fields.push({ // fieldGroup
+      label: appMessages.entities.taxonomies.children,
+      icon: 'categories',
+      fields: getTaxonomyFields(childTaxonomies, true),
+    });
+  }
+  const showLink = entity.getIn(['attributes', 'url'])
+    && entity.getIn(['attributes', 'url']).trim().length > 0;
+  const showDate = entity.getIn(['taxonomy', 'attributes', 'has_date']);
+  if (showLink || showDate) {
+    fields.push({
+      type: 'dark',
+      fields: [
+        showDate && getDateField(entity, 'date', { showEmpty: true }),
+        showLink && getLinkField(entity),
+      ],
+    });
+  }
+  if (isManager && !!entity.getIn(['taxonomy', 'attributes', 'has_manager'])) {
+    fields.push({
+      type: 'dark',
+      fields: [getManagerField(
+        entity,
+        appMessages.attributes.manager_id.categories,
+        appMessages.attributes.manager_id.categoriesEmpty
+      )],
+    });
+  }
+  return fields.length > 0 ? fields : null;
+};
+
+/* eslint-disable react/destructuring-assignment */
+const getTaxTitle = (id, intl) => intl.formatMessage(
+  appMessages.entities.taxonomies[id].single
+);
+/* eslint-ensable react/destructuring-assignment */
+
+
+function CategoryView({
+  viewEntity,
+  dataReady,
+  isManager,
+  parentTaxonomy,
+  childTaxonomies,
+  actionsByActiontype,
+  childActionsByActiontype,
+  taxonomies,
+  onEntityClick,
+  actionConnections,
+  actorsByActortype,
+  childActorsByActortype,
+  actorConnections,
+  handleEdit,
+  handleTypeClick,
+  onLoadEntitiesIfNeeded,
+  onSetPrintView,
+  intl,
+  handleClose,
+}) {
+  useEffect(() => {
+    // kick off loading of data
+    onLoadEntitiesIfNeeded();
+  }, []);
+  const mySetPrintView = () => onSetPrintView({
+    printType: PRINT_TYPES.SINGLE,
+    printOrientation: 'portrait',
+    printSize: 'A4',
+  });
+  const keydownHandler = (e) => {
+    keydownHandlerPrint(e, mySetPrintView);
   };
-
-  getBodyAsideFields = (entity, isManager, childTaxonomies) => {
-    const fields = [];
-    // include children links
-    if (childTaxonomies && hasTaxonomyCategories(childTaxonomies)) {
-      fields.push({ // fieldGroup
-        label: appMessages.entities.taxonomies.children,
-        icon: 'categories',
-        fields: getTaxonomyFields(childTaxonomies, true),
-      });
-    }
-    const showLink = entity.getIn(['attributes', 'url'])
-      && entity.getIn(['attributes', 'url']).trim().length > 0;
-    const showDate = entity.getIn(['taxonomy', 'attributes', 'has_date']);
-    if (showLink || showDate) {
-      fields.push({
-        type: 'dark',
-        fields: [
-          showDate && getDateField(entity, 'date', { showEmpty: true }),
-          showLink && getLinkField(entity),
-        ],
-      });
-    }
-    if (isManager && !!entity.getIn(['taxonomy', 'attributes', 'has_manager'])) {
-      fields.push({
-        type: 'dark',
-        fields: [getManagerField(
-          entity,
-          appMessages.attributes.manager_id.categories,
-          appMessages.attributes.manager_id.categoriesEmpty
-        )],
-      });
-    }
-    return fields.length > 0 ? fields : null;
-  };
-
-  /* eslint-disable react/destructuring-assignment */
-  getTaxTitle = (id) => this.context.intl.formatMessage(
-    appMessages.entities.taxonomies[id].single
-  );
-  /* eslint-ensable react/destructuring-assignment */
-
-  render() {
-    const { intl } = this.context;
-    const {
-      viewEntity,
-      dataReady,
-      isManager,
-      parentTaxonomy,
-      childTaxonomies,
-      actionsByActiontype,
-      childActionsByActiontype,
-      taxonomies,
-      onEntityClick,
-      actionConnections,
-      actorsByActortype,
-      childActorsByActortype,
-      actorConnections,
-      handleEdit,
-      handleTypeClick,
-    } = this.props;
-    let buttons = [];
-    if (dataReady) {
+  useEffect(() => {
+    document.addEventListener('keydown', keydownHandler);
+    return () => {
+      document.removeEventListener('keydown', keydownHandler);
+    };
+  }, []);
+  let buttons = [];
+  if (dataReady) {
+    if (window.print) {
       buttons = [
         ...buttons,
         {
           type: 'icon',
-          onClick: () => window.print(),
+          onClick: mySetPrintView,
           title: 'Print',
           icon: 'print',
         },
       ];
-      if (isManager) {
-        buttons = [
-          ...buttons,
-          {
-            type: 'edit',
-            onClick: handleEdit,
-          },
-        ];
-      }
     }
-
-    let pageTitle = intl.formatMessage(messages.pageTitle);
-    let metaTitle = pageTitle;
-    if (
-      viewEntity
-      && viewEntity.get('taxonomy')
-    ) {
-      pageTitle = this.getTaxTitle(viewEntity.getIn(['taxonomy', 'id']));
-      const ref = getEntityReference(viewEntity, false);
-      metaTitle = ref
-        ? `${pageTitle} ${ref}: ${getEntityTitleTruncated(viewEntity)}`
-        : `${pageTitle}: ${getEntityTitleTruncated(viewEntity)}`;
+    if (isManager) {
+      buttons = [
+        ...buttons,
+        {
+          type: 'edit',
+          onClick: handleEdit,
+        },
+      ];
     }
-    // console.log('taxonomies', taxonomies && taxonomies.toJS())
-    // console.log('actionsByActiontype', actionsByActiontype && actionsByActiontype.toJS())
-    // console.log('childActionsByActiontype', childActionsByActiontype && childActionsByActiontype.toJS())
-    // console.log('actorsByActortype', actorsByActortype && actorsByActortype.toJS())
-    // console.log('childActorsByActortype', childActorsByActortype && childActorsByActortype.toJS())
-    // console.log('actortypes', actortypes && actortypes.toJS())
-    return (
-      <div>
-        <Helmet
-          title={metaTitle}
-          meta={[
-            { name: 'description', content: intl.formatMessage(messages.metaDescription) },
-          ]}
-        />
-        <Content isSingle>
-          { !dataReady
-            && <Loading />
-          }
-          { !viewEntity && dataReady
-            && (
-              <div>
-                <FormattedMessage {...messages.notFound} />
-              </div>
-            )
-          }
-          { viewEntity && dataReady
-            && (
-              <EntityView
-                header={{
-                  title: pageTitle,
-                  onClose: this.props.handleClose,
-                  buttons,
-                  onTypeClick: this.props.viewEntity && isManager
-                    ? () => handleTypeClick(this.props.viewEntity.getIn(['taxonomy', 'id']))
-                    : null,
-                }}
-                fields={{
-                  header: {
-                    main: this.getHeaderMainFields(viewEntity, isManager),
-                    aside: this.getHeaderAsideFields(viewEntity, isManager, parentTaxonomy),
-                  },
-                  body: {
-                    main: this.getBodyMainFields(
-                      viewEntity,
-                      taxonomies,
-                      actorsByActortype,
-                      actionsByActiontype,
-                      childActorsByActortype,
-                      childActionsByActiontype,
-                      actorConnections,
-                      actionConnections,
-                      onEntityClick,
-                    ),
-                    aside: this.getBodyAsideFields(
-                      viewEntity,
-                      isManager,
-                      childTaxonomies,
-                    ),
-                  },
-                }}
-              />
-            )
-          }
-        </Content>
-      </div>
-    );
   }
+
+  let pageTitle = intl.formatMessage(messages.pageTitle);
+  let metaTitle = pageTitle;
+  if (
+    viewEntity
+    && viewEntity.get('taxonomy')
+  ) {
+    pageTitle = getTaxTitle(viewEntity.getIn(['taxonomy', 'id']), intl);
+    const ref = getEntityReference(viewEntity, false);
+    metaTitle = ref
+      ? `${pageTitle} ${ref}: ${getEntityTitleTruncated(viewEntity)}`
+      : `${pageTitle}: ${getEntityTitleTruncated(viewEntity)}`;
+  }
+
+  return (
+    <div>
+      <Helmet
+        title={metaTitle}
+        meta={[
+          { name: 'description', content: intl.formatMessage(messages.metaDescription) },
+        ]}
+      />
+      <Content isSingle>
+        {!dataReady && <Loading />}
+        {!viewEntity && dataReady && (
+          <div>
+            <FormattedMessage {...messages.notFound} />
+          </div>
+        )}
+        {viewEntity && dataReady && (
+          <EntityView
+            header={{
+              title: pageTitle,
+              onClose: handleClose,
+              buttons,
+              onTypeClick: viewEntity && isManager
+                ? () => handleTypeClick(viewEntity.getIn(['taxonomy', 'id']))
+                : null,
+            }}
+            fields={{
+              header: {
+                main: getHeaderMainFields(viewEntity, isManager),
+                aside: getHeaderAsideFields(viewEntity, isManager, parentTaxonomy, intl),
+              },
+              body: {
+                main: getBodyMainFields(
+                  viewEntity,
+                  taxonomies,
+                  actorsByActortype,
+                  actionsByActiontype,
+                  childActorsByActortype,
+                  childActionsByActiontype,
+                  actorConnections,
+                  actionConnections,
+                  onEntityClick,
+                ),
+                aside: getBodyAsideFields(
+                  viewEntity,
+                  isManager,
+                  childTaxonomies,
+                ),
+              },
+            }}
+          />
+        )}
+      </Content>
+    </div>
+  );
 }
 
 CategoryView.propTypes = {
-  loadEntitiesIfNeeded: PropTypes.func,
+  onLoadEntitiesIfNeeded: PropTypes.func,
   handleEdit: PropTypes.func,
   handleClose: PropTypes.func,
   onEntityClick: PropTypes.func,
@@ -412,10 +413,9 @@ CategoryView.propTypes = {
   childTaxonomies: PropTypes.object,
   actorConnections: PropTypes.object,
   actionConnections: PropTypes.object,
-};
-
-CategoryView.contextTypes = {
-  intl: PropTypes.object.isRequired,
+  onLoadData: PropTypes.func,
+  onSetPrintView: PropTypes.func,
+  intl: intlShape,
 };
 
 const mapStateToProps = (state, props) => ({
@@ -435,7 +435,7 @@ const mapStateToProps = (state, props) => ({
 
 function mapDispatchToProps(dispatch, { params }) {
   return {
-    loadEntitiesIfNeeded: () => {
+    onLoadEntitiesIfNeeded: () => {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
     onEntityClick: (id, path) => {
@@ -450,7 +450,10 @@ function mapDispatchToProps(dispatch, { params }) {
     handleTypeClick: (taxId) => {
       dispatch(updatePath(`${ROUTES.TAXONOMIES}/${taxId}`));
     },
+    onSetPrintView: (config) => {
+      dispatch(printView(config));
+    },
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CategoryView);
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(CategoryView));

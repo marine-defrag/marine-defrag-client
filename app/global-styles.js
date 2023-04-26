@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle, css } from 'styled-components';
 
 /* eslint no-unused-expressions: 0 */
 const GlobalStyle = createGlobalStyle`
@@ -32,7 +32,6 @@ const GlobalStyle = createGlobalStyle`
     min-height: 100%;
     min-width: 100%;
   }
-
   button {
     background: transparent;
     border: none;
@@ -60,47 +59,19 @@ const GlobalStyle = createGlobalStyle`
     font-size: 2em;
   }
   h2 {
-    font-size: 1.6em;
+    font-size: 1.9em;
   }
   h3 {
-    font-size: 1.3em;
+    font-size: 1.7em;
   }
   h4 {
-    font-size: 1.1em;
+    font-size: 1.4em;
   }
   h5 {
-    font-size: 1em;
+    font-size: 1.25em;
   }
   h6 {
-    font-size: 0.9em;
-  }
-  @media (min-width: 769px) {
-    h1 {
-      font-size: 2.3em;
-    }
-    h2 {
-      font-size: 2.15em;
-    }
-    h3 {
-      font-size: 1.9em;
-    }
-    h4 {
-      font-size: 1.5em;
-    }
-    h5 {
-      font-size: 1.25em;
-    }
-    h6 {
-      font-size: 1em;
-    }
-  }
-  @media (min-width: 1200px) {
-    h1 {
-      font-size: 2.6em;
-    }
-    h2 {
-      font-size: 2.25em;
-    }
+    font-size: 1em;
   }
 
   p {
@@ -147,7 +118,10 @@ const GlobalStyle = createGlobalStyle`
       p {
         &:first-child{
           font-size: 1.2em;
-          color: #6A7880;
+          color: ${({ theme, isPrint }) => theme.global.colors.text[isPrint ? 'light' : 'lead']}
+          @media print {
+            color: ${({ theme }) => theme.global.colors.text.light};
+          }
         }
       }
     }
@@ -157,7 +131,7 @@ const GlobalStyle = createGlobalStyle`
       .react-markdown {
         p {
           &:first-child{
-            font-size: 1.5em;
+            font-size: 1.2em;
             padding-bottom: 20px;
           }
         }
@@ -189,7 +163,6 @@ const GlobalStyle = createGlobalStyle`
       bottom: 40px;
     }
   }
-
   .new-entity-modal-overlay {
     position: fixed;
     top: 0;
@@ -272,13 +245,78 @@ const GlobalStyle = createGlobalStyle`
     .content-page {
       .react-markdown {
         p {
+          font-size: 10pt;
           &:first-child{
             font-size: 12pt;
           }
         }
       }
     }
+    .leaflet-control-container {
+      display: none;
+    }
   }
+  ${({ isPrint }) => isPrint && css`
+    body {
+      font-size: 10pt;
+    }
+    button, input, select, textarea {
+      font-size: 10pt;
+      page-break-inside: avoid;
+    }
+    a {
+      page-break-inside: avoid;
+    }
+    #app {
+      background-color: white;
+    }
+    h1 {
+      font-size: 20pt;
+    }
+    h2 {
+      font-size: 16pt;
+    }
+    h3 {
+      font-size: 13pt;
+    }
+    h4 {
+      font-size: 11pt;
+    }
+    h5 {
+      font-size: 10pt;
+    }
+    h6 {
+      font-size: 9pt;
+    }
+    blockquote {
+      page-break-inside: avoid;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      page-break-after: avoid;
+      page-break-inside: avoid;
+    }
+    img {
+      page-break-inside: avoid;
+      page-break-after: avoid;
+    }
+    table, pre {
+      page-break-inside: avoid;
+    }
+    ul, ol, dl {
+      page-break-before: avoid;
+    }
+
+    .content-page {
+      .react-markdown {
+        p {
+          font-size: 10pt;
+          &:first-child{
+            font-size: 12pt;
+          }
+        }
+      }
+    }
+  `}
 `;
 
 export default GlobalStyle;

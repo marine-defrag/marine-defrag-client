@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Box, ResponsiveContext } from 'grommet';
+import { Box, Text, ResponsiveContext } from 'grommet';
+import ReactMarkdown from 'react-markdown';
 
 import { isMinSize } from 'utils/responsive';
 
@@ -11,9 +12,9 @@ import {
 
 import SupTitle from 'components/SupTitle';
 import InfoOverlay from 'components/InfoOverlay';
-// import Icon from 'components/Icon';
-
 import ButtonFactory from 'components/buttons/ButtonFactory';
+import BoxPrint from 'components/styled/BoxPrint';
+import { usePrint } from 'containers/App/PrintContext';
 
 const Styled = styled.div`
   padding: ${({ isModal, hasViewOptions }) => {
@@ -21,7 +22,7 @@ const Styled = styled.div`
     if (hasViewOptions) return '0.5em 0 0.5em';
     return '1em 0 0.5em';
   }};
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     padding: ${({ isModal, hasViewOptions }) => {
     if (isModal) return '20px 0 20px 40px';
     if (hasViewOptions) return '0 0 1em';
@@ -38,6 +39,9 @@ const TitleMedium = styled.h3`
   line-height: 1;
   margin: 15px 0;
   display: inline-block;
+  @media print {
+    margin-bottom: 5px;
+  }
 `;
 const ButtonWrap = styled.span`
   padding: 0 0.3em;
@@ -49,7 +53,7 @@ const ButtonWrap = styled.span`
   }
 `;
 const TitleButtonWrap = styled((p) => <Box align="center" direction="row" {...p} />)`
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     min-height: 62px;
     width: 100%;
   }
@@ -58,7 +62,7 @@ const TitleButtonWrap = styled((p) => <Box align="center" direction="row" {...p}
 const ButtonGroup = styled((p) => <Box align="center" direction="row" {...p} />)`
   text-align: left;
   margin-bottom: 10px;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     margin-bottom: -4px;
   }
 `;
@@ -66,14 +70,22 @@ const ButtonGroup = styled((p) => <Box align="center" direction="row" {...p} />)
 const SubTitle = styled.p`
   font-size: 1.1em;
   @media print {
-    display: none;
+    font-size: 0.9em;
   }
 `;
 const TitleWrap = styled(Box)``;
 
+const MarkdownPrintOnly = styled(ReactMarkdown)`
+  font-size: ${({ theme }) => theme.sizes.print.smaller};
+  line-height: ${({ theme }) => theme.sizes.print.default};
+`;
+const InfoTitlePrintOnly = styled(Text)`
+  font-size: ${({ theme }) => theme.sizes.print.smaller};
+`;
+
+
 const renderTitle = (type, title) => {
   switch (type) {
-    case CONTENT_PAGE:
     case CONTENT_MODAL:
     case CONTENT_SINGLE:
       return (
@@ -93,6 +105,7 @@ export function ContentHeader({
   hasViewOptions,
   info,
 }) {
+  const isPrintView = usePrint();
   const size = React.useContext(ResponsiveContext);
   return (
     <Styled
@@ -109,14 +122,14 @@ export function ContentHeader({
                 {renderTitle(type, title)}
               </Box>
             )}
-            {info && (
+            {info && !isPrintView && (
               <InfoOverlay
                 title={info.title}
                 content={info.content}
               />
             )}
           </Box>
-          {buttons && isMinSize(size, 'medium') && (
+          {buttons && isMinSize(size, 'medium') && !isPrintView && (
             <ButtonGroup>
               {buttons.map((button, i) => (
                 <ButtonWrap key={i}>
@@ -127,6 +140,18 @@ export function ContentHeader({
           )}
         </TitleButtonWrap>
         {subTitle && <SubTitle>{subTitle}</SubTitle>}
+        {info && (
+          <BoxPrint printOnly>
+            <Box>
+              {info.title && (<InfoTitlePrintOnly>{info.title}</InfoTitlePrintOnly>)}
+            </Box>
+            <Box width={{ max: 'large' }}>
+              {info.content && (
+                <MarkdownPrintOnly source={info.content} className="react-markdown" />
+              )}
+            </Box>
+          </BoxPrint>
+        )}
       </TitleWrap>
       {buttons && !isMinSize(size, 'medium') && (
         <ButtonGroup justify="end">

@@ -1,34 +1,15 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Box, Text, Button, Drop,
-} from 'grommet';
-import styled from 'styled-components';
+import { Box, Drop } from 'grommet';
+
 import { truncateText } from 'utils/string';
 
 import { ROUTES } from 'themes/config';
 import DropEntityList from './DropEntityList';
-
-const Link = styled((p) => <Button as="a" plain {...p} />)`
-  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
-  line-height: 12px;
-`;
-const Label = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
-  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
-  line-height: 12px;
-`;
-
-const LinkTT = styled(
-  React.forwardRef((p, ref) => <Button plain {...p} ref={ref} />)
-)`
-  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
-  line-height: 12px;
-`;
-const LabelTT = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
-  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
-  font-style: italic;
-  line-height: 12px;
-`;
+import Link from './Link';
+import LinkTT from './LinkTT';
+import Label from './Label';
+import LabelTT from './LabelTT';
 
 const getActorLink = (actor) => `${ROUTES.ACTOR}/${actor.get('id')}`;
 

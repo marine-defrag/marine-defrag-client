@@ -7,7 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Box, Text } from 'grommet';
 
 import * as topojson from 'topojson-client';
@@ -22,6 +22,7 @@ import {
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
   selectMembershipsGroupedByAssociation,
+  selectPrintConfig,
 } from 'containers/App/selectors';
 
 import {
@@ -33,23 +34,39 @@ import {
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer/MapWrapper';
-import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
-import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
+import MapWrapperLeaflet from 'containers/MapControl/MapWrapperLeaflet';
+import SimpleMapContainer from 'containers/MapControl/SimpleMapContainer';
+import MapOption from 'containers/MapControl/MapInfoOptions/MapOption';
+import MapKey from 'containers/MapControl/MapInfoOptions/MapKey';
 // import messages from './messages';
+import { usePrint } from 'containers/App/PrintContext';
 
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
+  position: relative;
+  @media print {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 `;
-const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
+const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+  @media print {
+    margin-left: 0;
+  }
+`;
 const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
   max-width: 400px;
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+  @media print {
+    margin-left: 0;
+  }
 `;
-const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)``;
-const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
-  position: relative;
-  height: 400px;
-  background: #F9F9FA;
+const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+  @media print {
+    margin-left: 0;
+  }
 `;
 
 const addToList = (list, countryId, actionId) => {
@@ -126,8 +143,11 @@ export function ActorActivitiesMap({
   actiontypeHasTarget,
   memberships,
   actorCanBeMember,
+  printArgs,
+  mapId,
   // intl,
 }) {
+  const isPrint = usePrint();
   // console.log('actions', actions && actions.toJS())
   // console.log('actionsAsMember', actionsAsMember && actionsAsMember.toJS())
   // console.log('actiontypeHasTarget', actiontypeHasTarget)
@@ -413,10 +433,18 @@ export function ActorActivitiesMap({
     (max, actionList) => Math.max(max, actionList.size),
     0,
   );
+  // const ref = React.useRef();
+  // w={ref && ref.current && ref.current.clientWidth}
+  const [mapTooltips, setMapTooltips] = React.useState([]);
   return (
-    <Styled hasHeader noOverflow>
-      <MapWrapper>
-        <MapContainer
+    <Styled>
+      <SimpleMapContainer
+        orient={printArgs && printArgs.printOrientation}
+      >
+        <MapWrapperLeaflet
+          printArgs={printArgs}
+          isPrintView={isPrint}
+          isSingle
           countryData={countryData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
@@ -424,23 +452,26 @@ export function ActorActivitiesMap({
           maxValueCountries={maxValue}
           includeSecondaryMembers={includeActorMembers || includeTargetMembers}
           mapSubject={mapSubject}
-          fitBounds
           projection="gall-peters"
+          fitBoundsToCountryOverlay
+          mapTooltips={mapTooltips}
+          setMapTooltips={setMapTooltips}
+          mapId={mapId}
         />
-      </MapWrapper>
+      </SimpleMapContainer>
       {mapTitle && (
-        <MapTitle>
+        <MapTitle isPrint={isPrint}>
           <Text weight={600}>{mapTitle}</Text>
         </MapTitle>
       )}
       {maxValue > 1 && (
-        <MapKeyWrapper>
+        <MapKeyWrapper isPrint={isPrint}>
           <Text size="small">{keyTitle}</Text>
           <MapKey mapSubject={mapSubject} maxValue={maxValue} maxBinValue={0} />
         </MapKeyWrapper>
       )}
       {(memberOption || memberTargetOption) && (
-        <MapOptions>
+        <MapOptions isPrint={isPrint}>
           {memberTargetOption && (
             <MapOption option={memberTargetOption} type="member" />
           )}
@@ -469,6 +500,8 @@ ActorActivitiesMap.propTypes = {
   onEntityClick: PropTypes.func,
   mapSubject: PropTypes.string,
   actiontypeId: PropTypes.string,
+  mapId: PropTypes.string,
+  printArgs: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
@@ -476,6 +509,7 @@ const mapStateToProps = (state) => ({
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
   memberships: selectMembershipsGroupedByAssociation(state),
+  printArgs: selectPrintConfig(state),
 });
 function mapDispatchToProps(dispatch) {
   return {

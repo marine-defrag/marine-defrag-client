@@ -11,7 +11,7 @@
  */
 
 import { fromJS } from 'immutable';
-
+import { LOCATION_CHANGE } from 'react-router-redux';
 import { checkResponseError } from 'utils/request';
 import { isSignedIn } from 'utils/api-request';
 import qe from 'utils/quasi-equals';
@@ -33,6 +33,11 @@ import {
   ENTITIES_REQUESTED,
   INVALIDATE_ENTITIES,
   OPEN_NEW_ENTITY_MODAL,
+  SET_MAP_LOADING,
+  SET_MAP_LOADED,
+  PRINT_VIEW,
+  CLOSE_PRINT_VIEW,
+  // SET_MAP_VIEW,
 } from './constants';
 
 // The initial state of the App
@@ -57,6 +62,8 @@ const initialState = fromJS({
     isSignedIn: isSignedIn(),
   },
   newEntityModal: null,
+  mapLoading: {},
+  printConfig: null,
 });
 
 function appReducer(state = initialState, payload) {
@@ -146,6 +153,24 @@ function appReducer(state = initialState, payload) {
         .set('entities', fromJS(initialState.toJS().entities));
     case OPEN_NEW_ENTITY_MODAL:
       return state.set('newEntityModal', fromJS(payload.args));
+    case SET_MAP_LOADING:
+      return state.setIn(['mapLoading', payload.mapId], true);
+    case SET_MAP_LOADED:
+      return state.deleteIn(['mapLoading', payload.mapId]);
+    case PRINT_VIEW:
+      return state.set(
+        'printConfig', {
+          ...state.get('printConfig'),
+          ...payload.config,
+        }
+      );
+    case CLOSE_PRINT_VIEW:
+      return state.set('printConfig', null);
+    // case SET_MAP_VIEW:
+    //   return state.setIn(['mapView', payload.mapId], fromJS(payload.view));
+    case LOCATION_CHANGE:
+      // console.log('LOCATION_CHANGE', payload)
+      return state.set('printConfig', null);
     default:
       return state;
   }

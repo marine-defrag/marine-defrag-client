@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Box, Text } from 'grommet';
+import { Box } from 'grommet';
 import ButtonFlatIconOnly from 'components/buttons/ButtonFlatIconOnly';
+import TextPrint from 'components/styled/TextPrint';
+import BoxPrint from 'components/styled/BoxPrint';
 import Icon from 'components/Icon';
 import { SORT_ORDER_OPTIONS } from 'containers/App/constants';
 
@@ -15,6 +17,7 @@ const SortButton = styled(ButtonFlatIconOnly)`
   }
 `;
 
+
 export function CellHeaderPlain({ column }) {
   const sortOrderOption = column.onSort && SORT_ORDER_OPTIONS.find(
     (option) => column.sortOrder === option.value
@@ -23,12 +26,12 @@ export function CellHeaderPlain({ column }) {
   return (
     <Box direction="row" align="center" justify={align}>
       <Box>
-        <Text weight={500} size="small" textAlign={align} wordBreak="keep-all">
+        <TextPrint weight={500} size="xsmallTight" textAlign={align} wordBreak="keep-all">
           {column.label || column.title}
-        </Text>
+        </TextPrint>
       </Box>
       {column.onSort && (
-        <Box pad={{ left: 'xxsmall' }}>
+        <BoxPrint printHide pad={{ left: 'xxsmall' }}>
           <SortButton
             onClick={() => {
               if (column.sortActive) {
@@ -48,11 +51,11 @@ export function CellHeaderPlain({ column }) {
               }
               palette="dark"
               paletteIndex={column.sortActive ? 1 : 4}
-              hidePrint={!column.sortActive}
+              printHide={!column.sortActive}
               size="20px"
             />
           </SortButton>
-        </Box>
+        </BoxPrint>
       )}
     </Box>
   );

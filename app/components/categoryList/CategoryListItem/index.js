@@ -17,6 +17,7 @@ const Styled = styled.button`
   display: block;
   margin-bottom: 2px;
   line-height: 1.428571429;
+  border-top: ${({ isPrint }) => isPrint ? 1 : 0}px solid ${palette('light', 1)};
   &:hover {
     color: ${palette('mainListItemHover', 0)};
     background-color: ${palette('mainListItemHover', 1)};
@@ -121,15 +122,15 @@ const CountSecondary = styled(Count)`
 `;
 const Title = styled.div`
   display: inline-block;
-  padding: 0 4px;
+  padding: ${({ isPrint }) => isPrint ? 0 : '0px 4px'};
   width: 100%;
   font-size: ${(props) => props.theme.sizes.text.smaller};
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    padding: 4px 8px;
+    padding: ${({ isPrint }) => isPrint ? 0 : '4px 8px'};
     font-size: ${(props) => props.theme.sizes.text.default};
   }
   @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
-    padding: 8px 18px;
+    padding: ${({ isPrint }) => isPrint ? 0 : '8px 18px'};
     font-size: ${(props) => props.theme.sizes.text.aaLargeBold};
   }
   @media print {
@@ -213,7 +214,9 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
   };
 
   render() {
-    const { category, columns, onPageLink } = this.props;
+    const {
+      category, columns, onPageLink, isPrintView,
+    } = this.props;
     // return null;
     const catItem = {
       id: category.get('id'),
@@ -223,6 +226,7 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
 
     return (
       <Styled
+        isPrint={isPrintView}
         onClick={() => onPageLink(`${ROUTES.CATEGORY}/${catItem.id}`)}
       >
         <TableWrap>
@@ -244,7 +248,7 @@ class CategoryListItem extends React.PureComponent { // eslint-disable-line reac
                   </StatusWrap>
                 )}
                 {col.type === 'title' && (
-                  <Title>
+                  <Title isPrint={isPrintView}>
                     {catItem.title}
                   </Title>
                 )}
@@ -264,6 +268,7 @@ CategoryListItem.propTypes = {
   category: PropTypes.object,
   columns: PropTypes.array,
   onPageLink: PropTypes.func,
+  isPrintView: PropTypes.bool,
 };
 
 CategoryListItem.contextTypes = {

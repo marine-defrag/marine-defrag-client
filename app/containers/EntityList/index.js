@@ -17,8 +17,6 @@ import Messages from 'components/Messages';
 import Loading from 'components/Loading';
 
 import EntityListHeader from 'components/EntityListHeader';
-import EntityListPrintKey from 'components/EntityListPrintKey';
-import PrintOnly from 'components/styled/PrintOnly';
 
 import {
   selectHasUserRole,
@@ -29,6 +27,7 @@ import {
   selectMapSubjectQuery,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
+  selectIsPrintView,
 } from 'containers/App/selectors';
 
 import {
@@ -235,9 +234,10 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       handleEditSubmit,
       onCreateOption,
       allEntityCount,
+      isPrintView,
     } = this.props;
     // detect print to avoid expensive rendering
-    const printing = !!(
+    const printing = isPrintView || !!(
       typeof window !== 'undefined'
       && window.matchMedia
       && window.matchMedia('print').matches
@@ -352,10 +352,12 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             includeMembers={includeMembers}
             onSetFilterMemberOption={onSetFilterMemberOption}
             headerActions={headerOptions && headerOptions.actions}
+            isPrintView={isPrintView}
           />
         )}
         {showList && (
           <EntitiesListView
+            isPrintView={isPrintView}
             headerOptions={headerOptions}
             allEntityCount={allEntityCount}
             viewOptions={viewOptions}
@@ -439,17 +441,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onSetIncludeTargetMembers={onSetIncludeTargetMembers}
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
+            isPrintView={isPrintView}
           />
-        )}
-        {hasList && dataReady && config.taxonomies && (
-          <PrintOnly>
-            <EntityListPrintKey
-              entities={entities}
-              taxonomies={taxonomies}
-              config={config}
-              locationQuery={locationQuery}
-            />
-          </PrintOnly>
         )}
         {isManager && (progress !== null && progress < 100) && (
           <Progress>
@@ -582,6 +575,7 @@ EntityList.propTypes = {
   onSetIncludeTargetMembers: PropTypes.func,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   allEntityCount: PropTypes.number,
 };
 
@@ -603,6 +597,7 @@ const mapStateToProps = (state) => ({
   mapSubject: selectMapSubjectQuery(state),
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
+  isPrintView: selectIsPrintView(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
