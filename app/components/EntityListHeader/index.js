@@ -600,7 +600,10 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                 <HeaderSection noBorder>
                   <Box
                     fill="vertical"
-                    justify={((canEdit && managerActions.length > 0) || managerActions.length > 1) ? 'between' : 'center'}
+                    justify={(
+                      (canEdit && managerActions && managerActions.length > 0)
+                      || (managerActions && managerActions.length > 1)
+                    ) ? 'between' : 'center'}
                     pad={{ top: 'xsmall', bottom: 'xsmall' }}
                   >
                     {canEdit && (
