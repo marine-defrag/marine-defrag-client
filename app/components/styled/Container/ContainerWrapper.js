@@ -8,6 +8,9 @@ const Styled = styled.div`
     if (headerStyle === 'types') {
       return theme.sizes.headerList.banner.height;
     }
+    if (headerStyle === 'simple') {
+      return 40;
+    }
     return 0;
   }}px;
   bottom: ${({ isPrint }) => isPrint ? 'auto' : 0};

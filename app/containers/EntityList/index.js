@@ -254,7 +254,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     const entityIdsSelectedFiltered = entityIdsSelected.size > 0 && entities
       ? entityIdsSelected.filter((id) => entities.map((entity) => entity.get('id')).includes(id))
       : entityIdsSelected;
-    const isManager = canEdit && hasUserRole[USER_ROLES.MANAGER.value];
+    const isManager = hasUserRole[USER_ROLES.MANAGER.value];
+    const isManagerAndCanEdit = canEdit && isManager;
 
     const filters = currentFilters(
       {
@@ -324,7 +325,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             connectedTaxonomies={connectedTaxonomies}
             config={config}
             locationQuery={locationQuery}
-            canEdit={isManager && showList}
+            canEdit={isManagerAndCanEdit && showList}
             isManager={isManager}
             hasUserRole={hasUserRole}
             onCreateOption={onCreateOption}
@@ -336,7 +337,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
                 viewDomain.get('errors'),
               )}
             showFilters={this.state.visibleFilters}
-            showEditOptions={isManager && showList && this.state.visibleEditOptions}
+            showEditOptions={isManagerAndCanEdit && showList && this.state.visibleEditOptions}
             onShowFilters={this.onShowFilters}
             onHideFilters={this.onHideFilters}
             onHideEditOptions={this.onHideEditOptions}
@@ -351,6 +352,18 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onUpdateQuery={onUpdateQuery}
             includeMembers={includeMembers}
             onSetFilterMemberOption={onSetFilterMemberOption}
+            headerActions={headerOptions && headerOptions.actions}
+            isPrintView={isPrintView}
+          />
+        )}
+        {headerStyle === 'simple' && (
+          <EntityListHeader
+            headerStyle={headerStyle}
+            dataReady={dataReady}
+            config={config}
+            canEdit={isManagerAndCanEdit && showList}
+            isManager={isManager}
+            hasUserRole={hasUserRole}
             headerActions={headerOptions && headerOptions.actions}
             isPrintView={isPrintView}
           />
@@ -381,7 +394,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             entityTitle={entityTitle}
 
             dataReady={dataReady}
-            isManager={isManager}
+            isManager={isManagerAndCanEdit}
             isAnalyst={hasUserRole[USER_ROLES.ANALYST.value]}
 
             onEntitySelect={(id, checked) => {
@@ -444,7 +457,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             isPrintView={isPrintView}
           />
         )}
-        {isManager && (progress !== null && progress < 100) && (
+        {isManagerAndCanEdit && (progress !== null && progress < 100) && (
           <Progress>
             <ProgressText>
               <FormattedMessage
@@ -464,7 +477,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             />
           </Progress>
         )}
-        {isManager && (viewDomain.get('errors').size > 0 && progress >= 100) && (
+        {isManagerAndCanEdit && (viewDomain.get('errors').size > 0 && progress >= 100) && (
           <Progress error>
             <Messages
               type="error"
@@ -485,7 +498,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             />
           </Progress>
         )}
-        {isManager && (viewDomain.get('errors').size === 0 && progress >= 100) && (
+        {isManagerAndCanEdit && (viewDomain.get('errors').size === 0 && progress >= 100) && (
           <Progress error>
             <Messages
               type="success"
