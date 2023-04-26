@@ -1,10 +1,14 @@
 import { createSelector } from 'reselect';
 import { API } from 'themes/config';
-
 import {
   selectEntities,
   selectLocationQuery,
+  selectSortByQuery,
+  selectSortOrderQuery,
 } from 'containers/App/selectors';
+import { sortEntities } from 'utils/sort';
+
+import { SORT_OPTION_DEFAULT } from './constants';
 
 export const selectTypeQuery = createSelector(
   selectLocationQuery,
@@ -17,5 +21,15 @@ export const selectTypeQuery = createSelector(
 // 3. selectUsers
 export const selectBookmarks = createSelector(
   (state) => selectEntities(state, API.BOOKMARKS),
-  (entities) => entities && entities.toList()
+  selectSortByQuery,
+  selectSortOrderQuery,
+  (entities, sortBy, order) => {
+    const sortOption = (!sortBy || sortBy === 'id') && SORT_OPTION_DEFAULT;
+    return sortEntities(
+      entities,
+      order || (sortOption ? sortOption.order : 'asc'),
+      sortBy || (sortOption ? sortOption.field : 'title'),
+      sortOption ? sortOption.type : 'string',
+    );
+  }
 );
