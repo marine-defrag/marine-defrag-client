@@ -169,8 +169,10 @@ function appReducer(state = initialState, payload) {
     // case SET_MAP_VIEW:
     //   return state.setIn(['mapView', payload.mapId], fromJS(payload.view));
     case LOCATION_CHANGE:
-      // console.log('LOCATION_CHANGE', payload)
-      return state.set('printConfig', null);
+      // console.log('LOCATION_CHANGE', payload.payload, payload && payload.action === 'POP')
+      return (payload && payload.payload && payload.payload.action === 'POP')
+        ? state.set('printConfig', null)
+        : state;
     default:
       return state;
   }
