@@ -137,9 +137,16 @@ export function EntitiesOverTime({
                           <Text size="small">
                             {intl.formatDate(new Date(action.getIn(['attributes', 'date_start'])))}
                           </Text>
-                          <Text size="small">
-                            {action.getIn(['attributes', 'title'])}
-                          </Text>
+                          <Box direction="row" gap="small">
+                            {action.getIn(['attributes', 'code']) && (
+                              <Text size="small" color="textSecondary">
+                                {action.getIn(['attributes', 'code'])}
+                              </Text>
+                            )}
+                            <Text size="small">
+                              {action.getIn(['attributes', 'title'])}
+                            </Text>
+                          </Box>
                         </Box>
                         {action.get('offspring') && action.get('offspring').size > 0 && (
                           <Box margin={{ left: 'large', top: 'small' }}>
