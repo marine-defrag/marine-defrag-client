@@ -46,6 +46,7 @@ import { USER_ROLES } from 'themes/config';
 
 import EntitiesMap from './EntitiesMap';
 import EntitiesListView from './EntitiesListView';
+import EntitiesOverTime from './EntitiesOverTime';
 
 import {
   selectDomain,
@@ -276,32 +277,73 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     );
 
     const hasList = config.views && config.views.list;
-    const hasMap = typeId
+    const hasMapOption = typeId
       && config.views
       && config.views.map
       && config.views.map.types
       && config.views.map.types.indexOf(typeId) > -1;
-    const showList = !hasMap || (hasList && view === 'list');
-    const showMap = hasMap && view === 'map';
+    const hasTimelineOption = typeId
+      && config.views
+      && config.views.timeline
+      && config.views.timeline.types
+      && config.views.timeline.types.indexOf(typeId) > -1;
+    const showMap = hasMapOption && view === 'map';
+    const showTimeline = hasTimelineOption && view === 'time';
+    const showList = (hasList && view === 'list') || (!showMap && !showTimeline);
 
+    const headerActions = headerOptions && headerOptions.actions && headerOptions.actions.filter(
+      (action) => {
+        if (!showList) {
+          return !action.showOnListOnly;
+        }
+        if (!showTimeline) {
+          return !action.showOnTimelineOnly;
+        }
+        if (!showMap) {
+          return !action.showOnMapOnly;
+        }
+        return true;
+      },
+    );
     let viewOptions;
-    if (hasList && hasMap) {
+    if (hasList && (hasMapOption || hasTimelineOption)) {
       viewOptions = [
         {
-          type: 'primary',
-          title: 'List',
+          type: 'primaryGroup',
+          title: intl.formatMessage(messages.viewOptionList),
           onClick: () => onSetView('list'),
           active: showList,
           disabled: showList,
-        },
-        {
-          type: 'primary',
-          title: 'Map',
-          onClick: () => onSetView('map'),
-          active: showMap,
-          disabled: showMap,
+          isFirst: true,
+          isLast: !hasMapOption && !hasTimelineOption,
         },
       ];
+      if (hasMapOption) {
+        viewOptions = [
+          ...viewOptions,
+          {
+            type: 'primaryGroup',
+            title: intl.formatMessage(messages.viewOptionMap),
+            onClick: () => onSetView('map'),
+            active: showMap,
+            disabled: showMap,
+            isLast: !hasTimelineOption,
+          },
+        ];
+      }
+      if (hasTimelineOption) {
+        viewOptions = [
+          ...viewOptions,
+          {
+            type: 'primaryGroup',
+            title: intl.formatMessage(messages.viewOptionTimeline),
+            onClick: () => onSetView('time'),
+            active: showTimeline,
+            disabled: showTimeline,
+            isLast: true,
+          },
+        ];
+      }
     }
     return (
       <div>
@@ -352,7 +394,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onUpdateQuery={onUpdateQuery}
             includeMembers={includeMembers}
             onSetFilterMemberOption={onSetFilterMemberOption}
-            headerActions={headerOptions && headerOptions.actions}
+            headerActions={headerActions}
             isPrintView={isPrintView}
           />
         )}
@@ -364,7 +406,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             canEdit={isManagerAndCanEdit && showList}
             isManager={isManager}
             hasUserRole={hasUserRole}
-            headerActions={headerOptions && headerOptions.actions}
+            headerActions={headerActions}
             isPrintView={isPrintView}
           />
         )}
@@ -436,6 +478,29 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         )}
         {showMap && (
           <EntitiesMap
+            viewOptions={viewOptions}
+            entities={entities}
+            actortypes={actortypes}
+            actiontypes={actiontypes}
+            targettypes={targettypes}
+            config={config}
+            dataReady={dataReady}
+            onEntityClick={(id, path) => onEntityClick(
+              id, path, viewDomain.get('errors')
+            )}
+            typeId={typeId}
+            hasFilters={filters && filters.length > 0}
+            mapSubject={mapSubject}
+            onSetMapSubject={onSetMapSubject}
+            onSetIncludeActorMembers={onSetIncludeActorMembers}
+            onSetIncludeTargetMembers={onSetIncludeTargetMembers}
+            includeActorMembers={includeActorMembers}
+            includeTargetMembers={includeTargetMembers}
+            isPrintView={isPrintView}
+          />
+        )}
+        {showTimeline && (
+          <EntitiesOverTime
             viewOptions={viewOptions}
             entities={entities}
             actortypes={actortypes}

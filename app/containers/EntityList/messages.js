@@ -50,4 +50,16 @@ export default defineMessages({
     id: 'app.containers.EntityList.filterFormError',
     defaultMessage: 'Errors',
   },
+  viewOptionList: {
+    id: 'app.containers.EntityList.viewOptionList',
+    defaultMessage: 'List',
+  },
+  viewOptionMap: {
+    id: 'app.containers.EntityList.viewOptionMap',
+    defaultMessage: 'Map',
+  },
+  viewOptionTimeline: {
+    id: 'app.containers.EntityList.viewOptionTimeline',
+    defaultMessage: 'Over time',
+  },
 });

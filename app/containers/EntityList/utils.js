@@ -1,4 +1,4 @@
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 import qe from 'utils/quasi-equals';
 
 // work out actors for entities and store activites both direct as well as indirect
@@ -82,21 +82,23 @@ export const getActorsForEntities = (
               }
             } else {
               const actor = actors.get(sActorId);
-              result2 = result2.set(
-                sActorId,
-                actor.set(
-                  actorAtt,
-                  Map().set(
-                    actionId,
-                    actionActorConnectionAttributes
-                      ? actionActorConnectionAttributes.find(
-                        (connection) => qe(connection.get('measure_id'), actionId)
-                          && qe(connection.get('actor_id'), sActorId)
-                      )
-                      : Map({ measure_id: actionId })
+              if (actor) {
+                result2 = result2.set(
+                  sActorId,
+                  actor.set(
+                    actorAtt,
+                    Map().set(
+                      actionId,
+                      actionActorConnectionAttributes
+                        ? actionActorConnectionAttributes.find(
+                          (connection) => qe(connection.get('measure_id'), actionId)
+                            && qe(connection.get('actor_id'), sActorId)
+                        )
+                        : Map({ measure_id: actionId })
+                    )
                   )
-                )
-              );
+                );
+              }
             }
             return result2;
           },
@@ -165,3 +167,65 @@ export const getActorsForEntities = (
     Map(),
   ).toList();
 };
+
+// const includeParentRecursive = ({ parents, entity, entities }) => {
+//   let parentsUpdated;
+//   console.log('parents', parents.toJS())
+//   console.log('entities', entities.toJS());
+//   const parentId = entity.getIn(['attributes', 'parent_id']);
+//   console.log('parentId', parentId)
+//   if (parentId) {
+//     const parent = entities.get(parentId.toString());
+//     console.log('parent', parent.toJS())
+//     if (parent) {
+//       parentsUpdated = parent ? parents.push(parent) : parents;
+//       console.log('parentsUpdated', parentsUpdated.toJS())
+//       return includeParentRecursive({ parents: parentsUpdated, entity: parent, entities });
+//     }
+//     return parents;
+//   }
+//   return parents;
+// };
+const includeOffspringRecursive = ({ children, parent, entities }) => {
+  let childrenUpdated;
+  // console.log('children', children.toJS())
+  // console.log('entities', entities.toList().toJS());
+  const childrenDirect = entities.toList().filter(
+    (child) => qe(parent.get('id'), child.getIn(['attributes', 'parent_id'])),
+  );
+  if (childrenDirect && childrenDirect.size > 0) {
+    // console.log('childrenDirect', childrenDirect.toJS());
+    childrenUpdated = childrenDirect.reduce(
+      (memo, child) => {
+        // console.log('child', child.toJS())
+        const grandChildren = includeOffspringRecursive({
+          children: List(),
+          parent: child,
+          entities,
+        });
+        // console.log('grandChildren', grandChildren.toJS())
+        return memo.concat(grandChildren);
+      }, childrenDirect,
+    );
+    // console.log('childrenUpdated', childrenDirect.toJS());
+    return childrenUpdated;
+  }
+  return children;
+};
+
+export const getActionsWithOffspring = (actions) => actions
+  && actions.reduce((memo, action) => {
+    const parentId = action.getIn(['attributes', 'parent_id']);
+    const parent = actions.find((child) => qe(child.get('id'), parentId));
+    if (!parent) { // does not have parent => is first generation) {
+      const children = includeOffspringRecursive({
+        children: List(),
+        parent: action,
+        entities: actions,
+      });
+      return memo.set(action.get('id'), action.set('offspring', children));
+    }
+    // const ancestors = includeParentRecursive({ parents: List(), entity: action, entities: actions });
+    // console.log('action', action && action.toJS())
+    return memo;
+  }, Map());

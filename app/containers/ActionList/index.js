@@ -152,6 +152,7 @@ export function ActionList({
       onClick: () => handleImport(),
       icon: 'import',
       isManager,
+      showOnListOnly: true,
     });
   }
 

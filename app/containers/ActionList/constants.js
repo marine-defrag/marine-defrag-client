@@ -43,6 +43,12 @@ export const CONFIG = {
         ACTIONTYPES.NATL,
         ACTIONTYPES.INIT,
         ACTIONTYPES.DONOR,
+        // ACTIONTYPES.INTL,
+      ],
+    },
+    timeline: {
+      types: [
+        ACTIONTYPES.INTL,
       ],
     },
   },
