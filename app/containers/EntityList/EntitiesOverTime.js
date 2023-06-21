@@ -5,110 +5,79 @@
  */
 import React, { useRef } from 'react';
 // import React, { useEffect } from 'react';
-import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import { List } from 'immutable';
 import { connect } from 'react-redux';
-// import styled from 'styled-components';
-import { Box, Text } from 'grommet';
-
+import { ResponsiveContext } from 'grommet';
+import styled from 'styled-components';
 // import {
 //   ACTORTYPES,
 //   ROUTES,
 // } from 'themes/config';
 
 import { sortEntities } from 'utils/sort';
+import { isMaxSize } from 'utils/responsive';
 
 import {
   // selectActors,
   // selectActortypeActors,
   selectActorActionsGroupedByAction,
 } from 'containers/App/selectors';
-
+import { CONTENT_LIST } from 'containers/App/constants';
 // import { updatePath } from 'containers/App/actions';
 
 import PrintHide from 'components/styled/PrintHide';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
 import ContentSimple from 'components/styled/ContentSimple';
+import ContentHeader from 'containers/ContentHeader';
+
 import HeaderPrint from 'components/Header/HeaderPrint';
 import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
 
+
 // import appMessages from 'containers/App/messages';
 // import qe from 'utils/quasi-equals';
+
+import ChartTimeline from './ChartTimeline';
 // import messages from './messages';
 // import { selectActionsByAncestor } from './selectors';
-import { getActionsWithOffspring } from './utils';
 
-// const LoadingWrap = styled.div`
-//   position: absolute;
-//   top: 0;
-//   bottom: 0;
-//   right: 0;
-//   left: 0;
-//   background: white;
-//   z-index: 999;
-//   pointer-events: none;
-//   background: none;
-// `;
-
-// const Styled = styled((p) => <ContainerWrapper {...p} />)`
-//   background: white;
-//   box-shadow: none;
-//   padding: 0;
-// `;
+const ChartWrapperOuter = styled.div`
+  overflow-x: auto;
+  direction: ${({ scrollOverflow }) => scrollOverflow ? 'rtl' : 'tlr'};
+`;
+const ChartWrapperInner = styled.div`
+  width: ${({ scrollOverflow }) => scrollOverflow ? '1000px' : 'auto'};
+  direction: ltr
+`;
 
 export function EntitiesOverTime({
   dataReady,
   viewOptions,
   entities,
   isPrintView,
-  intl,
-  // config,
-  // actortypes,
-  // actiontypes,
-  // typeId,
-  // includeActorMembers,
-  // includeTargetMembers,
-  // countries,
-  // actors,
-  // actions,
-  // actionsWithOffspring,
-  // onEntityClick,
-  // hasFilters,
-  // actionActorsByAction,
-  // membershipsByAssociation,
-  // actorActionsByAction,
-  // countriesWithIndicators,
-  // locationsWithIndicators,
-  // ffIndicatorId,
-  // onSetFFOverlay,
-  // onSelectAction,
-  // onSetMapLoading,
-  // connections,
-  // connectedTaxonomies,
-  // locationQuery,
-  // taxonomies,
+  entityTitle,
+  allEntityCount,
+  hasFilters,
+  headerOptions,
 }) {
   const scrollContainer = useRef(null);
   const scrollReference = useRef(null);
-  const actionsWithOffspring = entities && sortEntities(
-    getActionsWithOffspring(
-      entities.filter(
-        (entity) => entity.getIn(['attributes', 'date_start'])
-      )
-    ),
-    'asc',
-    'date_start', // sortBy
-    'date', // type
-  );
 
-  const actionsGrouped = actionsWithOffspring.groupBy(
-    (action) => action.get('offspring') && action.get('offspring').size > 0
-      ? 'with'
-      : 'without'
-  );
+  let headerTitle;
+  let headerSubTitle;
+  if (entityTitle) {
+    headerTitle = entities
+      ? `${entities.size} ${entities.size === 1 ? entityTitle.single : entityTitle.plural}`
+      : entityTitle.plural;
+  }
+  if (hasFilters) {
+    headerSubTitle = `of ${allEntityCount} total`;
+  }
+  const size = React.useContext(ResponsiveContext);
+
   return (
     <ContainerWrapper headerStyle="types" ref={scrollContainer} isPrint={isPrintView}>
       {isPrintView && (
@@ -124,76 +93,27 @@ export function EntitiesOverTime({
           {!dataReady && (<Loading />)}
           {dataReady && (
             <div>
-              <Box margin={{ vertical: 'large' }}>
-                <Text color="textSecondary" size="large">Actions with Children</Text>
-              </Box>
-              <Box gap="medium">
-                {actionsGrouped
-                  && actionsGrouped.get('with')
-                  && actionsGrouped.get('with').valueSeq().map(
-                    (action) => (
-                      <Box key={action.get('id')}>
-                        <Box>
-                          <Text size="small">
-                            {intl.formatDate(new Date(action.getIn(['attributes', 'date_start'])))}
-                          </Text>
-                          <Box direction="row" gap="small">
-                            {action.getIn(['attributes', 'code']) && (
-                              <Text size="small" color="textSecondary">
-                                {action.getIn(['attributes', 'code'])}
-                              </Text>
-                            )}
-                            <Text size="small">
-                              {action.getIn(['attributes', 'title'])}
-                            </Text>
-                          </Box>
-                        </Box>
-                        {action.get('offspring') && action.get('offspring').size > 0 && (
-                          <Box margin={{ left: 'large', top: 'small' }}>
-                            <Box gap="small">
-                              {sortEntities(
-                                action.get('offspring'),
-                                'asc',
-                                'date_start', // sortBy
-                                'date', // type
-                              ).map((child) => (
-                                <Box key={child.get('id')}>
-                                  <Text size="small">
-                                    {intl.formatDate(new Date(child.getIn(['attributes', 'date_start'])))}
-                                  </Text>
-                                  <Text size="small">
-                                    {child.getIn(['attributes', 'title'])}
-                                  </Text>
-                                </Box>
-                              ))}
-                            </Box>
-                          </Box>
-                        )}
-                      </Box>
-                    )
-                  )}
-              </Box>
-              <Box margin={{ vertical: 'large' }}>
-                <Text color="textSecondary" size="large">Actions without Children</Text>
-              </Box>
-              <Box gap="medium">
-                {actionsGrouped
-                  && actionsGrouped.get('without')
-                  && actionsGrouped.get('without').valueSeq().map(
-                    (action) => (
-                      <Box key={action.get('id')}>
-                        <Box>
-                          <Text size="small">
-                            {intl.formatDate(new Date(action.getIn(['attributes', 'date_start'])))}
-                          </Text>
-                          <Text size="small">
-                            {action.getIn(['attributes', 'title'])}
-                          </Text>
-                        </Box>
-                      </Box>
-                    )
-                  )}
-              </Box>
+              <ContentHeader
+                type={CONTENT_LIST}
+                title={headerTitle}
+                subTitle={headerSubTitle}
+                hasViewOptions={viewOptions && viewOptions.length > 1}
+                info={headerOptions && headerOptions.info}
+              />
+              <ChartWrapperOuter scrollOverflow={isMaxSize(size, 'ms')}>
+                <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
+                  <ChartTimeline
+                    entities={sortEntities(
+                      entities.filter(
+                        (entity) => entity.getIn(['attributes', 'date_start'])
+                      ),
+                      'asc',
+                      'date_start', // sortBy
+                      'date', // type
+                    )}
+                  />
+                </ChartWrapperInner>
+              </ChartWrapperOuter>
             </div>
           )}
         </ContentSimple>
@@ -211,14 +131,16 @@ EntitiesOverTime.propTypes = {
   // connections: PropTypes.instanceOf(Map),
   // actortypes: PropTypes.instanceOf(Map),
   // actiontypes: PropTypes.instanceOf(Map),
+  headerOptions: PropTypes.object, // single/plural
+  entityTitle: PropTypes.object, // single/plural
   // primitive
   dataReady: PropTypes.bool,
   isPrintView: PropTypes.bool,
+  allEntityCount: PropTypes.number,
   // typeId: PropTypes.string,
-  // hasFilters: PropTypes.bool,
+  hasFilters: PropTypes.bool,
   // onEntityClick: PropTypes.func,
   // onSelectAction: PropTypes.func,
-  intl: intlShape.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -236,4 +158,4 @@ const mapStateToProps = (state) => ({
 //   };
 // }
 
-export default connect(mapStateToProps, null)(injectIntl(EntitiesOverTime));
+export default connect(mapStateToProps, null)(EntitiesOverTime);

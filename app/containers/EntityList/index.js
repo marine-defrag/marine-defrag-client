@@ -507,10 +507,13 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             actiontypes={actiontypes}
             targettypes={targettypes}
             config={config}
+            entityTitle={entityTitle}
+            allEntityCount={allEntityCount}
             dataReady={dataReady}
             onEntityClick={(id, path) => onEntityClick(
               id, path, viewDomain.get('errors')
             )}
+            headerOptions={headerOptions}
             typeId={typeId}
             hasFilters={filters && filters.length > 0}
             mapSubject={mapSubject}
