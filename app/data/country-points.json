@@ -7,11 +7,12 @@
       "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
     }
   },
+
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "code": "ABW",
+        "ADM0_A3": "ABW",
         "name_en": "Aruba",
         "name_de": "Aruba",
         "code_sovereign": null,
@@ -25,7 +26,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "AFG",
+        "ADM0_A3": "AFG",
         "name_en": "Afghanistan",
         "name_de": "Afghanistan",
         "code_sovereign": null,
@@ -39,7 +40,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "AGO",
+        "ADM0_A3": "AGO",
         "name_en": "Angola",
         "name_de": "Angola",
         "code_sovereign": null,
@@ -53,7 +54,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "AIA",
+        "ADM0_A3": "AIA",
         "name_en": "Anguilla",
         "name_de": "Anguilla",
         "code_sovereign": null,
@@ -67,7 +68,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ALB",
+        "ADM0_A3": "ALB",
         "name_en": "Albania",
         "name_de": "Albanien",
         "code_sovereign": null,
@@ -81,7 +82,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ALD",
+        "ADM0_A3": "ALD",
         "name_en": "Aland",
         "name_de": "Aland",
         "code_sovereign": null,
@@ -95,7 +96,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "AND",
+        "ADM0_A3": "AND",
         "name_en": "Andorra",
         "name_de": "Andorra",
         "code_sovereign": null,
@@ -109,7 +110,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ARE",
+        "ADM0_A3": "ARE",
         "name_en": "United Arab Emirates",
         "name_de": "Vereinigte Arabische Emirate",
         "code_sovereign": null,
@@ -123,7 +124,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ARG",
+        "ADM0_A3": "ARG",
         "name_en": "Argentina",
         "name_de": "Argentinien",
         "code_sovereign": null,
@@ -137,7 +138,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ARM",
+        "ADM0_A3": "ARM",
         "name_en": "Armenia",
         "name_de": "Armenien",
         "code_sovereign": null,
@@ -151,7 +152,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ASM",
+        "ADM0_A3": "ASM",
         "name_en": "American Samoa",
         "name_de": "Amerikanisch-Samoa",
         "code_sovereign": null,
@@ -165,7 +166,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ATA",
+        "ADM0_A3": "ATA",
         "name_en": "Antarctica",
         "name_de": "Antarktika",
         "code_sovereign": null,
@@ -179,7 +180,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ATC",
+        "ADM0_A3": "ATC",
         "name_en": "Ashmore and Cartier Islands",
         "name_de": "Ashmore- und Cartierinseln",
         "code_sovereign": null,
@@ -193,7 +194,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ATF",
+        "ADM0_A3": "ATF",
         "name_en": "French Southern and Antarctic Lands",
         "name_de": "Französische Süd- und Antarktisgebiete",
         "code_sovereign": null,
@@ -207,7 +208,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ATG",
+        "ADM0_A3": "ATG",
         "name_en": "Antigua and Barbuda",
         "name_de": "Antigua und Barbuda",
         "code_sovereign": null,
@@ -221,7 +222,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "AUS",
+        "ADM0_A3": "AUS",
         "name_en": "Australia",
         "name_de": "Australien",
         "code_sovereign": null,
@@ -235,7 +236,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "AUT",
+        "ADM0_A3": "AUT",
         "name_en": "Austria",
         "name_de": "Österreich",
         "code_sovereign": null,
@@ -249,7 +250,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "AZE",
+        "ADM0_A3": "AZE",
         "name_en": "Azerbaijan",
         "name_de": "Aserbaidschan",
         "code_sovereign": null,
@@ -263,7 +264,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BDI",
+        "ADM0_A3": "BDI",
         "name_en": "Burundi",
         "name_de": "Burundi",
         "code_sovereign": null,
@@ -277,7 +278,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BEL",
+        "ADM0_A3": "BEL",
         "name_en": "Belgium",
         "name_de": "Belgien",
         "code_sovereign": null,
@@ -291,7 +292,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BEN",
+        "ADM0_A3": "BEN",
         "name_en": "Benin",
         "name_de": "Benin",
         "code_sovereign": null,
@@ -305,7 +306,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BFA",
+        "ADM0_A3": "BFA",
         "name_en": "Burkina Faso",
         "name_de": "Burkina Faso",
         "code_sovereign": null,
@@ -319,7 +320,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BGD",
+        "ADM0_A3": "BGD",
         "name_en": "Bangladesh",
         "name_de": "Bangladesch",
         "code_sovereign": null,
@@ -333,7 +334,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BGR",
+        "ADM0_A3": "BGR",
         "name_en": "Bulgaria",
         "name_de": "Bulgarien",
         "code_sovereign": null,
@@ -347,7 +348,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BHR",
+        "ADM0_A3": "BHR",
         "name_en": "Bahrain",
         "name_de": "Bahrain",
         "code_sovereign": null,
@@ -361,7 +362,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CAN",
+        "ADM0_A3": "CAN",
         "name_en": "Canada",
         "name_de": "Kanada",
         "code_sovereign": null,
@@ -375,7 +376,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BHS",
+        "ADM0_A3": "BHS",
         "name_en": "The Bahamas",
         "name_de": "Bahamas",
         "code_sovereign": null,
@@ -389,7 +390,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BIH",
+        "ADM0_A3": "BIH",
         "name_en": "Bosnia and Herzegovina",
         "name_de": "Bosnien und Herzegowina",
         "code_sovereign": null,
@@ -403,7 +404,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BLM",
+        "ADM0_A3": "BLM",
         "name_en": "Saint-Barthélemy",
         "name_de": "Saint-Barthélemy",
         "code_sovereign": null,
@@ -417,7 +418,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BLR",
+        "ADM0_A3": "BLR",
         "name_en": "Belarus",
         "name_de": "Weißrussland",
         "code_sovereign": null,
@@ -431,7 +432,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BLZ",
+        "ADM0_A3": "BLZ",
         "name_en": "Belize",
         "name_de": "Belize",
         "code_sovereign": null,
@@ -445,7 +446,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BMU",
+        "ADM0_A3": "BMU",
         "name_en": "Bermuda",
         "name_de": "Bermuda",
         "code_sovereign": null,
@@ -459,7 +460,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BOL",
+        "ADM0_A3": "BOL",
         "name_en": "Bolivia",
         "name_de": "Bolivien",
         "code_sovereign": null,
@@ -473,7 +474,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BRA",
+        "ADM0_A3": "BRA",
         "name_en": "Brazil",
         "name_de": "Brasilien",
         "code_sovereign": null,
@@ -487,7 +488,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BRB",
+        "ADM0_A3": "BRB",
         "name_en": "Barbados",
         "name_de": "Barbados",
         "code_sovereign": null,
@@ -501,7 +502,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BRN",
+        "ADM0_A3": "BRN",
         "name_en": "Brunei",
         "name_de": "Brunei",
         "code_sovereign": null,
@@ -515,7 +516,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BTN",
+        "ADM0_A3": "BTN",
         "name_en": "Bhutan",
         "name_de": "Bhutan",
         "code_sovereign": null,
@@ -529,7 +530,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BWA",
+        "ADM0_A3": "BWA",
         "name_en": "Botswana",
         "name_de": "Botswana",
         "code_sovereign": null,
@@ -543,7 +544,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CAF",
+        "ADM0_A3": "CAF",
         "name_en": "Central African Republic",
         "name_de": "Zentralafrikanische Republik",
         "code_sovereign": null,
@@ -557,7 +558,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CHE",
+        "ADM0_A3": "CHE",
         "name_en": "Switzerland",
         "name_de": "Schweiz",
         "code_sovereign": null,
@@ -571,7 +572,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CHL",
+        "ADM0_A3": "CHL",
         "name_en": "Chile",
         "name_de": "Chile",
         "code_sovereign": null,
@@ -585,7 +586,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CHN",
+        "ADM0_A3": "CHN",
         "name_en": "People's Republic of China",
         "name_de": "Volksrepublik China",
         "code_sovereign": null,
@@ -599,7 +600,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CIV",
+        "ADM0_A3": "CIV",
         "name_en": "Ivory Coast",
         "name_de": "Elfenbeinküste",
         "code_sovereign": null,
@@ -613,7 +614,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CMR",
+        "ADM0_A3": "CMR",
         "name_en": "Cameroon",
         "name_de": "Kamerun",
         "code_sovereign": null,
@@ -627,7 +628,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "COD",
+        "ADM0_A3": "COD",
         "name_en": "Democratic Republic of the Congo",
         "name_de": "Demokratische Republik Kongo",
         "code_sovereign": null,
@@ -641,7 +642,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "COG",
+        "ADM0_A3": "COG",
         "name_en": "Republic of Congo",
         "name_de": "Republik Kongo",
         "code_sovereign": null,
@@ -655,7 +656,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "COK",
+        "ADM0_A3": "COK",
         "name_en": "Cook Islands",
         "name_de": "Cookinseln",
         "code_sovereign": null,
@@ -669,7 +670,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "COL",
+        "ADM0_A3": "COL",
         "name_en": "Colombia",
         "name_de": "Kolumbien",
         "code_sovereign": null,
@@ -683,7 +684,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "COM",
+        "ADM0_A3": "COM",
         "name_en": "Comoros",
         "name_de": "Komoren",
         "code_sovereign": null,
@@ -697,7 +698,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CPV",
+        "ADM0_A3": "CPV",
         "name_en": "Cape Verde",
         "name_de": "Kap Verde",
         "code_sovereign": null,
@@ -711,7 +712,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CRI",
+        "ADM0_A3": "CRI",
         "name_en": "Costa Rica",
         "name_de": "Costa Rica",
         "code_sovereign": null,
@@ -725,7 +726,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CUB",
+        "ADM0_A3": "CUB",
         "name_en": "Cuba",
         "name_de": "Kuba",
         "code_sovereign": null,
@@ -739,7 +740,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CUW",
+        "ADM0_A3": "CUW",
         "name_en": "Curaçao",
         "name_de": "Curaçao",
         "code_sovereign": null,
@@ -753,7 +754,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CYM",
+        "ADM0_A3": "CYM",
         "name_en": "Cayman Islands",
         "name_de": "Cayman Islands",
         "code_sovereign": null,
@@ -767,7 +768,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CYN",
+        "ADM0_A3": "CYN",
         "name_en": "Northern Cyprus",
         "name_de": "Northern Cyprus",
         "code_sovereign": null,
@@ -781,7 +782,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CYP",
+        "ADM0_A3": "CYP",
         "name_en": "Cyprus",
         "name_de": "Republik Zypern",
         "code_sovereign": null,
@@ -795,7 +796,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CZE",
+        "ADM0_A3": "CZE",
         "name_en": "Czech Republic",
         "name_de": "Tschechien",
         "code_sovereign": null,
@@ -809,7 +810,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "DEU",
+        "ADM0_A3": "DEU",
         "name_en": "Germany",
         "name_de": "Deutschland",
         "code_sovereign": null,
@@ -823,7 +824,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "DJI",
+        "ADM0_A3": "DJI",
         "name_en": "Djibouti",
         "name_de": "Dschibuti",
         "code_sovereign": null,
@@ -837,7 +838,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "DMA",
+        "ADM0_A3": "DMA",
         "name_en": "Dominica",
         "name_de": "Dominica",
         "code_sovereign": null,
@@ -851,7 +852,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "DNK",
+        "ADM0_A3": "DNK",
         "name_en": "Denmark",
         "name_de": "Dänemark",
         "code_sovereign": null,
@@ -865,7 +866,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "DOM",
+        "ADM0_A3": "DOM",
         "name_en": "Dominican Republic",
         "name_de": "Dominikanische Republik",
         "code_sovereign": null,
@@ -879,7 +880,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "DZA",
+        "ADM0_A3": "DZA",
         "name_en": "Algeria",
         "name_de": "Algerien",
         "code_sovereign": null,
@@ -893,7 +894,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ECU",
+        "ADM0_A3": "ECU",
         "name_en": "Ecuador",
         "name_de": "Ecuador",
         "code_sovereign": null,
@@ -907,7 +908,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "EGY",
+        "ADM0_A3": "EGY",
         "name_en": "Egypt",
         "name_de": "Ägypten",
         "code_sovereign": null,
@@ -921,7 +922,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ERI",
+        "ADM0_A3": "ERI",
         "name_en": "Eritrea",
         "name_de": "Eritrea",
         "code_sovereign": null,
@@ -935,7 +936,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ESP",
+        "ADM0_A3": "ESP",
         "name_en": "Spain",
         "name_de": "Spanien",
         "code_sovereign": null,
@@ -949,7 +950,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "EST",
+        "ADM0_A3": "EST",
         "name_en": "Estonia",
         "name_de": "Estland",
         "code_sovereign": null,
@@ -963,7 +964,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ETH",
+        "ADM0_A3": "ETH",
         "name_en": "Ethiopia",
         "name_de": "Äthiopien",
         "code_sovereign": null,
@@ -977,7 +978,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "FIN",
+        "ADM0_A3": "FIN",
         "name_en": "Finland",
         "name_de": "Finnland",
         "code_sovereign": null,
@@ -991,7 +992,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "FJI",
+        "ADM0_A3": "FJI",
         "name_en": "Fiji",
         "name_de": "Fidschi",
         "code_sovereign": null,
@@ -1005,7 +1006,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "FLK",
+        "ADM0_A3": "FLK",
         "name_en": "Falkland Islands",
         "name_de": "Falklandinseln",
         "code_sovereign": null,
@@ -1019,7 +1020,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "FRA",
+        "ADM0_A3": "FRA",
         "name_en": "France",
         "name_de": "Frankreich",
         "code_sovereign": null,
@@ -1033,7 +1034,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "FRO",
+        "ADM0_A3": "FRO",
         "name_en": "Faroe Islands",
         "name_de": "Färöer",
         "code_sovereign": null,
@@ -1047,7 +1048,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "FSM",
+        "ADM0_A3": "FSM",
         "name_en": "Federated States of Micronesia",
         "name_de": "Mikronesien",
         "code_sovereign": null,
@@ -1061,7 +1062,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GAB",
+        "ADM0_A3": "GAB",
         "name_en": "Gabon",
         "name_de": "Gabun",
         "code_sovereign": null,
@@ -1075,7 +1076,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GBR",
+        "ADM0_A3": "GBR",
         "name_en": "United Kingdom",
         "name_de": "Vereinigtes Königreich",
         "code_sovereign": null,
@@ -1089,7 +1090,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GEO",
+        "ADM0_A3": "GEO",
         "name_en": "Georgia",
         "name_de": "Georgien",
         "code_sovereign": null,
@@ -1103,7 +1104,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GGY",
+        "ADM0_A3": "GGY",
         "name_en": "Guernsey",
         "name_de": "Guernsey",
         "code_sovereign": null,
@@ -1117,7 +1118,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GHA",
+        "ADM0_A3": "GHA",
         "name_en": "Ghana",
         "name_de": "Ghana",
         "code_sovereign": null,
@@ -1131,7 +1132,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GIN",
+        "ADM0_A3": "GIN",
         "name_en": "Guinea",
         "name_de": "Guinea",
         "code_sovereign": null,
@@ -1145,7 +1146,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GMB",
+        "ADM0_A3": "GMB",
         "name_en": "The Gambia",
         "name_de": "Gambia",
         "code_sovereign": null,
@@ -1159,7 +1160,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GNB",
+        "ADM0_A3": "GNB",
         "name_en": "Guinea-Bissau",
         "name_de": "Guinea-Bissau",
         "code_sovereign": null,
@@ -1173,7 +1174,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GNQ",
+        "ADM0_A3": "GNQ",
         "name_en": "Equatorial Guinea",
         "name_de": "Äquatorialguinea",
         "code_sovereign": null,
@@ -1187,7 +1188,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GRC",
+        "ADM0_A3": "GRC",
         "name_en": "Greece",
         "name_de": "Griechenland",
         "code_sovereign": null,
@@ -1201,7 +1202,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GRD",
+        "ADM0_A3": "GRD",
         "name_en": "Grenada",
         "name_de": "Grenada",
         "code_sovereign": null,
@@ -1215,7 +1216,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GRL",
+        "ADM0_A3": "GRL",
         "name_en": "Greenland (Denmark)",
         "name_de": "Grönland (Dänemark)",
         "code_sovereign": "DNK",
@@ -1229,7 +1230,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GTM",
+        "ADM0_A3": "GTM",
         "name_en": "Guatemala",
         "name_de": "Guatemala",
         "code_sovereign": null,
@@ -1243,7 +1244,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GUM",
+        "ADM0_A3": "GUM",
         "name_en": "Guam",
         "name_de": "Guam",
         "code_sovereign": null,
@@ -1257,7 +1258,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GUY",
+        "ADM0_A3": "GUY",
         "name_en": "Guyana",
         "name_de": "Guyana",
         "code_sovereign": null,
@@ -1271,7 +1272,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "HMD",
+        "ADM0_A3": "HMD",
         "name_en": "Heard Island and McDonald Islands",
         "name_de": "Heard und McDonaldinseln",
         "code_sovereign": null,
@@ -1285,7 +1286,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "HND",
+        "ADM0_A3": "HND",
         "name_en": "Honduras",
         "name_de": "Honduras",
         "code_sovereign": null,
@@ -1299,7 +1300,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "HRV",
+        "ADM0_A3": "HRV",
         "name_en": "Croatia",
         "name_de": "Kroatien",
         "code_sovereign": null,
@@ -1313,7 +1314,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "HTI",
+        "ADM0_A3": "HTI",
         "name_en": "Haiti",
         "name_de": "Haiti",
         "code_sovereign": null,
@@ -1327,7 +1328,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "HUN",
+        "ADM0_A3": "HUN",
         "name_en": "Hungary",
         "name_de": "Ungarn",
         "code_sovereign": null,
@@ -1341,7 +1342,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "IDN",
+        "ADM0_A3": "IDN",
         "name_en": "Indonesia",
         "name_de": "Indonesien",
         "code_sovereign": null,
@@ -1355,7 +1356,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "IMN",
+        "ADM0_A3": "IMN",
         "name_en": "Isle of Man",
         "name_de": "Isle of Man",
         "code_sovereign": null,
@@ -1369,7 +1370,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "IND",
+        "ADM0_A3": "IND",
         "name_en": "India",
         "name_de": "Indien",
         "code_sovereign": null,
@@ -1383,7 +1384,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "IOA",
+        "ADM0_A3": "IOA",
         "name_en": "Indian Ocean Territories",
         "name_de": "Indian Ocean Territories",
         "code_sovereign": null,
@@ -1397,7 +1398,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "IOT",
+        "ADM0_A3": "IOT",
         "name_en": "British Indian Ocean Territory",
         "name_de": "Britisches Territorium im Indischen Ozean",
         "code_sovereign": null,
@@ -1411,7 +1412,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "IRL",
+        "ADM0_A3": "IRL",
         "name_en": "Ireland",
         "name_de": "Irland",
         "code_sovereign": null,
@@ -1425,7 +1426,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "IRN",
+        "ADM0_A3": "IRN",
         "name_en": "Iran",
         "name_de": "Iran",
         "code_sovereign": null,
@@ -1439,7 +1440,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "IRQ",
+        "ADM0_A3": "IRQ",
         "name_en": "Iraq",
         "name_de": "Irak",
         "code_sovereign": null,
@@ -1453,7 +1454,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ISL",
+        "ADM0_A3": "ISL",
         "name_en": "Iceland",
         "name_de": "Island",
         "code_sovereign": null,
@@ -1467,7 +1468,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ISR",
+        "ADM0_A3": "ISR",
         "name_en": "Israel",
         "name_de": "Israel",
         "code_sovereign": null,
@@ -1481,7 +1482,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ITA",
+        "ADM0_A3": "ITA",
         "name_en": "Italy",
         "name_de": "Italien",
         "code_sovereign": null,
@@ -1495,7 +1496,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "JAM",
+        "ADM0_A3": "JAM",
         "name_en": "Jamaica",
         "name_de": "Jamaika",
         "code_sovereign": null,
@@ -1509,7 +1510,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "JEY",
+        "ADM0_A3": "JEY",
         "name_en": "Jersey",
         "name_de": "Jersey",
         "code_sovereign": null,
@@ -1523,7 +1524,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "JOR",
+        "ADM0_A3": "JOR",
         "name_en": "Jordan",
         "name_de": "Jordanien",
         "code_sovereign": null,
@@ -1537,7 +1538,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "JPN",
+        "ADM0_A3": "JPN",
         "name_en": "Japan",
         "name_de": "Japan",
         "code_sovereign": null,
@@ -1551,7 +1552,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "KAS",
+        "ADM0_A3": "KAS",
         "name_en": "Siachen Glacier",
         "name_de": "Siachen-Gletscher",
         "code_sovereign": null,
@@ -1565,7 +1566,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "KAZ",
+        "ADM0_A3": "KAZ",
         "name_en": "Kazakhstan",
         "name_de": "Kasachstan",
         "code_sovereign": null,
@@ -1579,7 +1580,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "KEN",
+        "ADM0_A3": "KEN",
         "name_en": "Kenya",
         "name_de": "Kenia",
         "code_sovereign": null,
@@ -1593,7 +1594,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "KGZ",
+        "ADM0_A3": "KGZ",
         "name_en": "Kyrgyzstan",
         "name_de": "Kirgisistan",
         "code_sovereign": null,
@@ -1607,7 +1608,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "KHM",
+        "ADM0_A3": "KHM",
         "name_en": "Cambodia",
         "name_de": "Kambodscha",
         "code_sovereign": null,
@@ -1621,7 +1622,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "KIR",
+        "ADM0_A3": "KIR",
         "name_en": "Kiribati",
         "name_de": "Kiribati",
         "code_sovereign": null,
@@ -1635,7 +1636,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "KNA",
+        "ADM0_A3": "KNA",
         "name_en": "Saint Kitts and Nevis",
         "name_de": "St. Kitts und Nevis",
         "code_sovereign": null,
@@ -1649,7 +1650,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "KOR",
+        "ADM0_A3": "KOR",
         "name_en": "South Korea",
         "name_de": "Südkorea",
         "code_sovereign": null,
@@ -1663,7 +1664,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "KOS",
+        "ADM0_A3": "KOS",
         "name_en": "Kosovo",
         "name_de": "Kosovo",
         "code_sovereign": null,
@@ -1677,7 +1678,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "KWT",
+        "ADM0_A3": "KWT",
         "name_en": "Kuwait",
         "name_de": "Kuwait",
         "code_sovereign": null,
@@ -1691,7 +1692,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LAO",
+        "ADM0_A3": "LAO",
         "name_en": "Laos",
         "name_de": "Laos",
         "code_sovereign": null,
@@ -1705,7 +1706,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LBN",
+        "ADM0_A3": "LBN",
         "name_en": "Lebanon",
         "name_de": "Libanon",
         "code_sovereign": null,
@@ -1719,7 +1720,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LBR",
+        "ADM0_A3": "LBR",
         "name_en": "Liberia",
         "name_de": "Liberia",
         "code_sovereign": null,
@@ -1733,7 +1734,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LBY",
+        "ADM0_A3": "LBY",
         "name_en": "Libya",
         "name_de": "Libyen",
         "code_sovereign": null,
@@ -1747,7 +1748,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LCA",
+        "ADM0_A3": "LCA",
         "name_en": "Saint Lucia",
         "name_de": "St. Lucia",
         "code_sovereign": null,
@@ -1761,7 +1762,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LIE",
+        "ADM0_A3": "LIE",
         "name_en": "Liechtenstein",
         "name_de": "Liechtenstein",
         "code_sovereign": null,
@@ -1775,7 +1776,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LKA",
+        "ADM0_A3": "LKA",
         "name_en": "Sri Lanka",
         "name_de": "Sri Lanka",
         "code_sovereign": null,
@@ -1789,7 +1790,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LSO",
+        "ADM0_A3": "LSO",
         "name_en": "Lesotho",
         "name_de": "Lesotho",
         "code_sovereign": null,
@@ -1803,7 +1804,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LTU",
+        "ADM0_A3": "LTU",
         "name_en": "Lithuania",
         "name_de": "Litauen",
         "code_sovereign": null,
@@ -1817,7 +1818,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LUX",
+        "ADM0_A3": "LUX",
         "name_en": "Luxembourg",
         "name_de": "Luxemburg",
         "code_sovereign": null,
@@ -1831,7 +1832,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LVA",
+        "ADM0_A3": "LVA",
         "name_en": "Latvia",
         "name_de": "Lettland",
         "code_sovereign": null,
@@ -1845,7 +1846,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MAC",
+        "ADM0_A3": "MAC",
         "name_en": "Macau",
         "name_de": "Macau",
         "code_sovereign": null,
@@ -1859,7 +1860,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MAF",
+        "ADM0_A3": "MAF",
         "name_en": "Saint Martin",
         "name_de": "Saint-Martin",
         "code_sovereign": null,
@@ -1873,7 +1874,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MAR",
+        "ADM0_A3": "MAR",
         "name_en": "Morocco",
         "name_de": "Marokko",
         "code_sovereign": null,
@@ -1887,7 +1888,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MCO",
+        "ADM0_A3": "MCO",
         "name_en": "Monaco",
         "name_de": "Monaco",
         "code_sovereign": null,
@@ -1901,7 +1902,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MDA",
+        "ADM0_A3": "MDA",
         "name_en": "Moldova",
         "name_de": "Republik Moldau",
         "code_sovereign": null,
@@ -1915,7 +1916,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MDG",
+        "ADM0_A3": "MDG",
         "name_en": "Madagascar",
         "name_de": "Madagaskar",
         "code_sovereign": null,
@@ -1929,7 +1930,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MDV",
+        "ADM0_A3": "MDV",
         "name_en": "Maldives",
         "name_de": "Malediven",
         "code_sovereign": null,
@@ -1943,7 +1944,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MEX",
+        "ADM0_A3": "MEX",
         "name_en": "Mexico",
         "name_de": "Mexiko",
         "code_sovereign": null,
@@ -1957,7 +1958,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MHL",
+        "ADM0_A3": "MHL",
         "name_en": "Marshall Islands",
         "name_de": "Marshallinseln",
         "code_sovereign": null,
@@ -1971,7 +1972,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MKD",
+        "ADM0_A3": "MKD",
         "name_en": "Republic of Macedonia",
         "name_de": "Mazedonien",
         "code_sovereign": null,
@@ -1985,7 +1986,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MLI",
+        "ADM0_A3": "MLI",
         "name_en": "Mali",
         "name_de": "Mali",
         "code_sovereign": null,
@@ -1999,7 +2000,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MLT",
+        "ADM0_A3": "MLT",
         "name_en": "Malta",
         "name_de": "Malta",
         "code_sovereign": null,
@@ -2013,7 +2014,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MMR",
+        "ADM0_A3": "MMR",
         "name_en": "Myanmar",
         "name_de": "Myanmar",
         "code_sovereign": null,
@@ -2027,7 +2028,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MNE",
+        "ADM0_A3": "MNE",
         "name_en": "Montenegro",
         "name_de": "Montenegro",
         "code_sovereign": null,
@@ -2041,7 +2042,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MNG",
+        "ADM0_A3": "MNG",
         "name_en": "Mongolia",
         "name_de": "Mongolei",
         "code_sovereign": null,
@@ -2055,7 +2056,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MNP",
+        "ADM0_A3": "MNP",
         "name_en": "Northern Mariana Islands",
         "name_de": "Nördliche Marianen",
         "code_sovereign": null,
@@ -2069,7 +2070,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MOZ",
+        "ADM0_A3": "MOZ",
         "name_en": "Mozambique",
         "name_de": "Mosambik",
         "code_sovereign": null,
@@ -2083,7 +2084,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MRT",
+        "ADM0_A3": "MRT",
         "name_en": "Mauritania",
         "name_de": "Mauretanien",
         "code_sovereign": null,
@@ -2097,7 +2098,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MSR",
+        "ADM0_A3": "MSR",
         "name_en": "Montserrat",
         "name_de": "Montserrat",
         "code_sovereign": null,
@@ -2111,7 +2112,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MUS",
+        "ADM0_A3": "MUS",
         "name_en": "Mauritius",
         "name_de": "Mauritius",
         "code_sovereign": null,
@@ -2125,7 +2126,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MWI",
+        "ADM0_A3": "MWI",
         "name_en": "Malawi",
         "name_de": "Malawi",
         "code_sovereign": null,
@@ -2139,7 +2140,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MYS",
+        "ADM0_A3": "MYS",
         "name_en": "Malaysia",
         "name_de": "Malaysia",
         "code_sovereign": null,
@@ -2153,7 +2154,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NAM",
+        "ADM0_A3": "NAM",
         "name_en": "Namibia",
         "name_de": "Namibia",
         "code_sovereign": null,
@@ -2167,7 +2168,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NCL",
+        "ADM0_A3": "NCL",
         "name_en": "New Caledonia",
         "name_de": "Neukaledonien",
         "code_sovereign": null,
@@ -2181,7 +2182,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NER",
+        "ADM0_A3": "NER",
         "name_en": "Niger",
         "name_de": "Niger",
         "code_sovereign": null,
@@ -2195,7 +2196,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NFK",
+        "ADM0_A3": "NFK",
         "name_en": "Norfolk Island",
         "name_de": "Norfolk Island",
         "code_sovereign": null,
@@ -2209,7 +2210,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NGA",
+        "ADM0_A3": "NGA",
         "name_en": "Nigeria",
         "name_de": "Nigeria",
         "code_sovereign": null,
@@ -2223,7 +2224,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NIC",
+        "ADM0_A3": "NIC",
         "name_en": "Nicaragua",
         "name_de": "Nicaragua",
         "code_sovereign": null,
@@ -2237,7 +2238,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NIU",
+        "ADM0_A3": "NIU",
         "name_en": "Niue",
         "name_de": "Niue",
         "code_sovereign": null,
@@ -2251,7 +2252,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NLD",
+        "ADM0_A3": "NLD",
         "name_en": "Netherlands",
         "name_de": "Niederlande",
         "code_sovereign": null,
@@ -2265,7 +2266,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NOR",
+        "ADM0_A3": "NOR",
         "name_en": "Norway",
         "name_de": "Norwegen",
         "code_sovereign": null,
@@ -2279,7 +2280,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NPL",
+        "ADM0_A3": "NPL",
         "name_en": "Nepal",
         "name_de": "Nepal",
         "code_sovereign": null,
@@ -2293,7 +2294,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NRU",
+        "ADM0_A3": "NRU",
         "name_en": "Nauru",
         "name_de": "Nauru",
         "code_sovereign": null,
@@ -2307,7 +2308,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NZL",
+        "ADM0_A3": "NZL",
         "name_en": "New Zealand",
         "name_de": "Neuseeland",
         "code_sovereign": null,
@@ -2321,7 +2322,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "OMN",
+        "ADM0_A3": "OMN",
         "name_en": "Oman",
         "name_de": "Oman",
         "code_sovereign": null,
@@ -2335,7 +2336,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PAK",
+        "ADM0_A3": "PAK",
         "name_en": "Pakistan",
         "name_de": "Pakistan",
         "code_sovereign": null,
@@ -2349,7 +2350,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PAN",
+        "ADM0_A3": "PAN",
         "name_en": "Panama",
         "name_de": "Panama",
         "code_sovereign": null,
@@ -2363,7 +2364,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PCN",
+        "ADM0_A3": "PCN",
         "name_en": "Pitcairn Islands",
         "name_de": "Pitcairninseln",
         "code_sovereign": null,
@@ -2377,7 +2378,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PER",
+        "ADM0_A3": "PER",
         "name_en": "Peru",
         "name_de": "Peru",
         "code_sovereign": null,
@@ -2391,7 +2392,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PHL",
+        "ADM0_A3": "PHL",
         "name_en": "Philippines",
         "name_de": "Philippinen",
         "code_sovereign": null,
@@ -2405,7 +2406,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PLW",
+        "ADM0_A3": "PLW",
         "name_en": "Palau",
         "name_de": "Palau",
         "code_sovereign": null,
@@ -2419,7 +2420,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PNG",
+        "ADM0_A3": "PNG",
         "name_en": "Papua New Guinea",
         "name_de": "Papua-Neuguinea",
         "code_sovereign": null,
@@ -2433,7 +2434,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "POL",
+        "ADM0_A3": "POL",
         "name_en": "Poland",
         "name_de": "Polen",
         "code_sovereign": null,
@@ -2447,7 +2448,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PRI",
+        "ADM0_A3": "PRI",
         "name_en": "Puerto Rico",
         "name_de": "Puerto Rico",
         "code_sovereign": null,
@@ -2461,7 +2462,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PRK",
+        "ADM0_A3": "PRK",
         "name_en": "North Korea",
         "name_de": "Nordkorea",
         "code_sovereign": null,
@@ -2475,7 +2476,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PRT",
+        "ADM0_A3": "PRT",
         "name_en": "Portugal",
         "name_de": "Portugal",
         "code_sovereign": null,
@@ -2489,7 +2490,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PRY",
+        "ADM0_A3": "PRY",
         "name_en": "Paraguay",
         "name_de": "Paraguay",
         "code_sovereign": null,
@@ -2503,7 +2504,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PSE",
+        "ADM0_A3": "PSE",
         "name_en": "Palestine",
         "name_de": "Palästina",
         "code_sovereign": null,
@@ -2517,7 +2518,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PYF",
+        "ADM0_A3": "PYF",
         "name_en": "French Polynesia",
         "name_de": "Französisch-Polynesien",
         "code_sovereign": null,
@@ -2531,7 +2532,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "QAT",
+        "ADM0_A3": "QAT",
         "name_en": "Qatar",
         "name_de": "Katar",
         "code_sovereign": null,
@@ -2545,7 +2546,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ROU",
+        "ADM0_A3": "ROU",
         "name_en": "Romania",
         "name_de": "Rumänien",
         "code_sovereign": null,
@@ -2559,7 +2560,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "RUS",
+        "ADM0_A3": "RUS",
         "name_en": "Russia",
         "name_de": "Russland",
         "code_sovereign": null,
@@ -2573,7 +2574,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "RWA",
+        "ADM0_A3": "RWA",
         "name_en": "Rwanda",
         "name_de": "Ruanda",
         "code_sovereign": null,
@@ -2587,7 +2588,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SAH",
+        "ADM0_A3": "SAH",
         "name_en": "Western Sahara",
         "name_de": "Westsahara",
         "code_sovereign": null,
@@ -2601,7 +2602,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SAU",
+        "ADM0_A3": "SAU",
         "name_en": "Saudi Arabia",
         "name_de": "Saudi-Arabien",
         "code_sovereign": null,
@@ -2615,7 +2616,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SDN",
+        "ADM0_A3": "SDN",
         "name_en": "Sudan",
         "name_de": "Sudan",
         "code_sovereign": null,
@@ -2629,7 +2630,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SSD",
+        "ADM0_A3": "SSD",
         "name_en": "South Sudan",
         "name_de": "Südsudan",
         "code_sovereign": null,
@@ -2643,7 +2644,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SEN",
+        "ADM0_A3": "SEN",
         "name_en": "Senegal",
         "name_de": "Senegal",
         "code_sovereign": null,
@@ -2657,7 +2658,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SGP",
+        "ADM0_A3": "SGP",
         "name_en": "Singapore",
         "name_de": "Singapur",
         "code_sovereign": null,
@@ -2671,7 +2672,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SGS",
+        "ADM0_A3": "SGS",
         "name_en": "South Georgia and the South Sandwich Islands",
         "name_de": "Südgeorgien und die Südlichen Sandwichinseln",
         "code_sovereign": null,
@@ -2685,7 +2686,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SHN",
+        "ADM0_A3": "SHN",
         "name_en": "Saint Helena",
         "name_de": "St. Helena",
         "code_sovereign": null,
@@ -2699,7 +2700,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SLB",
+        "ADM0_A3": "SLB",
         "name_en": "Solomon Islands",
         "name_de": "Salomonen",
         "code_sovereign": null,
@@ -2713,7 +2714,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SLE",
+        "ADM0_A3": "SLE",
         "name_en": "Sierra Leone",
         "name_de": "Sierra Leone",
         "code_sovereign": null,
@@ -2727,7 +2728,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SLV",
+        "ADM0_A3": "SLV",
         "name_en": "El Salvador",
         "name_de": "El Salvador",
         "code_sovereign": null,
@@ -2741,7 +2742,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SMR",
+        "ADM0_A3": "SMR",
         "name_en": "San Marino",
         "name_de": "San Marino",
         "code_sovereign": null,
@@ -2755,7 +2756,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SOL",
+        "ADM0_A3": "SOL",
         "name_en": "Somaliland",
         "name_de": "Somaliland",
         "code_sovereign": null,
@@ -2769,7 +2770,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SOM",
+        "ADM0_A3": "SOM",
         "name_en": "Somalia",
         "name_de": "Somalia",
         "code_sovereign": null,
@@ -2783,7 +2784,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SPM",
+        "ADM0_A3": "SPM",
         "name_en": "Saint Pierre and Miquelon",
         "name_de": "Saint-Pierre und Miquelon",
         "code_sovereign": null,
@@ -2797,7 +2798,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SRB",
+        "ADM0_A3": "SRB",
         "name_en": "Serbia",
         "name_de": "Serbien",
         "code_sovereign": null,
@@ -2811,7 +2812,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "STP",
+        "ADM0_A3": "STP",
         "name_en": "São Tomé and Príncipe",
         "name_de": "São Tomé und Príncipe",
         "code_sovereign": null,
@@ -2825,7 +2826,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SUR",
+        "ADM0_A3": "SUR",
         "name_en": "Suriname",
         "name_de": "Suriname",
         "code_sovereign": null,
@@ -2839,7 +2840,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SVK",
+        "ADM0_A3": "SVK",
         "name_en": "Slovakia",
         "name_de": "Slowakei",
         "code_sovereign": null,
@@ -2853,7 +2854,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SVN",
+        "ADM0_A3": "SVN",
         "name_en": "Slovenia",
         "name_de": "Slowenien",
         "code_sovereign": null,
@@ -2867,7 +2868,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SWE",
+        "ADM0_A3": "SWE",
         "name_en": "Sweden",
         "name_de": "Schweden",
         "code_sovereign": null,
@@ -2881,7 +2882,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SWZ",
+        "ADM0_A3": "SWZ",
         "name_en": "Eswatini",
         "name_de": "Swasiland",
         "code_sovereign": null,
@@ -2895,7 +2896,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SXM",
+        "ADM0_A3": "SXM",
         "name_en": "Sint Maarten",
         "name_de": "Sint Maarten",
         "code_sovereign": null,
@@ -2909,7 +2910,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SYC",
+        "ADM0_A3": "SYC",
         "name_en": "Seychelles",
         "name_de": "Seychellen",
         "code_sovereign": null,
@@ -2923,7 +2924,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SYR",
+        "ADM0_A3": "SYR",
         "name_en": "Syria",
         "name_de": "Syrien",
         "code_sovereign": null,
@@ -2937,7 +2938,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TCA",
+        "ADM0_A3": "TCA",
         "name_en": "Turks and Caicos Islands",
         "name_de": "Turks- und Caicosinseln",
         "code_sovereign": null,
@@ -2951,7 +2952,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TCD",
+        "ADM0_A3": "TCD",
         "name_en": "Chad",
         "name_de": "Tschad",
         "code_sovereign": null,
@@ -2965,7 +2966,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TGO",
+        "ADM0_A3": "TGO",
         "name_en": "Togo",
         "name_de": "Togo",
         "code_sovereign": null,
@@ -2979,7 +2980,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "THA",
+        "ADM0_A3": "THA",
         "name_en": "Thailand",
         "name_de": "Thailand",
         "code_sovereign": null,
@@ -2993,7 +2994,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TJK",
+        "ADM0_A3": "TJK",
         "name_en": "Tajikistan",
         "name_de": "Tadschikistan",
         "code_sovereign": null,
@@ -3007,7 +3008,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TKM",
+        "ADM0_A3": "TKM",
         "name_en": "Turkmenistan",
         "name_de": "Turkmenistan",
         "code_sovereign": null,
@@ -3021,7 +3022,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TLS",
+        "ADM0_A3": "TLS",
         "name_en": "East Timor",
         "name_de": "Osttimor",
         "code_sovereign": null,
@@ -3035,7 +3036,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TON",
+        "ADM0_A3": "TON",
         "name_en": "Tonga",
         "name_de": "Tonga",
         "code_sovereign": null,
@@ -3049,7 +3050,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TTO",
+        "ADM0_A3": "TTO",
         "name_en": "Trinidad and Tobago",
         "name_de": "Trinidad und Tobago",
         "code_sovereign": null,
@@ -3063,7 +3064,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TUN",
+        "ADM0_A3": "TUN",
         "name_en": "Tunisia",
         "name_de": "Tunesien",
         "code_sovereign": null,
@@ -3077,7 +3078,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TUR",
+        "ADM0_A3": "TUR",
         "name_en": "Turkey",
         "name_de": "Türkei",
         "code_sovereign": null,
@@ -3091,7 +3092,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TUV",
+        "ADM0_A3": "TUV",
         "name_en": "Tuvalu",
         "name_de": "Tuvalu",
         "code_sovereign": null,
@@ -3105,7 +3106,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TZA",
+        "ADM0_A3": "TZA",
         "name_en": "Tanzania",
         "name_de": "Tanzania",
         "code_sovereign": null,
@@ -3119,7 +3120,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "UGA",
+        "ADM0_A3": "UGA",
         "name_en": "Uganda",
         "name_de": "Uganda",
         "code_sovereign": null,
@@ -3133,7 +3134,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "UKR",
+        "ADM0_A3": "UKR",
         "name_en": "Ukraine",
         "name_de": "Ukraine",
         "code_sovereign": null,
@@ -3147,7 +3148,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "URY",
+        "ADM0_A3": "URY",
         "name_en": "Uruguay",
         "name_de": "Uruguay",
         "code_sovereign": null,
@@ -3161,7 +3162,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "USA",
+        "ADM0_A3": "USA",
         "name_en": "United States of America",
         "name_de": "Vereinigte Staaten",
         "code_sovereign": null,
@@ -3175,7 +3176,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "UZB",
+        "ADM0_A3": "UZB",
         "name_en": "Uzbekistan",
         "name_de": "Usbekistan",
         "code_sovereign": null,
@@ -3189,7 +3190,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "VAT",
+        "ADM0_A3": "VAT",
         "name_en": "Vatican City",
         "name_de": "Vatikanstadt",
         "code_sovereign": null,
@@ -3203,7 +3204,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "VCT",
+        "ADM0_A3": "VCT",
         "name_en": "Saint Vincent and the Grenadines",
         "name_de": "St. Vincent und die Grenadinen",
         "code_sovereign": null,
@@ -3217,7 +3218,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "VEN",
+        "ADM0_A3": "VEN",
         "name_en": "Venezuela",
         "name_de": "Venezuela",
         "code_sovereign": null,
@@ -3231,7 +3232,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "VGB",
+        "ADM0_A3": "VGB",
         "name_en": "British Virgin Islands",
         "name_de": "Britische Jungferninseln",
         "code_sovereign": null,
@@ -3245,7 +3246,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "VIR",
+        "ADM0_A3": "VIR",
         "name_en": "United States Virgin Islands",
         "name_de": "Amerikanische Jungferninseln",
         "code_sovereign": null,
@@ -3259,7 +3260,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "VNM",
+        "ADM0_A3": "VNM",
         "name_en": "Vietnam",
         "name_de": "Vietnam",
         "code_sovereign": null,
@@ -3273,7 +3274,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "VUT",
+        "ADM0_A3": "VUT",
         "name_en": "Vanuatu",
         "name_de": "Vanuatu",
         "code_sovereign": null,
@@ -3287,7 +3288,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "WLF",
+        "ADM0_A3": "WLF",
         "name_en": "Wallis and Futuna",
         "name_de": "Wallis und Futuna",
         "code_sovereign": null,
@@ -3301,7 +3302,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "WSM",
+        "ADM0_A3": "WSM",
         "name_en": "Samoa",
         "name_de": "Samoa",
         "code_sovereign": null,
@@ -3315,7 +3316,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "YEM",
+        "ADM0_A3": "YEM",
         "name_en": "Yemen",
         "name_de": "Jemen",
         "code_sovereign": null,
@@ -3329,7 +3330,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ZAF",
+        "ADM0_A3": "ZAF",
         "name_en": "South Africa",
         "name_de": "Südafrika",
         "code_sovereign": null,
@@ -3343,7 +3344,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ZMB",
+        "ADM0_A3": "ZMB",
         "name_en": "Zambia",
         "name_de": "Sambia",
         "code_sovereign": null,
@@ -3357,7 +3358,7 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ZWE",
+        "ADM0_A3": "ZWE",
         "name_en": "Zimbabwe",
         "name_de": "Simbabwe",
         "code_sovereign": null,
