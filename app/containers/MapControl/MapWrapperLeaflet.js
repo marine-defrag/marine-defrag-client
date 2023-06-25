@@ -27,7 +27,6 @@ import {
   getBBox,
   getTooltipFeatures,
   getCenterLatLng,
-  filterFeaturesByZoom,
   filterNoDataFeatures,
   getPointLayer,
 } from './utils';
@@ -420,10 +419,11 @@ export function MapWrapperLeaflet({
   useEffect(() => {
     countryPointOverlayGroupRef.current.clearLayers();
     if (countryPointData && countryPointData.length > 0) {
-      // filterNoDataFeatures()
+      // const zoom = mapView ? mapView.zoom : MAP_OPTIONS.ZOOM.INIT;
+      // filterFeaturesByZoom(countryPointData, zoom, 'marker_max_zoom')
       const jsonLayer = getPointLayer({
         data: filterNoDataFeatures(
-          filterFeaturesByZoom(countryPointData, mapView.zoom, 'marker_max_zoom'),
+          countryPointData,
           indicator,
           !!mapSubject, // proxy for isCount: mapSubject only set for "count indicators"
         ),
