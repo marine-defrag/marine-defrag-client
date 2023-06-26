@@ -12,6 +12,7 @@ import { Box, Text } from 'grommet';
 import { Map } from 'immutable';
 import styled from 'styled-components';
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
+import countryPointJSON from 'data/country-points.json';
 import * as topojson from 'topojson-client';
 
 import { usePrint } from 'containers/App/PrintContext';
@@ -39,7 +40,31 @@ const Styled = styled((p) => <Box {...p} />)`
     break-inside: avoid;
   }
 `;
-
+const reduceCountryData = ({ features, countries }) => features.reduce(
+  (memo, feature) => {
+    const country = countries && countries.find(
+      (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+    );
+    if (country) {
+      return [
+        ...memo,
+        {
+          ...feature,
+          id: country.get('id'),
+          attributes: country.get('attributes').toJS(),
+          tooltip: {
+            title: country.getIn(['attributes', 'title']),
+          },
+          values: {
+            actions: 1,
+          },
+        },
+      ];
+    }
+    return memo;
+  },
+  [],
+);
 export function ActorViewDetailsMembers({
   onEntityClick,
   membersByType,
@@ -55,31 +80,13 @@ export function ActorViewDetailsMembers({
   );
   const countries = membersByType && membersByType.get(parseInt(ACTORTYPES.COUNTRY, 10));
 
-  const countryData = countries && countries.size > 0 && countriesJSON.features.reduce(
-    (memo, feature) => {
-      const country = countries && countries.find(
-        (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-      );
-      if (country) {
-        return [
-          ...memo,
-          {
-            ...feature,
-            id: country.get('id'),
-            attributes: country.get('attributes').toJS(),
-            tooltip: {
-              title: country.getIn(['attributes', 'title']),
-            },
-            values: {
-              actions: 1,
-            },
-          },
-        ];
-      }
-      return memo;
-    },
-    [],
-  );
+  let countryData; let
+    countryPointData;
+  if (countries && countries.size > 0) {
+    countryData = reduceCountryData({ features: countriesJSON.features, countries });
+    countryPointData = reduceCountryData({ features: countryPointJSON.features, countries });
+  }
+
   const isPrintView = usePrint();
 
   return (
@@ -100,7 +107,9 @@ export function ActorViewDetailsMembers({
             printArgs={printArgs}
             isPrintView={isPrintView}
             countryData={countryData}
+            countryPointData={countryPointData}
             countryFeatures={countriesJSON.features}
+            indicator="actions"
             styleType="members"
             onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
             fitBoundsToCountryOverlay
