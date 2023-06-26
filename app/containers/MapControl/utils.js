@@ -98,7 +98,7 @@ export const getPointLayer = ({ data, config, markerEvents }) => {
         valueToStyle,
         styleType,
       });
-      const iconRingColor = tooltipFeatureIds.length && tooltipFeatureIds.indexOf(feature.id) > -1 ? mapOptions.STYLE.active.color : 'white';
+      const iconRingColor = (tooltipFeatureIds.length && tooltipFeatureIds.indexOf(feature.id) > -1) || feature.isActive ? mapOptions.STYLE.active.color : 'white';
       const svgIcon = L.divIcon({
         html: `
 <svg
