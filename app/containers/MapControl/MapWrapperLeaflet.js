@@ -428,7 +428,7 @@ export function MapWrapperLeaflet({
           !!mapSubject, // proxy for isCount: mapSubject only set for "count indicators"
         ),
         config: {
-          indicator, mapOptions, mapSubject, maxValueCountries, tooltip,
+          indicator, mapOptions, mapSubject, maxValueCountries, tooltip, styleType,
         },
         markerEvents: {
           click: (e) => onFeatureClickTT(e),

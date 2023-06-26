@@ -9,11 +9,11 @@ export const filterFeaturesByZoom = (
   features,
   zoom,
   propertyMaxZoom,
-) => features.filter((f) => {
+) => features.filter((feature) => {
   if (
-    f.properties && f.properties[propertyMaxZoom]
+    feature.properties && feature.properties[propertyMaxZoom]
   ) {
-    return zoom <= parseInt(f.properties[propertyMaxZoom], 10);
+    return zoom <= parseInt(feature.properties[propertyMaxZoom], 10);
   }
   return false;
 });
@@ -40,7 +40,12 @@ const getPointIconFillColor = ({
   maxValueCountries,
   mapOptions,
   valueToStyle,
+  styleType,
 }) => {
+  // check if custom styleType mapping exists
+  if (styleType && mapOptions.STYLE[styleType]) {
+    return mapOptions.STYLE[styleType].fillColor;
+  }
   // check for explicitly set feature color
   if (feature.style && feature.style.fillColor) {
     return feature.style.fillColor;
@@ -73,7 +78,7 @@ const getPointIconFillColor = ({
 export const getPointLayer = ({ data, config, markerEvents }) => {
   const layer = L.featureGroup(null);
   const {
-    indicator, mapOptions, mapSubject, maxValueCountries, tooltip, valueToStyle,
+    indicator, mapOptions, mapSubject, maxValueCountries, tooltip, valueToStyle, styleType,
   } = config;
   const events = {
     mouseover: (e) => markerEvents.mouseover ? markerEvents.mouseover(e, config) : null,
@@ -91,6 +96,7 @@ export const getPointLayer = ({ data, config, markerEvents }) => {
         maxValueCountries,
         mapOptions,
         valueToStyle,
+        styleType,
       });
       const iconRingColor = tooltipFeatureIds.length && tooltipFeatureIds.indexOf(feature.id) > -1 ? mapOptions.STYLE.active.color : 'white';
       const svgIcon = L.divIcon({
