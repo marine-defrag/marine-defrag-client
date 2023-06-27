@@ -99,6 +99,7 @@ export const getPointLayer = ({ data, config, markerEvents }) => {
         styleType,
       });
       const iconRingColor = (tooltipFeatureIds.length && tooltipFeatureIds.indexOf(feature.id) > -1) || feature.isActive ? mapOptions.STYLE.active.color : 'white';
+      const iconCircleOpacity = feature.style && feature.style.fillOpacity ? feature.style.fillOpacity : 1;
       const svgIcon = L.divIcon({
         html: `
 <svg
@@ -112,7 +113,7 @@ export const getPointLayer = ({ data, config, markerEvents }) => {
     fill="${iconRingColor}"
     filter="drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.3))"
   />
-  <circle cx="14" cy="14.18" r="8.18" fill="${iconCircleColor}"/>
+  <circle cx="14" cy="14.18" r="8.18" fill="${iconCircleColor}"     opacity="${iconCircleOpacity}"/>
 </svg>`,
         className: 'country-marker-svg-icon',
         iconSize: [25, 27],
