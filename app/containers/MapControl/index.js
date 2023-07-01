@@ -13,6 +13,8 @@ import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
+import countryPointJSON from 'data/country-points.json';
+
 import {
   setMapLoaded,
   setMapTooltips,
@@ -124,6 +126,7 @@ export function MapControl({
   );
 
   let countryData = null;
+  let countryPointData = null;
   let locationData = null;
   let maxValue;
   let minValue;
@@ -132,9 +135,9 @@ export function MapControl({
   const showPointsOnly = hasPointOption && showAsPoint;
   if (
     reducePoints
-      && indicatorPoints
-      && indicatorPoints !== '0'
-      && (hasPointOverlay || showPointsOnly)
+    && indicatorPoints
+    && indicatorPoints !== '0'
+    && (hasPointOverlay || showPointsOnly)
   ) {
     const ffUnit = unit || circleLayerConfig.unit || '';
     const isPercentage = ffUnit.indexOf('%') > -1;
@@ -164,6 +167,7 @@ export function MapControl({
     && !showPointsOnly
   ) {
     countryData = reduceCountryAreas && reduceCountryAreas(countriesJSON.features);
+    countryPointData = reduceCountryAreas && reduceCountryAreas(countryPointJSON.features);
 
     [maxValue, minValue] = countryData
       ? countryData.reduce(
@@ -207,6 +211,7 @@ export function MapControl({
           printArgs={printArgs}
           isPrintView={isPrintView}
           countryData={countryData}
+          countryPointData={countryPointData}
           locationData={locationData}
           countryFeatures={countriesJSON.features}
           indicator={indicator}
