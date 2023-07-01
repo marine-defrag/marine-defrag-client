@@ -419,7 +419,7 @@ export function MapWrapperLeaflet({
   // add countryPointData
   useEffect(() => {
     countryPointOverlayGroupRef.current.clearLayers();
-    const hasLocationData = locationData && countryPointData.length > 0;
+    const hasLocationData = locationData && locationData.length > 0;
     if (!hasLocationData && countryPointData && countryPointData.length > 0) {
       const zoom = mapView && mapView.zoom ? mapView.zoom : MAP_OPTIONS.ZOOM.INIT;
       const jsonLayer = getPointLayer({

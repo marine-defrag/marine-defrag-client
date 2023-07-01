@@ -196,8 +196,9 @@ export function ActionMap({
     ? includeActorChildren
     : includeTargetChildren;
 
-  let countryData; let
-    countryPointData;
+  let countryData;
+  let countryPointData;
+
   if (actorsByType || childCountries) {
     const countriesViaMembership = actorsByType && hasMemberOption && includeMembers && hasAssociations && actorsByType.reduce(
       (memo, typeActors, actortypeId) => {

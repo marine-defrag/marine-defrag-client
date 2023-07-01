@@ -676,7 +676,7 @@ export function EntitiesMap(props) {
       reducePoints = () => ffIndicator && countryPointsJSON.features.reduce(
         (memo, feature) => {
           const country = countriesWithIndicators.find(
-            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code || feature.properties.ADM0_A3)
           );
           // console.log(country && country.toJS())
           if (country) {
