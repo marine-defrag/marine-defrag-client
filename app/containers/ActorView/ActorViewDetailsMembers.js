@@ -73,7 +73,7 @@ export function ActorViewDetailsMembers({
   printArgs,
 }) {
   const [mapTooltips, setMapTooltips] = React.useState([]);
-
+  const [mapView, setMapView] = React.useState(null);
   const countriesJSON = topojson.feature(
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
@@ -116,6 +116,8 @@ export function ActorViewDetailsMembers({
             projection="gall-peters"
             mapTooltips={mapTooltips}
             setMapTooltips={setMapTooltips}
+            mapView={mapView}
+            onSetMapView={setMapView}
           />
         </SimpleMapContainer>
       )}

@@ -445,6 +445,8 @@ export function ActorActivitiesMap({
   // const ref = React.useRef();
   // w={ref && ref.current && ref.current.clientWidth}
   const [mapTooltips, setMapTooltips] = React.useState([]);
+  const [mapView, setMapView] = React.useState(null);
+
   return (
     <Styled>
       <SimpleMapContainer
@@ -467,6 +469,8 @@ export function ActorActivitiesMap({
           mapTooltips={mapTooltips}
           setMapTooltips={setMapTooltips}
           mapId={mapId}
+          mapView={mapView}
+          onSetMapView={setMapView}
         />
       </SimpleMapContainer>
       {mapTitle && (
