@@ -979,25 +979,25 @@ export const MAP_OPTIONS = {
     actors: ['#fafa6e', '#72d07d', '#009a8a', '#006076', '#052b43'],
     targets: ['#fafa6e', '#faad4a', '#dd654b', '#a52752', '#59004d'],
   },
-  NO_DATA_COLOR: '#EDEFF0',
+  NO_DATA_COLOR: '#ffffff',
   DEFAULT_STYLE: {
     weight: 1,
-    color: '#CFD3D7',
+    color: '#d5d5d5',
     fillOpacity: 1,
-    fillColor: '#EDEFF0',
+    fillColor: '#ffffff',
   },
   STYLE: {
     active: {
-      weight: 2,
+      weight: 1.25,
       color: '#000000',
     },
     members: {
-      fillColor: '#aaa',
+      fillColor: '#0077d8',
+      color: '#555555',
     },
     country: {
-      fillColor: '#0063b5',
-      weight: 1.5,
-      color: '#333333',
+      fillColor: '#0077d8',
+      color: '#000000',
     },
   },
   TOOLTIP_STYLE: {
@@ -1013,7 +1013,7 @@ export const MAP_OPTIONS = {
     interactive: false,
   },
   BBOX_STYLE: {
-    fillColor: '#F9F9FA',
+    fillColor: '#f6f7f9',
     fillOpacity: 1,
     weight: 0.5,
     color: '#DEE1E3',
