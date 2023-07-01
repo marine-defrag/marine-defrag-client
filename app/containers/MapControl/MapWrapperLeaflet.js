@@ -622,7 +622,7 @@ export function MapWrapperLeaflet({
         }
       }
     }
-  }, [mapTooltips, mapSubject, includeSecondaryMembers]);
+  }, [mapTooltips, mapSubject, includeSecondaryMembers, mapView]);
 
   useLayoutEffect(() => {
     countryOverGroupRef.current.clearLayers();
