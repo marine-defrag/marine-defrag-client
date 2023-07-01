@@ -28,7 +28,7 @@ export function IndicatorCountryMap({
   const reducePoints = () => countryPointsJSON.features.reduce(
     (memo, feature) => {
       const country = countries.find(
-        (c) => qe(c.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+        (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code || feature.properties.ADM0_A3)
       );
       if (country) {
         const value = country.getIn(['actionValues', indicator.get('id')]);
