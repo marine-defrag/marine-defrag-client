@@ -7,13 +7,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Box, Text } from 'grommet';
 
 import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
+import countryPointJSON from 'data/country-points.json';
 
 import { ACTORTYPES, ACTIONTYPES } from 'themes/config';
 
@@ -22,6 +23,7 @@ import {
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
   selectMembershipsGroupedByAssociation,
+  selectPrintConfig,
 } from 'containers/App/selectors';
 
 import {
@@ -33,23 +35,39 @@ import {
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer/MapWrapper';
-import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
-import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
+import MapWrapperLeaflet from 'containers/MapControl/MapWrapperLeaflet';
+import SimpleMapContainer from 'containers/MapControl/SimpleMapContainer';
+import MapOption from 'containers/MapControl/MapInfoOptions/MapOption';
+import MapKey from 'containers/MapControl/MapInfoOptions/MapKey';
 // import messages from './messages';
+import { usePrint } from 'containers/App/PrintContext';
 
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
+  position: relative;
+  @media print {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 `;
-const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
+const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+  @media print {
+    margin-left: 0;
+  }
+`;
 const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
   max-width: 400px;
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+  @media print {
+    margin-left: 0;
+  }
 `;
-const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)``;
-const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
-  position: relative;
-  height: 400px;
-  background: #F9F9FA;
+const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+  @media print {
+    margin-left: 0;
+  }
 `;
 
 const addToList = (list, countryId, actionId) => {
@@ -109,6 +127,65 @@ const addAllCountryActionIdsToList = (
   },
   countryList,
 );
+const reduceCountryData = ({
+  features, countries, countryActionIds, actor,
+}) => features.reduce(
+  (memo, feature) => {
+    const country = countries && countries.find(
+      (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+    );
+    if (country) {
+      const isActive = qe(country.get('id'), actor.get('id'));
+      const actionCount = countryActionIds
+        && countryActionIds.get(parseInt(country.get('id'), 10))
+        && countryActionIds.get(parseInt(country.get('id'), 10)).size;
+      if (actionCount) {
+        return [
+          ...memo,
+          {
+            ...feature,
+            id: country.get('id'),
+            attributes: country.get('attributes').toJS(),
+            tooltip: {
+              id: country.get('id'),
+              title: country.getIn(['attributes', 'title']),
+              isCount: true,
+              stats: [{
+                values: [{
+                  label: 'No of activities',
+                  value: actionCount || 0,
+                }],
+              }],
+            },
+            isActive,
+            values: {
+              actions: actionCount || 0,
+            },
+          },
+        ];
+      }
+      if (isActive) {
+        return [
+          ...memo,
+          {
+            ...feature,
+            id: country.get('id'),
+            attributes: country.get('attributes').toJS(),
+            isActive,
+          },
+        ];
+      }
+    }
+    return memo;
+  },
+  [],
+).sort(
+  (a, b) => {
+    if (a.isActive) return 1;
+    if (b.isActive) return -1;
+    return -1;
+  },
+);
 
 export function ActorActivitiesMap({
   actor,
@@ -126,8 +203,11 @@ export function ActorActivitiesMap({
   actiontypeHasTarget,
   memberships,
   actorCanBeMember,
+  printArgs,
+  mapId,
   // intl,
 }) {
+  const isPrint = usePrint();
   // console.log('actions', actions && actions.toJS())
   // console.log('actionsAsMember', actionsAsMember && actionsAsMember.toJS())
   // console.log('actiontypeHasTarget', actiontypeHasTarget)
@@ -351,96 +431,61 @@ export function ActorActivitiesMap({
   }
 
   const countryData = !hasRelated
-    ? countriesJSON.features
-    : countriesJSON.features.reduce(
-      (memo, feature) => {
-        const country = countries && countries.find(
-          (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-        );
-        if (country) {
-          const isActive = qe(country.get('id'), actor.get('id'));
-          const actionCount = countryActionIds
-            && countryActionIds.get(parseInt(country.get('id'), 10))
-            && countryActionIds.get(parseInt(country.get('id'), 10)).size;
-          if (actionCount) {
-            return [
-              ...memo,
-              {
-                ...feature,
-                id: country.get('id'),
-                attributes: country.get('attributes').toJS(),
-                tooltip: {
-                  id: country.get('id'),
-                  title: country.getIn(['attributes', 'title']),
-                  isCount: true,
-                  stats: [{
-                    values: [{
-                      label: 'No of activities',
-                      value: actionCount || 0,
-                    }],
-                  }],
-                },
-                isActive,
-                values: {
-                  actions: actionCount || 0,
-                },
-              },
-            ];
-          }
-          if (isActive) {
-            return [
-              ...memo,
-              {
-                ...feature,
-                id: country.get('id'),
-                attributes: country.get('attributes').toJS(),
-                isActive,
-              },
-            ];
-          }
-        }
-        return memo;
-      },
-      [],
-    ).sort(
-      (a, b) => {
-        if (a.isActive) return 1;
-        if (b.isActive) return -1;
-        return -1;
-      },
-    );
+    ? countriesJSON.features : reduceCountryData({
+      features: countriesJSON.features, countries, countryActionIds, actor,
+    });
+  const countryPointData = !hasRelated ? countryPointJSON.features : reduceCountryData({
+    features: countryPointJSON.features, countries, countryActionIds, actor,
+  });
+
   const maxValue = countryActionIds && countryActionIds.reduce(
     (max, actionList) => Math.max(max, actionList.size),
     0,
   );
+  // const ref = React.useRef();
+  // w={ref && ref.current && ref.current.clientWidth}
+  const [mapTooltips, setMapTooltips] = React.useState([]);
+  const [mapView, setMapView] = React.useState(null);
+
   return (
-    <Styled hasHeader noOverflow>
-      <MapWrapper>
-        <MapContainer
+    <Styled>
+      <SimpleMapContainer
+        orient={printArgs && printArgs.printOrientation}
+      >
+        <MapWrapperLeaflet
+          printArgs={printArgs}
+          isPrintView={isPrint}
+          isSingle
           countryData={countryData}
+          countryPointData={countryPointData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
           onActorClick={(id) => onEntityClick(id)}
           maxValueCountries={maxValue}
           includeSecondaryMembers={includeActorMembers || includeTargetMembers}
           mapSubject={mapSubject}
-          fitBounds
           projection="gall-peters"
+          fitBoundsToCountryOverlay
+          mapTooltips={mapTooltips}
+          setMapTooltips={setMapTooltips}
+          mapId={mapId}
+          mapView={mapView}
+          onSetMapView={setMapView}
         />
-      </MapWrapper>
+      </SimpleMapContainer>
       {mapTitle && (
-        <MapTitle>
+        <MapTitle isPrint={isPrint}>
           <Text weight={600}>{mapTitle}</Text>
         </MapTitle>
       )}
       {maxValue > 1 && (
-        <MapKeyWrapper>
+        <MapKeyWrapper isPrint={isPrint}>
           <Text size="small">{keyTitle}</Text>
           <MapKey mapSubject={mapSubject} maxValue={maxValue} maxBinValue={0} />
         </MapKeyWrapper>
       )}
       {(memberOption || memberTargetOption) && (
-        <MapOptions>
+        <MapOptions isPrint={isPrint}>
           {memberTargetOption && (
             <MapOption option={memberTargetOption} type="member" />
           )}
@@ -469,6 +514,8 @@ ActorActivitiesMap.propTypes = {
   onEntityClick: PropTypes.func,
   mapSubject: PropTypes.string,
   actiontypeId: PropTypes.string,
+  mapId: PropTypes.string,
+  printArgs: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
@@ -476,6 +523,7 @@ const mapStateToProps = (state) => ({
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
   memberships: selectMembershipsGroupedByAssociation(state),
+  printArgs: selectPrintConfig(state),
 });
 function mapDispatchToProps(dispatch) {
   return {

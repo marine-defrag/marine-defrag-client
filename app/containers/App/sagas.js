@@ -48,6 +48,8 @@ import {
   SET_INCLUDE_TARGET_CHILDREN,
   SET_INCLUDE_MEMBERS_FORFILTERS,
   SET_FF_OVERLAY,
+  SET_MAP_TOOLTIPS,
+  SET_MAP_VIEW,
 } from 'containers/App/constants';
 
 import {
@@ -838,6 +840,58 @@ export function* setFFOverlaySaga({ value }) {
   );
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
+export function* setMapTooltipsSaga({ values }) {
+  const location = yield select(selectLocation);
+  let queryNext = [];
+  let value;
+  if (Array.isArray(values)) {
+    value = values.join(';');
+  }
+  if (typeof values === 'string') {
+    value = values;
+  }
+  if (value) {
+    queryNext = getNextQuery(
+      [{
+        arg: 'mtt',
+        value,
+        replace: true,
+      }],
+      true, // extend
+      location,
+    );
+  } else {
+    queryNext = getNextQuery(
+      [{ arg: 'mtt', remove: true }],
+      true, // extend
+      location,
+    );
+  }
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
+export function* setMapViewSaga({ view }) {
+  const location = yield select(selectLocation);
+  let queryNext = [];
+
+  if (view) {
+    queryNext = getNextQuery(
+      [{
+        arg: 'mvw',
+        value: `${view.zoom}|${view.center.lat}|${view.center.lng}`,
+        replace: true,
+      }],
+      true, // extend
+      location,
+    );
+  } else {
+    queryNext = getNextQuery(
+      [{ arg: 'mvw', remove: true }],
+      true, // extend
+      location,
+    );
+  }
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
 
 export function* openBookmarkSaga({ bookmark }) {
   const path = bookmark.getIn(['attributes', 'view', 'path']);
@@ -936,6 +990,8 @@ export default function* rootSaga() {
   yield takeEvery(SET_VIEW, setViewSaga);
   yield takeEvery(SET_SUBJECT, setSubjectSaga);
   yield takeEvery(SET_MAP_SUBJECT, setMapSubjectSaga);
+  yield takeEvery(SET_MAP_TOOLTIPS, setMapTooltipsSaga);
+  yield takeEvery(SET_MAP_VIEW, setMapViewSaga);
   yield takeEvery(SET_INCLUDE_ACTOR_MEMBERS, setIncludeActorMembersSaga);
   yield takeEvery(SET_INCLUDE_TARGET_MEMBERS, setIncludeTargetMembersSaga);
   yield takeEvery(SET_INCLUDE_ACTOR_CHILDREN, setIncludeActorChildrenSaga);
@@ -944,6 +1000,8 @@ export default function* rootSaga() {
   yield takeEvery(SET_FF_OVERLAY, setFFOverlaySaga);
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);
   yield takeEvery(DISMISS_QUERY_MESSAGES, dismissQueryMessagesSaga);
+  // yield takeEvery(PRINT_VIEW, printViewSaga);
+  // yield takeEvery(CLOSE_PRINT_VIEW, closePrintViewSaga);
 
   yield takeEvery(CLOSE_ENTITY, closeEntitySaga);
 }

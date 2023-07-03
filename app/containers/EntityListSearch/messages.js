@@ -6,15 +6,15 @@ import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   searchPlaceholderEntities: {
-    id: 'app.components.EntityListSearch.searchPlaceholderEntities',
+    id: 'app.containers.EntityListSearch.searchPlaceholderEntities',
     defaultMessage: 'Filter items by reference or title',
   },
   searchPlaceholderMultiSelect: {
-    id: 'app.components.EntityListSearch.searchPlaceholderMultiSelect',
+    id: 'app.containers.EntityListSearch.searchPlaceholderMultiSelect',
     defaultMessage: 'Filter options by reference or title',
   },
   labelPrintKeywords: {
-    id: 'app.components.EntityListSearch.labelPrintKeywords',
+    id: 'app.containers.EntityListSearch.labelPrintKeywords',
     defaultMessage: 'Keyword search:',
   },
 });

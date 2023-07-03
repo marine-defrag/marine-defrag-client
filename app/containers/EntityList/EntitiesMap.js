@@ -4,6 +4,7 @@
  *
  */
 import React from 'react';
+// import React, { useEffect } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
@@ -33,16 +34,21 @@ import {
   selectFFOverlay,
 } from 'containers/App/selectors';
 
-import { setFFOverlay, updatePath } from 'containers/App/actions';
+import {
+  setFFOverlay,
+  updatePath,
+  // setMapLoading,
+} from 'containers/App/actions';
 
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
+import HeaderPrint from 'components/Header/HeaderPrint';
 import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
 
 import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer';
+import MapControl from 'containers/MapControl';
 // import messages from './messages';
 
 const LoadingWrap = styled.div`
@@ -57,44 +63,52 @@ const LoadingWrap = styled.div`
   background: none;
 `;
 
-const Styled = styled(ContainerWrapper)`
+const Styled = styled((p) => <ContainerWrapper {...p} />)`
   background: white;
+  box-shadow: none;
+  padding: 0;
 `;
 
-export function EntitiesMap({
-  dataReady,
-  viewOptions,
-  config,
-  entities,
-  actortypes,
-  actiontypes,
-  targettypes,
-  typeId,
-  mapSubject,
-  onSetMapSubject,
-  onSetIncludeActorMembers,
-  onSetIncludeTargetMembers,
-  includeActorMembers,
-  includeTargetMembers,
-  countries,
-  actors,
-  actions,
-  onEntityClick,
-  intl,
-  hasFilters,
-  actionActorsByAction,
-  membershipsByAssociation,
-  actorActionsByAction,
-  countriesWithIndicators,
-  locationsWithIndicators,
-  ffIndicatorId,
-  onSetFFOverlay,
-  onSelectAction,
-  // connections,
-  // connectedTaxonomies,
-  // locationQuery,
-  // taxonomies,
-}) {
+export function EntitiesMap(props) {
+  const {
+    dataReady,
+    viewOptions,
+    config,
+    entities,
+    actortypes,
+    actiontypes,
+    targettypes,
+    typeId,
+    mapSubject,
+    onSetMapSubject,
+    onSetIncludeActorMembers,
+    onSetIncludeTargetMembers,
+    includeActorMembers,
+    includeTargetMembers,
+    countries,
+    actors,
+    actions,
+    onEntityClick,
+    intl,
+    hasFilters,
+    actionActorsByAction,
+    membershipsByAssociation,
+    actorActionsByAction,
+    countriesWithIndicators,
+    locationsWithIndicators,
+    ffIndicatorId,
+    onSetFFOverlay,
+    onSelectAction,
+    // onSetMapLoading,
+    isPrintView,
+    // connections,
+    // connectedTaxonomies,
+    // locationQuery,
+    // taxonomies,
+  } = props;
+  // useEffect(() => {
+  //   onSetMapLoading('ll-map-list');
+  // }, []); // once
   // const { intl } = this.context;
   let type;
   let hasByTarget;
@@ -106,6 +120,7 @@ export function EntitiesMap({
   let indicator = includeActorMembers ? 'actionsTotal' : 'actions';
   let actionsTotalShowing;
   let infoTitle;
+  let infoTitlePrint;
   let infoSubTitle;
   let reduceCountryAreas;
   let reducePoints;
@@ -163,13 +178,13 @@ export function EntitiesMap({
           onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
           label: 'Include activities targeting regions, intergovernmental organisations and classes (countries belong to)',
         };
-      // } else if (!hasActions && hasByTarget) { // i.e. regions, classes
-      //   mapSubjectClean = 'targets';
-      //   memberOption = {
-      //     active: includeActorMembers,
-      //     onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-      //     label: 'Include activities of intergovernmental organisations (countries belong to)',
-      //   };
+        // } else if (!hasActions && hasByTarget) { // i.e. regions, classes
+        //   mapSubjectClean = 'targets';
+        //   memberOption = {
+        //     active: includeActorMembers,
+        //     onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+        //     label: 'Include activities of intergovernmental organisations (countries belong to)',
+        //   };
       } else { // i.e. groups
         mapSubjectClean = 'targets';
         memberOption = {
@@ -256,6 +271,7 @@ export function EntitiesMap({
                 stats,
                 isCount: true,
                 isCountryData: true,
+                linkActor: true,
               },
               values: {
                 actions: countActions,
@@ -277,6 +293,8 @@ export function EntitiesMap({
         });
         infoTitle = typeLabels.plural;
         infoSubTitle = `for ${entitiesTotal} ${typeLabelsFor[entitiesTotal === 1 ? 'single' : 'plural']}${hasFilters ? ' (filtered)' : ''}`;
+        const subjectOption = subjectOptions && subjectOptions.find((option) => option.active);
+        infoTitlePrint = subjectOption.title;
       } else if (hasActions) {
         // entities are orgs
         // figure out action ids for each country
@@ -395,6 +413,7 @@ export function EntitiesMap({
                 stats,
                 isCount: true,
                 isCountryData: true,
+                linkActor: true,
               },
               values: {
                 targetingActions: countTargetingActions,
@@ -422,9 +441,10 @@ export function EntitiesMap({
         };
         infoTitle = `${typeLabels.plural}${hasFilters ? ' (filtered)' : ''}`;
         infoSubTitle = `targeting ${countriesTotal} ${typeLabelsFor[countriesTotal === 1 ? 'single' : 'plural']}`;
+        infoTitlePrint = infoTitle;
       }
 
-    // actions ===================================================
+      // actions ===================================================
     } else if (config.types === 'actiontypes') {
       typeLabels = {
         single: intl.formatMessage(appMessages.entities[`actions_${typeId}`].single),
@@ -596,6 +616,7 @@ export function EntitiesMap({
               stats,
               isCount: true,
               isCountryData: true,
+              linkActor: true,
             },
             values: {
               actions: countActions,
@@ -615,7 +636,9 @@ export function EntitiesMap({
           },
         };
       });
-      infoTitle = `No. of ${typeLabels[actionsTotalShowing === 1 ? 'single' : 'plural']} by Country`;
+      infoTitle = `No. of ${typeLabels.plural} by Country`;
+      const subjectOption = subjectOptions && subjectOptions.find((option) => option.active);
+      infoTitlePrint = subjectOption ? `${subjectOption.title}: No. of ${typeLabels.plural}` : infoTitle;
       infoSubTitle = `Showing ${actionsTotalShowing} of ${entities ? entities.size : 0} activities total${hasFilters ? ' (filtered)' : ''}`;
     }
     // facts && figures
@@ -653,7 +676,7 @@ export function EntitiesMap({
       reducePoints = () => ffIndicator && countryPointsJSON.features.reduce(
         (memo, feature) => {
           const country = countriesWithIndicators.find(
-            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
+            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code || feature.properties.ADM0_A3)
           );
           // console.log(country && country.toJS())
           if (country) {
@@ -683,6 +706,7 @@ export function EntitiesMap({
                   title: country.getIn(['attributes', 'title']),
                   stats,
                   isLocationData: true,
+                  linkActor: true,
                 },
                 values: {
                   [ffIndicatorId]: parseFloat(value, 10),
@@ -720,7 +744,6 @@ export function EntitiesMap({
           const location = locationsWithIndicators.find(
             (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
           );
-          // console.log(country && country.toJS())
           if (location) {
             const value = location.getIn(['actionValues', ffIndicator.get('id')]);
             if (!value && value !== 0) {
@@ -801,13 +824,18 @@ export function EntitiesMap({
     }],
   );
   return (
-    <Styled headerStyle="types" noOverflow>
+    <Styled headerStyle="types" noOverflow isPrint={isPrintView}>
+      {isPrintView && (
+        <HeaderPrint />
+      )}
       {dataReady && (
-        <MapContainer
+        <MapControl
+          isPrintView={isPrintView}
           fullMap
           reduceCountryAreas={reduceCountryAreas}
           reducePoints={reducePoints}
           mapData={{
+            mapId: 'll-map-list',
             typeLabels,
             indicator,
             indicatorPoints: ffIndicatorId,
@@ -817,12 +845,14 @@ export function EntitiesMap({
             hasPointOption: false,
             hasPointOverlay: true,
             circleLayerConfig,
+            fitBounds: true,
           }}
           onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
           mapInfo={[{
             id: 'countries',
             tabTitle: 'Activities',
             title: infoTitle,
+            titlePrint: infoTitlePrint,
             subTitle: infoSubTitle,
             subjectOptions: hasByTarget && subjectOptions,
             memberOption,
@@ -837,7 +867,7 @@ export function EntitiesMap({
           }]}
         />
       )}
-      {viewOptions && viewOptions.length > 1 && (
+      {viewOptions && viewOptions.length > 1 && !isPrintView && (
         <EntityListViewOptions options={viewOptions} isOnMap />
       )}
       {!dataReady && (
@@ -874,10 +904,12 @@ EntitiesMap.propTypes = {
   onSetIncludeTargetMembers: PropTypes.func,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   hasFilters: PropTypes.bool,
   onEntityClick: PropTypes.func,
   onSetFFOverlay: PropTypes.func,
   onSelectAction: PropTypes.func,
+  // onSetMapLoading: PropTypes.func,
   ffIndicatorId: PropTypes.string,
   intl: intlShape.isRequired,
 };
@@ -899,6 +931,9 @@ function mapDispatchToProps(dispatch) {
     onSetFFOverlay: (value) => {
       dispatch(setFFOverlay(value));
     },
+    // onSetMapLoading: (mapId) => {
+    //   dispatch(setMapLoading(mapId));
+    // },
     onSelectAction: (id) => {
       dispatch(updatePath(`${ROUTES.ACTION}/${id}`));
     },

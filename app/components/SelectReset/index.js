@@ -24,7 +24,7 @@ const Label = styled.label`
 `;
 const Styled = styled.span`;
   @media print {
-    display: ${({ hidePrint }) => (hidePrint ? 'none' : 'inline')};
+    display: ${({ printHide }) => (printHide ? 'none' : 'inline')};
   }
 `;
 const Select = styled.select`
@@ -72,12 +72,12 @@ export class SelectReset extends React.PureComponent { // eslint-disable-line re
       options,
       isReset,
       index,
-      hidePrint,
+      printHide,
     } = this.props;
     const optionActive = find(options, (option) => option.value === value);
 
     return (
-      <Styled hidePrint={hidePrint}>
+      <Styled printHide={printHide}>
         {label
           && <Label htmlFor={index}>{ label }</Label>
         }
@@ -107,7 +107,7 @@ export class SelectReset extends React.PureComponent { // eslint-disable-line re
           && (
             <Reset onClick={() => onChange(emptyValue)}>
               {optionActive.label}
-              <Icon name="removeSmall" text textRight hidePrint />
+              <Icon name="removeSmall" text textRight printHide />
             </Reset>
           )
         }
@@ -124,7 +124,7 @@ SelectReset.propTypes = {
   options: PropTypes.array,
   onChange: PropTypes.func,
   isReset: PropTypes.bool,
-  hidePrint: PropTypes.bool,
+  printHide: PropTypes.bool,
 };
 
 SelectReset.contextTypes = {

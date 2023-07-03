@@ -11,6 +11,7 @@ import Helmet from 'react-helmet';
 import { List } from 'immutable';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Box } from 'grommet';
+import styled from 'styled-components';
 
 import {
   getTitleField,
@@ -34,11 +35,12 @@ import {
   getEntityTitleTruncated,
   checkActionAttribute,
 } from 'utils/entities';
-
+import { keydownHandlerPrint } from 'utils/print';
 import {
   loadEntitiesIfNeeded,
   updatePath,
   closeEntity,
+  printView,
 } from 'containers/App/actions';
 
 import {
@@ -46,6 +48,8 @@ import {
   selectIsUserManager,
   selectResourceConnections,
   selectTaxonomiesWithCategories,
+  selectIsPrintView,
+  selectShowFFasCircles,
 } from 'containers/App/selectors';
 
 import {
@@ -53,7 +57,7 @@ import {
   FF_ACTIONTYPE,
   RESOURCE_FIELDS,
 } from 'themes/config';
-
+import { PRINT_TYPES } from 'containers/App/constants';
 import Loading from 'components/Loading';
 import Content from 'components/Content';
 import ViewHeader from 'components/EntityView/ViewHeader';
@@ -63,7 +67,7 @@ import ViewWrapper from 'components/EntityView/ViewWrapper';
 import ViewPanel from 'components/EntityView/ViewPanel';
 import ViewPanelInside from 'components/EntityView/ViewPanelInside';
 import FieldGroup from 'components/fields/FieldGroup';
-
+import HeaderPrint from 'components/Header/HeaderPrint';
 
 import appMessages from 'containers/App/messages';
 import messages from './messages';
@@ -79,44 +83,69 @@ import {
 
 import { DEPENDENCIES } from './constants';
 
-export function ActionView(props) {
-  const {
-    viewEntity,
-    dataReady,
-    isManager,
-    taxonomies,
-    viewTaxonomies,
-    resourcesByResourcetype,
-    onEntityClick,
-    resourceConnections,
-    parent,
-    onLoadData,
-    intl,
-    handleEdit,
-    handleClose,
-    params,
-    handleTypeClick,
-  } = props;
+const ResourcesWrapper = styled((p) => <Box pad={{ top: 'medium', bottom: 'large' }} {...p} />)`
+  border-top: 1px solid;
+  border-color: #f1f0f1;
+`;
 
+export function ActionView({
+  viewEntity,
+  dataReady,
+  isManager,
+  taxonomies,
+  viewTaxonomies,
+  resourcesByResourcetype,
+  onEntityClick,
+  resourceConnections,
+  parent,
+  onLoadData,
+  intl,
+  handleEdit,
+  handleClose,
+  params,
+  handleTypeClick,
+  isPrintView,
+  onSetPrintView,
+  showFFasCircles,
+}) {
   useEffect(() => {
     // kick off loading of data
     onLoadData();
   }, []);
-
+  const mySetPrintView = () => onSetPrintView({
+    printType: isIndicator ? PRINT_TYPES.FF : PRINT_TYPES.SINGLE,
+    printContentOptions: isIndicator ? null : { tabs: true },
+    printMapOptions: (!isIndicator || !showFFasCircles) ? { markers: true } : null,
+    printMapMarkers: true,
+    printOrientation: 'portrait',
+    printSize: 'A4',
+  });
+  const keydownHandler = (e) => {
+    keydownHandlerPrint(e, mySetPrintView);
+  };
+  useEffect(() => {
+    document.addEventListener('keydown', keydownHandler);
+    return () => {
+      document.removeEventListener('keydown', keydownHandler);
+    };
+  }, []);
   const typeId = viewEntity && viewEntity.getIn(['attributes', 'measuretype_id']);
   const isIndicator = qe(typeId, FF_ACTIONTYPE);
 
   let buttons = [];
   if (dataReady) {
-    buttons = [
-      ...buttons,
-      {
-        type: 'icon',
-        onClick: () => window.print(),
-        title: 'Print',
-        icon: 'print',
-      },
-    ];
+    if (window.print) {
+      buttons = [
+        ...buttons,
+        {
+          type: 'icon',
+          // onClick: () => window.print(),
+          onClick: mySetPrintView,
+          title: 'Print',
+          icon: 'print',
+        },
+      ];
+    }
     if (isManager) {
       buttons = [
         ...buttons,
@@ -169,7 +198,6 @@ export function ActionView(props) {
     const [de] = viewEntity.getIn(['attributes', 'date_end']).split('T');
     datesEqual = ds === de;
   }
-
   return (
     <div>
       <Helmet
@@ -178,7 +206,7 @@ export function ActionView(props) {
           { name: 'description', content: intl.formatMessage(messages.metaDescription) },
         ]}
       />
-      <Content isSingle>
+      <Content isSingle isPrint={isPrintView}>
         { !dataReady
           && <Loading />
         }
@@ -190,8 +218,10 @@ export function ActionView(props) {
           )
         }
         { viewEntity && dataReady && (
-          <ViewWrapper>
+          <ViewWrapper isPrint={isPrintView}>
+            {isPrintView && <HeaderPrint />}
             <ViewHeader
+              isPrintView={isPrintView}
               title={typeId
                 ? intl.formatMessage(appMessages.actiontypes[typeId])
                 : intl.formatMessage(appMessages.entities.actions.plural)
@@ -202,7 +232,7 @@ export function ActionView(props) {
             />
             <ViewPanel>
               <ViewPanelInside>
-                <Main hasAside={isManager && !isIndicator}>
+                <Main hasAside={isManager && !isIndicator && !isPrintView}>
                   <FieldGroup
                     group={{ // fieldGroup
                       fields: [
@@ -216,7 +246,7 @@ export function ActionView(props) {
                     }}
                   />
                 </Main>
-                {isManager && (
+                {isManager && !isPrintView && (
                   <Aside>
                     <FieldGroup
                       group={{
@@ -274,7 +304,7 @@ export function ActionView(props) {
                     isIndicator={isIndicator}
                   />
                   {resourcesByResourcetype && (
-                    <Box pad={{ top: 'medium', bottom: 'large' }}>
+                    <ResourcesWrapper>
                       <FieldGroup
                         group={{
                           type: 'dark',
@@ -314,11 +344,19 @@ export function ActionView(props) {
                           ),
                         }}
                       />
-                    </Box>
+                    </ResourcesWrapper>
                   )}
                 </Main>
                 {!isIndicator && (
                   <Aside bottom>
+                    {hasTaxonomyCategories(viewTaxonomies) && (
+                      <FieldGroup
+                        aside
+                        group={{
+                          fields: getTaxonomyFields(viewTaxonomies),
+                        }}
+                      />
+                    )}
                     <FieldGroup
                       aside
                       group={{
@@ -361,16 +399,6 @@ export function ActionView(props) {
                         ],
                       }}
                     />
-                    {hasTaxonomyCategories(viewTaxonomies) && (
-                      <FieldGroup
-                        aside
-                        group={{
-                          label: appMessages.entities.taxonomies.plural,
-                          icon: 'categories',
-                          fields: getTaxonomyFields(viewTaxonomies),
-                        }}
-                      />
-                    )}
                     {parent && (
                       <FieldGroup
                         aside
@@ -398,20 +426,23 @@ export function ActionView(props) {
 }
 
 ActionView.propTypes = {
-  viewEntity: PropTypes.object,
-  onLoadData: PropTypes.func,
-  handleTypeClick: PropTypes.func,
   dataReady: PropTypes.bool,
-  handleEdit: PropTypes.func,
-  handleClose: PropTypes.func,
-  onEntityClick: PropTypes.func,
   isManager: PropTypes.bool,
+  isPrintView: PropTypes.bool,
+  viewEntity: PropTypes.object,
   viewTaxonomies: PropTypes.object,
   taxonomies: PropTypes.object,
   resourcesByResourcetype: PropTypes.object,
   resourceConnections: PropTypes.object,
   params: PropTypes.object,
   parent: PropTypes.object,
+  onLoadData: PropTypes.func,
+  handleTypeClick: PropTypes.func,
+  handleEdit: PropTypes.func,
+  handleClose: PropTypes.func,
+  onEntityClick: PropTypes.func,
+  onSetPrintView: PropTypes.func,
+  showFFasCircles: PropTypes.bool,
   intl: intlShape.isRequired,
 };
 
@@ -424,6 +455,8 @@ const mapStateToProps = (state, props) => ({
   resourcesByResourcetype: selectResourcesByType(state, props.params.id),
   resourceConnections: selectResourceConnections(state),
   parent: selectParentAction(state, props.params.id),
+  isPrintView: selectIsPrintView(state),
+  showFFasCircles: selectShowFFasCircles(state),
 });
 
 function mapDispatchToProps(dispatch, props) {
@@ -442,6 +475,9 @@ function mapDispatchToProps(dispatch, props) {
     },
     handleTypeClick: (typeId) => {
       dispatch(updatePath(`${ROUTES.ACTIONS}/${typeId}`));
+    },
+    onSetPrintView: (config) => {
+      dispatch(printView(config));
     },
   };
 }

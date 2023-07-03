@@ -70,6 +70,16 @@ export const selectNewEntityModal = createSelector(
   getGlobal,
   (globalState) => globalState.get('newEntityModal')
 );
+export const selectMapLoading = createSelector(
+  getGlobal,
+  (globalState) => globalState.get('mapLoading').size > 0,
+);
+export const selectMapViewFromState = createSelector(
+  (state, mapId) => mapId,
+  getGlobal,
+  (mapId, globalState) => globalState.getIn(['mapView', mapId])
+    && globalState.getIn(['mapView', mapId]).toJS(),
+);
 
 // users and user authentication ///////////////////////////////////////////////
 
@@ -443,6 +453,44 @@ export const selectFFOverlay = createSelector(
   selectLocationQuery,
   (locationQuery) => (locationQuery && locationQuery.get('ff')) || '0'
 );
+export const selectHasFFOverlay = createSelector(
+  selectFFOverlay,
+  (ffOverlay) => !!ffOverlay && !qe(ffOverlay, 0)
+);
+export const selectShowFFasCircles = createSelector(
+  getGlobal,
+  (state) => state.get('showFFasCircles')
+);
+
+export const selectIsPrintView = createSelector(
+  getGlobal,
+  (state) => !!state.get('printConfig')
+);
+
+export const selectPrintConfig = createSelector(
+  getGlobal,
+  (state) => state.get('printConfig') || {}
+);
+export const selectMapTooltips = createSelector(
+  selectLocationQuery,
+  (locationQuery) => (locationQuery && locationQuery.get('mtt'))
+    ? locationQuery.get('mtt').split(';')
+    : []
+);
+export const selectMapView = createSelector(
+  selectLocationQuery,
+  (locationQuery) => {
+    if (locationQuery && locationQuery.get('mvw')) {
+      const [zoom, lat, lng] = locationQuery.get('mvw').split('|');
+      return {
+        zoom: parseInt(zoom, 10),
+        center: { lat: parseFloat(lat), lng: parseFloat(lng) },
+      };
+    }
+    return null;
+  }
+);
+
 
 // database ////////////////////////////////////////////////////////////////////////
 
@@ -1515,12 +1563,12 @@ export const selectLocationsWithIndicators = createSelector(
   (state) => selectActortypeActors(state, { type: ACTORTYPES.POINT }),
   (state) => selectActiontypeActions(state, { type: FF_ACTIONTYPE }),
   selectActorActionsGroupedByActorAttributes,
-  (countries, actions, actorConnections) => countries
+  (actors, actions, actorConnections) => actors
     && actions
     && actorConnections
-    && countries.map(
-      (country) => {
-        let actorActionValues = actorConnections.get(parseInt(country.get('id'), 10)) || null;
+    && actors.map(
+      (actor) => {
+        let actorActionValues = actorConnections.get(parseInt(actor.get('id'), 10)) || null;
         if (actorActionValues) {
           actorActionValues = actorActionValues
             .filter(
@@ -1534,7 +1582,7 @@ export const selectLocationsWithIndicators = createSelector(
               Map()
             );
         }
-        return country.set('actionValues', actorActionValues);
+        return actor.set('actionValues', actorActionValues);
       }
     )
 );

@@ -1,21 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Text, Button } from 'grommet';
-import PrintHide from 'components/styled/PrintHide';
+import { Box } from 'grommet';
 import styled from 'styled-components';
+
+import PrintHide from 'components/styled/PrintHide';
+import TextPrint from 'components/styled/TextPrint';
+import Link from './Link';
+import Label from './Label';
 
 const Select = styled(PrintHide)`
   width: 20px;
   text-align: center;
   padding-right: 6px;
-`;
-
-const Link = styled((p) => <Button as="a" plain {...p} />)`
-  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
-  line-height: 16px;
-`;
-const Label = styled((p) => <Text size="small" {...p} />)`
-  line-height: 16px;
 `;
 
 export function CellBodyMain({
@@ -26,13 +22,15 @@ export function CellBodyMain({
   return (
     <Box direction="row" align="center" justify="start">
       {canEdit && (
-        <Select>
-          <input
-            type="checkbox"
-            checked={entity.selected}
-            onChange={(evt) => entity.onSelect(evt.target.checked)}
-          />
-        </Select>
+        <PrintHide>
+          <Select>
+            <input
+              type="checkbox"
+              checked={entity.selected}
+              onChange={(evt) => entity.onSelect(evt.target.checked)}
+            />
+          </Select>
+        </PrintHide>
       )}
       <Box>
         {Object.keys(entity.values).map((key) => (
@@ -43,7 +41,7 @@ export function CellBodyMain({
                 onClick={entity.onClick}
                 title={entity.values.title}
               >
-                <Label size="small">
+                <Label>
                   {entity.values[key]}
                 </Label>
               </Link>
@@ -51,7 +49,7 @@ export function CellBodyMain({
             {key !== 'title' && key !== 'name' && (
               <Label
                 color="dark-5"
-                size="xsmall"
+                size="xxsmall"
               >
                 {entity.values[key]}
               </Label>
@@ -60,9 +58,9 @@ export function CellBodyMain({
         ))}
         {entity.draft && (
           <Box>
-            <Text color="dark-5" size="xxsmall">
+            <TextPrint color="dark-5" size="xxsmall">
               [DRAFT]
-            </Text>
+            </TextPrint>
           </Box>
         )}
       </Box>

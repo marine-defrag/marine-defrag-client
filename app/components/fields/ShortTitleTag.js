@@ -24,11 +24,6 @@ const ShortTitleTag = styled.span`
     color: ${palette('text', 1)};
     background-color: transparent;
     margin-right: 8px;
-    border-radius: 3px;
-    border-right: 1px solid;
-    border-top: 1px solid;
-    border-bottom: 1px solid;
-    border-left: 7px solid;
     border-color: ${(props) => palette('taxonomies', parseInt(props.pIndex, 10) || 0)};
   }
 `;

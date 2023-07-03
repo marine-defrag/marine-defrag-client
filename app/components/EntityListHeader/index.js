@@ -5,16 +5,13 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import styled, { withTheme } from 'styled-components';
 import { Map, List } from 'immutable';
 import { palette } from 'styled-theme';
 import {
   Box, Text, Button, ResponsiveContext,
 } from 'grommet';
-import {
-  Add, Edit, Multiple,
-} from 'grommet-icons';
 
 import { isEqual } from 'lodash/lang';
 import { truncateText } from 'utils/string';
@@ -34,6 +31,7 @@ import Icon from 'components/Icon';
 import ButtonOld from 'components/buttons/Button';
 
 import EntityListSidebar from './EntityListSidebar';
+import ButtonOptionsLabelWithIcon from './ButtonOptionsLabelWithIcon';
 
 import { makeFilterGroups } from './filterGroupsFactory';
 import { makeEditGroups } from './editGroupsFactory';
@@ -45,10 +43,17 @@ import { makeActiveEditOptions } from './editOptionsFactory';
 
 import messages from './messages';
 
-const Styled = styled(PrintHide)``;
+const Styled = styled(PrintHide)`
+  display: ${({ isPrint }) => isPrint ? 'none' : 'block'};
+`;
 
 const TheHeader = styled((p) => <Box direction="row" {...p} />)`
-  height: ${({ theme }) => theme.sizes.headerList.banner.height}px;
+  height: ${({ theme, headerStyle }) => {
+    if (headerStyle === 'simple') {
+      return 40;
+    }
+    return theme.sizes.headerList.banner.height;
+  }}px;
   padding: 0 3px;
   background-color: ${palette('primary', 3)};
   box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
@@ -115,7 +120,7 @@ const LinkTitle = styled.div`
   }
 `;
 
-const TypeOptions = styled(PrintHide)`
+const TypeOptions = styled.div`
   display: none;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     position: absolute;
@@ -200,6 +205,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       || this.props.taxonomies !== nextProps.taxonomies
       || this.props.connections !== nextProps.connections
       || this.props.typeOptions !== nextProps.typeOptions
+      || this.props.isManager !== nextProps.isManager
       || !isEqual(this.state, nextState);
   }
 
@@ -243,8 +249,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     this.setState({ showTypes: false });
   };
 
-  getFormButtons = (activeOption) => {
-    const { intl } = this.context;
+  getFormButtons = (activeOption, intl) => {
     const { onCreateOption } = this.props;
     return [
       activeOption.create
@@ -308,8 +313,11 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
       includeMembers,
       onSetFilterMemberOption,
       headerActions,
+      isPrintView,
+      headerStyle,
+      intl,
     } = this.props;
-    const { intl } = this.context;
+
     const { activeOption } = this.state;
     const hasSelected = dataReady && canEdit && entityIdsSelected && entityIdsSelected.size > 0;
     const entitiesSelected = hasSelected
@@ -319,131 +327,134 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     let panelGroups = null;
 
     let formOptions = null;
-    if (dataReady && showFilters) {
-      panelGroups = makeFilterGroups({
-        config,
-        taxonomies,
-        connectedTaxonomies,
-        hasUserRole,
-        actortypes,
-        resourcetypes,
-        actiontypes,
-        targettypes,
-        actiontypesForTarget,
-        membertypes,
-        associationtypes,
-        activeFilterOption: activeOption,
-        currentFilters,
-        typeId,
-        intl,
-        locationQuery,
-        messages: {
-          attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
-          taxonomyGroup: intl.formatMessage(messages.filterGroupLabel.taxonomies),
-          connections: (type) => getFilterConnectionsMsg(intl, type),
-          // connectedTaxonomies: intl.formatMessage(messages.filterGroupLabel.connectedTaxonomies),
-          taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
-        },
-        includeMembers,
-      });
-      panelGroups = Object.keys(panelGroups).reduce(
-        (memo, groupId) => {
-          const group = panelGroups[groupId];
-          if (group.includeAnyWithout && group.options && group.options.length > 0) {
-            const allAnyOptions = makeAnyWithoutFilterOptions({
-              config,
-              locationQuery,
-              activeFilterOption: {
-                group: groupId,
-              },
-              contextIntl: intl,
-              messages: {
-                titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
-                without: intl.formatMessage(messages.filterFormWithoutPrefix),
-                any: intl.formatMessage(messages.filterFormAnyPrefix),
-                connections: (type) => getFilterConnectionsMsg(intl, type),
-              },
-            });
-            return {
-              ...memo,
-              [groupId]: {
-                ...group,
-                optionsGeneral: allAnyOptions,
-              },
-            };
-          }
-          return {
-            ...memo,
-            [groupId]: group,
-          };
-        },
-        {},
-      );
-      if (activeOption) {
-        formOptions = makeActiveFilterOptions({
-          entities,
+    let currentTypeOption = null;
+    if (headerStyle !== 'simple') {
+      if (dataReady && showFilters) {
+        panelGroups = makeFilterGroups({
           config,
-          locationQuery,
           taxonomies,
-          connections,
-          // actortypes,
-          // actiontypes,
           connectedTaxonomies,
+          hasUserRole,
+          actortypes,
+          resourcetypes,
+          actiontypes,
+          targettypes,
+          actiontypesForTarget,
+          membertypes,
+          associationtypes,
           activeFilterOption: activeOption,
-          contextIntl: intl,
+          currentFilters,
           typeId,
-          isManager,
+          intl,
+          locationQuery,
           messages: {
-            titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
-            without: intl.formatMessage(messages.filterFormWithoutPrefix),
-            any: intl.formatMessage(messages.filterFormAnyPrefix),
+            attributes: intl.formatMessage(messages.filterGroupLabel.attributes),
+            taxonomyGroup: intl.formatMessage(messages.filterGroupLabel.taxonomies),
+            connections: (type) => getFilterConnectionsMsg(intl, type),
+            // connectedTaxonomies: intl.formatMessage(messages.filterGroupLabel.connectedTaxonomies),
+            taxonomies: (taxId) => intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
           },
           includeMembers,
         });
-      }
-    } else if (dataReady && showEditOptions && hasSelected) {
-      panelGroups = makeEditGroups({
-        config,
-        taxonomies,
-        connectedTaxonomies,
-        activeEditOption: activeOption,
-        hasUserRole,
-        actortypes,
-        actiontypes,
-        targettypes,
-        resourcetypes,
-        actiontypesForTarget,
-        membertypes,
-        associationtypes,
-        typeId,
-        messages: {
-          attributes: intl.formatMessage(messages.editGroupLabel.attributes),
-          taxonomyGroup: intl.formatMessage(messages.editGroupLabel.taxonomies),
-          connections: (type) => getEditConnectionsMsg(intl, type),
-          taxonomies: (taxId) => this.context.intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
-        },
-        // selectedActortypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'actortype_id'])).keySeq(),
-        // selectedActiontypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'measuretype_id'])).keySeq(),
-      });
-      if (activeOption && connections) {
-        formOptions = makeActiveEditOptions({
-          entities: entitiesSelected,
+        panelGroups = Object.keys(panelGroups).reduce(
+          (memo, groupId) => {
+            const group = panelGroups[groupId];
+            if (group.includeAnyWithout && group.options && group.options.length > 0) {
+              const allAnyOptions = makeAnyWithoutFilterOptions({
+                config,
+                locationQuery,
+                activeFilterOption: {
+                  group: groupId,
+                },
+                contextIntl: intl,
+                messages: {
+                  titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
+                  without: intl.formatMessage(messages.filterFormWithoutPrefix),
+                  any: intl.formatMessage(messages.filterFormAnyPrefix),
+                  connections: (type) => getFilterConnectionsMsg(intl, type),
+                },
+              });
+              return {
+                ...memo,
+                [groupId]: {
+                  ...group,
+                  optionsGeneral: allAnyOptions,
+                },
+              };
+            }
+            return {
+              ...memo,
+              [groupId]: group,
+            };
+          },
+          {},
+        );
+        if (activeOption) {
+          formOptions = makeActiveFilterOptions({
+            entities,
+            config,
+            locationQuery,
+            taxonomies,
+            connections,
+            // actortypes,
+            // actiontypes,
+            connectedTaxonomies,
+            activeFilterOption: activeOption,
+            contextIntl: intl,
+            typeId,
+            isManager,
+            messages: {
+              titlePrefix: intl.formatMessage(messages.filterFormTitlePrefix),
+              without: intl.formatMessage(messages.filterFormWithoutPrefix),
+              any: intl.formatMessage(messages.filterFormAnyPrefix),
+            },
+            includeMembers,
+          });
+        }
+      } else if (dataReady && showEditOptions && hasSelected) {
+        panelGroups = makeEditGroups({
           config,
           taxonomies,
-          connections,
           connectedTaxonomies,
           activeEditOption: activeOption,
-          contextIntl: intl,
+          hasUserRole,
+          actortypes,
+          actiontypes,
+          targettypes,
+          resourcetypes,
+          actiontypesForTarget,
+          membertypes,
+          associationtypes,
+          typeId,
           messages: {
-            title: `${intl.formatMessage(messages.editFormTitlePrefix)} ${entitiesSelected.size} ${intl.formatMessage(messages.editFormTitlePostfix)}`,
+            attributes: intl.formatMessage(messages.editGroupLabel.attributes),
+            taxonomyGroup: intl.formatMessage(messages.editGroupLabel.taxonomies),
+            connections: (type) => getEditConnectionsMsg(intl, type),
+            taxonomies: (taxId) => intl.formatMessage(appMessages.entities.taxonomies[taxId].plural),
           },
+          // selectedActortypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'actortype_id'])).keySeq(),
+          // selectedActiontypeIds: entitiesSelected.groupBy((e) => e.getIn(['attributes', 'measuretype_id'])).keySeq(),
         });
+        if (activeOption && connections) {
+          formOptions = makeActiveEditOptions({
+            entities: entitiesSelected,
+            config,
+            taxonomies,
+            connections,
+            connectedTaxonomies,
+            activeEditOption: activeOption,
+            contextIntl: intl,
+            messages: {
+              title: `${intl.formatMessage(messages.editFormTitlePrefix)} ${entitiesSelected.size} ${intl.formatMessage(messages.editFormTitlePostfix)}`,
+            },
+          });
+        }
       }
+      const hasTypeOptions = typeOptions && typeOptions.length > 0;
+      currentTypeOption = hasTypeOptions && typeOptions.find((option) => option.active);
     }
-    const hasTypeOptions = typeOptions && typeOptions.length > 0;
-    const currentTypeOption = hasTypeOptions && typeOptions.find((option) => option.active);
 
-    const managerActions = canEdit && headerActions && headerActions.filter(
+    const managerActions = headerActions && headerActions.filter(
       (action) => action.isManager
     );
     const normalActions = headerActions && headerActions.filter(
@@ -452,8 +463,8 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     return (
       <ResponsiveContext.Consumer>
         {(size) => (
-          <Styled>
-            <TheHeader align="center">
+          <Styled isPrint={isPrintView}>
+            <TheHeader align="center" headerStyle={headerStyle}>
               {config.types && typeOptions && (
                 <HeaderSection noBorder>
                   <ButtonFlatIconOnly onClick={() => onSelectType()}>
@@ -507,25 +518,33 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                     </SelectType>
                   )}
                   {this.state.showTypes && typeOptions && (
-                    <TypeOptions ref={this.typeWrapperRef}>
-                      {typeOptions.map((option) => (
-                        <TypeOption
-                          key={option.value}
-                          active={option.active}
-                          onClick={() => {
-                            this.onHideTypes();
-                            onSelectType(option.value);
-                          }}
-                        >
-                          {option.label}
-                        </TypeOption>
-                      ))}
-                    </TypeOptions>
+                    <PrintHide>
+                      <TypeOptions ref={this.typeWrapperRef}>
+                        {typeOptions.map((option) => (
+                          <TypeOption
+                            key={option.value}
+                            active={option.active}
+                            onClick={() => {
+                              this.onHideTypes();
+                              onSelectType(option.value);
+                            }}
+                          >
+                            {option.label}
+                          </TypeOption>
+                        ))}
+                      </TypeOptions>
+                    </PrintHide>
                   )}
                 </HeaderSectionType>
               )}
-              <HeaderSection grow align="center" gap="medium" justify="end">
-                {dataReady && isMinSize(size, 'large') && (
+              <HeaderSection
+                grow
+                align="center"
+                gap="medium"
+                justify="end"
+                noBorder={headerStyle === 'simple'}
+              >
+                {dataReady && currentFilters && isMinSize(size, 'large') && (
                   <EntityListSearch>
                     <TagList
                       filters={currentFilters}
@@ -533,7 +552,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                   </EntityListSearch>
                 )}
               </HeaderSection>
-              {dataReady && isMinSize(size, 'large') && (
+              {dataReady && onShowFilters && isMinSize(size, 'large') && (
                 <HeaderSection align="center">
                   <ButtonOptions
                     onClick={onShowFilters}
@@ -547,7 +566,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                 </HeaderSection>
               )}
               {normalActions && (
-                <HeaderSection noBorder={!canEdit}>
+                <HeaderSection noBorder={!isManager}>
                   <Box fill="vertical" direction="row" align="center" pad={{ vertical: 'xsmall' }}>
                     {normalActions.map(
                       (action, i) => {
@@ -577,50 +596,36 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                   </Box>
                 </HeaderSection>
               )}
-              {canEdit && isMinSize(size, 'large') && (
+              {isManager && isMinSize(size, 'large') && (
                 <HeaderSection noBorder>
-                  <Box fill="vertical" justify="between" pad={{ top: 'xsmall', bottom: 'xxsmall' }}>
-                    <ButtonOptions
-                      onClick={onShowEditOptions}
-                      label={(
-                        <Box direction="row" gap="small">
-                          <Box>
-                            <Edit color="dark-3" size="xxsmall" />
-                          </Box>
-                          <Text color="dark-3" size="small">{intl.formatMessage(messages.listOptions.showEditOptions)}</Text>
-                        </Box>
-                      )}
-                    />
+                  <Box
+                    fill="vertical"
+                    justify={(
+                      (canEdit && managerActions && managerActions.length > 0)
+                      || (managerActions && managerActions.length > 1)
+                    ) ? 'between' : 'center'}
+                    pad={{ top: 'xsmall', bottom: 'xsmall' }}
+                  >
+                    {canEdit && (
+                      <ButtonOptions
+                        onClick={onShowEditOptions}
+                        label={(
+                          <ButtonOptionsLabelWithIcon
+                            icon="edit"
+                            title={intl.formatMessage(messages.listOptions.showEditOptions)}
+                          />
+                        )}
+                      />
+                    )}
                     {managerActions && managerActions.map(
                       (action, i) => {
-                        if (action.icon === 'add') {
+                        if (action.icon === 'add' || action.icon === 'import') {
                           return (
                             <ButtonOptions
                               key={i}
                               onClick={action.onClick}
                               label={(
-                                <Box direction="row" gap="small">
-                                  <Box>
-                                    <Add color="dark-3" size="xxsmall" />
-                                  </Box>
-                                  <Text color="dark-3" size="small">{action.title}</Text>
-                                </Box>
-                              )}
-                            />
-                          );
-                        }
-                        if (action.icon === 'import') {
-                          return (
-                            <ButtonOptions
-                              key={i}
-                              onClick={action.onClick}
-                              label={(
-                                <Box direction="row" gap="small">
-                                  <Box>
-                                    <Multiple color="dark-3" size="xxsmall" />
-                                  </Box>
-                                  <Text color="dark-3" size="small">{action.title}</Text>
-                                </Box>
+                                <ButtonOptionsLabelWithIcon icon={action.icon} title={action.title} />
                               )}
                             />
                           );
@@ -642,7 +647,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                 </HeaderSection>
               )}
             </TheHeader>
-            {showFilters && (
+            {headerStyle !== 'simple' && showFilters && (
               <EntityListSidebar
                 hasEntities={entities && entities.size > 0}
                 panelGroups={panelGroups}
@@ -667,7 +672,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                 }
               />
             )}
-            {showEditOptions && (
+            {headerStyle !== 'simple' && showEditOptions && (
               <EntityListSidebar
                 isEditPanel
                 hasEntities={entities && entities.size > 0}
@@ -677,13 +682,13 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                 setActiveOption={this.onSetActiveOption}
               />
             )}
-            {activeOption && formOptions && (
+            {headerStyle !== 'simple' && activeOption && formOptions && (
               <EntityListForm
                 model={formModel}
                 activeOptionId={`${activeOption.group}-${activeOption.optionId}`}
                 formOptions={formOptions}
                 buttons={showEditOptions
-                  ? this.getFormButtons(activeOption)
+                  ? this.getFormButtons(activeOption, intl)
                   : null
                 }
                 onCancel={this.onHideForm}
@@ -726,12 +731,12 @@ EntityListHeader.propTypes = {
   locationQuery: PropTypes.instanceOf(Map),
   hasUserRole: PropTypes.object,
   config: PropTypes.object,
-  onUpdate: PropTypes.func.isRequired,
-  onCreateOption: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func,
+  onCreateOption: PropTypes.func,
   listUpdating: PropTypes.bool,
   theme: PropTypes.object,
   currentFilters: PropTypes.array,
-  onUpdateQuery: PropTypes.func.isRequired,
+  onUpdateQuery: PropTypes.func,
   onShowFilters: PropTypes.func,
   onHideFilters: PropTypes.func,
   showFilters: PropTypes.bool,
@@ -742,15 +747,14 @@ EntityListHeader.propTypes = {
   dataReady: PropTypes.bool,
   isManager: PropTypes.bool,
   includeMembers: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   typeOptions: PropTypes.array,
   onSelectType: PropTypes.func,
   onSetFilterMemberOption: PropTypes.func,
   typeId: PropTypes.string,
   headerActions: PropTypes.array,
+  headerStyle: PropTypes.string,
+  intl: intlShape.isRequired,
 };
 
-EntityListHeader.contextTypes = {
-  intl: PropTypes.object.isRequired,
-};
-
-export default withTheme(EntityListHeader);
+export default withTheme(injectIntl(EntityListHeader));

@@ -27,14 +27,14 @@ import Button from 'components/buttons/Button';
 import ContainerWithSidebar from 'components/styled/Container/ContainerWithSidebar';
 import Container from 'components/styled/Container';
 import Loading from 'components/Loading';
-import ContentHeader from 'components/ContentHeader';
+import ContentHeader from 'containers/ContentHeader';
 import Scrollable from 'components/styled/Scrollable';
 import Sidebar from 'components/styled/Sidebar';
 import SidebarHeader from 'components/styled/SidebarHeader';
 import SidebarGroupLabel from 'components/styled/SidebarGroupLabel';
 import SupTitle from 'components/SupTitle';
 import Component from 'components/styled/Component';
-import Content from 'components/styled/Content';
+import Content from 'components/styled/ContentSimple';
 import EntityListItem from 'components/EntityListItem';
 import PrintHide from 'components/styled/PrintHide';
 

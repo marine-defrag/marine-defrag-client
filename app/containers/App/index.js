@@ -14,67 +14,153 @@ import GlobalStyle from 'global-styles';
 import styled from 'styled-components';
 import Header from 'components/Header';
 import EntityNew from 'containers/EntityNew';
+import PrintUI from 'containers/PrintUI';
 
 import { sortEntities } from 'utils/sort';
-import { ROUTES, API } from 'themes/config';
+import { ROUTES, API, PRINT } from 'themes/config';
 
 import {
   selectIsSignedIn,
   selectIsUserManager,
   selectIsUserAnalyst,
   selectSessionUserAttributes,
-  selectReady,
+  // selectReady,
   selectEntitiesWhere,
   selectNewEntityModal,
+  selectIsPrintView,
+  selectPrintConfig,
 } from './selectors';
 
 import {
   validateToken,
-  loadEntitiesIfNeeded,
+  // loadEntitiesIfNeeded,
   updatePath,
   openNewEntityModal,
 } from './actions';
 
-import { DEPENDENCIES } from './constants';
+// import { DEPENDENCIES } from './constants';
 
+import { PrintContext } from './PrintContext';
 import messages from './messages';
 
 const Main = styled.div`
-  position: ${(props) => props.isHome ? 'relative' : 'absolute'};
-  top: ${(props) => props.isHome
+  position: ${({ isHome, isPrintView }) => {
+    if (isPrintView) {
+      return 'absolute';
+    }
+    if (isHome) {
+      return 'absolute';
+    }
+    return 'absolute';
+  }};
+  top: ${({ isHome, theme }) => isHome
     ? 0
-    : props.theme.sizes.header.banner.heightMobile
+    : theme.sizes.header.banner.heightMobile
 }px;
   left: 0;
   right: 0;
   bottom:0;
-  background-color: transparent;
-  overflow: hidden;
-
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    top: ${(props) => props.isHome
+  overflow: ${({ isPrint }) => isPrint ? 'auto' : 'hidden'};
+  width: auto;
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+    top: ${({ isHome, theme }) => isHome
     ? 0
-    : props.theme.sizes.header.banner.height
+    : theme.sizes.header.banner.height
 }px;
   }
   @media print {
-    background: white;
+    background: transparent;
     position: static;
+    overflow: hidden;
   }
 `;
+// A4 595 × 842
+// A3 842 x 1190
+/* eslint-disable prefer-template */
+const getPrintHeight = ({
+  isPrint,
+  orient = 'portrait',
+  size = 'A4',
+  fixed = false,
+}) => {
+  if (fixed && isPrint) {
+    return PRINT.SIZES[size][orient].H + 'pt';
+  }
+  if (isPrint) {
+    return 'auto';
+  }
+  return '100%';
+};
+
+const getPrintWidth = ({
+  isPrint,
+  orient = 'portrait',
+  size = 'A4',
+}) => {
+  if (isPrint) {
+    return PRINT.SIZES[size][orient].W + 'pt';
+  }
+  return '100%';
+};
+const PrintWrapperInner = styled.div`
+  position: ${({ isPrint, fixed = false }) => (isPrint && fixed) ? 'absolute' : 'static'};
+  top: ${({ isPrint }) => isPrint ? 20 : 0}px;
+  bottom: ${({ isPrint, fixed = false }) => {
+    if (isPrint && fixed) {
+      return '20px';
+    }
+    if (isPrint) {
+      return 'auto';
+    }
+    return 0;
+  }};
+  right: ${({ isPrint }) => isPrint ? 20 : 0}px;
+  left: ${({ isPrint }) => isPrint ? 20 : 0}px;
+  @media print {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: ${(props) => props.fixed ? getPrintWidth(props) : '100%'};
+    height: ${(props) => getPrintHeight(props)};;
+  }
+`;
+const PrintWrapper = styled.div`
+  position: relative;
+  margin-bottom: ${({ isPrint }) => isPrint ? '140px' : '0px'};
+  margin-right: ${({ isPrint }) => isPrint ? 'auto' : '0px'};
+  margin-left: ${({ isPrint }) => isPrint ? 'auto' : '0px'};
+  bottom: ${({ isPrint, fixed = false }) => {
+    if (isPrint && fixed) {
+      return 0;
+    }
+    if (isPrint) {
+      return 'auto';
+    }
+    return 0;
+  }};
+  width: ${(props) => getPrintWidth(props)};
+  height: ${(props) => getPrintHeight(props)};
+  min-height: ${(props) => props.isPrint ? getPrintHeight({ ...props, fixed: true }) : 'auto'};
+  box-shadow: ${({ isPrint }) => isPrint ? '0px 0px 5px 0px rgb(0 0 0 / 50%)' : 'none'};
+  padding: ${({ isPrint }) => isPrint ? 20 : 0}px;
+  @media print {
+    position: static;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    bottom: 0;
+    background: transparent;
+  }
+`;
+// overflow: hidden;
+
 // overflow: ${(props) => props.isHome ? 'auto' : 'hidden'};
 
 class App extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   UNSAFE_componentWillMount() {
     this.props.validateToken();
-    this.props.loadEntitiesIfNeeded();
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    // reload entities if invalidated
-    if (!nextProps.dataReady) {
-      this.props.loadEntitiesIfNeeded();
-    }
   }
 
   preparePageMenuPages = (pages, currentPath) => sortEntities(
@@ -143,8 +229,10 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       newEntityModal,
       user,
       children,
+      isPrintView,
+      onCloseModal,
+      printArgs,
     } = this.props;
-
     const { intl } = this.context;
     const title = intl.formatMessage(messages.app.title);
     const isHome = location.pathname === '/';
@@ -154,15 +242,16 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       || location.pathname.startsWith(ROUTES.UNAUTHORISED);
     const isHomeOrAuth = isHome || isAuth;
     return (
-      <div id="app">
+      <div id="app-inner" className={isPrintView ? 'print-view' : ''}>
         <Helmet titleTemplate={`%s - ${title}`} defaultTitle={title} />
         {!isHome && (
           <Header
             isSignedIn={isUserSignedIn}
             isAnalyst={isAnalyst}
+            isPrintView={isPrintView}
             user={user}
-            pages={pages && this.preparePageMenuPages(pages, location.pathname)}
-            navItems={this.prepareMainMenuItems(
+            pages={!isPrintView && pages && this.preparePageMenuPages(pages, location.pathname)}
+            navItems={!isPrintView && this.prepareMainMenuItems(
               isUserSignedIn && isManager,
               isUserSignedIn && isAnalyst,
               location.pathname,
@@ -181,33 +270,48 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             currentPath={location.pathname}
           />
         )}
-        <Main isHome={isHomeOrAuth}>
-          {React.Children.toArray(children)}
-        </Main>
-        {newEntityModal
-          && (
-            <ReactModal
-              isOpen
-              contentLabel={newEntityModal.get('path')}
-              onRequestClose={this.props.onCloseModal}
-              className="new-entity-modal"
-              overlayClassName="new-entity-modal-overlay"
-              style={{
-                overlay: { zIndex: 99999999 },
-              }}
-              appElement={document.getElementById('app')}
+        <Main isHome={isHomeOrAuth} isPrint={isPrintView}>
+          {isPrintView && (<PrintUI />)}
+          <PrintWrapper
+            isPrint={isPrintView}
+            fixed={printArgs.fixed}
+            orient={printArgs.printOrientation}
+            size={printArgs.printSize}
+          >
+            <PrintWrapperInner
+              isPrint={isPrintView}
+              fixed={printArgs.fixed}
+              orient={printArgs.printOrientation}
+              size={printArgs.printSize}
             >
-              <EntityNew
-                path={newEntityModal.get('path')}
-                attributes={newEntityModal.get('attributes')}
-                onSaveSuccess={this.props.onCloseModal}
-                onCancel={this.props.onCloseModal}
-                inModal
-              />
-            </ReactModal>
-          )
-        }
-        <GlobalStyle />
+              <PrintContext.Provider value={isPrintView}>
+                {React.Children.toArray(children)}
+              </PrintContext.Provider>
+            </PrintWrapperInner>
+          </PrintWrapper>
+        </Main>
+        {newEntityModal && (
+          <ReactModal
+            isOpen
+            contentLabel={newEntityModal.get('path')}
+            onRequestClose={onCloseModal}
+            className="new-entity-modal"
+            overlayClassName="new-entity-modal-overlay"
+            style={{
+              overlay: { zIndex: 99999999 },
+            }}
+            appElement={document.getElementById('app')}
+          >
+            <EntityNew
+              path={newEntityModal.get('path')}
+              attributes={newEntityModal.get('attributes')}
+              onSaveSuccess={onCloseModal}
+              onCancel={onCloseModal}
+              inModal
+            />
+          </ReactModal>
+        )}
+        <GlobalStyle isPrint={isPrintView} />
       </div>
     );
   }
@@ -218,13 +322,15 @@ App.propTypes = {
   isUserSignedIn: PropTypes.bool,
   isManager: PropTypes.bool,
   isAnalyst: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   user: PropTypes.object,
   pages: PropTypes.object,
   validateToken: PropTypes.func,
-  loadEntitiesIfNeeded: PropTypes.func,
+  // loadEntitiesIfNeeded: PropTypes.func,
   onPageLink: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
   newEntityModal: PropTypes.object,
+  printArgs: PropTypes.object,
   onCloseModal: PropTypes.func,
 };
 App.contextTypes = {
@@ -232,15 +338,17 @@ App.contextTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  dataReady: selectReady(state, { path: DEPENDENCIES }),
+  // dataReady: selectReady(state, { path: DEPENDENCIES }),
   isManager: selectIsUserManager(state),
   isAnalyst: selectIsUserAnalyst(state),
   isUserSignedIn: selectIsSignedIn(state),
   user: selectSessionUserAttributes(state),
+  isPrintView: selectIsPrintView(state),
   pages: selectEntitiesWhere(state, {
     path: API.PAGES,
     where: { draft: false },
   }),
+  printArgs: selectPrintConfig(state),
   newEntityModal: selectNewEntityModal(state),
 });
 
@@ -249,9 +357,9 @@ export function mapDispatchToProps(dispatch) {
     validateToken: () => {
       dispatch(validateToken()); // Maybe this could move to routes.js or App wrapper
     },
-    loadEntitiesIfNeeded: () => {
-      DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
-    },
+    // loadEntitiesIfNeeded: () => {
+    //   DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
+    // },
     onPageLink: (path, args) => {
       dispatch(updatePath(path, args));
     },

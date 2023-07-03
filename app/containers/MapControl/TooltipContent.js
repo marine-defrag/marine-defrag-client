@@ -32,6 +32,7 @@ const TooltipContent = ({
             {stat.values.map((value, j) => (
               <NumberField
                 key={j}
+                secondary
                 field={{
                   title: value.label,
                   value: value.value,

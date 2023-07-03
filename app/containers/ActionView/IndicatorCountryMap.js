@@ -3,7 +3,7 @@
  * IndicatorCountryMap
  *
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 
@@ -11,8 +11,8 @@ import { Map } from 'immutable';
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer';
-import TooltipContent from 'containers/MapContainer/TooltipContent';
+import MapControl from 'containers/MapControl';
+// import TooltipContent from 'containers/MapControl/TooltipContent';
 
 import countryPointsJSON from 'data/country-points.json';
 
@@ -24,11 +24,11 @@ export function IndicatorCountryMap({
   // intl,
 }) {
   if (!countries) return null;
-
+  const [mapView, setMapView] = useState(null);
   const reducePoints = () => countryPointsJSON.features.reduce(
     (memo, feature) => {
       const country = countries.find(
-        (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
+        (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code || feature.properties.ADM0_A3)
       );
       if (country) {
         const value = country.getIn(['actionValues', indicator.get('id')]);
@@ -55,7 +55,8 @@ export function IndicatorCountryMap({
             tooltip: {
               id: country.get('id'),
               title: country.getIn(['attributes', 'title']),
-              content: <TooltipContent stats={stats} />,
+              stats,
+              isCountryData: true,
             },
             values: {
               indicator: parseFloat(value, 10),
@@ -97,7 +98,8 @@ export function IndicatorCountryMap({
             tooltip: {
               id: country.get('id'),
               title: country.getIn(['attributes', 'title']),
-              content: <TooltipContent stats={stats} />,
+              stats,
+              isCountryData: true,
             },
             values: {
               indicator: parseFloat(value, 10),
@@ -132,7 +134,8 @@ export function IndicatorCountryMap({
   // indicator.getIn(['attributes', 'comment'])
   // && indicator.getIn(['attributes', 'comment']).indexOf('%') === -1;
   return (
-    <MapContainer
+    <MapControl
+      mapId="ll-indicator-country-map"
       mapKey={{
         keyTitle,
         isIndicator: true,
@@ -154,6 +157,8 @@ export function IndicatorCountryMap({
       onActorClick={(id) => onCountryClick(id)}
       reducePoints={reducePoints}
       reduceCountryAreas={reduceCountryAreas}
+      mapViewLocal={mapView}
+      onSetMapViewLocal={setMapView}
     />
   );
 }

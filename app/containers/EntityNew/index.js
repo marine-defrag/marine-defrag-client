@@ -34,7 +34,7 @@ import { getCheckedValuesFromOptions } from 'components/forms/MultiSelectControl
 import Content from 'components/Content';
 import Messages from 'components/Messages';
 import Loading from 'components/Loading';
-import ContentHeader from 'components/ContentHeader';
+import ContentHeader from 'containers/ContentHeader';
 import EntityForm from 'containers/EntityForm';
 
 import { selectDomain } from './selectors';

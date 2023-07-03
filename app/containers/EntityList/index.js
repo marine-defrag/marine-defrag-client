@@ -17,8 +17,6 @@ import Messages from 'components/Messages';
 import Loading from 'components/Loading';
 
 import EntityListHeader from 'components/EntityListHeader';
-import EntityListPrintKey from 'components/EntityListPrintKey';
-import PrintOnly from 'components/styled/PrintOnly';
 
 import {
   selectHasUserRole,
@@ -29,6 +27,7 @@ import {
   selectMapSubjectQuery,
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
+  selectIsPrintView,
 } from 'containers/App/selectors';
 
 import {
@@ -235,9 +234,10 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       handleEditSubmit,
       onCreateOption,
       allEntityCount,
+      isPrintView,
     } = this.props;
     // detect print to avoid expensive rendering
-    const printing = !!(
+    const printing = isPrintView || !!(
       typeof window !== 'undefined'
       && window.matchMedia
       && window.matchMedia('print').matches
@@ -254,7 +254,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     const entityIdsSelectedFiltered = entityIdsSelected.size > 0 && entities
       ? entityIdsSelected.filter((id) => entities.map((entity) => entity.get('id')).includes(id))
       : entityIdsSelected;
-    const isManager = canEdit && hasUserRole[USER_ROLES.MANAGER.value];
+    const isManager = hasUserRole[USER_ROLES.MANAGER.value];
+    const isManagerAndCanEdit = canEdit && isManager;
 
     const filters = currentFilters(
       {
@@ -324,7 +325,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             connectedTaxonomies={connectedTaxonomies}
             config={config}
             locationQuery={locationQuery}
-            canEdit={isManager && showList}
+            canEdit={isManagerAndCanEdit && showList}
             isManager={isManager}
             hasUserRole={hasUserRole}
             onCreateOption={onCreateOption}
@@ -336,7 +337,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
                 viewDomain.get('errors'),
               )}
             showFilters={this.state.visibleFilters}
-            showEditOptions={isManager && showList && this.state.visibleEditOptions}
+            showEditOptions={isManagerAndCanEdit && showList && this.state.visibleEditOptions}
             onShowFilters={this.onShowFilters}
             onHideFilters={this.onHideFilters}
             onHideEditOptions={this.onHideEditOptions}
@@ -352,10 +353,24 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             includeMembers={includeMembers}
             onSetFilterMemberOption={onSetFilterMemberOption}
             headerActions={headerOptions && headerOptions.actions}
+            isPrintView={isPrintView}
+          />
+        )}
+        {headerStyle === 'simple' && (
+          <EntityListHeader
+            headerStyle={headerStyle}
+            dataReady={dataReady}
+            config={config}
+            canEdit={isManagerAndCanEdit && showList}
+            isManager={isManager}
+            hasUserRole={hasUserRole}
+            headerActions={headerOptions && headerOptions.actions}
+            isPrintView={isPrintView}
           />
         )}
         {showList && (
           <EntitiesListView
+            isPrintView={isPrintView}
             headerOptions={headerOptions}
             allEntityCount={allEntityCount}
             viewOptions={viewOptions}
@@ -379,7 +394,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             entityTitle={entityTitle}
 
             dataReady={dataReady}
-            isManager={isManager}
+            isManager={isManagerAndCanEdit}
             isAnalyst={hasUserRole[USER_ROLES.ANALYST.value]}
 
             onEntitySelect={(id, checked) => {
@@ -439,19 +454,10 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onSetIncludeTargetMembers={onSetIncludeTargetMembers}
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
+            isPrintView={isPrintView}
           />
         )}
-        {hasList && dataReady && config.taxonomies && (
-          <PrintOnly>
-            <EntityListPrintKey
-              entities={entities}
-              taxonomies={taxonomies}
-              config={config}
-              locationQuery={locationQuery}
-            />
-          </PrintOnly>
-        )}
-        {isManager && (progress !== null && progress < 100) && (
+        {isManagerAndCanEdit && (progress !== null && progress < 100) && (
           <Progress>
             <ProgressText>
               <FormattedMessage
@@ -471,7 +477,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             />
           </Progress>
         )}
-        {isManager && (viewDomain.get('errors').size > 0 && progress >= 100) && (
+        {isManagerAndCanEdit && (viewDomain.get('errors').size > 0 && progress >= 100) && (
           <Progress error>
             <Messages
               type="error"
@@ -492,7 +498,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             />
           </Progress>
         )}
-        {isManager && (viewDomain.get('errors').size === 0 && progress >= 100) && (
+        {isManagerAndCanEdit && (viewDomain.get('errors').size === 0 && progress >= 100) && (
           <Progress error>
             <Messages
               type="success"
@@ -582,6 +588,7 @@ EntityList.propTypes = {
   onSetIncludeTargetMembers: PropTypes.func,
   includeActorMembers: PropTypes.bool,
   includeTargetMembers: PropTypes.bool,
+  isPrintView: PropTypes.bool,
   allEntityCount: PropTypes.number,
 };
 
@@ -603,6 +610,7 @@ const mapStateToProps = (state) => ({
   mapSubject: selectMapSubjectQuery(state),
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
+  isPrintView: selectIsPrintView(state),
 });
 
 function mapDispatchToProps(dispatch, props) {

@@ -18,4 +18,12 @@ export default defineMessages({
     id: 'app.components.Header.userLoading',
     defaultMessage: 'Signing in...',
   },
+  urlLabelPrint: {
+    id: 'app.components.Header.urlLabelPrint',
+    defaultMessage: 'URL:',
+  },
+  dateLabelPrint: {
+    id: 'app.components.Header.dateLabelPrint',
+    defaultMessage: 'Date:',
+  },
 });

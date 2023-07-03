@@ -24,15 +24,19 @@ import { CONTENT_LIST } from 'containers/App/constants';
 import { jumpToComponent } from 'utils/scroll-to-component';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
-import Content from 'components/styled/Content';
+import ContentSimple from 'components/styled/ContentSimple';
+import BoxPrint from 'components/styled/BoxPrint';
+import PrintHide from 'components/styled/PrintHide';
 import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
-import MapSubjectOptions from 'containers/MapContainer/MapInfoOptions/MapSubjectOptions';
-import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
+import MapSubjectOptions from 'containers/MapControl/MapInfoOptions/MapSubjectOptions';
+import MapOption from 'containers/MapControl/MapInfoOptions/MapOption';
 import EntityListTable from 'containers/EntityListTable';
 import ButtonPill from 'components/buttons/ButtonPill';
 
-import ContentHeader from 'components/ContentHeader';
+import ContentHeader from 'containers/ContentHeader';
+import HeaderPrint from 'components/Header/HeaderPrint';
+
 import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
 
@@ -142,6 +146,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       resourcetypes,
       allEntityCount,
       headerOptions,
+      isPrintView,
     } = this.props;
     const { viewType } = this.state;
     let type;
@@ -174,6 +179,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
             title: 'Activities',
             onClick: () => onSetMapSubject(),
             active: !mapSubjectClean,
+            printHide: true,
             disabled: !mapSubjectClean,
           },
           {
@@ -206,7 +212,9 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       } else if (mapSubjectClean === 'actors' && qe(viewType, ACTORTYPES.COUNTRY)) {
         memberOption = {
           active: includeActorMembers,
-          onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+          onClick: () => {
+            onSetIncludeActorMembers(includeActorMembers ? '0' : '1');
+          },
           label: 'Include activities of intergovernmental organisations (countries belong to)',
         };
       }
@@ -302,7 +310,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       } else if (mapSubjectClean === 'actors' && qe(typeId, ACTORTYPES.COUNTRY)) {
         memberOption = {
           active: includeActorMembers,
-          onClick: () => onSetIncludeActorMembers(includeTargetMembersClean ? '0' : '1'),
+          onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
           label: 'Include activities of intergovernmental organisations (countries belong to)',
         };
       }
@@ -355,14 +363,22 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
     if (hasFilters) {
       headerSubTitle = `of ${allEntityCount} total`;
     }
-
     return (
-      <ContainerWrapper headerStyle={headerStyle} ref={this.ScrollContainer}>
-        {dataReady && viewOptions && viewOptions.length > 1 && (
-          <EntityListViewOptions options={viewOptions} />
+      <ContainerWrapper
+        headerStyle={headerStyle}
+        ref={this.ScrollContainer}
+        isPrint={isPrintView}
+      >
+        {isPrintView && (
+          <HeaderPrint />
         )}
-        <Container ref={this.ScrollReference}>
-          <Content>
+        {dataReady && viewOptions && viewOptions.length > 1 && (
+          <PrintHide>
+            <EntityListViewOptions isPrintView={isPrintView} options={viewOptions} />
+          </PrintHide>
+        )}
+        <Container ref={this.ScrollReference} isPrint={isPrintView}>
+          <ContentSimple isPrint={isPrintView}>
             {!dataReady && <Loading />}
             {dataReady && (
               <div>
@@ -376,13 +392,20 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 {config.types === 'actiontypes' && (
                   <Box>
                     {subjectOptions && (
-                      <MapSubjectOptions options={subjectOptions} />
+                      <MapSubjectOptions inList options={subjectOptions} />
                     )}
                   </Box>
                 )}
                 {entityActors && (
                   <Box>
-                    <Box direction="row" gap="xsmall" margin={{ vertical: 'small' }} wrap>
+                    <BoxPrint
+                      isPrint={isPrintView}
+                      printHide
+                      direction="row"
+                      gap="xsmall"
+                      margin={{ vertical: 'small' }}
+                      wrap
+                    >
                       {mapSubject === 'actors'
                         && ACTIONTYPE_ACTORTYPES[typeId].length > 1
                         && ACTIONTYPE_ACTORTYPES[typeId].map(
@@ -413,9 +436,9 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                             </ButtonPill>
                           )
                         )}
-                    </Box>
+                    </BoxPrint>
                     {memberOption && (
-                      <Box>
+                      <Box margin={{ bottom: 'small' }}>
                         <MapOption option={memberOption} type="member" />
                       </Box>
                     )}
@@ -510,8 +533,15 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                     hasSearch
                     columns={columns}
                     headerColumnsUtility={headerColumnsUtility}
-                    memberOption={memberOption && <MapOption option={memberOption} type="member" />}
-                    subjectOptions={subjectOptions && <MapSubjectOptions inList options={subjectOptions} />}
+                    memberOption={memberOption && <MapOption align="end" option={memberOption} type="member" />}
+                    subjectOptions={subjectOptions && (
+                      <MapSubjectOptions
+                        inList
+                        align="end"
+                        isPrintView={isPrintView}
+                        options={subjectOptions}
+                      />
+                    )}
                     listUpdating={listUpdating}
                     entities={entities}
                     errors={errors}
@@ -542,7 +572,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
                 )}
               </div>
             )}
-          </Content>
+          </ContentSimple>
         </Container>
       </ContainerWrapper>
     );
@@ -550,6 +580,15 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
 }
 
 EntitiesListView.propTypes = {
+  hasFilters: PropTypes.bool,
+  isPrintView: PropTypes.bool,
+  showCode: PropTypes.bool,
+  dataReady: PropTypes.bool,
+  isManager: PropTypes.bool,
+  isAnalyst: PropTypes.bool,
+  includeActorMembers: PropTypes.bool,
+  includeTargetMembers: PropTypes.bool,
+  listUpdating: PropTypes.bool,
   entities: PropTypes.instanceOf(List),
   taxonomies: PropTypes.instanceOf(Map),
   actortypes: PropTypes.instanceOf(Map),
@@ -567,16 +606,8 @@ EntitiesListView.propTypes = {
   headerOptions: PropTypes.object, // single/plural
   intl: intlShape.isRequired,
   // primitive
-  dataReady: PropTypes.bool,
-  isManager: PropTypes.bool,
-  isAnalyst: PropTypes.bool,
-  includeActorMembers: PropTypes.bool,
-  includeTargetMembers: PropTypes.bool,
-  listUpdating: PropTypes.bool,
   headerStyle: PropTypes.string,
-  hasFilters: PropTypes.bool,
   typeId: PropTypes.string,
-  showCode: PropTypes.bool,
   mapSubject: PropTypes.string,
   allEntityCount: PropTypes.number,
   // functions

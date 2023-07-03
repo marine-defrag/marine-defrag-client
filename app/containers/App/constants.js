@@ -79,6 +79,13 @@ export const SET_INCLUDE_MEMBERS_FORFILTERS = 'impactoss/App/SET_INCLUDE_MEMBERS
 export const SET_INCLUDE_TARGET_CHILDREN = 'impactoss/App/SET_INCLUDE_TARGET_CHILDREN';
 export const SET_INCLUDE_ACTOR_CHILDREN = 'impactoss/App/SET_INCLUDE_ACTOR_CHILDREN';
 export const SET_FF_OVERLAY = 'impactoss/App/SET_FF_OVERLAY';
+export const PRINT_VIEW = 'impactoss/App/PRINT_VIEW';
+export const CLOSE_PRINT_VIEW = 'impactoss/App/CLOSE_PRINT_VIEW';
+export const SET_MAP_LOADING = 'impactoss/App/SET_MAP_LOADING';
+export const SET_MAP_LOADED = 'impactoss/App/SET_MAP_LOADED';
+export const SET_MAP_TOOLTIPS = 'impactoss/App/SET_MAP_TOOLTIPS';
+export const SET_MAP_VIEW = 'impactoss/App/SET_MAP_VIEW';
+export const SET_SHOW_FF_AS_CIRCLES = 'impactoss/App/SET_SHOW_FF_AS_CIRCLES';
 
 export const FILTERS_PANEL = 'filters';
 export const EDIT_PANEL = 'edit';
@@ -122,4 +129,10 @@ export const VIEWPORTS = {
   SMALL: 2,
   MEDIUM: 3,
   LARGE: 4,
+};
+
+export const PRINT_TYPES = {
+  LIST: 1,
+  SINGLE: 2,
+  FF: 3,
 };

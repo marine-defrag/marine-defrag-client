@@ -66,12 +66,19 @@ import {
   SET_VIEW,
   SET_SUBJECT,
   SET_MAP_SUBJECT,
+  SET_MAP_LOADING,
+  SET_MAP_VIEW,
+  SET_MAP_LOADED,
   SET_INCLUDE_ACTOR_MEMBERS,
   SET_INCLUDE_TARGET_MEMBERS,
   SET_INCLUDE_MEMBERS_FORFILTERS,
   SET_INCLUDE_TARGET_CHILDREN,
   SET_INCLUDE_ACTOR_CHILDREN,
   SET_FF_OVERLAY,
+  PRINT_VIEW,
+  CLOSE_PRINT_VIEW,
+  SET_MAP_TOOLTIPS,
+  SET_SHOW_FF_AS_CIRCLES,
 } from './constants';
 
 export function submitInvalid(valid) {
@@ -481,6 +488,7 @@ export function setMapSubject(subject) {
     subject,
   };
 }
+
 export function setIncludeActorMembers(value) {
   return {
     type: SET_INCLUDE_ACTOR_MEMBERS,
@@ -521,5 +529,47 @@ export function setFFOverlay(value) {
   return {
     type: SET_FF_OVERLAY,
     value,
+  };
+}
+export function printView(config) {
+  return {
+    type: PRINT_VIEW,
+    config,
+  };
+}
+export function closePrintView() {
+  return {
+    type: CLOSE_PRINT_VIEW,
+  };
+}
+export function setMapTooltips(values) {
+  return {
+    type: SET_MAP_TOOLTIPS,
+    values,
+  };
+}
+export function setMapLoading(mapId) {
+  return {
+    type: SET_MAP_LOADING,
+    mapId,
+  };
+}
+export function setMapView(view, mapId) {
+  return {
+    type: SET_MAP_VIEW,
+    mapId,
+    view,
+  };
+}
+export function setMapLoaded(mapId) {
+  return {
+    type: SET_MAP_LOADED,
+    mapId,
+  };
+}
+export function setShowFFasCircles(showAsCircles) {
+  return {
+    type: SET_SHOW_FF_AS_CIRCLES,
+    showAsCircles,
   };
 }

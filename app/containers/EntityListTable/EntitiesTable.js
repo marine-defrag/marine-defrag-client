@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, ResponsiveContext } from 'grommet';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { isMinSize } from 'utils/responsive';
 
 import CellBodyMain from './CellBodyMain';
@@ -20,11 +20,20 @@ const Table = styled.table`
   width: inherit;
   table-layout: fixed;
   width: 100%;
+  ${({ isPrint }) => isPrint && css`pointer-events: none;`}
+  @media print {
+    display: block;
+    page-break-inside: auto;
+  }
 `;
 const TableHeader = styled.thead``;
 const TableBody = styled.tbody``;
 const TableRow = styled.tr`
   height: 100%;
+  @media print {
+    height: auto;
+    page-break-inside: avoid;
+  }
 `;
 const getColWidth = ({
   col, count, isIndicator, colSpan = 1,
@@ -71,8 +80,8 @@ const TableCellHeader = styled.th`
     if (utility) return 'transparent';
     return 'rgba(0,0,0,0.33)';
   }};
-  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 16 : 8}px;
-  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 16 : 8}px;
+  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 16 : 0}px;
+  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 16 : 0}px;
   padding-top: 6px;
   padding-bottom: 6px;
   width: 100%;
@@ -90,8 +99,8 @@ const TableCellBody = styled.td`
   height: 100%;
   text-align: start;
   border-bottom: solid 1px #DADADA;
-  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 20 : 8}px;
-  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 20 : 8}px;
+  padding-left: ${({ col, first }) => (col.align !== 'end' && !first) ? 16 : 0}px;
+  padding-right: ${({ col, last }) => (col.align === 'end' && !last) ? 16 : 0}px;
   padding-top: 6px;
   padding-bottom: 6px;
   word-wrap:break-word;
@@ -114,11 +123,12 @@ export function EntitiesTable({
   headerColumnsUtility,
   memberOption,
   subjectOptions,
+  isPrintView,
 }) {
   const size = React.useContext(ResponsiveContext);
   return (
     <Box fill="horizontal">
-      <Table>
+      <Table isPrint={isPrintView}>
         {headerColumns && (
           <TableHeader>
             {headerColumnsUtility && isMinSize(size, 'large') && (
@@ -137,14 +147,14 @@ export function EntitiesTable({
                       utility
                     >
                       {col.type === 'options' && (
-                        <Box>
+                        <Box justify="end" fill="horizontal">
                           {subjectOptions && (
-                            <Box>
+                            <Box justify="end" fill="horizontal">
                               {subjectOptions}
                             </Box>
                           )}
                           {memberOption && (
-                            <Box>
+                            <Box justify="end" fill="horizontal">
                               {memberOption}
                             </Box>
                           )}
@@ -157,7 +167,7 @@ export function EntitiesTable({
             )}
             <TableRow>
               {headerColumns.map(
-                (col, i) => (isMinSize(size, 'large') || col.type === 'main') && (
+                (col, i) => (isMinSize(size, 'large') || isPrintView || col.type === 'main') && (
                   <TableCellHeader
                     key={i}
                     scope="col"
@@ -171,11 +181,12 @@ export function EntitiesTable({
                       {col.type === 'main' && (
                         <CellHeaderMain
                           column={col}
-                          canEdit={canEdit}
+                          canEdit={canEdit && !isPrintView}
+                          isPrintView={isPrintView}
                         />
                       )}
-                      {isMinSize(size, 'large') && col.type !== 'main' && (
-                        <CellHeaderPlain column={col} />
+                      {(isMinSize(size, 'large') || isPrintView) && col.type !== 'main' && (
+                        <CellHeaderPlain column={col} isPrintView={isPrintView} />
                       )}
                     </TableCellHeaderInner>
                   </TableCellHeader>
@@ -188,7 +199,7 @@ export function EntitiesTable({
           {entities.length > 0 && entities.map((entity, key) => (
             <TableRow key={key}>
               {columns.map((col, i) => entity[col.id]
-                && (isMinSize(size, 'large') || col.type === 'main')
+                && (isMinSize(size, 'large') || isPrintView || col.type === 'main')
                 && (
                   <TableCellBody
                     key={i}
@@ -202,7 +213,7 @@ export function EntitiesTable({
                       {col.type === 'main' && (
                         <CellBodyMain
                           entity={entity[col.id]}
-                          canEdit={canEdit}
+                          canEdit={canEdit && !isPrintView}
                           column={col}
                         />
                       )}
@@ -292,6 +303,7 @@ EntitiesTable.propTypes = {
   onEntityClick: PropTypes.func,
   memberOption: PropTypes.node,
   subjectOptions: PropTypes.node,
+  isPrintView: PropTypes.bool,
 };
 
 export default EntitiesTable;

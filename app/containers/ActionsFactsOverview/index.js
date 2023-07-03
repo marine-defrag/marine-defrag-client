@@ -18,7 +18,7 @@ import { updatePath } from 'containers/App/actions';
 import HeaderExplore from 'containers/HeaderExplore';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
-import Content from 'components/styled/Content';
+import Content from 'components/styled/ContentSimple';
 import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
 import ButtonFactory from 'components/buttons/ButtonFactory';

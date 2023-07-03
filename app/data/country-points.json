@@ -3,16 +3,20 @@
   "name": "country-points",
   "crs": {
     "type": "name",
-    "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" }
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
   },
+
   "features": [
     {
       "type": "Feature",
       "properties": {
-        "code": "ABW",
+        "ADM0_A3": "ABW",
         "name_en": "Aruba",
         "name_de": "Aruba",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -22,20 +26,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "AFG",
+        "ADM0_A3": "AFG",
         "name_en": "Afghanistan",
         "name_de": "Afghanistan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [66.00473366, 33.83523073] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [66.00473366, 33.83523073]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "AGO",
+        "ADM0_A3": "AGO",
         "name_en": "Angola",
         "name_de": "Angola",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -45,60 +54,81 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "AIA",
+        "ADM0_A3": "AIA",
         "name_en": "Anguilla",
         "name_de": "Anguilla",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [-63.06498927, 18.2239595] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-63.06498927, 18.2239595]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ALB",
+        "ADM0_A3": "ALB",
         "name_en": "Albania",
         "name_de": "Albanien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
-      "geometry": { "type": "Point", "coordinates": [20.04983396, 41.14244989] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [20.04983396, 41.14244989]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ALD",
+        "ADM0_A3": "ALD",
         "name_en": "Aland",
         "name_de": "Aland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [19.95328768, 60.21488688] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [19.95328768, 60.21488688]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "AND",
+        "ADM0_A3": "AND",
         "name_en": "Andorra",
         "name_de": "Andorra",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 4
       },
-      "geometry": { "type": "Point", "coordinates": [1.560543779, 42.54229102] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [1.560543779, 42.54229102]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ARE",
+        "ADM0_A3": "ARE",
         "name_en": "United Arab Emirates",
         "name_de": "Vereinigte Arabische Emirate",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [54.3001671, 23.90528188] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [54.3001671, 23.90528188]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ARG",
+        "ADM0_A3": "ARG",
         "name_en": "Argentina",
         "name_de": "Argentinien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -108,20 +138,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ARM",
+        "ADM0_A3": "ARM",
         "name_en": "Armenia",
         "name_de": "Armenien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
-      "geometry": { "type": "Point", "coordinates": [44.92993276, 40.28952569] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [44.92993276, 40.28952569]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ASM",
+        "ADM0_A3": "ASM",
         "name_en": "American Samoa",
         "name_de": "Amerikanisch-Samoa",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -131,10 +166,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ATA",
+        "ADM0_A3": "ATA",
         "name_en": "Antarctica",
         "name_de": "Antarktika",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -144,10 +180,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ATC",
+        "ADM0_A3": "ATC",
         "name_en": "Ashmore and Cartier Islands",
         "name_de": "Ashmore- und Cartierinseln",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -157,10 +194,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ATF",
+        "ADM0_A3": "ATF",
         "name_en": "French Southern and Antarctic Lands",
         "name_de": "Französische Süd- und Antarktisgebiete",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -170,20 +208,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ATG",
+        "ADM0_A3": "ATG",
         "name_en": "Antigua and Barbuda",
         "name_de": "Antigua und Barbuda",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
-      "geometry": { "type": "Point", "coordinates": [-61.79469343, 17.2774996] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-61.79469343, 17.2774996]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "AUS",
+        "ADM0_A3": "AUS",
         "name_en": "Australia",
         "name_de": "Australien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -193,30 +236,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "AUT",
+        "ADM0_A3": "AUT",
         "name_en": "Austria",
         "name_de": "Österreich",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [14.1264761, 47.58549439] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [14.1264761, 47.58549439]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "AZE",
+        "ADM0_A3": "AZE",
         "name_en": "Azerbaijan",
         "name_de": "Aserbaidschan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [47.54599879, 40.28827235] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [47.54599879, 40.28827235]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "BDI",
+        "ADM0_A3": "BDI",
         "name_en": "Burundi",
         "name_de": "Burundi",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
       "geometry": {
         "type": "Point",
@@ -226,30 +278,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BEL",
+        "ADM0_A3": "BEL",
         "name_en": "Belgium",
         "name_de": "Belgien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [4.640651139, 50.63981576] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [4.640651139, 50.63981576]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "BEN",
+        "ADM0_A3": "BEN",
         "name_en": "Benin",
         "name_de": "Benin",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [2.327852544, 9.641759702] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [2.327852544, 9.641759702]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "BFA",
+        "ADM0_A3": "BFA",
         "name_en": "Burkina Faso",
         "name_de": "Burkina Faso",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -259,40 +320,53 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BGD",
+        "ADM0_A3": "BGD",
         "name_en": "Bangladesh",
         "name_de": "Bangladesch",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [90.23812743, 23.86731158] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [90.23812743, 23.86731158]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "BGR",
+        "ADM0_A3": "BGR",
         "name_en": "Bulgaria",
         "name_de": "Bulgarien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [25.21552909, 42.76890318] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [25.21552909, 42.76890318]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "BHR",
+        "ADM0_A3": "BHR",
         "name_en": "Bahrain",
         "name_de": "Bahrain",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
-      "geometry": { "type": "Point", "coordinates": [50.54196932, 26.04205135] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [50.54196932, 26.04205135]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "CAN",
+        "ADM0_A3": "CAN",
         "name_en": "Canada",
         "name_de": "Kanada",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -302,10 +376,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BHS",
+        "ADM0_A3": "BHS",
         "name_en": "The Bahamas",
         "name_de": "Bahamas",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 3
       },
       "geometry": {
         "type": "Point",
@@ -315,20 +390,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BIH",
+        "ADM0_A3": "BIH",
         "name_en": "Bosnia and Herzegovina",
         "name_de": "Bosnien und Herzegowina",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [17.76876733, 44.17450125] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [17.76876733, 44.17450125]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "BLM",
+        "ADM0_A3": "BLM",
         "name_en": "Saint-Barthélemy",
         "name_de": "Saint-Barthélemy",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -338,20 +418,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BLR",
+        "ADM0_A3": "BLR",
         "name_en": "Belarus",
         "name_de": "Weißrussland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [28.03209307, 53.53131377] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [28.03209307, 53.53131377]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "BLZ",
+        "ADM0_A3": "BLZ",
         "name_en": "Belize",
         "name_de": "Belize",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
       "geometry": {
         "type": "Point",
@@ -361,20 +446,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BMU",
+        "ADM0_A3": "BMU",
         "name_en": "Bermuda",
         "name_de": "Bermuda",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [-64.7545589, 32.31367802] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-64.7545589, 32.31367802]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "BOL",
+        "ADM0_A3": "BOL",
         "name_en": "Bolivia",
         "name_de": "Bolivien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -384,10 +474,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BRA",
+        "ADM0_A3": "BRA",
         "name_en": "Brazil",
         "name_de": "Brasilien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -397,40 +488,53 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "BRB",
+        "ADM0_A3": "BRB",
         "name_en": "Barbados",
         "name_de": "Barbados",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
-      "geometry": { "type": "Point", "coordinates": [-59.559797, 13.18145428] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-59.559797, 13.18145428]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "BRN",
+        "ADM0_A3": "BRN",
         "name_en": "Brunei",
         "name_de": "Brunei",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [114.7220304, 4.519689575] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [114.7220304, 4.519689575]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "BTN",
+        "ADM0_A3": "BTN",
         "name_en": "Bhutan",
         "name_de": "Bhutan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [90.40188155, 27.41106589] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [90.40188155, 27.41106589]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "BWA",
+        "ADM0_A3": "BWA",
         "name_en": "Botswana",
         "name_de": "Botswana",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -440,30 +544,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CAF",
+        "ADM0_A3": "CAF",
         "name_en": "Central African Republic",
         "name_de": "Zentralafrikanische Republik",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [20.46826831, 6.56823297] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [20.46826831, 6.56823297]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "CHE",
+        "ADM0_A3": "CHE",
         "name_en": "Switzerland",
         "name_de": "Schweiz",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [8.208674706, 46.79785878] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [8.208674706, 46.79785878]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "CHL",
+        "ADM0_A3": "CHL",
         "name_en": "Chile",
         "name_de": "Chile",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -473,50 +586,67 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CHN",
+        "ADM0_A3": "CHN",
         "name_en": "People's Republic of China",
         "name_de": "Volksrepublik China",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [107.1820773, 34.26845927] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [107.1820773, 34.26845927]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "CIV",
+        "ADM0_A3": "CIV",
         "name_en": "Ivory Coast",
         "name_de": "Elfenbeinküste",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [-5.5692157, 7.628426202] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-5.5692157, 7.628426202]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "CMR",
+        "ADM0_A3": "CMR",
         "name_en": "Cameroon",
         "name_de": "Kamerun",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [12.73964156, 5.69109849] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [12.73964156, 5.69109849]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "COD",
+        "ADM0_A3": "COD",
         "name_en": "Democratic Republic of the Congo",
         "name_de": "Demokratische Republik Kongo",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [23.64396107, -2.87746289] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [23.64396107, -2.87746289]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "COG",
+        "ADM0_A3": "COG",
         "name_en": "Republic of Congo",
         "name_de": "Republik Kongo",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -526,10 +656,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "COK",
+        "ADM0_A3": "COK",
         "name_en": "Cook Islands",
         "name_de": "Cookinseln",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 6
       },
       "geometry": {
         "type": "Point",
@@ -539,10 +670,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "COL",
+        "ADM0_A3": "COL",
         "name_en": "Colombia",
         "name_de": "Kolumbien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -552,10 +684,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "COM",
+        "ADM0_A3": "COM",
         "name_en": "Comoros",
         "name_de": "Komoren",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 4
       },
       "geometry": {
         "type": "Point",
@@ -565,20 +698,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CPV",
+        "ADM0_A3": "CPV",
         "name_en": "Cape Verde",
         "name_de": "Kap Verde",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 4
       },
-      "geometry": { "type": "Point", "coordinates": [-23.9598882, 15.95523324] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-23.9598882, 15.95523324]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "CRI",
+        "ADM0_A3": "CRI",
         "name_en": "Costa Rica",
         "name_de": "Costa Rica",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -588,10 +726,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CUB",
+        "ADM0_A3": "CUB",
         "name_en": "Cuba",
         "name_de": "Kuba",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -601,10 +740,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CUW",
+        "ADM0_A3": "CUW",
         "name_en": "Curaçao",
         "name_de": "Curaçao",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -614,10 +754,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CYM",
+        "ADM0_A3": "CYM",
         "name_en": "Cayman Islands",
         "name_de": "Cayman Islands",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -627,80 +768,109 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "CYN",
+        "ADM0_A3": "CYN",
         "name_en": "Northern Cyprus",
         "name_de": "Northern Cyprus",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [33.5684813, 35.26277486] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [33.5684813, 35.26277486]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "CYP",
+        "ADM0_A3": "CYP",
         "name_en": "Cyprus",
         "name_de": "Republik Zypern",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 2
       },
-      "geometry": { "type": "Point", "coordinates": [33.0060022, 34.91667211] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [33.0060022, 34.91667211]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "CZE",
+        "ADM0_A3": "CZE",
         "name_en": "Czech Republic",
         "name_de": "Tschechien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [15.31240163, 49.73341233] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [15.31240163, 49.73341233]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "DEU",
+        "ADM0_A3": "DEU",
         "name_en": "Germany",
         "name_de": "Deutschland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [10.38578051, 51.10698181] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [10.38578051, 51.10698181]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "DJI",
+        "ADM0_A3": "DJI",
         "name_en": "Djibouti",
         "name_de": "Dschibuti",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
-      "geometry": { "type": "Point", "coordinates": [42.5606754, 11.74871806] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [42.5606754, 11.74871806]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "DMA",
+        "ADM0_A3": "DMA",
         "name_en": "Dominica",
         "name_de": "Dominica",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
-      "geometry": { "type": "Point", "coordinates": [-61.357726, 15.4394702] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-61.357726, 15.4394702]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "DNK",
+        "ADM0_A3": "DNK",
         "name_en": "Denmark",
         "name_de": "Dänemark",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [10.02800992, 55.98125296] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [10.02800992, 55.98125296]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "DOM",
+        "ADM0_A3": "DOM",
         "name_en": "Dominican Republic",
         "name_de": "Dominikanische Republik",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -710,20 +880,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "DZA",
+        "ADM0_A3": "DZA",
         "name_en": "Algeria",
         "name_de": "Algerien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [2.617323009, 28.15893849] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [2.617323009, 28.15893849]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ECU",
+        "ADM0_A3": "ECU",
         "name_en": "Ecuador",
         "name_de": "Ecuador",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -733,30 +908,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "EGY",
+        "ADM0_A3": "EGY",
         "name_en": "Egypt",
         "name_de": "Ägypten",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [29.86190099, 26.49593311] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [29.86190099, 26.49593311]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ERI",
+        "ADM0_A3": "ERI",
         "name_en": "Eritrea",
         "name_de": "Eritrea",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [38.84617011, 15.36186618] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [38.84617011, 15.36186618]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ESP",
+        "ADM0_A3": "ESP",
         "name_en": "Spain",
         "name_de": "Spanien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -766,40 +950,53 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "EST",
+        "ADM0_A3": "EST",
         "name_en": "Estonia",
         "name_de": "Estland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [25.54248537, 58.67192972] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [25.54248537, 58.67192972]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ETH",
+        "ADM0_A3": "ETH",
         "name_en": "Ethiopia",
         "name_de": "Äthiopien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [39.60080098, 8.622786793] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [39.60080098, 8.622786793]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "FIN",
+        "ADM0_A3": "FIN",
         "name_en": "Finland",
         "name_de": "Finnland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [26.2746656, 64.49884603] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [26.2746656, 64.49884603]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "FJI",
+        "ADM0_A3": "FJI",
         "name_en": "Fiji",
         "name_de": "Fidschi",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 2
       },
       "geometry": {
         "type": "Point",
@@ -809,10 +1006,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "FLK",
+        "ADM0_A3": "FLK",
         "name_en": "Falkland Islands",
         "name_de": "Falklandinseln",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -822,20 +1020,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "FRA",
+        "ADM0_A3": "FRA",
         "name_en": "France",
         "name_de": "Frankreich",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [1.960291597, 47.0687625] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [1.960291597, 47.0687625]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "FRO",
+        "ADM0_A3": "FRO",
         "name_en": "Faroe Islands",
         "name_de": "Färöer",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -845,30 +1048,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "FSM",
+        "ADM0_A3": "FSM",
         "name_en": "Federated States of Micronesia",
         "name_de": "Mikronesien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
-      "geometry": { "type": "Point", "coordinates": [158.158889, 6.917222] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [158.158889, 6.917222]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "GAB",
+        "ADM0_A3": "GAB",
         "name_en": "Gabon",
         "name_de": "Gabun",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [11.7886287, -0.58660025] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [11.7886287, -0.58660025]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "GBR",
+        "ADM0_A3": "GBR",
         "name_en": "United Kingdom",
         "name_de": "Vereinigtes Königreich",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -878,20 +1090,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GEO",
+        "ADM0_A3": "GEO",
         "name_en": "Georgia",
         "name_de": "Georgien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [43.50780252, 42.16855755] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [43.50780252, 42.16855755]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "GGY",
+        "ADM0_A3": "GGY",
         "name_en": "Guernsey",
         "name_de": "Guernsey",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -901,10 +1118,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GHA",
+        "ADM0_A3": "GHA",
         "name_en": "Ghana",
         "name_de": "Ghana",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -914,10 +1132,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GIN",
+        "ADM0_A3": "GIN",
         "name_en": "Guinea",
         "name_de": "Guinea",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -927,10 +1146,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GMB",
+        "ADM0_A3": "GMB",
         "name_en": "The Gambia",
         "name_de": "Gambia",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 3
       },
       "geometry": {
         "type": "Point",
@@ -940,10 +1160,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GNB",
+        "ADM0_A3": "GNB",
         "name_en": "Guinea-Bissau",
         "name_de": "Guinea-Bissau",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -953,30 +1174,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GNQ",
+        "ADM0_A3": "GNQ",
         "name_en": "Equatorial Guinea",
         "name_de": "Äquatorialguinea",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
-      "geometry": { "type": "Point", "coordinates": [10.34137924, 1.705551355] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [10.34137924, 1.705551355]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "GRC",
+        "ADM0_A3": "GRC",
         "name_en": "Greece",
         "name_de": "Griechenland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [22.95555794, 39.07469623] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [22.95555794, 39.07469623]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "GRD",
+        "ADM0_A3": "GRD",
         "name_en": "Grenada",
         "name_de": "Grenada",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
       "geometry": {
         "type": "Point",
@@ -986,10 +1216,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GRL",
+        "ADM0_A3": "GRL",
         "name_en": "Greenland (Denmark)",
         "name_de": "Grönland (Dänemark)",
-        "code_sovereign": "DNK"
+        "code_sovereign": "DNK",
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -999,10 +1230,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GTM",
+        "ADM0_A3": "GTM",
         "name_en": "Guatemala",
         "name_de": "Guatemala",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1012,10 +1244,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GUM",
+        "ADM0_A3": "GUM",
         "name_en": "Guam",
         "name_de": "Guam",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1025,50 +1258,67 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "GUY",
+        "ADM0_A3": "GUY",
         "name_en": "Guyana",
         "name_de": "Guyana",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [-58.98202459, 4.79378034] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-58.98202459, 4.79378034]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "HMD",
+        "ADM0_A3": "HMD",
         "name_en": "Heard Island and McDonald Islands",
         "name_de": "Heard und McDonaldinseln",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [73.5205171, -53.08724656] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [73.5205171, -53.08724656]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "HND",
+        "ADM0_A3": "HND",
         "name_en": "Honduras",
         "name_de": "Honduras",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [-86.6151661, 14.82688165] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-86.6151661, 14.82688165]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "HRV",
+        "ADM0_A3": "HRV",
         "name_en": "Croatia",
         "name_de": "Kroatien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [16.40412899, 45.08047631] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [16.40412899, 45.08047631]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "HTI",
+        "ADM0_A3": "HTI",
         "name_en": "Haiti",
         "name_de": "Haiti",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
       "geometry": {
         "type": "Point",
@@ -1078,20 +1328,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "HUN",
+        "ADM0_A3": "HUN",
         "name_en": "Hungary",
         "name_de": "Ungarn",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [19.39559116, 47.16277506] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [19.39559116, 47.16277506]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "IDN",
+        "ADM0_A3": "IDN",
         "name_en": "Indonesia",
         "name_de": "Indonesien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1101,10 +1356,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "IMN",
+        "ADM0_A3": "IMN",
         "name_en": "Isle of Man",
         "name_de": "Isle of Man",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1114,30 +1370,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "IND",
+        "ADM0_A3": "IND",
         "name_en": "India",
         "name_de": "Indien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [79.6119761, 22.88578212] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.6119761, 22.88578212]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "IOA",
+        "ADM0_A3": "IOA",
         "name_en": "Indian Ocean Territories",
         "name_de": "Indian Ocean Territories",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [104.851898, -10.6478515] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [104.851898, -10.6478515]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "IOT",
+        "ADM0_A3": "IOT",
         "name_en": "British Indian Ocean Territory",
         "name_de": "Britisches Territorium im Indischen Ozean",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1147,40 +1412,53 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "IRL",
+        "ADM0_A3": "IRL",
         "name_en": "Ireland",
         "name_de": "Irland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [-8.137935687, 53.1754487] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-8.137935687, 53.1754487]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "IRN",
+        "ADM0_A3": "IRN",
         "name_en": "Iran",
         "name_de": "Iran",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [54.27407004, 32.57503292] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [54.27407004, 32.57503292]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "IRQ",
+        "ADM0_A3": "IRQ",
         "name_en": "Iraq",
         "name_de": "Irak",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [43.74353149, 33.03970582] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [43.74353149, 33.03970582]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ISL",
+        "ADM0_A3": "ISL",
         "name_en": "Iceland",
         "name_de": "Island",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1190,30 +1468,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ISR",
+        "ADM0_A3": "ISR",
         "name_en": "Israel",
         "name_de": "Israel",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
-      "geometry": { "type": "Point", "coordinates": [35.00771788, 31.75691157] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [35.00771788, 31.75691157]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ITA",
+        "ADM0_A3": "ITA",
         "name_en": "Italy",
         "name_de": "Italien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [12.07001339, 42.79662641] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [12.07001339, 42.79662641]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "JAM",
+        "ADM0_A3": "JAM",
         "name_en": "Jamaica",
         "name_de": "Jamaika",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 2
       },
       "geometry": {
         "type": "Point",
@@ -1223,10 +1510,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "JEY",
+        "ADM0_A3": "JEY",
         "name_en": "Jersey",
         "name_de": "Jersey",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1236,150 +1524,207 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "JOR",
+        "ADM0_A3": "JOR",
         "name_en": "Jordan",
         "name_de": "Jordanien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [36.77136104, 31.24579091] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [36.77136104, 31.24579091]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "JPN",
+        "ADM0_A3": "JPN",
         "name_en": "Japan",
         "name_de": "Japan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [138.0308956, 37.59230135] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [138.0308956, 37.59230135]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "KAS",
+        "ADM0_A3": "KAS",
         "name_en": "Siachen Glacier",
         "name_de": "Siachen-Gletscher",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [77.18011865, 35.39236325] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.18011865, 35.39236325]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "KAZ",
+        "ADM0_A3": "KAZ",
         "name_en": "Kazakhstan",
         "name_de": "Kasachstan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [67.29149357, 48.15688067] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [67.29149357, 48.15688067]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "KEN",
+        "ADM0_A3": "KEN",
         "name_en": "Kenya",
         "name_de": "Kenia",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [37.79593973, 0.599880215] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [37.79593973, 0.599880215]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "KGZ",
+        "ADM0_A3": "KGZ",
         "name_en": "Kyrgyzstan",
         "name_de": "Kirgisistan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [74.54165513, 41.46221943] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [74.54165513, 41.46221943]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "KHM",
+        "ADM0_A3": "KHM",
         "name_en": "Cambodia",
         "name_de": "Kambodscha",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [104.9069432, 12.72004786] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [104.9069432, 12.72004786]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "KIR",
+        "ADM0_A3": "KIR",
         "name_en": "Kiribati",
         "name_de": "Kiribati",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 8
       },
-      "geometry": { "type": "Point", "coordinates": [173.0253191, 1.303027597] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [173.0253191, 1.303027597]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "KNA",
+        "ADM0_A3": "KNA",
         "name_en": "Saint Kitts and Nevis",
         "name_de": "St. Kitts und Nevis",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
-      "geometry": { "type": "Point", "coordinates": [-62.68755265, 17.2645995] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-62.68755265, 17.2645995]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "KOR",
+        "ADM0_A3": "KOR",
         "name_en": "South Korea",
         "name_de": "Südkorea",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [127.8391609, 36.38523983] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [127.8391609, 36.38523983]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "KOS",
+        "ADM0_A3": "KOS",
         "name_en": "Kosovo",
         "name_de": "Kosovo",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [20.87249811, 42.57078707] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [20.87249811, 42.57078707]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "KWT",
+        "ADM0_A3": "KWT",
         "name_en": "Kuwait",
         "name_de": "Kuwait",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
-      "geometry": { "type": "Point", "coordinates": [47.58700459, 29.33431262] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [47.58700459, 29.33431262]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "LAO",
+        "ADM0_A3": "LAO",
         "name_en": "Laos",
         "name_de": "Laos",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [103.7377241, 18.50217433] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [103.7377241, 18.50217433]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "LBN",
+        "ADM0_A3": "LBN",
         "name_en": "Lebanon",
         "name_de": "Libanon",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 2
       },
-      "geometry": { "type": "Point", "coordinates": [35.88016072, 33.92306631] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [35.88016072, 33.92306631]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "LBR",
+        "ADM0_A3": "LBR",
         "name_en": "Liberia",
         "name_de": "Liberia",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1389,20 +1734,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LBY",
+        "ADM0_A3": "LBY",
         "name_en": "Libya",
         "name_de": "Libyen",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [18.00866169, 27.03094495] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [18.00866169, 27.03094495]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "LCA",
+        "ADM0_A3": "LCA",
         "name_en": "Saint Lucia",
         "name_de": "St. Lucia",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
       "geometry": {
         "type": "Point",
@@ -1412,30 +1762,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LIE",
+        "ADM0_A3": "LIE",
         "name_en": "Liechtenstein",
         "name_de": "Liechtenstein",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 6
       },
-      "geometry": { "type": "Point", "coordinates": [9.535743118, 47.13665835] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [9.535743118, 47.13665835]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "LKA",
+        "ADM0_A3": "LKA",
         "name_en": "Sri Lanka",
         "name_de": "Sri Lanka",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [80.70108238, 7.612665092] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [80.70108238, 7.612665092]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "LSO",
+        "ADM0_A3": "LSO",
         "name_en": "Lesotho",
         "name_de": "Lesotho",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1445,50 +1804,67 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "LTU",
+        "ADM0_A3": "LTU",
         "name_en": "Lithuania",
         "name_de": "Litauen",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [23.88719355, 55.32610984] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [23.88719355, 55.32610984]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "LUX",
+        "ADM0_A3": "LUX",
         "name_en": "Luxembourg",
         "name_de": "Luxemburg",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 3
       },
-      "geometry": { "type": "Point", "coordinates": [6.071822011, 49.76725361] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.071822011, 49.76725361]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "LVA",
+        "ADM0_A3": "LVA",
         "name_en": "Latvia",
         "name_de": "Lettland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [24.91235983, 56.85085163] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.91235983, 56.85085163]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MAC",
+        "ADM0_A3": "MAC",
         "name_en": "Macau",
         "name_de": "Macau",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [113.5093212, 22.22311688] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [113.5093212, 22.22311688]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MAF",
+        "ADM0_A3": "MAF",
         "name_en": "Saint Martin",
         "name_de": "Saint-Martin",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1498,10 +1874,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MAR",
+        "ADM0_A3": "MAR",
         "name_en": "Morocco",
         "name_de": "Marokko",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1511,30 +1888,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MCO",
+        "ADM0_A3": "MCO",
         "name_en": "Monaco",
         "name_de": "Monaco",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 99
       },
-      "geometry": { "type": "Point", "coordinates": [7.406276769, 43.75274627] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [7.406276769, 43.75274627]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MDA",
+        "ADM0_A3": "MDA",
         "name_en": "Moldova",
         "name_de": "Republik Moldau",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [28.45673372, 47.19498804] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [28.45673372, 47.19498804]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MDG",
+        "ADM0_A3": "MDG",
         "name_en": "Madagascar",
         "name_de": "Madagaskar",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1544,20 +1930,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MDV",
+        "ADM0_A3": "MDV",
         "name_en": "Maldives",
         "name_de": "Malediven",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 8
       },
-      "geometry": { "type": "Point", "coordinates": [73.45713004, 3.7287092] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [73.45713004, 3.7287092]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MEX",
+        "ADM0_A3": "MEX",
         "name_en": "Mexico",
         "name_de": "Mexiko",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1567,30 +1958,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MHL",
+        "ADM0_A3": "MHL",
         "name_en": "Marshall Islands",
         "name_de": "Marshallinseln",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 7
       },
-      "geometry": { "type": "Point", "coordinates": [171.066667, 7.116667] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [171.066667, 7.116667]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MKD",
+        "ADM0_A3": "MKD",
         "name_en": "Republic of Macedonia",
         "name_de": "Mazedonien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
-      "geometry": { "type": "Point", "coordinates": [21.68211346, 41.59530893] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [21.68211346, 41.59530893]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MLI",
+        "ADM0_A3": "MLI",
         "name_en": "Mali",
         "name_de": "Mali",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1600,60 +2000,81 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MLT",
+        "ADM0_A3": "MLT",
         "name_en": "Malta",
         "name_de": "Malta",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
-      "geometry": { "type": "Point", "coordinates": [14.40523316, 35.92149632] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [14.40523316, 35.92149632]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MMR",
+        "ADM0_A3": "MMR",
         "name_en": "Myanmar",
         "name_de": "Myanmar",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [96.48843321, 21.18566599] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [96.48843321, 21.18566599]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MNE",
+        "ADM0_A3": "MNE",
         "name_en": "Montenegro",
         "name_de": "Montenegro",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 2
       },
-      "geometry": { "type": "Point", "coordinates": [19.23883939, 42.78890259] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [19.23883939, 42.78890259]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MNG",
+        "ADM0_A3": "MNG",
         "name_en": "Mongolia",
         "name_de": "Mongolei",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [103.0529976, 46.82681544] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [103.0529976, 46.82681544]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MNP",
+        "ADM0_A3": "MNP",
         "name_en": "Northern Mariana Islands",
         "name_de": "Nördliche Marianen",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [145.6196965, 15.82927563] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [145.6196965, 15.82927563]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "MOZ",
+        "ADM0_A3": "MOZ",
         "name_en": "Mozambique",
         "name_de": "Mosambik",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1663,10 +2084,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MRT",
+        "ADM0_A3": "MRT",
         "name_en": "Mauritania",
         "name_de": "Mauretanien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1676,10 +2098,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MSR",
+        "ADM0_A3": "MSR",
         "name_en": "Montserrat",
         "name_de": "Montserrat",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1689,10 +2112,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MUS",
+        "ADM0_A3": "MUS",
         "name_en": "Mauritius",
         "name_de": "Mauritius",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 4
       },
       "geometry": {
         "type": "Point",
@@ -1702,10 +2126,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MWI",
+        "ADM0_A3": "MWI",
         "name_en": "Malawi",
         "name_de": "Malawi",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1715,20 +2140,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "MYS",
+        "ADM0_A3": "MYS",
         "name_en": "Malaysia",
         "name_de": "Malaysia",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [109.6976228, 3.789868456] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [109.6976228, 3.789868456]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "NAM",
+        "ADM0_A3": "NAM",
         "name_en": "Namibia",
         "name_de": "Namibia",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1738,10 +2168,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NCL",
+        "ADM0_A3": "NCL",
         "name_en": "New Caledonia",
         "name_de": "Neukaledonien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1751,20 +2182,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NER",
+        "ADM0_A3": "NER",
         "name_en": "Niger",
         "name_de": "Niger",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [9.385458815, 17.41912493] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [9.385458815, 17.41912493]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "NFK",
+        "ADM0_A3": "NFK",
         "name_en": "Norfolk Island",
         "name_de": "Norfolk Island",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1774,30 +2210,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NGA",
+        "ADM0_A3": "NGA",
         "name_en": "Nigeria",
         "name_de": "Nigeria",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [8.089438948, 9.594114522] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [8.089438948, 9.594114522]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "NIC",
+        "ADM0_A3": "NIC",
         "name_en": "Nicaragua",
         "name_de": "Nicaragua",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [-85.0305297, 12.84709429] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-85.0305297, 12.84709429]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "NIU",
+        "ADM0_A3": "NIU",
         "name_en": "Niue",
         "name_de": "Niue",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 6
       },
       "geometry": {
         "type": "Point",
@@ -1807,80 +2252,109 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "NLD",
+        "ADM0_A3": "NLD",
         "name_en": "Netherlands",
         "name_de": "Niederlande",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [5.28144793, 52.1007899] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [5.28144793, 52.1007899]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "NOR",
+        "ADM0_A3": "NOR",
         "name_en": "Norway",
         "name_de": "Norwegen",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [15.34834656, 68.75015572] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [15.34834656, 68.75015572]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "NPL",
+        "ADM0_A3": "NPL",
         "name_en": "Nepal",
         "name_de": "Nepal",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [83.9158264, 28.24891365] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [83.9158264, 28.24891365]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "NRU",
+        "ADM0_A3": "NRU",
         "name_en": "Nauru",
         "name_de": "Nauru",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 8
       },
-      "geometry": { "type": "Point", "coordinates": [166.9325682, -0.51912639] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [166.9325682, -0.51912639]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "NZL",
+        "ADM0_A3": "NZL",
         "name_en": "New Zealand",
         "name_de": "Neuseeland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [173.3059537, -41.4906106] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [173.3059537, -41.4906106]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "OMN",
+        "ADM0_A3": "OMN",
         "name_en": "Oman",
         "name_de": "Oman",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [56.09166155, 20.60515333] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [56.09166155, 20.60515333]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "PAK",
+        "ADM0_A3": "PAK",
         "name_en": "Pakistan",
         "name_de": "Pakistan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [69.33957937, 29.9497515] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [69.33957937, 29.9497515]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "PAN",
+        "ADM0_A3": "PAN",
         "name_en": "Panama",
         "name_de": "Panama",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1890,10 +2364,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PCN",
+        "ADM0_A3": "PCN",
         "name_en": "Pitcairn Islands",
         "name_de": "Pitcairninseln",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1903,10 +2378,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PER",
+        "ADM0_A3": "PER",
         "name_en": "Peru",
         "name_de": "Peru",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1916,30 +2392,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PHL",
+        "ADM0_A3": "PHL",
         "name_en": "Philippines",
         "name_de": "Philippinen",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [122.8839325, 11.77536778] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [122.8839325, 11.77536778]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "PLW",
+        "ADM0_A3": "PLW",
         "name_en": "Palau",
         "name_de": "Palau",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 6
       },
-      "geometry": { "type": "Point", "coordinates": [134.4080797, 7.287427836] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [134.4080797, 7.287427836]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "PNG",
+        "ADM0_A3": "PNG",
         "name_en": "Papua New Guinea",
         "name_de": "Papua-Neuguinea",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1949,20 +2434,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "POL",
+        "ADM0_A3": "POL",
         "name_en": "Poland",
         "name_de": "Polen",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [19.39012835, 52.12759564] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [19.39012835, 52.12759564]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "PRI",
+        "ADM0_A3": "PRI",
         "name_en": "Puerto Rico",
         "name_de": "Puerto Rico",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1972,20 +2462,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PRK",
+        "ADM0_A3": "PRK",
         "name_en": "North Korea",
         "name_de": "Nordkorea",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [127.1924797, 40.15350311] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [127.1924797, 40.15350311]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "PRT",
+        "ADM0_A3": "PRT",
         "name_en": "Portugal",
         "name_de": "Portugal",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -1995,10 +2490,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PRY",
+        "ADM0_A3": "PRY",
         "name_en": "Paraguay",
         "name_de": "Paraguay",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2008,20 +2504,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "PSE",
+        "ADM0_A3": "PSE",
         "name_en": "Palestine",
         "name_de": "Palästina",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 3
       },
-      "geometry": { "type": "Point", "coordinates": [35.19628705, 31.91613893] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [35.19628705, 31.91613893]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "PYF",
+        "ADM0_A3": "PYF",
         "name_en": "French Polynesia",
         "name_de": "Französisch-Polynesien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2031,40 +2532,53 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "QAT",
+        "ADM0_A3": "QAT",
         "name_en": "Qatar",
         "name_de": "Katar",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 3
       },
-      "geometry": { "type": "Point", "coordinates": [51.18479632, 25.30601188] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [51.18479632, 25.30601188]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ROU",
+        "ADM0_A3": "ROU",
         "name_en": "Romania",
         "name_de": "Rumänien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [24.97293039, 45.85243127] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [24.97293039, 45.85243127]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "RUS",
+        "ADM0_A3": "RUS",
         "name_en": "Russia",
         "name_de": "Russland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [96.68656112, 61.98052209] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [96.68656112, 61.98052209]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "RWA",
+        "ADM0_A3": "RWA",
         "name_en": "Rwanda",
         "name_de": "Ruanda",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
       "geometry": {
         "type": "Point",
@@ -2074,10 +2588,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SAH",
+        "ADM0_A3": "SAH",
         "name_en": "Western Sahara",
         "name_de": "Westsahara",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2087,60 +2602,81 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SAU",
+        "ADM0_A3": "SAU",
         "name_en": "Saudi Arabia",
         "name_de": "Saudi-Arabien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [44.53686271, 24.12245841] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [44.53686271, 24.12245841]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SDN",
+        "ADM0_A3": "SDN",
         "name_en": "Sudan",
         "name_de": "Sudan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [29.94046812, 15.99035669] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [29.94046812, 15.99035669]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SSD",
+        "ADM0_A3": "SSD",
         "name_en": "South Sudan",
         "name_de": "Südsudan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [30.24790002, 7.308779449] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [30.24790002, 7.308779449]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SEN",
+        "ADM0_A3": "SEN",
         "name_en": "Senegal",
         "name_de": "Senegal",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [-14.4734924, 14.36624173] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-14.4734924, 14.36624173]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SGP",
+        "ADM0_A3": "SGP",
         "name_en": "Singapore",
         "name_de": "Singapur",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
-      "geometry": { "type": "Point", "coordinates": [103.8172559, 1.358760871] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [103.8172559, 1.358760871]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SGS",
+        "ADM0_A3": "SGS",
         "name_en": "South Georgia and the South Sandwich Islands",
         "name_de": "Südgeorgien und die Südlichen Sandwichinseln",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2150,10 +2686,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SHN",
+        "ADM0_A3": "SHN",
         "name_en": "Saint Helena",
         "name_de": "St. Helena",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2163,10 +2700,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SLB",
+        "ADM0_A3": "SLB",
         "name_en": "Solomon Islands",
         "name_de": "Salomonen",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 2
       },
       "geometry": {
         "type": "Point",
@@ -2176,20 +2714,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SLE",
+        "ADM0_A3": "SLE",
         "name_en": "Sierra Leone",
         "name_de": "Sierra Leone",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [-11.79271247, 8.56329593] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-11.79271247, 8.56329593]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SLV",
+        "ADM0_A3": "SLV",
         "name_en": "El Salvador",
         "name_de": "El Salvador",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
       "geometry": {
         "type": "Point",
@@ -2199,40 +2742,53 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SMR",
+        "ADM0_A3": "SMR",
         "name_en": "San Marino",
         "name_de": "San Marino",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 99
       },
-      "geometry": { "type": "Point", "coordinates": [12.45922334, 43.94186747] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [12.45922334, 43.94186747]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SOL",
+        "ADM0_A3": "SOL",
         "name_en": "Somaliland",
         "name_de": "Somaliland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [46.25198395, 9.733454963] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [46.25198395, 9.733454963]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SOM",
+        "ADM0_A3": "SOM",
         "name_en": "Somalia",
         "name_de": "Somalia",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [45.70714487, 4.750628761] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [45.70714487, 4.750628761]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SPM",
+        "ADM0_A3": "SPM",
         "name_en": "Saint Pierre and Miquelon",
         "name_de": "Saint-Pierre und Miquelon",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2242,80 +2798,109 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SRB",
+        "ADM0_A3": "SRB",
         "name_en": "Serbia",
         "name_de": "Serbien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [20.78958334, 44.2215032] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [20.78958334, 44.2215032]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "STP",
+        "ADM0_A3": "STP",
         "name_en": "São Tomé and Príncipe",
         "name_de": "São Tomé und Príncipe",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
-      "geometry": { "type": "Point", "coordinates": [6.724296579, 0.443914449] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [6.724296579, 0.443914449]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SUR",
+        "ADM0_A3": "SUR",
         "name_en": "Suriname",
         "name_de": "Suriname",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [-55.9123457, 4.13055413] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-55.9123457, 4.13055413]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SVK",
+        "ADM0_A3": "SVK",
         "name_en": "Slovakia",
         "name_de": "Slowakei",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [19.47905218, 48.70547528] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [19.47905218, 48.70547528]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SVN",
+        "ADM0_A3": "SVN",
         "name_en": "Slovenia",
         "name_de": "Slowenien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 1
       },
-      "geometry": { "type": "Point", "coordinates": [14.80444238, 46.11554772] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [14.80444238, 46.11554772]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SWE",
+        "ADM0_A3": "SWE",
         "name_en": "Sweden",
         "name_de": "Schweden",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [16.74558049, 62.77966519] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [16.74558049, 62.77966519]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SWZ",
+        "ADM0_A3": "SWZ",
         "name_en": "Eswatini",
         "name_de": "Swasiland",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 2
       },
-      "geometry": { "type": "Point", "coordinates": [31.4819369, -26.55843045] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [31.4819369, -26.55843045]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "SXM",
+        "ADM0_A3": "SXM",
         "name_en": "Sint Maarten",
         "name_de": "Sint Maarten",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2325,10 +2910,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SYC",
+        "ADM0_A3": "SYC",
         "name_en": "Seychelles",
         "name_de": "Seychellen",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 6
       },
       "geometry": {
         "type": "Point",
@@ -2338,20 +2924,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "SYR",
+        "ADM0_A3": "SYR",
         "name_en": "Syria",
         "name_de": "Syrien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [38.50788204, 35.02547389] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [38.50788204, 35.02547389]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "TCA",
+        "ADM0_A3": "TCA",
         "name_en": "Turks and Caicos Islands",
         "name_de": "Turks- und Caicosinseln",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2361,70 +2952,95 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TCD",
+        "ADM0_A3": "TCD",
         "name_en": "Chad",
         "name_de": "Tschad",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [18.64492513, 15.33333759] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [18.64492513, 15.33333759]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "TGO",
+        "ADM0_A3": "TGO",
         "name_en": "Togo",
         "name_de": "Togo",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [0.96232845, 8.525313561] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [0.96232845, 8.525313561]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "THA",
+        "ADM0_A3": "THA",
         "name_en": "Thailand",
         "name_de": "Thailand",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [101.0028813, 15.11815794] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [101.0028813, 15.11815794]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "TJK",
+        "ADM0_A3": "TJK",
         "name_en": "Tajikistan",
         "name_de": "Tadschikistan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [71.01362631, 38.5304539] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [71.01362631, 38.5304539]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "TKM",
+        "ADM0_A3": "TKM",
         "name_en": "Turkmenistan",
         "name_de": "Turkmenistan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [59.37100021, 39.11554137] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [59.37100021, 39.11554137]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "TLS",
+        "ADM0_A3": "TLS",
         "name_en": "East Timor",
         "name_de": "Osttimor",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 2
       },
-      "geometry": { "type": "Point", "coordinates": [125.8443898, -8.82889162] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [125.8443898, -8.82889162]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "TON",
+        "ADM0_A3": "TON",
         "name_en": "Tonga",
         "name_de": "Tonga",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 6
       },
       "geometry": {
         "type": "Point",
@@ -2434,10 +3050,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TTO",
+        "ADM0_A3": "TTO",
         "name_en": "Trinidad and Tobago",
         "name_de": "Trinidad und Tobago",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 3
       },
       "geometry": {
         "type": "Point",
@@ -2447,40 +3064,53 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "TUN",
+        "ADM0_A3": "TUN",
         "name_en": "Tunisia",
         "name_de": "Tunesien",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [9.552883589, 34.11956246] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [9.552883589, 34.11956246]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "TUR",
+        "ADM0_A3": "TUR",
         "name_en": "Turkey",
         "name_de": "Türkei",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [35.16895346, 39.0616029] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [35.16895346, 39.0616029]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "TUV",
+        "ADM0_A3": "TUV",
         "name_en": "Tuvalu",
         "name_de": "Tuvalu",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 8
       },
-      "geometry": { "type": "Point", "coordinates": [179.2, -8.516667] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [179.2, -8.516667]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "TZA",
+        "ADM0_A3": "TZA",
         "name_en": "Tanzania",
         "name_de": "Tanzania",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2490,30 +3120,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "UGA",
+        "ADM0_A3": "UGA",
         "name_en": "Uganda",
         "name_de": "Uganda",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [32.36907971, 1.274692987] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [32.36907971, 1.274692987]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "UKR",
+        "ADM0_A3": "UKR",
         "name_en": "Ukraine",
         "name_de": "Ukraine",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [31.38326469, 48.99656673] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [31.38326469, 48.99656673]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "URY",
+        "ADM0_A3": "URY",
         "name_en": "Uruguay",
         "name_de": "Uruguay",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2523,10 +3162,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "USA",
+        "ADM0_A3": "USA",
         "name_en": "United States of America",
         "name_de": "Vereinigte Staaten",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2536,30 +3176,39 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "UZB",
+        "ADM0_A3": "UZB",
         "name_en": "Uzbekistan",
         "name_de": "Usbekistan",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [63.14001528, 41.75554225] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [63.14001528, 41.75554225]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "VAT",
+        "ADM0_A3": "VAT",
         "name_en": "Vatican City",
         "name_de": "Vatikanstadt",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 99
       },
-      "geometry": { "type": "Point", "coordinates": [12.43387177, 41.90174985] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [12.43387177, 41.90174985]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "VCT",
+        "ADM0_A3": "VCT",
         "name_en": "Saint Vincent and the Grenadines",
         "name_de": "St. Vincent und die Grenadinen",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 5
       },
       "geometry": {
         "type": "Point",
@@ -2569,10 +3218,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "VEN",
+        "ADM0_A3": "VEN",
         "name_en": "Venezuela",
         "name_de": "Venezuela",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2582,10 +3232,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "VGB",
+        "ADM0_A3": "VGB",
         "name_en": "British Virgin Islands",
         "name_de": "Britische Jungferninseln",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2595,10 +3246,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "VIR",
+        "ADM0_A3": "VIR",
         "name_en": "United States Virgin Islands",
         "name_de": "Amerikanische Jungferninseln",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2608,20 +3260,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "VNM",
+        "ADM0_A3": "VNM",
         "name_en": "Vietnam",
         "name_de": "Vietnam",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [106.299147, 16.6460167] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [106.299147, 16.6460167]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "VUT",
+        "ADM0_A3": "VUT",
         "name_en": "Vanuatu",
         "name_de": "Vanuatu",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 3
       },
       "geometry": {
         "type": "Point",
@@ -2631,10 +3288,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "WLF",
+        "ADM0_A3": "WLF",
         "name_en": "Wallis and Futuna",
         "name_de": "Wallis und Futuna",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2644,10 +3302,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "WSM",
+        "ADM0_A3": "WSM",
         "name_en": "Samoa",
         "name_de": "Samoa",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": 4
       },
       "geometry": {
         "type": "Point",
@@ -2657,20 +3316,25 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "YEM",
+        "ADM0_A3": "YEM",
         "name_en": "Yemen",
         "name_de": "Jemen",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [47.58676189, 15.90928005] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [47.58676189, 15.90928005]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "code": "ZAF",
+        "ADM0_A3": "ZAF",
         "name_en": "South Africa",
         "name_de": "Südafrika",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2680,10 +3344,11 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ZMB",
+        "ADM0_A3": "ZMB",
         "name_en": "Zambia",
         "name_de": "Sambia",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
       "geometry": {
         "type": "Point",
@@ -2693,22 +3358,16 @@
     {
       "type": "Feature",
       "properties": {
-        "code": "ZWE",
+        "ADM0_A3": "ZWE",
         "name_en": "Zimbabwe",
         "name_de": "Simbabwe",
-        "code_sovereign": null
+        "code_sovereign": null,
+        "marker_max_zoom": null
       },
-      "geometry": { "type": "Point", "coordinates": [29.8514412, -19.00420419] }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "code": "EU",
-        "name_en": "European Union",
-        "name_de": "Europäische Union",
-        "code_sovereign": null
-      },
-      "geometry": { "type": "Point", "coordinates": [4.3517, 50.8503] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [29.8514412, -19.00420419]
+      }
     }
   ]
 }

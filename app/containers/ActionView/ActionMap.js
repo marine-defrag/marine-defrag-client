@@ -3,19 +3,22 @@
  * ActionMap
  *
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Box, Text } from 'grommet';
 
 import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
+import countryPointsJSON from 'data/country-points.json';
 
 import { ACTORTYPES, ACTIONTYPES } from 'themes/config';
+
+import { usePrint } from 'containers/App/PrintContext';
 
 import {
   selectActortypeActors,
@@ -23,6 +26,8 @@ import {
   selectIncludeTargetMembers,
   selectIncludeActorChildren,
   selectIncludeTargetChildren,
+  selectPrintConfig,
+  // selectMapTooltips,
 } from 'containers/App/selectors';
 
 import {
@@ -30,27 +35,116 @@ import {
   setIncludeTargetMembers,
   setIncludeActorChildren,
   setIncludeTargetChildren,
+  // setMapTooltips,
 } from 'containers/App/actions';
 
 
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer/MapWrapper';
-import MapOption from 'containers/MapContainer/MapInfoOptions/MapOption';
+import MapWrapperLeaflet from 'containers/MapControl/MapWrapperLeaflet';
+import SimpleMapContainer from 'containers/MapControl/SimpleMapContainer';
+import MapOption from 'containers/MapControl/MapInfoOptions/MapOption';
 
 // import messages from './messages';
 
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
-`;
-const MapTitle = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)``;
-const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)``;
-const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
-  height: 400px;
-  background: #F9F9FA;
+  @media print {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
 `;
+const MapTitle = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+@media print {
+    margin-left: 0;
+  }
+`;
+const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+  @media print {
+    margin-left: 0;
+  }
+`;
+// const MapContainer = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+//   ${({ isPrint }) => isPrint && css`margin-left: 0;`}
+//   position: relative;
+//   background: #F9F9FA;
+//   overflow: hidden;
+//   padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
+//   @media print {
+//     margin-left: 0;
+//     display: block;
+//     page-break-inside: avoid;
+//     break-inside: avoid;
+//   }
+// `;
+// const MapSpacer = styled.div`
+//   height: ${({ w, orient }) => (orient) === 'landscape' ? w * 0.5 : w * 0.5625}px;
+//   display: block;
+//   width: 1px;
+// `;
+
+/* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+const reduceCountryData = ({
+  features,
+  hasCountries,
+  actorsByType,
+  includeChildActions,
+  childCountries,
+  hasAssociations,
+  countriesViaMembership,
+}) => features.reduce(
+  (memo, feature) => {
+    const countryDirect = hasCountries && actorsByType.get(parseInt(ACTORTYPES.COUNTRY, 10)).find(
+      (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+    );
+    const countryViaChild = !countryDirect
+        && includeChildActions
+        && childCountries
+        && childCountries.find(
+          (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+        );
+    const countryViaMembership = !countryDirect
+        && !countryViaChild
+        && hasAssociations
+        && countriesViaMembership
+        && countriesViaMembership.find(
+          (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+        );
+    let opacity = 1;
+    if (countryViaChild) {
+      opacity = 0.6;
+    } else if (countryViaMembership) {
+      opacity = 0.3;
+    }
+    const country = countryDirect || countryViaMembership || countryViaChild;
+    if (country) {
+      return [
+        ...memo,
+        {
+          ...feature,
+          id: country.get('id'),
+          attributes: country.get('attributes').toJS(),
+          tooltip: {
+            id: country.get('id'),
+            title: country.getIn(['attributes', 'title']),
+          },
+          values: {
+            actions: 1,
+          },
+          style: {
+            fillOpacity: opacity,
+          },
+        },
+      ];
+    }
+    return memo;
+  },
+  [],
+);
 
 export function ActionMap({
   actorsByType,
@@ -68,8 +162,15 @@ export function ActionMap({
   includeTargetChildren,
   typeId,
   childCountries,
+  mapId = 'll-action-map',
+  // isPrintView,
+  printArgs,
   // intl,
 }) {
+  const [mapTooltips, setMapTooltips] = useState([]);
+  const [mapView, setMapView] = useState(null);
+  const isPrintView = usePrint();
+
   // console.log('ActionMap')
   // // const { intl } = this.context;
   // // let type;
@@ -96,6 +197,8 @@ export function ActionMap({
     : includeTargetChildren;
 
   let countryData;
+  let countryPointData;
+
   if (actorsByType || childCountries) {
     const countriesViaMembership = actorsByType && hasMemberOption && includeMembers && hasAssociations && actorsByType.reduce(
       (memo, typeActors, actortypeId) => {
@@ -120,55 +223,25 @@ export function ActionMap({
       (countryId) => countries.get(countryId.toString())
     );
 
-    countryData = countriesJSON.features.reduce(
-      (memo, feature) => {
-        const countryDirect = hasCountries && actorsByType.get(parseInt(ACTORTYPES.COUNTRY, 10)).find(
-          (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-        );
-        const countryViaChild = !countryDirect
-          && includeChildActions
-          && childCountries
-          && childCountries.find(
-            (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-          );
-        const countryViaMembership = !countryDirect
-          && !countryViaChild
-          && hasAssociations
-          && countriesViaMembership
-          && countriesViaMembership.find(
-            (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-          );
-        let opacity = 1;
-        if (countryViaChild) {
-          opacity = 0.6;
-        } else if (countryViaMembership) {
-          opacity = 0.3;
-        }
-        const country = countryDirect || countryViaMembership || countryViaChild;
-        if (country) {
-          return [
-            ...memo,
-            {
-              ...feature,
-              id: country.get('id'),
-              attributes: country.get('attributes').toJS(),
-              tooltip: {
-                id: country.get('id'),
-                title: country.getIn(['attributes', 'title']),
-              },
-              values: {
-                actions: 1,
-              },
-              style: {
-                fillOpacity: opacity,
-              },
-            },
-          ];
-        }
-        return memo;
-      },
-      [],
-    );
+    countryData = reduceCountryData({
+      features: countriesJSON.features,
+      hasCountries,
+      actorsByType,
+      includeChildActions,
+      childCountries,
+      hasAssociations,
+      countriesViaMembership,
+    });
+
+    countryPointData = reduceCountryData({
+      features: countryPointsJSON.features,
+      hasCountries,
+      actorsByType,
+      includeChildActions,
+      childCountries,
+      hasAssociations,
+      countriesViaMembership,
+    });
   }
   if (!countryData) return null;
 
@@ -223,30 +296,45 @@ export function ActionMap({
       };
     }
   }
-
+  // <MapSpacer
+  // isPrint={isPrintView}
+  // w={ref && ref.current && ref.current.clientWidth}
+  // orient={printArgs && printArgs.printOrientation}
+  // />
+  // const ref = useRef();
+  // w={ref && ref.current && ref.current.clientWidth}
   return (
-    <Styled hasHeader noOverflow>
-      <MapWrapper>
-        <MapContainer
+    <Styled>
+      <SimpleMapContainer
+        orient={printArgs && printArgs.printOrientation}
+      >
+        <MapWrapperLeaflet
+          printArgs={printArgs}
+          isPrintView={isPrintView}
           countryData={countryData}
+          countryPointData={countryPointData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
-          onActorClick={(id) => onActorClick(id)}
+          mapSubject={mapSubject}
           maxValueCountries={1}
+          fitBoundsToCountryOverlay
+          projection="gall-peters"
           includeSecondaryMembers={
             includeActorMembers
             || includeTargetMembers
             || includeActorChildren
             || includeTargetChildren
           }
-          mapSubject={mapSubject}
-          fitBounds
-          projection="gall-peters"
-          mapId="ll-action-map"
+          mapId={mapId}
+          mapView={mapView}
+          mapTooltips={mapTooltips}
+          setMapTooltips={setMapTooltips}
+          onSetMapView={setMapView}
+          onActorClick={(id) => onActorClick(id)}
         />
-      </MapWrapper>
+      </SimpleMapContainer>
       {(memberOption || mapTitle || childrenOption) && (
-        <MapOptions>
+        <MapOptions isPrint={isPrintView}>
           {mapTitle && (
             <MapTitle>
               <Text weight={600}>{mapTitle}</Text>
@@ -279,10 +367,12 @@ ActionMap.propTypes = {
   includeTargetChildren: PropTypes.bool,
   onActorClick: PropTypes.func,
   mapSubject: PropTypes.string,
+  mapId: PropTypes.string,
   typeId: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
   ]),
+  printArgs: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
@@ -291,6 +381,7 @@ const mapStateToProps = (state) => ({
   includeTargetMembers: selectIncludeTargetMembers(state),
   includeActorChildren: selectIncludeActorChildren(state),
   includeTargetChildren: selectIncludeTargetChildren(state),
+  printArgs: selectPrintConfig(state),
 });
 function mapDispatchToProps(dispatch) {
   return {
@@ -306,6 +397,9 @@ function mapDispatchToProps(dispatch) {
     onSetIncludeActorChildren: (active) => {
       dispatch(setIncludeActorChildren(active));
     },
+    // onSetMapTooltips: (items, mapId) => {
+    //   dispatch(setMapTooltips(items, mapId));
+    // },
   };
 }
 

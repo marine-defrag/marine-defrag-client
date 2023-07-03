@@ -3,10 +3,10 @@
  * IndicatorLocationMap
  *
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Box, Text } from 'grommet';
 
 import * as topojson from 'topojson-client';
@@ -18,31 +18,54 @@ import locationsJSON from 'data/locations.json';
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 // import { hasGroupActors } from 'utils/entities';
-import MapContainer from 'containers/MapContainer/MapWrapper';
-import TooltipContent from 'containers/MapContainer/TooltipContent';
-import MapKey from 'containers/MapContainer/MapInfoOptions/MapKey';
-const MapKeyWrapper = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)`
+import MapWrapperLeaflet from 'containers/MapControl/MapWrapperLeaflet';
+import SimpleMapContainer from 'containers/MapControl/SimpleMapContainer';
+import MapKey from 'containers/MapControl/MapInfoOptions/MapKey';
+const MapKeyWrapper = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)`
   max-width: 400px;
 `;
 // import messages from './messages';
 
 const Styled = styled((p) => <Box {...p} />)`
   z-index: 0;
-`;
-const MapTitle = styled((p) => <Box margin={{ horizontal: 'medium', vertical: 'xsmall' }} {...p} />)``;
-const MapWrapper = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   position: relative;
-  height: 500px;
 `;
+const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+  @media print {
+    margin-left: 0;
+  }
+`;
+const MapTitle = styled((p) => <Box margin={{ vertical: 'xsmall' }} {...p} />)`
+  ${({ isPrint }) => isPrint && css`margin-left: 0`};
+@media print {
+    margin-left: 0;
+  }
+`;
+// const MapContainer = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
+//   position: relative;
+//   padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
+//   overflow: hidden;
+//   @media print {
+//     margin-left: 0;
+//     display: block;
+//     page-break-inside: avoid;
+//     break-inside: avoid;
+//   }
+// `;
 
 export function IndicatorLocationMap({
   locations,
   mapSubject,
   indicator,
+  isPrintView,
+  printArgs,
   // intl,
 }) {
   // const { intl } = this.context;
   // let type;
+  const [mapTooltips, setMapTooltips] = useState([]);
+  const [mapView, setMapView] = useState(null);
   const countriesJSON = topojson.feature(
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
@@ -77,9 +100,7 @@ export function IndicatorLocationMap({
               attributes: location.get('attributes').toJS(),
               tooltip: {
                 id: location.get('id'),
-                content: (
-                  <TooltipContent stats={stats} />
-                ),
+                stats,
                 linkActor: false,
               },
               values: {
@@ -121,43 +142,56 @@ export function IndicatorLocationMap({
     };
 
     return (
-      <Styled hasHeader noOverflow>
-        <MapWrapper>
-          <MapContainer
+      <Styled>
+        <SimpleMapContainer
+          orient={printArgs && printArgs.printOrientation}
+          nobg
+        >
+          <MapWrapperLeaflet
+            printArgs={printArgs}
+            isPrintView={isPrintView}
             locationData={locationData}
             countryFeatures={countriesJSON.features}
             indicator="indicator"
             mapSubject={mapSubject}
-            fitBounds
+            fitBoundsToCountryOverlay
             projection="robinson"
             circleLayerConfig={config}
             mapId="ll-indicator-location-map"
             isLocationData
+            mapView={mapView}
+            onSetMapView={setMapView}
+            mapTooltips={mapTooltips}
+            setMapTooltips={setMapTooltips}
           />
-        </MapWrapper>
-        <MapTitle>
-          <Text weight={600}>{keyTitle}</Text>
-        </MapTitle>
-        <MapKeyWrapper>
-          <MapKey
-            mapSubject={mapSubject}
-            maxValue={maxValue}
-            minValue={minValue}
-            isIndicator
-            type="circles"
-            circleLayerConfig={config}
-          />
-        </MapKeyWrapper>
+        </SimpleMapContainer>
+        <MapOptions isPrint={isPrintView}>
+          <MapTitle>
+            <Text weight={600}>{keyTitle}</Text>
+          </MapTitle>
+          <MapKeyWrapper>
+            <MapKey
+              mapSubject={mapSubject}
+              maxValue={maxValue}
+              minValue={minValue}
+              isIndicator
+              type="circles"
+              circleLayerConfig={config}
+            />
+          </MapKeyWrapper>
+        </MapOptions>
       </Styled>
     );
   }
-  return (<div> WIP Location Map </div>);
+  return null;
 }
 
 IndicatorLocationMap.propTypes = {
   indicator: PropTypes.instanceOf(Map), // the action
   locations: PropTypes.instanceOf(Map), // actors by actortype for current action
   mapSubject: PropTypes.string,
+  isPrintView: PropTypes.bool,
+  printArgs: PropTypes.object,
 };
 
 // const mapStateToProps = (state) => ({

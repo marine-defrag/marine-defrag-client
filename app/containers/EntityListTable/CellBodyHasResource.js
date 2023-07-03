@@ -9,12 +9,8 @@ import styled from 'styled-components';
 import appMessages from 'containers/App/messages';
 
 import { ROUTES } from 'themes/config';
-const LinkTT = styled(
-  React.forwardRef((p, ref) => <Button plain {...p} ref={ref} />)
-)`
-  text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
-  line-height: 12px;
-`;
+import LinkTT from './LinkTT';
+
 const LinkInTT = styled((p) => <Button as="a" plain {...p} />)`
   line-height: 13px;
 `;
