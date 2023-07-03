@@ -453,6 +453,14 @@ export const selectFFOverlay = createSelector(
   selectLocationQuery,
   (locationQuery) => (locationQuery && locationQuery.get('ff')) || '0'
 );
+export const selectHasFFOverlay = createSelector(
+  selectFFOverlay,
+  (ffOverlay) => !!ffOverlay && !qe(ffOverlay, 0)
+);
+export const selectShowFFasCircles = createSelector(
+  getGlobal,
+  (state) => state.get('showFFasCircles')
+);
 
 export const selectIsPrintView = createSelector(
   getGlobal,

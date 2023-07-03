@@ -2,7 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
-import { Box, RadioButton, Text } from 'grommet';
+import {
+  Box,
+  RadioButton,
+  CheckBox,
+  Text,
+} from 'grommet';
 import styled from 'styled-components';
 
 import {
@@ -133,6 +138,8 @@ export function PrintUI({
     printOrientation,
     printItems,
     printContentOptions,
+    printMapOptions,
+    printMapMarkers,
   } = printConfig;
   const printAllPages = printItems === 'all' || pageItems === 'all';
   // qe(printType, PRINT_TYPES.SINGLE)
@@ -332,6 +339,49 @@ export function PrintUI({
                         {qe(printType, PRINT_TYPES.SINGLE) && (
                           <FormattedMessage {...messages.hintContentSingle} />
                         )}
+                      </Text>
+                    </StyledFieldGroupWrapper>
+                  </Box>
+                </Box>
+              </Box>
+            )}
+            {!!printMapOptions && (
+              <Box>
+                <FieldGroupLabel>
+                  <StyledGroupLabel>
+                    <FormattedMessage {...messages.titleMap} />
+                  </StyledGroupLabel>
+                </FieldGroupLabel>
+                <Box direction="row" fill="horizontal">
+                  <Box basis="1/2">
+                    <StyledFieldGroupWrapper>
+                      {printMapOptions.markers && (
+                        <Field>
+                          <FormFieldWrap>
+                            <FieldLabel>
+                              <FormattedMessage {...messages.mapMarkersOption} />
+                            </FieldLabel>
+                          </FormFieldWrap>
+                          <FormFieldWrap>
+                            <Box direction="row" gap="medium">
+                              <CheckBox
+                                name="checkbox-markers-1"
+                                checked={printMapMarkers}
+                                label={<Label>{intl.formatMessage(messages.mapMarkersLabel)}</Label>}
+                                onChange={() => onPrint({
+                                  printMapMarkers: !printMapMarkers,
+                                })}
+                              />
+                            </Box>
+                          </FormFieldWrap>
+                        </Field>
+                      )}
+                    </StyledFieldGroupWrapper>
+                  </Box>
+                  <Box basis="1/2">
+                    <StyledFieldGroupWrapper>
+                      <Text size="xsmall" color="hint">
+                        <FormattedMessage {...messages.hintMap} />
                       </Text>
                     </StyledFieldGroupWrapper>
                   </Box>

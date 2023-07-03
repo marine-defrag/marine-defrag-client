@@ -43,6 +43,7 @@ import {
   selectActorConnections,
   selectIsPrintView,
   selectPrintConfig,
+  selectSubjectQuery,
 } from 'containers/App/selectors';
 
 import { CONTENT_SINGLE, PRINT_TYPES } from 'containers/App/constants';
@@ -91,6 +92,7 @@ export function ActorView({
   isPrintView,
   onSetPrintView,
   printArgs,
+  subject,
 }) {
   useEffect(() => {
     // kick off loading of data
@@ -99,6 +101,8 @@ export function ActorView({
   const mySetPrintView = () => onSetPrintView({
     printType: PRINT_TYPES.SINGLE,
     printContentOptions: { tabs: true, types: true },
+    printMapOptions: subject !== 'facts' ? { markers: true } : null,
+    printMapMarkers: true,
     printOrientation: 'portrait',
     printSize: 'A4',
   });
@@ -327,6 +331,7 @@ ActorView.propTypes = {
   intl: intlShape.isRequired,
   isPrintView: PropTypes.bool,
   onSetPrintView: PropTypes.func,
+  subject: PropTypes.string,
   printArgs: PropTypes.object,
 };
 
@@ -341,6 +346,7 @@ const mapStateToProps = (state, props) => ({
   associationsByType: selectAssociationsByType(state, props.params.id),
   isPrintView: selectIsPrintView(state),
   printArgs: selectPrintConfig(state),
+  subject: selectSubjectQuery(state), // tab
 });
 
 function mapDispatchToProps(dispatch, props) {

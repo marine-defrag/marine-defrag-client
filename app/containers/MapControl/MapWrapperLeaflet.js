@@ -420,7 +420,12 @@ export function MapWrapperLeaflet({
   useEffect(() => {
     countryPointOverlayGroupRef.current.clearLayers();
     const hasLocationData = locationData && locationData.length > 0;
-    if (!hasLocationData && countryPointData && countryPointData.length > 0) {
+    const showMarkers = !isPrintView || (printArgs && printArgs.printMapMarkers);
+    if (
+      !hasLocationData
+      && countryPointData && countryPointData.length > 0
+      && showMarkers
+    ) {
       const zoom = mapView && mapView.zoom ? mapView.zoom : MAP_OPTIONS.ZOOM.INIT;
       const jsonLayer = getPointLayer({
         data: filterNoDataFeatures(
@@ -439,7 +444,7 @@ export function MapWrapperLeaflet({
 
       countryPointOverlayGroupRef.current.addLayer(jsonLayer);
     }
-  }, [countryPointData, mapView, indicator, tooltip, mapSubject, locationData]);
+  }, [countryPointData, mapView, indicator, tooltip, mapSubject, locationData, printArgs, isPrintView]);
 
   // add zoom to countryData
   useEffect(() => {

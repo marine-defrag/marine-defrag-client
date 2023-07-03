@@ -29,6 +29,7 @@ import {
   selectActiontypeActions,
   // selectIsPrintView,
   // selectMapLoading,
+  selectHasFFOverlay,
   selectViewQuery,
 } from 'containers/App/selectors';
 
@@ -81,6 +82,7 @@ export function ActionList({
   // isMapLoading,
   onLoadEntitiesIfNeeded,
   // isPrintView,
+  hasFFOverlay,
   view,
 }) {
   useEffect(() => {
@@ -100,6 +102,8 @@ export function ActionList({
   const mySetPrintView = () => onSetPrintView({
     printType: PRINT_TYPES.LIST,
     printContentOptions: showMap ? null : { pages: true },
+    printMapOptions: showMap && !hasFFOverlay ? { markers: true } : null,
+    printMapMarkers: true,
     fixed: showMap,
     printOrientation: showMap ? 'landscape' : 'portrait',
     printSize: 'A4',
@@ -223,6 +227,7 @@ ActionList.propTypes = {
   handleImport: PropTypes.func,
   onSelectType: PropTypes.func,
   onSetPrintView: PropTypes.func,
+  hasFFOverlay: PropTypes.bool,
   intl: intlShape,
 };
 
@@ -242,6 +247,7 @@ const mapStateToProps = (state, props) => ({
   // isPrintView: selectIsPrintView(state),
   // isMapLoading: selectMapLoading(state),
   view: selectViewQuery(state),
+  hasFFOverlay: selectHasFFOverlay(state),
 });
 function mapDispatchToProps(dispatch) {
   return {

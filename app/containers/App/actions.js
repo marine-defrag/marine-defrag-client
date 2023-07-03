@@ -78,6 +78,7 @@ import {
   PRINT_VIEW,
   CLOSE_PRINT_VIEW,
   SET_MAP_TOOLTIPS,
+  SET_SHOW_FF_AS_CIRCLES,
 } from './constants';
 
 export function submitInvalid(valid) {
@@ -564,5 +565,11 @@ export function setMapLoaded(mapId) {
   return {
     type: SET_MAP_LOADED,
     mapId,
+  };
+}
+export function setShowFFasCircles(showAsCircles) {
+  return {
+    type: SET_SHOW_FF_AS_CIRCLES,
+    showAsCircles,
   };
 }
