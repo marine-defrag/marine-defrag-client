@@ -111,7 +111,7 @@ export const getPointLayer = ({ data, config, markerEvents }) => {
   <path
     d="m24,14.18c0-5.52-4.48-10-10-10S4,8.66,4,14.18c0,4.37,2.8,8.07,6.71,9.43l3.29,4.2,3.29-4.2c3.9-1.36,6.71-5.07,6.71-9.43Z"
     fill="${iconRingColor}"
-    filter="drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.3))"
+    filter="drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.35))"
   />
   <circle cx="14" cy="14.18" r="8.18" fill="${iconCircleColor}"     opacity="${iconCircleOpacity}"/>
 </svg>`,
