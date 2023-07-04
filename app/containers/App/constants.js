@@ -86,6 +86,7 @@ export const SET_MAP_LOADED = 'impactoss/App/SET_MAP_LOADED';
 export const SET_MAP_TOOLTIPS = 'impactoss/App/SET_MAP_TOOLTIPS';
 export const SET_MAP_VIEW = 'impactoss/App/SET_MAP_VIEW';
 export const SET_SHOW_FF_AS_CIRCLES = 'impactoss/App/SET_SHOW_FF_AS_CIRCLES';
+export const SET_TIMELINE_HIGHLIGHT_CATEGORY = 'impactoss/App/SET_TIMELINE_HIGHLIGHT_CATEGORY';
 
 export const FILTERS_PANEL = 'filters';
 export const EDIT_PANEL = 'edit';

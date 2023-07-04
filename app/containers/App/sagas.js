@@ -50,6 +50,7 @@ import {
   SET_FF_OVERLAY,
   SET_MAP_TOOLTIPS,
   SET_MAP_VIEW,
+  SET_TIMELINE_HIGHLIGHT_CATEGORY,
 } from 'containers/App/constants';
 
 import {
@@ -840,6 +841,19 @@ export function* setFFOverlaySaga({ value }) {
   );
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
+export function* setTimelineHighlightCategorySaga({ value }) {
+  const location = yield select(selectLocation);
+  const queryNext = getNextQuery(
+    {
+      arg: 'tlcat',
+      value,
+      replace: true,
+    },
+    true, // extend
+    location,
+  );
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
 export function* setMapTooltipsSaga({ values }) {
   const location = yield select(selectLocation);
   let queryNext = [];
@@ -1000,6 +1014,7 @@ export default function* rootSaga() {
   yield takeEvery(SET_FF_OVERLAY, setFFOverlaySaga);
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);
   yield takeEvery(DISMISS_QUERY_MESSAGES, dismissQueryMessagesSaga);
+  yield takeEvery(SET_TIMELINE_HIGHLIGHT_CATEGORY, setTimelineHighlightCategorySaga);
   // yield takeEvery(PRINT_VIEW, printViewSaga);
   // yield takeEvery(CLOSE_PRINT_VIEW, closePrintViewSaga);
 

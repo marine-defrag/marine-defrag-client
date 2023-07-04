@@ -378,6 +378,10 @@ export const selectPageNoQuery = createSelector(
   selectLocationQuery,
   (locationQuery) => locationQuery && locationQuery.get('page')
 );
+export const selectTimelineHighlightCategory = createSelector(
+  selectLocationQuery,
+  (locationQuery) => locationQuery && locationQuery.get('tlcat')
+);
 
 export const selectActortypeQuery = createSelector(
   selectLocationQuery,

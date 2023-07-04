@@ -6,7 +6,7 @@
 import React, { useRef } from 'react';
 // import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
 import { ResponsiveContext } from 'grommet';
 import styled from 'styled-components';
@@ -22,6 +22,7 @@ import {
   // selectActors,
   // selectActortypeActors,
   selectActorActionsGroupedByAction,
+  selectActiontypeTaxonomiesWithCats,
 } from 'containers/App/selectors';
 import { CONTENT_LIST } from 'containers/App/constants';
 // import { updatePath } from 'containers/App/actions';
@@ -62,7 +63,9 @@ export function EntitiesOverTime({
   allEntityCount,
   hasFilters,
   headerOptions,
+  taxonomiesWithCats,
 }) {
+  console.log('taxonomiesWithCats', taxonomiesWithCats && taxonomiesWithCats.toJS());
   const scrollContainer = useRef(null);
   const scrollReference = useRef(null);
 
@@ -131,6 +134,7 @@ EntitiesOverTime.propTypes = {
   // connections: PropTypes.instanceOf(Map),
   // actortypes: PropTypes.instanceOf(Map),
   // actiontypes: PropTypes.instanceOf(Map),
+  taxonomiesWithCats: PropTypes.instanceOf(Map),
   headerOptions: PropTypes.object, // single/plural
   entityTitle: PropTypes.object, // single/plural
   // primitive
@@ -143,11 +147,12 @@ EntitiesOverTime.propTypes = {
   // onSelectAction: PropTypes.func,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state, { typeId }) => ({
   // countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
   // actors: selectActors(state),
   // actions: selectActions(state),
   actorActionsByAction: selectActorActionsGroupedByAction(state), // for figuring out targeted countries
+  taxonomiesWithCats: selectActiontypeTaxonomiesWithCats(state, { type: typeId }),
 });
 
 // function mapDispatchToProps(dispatch) {

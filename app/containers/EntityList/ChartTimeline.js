@@ -1,7 +1,8 @@
-import React from 'react';
 // import React, { useEffect } from 'react';
+import React from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { List } from 'immutable';
 import styled from 'styled-components';
 import { ResponsiveContext } from 'grommet';
@@ -16,6 +17,9 @@ import {
   AreaSeries,
   // Hint,
 } from 'react-vis';
+
+import { selectTimelineHighlightCategory } from 'containers/App/selectors';
+import { setTimelineHighlightCategory } from 'containers/App/actions';
 
 // import { sortEntities } from 'utils/sort';
 //
@@ -42,8 +46,12 @@ const myTimeFormat = (value) => {
 
 export function ChartTimeline({
   entities,
+  highlightCategory,
+  // onSetCategory,
   intl,
 }) {
+  console.log('highlightCategory', highlightCategory);
+
   // const actionsWithOffspring = entities && getActionsWithOffspring(entities);
   //
   // const actionsGrouped = actionsWithOffspring.groupBy(
@@ -51,6 +59,7 @@ export function ChartTimeline({
   //     ? 'with'
   //     : 'without'
   // );
+
   const minDate = getDateForChart(
     entities.first().getIn(['attributes', 'date_start']),
   );
@@ -190,7 +199,21 @@ export function ChartTimeline({
 
 ChartTimeline.propTypes = {
   entities: PropTypes.instanceOf(List),
+  highlightCategory: PropTypes.string,
+  // onSetCategory: PropTypes.func,
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(ChartTimeline);
+const mapStateToProps = (state) => ({
+  highlightCategory: selectTimelineHighlightCategory(state),
+});
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onSetCategory: (catId) => {
+      dispatch(setTimelineHighlightCategory(catId));
+    },
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(ChartTimeline));
