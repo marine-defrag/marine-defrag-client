@@ -3,10 +3,9 @@ import React, {
 } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { List } from 'immutable';
 import styled from 'styled-components';
-import { ResponsiveContext, Box } from 'grommet';
+import { ResponsiveContext } from 'grommet';
 import { utcFormat as timeFormat } from 'd3-time-format';
 
 import {
@@ -19,12 +18,6 @@ import {
   // Hint,
 } from 'react-vis';
 
-import { selectTimelineHighlightCategory } from 'containers/App/selectors';
-import { setTimelineHighlightCategory } from 'containers/App/actions';
-
-import ButtonDefault from 'components/buttons/ButtonDefault';
-
-import qe from 'utils/quasi-equals';
 // import { sortEntities } from 'utils/sort';
 //
 // import { getActionsWithOffspring } from './utils';
@@ -54,8 +47,6 @@ const myTimeFormat = (value) => {
 export function ChartTimeline({
   entities,
   highlightCategory,
-  onSetCategory,
-  onResetCategory,
   intl,
 }) {
   const targetRef = useRef();
@@ -117,7 +108,7 @@ export function ChartTimeline({
   });
   // console.log('chartData', chartData)
   return (
-    <Box flex={{ shrink: 0 }} ref={targetRef}>
+    <div ref={targetRef}>
       <ChartWrapper>
         {chartData && (
           <FlexibleWidthXYPlot
@@ -157,22 +148,7 @@ export function ChartTimeline({
           </FlexibleWidthXYPlot>
         )}
       </ChartWrapper>
-      <Box direction="row" fill={false}>
-        <ButtonDefault
-          inactive={!qe(highlightCategory, 3)}
-          alt="Test 3"
-          onClick={() => {
-            if (qe(highlightCategory, 3)) {
-              onResetCategory();
-            } else {
-              onSetCategory(3);
-            }
-          }}
-        >
-          Test 3
-        </ButtonDefault>
-      </Box>
-    </Box>
+    </div>
   );
 }
 //
@@ -250,24 +226,7 @@ export function ChartTimeline({
 ChartTimeline.propTypes = {
   entities: PropTypes.instanceOf(List),
   highlightCategory: PropTypes.string,
-  onSetCategory: PropTypes.func,
-  onResetCategory: PropTypes.func,
   intl: intlShape.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  highlightCategory: selectTimelineHighlightCategory(state),
-});
-
-function mapDispatchToProps(dispatch) {
-  return {
-    onSetCategory: (catId) => {
-      dispatch(setTimelineHighlightCategory(catId));
-    },
-    onResetCategory: () => {
-      dispatch(setTimelineHighlightCategory());
-    },
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(ChartTimeline));
+export default injectIntl(ChartTimeline);

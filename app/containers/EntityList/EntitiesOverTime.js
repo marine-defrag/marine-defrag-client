@@ -8,13 +8,14 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
-import { ResponsiveContext } from 'grommet';
+import { ResponsiveContext, Box } from 'grommet';
 import styled from 'styled-components';
 // import {
 //   ACTORTYPES,
 //   ROUTES,
 // } from 'themes/config';
 
+import qe from 'utils/quasi-equals';
 import { sortEntities } from 'utils/sort';
 import { isMaxSize } from 'utils/responsive';
 
@@ -23,10 +24,13 @@ import {
   // selectActortypeActors,
   selectActorActionsGroupedByAction,
   selectActiontypeTaxonomiesWithCats,
+  selectTimelineHighlightCategory,
 } from 'containers/App/selectors';
 import { CONTENT_LIST } from 'containers/App/constants';
+import { setTimelineHighlightCategory } from 'containers/App/actions';
 // import { updatePath } from 'containers/App/actions';
 
+import ButtonDefault from 'components/buttons/ButtonDefault';
 import PrintHide from 'components/styled/PrintHide';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
@@ -64,6 +68,9 @@ export function EntitiesOverTime({
   hasFilters,
   headerOptions,
   taxonomiesWithCats,
+  onSetCategory,
+  onResetCategory,
+  highlightCategory,
 }) {
   console.log('taxonomiesWithCats', taxonomiesWithCats && taxonomiesWithCats.toJS());
   const scrollContainer = useRef(null);
@@ -106,6 +113,7 @@ export function EntitiesOverTime({
               <ChartWrapperOuter scrollOverflow={isMaxSize(size, 'ms')}>
                 <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
                   <ChartTimeline
+                    highlightCategory={highlightCategory}
                     entities={sortEntities(
                       entities.filter(
                         (entity) => entity.getIn(['attributes', 'date_start'])
@@ -117,6 +125,21 @@ export function EntitiesOverTime({
                   />
                 </ChartWrapperInner>
               </ChartWrapperOuter>
+              <Box direction="row" fill={false}>
+                <ButtonDefault
+                  inactive={!qe(highlightCategory, 3)}
+                  alt="Test 3"
+                  onClick={() => {
+                    if (qe(highlightCategory, 3)) {
+                      onResetCategory();
+                    } else {
+                      onSetCategory(3);
+                    }
+                  }}
+                >
+                  Test 3
+                </ButtonDefault>
+              </Box>
             </div>
           )}
         </ContentSimple>
@@ -142,7 +165,10 @@ EntitiesOverTime.propTypes = {
   isPrintView: PropTypes.bool,
   allEntityCount: PropTypes.number,
   // typeId: PropTypes.string,
+  highlightCategory: PropTypes.string,
   hasFilters: PropTypes.bool,
+  onSetCategory: PropTypes.func,
+  onResetCategory: PropTypes.func,
   // onEntityClick: PropTypes.func,
   // onSelectAction: PropTypes.func,
 };
@@ -153,14 +179,19 @@ const mapStateToProps = (state, { typeId }) => ({
   // actions: selectActions(state),
   actorActionsByAction: selectActorActionsGroupedByAction(state), // for figuring out targeted countries
   taxonomiesWithCats: selectActiontypeTaxonomiesWithCats(state, { type: typeId }),
+  highlightCategory: selectTimelineHighlightCategory(state),
 });
 
-// function mapDispatchToProps(dispatch) {
-//   return {
-//     onSelectAction: (id) => {
-//       dispatch(updatePath(`${ROUTES.ACTION}/${id}`));
-//     },
-//   };
-// }
+function mapDispatchToProps(dispatch) {
+  return {
+    onSetCategory: (catId) => {
+      dispatch(setTimelineHighlightCategory(catId));
+    },
+    onResetCategory: () => {
+      dispatch(setTimelineHighlightCategory());
+    },
+  };
+}
 
-export default connect(mapStateToProps, null)(EntitiesOverTime);
+
+export default connect(mapStateToProps, mapDispatchToProps)(EntitiesOverTime);
