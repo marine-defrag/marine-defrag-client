@@ -664,7 +664,7 @@ const getNextQuery = (query, extend, location) => {
     // if set and removing
     } else if (queryUpdated[param.arg] && param.value && param.replace) {
       queryUpdated[param.arg] = param.value;
-    } else if (queryUpdated[param.arg] && (param.remove || typeof param.value === 'undefined')) {
+    } else if (queryUpdated[param.arg] && (param.remove || typeof param.value === 'undefined' || param.value === null)) {
       delete queryUpdated[param.arg];
     // if not set or replacing with new value
     } else if (typeof param.value !== 'undefined' && !param.remove) {
