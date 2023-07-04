@@ -1,10 +1,12 @@
-import React, { useLayoutEffect, useState, useRef } from 'react';
+import React, {
+  useEffect, useLayoutEffect, useState, useRef,
+} from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { List } from 'immutable';
 import styled from 'styled-components';
-import { ResponsiveContext } from 'grommet';
+import { ResponsiveContext, Box } from 'grommet';
 import { utcFormat as timeFormat } from 'd3-time-format';
 
 import {
@@ -40,6 +42,9 @@ const YearLabel = styled.text`
   font-size: 12px;
   text-anchor: start;
 `;
+const ChartWrapper = styled.div`
+  position: relative;
+`;
 
 const myTimeFormat = (value) => {
   const formatted = timeFormat('%Y')(value);
@@ -57,10 +62,26 @@ export function ChartTimeline({
   const [chartWidth, setChartWidth] = useState(0);
   console.log('highlightCategory', highlightCategory);
   console.log('entities', entities && entities.toJS());
-  useLayoutEffect(() => {
+
+  const handleResize = () => {
     if (targetRef.current) {
       setChartWidth(targetRef.current.offsetWidth);
     }
+  };
+
+  // useLayoutEffect(() => {
+  //   if (targetRef.current) {
+  //     setChartWidth(targetRef.current.offsetWidth);
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useLayoutEffect(() => {
+    handleResize();
   }, []);
   // const actionsWithOffspring = entities && getActionsWithOffspring(entities);
   //
@@ -96,8 +117,8 @@ export function ChartTimeline({
   });
   // console.log('chartData', chartData)
   return (
-    <div>
-      <div style={{ position: 'relative' }} ref={targetRef}>
+    <Box flex={{ shrink: 0 }} ref={targetRef}>
+      <ChartWrapper>
         {chartData && (
           <FlexibleWidthXYPlot
             height={chartHeight}
@@ -135,21 +156,23 @@ export function ChartTimeline({
             />
           </FlexibleWidthXYPlot>
         )}
-      </div>
-      <ButtonDefault
-        inactive={!qe(highlightCategory, 3)}
-        alt="Test 3"
-        onClick={() => {
-          if (qe(highlightCategory, 3)) {
-            onResetCategory();
-          } else {
-            onSetCategory(3);
-          }
-        }}
-      >
-        Test 3
-      </ButtonDefault>
-    </div>
+      </ChartWrapper>
+      <Box direction="row" fill={false}>
+        <ButtonDefault
+          inactive={!qe(highlightCategory, 3)}
+          alt="Test 3"
+          onClick={() => {
+            if (qe(highlightCategory, 3)) {
+              onResetCategory();
+            } else {
+              onSetCategory(3);
+            }
+          }}
+        >
+          Test 3
+        </ButtonDefault>
+      </Box>
+    </Box>
   );
 }
 //
