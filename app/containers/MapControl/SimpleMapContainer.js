@@ -10,6 +10,8 @@ const Styled = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} />)`
   background: ${({ nobg }) => nobg ? 'transparent' : '#F9F9FA'};
   overflow: hidden;
   padding-top: ${({ isPrint, orient }) => (isPrint && orient) === 'landscape' ? '50%' : '56.25%'};
+  border: 1px solid #f6f7f9;
+
   @media print {
     margin-left: 0;
     margin-right: 0;

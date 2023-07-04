@@ -37,7 +37,7 @@ import {
   SET_MAP_LOADED,
   PRINT_VIEW,
   CLOSE_PRINT_VIEW,
-  // SET_MAP_VIEW,
+  SET_SHOW_FF_AS_CIRCLES,
 } from './constants';
 
 // The initial state of the App
@@ -64,6 +64,7 @@ const initialState = fromJS({
   newEntityModal: null,
   mapLoading: {},
   printConfig: null,
+  showFFasCircles: false,
 });
 
 function appReducer(state = initialState, payload) {
@@ -166,6 +167,8 @@ function appReducer(state = initialState, payload) {
       );
     case CLOSE_PRINT_VIEW:
       return state.set('printConfig', null);
+    case SET_SHOW_FF_AS_CIRCLES:
+      return state.set('showFFasCircles', payload.showAsCircles);
     // case SET_MAP_VIEW:
     //   return state.setIn(['mapView', payload.mapId], fromJS(payload.view));
     case LOCATION_CHANGE:

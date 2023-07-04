@@ -3,7 +3,7 @@
  * MapControl
  *
  */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled, { css } from 'styled-components';
@@ -13,15 +13,19 @@ import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
+import countryPointJSON from 'data/country-points.json';
+
 import {
   setMapLoaded,
   setMapTooltips,
   setMapView,
+  setShowFFasCircles,
 } from 'containers/App/actions';
 import {
   selectMapTooltips,
   selectPrintConfig,
   selectMapView,
+  selectShowFFasCircles,
 } from 'containers/App/selectors';
 import { usePrint } from 'containers/App/PrintContext';
 
@@ -93,6 +97,8 @@ export function MapControl({
   onSetMapView,
   mapViewLocal,
   onSetMapViewLocal,
+  showAsCircles,
+  onSetShowFFasCircles,
   // intl,
 }) {
   const {
@@ -116,25 +122,24 @@ export function MapControl({
     unit,
     maxBinValue,
   } = mapKey;
-  const [showAsPoint, setShowAsPoint] = useState(false);
-
   const countriesJSON = topojson.feature(
     countriesTopo,
     Object.values(countriesTopo.objects)[0],
   );
 
   let countryData = null;
+  let countryPointData = null;
   let locationData = null;
   let maxValue;
   let minValue;
   const minMaxValues = { points: null, countries: null };
 
-  const showPointsOnly = hasPointOption && showAsPoint;
+  const showPointsOnly = hasPointOption && showAsCircles;
   if (
     reducePoints
-      && indicatorPoints
-      && indicatorPoints !== '0'
-      && (hasPointOverlay || showPointsOnly)
+    && indicatorPoints
+    && indicatorPoints !== '0'
+    && (hasPointOverlay || showPointsOnly)
   ) {
     const ffUnit = unit || circleLayerConfig.unit || '';
     const isPercentage = ffUnit.indexOf('%') > -1;
@@ -164,6 +169,7 @@ export function MapControl({
     && !showPointsOnly
   ) {
     countryData = reduceCountryAreas && reduceCountryAreas(countriesJSON.features);
+    countryPointData = reduceCountryAreas && reduceCountryAreas(countryPointJSON.features);
 
     [maxValue, minValue] = countryData
       ? countryData.reduce(
@@ -184,8 +190,8 @@ export function MapControl({
   if (hasPointOption) {
     allMapOptions = [
       {
-        active: showAsPoint,
-        onClick: () => setShowAsPoint(!showAsPoint),
+        active: showAsCircles,
+        onClick: () => onSetShowFFasCircles(!showAsCircles),
         label: 'Show as circles',
         printHide: true,
         key: 'circle',
@@ -207,6 +213,7 @@ export function MapControl({
           printArgs={printArgs}
           isPrintView={isPrintView}
           countryData={countryData}
+          countryPointData={countryPointData}
           locationData={locationData}
           countryFeatures={countriesJSON.features}
           indicator={indicator}
@@ -257,7 +264,7 @@ export function MapControl({
           <MapTitle>
             <Text weight={600}>{keyTitle}</Text>
           </MapTitle>
-          <MapKeyWrapper padLeft={!showAsPoint}>
+          <MapKeyWrapper padLeft={!showAsCircles}>
             <MapKey
               isPrint={isPrintView}
               mapSubject={mapSubject}
@@ -265,7 +272,7 @@ export function MapControl({
               minValue={minValue}
               maxBinValue={maxBinValue}
               isIndicator={isIndicator}
-              type={hasPointOption && showAsPoint ? 'circles' : 'gradient'}
+              type={hasPointOption && showAsCircles ? 'circles' : 'gradient'}
               unit={unit}
               circleLayerConfig={circleLayerConfig}
             />
@@ -297,6 +304,7 @@ MapControl.propTypes = {
   onSetMapTooltips: PropTypes.func,
   onSetMapView: PropTypes.func,
   onSetMapViewLocal: PropTypes.func,
+  onSetShowFFasCircles: PropTypes.func,
   printArgs: PropTypes.object,
   mapData: PropTypes.object,
   mapView: PropTypes.object,
@@ -306,12 +314,14 @@ MapControl.propTypes = {
   mapOptions: PropTypes.array,
   mapTooltips: PropTypes.array,
   fullMap: PropTypes.bool,
+  showAsCircles: PropTypes.bool,
 };
 
 const mapStateToProps = (state, { mapData }) => ({
   mapTooltips: selectMapTooltips(state, mapData && mapData.mapId),
   mapView: selectMapView(state, mapData && mapData.mapId),
   printArgs: selectPrintConfig(state),
+  showAsCircles: selectShowFFasCircles(state),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -324,6 +334,9 @@ function mapDispatchToProps(dispatch) {
     },
     onSetMapView: (view, mapId) => {
       dispatch(setMapView(view, mapId));
+    },
+    onSetShowFFasCircles: (showAsCircles) => {
+      dispatch(setShowFFasCircles(showAsCircles));
     },
   };
 }

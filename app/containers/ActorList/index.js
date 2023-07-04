@@ -28,6 +28,7 @@ import {
   selectAssociationtypesForActortype,
   selectActortypeActors,
   selectViewQuery,
+  selectHasFFOverlay,
 } from 'containers/App/selectors';
 
 import { checkActionAttribute } from 'utils/entities';
@@ -89,6 +90,7 @@ export function ActorList({
   handleImport,
   onSetPrintView,
   view,
+  hasFFOverlay,
 }) {
   useEffect(() => {
     if (!dataReady) onLoadEntitiesIfNeeded();
@@ -107,6 +109,8 @@ export function ActorList({
   const mySetPrintView = () => onSetPrintView({
     printType: PRINT_TYPES.LIST,
     printContentOptions: showMap ? null : { pages: true },
+    printMapOptions: showMap && !hasFFOverlay ? { markers: true } : null,
+    printMapMarkers: true,
     fixed: showMap,
     printOrientation: showMap ? 'landscape' : 'portrait',
     printSize: 'A4',
@@ -226,6 +230,7 @@ ActorList.propTypes = {
   handleImport: PropTypes.func,
   onSetPrintView: PropTypes.func,
   onSelectType: PropTypes.func,
+  hasFFOverlay: PropTypes.bool,
   intl: intlShape.isRequired,
 };
 
@@ -244,6 +249,7 @@ const mapStateToProps = (state, props) => ({
   actortypes: selectActortypes(state),
   allEntities: selectActortypeActors(state, { type: props.params.id }),
   view: selectViewQuery(state),
+  hasFFOverlay: selectHasFFOverlay(state),
 });
 
 function mapDispatchToProps(dispatch) {

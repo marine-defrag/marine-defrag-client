@@ -14,6 +14,7 @@ import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
+import countryPointsJSON from 'data/country-points.json';
 
 import { ACTORTYPES, ACTIONTYPES } from 'themes/config';
 
@@ -87,6 +88,63 @@ const MapOptions = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p} /
 // `;
 
 /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+const reduceCountryData = ({
+  features,
+  hasCountries,
+  actorsByType,
+  includeChildActions,
+  childCountries,
+  hasAssociations,
+  countriesViaMembership,
+}) => features.reduce(
+  (memo, feature) => {
+    const countryDirect = hasCountries && actorsByType.get(parseInt(ACTORTYPES.COUNTRY, 10)).find(
+      (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+    );
+    const countryViaChild = !countryDirect
+        && includeChildActions
+        && childCountries
+        && childCountries.find(
+          (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+        );
+    const countryViaMembership = !countryDirect
+        && !countryViaChild
+        && hasAssociations
+        && countriesViaMembership
+        && countriesViaMembership.find(
+          (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+        );
+    let opacity = 1;
+    if (countryViaChild) {
+      opacity = 0.6;
+    } else if (countryViaMembership) {
+      opacity = 0.3;
+    }
+    const country = countryDirect || countryViaMembership || countryViaChild;
+    if (country) {
+      return [
+        ...memo,
+        {
+          ...feature,
+          id: country.get('id'),
+          attributes: country.get('attributes').toJS(),
+          tooltip: {
+            id: country.get('id'),
+            title: country.getIn(['attributes', 'title']),
+          },
+          values: {
+            actions: 1,
+          },
+          style: {
+            fillOpacity: opacity,
+          },
+        },
+      ];
+    }
+    return memo;
+  },
+  [],
+);
 
 export function ActionMap({
   actorsByType,
@@ -139,6 +197,8 @@ export function ActionMap({
     : includeTargetChildren;
 
   let countryData;
+  let countryPointData;
+
   if (actorsByType || childCountries) {
     const countriesViaMembership = actorsByType && hasMemberOption && includeMembers && hasAssociations && actorsByType.reduce(
       (memo, typeActors, actortypeId) => {
@@ -163,55 +223,25 @@ export function ActionMap({
       (countryId) => countries.get(countryId.toString())
     );
 
-    countryData = countriesJSON.features.reduce(
-      (memo, feature) => {
-        const countryDirect = hasCountries && actorsByType.get(parseInt(ACTORTYPES.COUNTRY, 10)).find(
-          (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-        );
-        const countryViaChild = !countryDirect
-          && includeChildActions
-          && childCountries
-          && childCountries.find(
-            (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-          );
-        const countryViaMembership = !countryDirect
-          && !countryViaChild
-          && hasAssociations
-          && countriesViaMembership
-          && countriesViaMembership.find(
-            (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-          );
-        let opacity = 1;
-        if (countryViaChild) {
-          opacity = 0.6;
-        } else if (countryViaMembership) {
-          opacity = 0.3;
-        }
-        const country = countryDirect || countryViaMembership || countryViaChild;
-        if (country) {
-          return [
-            ...memo,
-            {
-              ...feature,
-              id: country.get('id'),
-              attributes: country.get('attributes').toJS(),
-              tooltip: {
-                id: country.get('id'),
-                title: country.getIn(['attributes', 'title']),
-              },
-              values: {
-                actions: 1,
-              },
-              style: {
-                fillOpacity: opacity,
-              },
-            },
-          ];
-        }
-        return memo;
-      },
-      [],
-    );
+    countryData = reduceCountryData({
+      features: countriesJSON.features,
+      hasCountries,
+      actorsByType,
+      includeChildActions,
+      childCountries,
+      hasAssociations,
+      countriesViaMembership,
+    });
+
+    countryPointData = reduceCountryData({
+      features: countryPointsJSON.features,
+      hasCountries,
+      actorsByType,
+      includeChildActions,
+      childCountries,
+      hasAssociations,
+      countriesViaMembership,
+    });
   }
   if (!countryData) return null;
 
@@ -282,6 +312,7 @@ export function ActionMap({
           printArgs={printArgs}
           isPrintView={isPrintView}
           countryData={countryData}
+          countryPointData={countryPointData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
           mapSubject={mapSubject}

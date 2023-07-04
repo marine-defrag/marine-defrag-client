@@ -49,6 +49,7 @@ import {
   selectResourceConnections,
   selectTaxonomiesWithCategories,
   selectIsPrintView,
+  selectShowFFasCircles,
 } from 'containers/App/selectors';
 
 import {
@@ -105,6 +106,7 @@ export function ActionView({
   handleTypeClick,
   isPrintView,
   onSetPrintView,
+  showFFasCircles,
 }) {
   useEffect(() => {
     // kick off loading of data
@@ -113,6 +115,8 @@ export function ActionView({
   const mySetPrintView = () => onSetPrintView({
     printType: isIndicator ? PRINT_TYPES.FF : PRINT_TYPES.SINGLE,
     printContentOptions: isIndicator ? null : { tabs: true },
+    printMapOptions: (!isIndicator || !showFFasCircles) ? { markers: true } : null,
+    printMapMarkers: true,
     printOrientation: 'portrait',
     printSize: 'A4',
   });
@@ -438,6 +442,7 @@ ActionView.propTypes = {
   handleClose: PropTypes.func,
   onEntityClick: PropTypes.func,
   onSetPrintView: PropTypes.func,
+  showFFasCircles: PropTypes.bool,
   intl: intlShape.isRequired,
 };
 
@@ -451,6 +456,7 @@ const mapStateToProps = (state, props) => ({
   resourceConnections: selectResourceConnections(state),
   parent: selectParentAction(state, props.params.id),
   isPrintView: selectIsPrintView(state),
+  showFFasCircles: selectShowFFasCircles(state),
 });
 
 function mapDispatchToProps(dispatch, props) {

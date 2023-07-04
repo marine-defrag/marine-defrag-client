@@ -14,6 +14,7 @@ import * as topojson from 'topojson-client';
 // import { FormattedMessage } from 'react-intl';
 
 import countriesTopo from 'data/ne_countries_10m_v5.topo.json';
+import countryPointJSON from 'data/country-points.json';
 
 import { ACTORTYPES, ACTIONTYPES } from 'themes/config';
 
@@ -125,6 +126,65 @@ const addAllCountryActionIdsToList = (
     return memo;
   },
   countryList,
+);
+const reduceCountryData = ({
+  features, countries, countryActionIds, actor,
+}) => features.reduce(
+  (memo, feature) => {
+    const country = countries && countries.find(
+      (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
+    );
+    if (country) {
+      const isActive = qe(country.get('id'), actor.get('id'));
+      const actionCount = countryActionIds
+        && countryActionIds.get(parseInt(country.get('id'), 10))
+        && countryActionIds.get(parseInt(country.get('id'), 10)).size;
+      if (actionCount) {
+        return [
+          ...memo,
+          {
+            ...feature,
+            id: country.get('id'),
+            attributes: country.get('attributes').toJS(),
+            tooltip: {
+              id: country.get('id'),
+              title: country.getIn(['attributes', 'title']),
+              isCount: true,
+              stats: [{
+                values: [{
+                  label: 'No of activities',
+                  value: actionCount || 0,
+                }],
+              }],
+            },
+            isActive,
+            values: {
+              actions: actionCount || 0,
+            },
+          },
+        ];
+      }
+      if (isActive) {
+        return [
+          ...memo,
+          {
+            ...feature,
+            id: country.get('id'),
+            attributes: country.get('attributes').toJS(),
+            isActive,
+          },
+        ];
+      }
+    }
+    return memo;
+  },
+  [],
+).sort(
+  (a, b) => {
+    if (a.isActive) return 1;
+    if (b.isActive) return -1;
+    return -1;
+  },
 );
 
 export function ActorActivitiesMap({
@@ -371,64 +431,13 @@ export function ActorActivitiesMap({
   }
 
   const countryData = !hasRelated
-    ? countriesJSON.features
-    : countriesJSON.features.reduce(
-      (memo, feature) => {
-        const country = countries && countries.find(
-          (e) => qe(e.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
-        );
-        if (country) {
-          const isActive = qe(country.get('id'), actor.get('id'));
-          const actionCount = countryActionIds
-            && countryActionIds.get(parseInt(country.get('id'), 10))
-            && countryActionIds.get(parseInt(country.get('id'), 10)).size;
-          if (actionCount) {
-            return [
-              ...memo,
-              {
-                ...feature,
-                id: country.get('id'),
-                attributes: country.get('attributes').toJS(),
-                tooltip: {
-                  id: country.get('id'),
-                  title: country.getIn(['attributes', 'title']),
-                  isCount: true,
-                  stats: [{
-                    values: [{
-                      label: 'No of activities',
-                      value: actionCount || 0,
-                    }],
-                  }],
-                },
-                isActive,
-                values: {
-                  actions: actionCount || 0,
-                },
-              },
-            ];
-          }
-          if (isActive) {
-            return [
-              ...memo,
-              {
-                ...feature,
-                id: country.get('id'),
-                attributes: country.get('attributes').toJS(),
-                isActive,
-              },
-            ];
-          }
-        }
-        return memo;
-      },
-      [],
-    ).sort(
-      (a, b) => {
-        if (a.isActive) return 1;
-        if (b.isActive) return -1;
-        return -1;
-      },
-    );
+    ? countriesJSON.features : reduceCountryData({
+      features: countriesJSON.features, countries, countryActionIds, actor,
+    });
+  const countryPointData = !hasRelated ? countryPointJSON.features : reduceCountryData({
+    features: countryPointJSON.features, countries, countryActionIds, actor,
+  });
+
   const maxValue = countryActionIds && countryActionIds.reduce(
     (max, actionList) => Math.max(max, actionList.size),
     0,
@@ -436,6 +445,8 @@ export function ActorActivitiesMap({
   // const ref = React.useRef();
   // w={ref && ref.current && ref.current.clientWidth}
   const [mapTooltips, setMapTooltips] = React.useState([]);
+  const [mapView, setMapView] = React.useState(null);
+
   return (
     <Styled>
       <SimpleMapContainer
@@ -446,6 +457,7 @@ export function ActorActivitiesMap({
           isPrintView={isPrint}
           isSingle
           countryData={countryData}
+          countryPointData={countryPointData}
           countryFeatures={countriesJSON.features}
           indicator="actions"
           onActorClick={(id) => onEntityClick(id)}
@@ -457,6 +469,8 @@ export function ActorActivitiesMap({
           mapTooltips={mapTooltips}
           setMapTooltips={setMapTooltips}
           mapId={mapId}
+          mapView={mapView}
+          onSetMapView={setMapView}
         />
       </SimpleMapContainer>
       {mapTitle && (

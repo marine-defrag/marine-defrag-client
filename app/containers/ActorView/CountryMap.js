@@ -40,6 +40,7 @@ const MapContainer = styled((p) => <Box margin={{ horizontal: 'medium' }} {...p}
   position: relative;
   background: #F9F9FA;
   overflow: hidden;
+  border: 1px solid #f6f7f9;
   padding-top: ${({ isPrint, orient }) => {
     if (isPrint) return orient === 'landscape' ? '77%' : '111%';
     return '88%';

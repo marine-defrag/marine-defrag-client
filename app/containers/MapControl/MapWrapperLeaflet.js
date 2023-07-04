@@ -27,6 +27,9 @@ import {
   getBBox,
   getTooltipFeatures,
   getCenterLatLng,
+  getPointLayer,
+  filterNoDataFeatures,
+  filterFeaturesByZoom,
 } from './utils';
 
 const Styled = styled.div`
@@ -82,6 +85,7 @@ const VIEW_INITIAL = {
 export function MapWrapperLeaflet({
   countryFeatures,
   countryData,
+  countryPointData,
   locationData,
   indicator,
   onActorClick,
@@ -115,6 +119,7 @@ export function MapWrapperLeaflet({
   const mapRef = useRef(null);
   const countryLayerGroupRef = useRef(null);
   const countryOverlayGroupRef = useRef(null);
+  const countryPointOverlayGroupRef = useRef(null);
   const locationOverlayGroupRef = useRef(null);
   const countryTooltipGroupRef = useRef(null);
   const countryOverGroupRef = useRef(null);
@@ -296,6 +301,8 @@ export function MapWrapperLeaflet({
       countryLayerGroupRef.current.addTo(mapRef.current);
       countryOverlayGroupRef.current = L.layerGroup();
       countryOverlayGroupRef.current.addTo(mapRef.current);
+      countryPointOverlayGroupRef.current = L.layerGroup();
+      countryPointOverlayGroupRef.current.addTo(mapRef.current);
       locationOverlayGroupRef.current = L.layerGroup();
       locationOverlayGroupRef.current.addTo(mapRef.current);
       countryTooltipGroupRef.current = L.layerGroup();
@@ -408,6 +415,37 @@ export function MapWrapperLeaflet({
     }
   }, [countryData, indicator, mapSubject]);
   // }, [countryData, indicator, mapTooltips, mapSubject]);
+
+  // add countryPointData
+  useEffect(() => {
+    countryPointOverlayGroupRef.current.clearLayers();
+    const hasLocationData = locationData && locationData.length > 0;
+    const showMarkers = !isPrintView || (printArgs && printArgs.printMapMarkers);
+    if (
+      !hasLocationData
+      && countryPointData && countryPointData.length > 0
+      && showMarkers
+    ) {
+      const zoom = mapView && mapView.zoom ? mapView.zoom : MAP_OPTIONS.ZOOM.INIT;
+      const jsonLayer = getPointLayer({
+        data: filterNoDataFeatures(
+          filterFeaturesByZoom(countryPointData, zoom, 'marker_max_zoom'),
+          indicator,
+          !!mapSubject, // proxy for isCount: mapSubject only set for "count indicators"
+        ),
+        config: {
+          indicator, mapOptions, mapSubject, maxValueCountries, tooltip, styleType,
+        },
+        markerEvents: {
+          click: (e) => onFeatureClickTT(e),
+          mouseout: () => onFeatureOver(),
+        },
+      });
+
+      countryPointOverlayGroupRef.current.addLayer(jsonLayer);
+    }
+  }, [countryPointData, mapView, indicator, tooltip, mapSubject, locationData, printArgs, isPrintView]);
+
   // add zoom to countryData
   useEffect(() => {
     if (
@@ -589,7 +627,7 @@ export function MapWrapperLeaflet({
         }
       }
     }
-  }, [mapTooltips, mapSubject, includeSecondaryMembers]);
+  }, [mapTooltips, mapSubject, includeSecondaryMembers, mapView]);
 
   useLayoutEffect(() => {
     countryOverGroupRef.current.clearLayers();
@@ -645,6 +683,7 @@ export function MapWrapperLeaflet({
 MapWrapperLeaflet.propTypes = {
   countryFeatures: PropTypes.array, // country basemap
   countryData: PropTypes.array, // country data overlay
+  countryPointData: PropTypes.array,
   locationData: PropTypes.array, // location data overlay
   indicator: PropTypes.string,
   onActorClick: PropTypes.func,

@@ -178,13 +178,13 @@ export function EntitiesMap(props) {
           onClick: () => onSetIncludeTargetMembers(includeTargetMembers ? '0' : '1'),
           label: 'Include activities targeting regions, intergovernmental organisations and classes (countries belong to)',
         };
-      // } else if (!hasActions && hasByTarget) { // i.e. regions, classes
-      //   mapSubjectClean = 'targets';
-      //   memberOption = {
-      //     active: includeActorMembers,
-      //     onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
-      //     label: 'Include activities of intergovernmental organisations (countries belong to)',
-      //   };
+        // } else if (!hasActions && hasByTarget) { // i.e. regions, classes
+        //   mapSubjectClean = 'targets';
+        //   memberOption = {
+        //     active: includeActorMembers,
+        //     onClick: () => onSetIncludeActorMembers(includeActorMembers ? '0' : '1'),
+        //     label: 'Include activities of intergovernmental organisations (countries belong to)',
+        //   };
       } else { // i.e. groups
         mapSubjectClean = 'targets';
         memberOption = {
@@ -444,7 +444,7 @@ export function EntitiesMap(props) {
         infoTitlePrint = infoTitle;
       }
 
-    // actions ===================================================
+      // actions ===================================================
     } else if (config.types === 'actiontypes') {
       typeLabels = {
         single: intl.formatMessage(appMessages.entities[`actions_${typeId}`].single),
@@ -676,7 +676,7 @@ export function EntitiesMap(props) {
       reducePoints = () => ffIndicator && countryPointsJSON.features.reduce(
         (memo, feature) => {
           const country = countriesWithIndicators.find(
-            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
+            (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code || feature.properties.ADM0_A3)
           );
           // console.log(country && country.toJS())
           if (country) {
