@@ -1,5 +1,4 @@
-// import React, { useEffect } from 'react';
-import React from 'react';
+import React, { useLayoutEffect, useState, useRef } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -21,6 +20,9 @@ import {
 import { selectTimelineHighlightCategory } from 'containers/App/selectors';
 import { setTimelineHighlightCategory } from 'containers/App/actions';
 
+import ButtonDefault from 'components/buttons/ButtonDefault';
+
+import qe from 'utils/quasi-equals';
 // import { sortEntities } from 'utils/sort';
 //
 // import { getActionsWithOffspring } from './utils';
@@ -47,11 +49,19 @@ const myTimeFormat = (value) => {
 export function ChartTimeline({
   entities,
   highlightCategory,
-  // onSetCategory,
+  onSetCategory,
+  onResetCategory,
   intl,
 }) {
+  const targetRef = useRef();
+  const [chartWidth, setChartWidth] = useState(0);
   console.log('highlightCategory', highlightCategory);
-
+  console.log('entities', entities && entities.toJS());
+  useLayoutEffect(() => {
+    if (targetRef.current) {
+      setChartWidth(targetRef.current.offsetWidth);
+    }
+  }, []);
   // const actionsWithOffspring = entities && getActionsWithOffspring(entities);
   //
   // const actionsGrouped = actionsWithOffspring.groupBy(
@@ -78,50 +88,67 @@ export function ChartTimeline({
   const size = React.useContext(ResponsiveContext);
   const chartHeight = getPlotHeight({ size });
   // console.log('tickValuesX', tickValuesX);
+  console.log('chartWidth', chartWidth);
+  console.log('chartHeight', chartHeight);
 
   const chartData = prepChartData({
     entities,
   });
   // console.log('chartData', chartData)
   return (
-    <div style={{ position: 'relative' }}>
-      {chartData && (
-        <FlexibleWidthXYPlot
-          height={chartHeight}
-          xType="time"
-          style={{ fill: 'transparent' }}
-          margin={{
-            bottom: 30,
-            top: 0,
-            right: 32,
-            left: 32,
-          }}
-        >
-          <AreaSeries data={dataForceXYRange} style={{ opacity: 0 }} />
-          <VerticalGridLines
-            tickValues={tickValuesX}
-            style={{
-              stroke: 'rgba(136, 150, 160, 0.4)',
+    <div>
+      <div style={{ position: 'relative' }} ref={targetRef}>
+        {chartData && (
+          <FlexibleWidthXYPlot
+            height={chartHeight}
+            xType="time"
+            style={{ fill: 'transparent' }}
+            margin={{
+              bottom: 30,
+              top: 0,
+              right: 32,
+              left: 32,
             }}
-          />
-          {/* tickmarks as vertical gridlines and date */}
-          <XAxis
-            tickFormat={(val) => myTimeFormat(val, intl)}
-            tickSizeInner={0}
-            tickSizeOuter={20}
-            style={{
-              ticks: { strokeWidth: 1, stroke: 'rgba(136, 150, 160, 0.4)' },
-            }}
-            tickValues={tickValuesX}
-            tickPadding={-12}
-          />
-          <MarkSeries
-            data={chartData}
-            colorType="literal"
-            size={5}
-          />
-        </FlexibleWidthXYPlot>
-      )}
+          >
+            <AreaSeries data={dataForceXYRange} style={{ opacity: 0 }} />
+            <VerticalGridLines
+              tickValues={tickValuesX}
+              style={{
+                stroke: 'rgba(136, 150, 160, 0.4)',
+              }}
+            />
+            {/* tickmarks as vertical gridlines and date */}
+            <XAxis
+              tickFormat={(val) => myTimeFormat(val, intl)}
+              tickSizeInner={0}
+              tickSizeOuter={20}
+              style={{
+                ticks: { strokeWidth: 1, stroke: 'rgba(136, 150, 160, 0.4)' },
+              }}
+              tickValues={tickValuesX}
+              tickPadding={-12}
+            />
+            <MarkSeries
+              data={chartData}
+              colorType="literal"
+              size={5}
+            />
+          </FlexibleWidthXYPlot>
+        )}
+      </div>
+      <ButtonDefault
+        inactive={!qe(highlightCategory, 3)}
+        alt="Test 3"
+        onClick={() => {
+          if (qe(highlightCategory, 3)) {
+            onResetCategory();
+          } else {
+            onSetCategory(3);
+          }
+        }}
+      >
+        Test 3
+      </ButtonDefault>
     </div>
   );
 }
@@ -200,7 +227,8 @@ export function ChartTimeline({
 ChartTimeline.propTypes = {
   entities: PropTypes.instanceOf(List),
   highlightCategory: PropTypes.string,
-  // onSetCategory: PropTypes.func,
+  onSetCategory: PropTypes.func,
+  onResetCategory: PropTypes.func,
   intl: intlShape.isRequired,
 };
 
@@ -212,6 +240,9 @@ function mapDispatchToProps(dispatch) {
   return {
     onSetCategory: (catId) => {
       dispatch(setTimelineHighlightCategory(catId));
+    },
+    onResetCategory: () => {
+      dispatch(setTimelineHighlightCategory());
     },
   };
 }
