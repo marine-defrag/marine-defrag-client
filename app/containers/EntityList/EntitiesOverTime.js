@@ -15,7 +15,6 @@ import styled from 'styled-components';
 //   ROUTES,
 // } from 'themes/config';
 
-import qe from 'utils/quasi-equals';
 import { sortEntities } from 'utils/sort';
 import { isMaxSize } from 'utils/responsive';
 
@@ -30,7 +29,6 @@ import { CONTENT_LIST } from 'containers/App/constants';
 import { setTimelineHighlightCategory } from 'containers/App/actions';
 // import { updatePath } from 'containers/App/actions';
 
-import ButtonDefault from 'components/buttons/ButtonDefault';
 import PrintHide from 'components/styled/PrintHide';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
@@ -46,6 +44,7 @@ import EntityListViewOptions from 'components/EntityListViewOptions';
 // import qe from 'utils/quasi-equals';
 
 import ChartTimeline from './ChartTimeline';
+import EntitiesCategories from './EntitiesCategories';
 // import messages from './messages';
 // import { selectActionsByAncestor } from './selectors';
 
@@ -126,19 +125,15 @@ export function EntitiesOverTime({
                 </ChartWrapperInner>
               </ChartWrapperOuter>
               <Box direction="row" fill={false}>
-                <ButtonDefault
-                  inactive={!qe(highlightCategory, 3)}
-                  alt="Test 3"
-                  onClick={() => {
-                    if (qe(highlightCategory, 3)) {
-                      onResetCategory();
-                    } else {
-                      onSetCategory(3);
-                    }
-                  }}
-                >
-                  Test 3
-                </ButtonDefault>
+                {taxonomiesWithCats
+                  && (
+                    <EntitiesCategories
+                      taxonomiesWithCats={taxonomiesWithCats}
+                      onSetCategory={onSetCategory}
+                      onResetCategory={onResetCategory}
+                      highlightCategory={highlightCategory}
+                    />
+                  )}
               </Box>
             </div>
           )}
