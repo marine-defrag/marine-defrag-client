@@ -60,14 +60,19 @@ const ChartWrapperInner = styled.div`
 
 const prepareEntityOptions = (
   entities, highlightCategory,
-) => highlightCategory !== undefined ? entities.map(
+) => entities.map(
   (entity) => {
-    const color = entity.get('categories')
-      && testEntityCategoryValueAssociation(entity, 'categories', highlightCategory) ? '#FF0000' : '#89CFF0';
+    let color;
+    if (highlightCategory !== undefined) {
+      color = entity.get('categories')
+        && testEntityCategoryValueAssociation(entity, 'categories', highlightCategory) ? '#477ad1' : '#EDEFF0';
+    } else {
+      color = '#477ad1';
+    }
     return entity.setIn(['attributes', 'color'], color);
   },
   []
-) : entities;
+);
 export function EntitiesOverTime({
   dataReady,
   viewOptions,
