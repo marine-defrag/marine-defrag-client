@@ -17,6 +17,7 @@ import styled from 'styled-components';
 
 import { sortEntities } from 'utils/sort';
 import { isMaxSize } from 'utils/responsive';
+import { testEntityCategoryValueAssociation } from 'utils/entities';
 
 import {
   // selectActors,
@@ -57,6 +58,16 @@ const ChartWrapperInner = styled.div`
   direction: ltr
 `;
 
+const prepareEntityOptions = (
+  entities, highlightCategory,
+) => highlightCategory !== undefined ? entities.map(
+  (entity) => {
+    const color = entity.get('categories')
+      && testEntityCategoryValueAssociation(entity, 'categories', highlightCategory) ? '#FF0000' : '#89CFF0';
+    return entity.setIn(['attributes', 'color'], color);
+  },
+  []
+) : entities;
 export function EntitiesOverTime({
   dataReady,
   viewOptions,
@@ -113,14 +124,14 @@ export function EntitiesOverTime({
                 <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
                   <ChartTimeline
                     highlightCategory={highlightCategory}
-                    entities={sortEntities(
+                    entities={prepareEntityOptions(sortEntities(
                       entities.filter(
                         (entity) => entity.getIn(['attributes', 'date_start'])
                       ),
                       'asc',
                       'date_start', // sortBy
                       'date', // type
-                    )}
+                    ), highlightCategory)}
                   />
                 </ChartWrapperInner>
               </ChartWrapperOuter>

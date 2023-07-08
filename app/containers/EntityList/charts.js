@@ -56,6 +56,7 @@ export const prepChartData = ({ entities }) => {
         {
           y: randomiseInRange(-4, 4),
           x: new Date(date).getTime(),
+          color: entity.getIn(['attributes', 'color']),
         },
       ];
     },
