@@ -57,7 +57,18 @@ const ChartWrapperInner = styled.div`
   width: ${({ scrollOverflow }) => scrollOverflow ? '1000px' : 'auto'};
   direction: ltr
 `;
+const prepareTaxonomiesWithCats = (taxonomiesWithCats, entities) => {
+  const uniqueCategories = entities.map((entity) => entity.getIn(['categories'])).flatten().toSet();
+  return taxonomiesWithCats.reduce((memo, taxonomy) => {
+    const keepCategories = taxonomy.getIn(['categories'])
+      .filter((category) => !uniqueCategories.has(category))
+      .map((category) => ({ id: category.get('id'), label: category.getIn(['attributes', 'title']) }));
 
+    const taxonomyID = taxonomy.get('id');
+    // const taxonomyLabel = intl.formatMessage(appMessages[taxonomy.type][taxonomy.id]);
+    return keepCategories.size > 0 ? memo.concat([{ taxonomyID, label: taxonomyID, categories: keepCategories.toList().toJS() }]) : memo;
+  }, []);
+};
 const prepareEntityOptions = (
   entities, highlightCategory,
 ) => entities.map(
@@ -87,7 +98,6 @@ export function EntitiesOverTime({
   onResetCategory,
   highlightCategory,
 }) {
-  console.log('taxonomiesWithCats', taxonomiesWithCats && taxonomiesWithCats.toJS());
   const scrollContainer = useRef(null);
   const scrollReference = useRef(null);
 
@@ -144,7 +154,7 @@ export function EntitiesOverTime({
                 {taxonomiesWithCats
                   && (
                     <EntitiesCategories
-                      taxonomiesWithCats={taxonomiesWithCats}
+                      taxonomiesWithCats={prepareTaxonomiesWithCats(taxonomiesWithCats, entities)}
                       onSetCategory={onSetCategory}
                       onResetCategory={onResetCategory}
                       highlightCategory={highlightCategory}
