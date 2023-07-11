@@ -87,7 +87,7 @@ export const prepChartData = ({
               {
                 row: rowIndexGroups,
                 isGroup: true,
-                root: entity.get('id'),
+                group: entity.get('id'),
                 x: new Date(dateChild).getTime(),
                 color: colorChild,
               },
@@ -97,6 +97,7 @@ export const prepChartData = ({
             {
               row: rowIndexGroups,
               isGroup: true,
+              group: entity.get('id'),
               x: new Date(date).getTime(),
               color,
             },
