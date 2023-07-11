@@ -7,7 +7,7 @@ import qe from 'utils/quasi-equals';
 
 import ButtonDefault from 'components/buttons/ButtonDefault';
 
-const ButtonWrapperInner = styled((p) => (
+const ButtonWrapper = styled((p) => (
   <Box direction="row" justify="start" wrap gap="small" {...p} />
 ))`
   overflow-x: auto;
@@ -26,20 +26,19 @@ const EntitiesCategories = ({
     {taxonomiesWithCats.map((taxonomy) => (
       <TaxonomyGroup key={taxonomy.id}>
         <StyledText>{taxonomy.label}</StyledText>
-        <ButtonWrapperInner>
+        <ButtonWrapper>
           {taxonomy.categories.map((category) => {
-            const categoryID = category.id;
-            const { label } = category;
+            const { label, id } = category;
             return (
               <ButtonDefault
-                key={categoryID}
-                inactive={!qe(highlightCategory, categoryID)}
+                key={id}
+                inactive={!qe(highlightCategory, id)}
                 alt={label}
                 onClick={() => {
-                  if (qe(highlightCategory, categoryID)) {
+                  if (qe(highlightCategory, id)) {
                     onResetCategory();
                   } else {
-                    onSetCategory(categoryID);
+                    onSetCategory(id);
                   }
                 }}
               >
@@ -47,7 +46,7 @@ const EntitiesCategories = ({
               </ButtonDefault>
             );
           })}
-        </ButtonWrapperInner>
+        </ButtonWrapper>
       </TaxonomyGroup>
     ))}
   </Styled>
