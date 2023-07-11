@@ -61,13 +61,8 @@ export const prepChartData = ({
   const data = entities.reduce(
     (memo, entity) => {
       const date = entity.getIn(['attributes', 'date_start']);
-      let color;
-      if (highlightCategory !== undefined) {
-        color = entity.get('categories')
-          && testEntityCategoryValueAssociation(entity, 'categories', highlightCategory) ? '#477ad1' : '#EDEFF0';
-      } else {
-        color = '#477ad1';
-      }
+      const active = !highlightCategory || testEntityCategoryValueAssociation(entity, 'categories', highlightCategory);
+      const color = active ? '#477ad1' : '#EDEFF0';
       // group
       if (entity.get('offspring')) {
         rowIndexGroups -= 1;
@@ -75,18 +70,14 @@ export const prepChartData = ({
         const group = entity.get('offspring').reduce(
           (memoGroup, child) => {
             const dateChild = child.getIn(['attributes', 'date_start']);
-            let colorChild;
-            if (highlightCategory !== undefined) {
-              colorChild = child.get('categories')
-                && testEntityCategoryValueAssociation(child, 'categories', highlightCategory) ? '#477ad1' : '#EDEFF0';
-            } else {
-              colorChild = '#477ad1';
-            }
+            const activeChild = !highlightCategory || testEntityCategoryValueAssociation(child, 'categories', highlightCategory);
+            const colorChild = active ? '#477ad1' : '#EDEFF0';
             return [
               ...memoGroup,
               {
                 row: rowIndexGroups,
                 isGroup: true,
+                active: activeChild,
                 group: entity.get('id'),
                 x: new Date(dateChild).getTime(),
                 color: colorChild,
@@ -97,6 +88,7 @@ export const prepChartData = ({
             {
               row: rowIndexGroups,
               isGroup: true,
+              active,
               group: entity.get('id'),
               x: new Date(date).getTime(),
               color,
@@ -118,6 +110,7 @@ export const prepChartData = ({
         ...memo,
         {
           row: rowIndex,
+          active,
           isGroup: false,
           x: xCurrent,
           color,
