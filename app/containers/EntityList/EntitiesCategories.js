@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { Box } from 'grommet';
 
 import qe from 'utils/quasi-equals';
+import appMessages from 'containers/App/messages';
+import { injectIntl, intlShape } from 'react-intl';
 
 import ButtonDefault from 'components/buttons/ButtonDefault';
 
@@ -21,14 +23,15 @@ const EntitiesCategories = ({
   onSetCategory,
   onResetCategory,
   highlightCategory,
+  intl,
 }) => (
   <Styled>
     {taxonomiesWithCats.map((taxonomy) => (
       <TaxonomyGroup key={taxonomy.id}>
-        <StyledText>{taxonomy.label}</StyledText>
+        <StyledText>{intl.formatMessage(appMessages.entities.taxonomies[taxonomy.id].plural)}</StyledText>
         <ButtonWrapper>
           {taxonomy.categories.map((category) => {
-            const { label, id } = category;
+            const { id, label } = category;
             return (
               <ButtonDefault
                 key={id}
@@ -58,6 +61,7 @@ EntitiesCategories.propTypes = {
   highlightCategory: PropTypes.string,
   onSetCategory: PropTypes.func,
   onResetCategory: PropTypes.func,
+  intl: intlShape.isRequired,
 };
 
-export default EntitiesCategories;
+export default injectIntl(EntitiesCategories);
