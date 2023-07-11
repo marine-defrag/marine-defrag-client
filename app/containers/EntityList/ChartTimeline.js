@@ -20,7 +20,7 @@ import {
 
 // import { sortEntities } from 'utils/sort';
 //
-// import { getActionsWithOffspring } from './utils';
+import { getActionsWithOffspring } from './utils';
 import {
   getPlotHeight,
   getTickValuesX,
@@ -28,6 +28,7 @@ import {
   getXYRange,
   prepChartData,
   getDecade,
+  mapRowToY,
 } from './charts';
 
 const YearLabel = styled.text`
@@ -51,8 +52,6 @@ export function ChartTimeline({
 }) {
   const targetRef = useRef();
   const [chartWidth, setChartWidth] = useState(0);
-  console.log('highlightCategory', highlightCategory);
-  console.log('entities', entities && entities.toJS());
 
   const handleResize = () => {
     if (targetRef.current) {
@@ -74,13 +73,7 @@ export function ChartTimeline({
   useLayoutEffect(() => {
     handleResize();
   }, []);
-  // const actionsWithOffspring = entities && getActionsWithOffspring(entities);
-  //
-  // const actionsGrouped = actionsWithOffspring.groupBy(
-  //   (action) => action.get('offspring') && action.get('offspring').size > 0
-  //     ? 'with'
-  //     : 'without'
-  // );
+  const actionsWithOffspring = entities && getActionsWithOffspring(entities);
 
   const minDate = getDateForChart(
     entities.first().getIn(['attributes', 'date_start']),
@@ -94,19 +87,28 @@ export function ChartTimeline({
   const tickValuesX = getTickValuesX(
     { minDecade, maxDecade }
   );
-  const dataForceXYRange = getXYRange(
-    { minDate: `${minDecade}-01-01`, maxDate: `${maxDecade}-01-01` }
-  );
   const size = React.useContext(ResponsiveContext);
   const chartHeight = getPlotHeight({ size });
+  const dataForceXYRange = getXYRange(
+    {
+      minDate: `${minDecade}-01-01`,
+      maxDate: `${maxDecade}-01-01`,
+    }
+  );
   // console.log('tickValuesX', tickValuesX);
-  console.log('chartWidth', chartWidth);
-  console.log('chartHeight', chartHeight);
+  // console.log('chartWidth', chartWidth);
+  // console.log('chartHeight', chartHeight);
 
-  const chartData = prepChartData({
-    entities,
+  const { chartData, minRow, maxRow } = prepChartData({
+    entities: actionsWithOffspring,
+    chartWidth,
+    xMin: dataForceXYRange[0].x,
+    xMax: dataForceXYRange[1].x,
+    highlightCategory,
   });
   // console.log('chartData', chartData)
+  // console.log('noRows', noRows)
+  // console.log('chartHeight', chartHeight)
   return (
     <div ref={targetRef}>
       <ChartWrapper>
@@ -121,6 +123,7 @@ export function ChartTimeline({
               right: 32,
               left: 32,
             }}
+            getY={(d) => d.y || mapRowToY(d, minRow, maxRow)}
           >
             <AreaSeries data={dataForceXYRange} style={{ opacity: 0 }} />
             <VerticalGridLines
@@ -143,7 +146,14 @@ export function ChartTimeline({
             <MarkSeries
               data={chartData}
               colorType="literal"
-              size={5}
+              size={8}
+              opacity={0.3}
+            />
+            <MarkSeries
+              data={chartData}
+              colorType="literal"
+              size={4}
+              opacity={1}
             />
           </FlexibleWidthXYPlot>
         )}

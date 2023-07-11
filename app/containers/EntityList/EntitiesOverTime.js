@@ -10,6 +10,7 @@ import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
 import { ResponsiveContext, Box } from 'grommet';
 import styled from 'styled-components';
+import { injectIntl, intlShape } from 'react-intl';
 // import {
 //   ACTORTYPES,
 //   ROUTES,
@@ -17,7 +18,6 @@ import styled from 'styled-components';
 
 import { sortEntities } from 'utils/sort';
 import { isMaxSize } from 'utils/responsive';
-import { testEntityCategoryValueAssociation } from 'utils/entities';
 
 import {
   // selectActors,
@@ -41,7 +41,7 @@ import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
 
 
-// import appMessages from 'containers/App/messages';
+import appMessages from 'containers/App/messages';
 // import qe from 'utils/quasi-equals';
 
 import ChartTimeline from './ChartTimeline';
@@ -57,7 +57,7 @@ const ChartWrapperInner = styled.div`
   width: ${({ scrollOverflow }) => scrollOverflow ? '1000px' : 'auto'};
   direction: ltr
 `;
-const prepareTaxonomiesWithCats = (taxonomiesWithCats, entities) => {
+const prepareTaxonomiesWithCats = (taxonomiesWithCats, entities, intl) => {
   const uniqueCategories = entities.map((entity) => entity.getIn(['categories'])).flatten().toSet();
   return taxonomiesWithCats.reduce((memo, taxonomy) => {
     const keepCategories = taxonomy.getIn(['categories'])
@@ -65,25 +65,11 @@ const prepareTaxonomiesWithCats = (taxonomiesWithCats, entities) => {
       .map((category) => ({ id: category.get('id'), label: category.getIn(['attributes', 'title']) }));
 
     const taxonomyID = taxonomy.get('id');
-    // const taxonomyLabel = intl.formatMessage(appMessages[taxonomy.type][taxonomy.id]);
-    return keepCategories.size > 0 ? memo.concat([{ taxonomyID, label: taxonomyID, categories: keepCategories.toList().toJS() }]) : memo;
+    const taxonomyLabel = intl.formatMessage(appMessages.entities.taxonomies[taxonomyID].plural);
+    return keepCategories.size > 0 ? memo.concat([{ id: taxonomyID, label: taxonomyLabel, categories: keepCategories.toList().toJS() }]) : memo;
   }, []);
 };
-const prepareEntityOptions = (
-  entities, highlightCategory,
-) => entities.map(
-  (entity) => {
-    let color;
-    if (highlightCategory !== undefined) {
-      color = entity.get('categories')
-        && testEntityCategoryValueAssociation(entity, 'categories', highlightCategory) ? '#477ad1' : '#EDEFF0';
-    } else {
-      color = '#477ad1';
-    }
-    return entity.setIn(['attributes', 'color'], color);
-  },
-  []
-);
+
 export function EntitiesOverTime({
   dataReady,
   viewOptions,
@@ -97,6 +83,7 @@ export function EntitiesOverTime({
   onSetCategory,
   onResetCategory,
   highlightCategory,
+  intl,
 }) {
   const scrollContainer = useRef(null);
   const scrollReference = useRef(null);
@@ -139,14 +126,14 @@ export function EntitiesOverTime({
                 <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
                   <ChartTimeline
                     highlightCategory={highlightCategory}
-                    entities={prepareEntityOptions(sortEntities(
+                    entities={sortEntities(
                       entities.filter(
                         (entity) => entity.getIn(['attributes', 'date_start'])
                       ),
                       'asc',
                       'date_start', // sortBy
                       'date', // type
-                    ), highlightCategory)}
+                    )}
                   />
                 </ChartWrapperInner>
               </ChartWrapperOuter>
@@ -154,7 +141,7 @@ export function EntitiesOverTime({
                 {taxonomiesWithCats
                   && (
                     <EntitiesCategories
-                      taxonomiesWithCats={prepareTaxonomiesWithCats(taxonomiesWithCats, entities)}
+                      taxonomiesWithCats={prepareTaxonomiesWithCats(taxonomiesWithCats, entities, intl, appMessages)}
                       onSetCategory={onSetCategory}
                       onResetCategory={onResetCategory}
                       highlightCategory={highlightCategory}
@@ -190,6 +177,7 @@ EntitiesOverTime.propTypes = {
   hasFilters: PropTypes.bool,
   onSetCategory: PropTypes.func,
   onResetCategory: PropTypes.func,
+  intl: intlShape.isRequired,
   // onEntityClick: PropTypes.func,
   // onSelectAction: PropTypes.func,
 };
@@ -215,4 +203,4 @@ function mapDispatchToProps(dispatch) {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(EntitiesOverTime);
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(EntitiesOverTime));

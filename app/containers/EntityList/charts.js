@@ -1,6 +1,5 @@
 import { isMinSize } from 'utils/responsive';
-
-const randomiseInRange = (min, max) => Math.random() * (max - min + 1) + min;
+import { testEntityCategoryValueAssociation } from 'utils/entities';
 
 export const getDateForChart = (dateString) => {
   const date = new Date(dateString);
@@ -18,20 +17,16 @@ export const getDecade = (dateString, isUpper = false) => {
 export const getXYRange = ({
   minDate,
   maxDate,
-}) => {
-  const yMax = 5;
-  const yMin = -5;
-  return [
-    {
-      x: new Date(minDate).getTime(),
-      y: yMin,
-    },
-    {
-      x: new Date(maxDate).getTime(),
-      y: yMax,
-    },
-  ];
-};
+}) => ([
+  {
+    x: new Date(minDate).getTime(),
+    y: -5,
+  },
+  {
+    x: new Date(maxDate).getTime(),
+    y: 105,
+  },
+]);
 
 export const getTickValuesX = ({ maxDecade, minDecade }) => {
   const values = [];
@@ -47,20 +42,100 @@ export const getPlotHeight = ({ size }) => {
   return 300;
 };
 
-export const prepChartData = ({ entities }) => {
+const NEXT_ROW_THRESHOLD = 12; // px
+export const prepChartData = ({
+  entities,
+  chartWidth, // px
+  xMin, // ms
+  xMax, // ms
+  highlightCategory,
+}) => {
+  // ms per px
+  const dx = (xMax - xMin) / chartWidth; // in ms
+  const nextRowThresholdTime = dx * NEXT_ROW_THRESHOLD; // in ms
+  let rowIndex = 0;
+  let maxRowIndex = 0;
+  let minRowIndex = 0;
+  let rowIndexGroups = 0;
+  let xPrevIndividual = 0;
   const data = entities.reduce(
     (memo, entity) => {
       const date = entity.getIn(['attributes', 'date_start']);
+      let color;
+      if (highlightCategory !== undefined) {
+        color = entity.get('categories')
+          && testEntityCategoryValueAssociation(entity, 'categories', highlightCategory) ? '#477ad1' : '#EDEFF0';
+      } else {
+        color = '#477ad1';
+      }
+      // group
+      if (entity.get('offspring')) {
+        rowIndexGroups -= 1;
+        minRowIndex = Math.min(rowIndexGroups, minRowIndex);
+        const group = entity.get('offspring').reduce(
+          (memoGroup, child) => {
+            const dateChild = child.getIn(['attributes', 'date_start']);
+            let colorChild;
+            if (highlightCategory !== undefined) {
+              colorChild = child.get('categories')
+                && testEntityCategoryValueAssociation(child, 'categories', highlightCategory) ? '#477ad1' : '#EDEFF0';
+            } else {
+              colorChild = '#477ad1';
+            }
+            return [
+              ...memoGroup,
+              {
+                row: rowIndexGroups,
+                isGroup: true,
+                root: entity.get('id'),
+                x: new Date(dateChild).getTime(),
+                color: colorChild,
+              },
+            ];
+          },
+          [
+            {
+              row: rowIndexGroups,
+              isGroup: true,
+              x: new Date(date).getTime(),
+              color,
+            },
+          ]
+        );
+        return [...memo, ...group];
+      }
+      // else individual
+      const xCurrent = new Date(date).getTime();
+      if ((xCurrent - xPrevIndividual) < nextRowThresholdTime) {
+        rowIndex += 1;
+      } else {
+        rowIndex = 0;
+      }
+      xPrevIndividual = xCurrent;
+      maxRowIndex = Math.max(rowIndex, maxRowIndex);
       return [
         ...memo,
         {
-          y: randomiseInRange(-4, 4),
-          x: new Date(date).getTime(),
-          color: entity.getIn(['attributes', 'color']),
+          row: rowIndex,
+          isGroup: false,
+          x: xCurrent,
+          color,
         },
       ];
     },
     [],
   );
-  return data;
+  return {
+    chartData: data,
+    minRow: minRowIndex,
+    maxRow: maxRowIndex,
+  };
+};
+export const mapRowToY = (
+  datum, minRow, maxRow,
+) => {
+  const noRows = maxRow - minRow;
+  const rowHeight = 100 / (noRows);
+  const y = rowHeight * (datum.row - minRow);
+  return 100 - y;
 };

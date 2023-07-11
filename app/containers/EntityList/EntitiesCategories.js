@@ -24,7 +24,7 @@ const EntitiesCategories = ({
 }) => (
   <Styled>
     {taxonomiesWithCats.map((taxonomy) => (
-      <TaxonomyGroup>
+      <TaxonomyGroup key={taxonomy.id}>
         <StyledText>{taxonomy.label}</StyledText>
         <ButtonWrapperInner>
           {taxonomy.categories.map((category) => {

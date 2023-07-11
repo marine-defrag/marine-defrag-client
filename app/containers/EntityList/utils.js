@@ -223,9 +223,13 @@ export const getActionsWithOffspring = (actions) => actions
         parent: action,
         entities: actions,
       });
-      return memo.set(action.get('id'), action.set('offspring', children));
+      return memo.push(
+        children && children.size > 0
+          ? action.set('offspring', children)
+          : action
+      );
     }
     // const ancestors = includeParentRecursive({ parents: List(), entity: action, entities: actions });
     // console.log('action', action && action.toJS())
     return memo;
-  }, Map());
+  }, List());
