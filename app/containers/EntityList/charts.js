@@ -71,7 +71,7 @@ export const prepChartData = ({
           (memoGroup, child) => {
             const dateChild = child.getIn(['attributes', 'date_start']);
             const activeChild = !highlightCategory || testEntityCategoryValueAssociation(child, 'categories', highlightCategory);
-            const colorChild = active ? '#477ad1' : '#EDEFF0';
+            const colorChild = activeChild ? '#477ad1' : '#EDEFF0';
             return [
               ...memoGroup,
               {
