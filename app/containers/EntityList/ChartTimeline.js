@@ -10,7 +10,7 @@ import { utcFormat as timeFormat } from 'd3-time-format';
 
 import {
   FlexibleWidthXYPlot,
-  // LineSeries,
+  LineSeries,
   XAxis,
   VerticalGridLines,
   MarkSeries,
@@ -44,6 +44,15 @@ const myTimeFormat = (value) => {
   const formatted = timeFormat('%Y')(value);
   return <YearLabel dx="2">{formatted}</YearLabel>;
 };
+
+const prepLineChartData = (chartData) => Object.values(chartData.filter((entity) => entity.isGroup).reduce((memo, entity) => {
+  const { group } = entity;
+  const updatedMemo = memo;
+  if (!updatedMemo[group]) {
+    updatedMemo[group] = [];
+  }
+  return { ...updatedMemo, [group]: [...updatedMemo[group], entity] };
+}, {}));
 
 export function ChartTimeline({
   entities,
@@ -106,7 +115,11 @@ export function ChartTimeline({
     xMax: dataForceXYRange[1].x,
     highlightCategory,
   });
-  // console.log('chartData', chartData)
+
+  const linesData = prepLineChartData(chartData);
+
+  // console.log('line data ', linesData);
+  // console.log('chartData', chartData);
   // console.log('noRows', noRows)
   // console.log('chartHeight', chartHeight)
   return (
@@ -155,6 +168,7 @@ export function ChartTimeline({
               size={4}
               opacity={1}
             />
+            {linesData.map((lineData, index) => <LineSeries key={index} data={lineData} style={{ stroke: lineData[0].color, strokeWidth: 1 }} />)}
           </FlexibleWidthXYPlot>
         )}
       </ChartWrapper>
