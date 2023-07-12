@@ -28,7 +28,7 @@ import {
   getXYRange,
   prepChartData,
   getDecade,
-  mapRowToY,
+  // mapRowToY,
 } from './charts';
 
 const PlotHint = styled.div`
@@ -121,7 +121,7 @@ export function ChartTimeline({
   // console.log('chartWidth', chartWidth);
   // console.log('chartHeight', chartHeight);
 
-  const { chartData, minRow, maxRow } = prepChartData({
+  const { chartData } = prepChartData({
     entities: actionsWithOffspring,
     chartWidth,
     xMin: dataForceXYRange[0].x,
@@ -146,11 +146,10 @@ export function ChartTimeline({
             style={{ fill: 'transparent' }}
             margin={{
               bottom: 30,
-              top: 0,
+              top: 20,
               right: 32,
               left: 32,
             }}
-            getY={(d) => d.y || mapRowToY(d, minRow, maxRow)}
           >
             <AreaSeries data={dataForceXYRange} style={{ opacity: 0 }} />
             <VerticalGridLines

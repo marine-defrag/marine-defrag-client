@@ -20,11 +20,11 @@ export const getXYRange = ({
 }) => ([
   {
     x: new Date(minDate).getTime(),
-    y: -5,
+    // y: -5,
   },
   {
     x: new Date(maxDate).getTime(),
-    y: 105,
+    // y: 105,
   },
 ]);
 
@@ -65,7 +65,7 @@ export const prepChartData = ({
       const color = active ? '#477ad1' : '#EDEFF0';
       // group
       if (entity.get('offspring')) {
-        rowIndexGroups -= 1;
+        rowIndexGroups += 1;
         minRowIndex = Math.min(rowIndexGroups, minRowIndex);
         const group = entity.get('offspring').reduce(
           (memoGroup, child) => {
@@ -77,6 +77,7 @@ export const prepChartData = ({
               {
                 id: entity.get('id'),
                 row: rowIndexGroups,
+                y: rowIndexGroups,
                 isGroup: true,
                 active: activeChild,
                 group: entity.get('id'),
@@ -89,6 +90,7 @@ export const prepChartData = ({
             {
               id: entity.get('id'),
               row: rowIndexGroups,
+              y: rowIndexGroups,
               isGroup: true,
               active,
               group: entity.get('id'),
@@ -102,7 +104,7 @@ export const prepChartData = ({
       // else individual
       const xCurrent = new Date(date).getTime();
       if ((xCurrent - xPrevIndividual) < nextRowThresholdTime) {
-        rowIndex += 1;
+        rowIndex -= 1;
       } else {
         rowIndex = 0;
       }
@@ -113,6 +115,7 @@ export const prepChartData = ({
         {
           id: entity.get('id'),
           row: rowIndex,
+          y: rowIndex,
           active,
           isGroup: false,
           x: xCurrent,
