@@ -15,7 +15,7 @@ import {
   VerticalGridLines,
   MarkSeries,
   AreaSeries,
-  // Hint,
+  Hint,
 } from 'react-vis';
 
 // import { sortEntities } from 'utils/sort';
@@ -30,6 +30,18 @@ import {
   getDecade,
   mapRowToY,
 } from './charts';
+
+const PlotHint = styled.div`
+  color: ${({ color, theme }) => theme.global.colors[color]};
+  background: ${({ theme }) => theme.global.colors.white};
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  border-radius: ${({ theme }) => theme.global.edgeSize.xxsmall};
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+  font-weight: 700;
+  width: auto;
+  white-space: nowrap;
+`;
 
 const YearLabel = styled.text`
   fill: black;
@@ -61,6 +73,7 @@ export function ChartTimeline({
 }) {
   const targetRef = useRef();
   const [chartWidth, setChartWidth] = useState(0);
+  const [highlight, setHighlight] = useState(false);
 
   const handleResize = () => {
     if (targetRef.current) {
@@ -122,6 +135,7 @@ export function ChartTimeline({
   // console.log('chartData', chartData);
   // console.log('noRows', noRows)
   // console.log('chartHeight', chartHeight)
+  // console.log('higlight', highlight);
   return (
     <div ref={targetRef}>
       <ChartWrapper>
@@ -167,10 +181,32 @@ export function ChartTimeline({
               colorType="literal"
               size={4}
               opacity={1}
+              onNearestXY={(point, { index }) => {
+                // const tooltipY = mapRowToY(point, minRow, maxRow);
+                // const tooltipX = parseInt(new Date(point.x).getTime(), 10);
+                // const tooltipX = parseInt(timeFormat('%Y')(point.x), 10);
+                // const p = { x: tooltipX, y: tooltipY, id: point.id };
+                setHighlight({ point, index });
+              }
+              }
             />
             {linesData.map((lineData, index) => <LineSeries key={index} data={lineData} style={{ stroke: lineData[0].color, strokeWidth: 1 }} />)}
           </FlexibleWidthXYPlot>
         )}
+        {highlight && highlight.point
+          && (
+            <Hint
+              value={highlight.point}
+              align={{ vertical: 'top', horizontal: 'left' }}
+              style={{
+                transform: 'translateX(50%)',
+              }}
+            >
+              <PlotHint color="white">
+                {`${highlight.point.id}`}
+              </PlotHint>
+            </Hint>
+          )}
       </ChartWrapper>
     </div>
   );

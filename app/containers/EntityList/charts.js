@@ -75,6 +75,7 @@ export const prepChartData = ({
             return [
               ...memoGroup,
               {
+                id: entity.get('id'),
                 row: rowIndexGroups,
                 isGroup: true,
                 active: activeChild,
@@ -86,6 +87,7 @@ export const prepChartData = ({
           },
           [
             {
+              id: entity.get('id'),
               row: rowIndexGroups,
               isGroup: true,
               active,
@@ -109,6 +111,7 @@ export const prepChartData = ({
       return [
         ...memo,
         {
+          id: entity.get('id'),
           row: rowIndex,
           active,
           isGroup: false,
