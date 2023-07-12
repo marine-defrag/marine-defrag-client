@@ -169,6 +169,7 @@ export function ChartTimeline({
               tickValues={tickValuesX}
               tickPadding={-12}
             />
+            {linesData.map((lineData, index) => <LineSeries key={index} data={lineData} style={{ stroke: lineData[0].color, strokeWidth: 1 }} />)}
             <MarkSeries
               data={chartData}
               colorType="literal"
@@ -189,7 +190,6 @@ export function ChartTimeline({
               }
               }
             />
-            {linesData.map((lineData, index) => <LineSeries key={index} data={lineData} style={{ stroke: lineData[0].color, strokeWidth: 1 }} />)}
           </FlexibleWidthXYPlot>
         )}
         {hint && hint.point
