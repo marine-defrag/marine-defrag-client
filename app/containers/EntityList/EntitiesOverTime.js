@@ -35,6 +35,7 @@ import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
 import ContentSimple from 'components/styled/ContentSimple';
 import ContentHeader from 'containers/ContentHeader';
+import ChartTimelineLegend from 'components/EntitiesOverTime/ChartTimelineLegend';
 
 import HeaderPrint from 'components/Header/HeaderPrint';
 import Loading from 'components/Loading';
@@ -98,7 +99,6 @@ export function EntitiesOverTime({
     headerSubTitle = `of ${allEntityCount} total`;
   }
   const size = React.useContext(ResponsiveContext);
-
   return (
     <ContainerWrapper headerStyle="types" ref={scrollContainer} isPrint={isPrintView}>
       {isPrintView && (
@@ -123,6 +123,7 @@ export function EntitiesOverTime({
               />
               <ChartWrapperOuter scrollOverflow={isMaxSize(size, 'ms')}>
                 <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
+                  <ChartTimelineLegend />
                   <ChartTimeline
                     highlightCategory={highlightCategory}
                     entities={sortEntities(
