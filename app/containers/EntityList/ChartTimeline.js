@@ -7,6 +7,7 @@ import { List } from 'immutable';
 import styled from 'styled-components';
 import { ResponsiveContext } from 'grommet';
 import { utcFormat as timeFormat } from 'd3-time-format';
+import qe from 'utils/quasi-equals';
 
 import {
   FlexibleWidthXYPlot,
@@ -43,6 +44,7 @@ const PlotHint = styled.div`
   white-space: nowrap;
 `;
 
+
 const YearLabel = styled.text`
   fill: black;
   font-size: 12px;
@@ -52,19 +54,34 @@ const ChartWrapper = styled.div`
   position: relative;
 `;
 
+/* eslint react/prop-types: 0 */
+const HintWrapper = (props) => (
+  <Hint
+    {...props}
+    value={props.value}
+    marginTop={0}
+    marginLeft={0}
+  >
+    {props.children}
+  </Hint>
+);
+
 const myTimeFormat = (value) => {
   const formatted = timeFormat('%Y')(value);
   return <YearLabel dx="2">{formatted}</YearLabel>;
 };
 
-const prepLineChartData = (chartData) => Object.values(chartData.filter((entity) => entity.isGroup).reduce((memo, entity) => {
-  const { group } = entity;
-  const updatedMemo = memo;
-  if (!updatedMemo[group]) {
-    updatedMemo[group] = [];
-  }
-  return { ...updatedMemo, [group]: [...updatedMemo[group], entity] };
-}, {}));
+const getEntityCodeById = (entities, id) => entities.find((entity) => qe(entity.get('id'), id)).getIn(['attributes', 'code']);
+
+const prepLineChartData = (chartData) => Object.values(chartData.filter((entity) => entity.isGroup)
+  .reduce((memo, entity) => {
+    const { group } = entity;
+    const updatedMemo = memo;
+    if (!updatedMemo[group]) {
+      updatedMemo[group] = [];
+    }
+    return { ...updatedMemo, [group]: [...updatedMemo[group], entity] };
+  }, {}));
 
 export function ChartTimeline({
   entities,
@@ -111,6 +128,7 @@ export function ChartTimeline({
   );
   const size = React.useContext(ResponsiveContext);
   const chartHeight = getPlotHeight({ size });
+
   const dataForceXYRange = getXYRange(
     {
       minDate: `${minDecade}-01-01`,
@@ -135,7 +153,8 @@ export function ChartTimeline({
   // console.log('chartData', chartData);
   // console.log('noRows', noRows)
   // console.log('chartHeight', chartHeight)
-  console.log('hint', hint);
+  // console.log('hint', hint);
+
   return (
     <div ref={targetRef}>
       <ChartWrapper>
@@ -169,7 +188,25 @@ export function ChartTimeline({
               tickValues={tickValuesX}
               tickPadding={-12}
             />
-            {linesData.map((lineData, index) => <LineSeries key={index} data={lineData} style={{ stroke: lineData[0].color, strokeWidth: 1 }} />)}
+            {linesData && linesData.length > 0
+              && linesData.map((lineData) => {
+                const firstElement = lineData[0];
+                return (
+                  <HintWrapper
+                    key={firstElement.id}
+                    value={firstElement}
+                    align={{ horizontal: 'right' }}
+                    style={{
+                      color: '#293a62',
+                      transform: 'translate(-90%, 50%)',
+                    }}
+                  >
+                    {getEntityCodeById(entities, firstElement.id)}
+                  </HintWrapper>
+                );
+              })}
+            {linesData && linesData.length > 0
+              && linesData.map((lineData, index) => <LineSeries key={index} data={lineData} style={{ stroke: lineData[0].color, strokeWidth: 1 }} />)}
             <MarkSeries
               data={chartData}
               colorType="literal"
@@ -181,30 +218,22 @@ export function ChartTimeline({
               colorType="literal"
               size={4}
               opacity={1}
-              onValueClick={(point, { index }) => {
-                // const tooltipY = mapRowToY(point, minRow, maxRow);
-                // const tooltipX = parseInt(new Date(point.x).getTime(), 10);
-                // const tooltipX = parseInt(timeFormat('%Y')(point.x), 10);
-                // const p = { x: tooltipX, y: tooltipY, id: point.id };
-                setHint({ point, index });
-              }
-              }
+              onValueClick={(point) => {
+                setHint({ point });
+              }}
             />
           </FlexibleWidthXYPlot>
         )}
         {hint && hint.point
           && (
-            <Hint
+            <HintWrapper
               value={hint.point}
-              align={{ vertical: 'top', horizontal: 'left' }}
-              style={{
-                transform: 'translateX(50%)',
-              }}
+              align={{ horizontal: 'right' }}
             >
-              <PlotHint color="white">
-                {`${hint.point.id}`}
+              <PlotHint>
+                {`id -  ${hint.point.id}`}
               </PlotHint>
-            </Hint>
+            </HintWrapper>
           )}
       </ChartWrapper>
     </div>
