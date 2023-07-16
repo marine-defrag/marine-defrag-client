@@ -121,9 +121,9 @@ export function EntitiesOverTime({
                 hasViewOptions={viewOptions && viewOptions.length > 1}
                 info={headerOptions && headerOptions.info}
               />
+              <ChartTimelineLegend />
               <ChartWrapperOuter scrollOverflow={isMaxSize(size, 'ms')}>
                 <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
-                  <ChartTimelineLegend />
                   <ChartTimeline
                     highlightCategory={highlightCategory}
                     entities={sortEntities(
