@@ -94,6 +94,7 @@ export const prepChartData = ({
               isGroup: true,
               active,
               group: entity.get('id'),
+              isGroupLabel: true,
               label: entity.getIn(['attributes', 'code']) || entity.getIn(['attributes', 'title']),
               x: new Date(date).getTime(),
               color,

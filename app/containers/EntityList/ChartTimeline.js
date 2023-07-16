@@ -16,6 +16,7 @@ import {
   MarkSeries,
   AreaSeries,
   Hint,
+  LabelSeries,
 } from 'react-vis';
 
 // import { sortEntities } from 'utils/sort';
@@ -133,6 +134,24 @@ export function ChartTimeline({
   });
 
   const linesData = prepLineChartData(chartData);
+  const labels = chartData.reduce((memo, d) => {
+    if (d.isGroupLabel) {
+      return [
+        ...memo,
+        {
+          ...d,
+          // yOffset: -8,
+          xOffset: -15,
+          style: {
+            fontSize: 12,
+            color: '#000000',
+            fill: '#000000',
+          },
+        },
+      ];
+    }
+    return memo;
+  }, []);
 
   // console.log('line data ', linesData);
   // console.log('chartData', chartData);
@@ -173,31 +192,12 @@ export function ChartTimeline({
               tickValues={tickValuesX}
               tickPadding={-12}
             />
-            {linesData && linesData.length > 0
-              && linesData.map((lineData) => {
-                const firstElement = lineData[0];
-                return (
-                  <Hint
-                    key={firstElement.id}
-                    value={firstElement}
-                    align={{ horizontal: 'left' }}
-                    style={{
-                      transform: 'translate(0, 50%)',
-                      pointerEvents: 'none',
-                    }}
-                  >
-                    <div
-                      style={{
-                        color: '#293a62',
-                        fontSize: 12,
-                        marginRight: '12px',
-                      }}
-                    >
-                      {firstElement.label}
-                    </div>
-                  </Hint>
-                );
-              })}
+            <LabelSeries
+              data={labels}
+              labelAnchorX="end"
+              labelAnchorY="middle"
+              allowOffsetToBeReversed={false}
+            />
             {linesData && linesData.length > 0
               && linesData.map((lineData, index) => <LineSeries key={index} data={lineData} style={{ stroke: lineData[0].color, strokeWidth: 1 }} />)}
             <MarkSeries
