@@ -7,7 +7,6 @@ import { List } from 'immutable';
 import styled from 'styled-components';
 import { ResponsiveContext } from 'grommet';
 import { utcFormat as timeFormat } from 'd3-time-format';
-import qe from 'utils/quasi-equals';
 
 import {
   FlexibleWidthXYPlot,
@@ -54,24 +53,10 @@ const ChartWrapper = styled.div`
   position: relative;
 `;
 
-/* eslint react/prop-types: 0 */
-const HintWrapper = (props) => (
-  <Hint
-    {...props}
-    value={props.value}
-    marginTop={0}
-    marginLeft={0}
-  >
-    {props.children}
-  </Hint>
-);
-
 const myTimeFormat = (value) => {
   const formatted = timeFormat('%Y')(value);
   return <YearLabel dx="2">{formatted}</YearLabel>;
 };
-
-const getEntityCodeById = (entities, id) => entities.find((entity) => qe(entity.get('id'), id)).getIn(['attributes', 'code']);
 
 const prepLineChartData = (chartData) => Object.values(chartData.filter((entity) => entity.isGroup)
   .reduce((memo, entity) => {
@@ -192,17 +177,25 @@ export function ChartTimeline({
               && linesData.map((lineData) => {
                 const firstElement = lineData[0];
                 return (
-                  <HintWrapper
+                  <Hint
                     key={firstElement.id}
                     value={firstElement}
-                    align={{ horizontal: 'right' }}
+                    align={{ horizontal: 'left' }}
                     style={{
-                      color: '#293a62',
-                      transform: 'translate(-90%, 50%)',
+                      transform: 'translate(0, 50%)',
+                      pointerEvents: 'none',
                     }}
                   >
-                    {getEntityCodeById(entities, firstElement.id)}
-                  </HintWrapper>
+                    <div
+                      style={{
+                        color: '#293a62',
+                        fontSize: 12,
+                        marginRight: '12px',
+                      }}
+                    >
+                      {firstElement.label}
+                    </div>
+                  </Hint>
                 );
               })}
             {linesData && linesData.length > 0
@@ -222,19 +215,21 @@ export function ChartTimeline({
                 setHint({ point });
               }}
             />
+            {hint && hint.point && (
+              <Hint
+                value={hint.point}
+                align={{ horizontal: 'left' }}
+                style={{
+                  transform: 'translate(50%, 0)',
+                }}
+              >
+                <PlotHint>
+                  {hint.point.id}
+                </PlotHint>
+              </Hint>
+            )}
           </FlexibleWidthXYPlot>
         )}
-        {hint && hint.point
-          && (
-            <HintWrapper
-              value={hint.point}
-              align={{ horizontal: 'right' }}
-            >
-              <PlotHint>
-                {`id -  ${hint.point.id}`}
-              </PlotHint>
-            </HintWrapper>
-          )}
       </ChartWrapper>
     </div>
   );
