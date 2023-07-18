@@ -158,7 +158,9 @@ export function ChartTimeline({
   // console.log('noRows', noRows)
   // console.log('chartHeight', chartHeight)
   // console.log('hint', hint);
-
+  const chartDataOrdered = highlightCategory
+    ? chartData.sort((a, b) => a.active && !b.active ? 1 : -1)
+    : chartData;
   return (
     <div ref={targetRef}>
       <ChartWrapper>
@@ -198,19 +200,26 @@ export function ChartTimeline({
               labelAnchorY="middle"
               allowOffsetToBeReversed={false}
             />
-            {linesData && linesData.length > 0
-              && linesData.map((lineData, index) => <LineSeries key={index} data={lineData} style={{ stroke: lineData[0].color, strokeWidth: 1 }} />)}
+            {linesData && linesData.length > 0 && linesData.map(
+              (lineData, index) => (
+                <LineSeries
+                  key={index}
+                  data={lineData}
+                  style={{ stroke: lineData[0].color, strokeWidth: 1 }}
+                />
+              )
+            )}
             <MarkSeries
-              data={chartData}
-              colorType="literal"
-              size={8}
-              opacity={0.3}
-            />
-            <MarkSeries
-              data={chartData}
+              data={chartDataOrdered}
               colorType="literal"
               size={4}
               opacity={1}
+            />
+            <MarkSeries
+              data={chartDataOrdered}
+              colorType="literal"
+              size={8}
+              opacity={0.3}
               onValueClick={(point) => {
                 setHint({ point });
               }}

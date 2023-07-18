@@ -106,7 +106,7 @@ export const prepChartData = ({
       // else individual
       const xCurrent = new Date(date).getTime();
       if ((xCurrent - xPrevIndividual) < nextRowThresholdTime) {
-        rowIndex -= 1;
+        rowIndex -= 0.5;
       } else {
         rowIndex = 0;
       }
