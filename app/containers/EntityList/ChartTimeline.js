@@ -7,6 +7,7 @@ import { List } from 'immutable';
 import styled from 'styled-components';
 import { ResponsiveContext } from 'grommet';
 import { utcFormat as timeFormat } from 'd3-time-format';
+import { palette } from 'styled-theme';
 
 import {
   FlexibleWidthXYPlot,
@@ -36,14 +37,29 @@ const PlotHint = styled.div`
   color: ${({ color, theme }) => theme.global.colors[color]};
   background: ${({ theme }) => theme.global.colors.white};
   padding: 5px 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   border-radius: ${({ theme }) => theme.global.edgeSize.xxsmall};
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
   font-weight: 700;
-  width: auto;
+  max-width: 300px;
   white-space: nowrap;
 `;
 
+const PlotHintDateLabel = styled.div`
+color: ${palette('text', 1)};
+@media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+  font-size: ${(props) => props.theme.sizes.text.smaller};
+}
+`;
+
+const PlotHintTitleLabel = styled.div`
+color: ${({ color, theme }) => theme.global.colors[color]};
+width: 250px;
+text-wrap: wrap;
+`;
+const PlotHintLinkLabel = styled.a`
+text-decoration: underline;
+`;
 
 const YearLabel = styled.text`
   fill: black;
@@ -58,7 +74,6 @@ const myTimeFormat = (value) => {
   const formatted = timeFormat('%Y')(value);
   return <YearLabel dx="2">{formatted}</YearLabel>;
 };
-
 const prepLineChartData = (chartData) => Object.values(chartData.filter((entity) => entity.isGroup)
   .reduce((memo, entity) => {
     const { group } = entity;
@@ -68,6 +83,15 @@ const prepLineChartData = (chartData) => Object.values(chartData.filter((entity)
     }
     return { ...updatedMemo, [group]: [...updatedMemo[group], entity] };
   }, {}));
+
+const prepTooltipData = (entities) => entities.reduce((memo, entity) => ({
+  ...memo,
+  [entity.get('id')]: {
+    date: timeFormat('%d.%m.%Y')(new Date(entity.getIn(['attributes', 'date_start']))),
+    title: entity.getIn(['attributes', 'title']),
+    href: '',
+  },
+}), {});
 
 export function ChartTimeline({
   entities,
@@ -134,6 +158,8 @@ export function ChartTimeline({
   });
 
   const linesData = prepLineChartData(chartData);
+  const tooltipData = prepTooltipData(actionsWithOffspring);
+
   const labels = chartData.reduce((memo, d) => {
     if (d.isGroupLabel) {
       return [
@@ -152,7 +178,6 @@ export function ChartTimeline({
     }
     return memo;
   }, []);
-
   // console.log('line data ', linesData);
   // console.log('chartData', chartData);
   // console.log('noRows', noRows)
@@ -223,6 +248,9 @@ export function ChartTimeline({
               onValueClick={(point) => {
                 setHint({ point });
               }}
+              style={{
+                cursor: 'pointer',
+              }}
             />
             {hint && hint.point && (
               <Hint
@@ -233,7 +261,9 @@ export function ChartTimeline({
                 }}
               >
                 <PlotHint>
-                  {hint.point.id}
+                  <PlotHintDateLabel>{tooltipData[hint.point.id].date}</PlotHintDateLabel>
+                  <PlotHintTitleLabel>{tooltipData[hint.point.id].title}</PlotHintTitleLabel>
+                  <PlotHintLinkLabel href={tooltipData[hint.point.id].href}>Read More</PlotHintLinkLabel>
                 </PlotHint>
               </Hint>
             )}
