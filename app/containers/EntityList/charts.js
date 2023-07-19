@@ -14,19 +14,6 @@ export const getDecade = (dateString, isUpper = false) => {
     ? Math.ceil(year / 10) * 10
     : Math.floor(year / 10) * 10;
 };
-export const getXYRange = ({
-  minDate,
-  maxDate,
-}) => ([
-  {
-    x: new Date(minDate).getTime(),
-    // y: -5,
-  },
-  {
-    x: new Date(maxDate).getTime(),
-    // y: 105,
-  },
-]);
 
 export const getTickValuesX = ({ maxDecade, minDecade }) => {
   const values = [];
@@ -44,34 +31,42 @@ export const getPlotHeight = ({ size }) => {
 
 const NEXT_ROW_THRESHOLD = 12; // px
 export const prepChartData = ({
-  entities,
+  actionsWithOffspring,
   chartWidth, // px
   xMin, // ms
   xMax, // ms
   highlightCategory,
+  // hintId,
 }) => {
   // ms per px
   const dx = (xMax - xMin) / chartWidth; // in ms
   const nextRowThresholdTime = dx * NEXT_ROW_THRESHOLD; // in ms
-  let rowIndex = 0;
+  let rowIndexIndividual = 0;
+  let rowIndexGroups = 0;
   let maxRowIndex = 0;
   let minRowIndex = 0;
-  let rowIndexGroups = 0;
   let xPrevIndividual = 0;
-  const data = entities.reduce(
-    (memo, entity) => {
-      const date = entity.getIn(['attributes', 'date_start']);
-      const active = !highlightCategory || testEntityCategoryValueAssociation(entity, 'categories', highlightCategory);
-      const color = active ? '#477ad1' : '#EDEFF0';
+  const data = actionsWithOffspring.reduce(
+    (memo, action) => {
+      const date = action.getIn(['attributes', 'date_start']);
+      // const isHint = hintId === action.get('id');
+      const active = !highlightCategory
+        || testEntityCategoryValueAssociation(
+          action,
+          'categories',
+          highlightCategory,
+        );
+      const color = active ? '#477ad1' : '#d9dbdc';
       // group
-      if (entity.get('offspring')) {
+      if (action.get('offspring')) {
         rowIndexGroups += 1;
-        minRowIndex = Math.min(rowIndexGroups, minRowIndex);
-        const group = entity.get('offspring').reduce(
+        maxRowIndex = Math.max(rowIndexGroups, maxRowIndex);
+        const group = action.get('offspring').reduce(
           (memoGroup, child) => {
             const dateChild = child.getIn(['attributes', 'date_start']);
             const activeChild = !highlightCategory || testEntityCategoryValueAssociation(child, 'categories', highlightCategory);
-            const colorChild = activeChild ? '#477ad1' : '#EDEFF0';
+            // const isHintChild = hintId === child.get('id');
+            const colorChild = activeChild ? '#477ad1' : '#d9dbdc';
             return [
               ...memoGroup,
               {
@@ -80,25 +75,27 @@ export const prepChartData = ({
                 y: rowIndexGroups,
                 isGroup: true,
                 active: activeChild,
-                group: entity.get('id'),
+                group: action.get('id'),
                 x: new Date(dateChild).getTime(),
                 color: colorChild,
+                title: child.getIn(['attributes', 'title']),
               },
             ];
           },
           [
             {
-              id: entity.get('id'),
+              id: action.get('id'),
               row: rowIndexGroups,
               y: rowIndexGroups,
               isGroup: true,
               active,
-              group: entity.get('id'),
+              group: action.get('id'),
               isGroupLabel: true,
               isGroupRoot: true,
-              label: entity.getIn(['attributes', 'code']) || entity.getIn(['attributes', 'title']),
+              label: action.getIn(['attributes', 'code']) || action.getIn(['attributes', 'title']),
               x: new Date(date).getTime(),
               color,
+              title: action.getIn(['attributes', 'title']),
             },
           ]
         );
@@ -107,22 +104,23 @@ export const prepChartData = ({
       // else individual
       const xCurrent = new Date(date).getTime();
       if ((xCurrent - xPrevIndividual) < nextRowThresholdTime) {
-        rowIndex -= 0.5;
+        rowIndexIndividual -= 0.5;
       } else {
-        rowIndex = 0;
+        rowIndexIndividual = 0;
       }
       xPrevIndividual = xCurrent;
-      maxRowIndex = Math.max(rowIndex, maxRowIndex);
+      minRowIndex = Math.min(rowIndexIndividual, minRowIndex);
       return [
         ...memo,
         {
-          id: entity.get('id'),
-          row: rowIndex,
-          y: rowIndex,
+          id: action.get('id'),
+          row: rowIndexIndividual,
+          y: rowIndexIndividual,
           active,
           isGroup: false,
           x: xCurrent,
           color,
+          title: action.getIn(['attributes', 'title']),
         },
       ];
     },

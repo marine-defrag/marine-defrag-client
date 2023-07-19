@@ -3,7 +3,7 @@
  * EntitiesOverTime
  *
  */
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 // import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { List, Map } from 'immutable';
@@ -85,6 +85,8 @@ export function EntitiesOverTime({
   onResetCategory,
   highlightCategory,
 }) {
+  const [hint, setHint] = useState(null);
+
   const scrollContainer = useRef(null);
   const scrollReference = useRef(null);
 
@@ -126,6 +128,8 @@ export function EntitiesOverTime({
                 <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
                   <ChartTimeline
                     highlightCategory={highlightCategory}
+                    setHint={setHint}
+                    hint={hint}
                     entities={sortEntities(
                       entities.filter(
                         (entity) => entity.getIn(['attributes', 'date_start'])
@@ -142,8 +146,14 @@ export function EntitiesOverTime({
                   && (
                     <EntitiesCategories
                       taxonomiesWithCats={prepareTaxonomiesWithCats(taxonomiesWithCats, entities)}
-                      onSetCategory={onSetCategory}
-                      onResetCategory={onResetCategory}
+                      onSetCategory={(catId) => {
+                        setHint(null);
+                        onSetCategory(catId);
+                      }}
+                      onResetCategory={() => {
+                        setHint(null);
+                        onResetCategory();
+                      }}
                       highlightCategory={highlightCategory}
                     />
                   )}
