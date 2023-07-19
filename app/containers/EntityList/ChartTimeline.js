@@ -29,6 +29,7 @@ import {
   getDateForChart,
   getXYRange,
   prepChartData,
+  prepLineChartData,
   getDecade,
   // mapRowToY,
 } from './charts';
@@ -74,15 +75,6 @@ const myTimeFormat = (value) => {
   const formatted = timeFormat('%Y')(value);
   return <YearLabel dx="2">{formatted}</YearLabel>;
 };
-const prepLineChartData = (chartData) => Object.values(chartData.filter((entity) => entity.isGroup)
-  .reduce((memo, entity) => {
-    const { group } = entity;
-    const updatedMemo = memo;
-    if (!updatedMemo[group]) {
-      updatedMemo[group] = [];
-    }
-    return { ...updatedMemo, [group]: [...updatedMemo[group], entity] };
-  }, {}));
 
 const prepTooltipData = (entities) => entities.reduce((memo, entity) => ({
   ...memo,
@@ -226,11 +218,14 @@ export function ChartTimeline({
               allowOffsetToBeReversed={false}
             />
             {linesData && linesData.length > 0 && linesData.map(
-              (lineData, index) => (
+              (group) => (
                 <LineSeries
-                  key={index}
-                  data={lineData}
-                  style={{ stroke: lineData[0].color, strokeWidth: 1 }}
+                  key={group.id}
+                  data={group.points}
+                  style={{
+                    stroke: group.active ? '#477ad1' : '#EDEFF0',
+                    strokeWidth: 1,
+                  }}
                 />
               )
             )}
@@ -246,7 +241,11 @@ export function ChartTimeline({
               size={8}
               opacity={0.3}
               onValueClick={(point) => {
-                setHint({ point });
+                if (!hint) {
+                  setHint({ point });
+                } else if (hint.point.id === point.id) {
+                  setHint(null);
+                }
               }}
               style={{
                 cursor: 'pointer',

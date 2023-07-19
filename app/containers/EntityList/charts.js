@@ -75,7 +75,7 @@ export const prepChartData = ({
             return [
               ...memoGroup,
               {
-                id: entity.get('id'),
+                id: child.get('id'),
                 row: rowIndexGroups,
                 y: rowIndexGroups,
                 isGroup: true,
@@ -95,6 +95,7 @@ export const prepChartData = ({
               active,
               group: entity.get('id'),
               isGroupLabel: true,
+              isGroupRoot: true,
               label: entity.getIn(['attributes', 'code']) || entity.getIn(['attributes', 'title']),
               x: new Date(date).getTime(),
               color,
@@ -133,6 +134,29 @@ export const prepChartData = ({
     maxRow: maxRowIndex,
   };
 };
+export const prepLineChartData = (chartData) => {
+  const groupRoots = chartData.filter((point) => point.isGroupRoot);
+  return groupRoots.reduce((memo, rootPoint) => {
+    const groupData = chartData.reduce(
+      (memo2, point) => {
+        if (point.group === rootPoint.id) {
+          return [...memo2, point];
+        }
+        return memo2;
+      }, [rootPoint]
+    );
+    const groupActive = groupData.every((point) => point.active);
+    return [
+      ...memo,
+      {
+        id: rootPoint.id,
+        active: groupActive,
+        points: groupData,
+      },
+    ];
+  }, []);
+};
+
 export const mapRowToY = (
   datum, minRow, maxRow,
 ) => {
