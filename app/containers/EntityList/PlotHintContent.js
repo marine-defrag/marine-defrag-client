@@ -5,6 +5,11 @@ import { FormattedDate } from 'react-intl';
 
 import { Hint } from 'react-vis';
 
+const PlotHintWrapper = styled.div`
+pointer-events: none;
+margin: 15px 0px;
+`;
+
 const PlotHint = styled.div`
   max-width: 300px;
   color: ${({ color, theme }) => theme.global.colors[color]};
@@ -47,17 +52,19 @@ const PlotHintContent = (props) => {
               margin: '10px 0',
             }}
           >
-            <PlotHint>
-              <PlotHintDateLabel>
-                <FormattedDate
-                  value={new Date(hintEntity.getIn(['attributes', 'date_start']))}
-                  year="numeric"
-                  month="long"
-                  day="numeric"
-                />
-              </PlotHintDateLabel>
-              <PlotHintTitleLabel>{hintEntity.getIn(['attributes', 'title'])}</PlotHintTitleLabel>
-            </PlotHint>
+            <PlotHintWrapper>
+              <PlotHint>
+                <PlotHintDateLabel>
+                  <FormattedDate
+                    value={new Date(hintEntity.getIn(['attributes', 'date_start']))}
+                    year="numeric"
+                    month="long"
+                    day="numeric"
+                  />
+                </PlotHintDateLabel>
+                <PlotHintTitleLabel>{hintEntity.getIn(['attributes', 'title'])}</PlotHintTitleLabel>
+              </PlotHint>
+            </PlotHintWrapper>
           </Hint>
         );
 };
