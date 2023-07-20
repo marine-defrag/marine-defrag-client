@@ -1,13 +1,12 @@
 import React, {
   useEffect, useLayoutEffect, useState, useRef,
 } from 'react';
-import { injectIntl, intlShape, FormattedDate } from 'react-intl';
+import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
 import { List } from 'immutable';
 import styled from 'styled-components';
 import { ResponsiveContext } from 'grommet';
 import { utcFormat as timeFormat } from 'd3-time-format';
-import { palette } from 'styled-theme';
 
 import {
   FlexibleWidthXYPlot,
@@ -16,7 +15,6 @@ import {
   VerticalGridLines,
   MarkSeries,
   AreaSeries,
-  Hint,
   LabelSeries,
 } from 'react-vis';
 
@@ -33,33 +31,8 @@ import {
   // mapRowToY,
 } from './charts';
 
-const PlotHint = styled.div`
-  max-width: 300px;
-  color: ${({ color, theme }) => theme.global.colors[color]};
-  background: ${({ theme }) => theme.global.colors.white};
-  padding: 5px 10px;
-  border-radius: ${({ theme }) => theme.global.edgeSize.xxsmall};
-  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
-  font-weight: 700;
-  white-space: nowrap;
-  pointer-events: auto;
-`;
+import PlotHintContent from './PlotHintContent';
 
-const PlotHintDateLabel = styled.div`
-color: ${palette('text', 1)};
-@media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-  font-size: ${(props) => props.theme.sizes.text.smaller};
-}
-`;
-
-const PlotHintTitleLabel = styled.div`
-color: ${({ color, theme }) => theme.global.colors[color]};
-width: 250px;
-text-wrap: wrap;
-`;
-// const PlotHintLinkLabel = styled.a`
-// text-decoration: underline;
-// `;
 
 const YearLabel = styled.text`
   fill: black;
@@ -147,6 +120,7 @@ export function ChartTimeline({
     highlightCategory,
     hintId: hint ? hint.id : null,
   });
+
   const dataForceXYRange = [
     { x: xMin, y: minRow - 1 },
     { x: xMax, y: minRow - 1 },
@@ -155,7 +129,6 @@ export function ChartTimeline({
   ];
 
   const linesData = prepLineChartData(chartData);
-
   const labels = chartData.reduce((memo, d) => {
     if (d.isGroupLabel) {
       return [
@@ -182,8 +155,7 @@ export function ChartTimeline({
   const chartDataOrdered = highlightCategory
     ? chartData.sort((a, b) => a.active && !b.active ? 1 : -1)
     : chartData;
-  // TODO vbojilova: move to PlotHintCOntent component
-  const hintEntity = hint ? entities.find((entity) => entity.get('id') === hint.id) : null;
+
   return (
     <div ref={targetRef}>
       <ChartWrapper>
@@ -283,27 +255,7 @@ export function ChartTimeline({
                 }}
               />
             )}
-            {hint && hintEntity && (
-              <Hint
-                value={hint}
-                style={{
-                  pointerEvents: 'none',
-                  margin: '10px 0',
-                }}
-              >
-                <PlotHint>
-                  <PlotHintDateLabel>
-                    <FormattedDate
-                      value={new Date(hintEntity.getIn(['attributes', 'date_start']))}
-                      year="numeric"
-                      month="long"
-                      day="numeric"
-                    />
-                  </PlotHintDateLabel>
-                  <PlotHintTitleLabel>{hintEntity.getIn(['attributes', 'title'])}</PlotHintTitleLabel>
-                </PlotHint>
-              </Hint>
-            )}
+            <PlotHintContent hint={hint} entities={entities} />
           </FlexibleWidthXYPlot>
         )}
       </ChartWrapper>
