@@ -9,7 +9,10 @@ import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import ButtonDefault from 'components/buttons/ButtonDefault';
 import messages from './messages';
 
-const ButtonWrapper = styled((p) => (
+const ButtonInnerWrapper = styled(Box)`
+margin-bottom: 5px;
+`;
+const ButtonOuterWrapper = styled((p) => (
   <Box direction="row" justify="start" wrap gap="small" {...p} />
 ))`
   overflow-x: auto;
@@ -39,27 +42,29 @@ const EntitiesCategories = ({
             }}
           />
         </HighlightCategoryLabel>
-        <ButtonWrapper>
+        <ButtonOuterWrapper>
           {taxonomy.categories.map((category) => {
             const { id, label } = category;
             return (
-              <ButtonDefault
-                key={id}
-                inactive={!qe(highlightCategory, id)}
-                alt={label}
-                onClick={() => {
-                  if (qe(highlightCategory, id)) {
-                    onResetCategory();
-                  } else {
-                    onSetCategory(id);
-                  }
-                }}
-              >
-                {label}
-              </ButtonDefault>
+              <ButtonInnerWrapper>
+                <ButtonDefault
+                  key={id}
+                  inactive={!qe(highlightCategory, id)}
+                  alt={label}
+                  onClick={() => {
+                    if (qe(highlightCategory, id)) {
+                      onResetCategory();
+                    } else {
+                      onSetCategory(id);
+                    }
+                  }}
+                >
+                  {label}
+                </ButtonDefault>
+              </ButtonInnerWrapper>
             );
           })}
-        </ButtonWrapper>
+        </ButtonOuterWrapper>
       </TaxonomyGroup>
     ))}
   </Styled>

@@ -14,9 +14,9 @@ position:relative;
 `;
 const Label = styled.span`
   color: #787A7D;
-  font-size: 12px;
+  font-size: 13px;
   position: absolute;
-  top: 21%;
+  top: 65%;
   left: ${({ left }) => left}px;
   transform: translate(50%, -50%);
 `;
@@ -33,8 +33,8 @@ const lineMarkerProps = {
 const ChartTimelineLegend = () => (
   <Styled>
     <XYPlot
-      width={200}
-      height={50}
+      width={220}
+      height={20}
     >
       <MarkSeries
         {...commitmentMarkerProps}
@@ -50,8 +50,8 @@ const ChartTimelineLegend = () => (
       />
       <LineSeries {...lineMarkerProps} style={{ stroke: '#477ad1', strokeWidth: 1 }} />
     </XYPlot>
-    <Label left={13}><FormattedMessage {...messages.legend.commitments} /></Label>
-    <Label left={140}><FormattedMessage {...messages.legend.relatedCommitments} /></Label>
+    <Label left={9}><FormattedMessage {...messages.legend.commitments} /></Label>
+    <Label left={154}><FormattedMessage {...messages.legend.relatedCommitments} /></Label>
   </Styled>
 );
 
