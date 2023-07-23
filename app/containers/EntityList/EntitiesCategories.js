@@ -46,9 +46,8 @@ const EntitiesCategories = ({
           {taxonomy.categories.map((category) => {
             const { id, label } = category;
             return (
-              <ButtonInnerWrapper>
+              <ButtonInnerWrapper key={id}>
                 <ButtonDefault
-                  key={id}
                   inactive={!qe(highlightCategory, id)}
                   alt={label}
                   onClick={() => {

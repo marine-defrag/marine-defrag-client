@@ -84,6 +84,7 @@ export function EntitiesOverTime({
   onSetCategory,
   onResetCategory,
   highlightCategory,
+  onEntityClick,
 }) {
   const [hint, setHint] = useState(null);
 
@@ -130,6 +131,7 @@ export function EntitiesOverTime({
                     highlightCategory={highlightCategory}
                     setHint={setHint}
                     hint={hint}
+                    onEntityClick={onEntityClick}
                     entities={sortEntities(
                       entities.filter(
                         (entity) => entity.getIn(['attributes', 'date_start'])
@@ -138,6 +140,7 @@ export function EntitiesOverTime({
                       'date_start', // sortBy
                       'date', // type
                     )}
+
                   />
                 </ChartWrapperInner>
               </ChartWrapperOuter>
@@ -188,7 +191,7 @@ EntitiesOverTime.propTypes = {
   onSetCategory: PropTypes.func,
   onResetCategory: PropTypes.func,
   // intl: intlShape.isRequired,
-  // onEntityClick: PropTypes.func,
+  onEntityClick: PropTypes.func,
   // onSelectAction: PropTypes.func,
 };
 

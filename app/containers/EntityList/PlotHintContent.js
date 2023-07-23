@@ -5,6 +5,8 @@ import { FormattedDate } from 'react-intl';
 
 import { Hint } from 'react-vis';
 
+import { ROUTES } from 'themes/config';
+
 const PlotHintWrapper = styled.div`
 pointer-events: none;
 margin: 15px 0px;
@@ -35,11 +37,18 @@ width: 250px;
 text-wrap: wrap;
 `;
 
-// const PlotHintLinkLabel = styled.a`
-// text-decoration: underline;
-// `;
+const PlotHintLinkLabel = styled.a`
+ text-decoration: underline;
+ font-weight: 500;
+ font-size: 12px;
+ stroke: ${({ theme }) => theme.global.colors.a};
+ &:hover {
+    stroke: ${({ theme }) => theme.global.colors.aHover};
+  }
+ `;
+
 const PlotHintContent = (props) => {
-  const { hint, entities } = props;
+  const { hint, entities, onEntityClick } = props;
   const hintEntity = hint ? entities.find((entity) => entity.get('id') === hint.id) : null;
 
   return hint && hintEntity
@@ -63,6 +72,15 @@ const PlotHintContent = (props) => {
                   />
                 </PlotHintDateLabel>
                 <PlotHintTitleLabel>{hintEntity.getIn(['attributes', 'title'])}</PlotHintTitleLabel>
+                <PlotHintLinkLabel
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onEntityClick(hintEntity.get('id'), ROUTES.ACTION);
+                  }}
+                >
+                            Read More
+                </PlotHintLinkLabel>
               </PlotHint>
             </PlotHintWrapper>
           </Hint>
