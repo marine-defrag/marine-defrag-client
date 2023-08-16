@@ -5,17 +5,17 @@ import { Box, Text } from 'grommet';
 
 import qe from 'utils/quasi-equals';
 import appMessages from 'containers/App/messages';
-import { FormattedMessage } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import ButtonDefault from 'components/buttons/ButtonDefault';
+import messages from './messages';
 
 const ButtonWrapper = styled((p) => (
   <Box direction="row" justify="start" wrap gap="xxsmall" {...p} />
-))`
-  overflow-x: auto;
-`;
+))``;
+
 const Styled = styled.div``;
-const TaxonomyGroupLabel = styled((p) => <Text size="small" {...p} />)`
+const HighlightCategoryLabel = styled((p) => <Text size="small" {...p} />)`
   margin-bottom: 3px;
 `;
 const TaxonomyGroup = styled((p) => <Box margin={{ vertical: 'small' }} {...p} />)``;
@@ -34,13 +34,19 @@ const ChartTimelineCategories = ({
   onSetCategory,
   onResetCategory,
   highlightCategory,
+  intl,
 }) => (
   <Styled>
     {taxonomiesWithCats.map((taxonomy) => (
       <TaxonomyGroup key={taxonomy.id}>
-        <TaxonomyGroupLabel>
-          <FormattedMessage {...appMessages.entities.taxonomies[taxonomy.id].plural} />
-        </TaxonomyGroupLabel>
+        <HighlightCategoryLabel>
+          <FormattedMessage
+            {...messages.highlightCategory}
+            values={{
+              categoryName: intl.formatMessage(appMessages.entities.taxonomies[taxonomy.id].plural),
+            }}
+          />
+        </HighlightCategoryLabel>
         <ButtonWrapper>
           {taxonomy.categories.map((category) => {
             const { id, label } = category;
@@ -73,6 +79,7 @@ ChartTimelineCategories.propTypes = {
   highlightCategory: PropTypes.string,
   onSetCategory: PropTypes.func,
   onResetCategory: PropTypes.func,
+  intl: intlShape,
 };
 
-export default ChartTimelineCategories;
+export default injectIntl(ChartTimelineCategories);

@@ -50,6 +50,10 @@ export default defineMessages({
     id: 'app.containers.EntityList.filterFormError',
     defaultMessage: 'Errors',
   },
+  highlightCategory: {
+    id: 'app.containers.EntitiesCategories.highlightCategory',
+    defaultMessage: 'Highlight {categoryName}',
+  },
   viewOptionList: {
     id: 'app.containers.EntityList.viewOptionList',
     defaultMessage: 'List',

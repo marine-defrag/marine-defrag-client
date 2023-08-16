@@ -54,6 +54,7 @@ export function ChartTimeline({
   intl,
   setHint,
   hint,
+  onEntityClick,
 }) {
   const targetRef = useRef();
   const [chartWidth, setChartWidth] = useState(0);
@@ -255,7 +256,7 @@ export function ChartTimeline({
                 }}
               />
             )}
-            <PlotHintContent hint={hint} entities={entities} />
+            <PlotHintContent hint={hint} entities={entities} onEntityClick={onEntityClick} />
           </FlexibleWidthXYPlot>
         )}
       </ChartWrapper>
@@ -269,6 +270,7 @@ ChartTimeline.propTypes = {
   setHint: PropTypes.func,
   hint: PropTypes.object,
   intl: intlShape.isRequired,
+  onEntityClick: PropTypes.func,
 };
 
 export default injectIntl(ChartTimeline);
