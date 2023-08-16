@@ -1,51 +1,66 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
-import {
-  LineSeries,
-  MarkSeries,
-  XYPlot,
-} from 'react-vis';
+import { Box, Text, ResponsiveContext } from 'grommet';
+import { FormattedMessage } from 'react-intl';
 
-const Styled = styled.div`
-position:relative;
+import Dot from './Dot';
+import messages from './messages';
+
+const Styled = styled((p) => <Box {...p} />)`
+  position:relative;
 `;
 
-const Label = styled.span`
-  position: absolute;
-  top: 45%;
-  left: ${({ left }) => left};
-  transform: translate(50%, -50%);
+const Label = styled((p) => <Text size="small" {...p} />)`
   color: #787A7D;
 `;
-const dataPoints = [{ x: 4, y: 5 }, { x: 13, y: 5 }, { x: 16, y: 5 }];
-const ChartTimelineLegend = () => (
-  <Styled>
-    <XYPlot
-      width={300}
-      height={25}
-    >
-      <LineSeries key="timline-legend-line-1" data={[{ x: 13, y: 5 }, { x: 16, y: 5 }]} style={{ stroke: '#477ad1', strokeWidth: 1 }} />
-      <MarkSeries
-        data={dataPoints}
-        key="timline-legend-markseries-1"
-        color="#477ad1"
-        colorType="literal"
-        size={8}
-        opacity={0.3}
-      />
-      <MarkSeries
-        data={dataPoints}
-        key="timeline-legend-markseries-2"
-        color="#477ad1"
-        colorType="literal"
-        size={4}
-        opacity={1}
-      />
-    </XYPlot>
-    <Label left="-7px">Committments</Label>
-    <Label left="210px">Related Committments</Label>
-  </Styled>
-);
+
+const Wrapper = styled.div`
+  position: relative;
+  width: 64px;
+  height: 16px;
+  display: block;
+`;
+
+const DotLeft = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+const DotRight = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
+const Line = styled.div`
+  border-bottom: 1px solid rgb(71, 122, 209);
+  position: absolute;
+  top: 0px;
+  left: 8px;
+  right: 8px;
+  height: 8px;
+  display: block;
+`;
+
+export function ChartTimelineLegend() {
+  const size = useContext(ResponsiveContext);
+  return (
+    <Styled direction={size === 'small' ? 'column' : 'row'} gap="medium">
+      <Box direction="row" gap="xsmall">
+        <Label><FormattedMessage {...messages.individual} /></Label>
+        <Dot />
+      </Box>
+      <Box direction="row" gap="xsmall">
+        <Label><FormattedMessage {...messages.multiple} /></Label>
+        <Wrapper>
+          <DotLeft><Dot /></DotLeft>
+          <DotRight><Dot /></DotRight>
+          <Line />
+        </Wrapper>
+      </Box>
+    </Styled>
+  );
+}
 
 
 export default ChartTimelineLegend;
