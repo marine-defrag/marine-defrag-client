@@ -62,4 +62,8 @@ export default defineMessages({
     id: 'app.containers.EntityList.viewOptionTimeline',
     defaultMessage: 'Over time',
   },
+  noDateHint: {
+    id: 'app.containers.EntityList.noDateHint',
+    defaultMessage: 'Note: there are {count} {entityTitle} without a date in the database',
+  },
 });

@@ -8,9 +8,10 @@ import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { List, Map } from 'immutable';
 import { connect } from 'react-redux';
-import { ResponsiveContext, Box } from 'grommet';
+import { ResponsiveContext, Box, Text } from 'grommet';
 import styled from 'styled-components';
-// import { injectIntl, intlShape } from 'react-intl';
+import { palette } from 'styled-theme';
+import { FormattedMessage } from 'react-intl';
 // import {
 //   ACTORTYPES,
 //   ROUTES,
@@ -46,8 +47,8 @@ import EntityListViewOptions from 'components/EntityListViewOptions';
 // import qe from 'utils/quasi-equals';
 
 import ChartTimeline from './ChartTimeline';
-import EntitiesCategories from './EntitiesCategories';
-// import messages from './messages';
+import ChartTimelineCategories from './ChartTimelineCategories';
+import messages from './messages';
 // import { selectActionsByAncestor } from './selectors';
 
 const ChartWrapperOuter = styled.div`
@@ -59,15 +60,35 @@ const ChartWrapperInner = styled.div`
   direction: ltr
 `;
 
+const WithoutDateHint = styled(Text)`
+  color:  ${palette('dark', 3)};
+  font-style: italic;
+`;
+
 const prepareTaxonomiesWithCats = (taxonomiesWithCats, entities) => {
-  const uniqueCategories = entities.map((entity) => entity.getIn(['categories'])).flatten().toSet().delete(undefined);
+  const uniqueCategories = entities.map(
+    (entity) => entity.getIn(['categories'])
+  ).flatten().toSet().delete(undefined);
   return taxonomiesWithCats.reduce((memo, taxonomy) => {
     const keepCategories = taxonomy.getIn(['categories'])
-      .filter((category) => category === undefined || uniqueCategories.has(parseInt(category.get('id'), 10)))
-      .map((category) => ({ id: category.get('id'), label: category.getIn(['attributes', 'title']) }));
+      .filter(
+        (category) => category === undefined || uniqueCategories.has(parseInt(category.get('id'), 10))
+      )
+      .map(
+        (category) => ({
+          id: category.get('id'),
+          label: category.getIn(['attributes', 'title']),
+        })
+      )
+      .sort(
+        (a, b) => a.label > b.label ? 1 : -1
+      );
 
     return keepCategories.size > 0
-      ? memo.concat([{ id: taxonomy.get('id'), categories: keepCategories.toList().toJS() }]) : memo;
+      ? memo.concat([{
+        id: taxonomy.get('id'), categories: keepCategories.toList().toJS(),
+      }])
+      : memo;
   }, []);
 };
 
@@ -101,6 +122,15 @@ export function EntitiesOverTime({
     headerSubTitle = `of ${allEntityCount} total`;
   }
   const size = React.useContext(ResponsiveContext);
+  const entitiesWithDate = entities && entities.filter(
+    (entity) => entity.getIn(['attributes', 'date_start'])
+  );
+  const entitiesWithoutDate = entities && entities.filter(
+    (entity) => !entity.getIn(['attributes', 'date_start'])
+  );
+  const hasEntitiesWithDate = entitiesWithDate && entitiesWithDate.size > 0;
+  const hasEntitiesWithoutDate = entitiesWithoutDate && entitiesWithoutDate.size > 0;
+
   return (
     <ContainerWrapper headerStyle="types" ref={scrollContainer} isPrint={isPrintView}>
       {isPrintView && (
@@ -123,41 +153,59 @@ export function EntitiesOverTime({
                 hasViewOptions={viewOptions && viewOptions.length > 1}
                 info={headerOptions && headerOptions.info}
               />
-              <ChartTimelineLegend />
-              <ChartWrapperOuter scrollOverflow={isMaxSize(size, 'ms')}>
-                <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
-                  <ChartTimeline
-                    highlightCategory={highlightCategory}
-                    setHint={setHint}
-                    hint={hint}
-                    entities={sortEntities(
-                      entities.filter(
-                        (entity) => entity.getIn(['attributes', 'date_start'])
-                      ),
-                      'asc',
-                      'date_start', // sortBy
-                      'date', // type
+              {hasEntitiesWithDate && (
+                <>
+                  <ChartTimelineLegend />
+                  <ChartWrapperOuter scrollOverflow={isMaxSize(size, 'ms')}>
+                    <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
+                      <ChartTimeline
+                        highlightCategory={highlightCategory}
+                        setHint={setHint}
+                        hint={hint}
+                        entities={sortEntities(
+                          entitiesWithDate,
+                          'asc',
+                          'date_start', // sortBy
+                          'date', // type
+                        )}
+                      />
+                    </ChartWrapperInner>
+                  </ChartWrapperOuter>
+                  <Box direction="row" fill={false}>
+                    {taxonomiesWithCats && (
+                      <ChartTimelineCategories
+                        taxonomiesWithCats={
+                          prepareTaxonomiesWithCats(taxonomiesWithCats, entitiesWithDate)
+                        }
+                        onSetCategory={(catId) => {
+                          setHint(null);
+                          onSetCategory(catId);
+                        }}
+                        onResetCategory={() => {
+                          setHint(null);
+                          onResetCategory();
+                        }}
+                        highlightCategory={highlightCategory}
+                      />
                     )}
-                  />
-                </ChartWrapperInner>
-              </ChartWrapperOuter>
-              <Box direction="row" fill={false}>
-                {taxonomiesWithCats
-                  && (
-                    <EntitiesCategories
-                      taxonomiesWithCats={prepareTaxonomiesWithCats(taxonomiesWithCats, entities)}
-                      onSetCategory={(catId) => {
-                        setHint(null);
-                        onSetCategory(catId);
+                  </Box>
+                </>
+              )}
+              {hasEntitiesWithoutDate && (
+                <Box margin={{ top: 'large' }}>
+                  <WithoutDateHint>
+                    <FormattedMessage
+                      {...messages.noDateHint}
+                      values={{
+                        count: entitiesWithoutDate.size,
+                        entityTitle: entitiesWithoutDate.size === 1
+                          ? entityTitle.single
+                          : entityTitle.plural,
                       }}
-                      onResetCategory={() => {
-                        setHint(null);
-                        onResetCategory();
-                      }}
-                      highlightCategory={highlightCategory}
                     />
-                  )}
-              </Box>
+                  </WithoutDateHint>
+                </Box>
+              )}
             </div>
           )}
         </ContentSimple>
