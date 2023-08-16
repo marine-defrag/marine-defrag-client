@@ -13,4 +13,8 @@ export default defineMessages({
     id: 'app.components.EntitiesOverTime.multiple',
     defaultMessage: 'Related commitments',
   },
+  highlightCategory: {
+    id: 'app.components.EntitiesOverTime.highlightCategory',
+    defaultMessage: 'Highlight by {categoryName}',
+  },
 });

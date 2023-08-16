@@ -37,6 +37,8 @@ import Container from 'components/styled/Container';
 import ContentSimple from 'components/styled/ContentSimple';
 import ContentHeader from 'containers/ContentHeader';
 import ChartTimelineLegend from 'components/EntitiesOverTime/ChartTimelineLegend';
+import ChartTimeline from 'components/EntitiesOverTime/ChartTimeline';
+import ChartTimelineCategories from 'components/EntitiesOverTime/ChartTimelineCategories';
 
 import HeaderPrint from 'components/Header/HeaderPrint';
 import Loading from 'components/Loading';
@@ -46,8 +48,6 @@ import EntityListViewOptions from 'components/EntityListViewOptions';
 // import appMessages from 'containers/App/messages';
 // import qe from 'utils/quasi-equals';
 
-import ChartTimeline from './ChartTimeline';
-import ChartTimelineCategories from './ChartTimelineCategories';
 import messages from './messages';
 // import { selectActionsByAncestor } from './selectors';
 

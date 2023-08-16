@@ -20,8 +20,8 @@ import {
 
 // import { sortEntities } from 'utils/sort';
 //
-import { getActionsWithOffspring } from './utils';
 import {
+  getActionsWithOffspring,
   getPlotHeight,
   getTickValuesX,
   getDateForChart,

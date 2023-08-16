@@ -1,4 +1,4 @@
-import { Map, List } from 'immutable';
+import { Map } from 'immutable';
 import qe from 'utils/quasi-equals';
 
 // work out actors for entities and store activites both direct as well as indirect
@@ -186,50 +186,3 @@ export const getActorsForEntities = (
 //   }
 //   return parents;
 // };
-const includeOffspringRecursive = ({ children, parent, entities }) => {
-  let childrenUpdated;
-  // console.log('children', children.toJS())
-  // console.log('entities', entities.toList().toJS());
-  const childrenDirect = entities.toList().filter(
-    (child) => qe(parent.get('id'), child.getIn(['attributes', 'parent_id'])),
-  );
-  if (childrenDirect && childrenDirect.size > 0) {
-    // console.log('childrenDirect', childrenDirect.toJS());
-    childrenUpdated = childrenDirect.reduce(
-      (memo, child) => {
-        // console.log('child', child.toJS())
-        const grandChildren = includeOffspringRecursive({
-          children: List(),
-          parent: child,
-          entities,
-        });
-        // console.log('grandChildren', grandChildren.toJS())
-        return memo.concat(grandChildren);
-      }, childrenDirect,
-    );
-    // console.log('childrenUpdated', childrenDirect.toJS());
-    return childrenUpdated;
-  }
-  return children;
-};
-
-export const getActionsWithOffspring = (actions) => actions
-  && actions.reduce((memo, action) => {
-    const parentId = action.getIn(['attributes', 'parent_id']);
-    const parent = actions.find((child) => qe(child.get('id'), parentId));
-    if (!parent) { // does not have parent => is first generation) {
-      const children = includeOffspringRecursive({
-        children: List(),
-        parent: action,
-        entities: actions,
-      });
-      return memo.push(
-        children && children.size > 0
-          ? action.set('offspring', children)
-          : action
-      );
-    }
-    // const ancestors = includeParentRecursive({ parents: List(), entity: action, entities: actions });
-    // console.log('action', action && action.toJS())
-    return memo;
-  }, List());
