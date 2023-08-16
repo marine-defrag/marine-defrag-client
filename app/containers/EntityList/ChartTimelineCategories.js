@@ -4,21 +4,24 @@ import styled from 'styled-components';
 import { Box, Text } from 'grommet';
 
 import qe from 'utils/quasi-equals';
+import { lowerCase } from 'utils/string';
 import appMessages from 'containers/App/messages';
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import ButtonDefault from 'components/buttons/ButtonDefault';
 import messages from './messages';
 
+const Styled = styled.div``;
+
 const ButtonWrapper = styled((p) => (
   <Box direction="row" justify="start" wrap gap="xxsmall" {...p} />
 ))``;
 
-const Styled = styled.div``;
-const HighlightCategoryLabel = styled((p) => <Text size="small" {...p} />)`
-  margin-bottom: 3px;
+const TaxonomyGroup = styled((p) => <Box margin={{ vertical: 'medium' }} gap="xsmall" {...p} />)``;
+
+const TaxonomyGroupLabel = styled((p) => <Text size="xsmall" {...p} />)`
+margin-bottom: 3px;
 `;
-const TaxonomyGroup = styled((p) => <Box margin={{ vertical: 'small' }} {...p} />)``;
 
 const CategoryButton = styled((p) => <ButtonDefault {...p} />)`
   margin-bottom: 3px;
@@ -27,6 +30,7 @@ const CategoryButton = styled((p) => <ButtonDefault {...p} />)`
     padding: 0.3em 0.8em;
   }
 `;
+
 const CategoryButtonLabel = styled((p) => <Text size="small" {...p} />)``;
 
 const ChartTimelineCategories = ({
@@ -39,14 +43,14 @@ const ChartTimelineCategories = ({
   <Styled>
     {taxonomiesWithCats.map((taxonomy) => (
       <TaxonomyGroup key={taxonomy.id}>
-        <HighlightCategoryLabel>
+        <TaxonomyGroupLabel>
           <FormattedMessage
             {...messages.highlightCategory}
             values={{
-              categoryName: intl.formatMessage(appMessages.entities.taxonomies[taxonomy.id].plural),
+              categoryName: lowerCase(intl.formatMessage(appMessages.entities.taxonomies[taxonomy.id].single)),
             }}
           />
-        </HighlightCategoryLabel>
+        </TaxonomyGroupLabel>
         <ButtonWrapper>
           {taxonomy.categories.map((category) => {
             const { id, label } = category;

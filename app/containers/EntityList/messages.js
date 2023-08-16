@@ -52,7 +52,7 @@ export default defineMessages({
   },
   highlightCategory: {
     id: 'app.containers.EntitiesCategories.highlightCategory',
-    defaultMessage: 'Highlight {categoryName}',
+    defaultMessage: 'Highlight by {categoryName}',
   },
   viewOptionList: {
     id: 'app.containers.EntityList.viewOptionList',
