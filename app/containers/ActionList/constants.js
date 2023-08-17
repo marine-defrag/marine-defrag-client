@@ -25,6 +25,7 @@ export const DEPENDENCIES = [
   API.MEMBERSHIPS,
   API.USERS,
   API.USER_ROLES,
+  API.PAGES,
 ];
 
 export const CONFIG = {

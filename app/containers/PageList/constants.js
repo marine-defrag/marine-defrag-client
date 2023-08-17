@@ -3,6 +3,7 @@ import { API, ROUTES } from 'themes/config';
 export const DEPENDENCIES = [
   API.PAGES,
   API.USER_ROLES,
+  API.PAGES,
 ];
 
 export const CONFIG = {

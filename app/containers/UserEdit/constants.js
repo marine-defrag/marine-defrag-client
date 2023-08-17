@@ -14,6 +14,7 @@ export const DEPENDENCIES = [
   API.CATEGORIES,
   API.TAXONOMIES,
   API.USER_CATEGORIES,
+  API.PAGES,
 ];
 
 export const FORM_INITIAL = fromJS({

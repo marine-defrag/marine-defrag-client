@@ -7,7 +7,7 @@ import { fromJS } from 'immutable';
 import { API } from 'themes/config';
 export const SAVE = 'impactoss/PageNew/SAVE';
 
-export const DEPENDENCIES = [API.USER_ROLES];
+export const DEPENDENCIES = [API.USER_ROLES, API.PAGES];
 
 export const FORM_INITIAL = fromJS({
   attributes: {
