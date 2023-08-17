@@ -398,7 +398,7 @@ export const selectActiontypeQuery = createSelector(
 
 export const selectViewQuery = createSelector(
   selectLocationQuery,
-  (locationQuery) => locationQuery && (locationQuery.get('view') || 'list')
+  (locationQuery) => locationQuery && (locationQuery.get('view'))
 );
 export const selectSubjectQuery = createSelector(
   selectLocationQuery,

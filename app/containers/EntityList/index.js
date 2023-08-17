@@ -287,9 +287,27 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       && config.views.timeline
       && config.views.timeline.types
       && config.views.timeline.types.indexOf(typeId) > -1;
-    const showMap = hasMapOption && view === 'map';
-    const showTimeline = hasTimelineOption && view === 'time';
-    const showList = (hasList && view === 'list') || (!showMap && !showTimeline);
+
+    let cleanView;
+    if (!view) {
+      if (hasTimelineOption) {
+        cleanView = 'time';
+      } else if (hasMapOption) {
+        cleanView = 'map';
+      } else if (hasList) {
+        cleanView = 'list';
+      }
+    } else if (
+      (hasTimelineOption && view === 'time')
+      || (hasMapOption && view === 'map')
+    ) {
+      cleanView = view;
+    } else {
+      cleanView = 'list';
+    }
+    const showList = cleanView === 'list';
+    const showMap = cleanView === 'map';
+    const showTimeline = cleanView === 'time';
 
     const headerActions = headerOptions && headerOptions.actions && headerOptions.actions.filter(
       (action) => {
@@ -305,32 +323,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         return true;
       },
     );
-    let viewOptions;
+    let viewOptions = [];
     if (hasList && (hasMapOption || hasTimelineOption)) {
-      viewOptions = [
-        {
-          type: 'primaryGroup',
-          title: intl.formatMessage(messages.viewOptionList),
-          onClick: () => onSetView('list'),
-          active: showList,
-          disabled: showList,
-          isFirst: true,
-          isLast: !hasMapOption && !hasTimelineOption,
-        },
-      ];
-      if (hasMapOption) {
-        viewOptions = [
-          ...viewOptions,
-          {
-            type: 'primaryGroup',
-            title: intl.formatMessage(messages.viewOptionMap),
-            onClick: () => onSetView('map'),
-            active: showMap,
-            disabled: showMap,
-            isLast: !hasTimelineOption,
-          },
-        ];
-      }
       if (hasTimelineOption) {
         viewOptions = [
           ...viewOptions,
@@ -340,10 +334,35 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onClick: () => onSetView('time'),
             active: showTimeline,
             disabled: showTimeline,
-            isLast: true,
+            isFirst: true,
           },
         ];
       }
+      if (hasMapOption) {
+        viewOptions = [
+          ...viewOptions,
+          {
+            type: 'primaryGroup',
+            title: intl.formatMessage(messages.viewOptionMap),
+            onClick: () => onSetView('map'),
+            active: showMap,
+            disabled: showMap,
+            isFirst: !hasTimelineOption,
+          },
+        ];
+      }
+      viewOptions = [
+        ...viewOptions,
+        {
+          type: 'primaryGroup',
+          title: intl.formatMessage(messages.viewOptionList),
+          onClick: () => onSetView('list'),
+          active: showList,
+          disabled: showList,
+          isLast: true,
+          isFirst: !hasMapOption && !hasTimelineOption,
+        },
+      ];
     }
     return (
       <div>
