@@ -97,10 +97,10 @@ export const CONTENT_PAGE = 'page';
 export const CONTENT_MODAL = 'modal';
 
 export const DEPENDENCIES = [
-  API.USERS,
-  API.USER_ROLES,
+  // API.USERS,
+  // API.USER_ROLES,
   API.PAGES,
-  API.BOOKMARKS,
+  // API.BOOKMARKS,
 ];
 
 export const SORT_ORDER_OPTIONS = [

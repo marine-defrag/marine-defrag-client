@@ -24,7 +24,7 @@ import {
   selectIsUserManager,
   selectIsUserAnalyst,
   selectSessionUserAttributes,
-  // selectReady,
+  selectReady,
   selectEntitiesWhere,
   selectNewEntityModal,
   selectIsPrintView,
@@ -33,12 +33,12 @@ import {
 
 import {
   validateToken,
-  // loadEntitiesIfNeeded,
+  loadEntitiesIfNeeded,
   updatePath,
   openNewEntityModal,
 } from './actions';
 
-// import { DEPENDENCIES } from './constants';
+import { DEPENDENCIES } from './constants';
 
 import { PrintContext } from './PrintContext';
 import messages from './messages';
@@ -161,6 +161,13 @@ const PrintWrapper = styled.div`
 class App extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   UNSAFE_componentWillMount() {
     this.props.validateToken();
+    this.props.onLoadData();
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (!nextProps.dataReady) {
+      this.props.onLoadData();
+    }
   }
 
   preparePageMenuPages = (pages, currentPath) => sortEntities(
@@ -233,6 +240,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       onCloseModal,
       printArgs,
     } = this.props;
+
     const { intl } = this.context;
     const title = intl.formatMessage(messages.app.title);
     const isHome = location.pathname === '/';
@@ -241,6 +249,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       || location.pathname.startsWith(ROUTES.LOGOUT)
       || location.pathname.startsWith(ROUTES.UNAUTHORISED);
     const isHomeOrAuth = isHome || isAuth;
+
     return (
       <div id="app-inner" className={isPrintView ? 'print-view' : ''}>
         <Helmet titleTemplate={`%s - ${title}`} defaultTitle={title} />
@@ -326,7 +335,7 @@ App.propTypes = {
   user: PropTypes.object,
   pages: PropTypes.object,
   validateToken: PropTypes.func,
-  // loadEntitiesIfNeeded: PropTypes.func,
+  onLoadData: PropTypes.func,
   onPageLink: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
   newEntityModal: PropTypes.object,
@@ -338,7 +347,7 @@ App.contextTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  // dataReady: selectReady(state, { path: DEPENDENCIES }),
+  dataReady: selectReady(state, { path: DEPENDENCIES }),
   isManager: selectIsUserManager(state),
   isAnalyst: selectIsUserAnalyst(state),
   isUserSignedIn: selectIsSignedIn(state),
@@ -357,9 +366,9 @@ export function mapDispatchToProps(dispatch) {
     validateToken: () => {
       dispatch(validateToken()); // Maybe this could move to routes.js or App wrapper
     },
-    // loadEntitiesIfNeeded: () => {
-    //   DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
-    // },
+    onLoadData: () => {
+      DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
+    },
     onPageLink: (path, args) => {
       dispatch(updatePath(path, args));
     },
