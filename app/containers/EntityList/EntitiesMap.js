@@ -139,21 +139,22 @@ export function EntitiesMap(props) {
       hasByTarget = type.getIn(['attributes', 'is_target']);
       hasActions = type.getIn(['attributes', 'is_active']);
       if (hasByTarget && qe(typeId, ACTORTYPES.COUNTRY)) { // ie countries & groups
+        mapSubjectClean = mapSubject || 'targets';
         if (mapSubjectClean === 'targets') {
           indicator = includeTargetMembers ? 'targetingActionsTotal' : 'targetingActions';
         }
         subjectOptions = [
           {
-            title: 'As actors',
-            onClick: () => onSetMapSubject('actors'),
-            active: mapSubjectClean === 'actors',
-            disabled: mapSubjectClean === 'actors',
-          },
-          {
             title: 'As targets',
             onClick: () => onSetMapSubject('targets'),
             active: mapSubjectClean === 'targets',
             disabled: mapSubjectClean === 'targets',
+          },
+          {
+            title: 'As actors',
+            onClick: () => onSetMapSubject('actors'),
+            active: mapSubjectClean === 'actors',
+            disabled: mapSubjectClean === 'actors',
           },
         ];
         if (mapSubjectClean === 'targets') {
@@ -453,22 +454,23 @@ export function EntitiesMap(props) {
       type = actiontypes.find((at) => qe(at.get('id'), typeId));
       hasByTarget = type.getIn(['attributes', 'has_target']);
       if (hasByTarget) {
+        mapSubjectClean = mapSubject || 'targets';
         if (mapSubjectClean === 'targets') {
           indicator = includeTargetMembers ? 'targetingActionsTotal' : 'targetingActions';
         }
         // cleanMapSubject = mapSubject;
         subjectOptions = [
           {
-            title: qe(ACTIONTYPES.DONOR, typeId) ? 'By donor' : 'By actor',
-            onClick: () => onSetMapSubject('actors'),
-            active: mapSubjectClean === 'actors',
-            disabled: mapSubjectClean === 'actors',
-          },
-          {
             title: qe(ACTIONTYPES.DONOR, typeId) ? 'By recipient' : 'By target',
             onClick: () => onSetMapSubject('targets'),
             active: mapSubjectClean === 'targets',
             disabled: mapSubjectClean === 'targets',
+          },
+          {
+            title: qe(ACTIONTYPES.DONOR, typeId) ? 'By donor' : 'By actor',
+            onClick: () => onSetMapSubject('actors'),
+            active: mapSubjectClean === 'actors',
+            disabled: mapSubjectClean === 'actors',
           },
         ];
       } else {
