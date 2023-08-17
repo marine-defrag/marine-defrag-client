@@ -39,6 +39,8 @@ import ContentHeader from 'containers/ContentHeader';
 import ChartTimelineLegend from 'components/EntitiesOverTime/ChartTimelineLegend';
 import ChartTimeline from 'components/EntitiesOverTime/ChartTimeline';
 import ChartTimelineCategories from 'components/EntitiesOverTime/ChartTimelineCategories';
+import PlotHintWrapper from 'components/EntitiesOverTime//PlotHintWrapper';
+
 
 import HeaderPrint from 'components/Header/HeaderPrint';
 import Loading from 'components/Loading';
@@ -51,9 +53,19 @@ import EntityListViewOptions from 'components/EntityListViewOptions';
 import messages from './messages';
 // import { selectActionsByAncestor } from './selectors';
 
+const PlotHintAnchor = styled.div`
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  direction: ltr;
+`;
+const WrapperOfWrappers = styled.div`
+  position: relative;
+`;
 const ChartWrapperOuter = styled.div`
   overflow-x: auto;
-  direction: ${({ scrollOverflow }) => scrollOverflow ? 'rtl' : 'tlr'};
+  direction: ${({ scrollOverflow }) => scrollOverflow ? 'rtl' : 'ltr'};
 `;
 const ChartWrapperInner = styled.div`
   width: ${({ scrollOverflow }) => scrollOverflow ? '1000px' : 'auto'};
@@ -108,6 +120,7 @@ export function EntitiesOverTime({
   onEntityClick,
 }) {
   const [hint, setHint] = useState(null);
+  const [hoverId, setHover] = useState(null);
 
   const scrollContainer = useRef(null);
   const scrollReference = useRef(null);
@@ -157,22 +170,35 @@ export function EntitiesOverTime({
               {hasEntitiesWithDate && (
                 <>
                   <ChartTimelineLegend />
-                  <ChartWrapperOuter scrollOverflow={isMaxSize(size, 'ms')}>
-                    <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
-                      <ChartTimeline
-                        highlightCategory={highlightCategory}
-                        setHint={setHint}
-                        hint={hint}
-                        onEntityClick={onEntityClick}
-                        entities={sortEntities(
-                          entitiesWithDate,
-                          'asc',
-                          'date_start', // sortBy
-                          'date', // type
-                        )}
-                      />
-                    </ChartWrapperInner>
-                  </ChartWrapperOuter>
+                  <WrapperOfWrappers>
+                    <ChartWrapperOuter scrollOverflow={isMaxSize(size, 'ms')}>
+                      <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
+                        <ChartTimeline
+                          highlightCategory={highlightCategory}
+                          setHint={setHint}
+                          hint={hint}
+                          setHover={setHover}
+                          hoverId={hoverId}
+                          onEntityClick={onEntityClick}
+                          entities={sortEntities(
+                            entitiesWithDate,
+                            'asc',
+                            'date_start', // sortBy
+                            'date', // type
+                          )}
+                        />
+                      </ChartWrapperInner>
+                    </ChartWrapperOuter>
+                    {hint && isMaxSize(size, 'ms') && (
+                      <PlotHintAnchor>
+                        <PlotHintWrapper
+                          hint={hint}
+                          onEntityClick={onEntityClick}
+                          onClose={() => setHint(null)}
+                        />
+                      </PlotHintAnchor>
+                    )}
+                  </WrapperOfWrappers>
                   <Box direction="row" fill={false}>
                     {taxonomiesWithCats && (
                       <ChartTimelineCategories

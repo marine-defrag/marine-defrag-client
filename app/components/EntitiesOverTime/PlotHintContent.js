@@ -1,90 +1,102 @@
 import React from 'react';
-import { palette } from 'styled-theme';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { FormattedDate } from 'react-intl';
-
-import { Hint } from 'react-vis';
-
+import { FormattedDate, FormattedMessage } from 'react-intl';
+import { Box, Text, Button } from 'grommet';
+import { FormNext, FormClose } from 'grommet-icons';
 import { ROUTES } from 'themes/config';
 
-const PlotHintWrapper = styled.div`
-pointer-events: none;
-margin: 15px 0px;
+import PrintHide from 'components/styled/PrintHide';
+
+import messages from './messages';
+
+const Styled = styled(Box)`
+  position: relative;
+`;
+const PlotHintMetaLabel = styled((p) => <Text size="xxsmall" {...p} />)`
+  color: ${({ theme }) => theme.global.colors.textSecondary};
 `;
 
-const PlotHint = styled.div`
-  max-width: 300px;
-  color: ${({ color, theme }) => theme.global.colors[color]};
-  background: ${({ theme }) => theme.global.colors.white};
-  padding: 5px 10px;
-  border-radius: ${({ theme }) => theme.global.edgeSize.xxsmall};
-  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
-  font-weight: 700;
-  white-space: nowrap;
-  pointer-events: auto;
-`;
-
-const PlotHintDateLabel = styled.div`
-color: ${palette('text', 1)};
-@media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-  font-size: ${(props) => props.theme.sizes.text.smaller};
-}
-`;
-
-const PlotHintTitleLabel = styled.div`
-color: ${({ color, theme }) => theme.global.colors[color]};
-width: 250px;
-text-wrap: wrap;
-`;
-
-const PlotHintLinkLabel = styled.a`
- text-decoration: underline;
- font-weight: 500;
- font-size: 12px;
- stroke: ${({ theme }) => theme.global.colors.a};
- &:hover {
+const PlotHintTitleLabel = styled((p) => <Text size="small" {...p} />)``;
+const ButtonWrap = styled((p) => <Box align="end" margin={{ top: 'xsmall' }} {...p} />)``;
+const ActionButton = styled((p) => <Button {...p} />)`
+  font-weight: 500;
+  font-size: 13px;
+  stroke: ${({ theme }) => theme.global.colors.a};
+  &:hover {
     stroke: ${({ theme }) => theme.global.colors.aHover};
   }
- `;
+`;
 
-const PlotHintContent = (props) => {
-  const { hint, entities, onEntityClick } = props;
-  const hintEntity = hint ? entities.find((entity) => entity.get('id') === hint.id) : null;
+const TTTitleWrap = styled((p) => (
+  <Box
+    direction="row"
+    justify="between"
+    align="center"
+    margin={{ bottom: 'xsmall' }}
+    {...p}
+  />
+))``;
 
-  return hint && hintEntity
-        && (
-          <Hint
-            {...props}
-            value={hint}
-            style={{
-              pointerEvents: 'none',
-              margin: '10px 0',
-            }}
-          >
-            <PlotHintWrapper>
-              <PlotHint>
-                <PlotHintDateLabel>
-                  <FormattedDate
-                    value={new Date(hintEntity.getIn(['attributes', 'date_start']))}
-                    year="numeric"
-                    month="long"
-                    day="numeric"
-                  />
-                </PlotHintDateLabel>
-                <PlotHintTitleLabel>{hintEntity.getIn(['attributes', 'title'])}</PlotHintTitleLabel>
-                <PlotHintLinkLabel
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onEntityClick(hintEntity.get('id'), ROUTES.ACTION);
-                  }}
-                >
-                            Read More
-                </PlotHintLinkLabel>
-              </PlotHint>
-            </PlotHintWrapper>
-          </Hint>
-        );
+
+const PlotHintContent = ({ hint, onEntityClick, onClose }) => (
+  <Styled>
+    <TTTitleWrap>
+      <Box direction="row" gap="xsmall" margin={{ vertical: 'xsmall' }}>
+        {hint.content.code && (
+          <Box>
+            <PlotHintMetaLabel>{hint.content.code}</PlotHintMetaLabel>
+          </Box>
+        )}
+        {hint.content.code && (
+          <Box>
+            <PlotHintMetaLabel>|</PlotHintMetaLabel>
+          </Box>
+        )}
+        <PlotHintMetaLabel>
+          <FormattedDate
+            value={new Date(hint.content.date)}
+            year="numeric"
+            month="long"
+            day="numeric"
+          />
+        </PlotHintMetaLabel>
+      </Box>
+      {onClose && (
+        <PrintHide>
+          <Button
+            plain
+            icon={<FormClose size="small" />}
+            onClick={() => onClose()}
+          />
+        </PrintHide>
+      )}
+    </TTTitleWrap>
+    <PlotHintTitleLabel>{hint.content.title}</PlotHintTitleLabel>
+    <ButtonWrap>
+      <ActionButton
+        as="a"
+        plain
+        href={`${ROUTES.ACTION}/${hint.content.id}`}
+        onClick={(evt) => {
+          // if (evt && evt.preventDefault) evt.preventDefault();
+          if (evt && evt.stopPropagation) evt.stopPropagation();
+          onEntityClick(hint.content.id, ROUTES.ACTION);
+        }}
+      >
+        <Box direction="row" align="center">
+          <Text size="small"><FormattedMessage {...messages.actionDetails} /></Text>
+          <FormNext size="xsmall" style={{ stroke: 'inherit' }} />
+        </Box>
+      </ActionButton>
+    </ButtonWrap>
+  </Styled>
+);
+
+PlotHintContent.propTypes = {
+  hint: PropTypes.object.isRequired,
+  onEntityClick: PropTypes.func,
+  onClose: PropTypes.func,
 };
 
 export default PlotHintContent;

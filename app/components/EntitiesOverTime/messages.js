@@ -17,4 +17,8 @@ export default defineMessages({
     id: 'app.components.EntitiesOverTime.highlightCategory',
     defaultMessage: 'Highlight by {categoryName}',
   },
+  actionDetails: {
+    id: 'app.components.EntitiesOverTime.actionDetails',
+    defaultMessage: 'Details',
+  },
 });

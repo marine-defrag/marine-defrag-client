@@ -24,7 +24,7 @@ margin-bottom: 3px;
 `;
 
 const CategoryButton = styled((p) => <ButtonDefault {...p} />)`
-  margin-bottom: 3px;
+  margin-bottom: 4px;
   padding: 0.2em 0.5em;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: 0.3em 0.8em;
