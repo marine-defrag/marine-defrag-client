@@ -58,7 +58,7 @@ import {
   ENDPOINTS,
   KEYS,
   API,
-  KEEP_FILTERS,
+  KEEP_QUERY_ARGS,
 } from 'themes/config';
 
 import {
@@ -936,17 +936,20 @@ export function* updatePathSaga({ path, args }) {
   const location = yield select(selectLocation);
 
   let queryNext = {};
-  if (args && (args.query || args.keepQuery)) {
+  if (args && (args.query || args.keepQuery || args.dropQuery)) {
     if (args.query) {
       queryNext = getNextQuery(args.query, args.extend, location);
     }
     if (args.keepQuery) {
       queryNext = location.get('query').toJS();
     }
+    if (args.dropQuery) {
+      queryNext = {};
+    }
   } else {
     // always keep "specific filters"
     queryNext = location.get('query').filter(
-      (val, key) => KEEP_FILTERS.indexOf(key) > -1
+      (val, key) => KEEP_QUERY_ARGS.indexOf(key) > -1
     ).toJS();
   }
   // convert to string
