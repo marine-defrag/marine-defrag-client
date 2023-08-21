@@ -103,6 +103,30 @@ const STATE_INITIAL = {
   visibleEditOptions: null,
 };
 
+const VALID_VIEWS = ['time', 'map', 'list'];
+const getView = ({
+  view,
+  hasTimelineOption,
+  hasMapOption,
+}) => {
+  // return default view if view unset, invalid or inconsistent
+  if (
+    !view
+    || VALID_VIEWS.indexOf(view) === -1
+    || (view === 'time' && !hasTimelineOption)
+    || (view === 'map' && !hasMapOption)
+  ) {
+    if (hasTimelineOption) {
+      return 'time';
+    }
+    if (hasMapOption) {
+      return 'map';
+    }
+    return 'list';
+  }
+  return view;
+};
+
 export class EntityList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   constructor() {
     super();
@@ -288,23 +312,12 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       && config.views.timeline.types
       && config.views.timeline.types.indexOf(typeId) > -1;
 
-    let cleanView;
-    if (!view) {
-      if (hasTimelineOption) {
-        cleanView = 'time';
-      } else if (hasMapOption) {
-        cleanView = 'map';
-      } else if (hasList) {
-        cleanView = 'list';
-      }
-    } else if (
-      (hasTimelineOption && view === 'time')
-      || (hasMapOption && view === 'map')
-    ) {
-      cleanView = view;
-    } else {
-      cleanView = 'list';
-    }
+    const cleanView = getView({
+      view,
+      hasTimelineOption,
+      hasMapOption,
+      hasList,
+    });
     const showList = cleanView === 'list';
     const showMap = cleanView === 'map';
     const showTimeline = cleanView === 'time';
