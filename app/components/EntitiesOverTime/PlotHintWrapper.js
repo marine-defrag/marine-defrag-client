@@ -6,7 +6,7 @@ import PlotHintContent from './PlotHintContent';
 
 const Styled = styled.div`
 pointer-events: none;
-margin: 8px 0px;
+margin: 4px 0px;
 `;
 
 const PlotHintInner = styled.div`

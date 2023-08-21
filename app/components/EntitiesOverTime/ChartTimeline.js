@@ -33,6 +33,7 @@ import {
 } from './charts';
 
 import PlotHintWrapper from './PlotHintWrapper';
+import PlotHintSimpleWrapper from './PlotHintSimpleWrapper';
 
 const YearLabel = styled.text`
   fill: black;
@@ -158,6 +159,13 @@ export function ChartTimeline({
     { x: xMax, y: maxRow + 1 },
     { x: xMin, y: maxRow + 1 },
   ];
+  const hoverEntity = chartData && hoverId
+    ? chartData.find((item) => item.id === hoverId)
+    : null;
+  let showHover = false;
+  if (hoverId && (!hint || hoverId !== hint.id)) {
+    showHover = true;
+  }
   return (
     <div ref={targetRef}>
       <ChartWrapper>
@@ -178,11 +186,10 @@ export function ChartTimeline({
             onMouseLeave={() => setHover(null)}
             onClick={() => {
               if (hoverId) {
-                const d = chartData.find((item) => item.id === hoverId);
-                if (hint && d.id === hint.id) {
+                if (hint && hoverEntity.id === hint.id) {
                   setHint(null);
                 } else {
-                  setHint(d);
+                  setHint(hoverEntity);
                 }
               }
             }}
@@ -252,6 +259,17 @@ export function ChartTimeline({
                   hint={hint}
                   onEntityClick={onEntityClick}
                   onClose={() => setHint(null)}
+                />
+              </Hint>
+            )}
+            {showHover && isMinSize(size, 'medium') && (
+              <Hint
+                value={hoverEntity}
+                align={{ vertical: 'top', horizontal: 'auto' }}
+                style={{ margin: '10px 0' }}
+              >
+                <PlotHintSimpleWrapper
+                  hint={hoverEntity}
                 />
               </Hint>
             )}
