@@ -79,6 +79,7 @@ import {
   CLOSE_PRINT_VIEW,
   SET_MAP_TOOLTIPS,
   SET_SHOW_FF_AS_CIRCLES,
+  SET_TIMELINE_HIGHLIGHT_CATEGORY,
 } from './constants';
 
 export function submitInvalid(valid) {
@@ -571,5 +572,11 @@ export function setShowFFasCircles(showAsCircles) {
   return {
     type: SET_SHOW_FF_AS_CIRCLES,
     showAsCircles,
+  };
+}
+export function setTimelineHighlightCategory(value) {
+  return {
+    type: SET_TIMELINE_HIGHLIGHT_CATEGORY,
+    value,
   };
 }

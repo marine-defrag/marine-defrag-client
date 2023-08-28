@@ -11,6 +11,7 @@ export const DEPENDENCIES = [
   API.PAGES,
   API.USERS,
   API.USER_ROLES,
+  API.PAGES,
 ];
 
 export const FORM_INITIAL = fromJS({

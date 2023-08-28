@@ -25,6 +25,7 @@ export const DEPENDENCIES = [
   API.MEMBERSHIPS,
   API.USERS,
   API.USER_ROLES,
+  API.PAGES,
 ];
 
 export const CONFIG = {
@@ -43,6 +44,12 @@ export const CONFIG = {
         ACTIONTYPES.NATL,
         ACTIONTYPES.INIT,
         ACTIONTYPES.DONOR,
+        // ACTIONTYPES.INTL,
+      ],
+    },
+    timeline: {
+      types: [
+        ACTIONTYPES.INTL,
       ],
     },
   },

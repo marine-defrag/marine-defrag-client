@@ -8,6 +8,7 @@ import { API, ACTION_FIELDS } from 'themes/config';
 export const SAVE = 'impactoss/ActionEdit/SAVE';
 
 export const DEPENDENCIES = [
+  API.PAGES,
   API.USERS,
   API.USER_ROLES,
   API.CATEGORIES,

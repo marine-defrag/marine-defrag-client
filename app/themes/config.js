@@ -862,7 +862,7 @@ export const ACTIONTYPES_CONFIG = {
 };
 
 
-export const KEEP_FILTERS = ['view', 'subj', 'msubj', 'tm', 'am'];
+export const KEEP_QUERY_ARGS = ['view', 'subj', 'msubj', 'tm', 'am', 'mvw'];
 
 // Language and date settings ********************
 // Note: you may also set the locales in i18n.js

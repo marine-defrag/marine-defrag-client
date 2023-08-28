@@ -483,6 +483,7 @@ theme.global = {
     inactive: '#f1f0f1', // on light background (empowerment)
     borderLight: '#CECED2',
     hint: '#777b7e', // on light background (empowerment)
+    textSecondary: '#777b7e', // on light background (empowerment)
     text: {
       brand: '#183863',
       dark: '#FFFFFF', //  on dark background

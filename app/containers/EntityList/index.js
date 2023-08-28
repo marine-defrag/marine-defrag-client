@@ -22,7 +22,6 @@ import {
   selectHasUserRole,
   selectCurrentPathname,
   selectAllTaxonomiesWithCategories,
-  selectViewQuery,
   selectIncludeMembersForFiltering,
   selectMapSubjectQuery,
   selectIncludeActorMembers,
@@ -46,6 +45,7 @@ import { USER_ROLES } from 'themes/config';
 
 import EntitiesMap from './EntitiesMap';
 import EntitiesListView from './EntitiesListView';
+import EntitiesOverTime from './EntitiesOverTime';
 
 import {
   selectDomain,
@@ -203,6 +203,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onSetView,
       typeId,
       view,
+      hasList,
+      hasMapOption,
+      hasTimelineOption,
       onEntitySelectAll,
       dataReady,
       showCode,
@@ -275,31 +278,62 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       intl.formatMessage(messages.filterFormError),
     );
 
-    const hasList = config.views && config.views.list;
-    const hasMap = typeId
-      && config.views
-      && config.views.map
-      && config.views.map.types
-      && config.views.map.types.indexOf(typeId) > -1;
-    const showList = !hasMap || (hasList && view === 'list');
-    const showMap = hasMap && view === 'map';
+    const showList = view === 'list';
+    const showMap = view === 'map';
+    const showTimeline = view === 'time';
 
-    let viewOptions;
-    if (hasList && hasMap) {
+    const headerActions = headerOptions && headerOptions.actions && headerOptions.actions.filter(
+      (action) => {
+        if (!showList) {
+          return !action.showOnListOnly;
+        }
+        if (!showTimeline) {
+          return !action.showOnTimelineOnly;
+        }
+        if (!showMap) {
+          return !action.showOnMapOnly;
+        }
+        return true;
+      },
+    );
+    let viewOptions = [];
+    if (hasList && (hasMapOption || hasTimelineOption)) {
+      if (hasTimelineOption) {
+        viewOptions = [
+          ...viewOptions,
+          {
+            type: 'primaryGroup',
+            title: intl.formatMessage(messages.viewOptionTimeline),
+            onClick: () => onSetView('time'),
+            active: showTimeline,
+            disabled: showTimeline,
+            isFirst: true,
+          },
+        ];
+      }
+      if (hasMapOption) {
+        viewOptions = [
+          ...viewOptions,
+          {
+            type: 'primaryGroup',
+            title: intl.formatMessage(messages.viewOptionMap),
+            onClick: () => onSetView('map'),
+            active: showMap,
+            disabled: showMap,
+            isFirst: !hasTimelineOption,
+          },
+        ];
+      }
       viewOptions = [
+        ...viewOptions,
         {
-          type: 'primary',
-          title: 'List',
+          type: 'primaryGroup',
+          title: intl.formatMessage(messages.viewOptionList),
           onClick: () => onSetView('list'),
           active: showList,
           disabled: showList,
-        },
-        {
-          type: 'primary',
-          title: 'Map',
-          onClick: () => onSetView('map'),
-          active: showMap,
-          disabled: showMap,
+          isLast: true,
+          isFirst: !hasMapOption && !hasTimelineOption,
         },
       ];
     }
@@ -352,7 +386,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onUpdateQuery={onUpdateQuery}
             includeMembers={includeMembers}
             onSetFilterMemberOption={onSetFilterMemberOption}
-            headerActions={headerOptions && headerOptions.actions}
+            headerActions={headerActions}
             isPrintView={isPrintView}
           />
         )}
@@ -364,7 +398,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             canEdit={isManagerAndCanEdit && showList}
             isManager={isManager}
             hasUserRole={hasUserRole}
-            headerActions={headerOptions && headerOptions.actions}
+            headerActions={headerActions}
             isPrintView={isPrintView}
           />
         )}
@@ -446,6 +480,32 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onEntityClick={(id, path) => onEntityClick(
               id, path, viewDomain.get('errors')
             )}
+            typeId={typeId}
+            hasFilters={filters && filters.length > 0}
+            mapSubject={mapSubject}
+            onSetMapSubject={onSetMapSubject}
+            onSetIncludeActorMembers={onSetIncludeActorMembers}
+            onSetIncludeTargetMembers={onSetIncludeTargetMembers}
+            includeActorMembers={includeActorMembers}
+            includeTargetMembers={includeTargetMembers}
+            isPrintView={isPrintView}
+          />
+        )}
+        {showTimeline && (
+          <EntitiesOverTime
+            viewOptions={viewOptions}
+            entities={entities}
+            actortypes={actortypes}
+            actiontypes={actiontypes}
+            targettypes={targettypes}
+            config={config}
+            entityTitle={entityTitle}
+            allEntityCount={allEntityCount}
+            dataReady={dataReady}
+            onEntityClick={(id, path) => onEntityClick(
+              id, path, viewDomain.get('errors')
+            )}
+            headerOptions={headerOptions}
             typeId={typeId}
             hasFilters={filters && filters.length > 0}
             mapSubject={mapSubject}
@@ -582,6 +642,9 @@ EntityList.propTypes = {
   onSetView: PropTypes.func,
   onSetFilterMemberOption: PropTypes.func,
   view: PropTypes.string,
+  hasList: PropTypes.bool,
+  hasMapOption: PropTypes.bool,
+  hasTimelineOption: PropTypes.bool,
   mapSubject: PropTypes.string,
   onSetMapSubject: PropTypes.func,
   onSetIncludeActorMembers: PropTypes.func,
@@ -605,7 +668,6 @@ const mapStateToProps = (state) => ({
   progressTypes: selectProgressTypes(state),
   currentPath: selectCurrentPathname(state),
   allTaxonomies: selectAllTaxonomiesWithCategories(state),
-  view: selectViewQuery(state),
   includeMembers: selectIncludeMembersForFiltering(state),
   mapSubject: selectMapSubjectQuery(state),
   includeActorMembers: selectIncludeActorMembers(state),

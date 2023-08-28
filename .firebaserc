@@ -4,6 +4,7 @@
     "dev": "marine-defrag-dev",
     "development": "marine-defrag-dev",
     "test": "marine-defrag-test",
+    "test-pdb": "marine-defrag-test-pdb",
     "production": "marine-defrag",
     "prod": "marine-defrag"
   }

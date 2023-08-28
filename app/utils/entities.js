@@ -20,6 +20,14 @@ import isNumber from 'utils/is-number';
 import appMessage from 'utils/app-message';
 import { qe } from 'utils/quasi-equals';
 
+// check if the category value, in an entity, matches an associated ID
+export const testEntityCategoryValueAssociation = (
+  entity,
+  path,
+  associatedId,
+) => entity.get(path)
+  && entity.get(path).contains(parseInt(associatedId, 10));
+
 // check if entity has nested connection by id
 export const testEntityEntityAssociation = (
   entity,

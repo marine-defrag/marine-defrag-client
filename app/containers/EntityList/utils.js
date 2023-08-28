@@ -82,21 +82,23 @@ export const getActorsForEntities = (
               }
             } else {
               const actor = actors.get(sActorId);
-              result2 = result2.set(
-                sActorId,
-                actor.set(
-                  actorAtt,
-                  Map().set(
-                    actionId,
-                    actionActorConnectionAttributes
-                      ? actionActorConnectionAttributes.find(
-                        (connection) => qe(connection.get('measure_id'), actionId)
-                          && qe(connection.get('actor_id'), sActorId)
-                      )
-                      : Map({ measure_id: actionId })
+              if (actor) {
+                result2 = result2.set(
+                  sActorId,
+                  actor.set(
+                    actorAtt,
+                    Map().set(
+                      actionId,
+                      actionActorConnectionAttributes
+                        ? actionActorConnectionAttributes.find(
+                          (connection) => qe(connection.get('measure_id'), actionId)
+                            && qe(connection.get('actor_id'), sActorId)
+                        )
+                        : Map({ measure_id: actionId })
+                    )
                   )
-                )
-              );
+                );
+              }
             }
             return result2;
           },
@@ -165,3 +167,22 @@ export const getActorsForEntities = (
     Map(),
   ).toList();
 };
+
+// const includeParentRecursive = ({ parents, entity, entities }) => {
+//   let parentsUpdated;
+//   console.log('parents', parents.toJS())
+//   console.log('entities', entities.toJS());
+//   const parentId = entity.getIn(['attributes', 'parent_id']);
+//   console.log('parentId', parentId)
+//   if (parentId) {
+//     const parent = entities.get(parentId.toString());
+//     console.log('parent', parent.toJS())
+//     if (parent) {
+//       parentsUpdated = parent ? parents.push(parent) : parents;
+//       console.log('parentsUpdated', parentsUpdated.toJS())
+//       return includeParentRecursive({ parents: parentsUpdated, entity: parent, entities });
+//     }
+//     return parents;
+//   }
+//   return parents;
+// };

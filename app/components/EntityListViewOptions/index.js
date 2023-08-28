@@ -7,7 +7,7 @@ import ButtonFactory from 'components/buttons/ButtonFactory';
 const Styled = styled.div`
   position: ${({ isOnMap }) => isOnMap ? 'absolute' : 'relative'};
   z-index: 20;
-  margin-left: 10px;
+  margin-left: 20px;
   padding: 10px 0;
   display: ${({ isPrint }) => isPrint ? 'none' : 'inline-block'};
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
@@ -37,7 +37,6 @@ const TableCell = styled.span`
   }
 `;
 const ButtonWrap = styled.span`
-  padding: 0 0.1em;
   @media print {
     display: none;
   }

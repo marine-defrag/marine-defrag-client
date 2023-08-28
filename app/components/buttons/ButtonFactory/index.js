@@ -4,6 +4,7 @@ import Icon from 'components/Icon';
 import appMessages from 'containers/App/messages';
 
 import ButtonDefaultWithIcon from '../ButtonDefaultWithIcon';
+import ButtonDefaultGrouped from '../ButtonDefaultGrouped';
 import ButtonDefault from '../ButtonDefault';
 import ButtonSubmit from '../ButtonSubmit';
 import ButtonFlat from '../ButtonFlat';
@@ -28,6 +29,19 @@ class ButtonFactory extends React.PureComponent { // eslint-disable-line react/p
           >
             {button.title}
           </ButtonDefault>
+        );
+      case 'primaryGroup':
+        return (
+          <ButtonDefaultGrouped
+            onClick={button.onClick && (() => button.onClick())}
+            type={button.submit ? 'submit' : 'button'}
+            disabled={button.disabled}
+            inactive={!button.active}
+            isLast={button.isLast}
+            isFirst={button.isFirst}
+          >
+            {button.title}
+          </ButtonDefaultGrouped>
         );
       case 'secondary':
         return (

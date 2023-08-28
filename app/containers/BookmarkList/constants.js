@@ -5,6 +5,7 @@ export const DEPENDENCIES = [
   API.BOOKMARKS,
   API.USERS,
   API.USER_ROLES,
+  API.PAGES,
 ];
 
 export const UPDATE_QUERY = 'impactoss/BookmarkList/UPDATE_QUERY';
