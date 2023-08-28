@@ -28,6 +28,8 @@
   "app.components.ColumnSelect.sortAttributes.target_date": "Target date",
   "app.components.EntityListItem.associationNotExistent": "Connection or category assignment already removed.",
   "app.components.EntityListItem.associationAlreadyPresent": "Connection or category already assigned.",
+  "app.components.EntitiesOverTime.individual": "Commitments",
+  "app.components.EntitiesOverTime.multiple": "Related commitments",
   "app.containers.EntityListTable.without": "Without",
   "app.containers.EntityListTable.continued": "{label} (continued)",
   "app.containers.EntityListTable.draft": "draft",

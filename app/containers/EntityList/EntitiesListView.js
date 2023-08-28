@@ -149,6 +149,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       isPrintView,
     } = this.props;
     const { viewType } = this.state;
+
     let type;
     let hasByTarget;
     let isTarget;
@@ -182,24 +183,27 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
             printHide: true,
             disabled: !mapSubjectClean,
           },
+        ];
+        if (hasByTarget) {
+          subjectOptions = [
+            ...subjectOptions,
+            {
+              type: 'secondary',
+              title: qe(ACTIONTYPES.DONOR, typeId) ? 'By recipient' : 'By target',
+              onClick: () => onSetMapSubject('targets'),
+              active: mapSubjectClean === 'targets',
+              disabled: mapSubjectClean === 'targets',
+            },
+          ];
+        }
+        subjectOptions = [
+          ...subjectOptions,
           {
             type: 'secondary',
             title: qe(ACTIONTYPES.DONOR, typeId) ? 'By donor' : 'By actor',
             onClick: () => onSetMapSubject('actors'),
             active: mapSubjectClean === 'actors',
             disabled: mapSubjectClean === 'actors',
-          },
-        ];
-      }
-      if (hasByTarget) {
-        subjectOptions = [
-          ...subjectOptions,
-          {
-            type: 'secondary',
-            title: qe(ACTIONTYPES.DONOR, typeId) ? 'By recipient' : 'By target',
-            onClick: () => onSetMapSubject('targets'),
-            active: mapSubjectClean === 'targets',
-            disabled: mapSubjectClean === 'targets',
           },
         ];
       }
@@ -240,7 +244,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
       isTarget = type.getIn(['attributes', 'is_target']);
       isActive = type.getIn(['attributes', 'is_active']);
       if (isTarget && isActive) {
-        mapSubjectClean = mapSubject || 'actors';
+        mapSubjectClean = mapSubject || 'targets';
       } else if (isTarget && !isActive) {
         mapSubjectClean = 'targets';
       } else if (!isTarget && isActive) {
@@ -277,18 +281,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
           },
         ]
         : null;
-      if (isActive) {
-        subjectOptions = [
-          ...subjectOptions,
-          {
-            type: 'secondary',
-            title: 'As actors',
-            onClick: () => onSetMapSubject('actors'),
-            active: mapSubjectClean === 'actors',
-            disabled: mapSubjectClean === 'actors',
-          },
-        ];
-      }
       if (isTarget) {
         subjectOptions = [
           ...subjectOptions,
@@ -298,6 +290,18 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
             onClick: () => onSetMapSubject('targets'),
             active: mapSubjectClean === 'targets',
             disabled: mapSubjectClean === 'targets',
+          },
+        ];
+      }
+      if (isActive) {
+        subjectOptions = [
+          ...subjectOptions,
+          {
+            type: 'secondary',
+            title: 'As actors',
+            onClick: () => onSetMapSubject('actors'),
+            active: mapSubjectClean === 'actors',
+            disabled: mapSubjectClean === 'actors',
           },
         ];
       }

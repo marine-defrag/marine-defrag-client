@@ -50,6 +50,7 @@ import {
   SET_FF_OVERLAY,
   SET_MAP_TOOLTIPS,
   SET_MAP_VIEW,
+  SET_TIMELINE_HIGHLIGHT_CATEGORY,
 } from 'containers/App/constants';
 
 import {
@@ -57,7 +58,7 @@ import {
   ENDPOINTS,
   KEYS,
   API,
-  KEEP_FILTERS,
+  KEEP_QUERY_ARGS,
 } from 'themes/config';
 
 import {
@@ -663,7 +664,7 @@ const getNextQuery = (query, extend, location) => {
     // if set and removing
     } else if (queryUpdated[param.arg] && param.value && param.replace) {
       queryUpdated[param.arg] = param.value;
-    } else if (queryUpdated[param.arg] && (param.remove || typeof param.value === 'undefined')) {
+    } else if (queryUpdated[param.arg] && (param.remove || typeof param.value === 'undefined' || param.value === null)) {
       delete queryUpdated[param.arg];
     // if not set or replacing with new value
     } else if (typeof param.value !== 'undefined' && !param.remove) {
@@ -840,6 +841,19 @@ export function* setFFOverlaySaga({ value }) {
   );
   yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
 }
+export function* setTimelineHighlightCategorySaga({ value }) {
+  const location = yield select(selectLocation);
+  const queryNext = getNextQuery(
+    {
+      arg: 'tlcat',
+      value,
+      replace: true,
+    },
+    true, // extend
+    location,
+  );
+  yield put(replace(`${location.get('pathname')}?${getNextQueryString(queryNext)}`));
+}
 export function* setMapTooltipsSaga({ values }) {
   const location = yield select(selectLocation);
   let queryNext = [];
@@ -922,17 +936,20 @@ export function* updatePathSaga({ path, args }) {
   const location = yield select(selectLocation);
 
   let queryNext = {};
-  if (args && (args.query || args.keepQuery)) {
+  if (args && (args.query || args.keepQuery || args.dropQuery)) {
     if (args.query) {
       queryNext = getNextQuery(args.query, args.extend, location);
     }
     if (args.keepQuery) {
       queryNext = location.get('query').toJS();
     }
+    if (args.dropQuery) {
+      queryNext = {};
+    }
   } else {
     // always keep "specific filters"
     queryNext = location.get('query').filter(
-      (val, key) => KEEP_FILTERS.indexOf(key) > -1
+      (val, key) => KEEP_QUERY_ARGS.indexOf(key) > -1
     ).toJS();
   }
   // convert to string
@@ -1000,6 +1017,7 @@ export default function* rootSaga() {
   yield takeEvery(SET_FF_OVERLAY, setFFOverlaySaga);
   yield takeEvery(OPEN_BOOKMARK, openBookmarkSaga);
   yield takeEvery(DISMISS_QUERY_MESSAGES, dismissQueryMessagesSaga);
+  yield takeEvery(SET_TIMELINE_HIGHLIGHT_CATEGORY, setTimelineHighlightCategorySaga);
   // yield takeEvery(PRINT_VIEW, printViewSaga);
   // yield takeEvery(CLOSE_PRINT_VIEW, closePrintViewSaga);
 

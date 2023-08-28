@@ -8,7 +8,7 @@
  * Follow this format:
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
-import { API } from 'themes/config';
+// import { API } from 'themes/config';
 
 export const REDIRECT_IF_NOT_PERMITTED = 'impactoss/App/REDIRECT_IF_NOT_PERMITTED';
 export const LOAD_ENTITIES_IF_NEEDED = 'impactoss/App/LOAD_ENTITIES_IF_NEEDED';
@@ -86,6 +86,7 @@ export const SET_MAP_LOADED = 'impactoss/App/SET_MAP_LOADED';
 export const SET_MAP_TOOLTIPS = 'impactoss/App/SET_MAP_TOOLTIPS';
 export const SET_MAP_VIEW = 'impactoss/App/SET_MAP_VIEW';
 export const SET_SHOW_FF_AS_CIRCLES = 'impactoss/App/SET_SHOW_FF_AS_CIRCLES';
+export const SET_TIMELINE_HIGHLIGHT_CATEGORY = 'impactoss/App/SET_TIMELINE_HIGHLIGHT_CATEGORY';
 
 export const FILTERS_PANEL = 'filters';
 export const EDIT_PANEL = 'edit';
@@ -95,12 +96,12 @@ export const CONTENT_SINGLE = 'single';
 export const CONTENT_PAGE = 'page';
 export const CONTENT_MODAL = 'modal';
 
-export const DEPENDENCIES = [
-  API.USERS,
-  API.USER_ROLES,
-  API.PAGES,
-  API.BOOKMARKS,
-];
+// export const DEPENDENCIES = [
+//   // API.USERS,
+//   // API.USER_ROLES,
+//   API.PAGES,
+//   // API.BOOKMARKS,
+// ];
 
 export const SORT_ORDER_OPTIONS = [
   {

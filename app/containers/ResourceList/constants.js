@@ -18,6 +18,7 @@ export const DEPENDENCIES = [
   API.CATEGORIES,
   API.USERS,
   API.USER_ROLES,
+  API.PAGES,
 ];
 
 export const CONFIG = {

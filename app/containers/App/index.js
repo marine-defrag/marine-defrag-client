@@ -241,6 +241,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       || location.pathname.startsWith(ROUTES.LOGOUT)
       || location.pathname.startsWith(ROUTES.UNAUTHORISED);
     const isHomeOrAuth = isHome || isAuth;
+
     return (
       <div id="app-inner" className={isPrintView ? 'print-view' : ''}>
         <Helmet titleTemplate={`%s - ${title}`} defaultTitle={title} />

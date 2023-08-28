@@ -123,7 +123,7 @@ export function mapDispatchToProps(dispatch) {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
     onUpdatePath: (path) => {
-      dispatch(updatePath(path));
+      dispatch(updatePath(path, { dropQuery: true }));
     },
   };
 }
