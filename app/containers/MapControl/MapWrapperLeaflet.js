@@ -462,7 +462,7 @@ export function MapWrapperLeaflet({
         bounds,
         false, // inside,
         [20, 20], // padding in px
-      );
+      ) - 1;
       const boundsCenter = bounds.getCenter();
       const currentCenter = mapRef.current.getCenter();
       const currentZoom = mapRef.current.getZoom();
