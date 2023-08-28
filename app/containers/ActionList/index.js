@@ -59,6 +59,31 @@ const prepareTypeOptions = (types, activeId, intl) => types.toList().toJS().map(
   active: activeId === type.id,
 }));
 
+
+const VALID_VIEWS = ['time', 'map', 'list'];
+const getView = ({
+  view,
+  hasTimelineOption,
+  hasMapOption,
+}) => {
+  // return default view if view unset, invalid or inconsistent
+  if (
+    !view
+    || VALID_VIEWS.indexOf(view) === -1
+    || (view === 'time' && !hasTimelineOption)
+    || (view === 'map' && !hasMapOption)
+  ) {
+    if (hasTimelineOption) {
+      return 'time';
+    }
+    if (hasMapOption) {
+      return 'map';
+    }
+    return 'list';
+  }
+  return view;
+};
+
 export function ActionList({
   dataReady,
   entities,
@@ -92,16 +117,31 @@ export function ActionList({
   const typeId = params.id;
   const type = `actions_${typeId}`;
 
-  const showMap = typeId
+  const hasList = CONFIG.views && !!CONFIG.views.list;
+  const hasMapOption = typeId
     && CONFIG.views
     && CONFIG.views.map
     && CONFIG.views.map.types
-    && CONFIG.views.map.types.indexOf(typeId) > -1
-    && view === 'map';
+    && CONFIG.views.map.types.indexOf(typeId) > -1;
+  const hasTimelineOption = typeId
+    && CONFIG.views
+    && CONFIG.views.timeline
+    && CONFIG.views.timeline.types
+    && CONFIG.views.timeline.types.indexOf(typeId) > -1;
+
+  const cleanView = getView({
+    view,
+    hasTimelineOption,
+    hasMapOption,
+    hasList,
+  });
+  const showList = cleanView === 'list';
+  const showMap = cleanView === 'map';
+  // const showTimeline = cleanView === 'time';
 
   const mySetPrintView = () => onSetPrintView({
     printType: PRINT_TYPES.LIST,
-    printContentOptions: showMap ? null : { pages: true },
+    printContentOptions: showList ? { pages: true } : null,
     printMapOptions: showMap && !hasFFOverlay ? { markers: true } : null,
     printMapMarkers: true,
     fixed: showMap,
@@ -170,6 +210,10 @@ export function ActionList({
       />
       {!qe(typeId, FF_ACTIONTYPE) && (
         <EntityList
+          view={cleanView}
+          hasTimelineOption={hasTimelineOption}
+          hasMapOption={hasMapOption}
+          hasList={hasList}
           entities={entities}
           allEntityCount={allEntities && allEntities.size}
           taxonomies={taxonomies}

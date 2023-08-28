@@ -22,7 +22,6 @@ import {
   selectHasUserRole,
   selectCurrentPathname,
   selectAllTaxonomiesWithCategories,
-  selectViewQuery,
   selectIncludeMembersForFiltering,
   selectMapSubjectQuery,
   selectIncludeActorMembers,
@@ -101,30 +100,6 @@ const ProgressText = styled.div`
 const STATE_INITIAL = {
   visibleFilters: null,
   visibleEditOptions: null,
-};
-
-const VALID_VIEWS = ['time', 'map', 'list'];
-const getView = ({
-  view,
-  hasTimelineOption,
-  hasMapOption,
-}) => {
-  // return default view if view unset, invalid or inconsistent
-  if (
-    !view
-    || VALID_VIEWS.indexOf(view) === -1
-    || (view === 'time' && !hasTimelineOption)
-    || (view === 'map' && !hasMapOption)
-  ) {
-    if (hasTimelineOption) {
-      return 'time';
-    }
-    if (hasMapOption) {
-      return 'map';
-    }
-    return 'list';
-  }
-  return view;
 };
 
 export class EntityList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
@@ -228,6 +203,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onSetView,
       typeId,
       view,
+      hasList,
+      hasMapOption,
+      hasTimelineOption,
       onEntitySelectAll,
       dataReady,
       showCode,
@@ -300,27 +278,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       intl.formatMessage(messages.filterFormError),
     );
 
-    const hasList = config.views && config.views.list;
-    const hasMapOption = typeId
-      && config.views
-      && config.views.map
-      && config.views.map.types
-      && config.views.map.types.indexOf(typeId) > -1;
-    const hasTimelineOption = typeId
-      && config.views
-      && config.views.timeline
-      && config.views.timeline.types
-      && config.views.timeline.types.indexOf(typeId) > -1;
-
-    const cleanView = getView({
-      view,
-      hasTimelineOption,
-      hasMapOption,
-      hasList,
-    });
-    const showList = cleanView === 'list';
-    const showMap = cleanView === 'map';
-    const showTimeline = cleanView === 'time';
+    const showList = view === 'list';
+    const showMap = view === 'map';
+    const showTimeline = view === 'time';
 
     const headerActions = headerOptions && headerOptions.actions && headerOptions.actions.filter(
       (action) => {
@@ -682,6 +642,9 @@ EntityList.propTypes = {
   onSetView: PropTypes.func,
   onSetFilterMemberOption: PropTypes.func,
   view: PropTypes.string,
+  hasList: PropTypes.bool,
+  hasMapOption: PropTypes.bool,
+  hasTimelineOption: PropTypes.bool,
   mapSubject: PropTypes.string,
   onSetMapSubject: PropTypes.func,
   onSetIncludeActorMembers: PropTypes.func,
@@ -705,7 +668,6 @@ const mapStateToProps = (state) => ({
   progressTypes: selectProgressTypes(state),
   currentPath: selectCurrentPathname(state),
   allTaxonomies: selectAllTaxonomiesWithCategories(state),
-  view: selectViewQuery(state),
   includeMembers: selectIncludeMembersForFiltering(state),
   mapSubject: selectMapSubjectQuery(state),
   includeActorMembers: selectIncludeActorMembers(state),

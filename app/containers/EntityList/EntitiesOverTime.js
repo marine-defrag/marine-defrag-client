@@ -26,6 +26,7 @@ import {
   selectActorActionsGroupedByAction,
   selectActiontypeTaxonomiesWithCats,
   selectTimelineHighlightCategory,
+  selectPrintConfig,
 } from 'containers/App/selectors';
 import { CONTENT_LIST } from 'containers/App/constants';
 import { setTimelineHighlightCategory } from 'containers/App/actions';
@@ -118,6 +119,7 @@ export function EntitiesOverTime({
   onResetCategory,
   highlightCategory,
   onEntityClick,
+  printArgs,
 }) {
   const [hint, setHint] = useState(null);
   const [hoverId, setHover] = useState(null);
@@ -175,6 +177,7 @@ export function EntitiesOverTime({
                       <ChartWrapperInner scrollOverflow={isMaxSize(size, 'ms')}>
                         <ChartTimeline
                           highlightCategory={highlightCategory}
+                          printArgs={printArgs}
                           setHint={setHint}
                           hint={hint}
                           setHover={setHover}
@@ -265,6 +268,7 @@ EntitiesOverTime.propTypes = {
   onResetCategory: PropTypes.func,
   // intl: intlShape.isRequired,
   onEntityClick: PropTypes.func,
+  printArgs: PropTypes.object,
   // onSelectAction: PropTypes.func,
 };
 
@@ -275,6 +279,7 @@ const mapStateToProps = (state, { typeId }) => ({
   actorActionsByAction: selectActorActionsGroupedByAction(state), // for figuring out targeted countries
   taxonomiesWithCats: selectActiontypeTaxonomiesWithCats(state, { type: typeId }),
   highlightCategory: selectTimelineHighlightCategory(state),
+  printArgs: selectPrintConfig(state),
 });
 
 function mapDispatchToProps(dispatch) {

@@ -20,7 +20,9 @@ import {
 } from 'react-vis';
 
 import { isMinSize } from 'utils/responsive';
-//
+
+import { usePrint } from 'containers/App/PrintContext';
+
 import {
   getPlotHeight,
   getTickValuesX,
@@ -58,7 +60,9 @@ export function ChartTimeline({
   onEntityClick,
   hoverId,
   setHover,
+  printArgs,
 }) {
+  const isPrint = usePrint();
   const targetRef = useRef();
   const [chartWidth, setChartWidth] = useState(0);
 
@@ -66,6 +70,7 @@ export function ChartTimeline({
     if (targetRef.current) {
       setChartWidth(targetRef.current.offsetWidth);
     }
+    setHint(null);
   };
   const handleClickOutside = (event) => {
     if (targetRef.current && !targetRef.current.contains(event.target)) {
@@ -87,8 +92,10 @@ export function ChartTimeline({
 
   useLayoutEffect(() => {
     handleResize();
-    setHint(null);
   }, []);
+  useLayoutEffect(() => {
+    handleResize();
+  }, [isPrint, printArgs]);
 
   const minDate = getDateForChart(
     entities.first().getIn(['attributes', 'date_start']),
@@ -134,11 +141,7 @@ export function ChartTimeline({
     }
     return memo;
   }, []);
-  // console.log('line data ', linesData);
-  // console.log('chartData', chartData);
-  // console.log('noRows', noRows)
-  // console.log('dataForceXYRange', dataForceXYRange)
-  // console.log('hint', hint);
+
   const chartDataOrdered = (hint || highlightCategory)
     ? chartData.sort(
       (a, b) => {
@@ -175,7 +178,7 @@ export function ChartTimeline({
             xType="time"
             style={{
               fill: 'transparent',
-              cursor: 'pointer',
+              cursor: isPrint ? 'auto' : 'pointer',
             }}
             margin={{
               bottom: 30,
@@ -185,7 +188,7 @@ export function ChartTimeline({
             }}
             onMouseLeave={() => setHover(null)}
             onClick={() => {
-              if (hoverId) {
+              if (!isPrint && hoverId) {
                 if (hint && hoverEntity.id === hint.id) {
                   setHint(null);
                 } else {
@@ -245,7 +248,7 @@ export function ChartTimeline({
               colorType="literal"
               size={8}
               opacity={0.3}
-              onNearestXY={(point) => setHover(point.id)}
+              onNearestXY={(point) => !isPrint && setHover(point.id)}
             />
             {hint && isMinSize(size, 'medium') && (
               <Hint
@@ -286,6 +289,7 @@ ChartTimeline.propTypes = {
   setHint: PropTypes.func,
   setHover: PropTypes.func,
   hint: PropTypes.object,
+  printArgs: PropTypes.object,
   hoverId: PropTypes.string,
   intl: intlShape.isRequired,
   onEntityClick: PropTypes.func,

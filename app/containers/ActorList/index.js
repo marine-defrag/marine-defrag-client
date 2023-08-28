@@ -67,6 +67,25 @@ const prepareTypeOptions = (
   })
 );
 
+const VALID_VIEWS = ['map', 'list'];
+const getView = ({
+  view,
+  hasMapOption,
+}) => {
+  // return default view if view unset, invalid or inconsistent
+  if (
+    !view
+    || VALID_VIEWS.indexOf(view) === -1
+    || (view === 'map' && !hasMapOption)
+  ) {
+    if (hasMapOption) {
+      return 'map';
+    }
+    return 'list';
+  }
+  return view;
+};
+
 export function ActorList({
   dataReady,
   entities,
@@ -99,16 +118,24 @@ export function ActorList({
 
   const typeId = params.id;
   const type = `actors_${typeId}`;
-
-  const showMap = typeId
+  const hasList = CONFIG.views && !!CONFIG.views.list;
+  const hasMapOption = typeId
     && CONFIG.views
     && CONFIG.views.map
     && CONFIG.views.map.types
-    && CONFIG.views.map.types.indexOf(typeId) > -1
-    && view === 'map';
+    && CONFIG.views.map.types.indexOf(typeId) > -1;
+
+  const cleanView = getView({
+    view,
+    hasMapOption,
+    hasList,
+  });
+  const showList = cleanView === 'list';
+  const showMap = cleanView === 'map';
+
   const mySetPrintView = () => onSetPrintView({
     printType: PRINT_TYPES.LIST,
-    printContentOptions: showMap ? null : { pages: true },
+    printContentOptions: showList ? { pages: true } : null,
     printMapOptions: showMap && !hasFFOverlay ? { markers: true } : null,
     printMapMarkers: true,
     fixed: showMap,
@@ -176,6 +203,9 @@ export function ActorList({
         ]}
       />
       <EntityList
+        view={cleanView}
+        hasMapOption={hasMapOption}
+        hasList={hasList}
         entities={entities}
         allEntityCount={allEntities && allEntities.size}
         taxonomies={taxonomies}
