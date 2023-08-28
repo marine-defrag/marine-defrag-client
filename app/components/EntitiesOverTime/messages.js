@@ -15,7 +15,11 @@ export default defineMessages({
   },
   highlightCategory: {
     id: 'app.components.EntitiesOverTime.highlightCategory',
-    defaultMessage: 'Highlight by {categoryName}',
+    defaultMessage: 'Highlight by {taxonomyName}',
+  },
+  highlightedCategoryPrint: {
+    id: 'app.components.EntitiesOverTime.highlightedCategoryPrint',
+    defaultMessage: '{taxonomyName} highlighted',
   },
   actionDetails: {
     id: 'app.components.EntitiesOverTime.actionDetails',

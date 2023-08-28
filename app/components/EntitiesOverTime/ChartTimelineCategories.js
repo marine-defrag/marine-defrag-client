@@ -6,6 +6,8 @@ import { Box, Text } from 'grommet';
 import qe from 'utils/quasi-equals';
 import { lowerCase } from 'utils/string';
 import appMessages from 'containers/App/messages';
+import { usePrint } from 'containers/App/PrintContext';
+
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 
 import ButtonDefault from 'components/buttons/ButtonDefault';
@@ -39,43 +41,60 @@ const ChartTimelineCategories = ({
   onResetCategory,
   highlightCategory,
   intl,
-}) => (
-  <Styled>
-    {taxonomiesWithCats.map((taxonomy) => (
-      <TaxonomyGroup key={taxonomy.id}>
-        <TaxonomyGroupLabel>
-          <FormattedMessage
-            {...messages.highlightCategory}
-            values={{
-              categoryName: lowerCase(intl.formatMessage(appMessages.entities.taxonomies[taxonomy.id].single)),
-            }}
-          />
-        </TaxonomyGroupLabel>
-        <ButtonWrapper>
-          {taxonomy.categories.map((category) => {
-            const { id, label } = category;
-            return (
-              <CategoryButton
-                key={id}
-                inactive={!qe(highlightCategory, id)}
-                alt={label}
-                onClick={() => {
-                  if (qe(highlightCategory, id)) {
-                    onResetCategory();
-                  } else {
-                    onSetCategory(id);
-                  }
-                }}
-              >
-                <CategoryButtonLabel>{label}</CategoryButtonLabel>
-              </CategoryButton>
-            );
-          })}
-        </ButtonWrapper>
-      </TaxonomyGroup>
-    ))}
-  </Styled>
-);
+}) => {
+  const isPrint = usePrint();
+  return (
+    <Styled>
+      {taxonomiesWithCats.map((taxonomy) => {
+        const taxCategories = taxonomy.categories && isPrint
+          ? taxonomy.categories.filter(({ id }) => qe(highlightCategory, id))
+          : taxonomy.categories;
+        if (!taxCategories || taxCategories.length === 0) {
+          return null;
+        }
+        const taxonomyName = intl.formatMessage(appMessages.entities.taxonomies[taxonomy.id].single);
+        return (
+          <TaxonomyGroup key={taxonomy.id}>
+            <TaxonomyGroupLabel>
+              {!isPrint && (
+                <FormattedMessage
+                  {...messages.highlightCategory}
+                  values={{ taxonomyName: lowerCase(taxonomyName) }}
+                />
+              )}
+              {isPrint && (
+                <span>
+                  {`${intl.formatMessage(messages.highlightedCategoryPrint, { taxonomyName })}: `}
+                  <strong>{taxonomy.categories[0].label}</strong>
+                </span>
+              )}
+            </TaxonomyGroupLabel>
+            {!isPrint && (
+              <ButtonWrapper>
+                {taxCategories.map(({ id, label }) => (
+                  <CategoryButton
+                    key={id}
+                    inactive={!qe(highlightCategory, id)}
+                    alt={label}
+                    onClick={() => {
+                      if (qe(highlightCategory, id)) {
+                        onResetCategory();
+                      } else {
+                        onSetCategory(id);
+                      }
+                    }}
+                  >
+                    <CategoryButtonLabel>{label}</CategoryButtonLabel>
+                  </CategoryButton>
+                ))}
+              </ButtonWrapper>
+            )}
+          </TaxonomyGroup>
+        );
+      })}
+    </Styled>
+  );
+};
 
 
 ChartTimelineCategories.propTypes = {
