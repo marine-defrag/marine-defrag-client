@@ -114,7 +114,7 @@ class HeaderExplore extends React.PureComponent { // eslint-disable-line react/p
                   active={item.active}
                   onClick={(evt) => {
                     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                    onPageLink(item.path);
+                    onPageLink(item.path, { dropQuery: true });
                   }}
                 >
                   <LinkTitle active={item.active}>

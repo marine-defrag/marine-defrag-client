@@ -163,17 +163,17 @@ export function ActorView({
         ]}
       />
       <Content isSingle isPrint={isPrintView}>
-        { !dataReady
+        {!dataReady
           && <Loading />
         }
-        { !viewEntity && dataReady
+        {!viewEntity && dataReady
           && (
             <div>
               <FormattedMessage {...messages.notFound} />
             </div>
           )
         }
-        { viewEntity && dataReady && (
+        {viewEntity && dataReady && (
           <ViewWrapper isPrint={isPrintView}>
             {isPrintView && (
               <HeaderPrint />
@@ -227,9 +227,9 @@ export function ActorView({
                     group={{
                       fields: [
                         checkActorAttribute(typeId, 'description')
-                          && getMarkdownField(viewEntity, 'description', true),
+                        && getMarkdownField(viewEntity, 'description', true),
                         checkActorAttribute(typeId, 'activity_summary')
-                          && getMarkdownField(viewEntity, 'activity_summary', true),
+                        && getMarkdownField(viewEntity, 'activity_summary', true),
                       ],
                     }}
                   />
@@ -262,25 +262,25 @@ export function ActorView({
                         group={{
                           fields: [
                             checkActorAttribute(typeId, 'url')
-                              && getLinkField(viewEntity),
+                            && getLinkField(viewEntity),
                             checkActorAttribute(typeId, 'gdp')
-                              && getNumberField(
-                                viewEntity,
-                                'gdp',
-                                {
-                                  unit: 'US$',
-                                  unitBefore: true,
-                                  info: appMessages.attributeInfo.gdp && intl.formatMessage(appMessages.attributeInfo.gdp),
-                                },
-                              ),
+                            && getNumberField(
+                              viewEntity,
+                              'gdp',
+                              {
+                                unit: 'US$',
+                                unitBefore: true,
+                                info: appMessages.attributeInfo.gdp && intl.formatMessage(appMessages.attributeInfo.gdp),
+                              },
+                            ),
                             checkActorAttribute(typeId, 'population')
-                              && getNumberField(
-                                viewEntity,
-                                'population',
-                                {
-                                  info: appMessages.attributeInfo.population && intl.formatMessage(appMessages.attributeInfo.population),
-                                },
-                              ),
+                            && getNumberField(
+                              viewEntity,
+                              'population',
+                              {
+                                info: appMessages.attributeInfo.population && intl.formatMessage(appMessages.attributeInfo.population),
+                              },
+                            ),
                           ],
                         }}
                       />
@@ -358,10 +358,10 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(updatePath(`${ROUTES.ACTOR}${ROUTES.EDIT}/${props.params.id}`, { replace: true }));
     },
     handleClose: (typeId) => {
-      dispatch(closeEntity(`${ROUTES.ACTORS}/${typeId}`));
+      dispatch(closeEntity(`${ROUTES.ACTORS}/${typeId}`, { dropQuery: true }));
     },
     handleTypeClick: (typeId) => {
-      dispatch(updatePath(`${ROUTES.ACTORS}/${typeId}`));
+      dispatch(updatePath(`${ROUTES.ACTORS}/${typeId}`, { dropQuery: true }));
     },
     onEntityClick: (id, path) => {
       dispatch(updatePath(`${path}/${id}`));

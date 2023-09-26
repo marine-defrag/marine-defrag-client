@@ -171,9 +171,9 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
         this.props.onPageLink(path, { query: { arg: 'redirectOnAuthSuccess', value: currentPath } });
       }
     } else {
-      this.props.onPageLink(path);
+      this.props.onPageLink(path, { dropQuery: true });
     }
-  }
+  };
 
   resize = () => {
     // reset

@@ -166,7 +166,7 @@ ActionsFactsOverview.propTypes = {
 export function mapDispatchToProps(dispatch) {
   return {
     onUpdatePath: (path) => {
-      dispatch(updatePath(path));
+      dispatch(updatePath(path, { dropQuery: true }));
     },
     handleNew: (typeId) => {
       dispatch(updatePath(`${ROUTES.ACTIONS}/${typeId}${ROUTES.NEW}`, { replace: true }));
