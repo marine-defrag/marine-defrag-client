@@ -14,6 +14,7 @@ import SupTitle from 'components/SupTitle';
 import InfoOverlay from 'components/InfoOverlay';
 import ButtonFactory from 'components/buttons/ButtonFactory';
 import BoxPrint from 'components/styled/BoxPrint';
+import TagList from 'components/TagList';
 import { usePrint } from 'containers/App/PrintContext';
 
 const Styled = styled.div`
@@ -104,6 +105,8 @@ export function ContentHeader({
   subTitle,
   hasViewOptions,
   info,
+  hasFilters,
+  filters,
 }) {
   const isPrintView = usePrint();
   const size = React.useContext(ResponsiveContext);
@@ -162,6 +165,7 @@ export function ContentHeader({
           ))}
         </ButtonGroup>
       )}
+      {isPrintView && hasFilters && <TagList filters={filters} isPrintView isPrint />}
     </Styled>
   );
 }
@@ -176,7 +180,9 @@ ContentHeader.propTypes = {
   subTitle: PropTypes.string,
   info: PropTypes.object,
   type: PropTypes.string,
+  filters: PropTypes.array,
   hasViewOptions: PropTypes.bool,
+  hasFilters: PropTypes.bool,
 };
 
 export default ContentHeader;

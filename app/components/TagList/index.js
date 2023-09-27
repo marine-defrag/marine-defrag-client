@@ -22,7 +22,9 @@ import ButtonTagFilter from 'components/buttons/ButtonTagFilter';
 
 // import messages from './messages';
 
-const Styled = styled((p) => <Box direction="row" align="end" justify="end" {...p} />)``;
+const Styled = styled((p) => <Box direction="row" align="end" {...p} />)`
+  justify: ${(props) => props.isPrint ? 'start' : 'end'};
+`;
 
 const Tags = styled((p) => <Box direction="row" {...p} />)``;
 
@@ -72,7 +74,7 @@ export const getFilterLabel = (filter, intl, long) => {
 
 export class TagList extends React.Component { // eslint-disable-line react/prefer-stateless-function
   render() {
-    const { filters, long } = this.props;
+    const { filters, long, isPrintView } = this.props;
     const { intl } = this.context;
     const hasFilters = filters.length > 0;
     const groupedFilters = groupBy(filters, 'group');
@@ -93,11 +95,12 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
                       palette={filter.type || 'attributes'}
                       paletteHover={`${filter.type || 'attributes'}Hover`}
                       pIndex={parseInt(filter.id, 10) || 0}
-                      disabled={!filter.onClick}
+                      disabled={!filter.onClick || isPrintView}
+                      isPrint={isPrintView}
                     >
                       {getFilterLabel(filter, intl, long)}
-                      { filter.onClick
-                      && <Icon name="removeSmall" text textRight printHide />
+                      {filter.onClick
+                        && <Icon name="removeSmall" text textRight printHide isPrint={isPrintView} />
                       }
                     </ButtonTagFilter>
                   ))}
@@ -122,6 +125,7 @@ TagList.propTypes = {
   filters: PropTypes.array,
   onClear: PropTypes.func,
   long: PropTypes.bool,
+  isPrintView: PropTypes.bool,
 };
 
 TagList.contextTypes = {

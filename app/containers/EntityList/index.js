@@ -459,6 +459,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onDismissError={onDismissError}
             typeId={typeId}
             hasFilters={filters && filters.length > 0}
+            filters={filters}
             showCode={showCode}
             mapSubject={mapSubject}
             onSetMapSubject={onSetMapSubject}
