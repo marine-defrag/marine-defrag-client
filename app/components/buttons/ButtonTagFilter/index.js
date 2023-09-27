@@ -4,7 +4,7 @@ import { palette } from 'styled-theme';
 import Button from '../Button';
 
 const ButtonTagFilter = styled(Button)`
-  color: ${(props) => props.isPrint ? 'black' : palette('text', 2)};
+  color: ${({ isPrint }) => isPrint ? 'black' : palette('text', 2)};
   background-color: ${(props) => props.isPrint ? 'white' : palette(props.palette, props.pIndex || 0)};
   padding: 1px 6px;
   margin-right: 2px;
@@ -20,13 +20,10 @@ const ButtonTagFilter = styled(Button)`
     font-size: 0.85em;
   }
   @media print {
-    color: ${palette('text', 1)};
+    color: black;
     background: transparent;
     border-radius: 3px;
-    border-right: 1px solid;
-    border-top: 1px solid;
-    border-bottom: 1px solid;
-    border-left: 7px solid;
+    border: 1px solid;
     border-color: black;
     padding: 0 4px;
     font-size: ${({ theme }) => theme.sizes.print.smallest};
