@@ -509,8 +509,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             headerOptions={headerOptions}
             typeId={typeId}
             hasFilters={filters && filters.length > 0}
-            mapSubject={mapSubject}
-            onSetMapSubject={onSetMapSubject}
             onSetIncludeActorMembers={onSetIncludeActorMembers}
             onSetIncludeTargetMembers={onSetIncludeTargetMembers}
             includeActorMembers={includeActorMembers}
