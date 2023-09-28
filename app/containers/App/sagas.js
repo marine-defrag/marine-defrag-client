@@ -971,7 +971,7 @@ export function* closeEntitySaga({ path }) {
   yield put(
     !isPreviousValid && previousPath && (previousPath !== currentPath)
       ? goBack()
-      : updatePath(path || '/', { dropQuery: true })
+      : updatePath(path || '/')
   );
 }
 

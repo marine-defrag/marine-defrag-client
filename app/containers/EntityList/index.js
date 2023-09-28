@@ -704,7 +704,7 @@ function mapDispatchToProps(dispatch, props) {
           }
         });
       }
-      dispatch(updatePath(`${path || props.config.clientPath}/${id}`, { dropQuery: true }));
+      dispatch(updatePath(`${path || props.config.clientPath}/${id}`));
     },
     onEntitySelectAll: (ids) => {
       dispatch(selectMultipleEntities(ids));

@@ -358,10 +358,10 @@ function mapDispatchToProps(dispatch, props) {
       dispatch(updatePath(`${ROUTES.ACTOR}${ROUTES.EDIT}/${props.params.id}`, { replace: true }));
     },
     handleClose: (typeId) => {
-      dispatch(closeEntity(`${ROUTES.ACTORS}/${typeId}`, { dropQuery: true }));
+      dispatch(closeEntity(`${ROUTES.ACTORS}/${typeId}`));
     },
     handleTypeClick: (typeId) => {
-      dispatch(updatePath(`${ROUTES.ACTORS}/${typeId}`, { dropQuery: true }));
+      dispatch(updatePath(`${ROUTES.ACTORS}/${typeId}`));
     },
     onEntityClick: (id, path) => {
       dispatch(updatePath(`${path}/${id}`));
