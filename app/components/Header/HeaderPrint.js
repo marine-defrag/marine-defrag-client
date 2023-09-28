@@ -78,7 +78,7 @@ function HeaderPrint({
     let remove = CLEANUP;
     // explicitly remove the keys in argsRemove
     if (argsRemove) {
-      remove = [...remove, argsRemove];
+      remove = [...remove, ...argsRemove];
     }
     // remove all but the keys in argsKeep
     if (argsKeep) {

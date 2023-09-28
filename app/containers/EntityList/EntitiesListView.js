@@ -375,7 +375,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
         isPrint={isPrintView}
       >
         {isPrintView && (
-          <HeaderPrint />
+          <HeaderPrint argsRemove={['subj', 'ac', 'tc', 'actontype']} />
         )}
         {dataReady && viewOptions && viewOptions.length > 1 && (
           <PrintHide>
