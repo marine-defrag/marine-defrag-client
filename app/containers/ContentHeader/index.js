@@ -15,6 +15,8 @@ import InfoOverlay from 'components/InfoOverlay';
 import ButtonFactory from 'components/buttons/ButtonFactory';
 import BoxPrint from 'components/styled/BoxPrint';
 import TagList from 'components/TagList';
+import PrintHide from 'components/styled/PrintHide';
+
 import { usePrint } from 'containers/App/PrintContext';
 
 const Styled = styled.div`
@@ -36,13 +38,18 @@ const Styled = styled.div`
 //   line-height: 1;
 //   margin-top: 10px;
 // `;
+const TitleMediumPrint = styled.h3`
+  margin-bottom: 0px;
+  margin-top: 22px;
+  font-size: 18pt;
+  @media print {
+    margin-bottom: 5px;
+  }
+`;
 const TitleMedium = styled.h3`
   line-height: 1;
   margin: 15px 0;
   display: inline-block;
-  @media print {
-    margin-bottom: 5px;
-  }
 `;
 const ButtonWrap = styled.span`
   padding: 0 0.3em;
@@ -82,6 +89,7 @@ const MarkdownPrintOnly = styled(ReactMarkdown)`
 `;
 const InfoTitlePrintOnly = styled(Text)`
   font-size: ${({ theme }) => theme.sizes.print.smaller};
+  line-height: ${({ theme }) => theme.sizes.print.default};
 `;
 
 
@@ -121,9 +129,14 @@ export function ContentHeader({
         <TitleButtonWrap fill="horizontal" justify="between">
           <Box align="center" direction="row">
             {title && (
-              <Box>
-                {renderTitle(type, title)}
-              </Box>
+              <PrintHide>
+                <Box>
+                  {renderTitle(type, title)}
+                </Box>
+              </PrintHide>
+            )}
+            {title && isPrintView && (
+              <TitleMediumPrint>{title}</TitleMediumPrint>
             )}
             {info && !isPrintView && (
               <InfoOverlay
@@ -145,13 +158,20 @@ export function ContentHeader({
         {subTitle && <SubTitle>{subTitle}</SubTitle>}
         {info && (
           <BoxPrint printOnly>
-            <Box>
-              {info.title && (<InfoTitlePrintOnly>{info.title}</InfoTitlePrintOnly>)}
-            </Box>
-            <Box width={{ max: 'large' }}>
-              {info.content && (
-                <MarkdownPrintOnly source={info.content} className="react-markdown" />
-              )}
+            <Box direction="row">
+              <Box flex="shrink">
+                {info.title && (
+                  <InfoTitlePrintOnly>
+                    {info.title}
+:&nbsp;
+                  </InfoTitlePrintOnly>
+                )}
+              </Box>
+              <Box width={{ max: 'large' }} flex>
+                {info.content && (
+                  <MarkdownPrintOnly source={info.content} className="react-markdown" />
+                )}
+              </Box>
             </Box>
           </BoxPrint>
         )}
