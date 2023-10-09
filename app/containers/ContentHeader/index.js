@@ -162,8 +162,7 @@ export function ContentHeader({
               <Box flex="shrink">
                 {info.title && (
                   <InfoTitlePrintOnly>
-                    {info.title}
-:&nbsp;
+                    {`${info.title}: `}
                   </InfoTitlePrintOnly>
                 )}
               </Box>
