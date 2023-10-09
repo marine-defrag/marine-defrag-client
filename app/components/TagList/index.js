@@ -23,7 +23,7 @@ import PrintOnly from 'components/styled/PrintOnly';
 import messages from './messages';
 
 const Styled = styled((p) => <Box direction="row" align="end" {...p} />)`
-  justify: ${({ isPrint }) => isPrint ? 'start' : 'end'};
+  justify-content: ${({ isPrint }) => isPrint ? 'start' : 'end'};
 `;
 
 const Tags = styled((p) => <Box direction="row" {...p} />)``;
@@ -87,7 +87,7 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
     const groupedFilters = groupBy(filters, 'group');
 
     return (
-      <Styled printHide={!hasFilters}>
+      <Styled isPrint={isPrintView}>
         {hasFilters && (
           <FilterWrapper>
             <LabelPrint>
