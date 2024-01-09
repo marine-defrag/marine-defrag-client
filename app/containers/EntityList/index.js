@@ -11,12 +11,14 @@ import styled from 'styled-components';
 import { palette } from 'styled-theme';
 
 import { Map, List, fromJS } from 'immutable';
+import ReactModal from 'react-modal';
 
 // import { getEntityReference } from 'utils/entities';
 import Messages from 'components/Messages';
 import Loading from 'components/Loading';
 
 import EntityListHeader from 'components/EntityListHeader';
+import EntityListDownload from 'components/EntityListDownload';
 
 import {
   selectHasUserRole,
@@ -39,9 +41,9 @@ import {
   setIncludeActorMembers,
   setIncludeTargetMembers,
 } from 'containers/App/actions';
+import appMessages from 'containers/App/messages';
 
-// import appMessages from 'containers/App/messages';
-import { USER_ROLES } from 'themes/config';
+import { USER_ROLES, ACTION_FIELDS, ACTOR_FIELDS } from 'themes/config';
 
 import EntitiesMap from './EntitiesMap';
 import EntitiesListView from './EntitiesListView';
@@ -98,6 +100,7 @@ const ProgressText = styled.div`
 `;
 
 const STATE_INITIAL = {
+  downloadActive: false,
   visibleFilters: null,
   visibleEditOptions: null,
 };
@@ -152,7 +155,15 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       this.props.locationQuery,
     ));
     this.props.onDismissAllErrors();
-  }
+  };
+
+  onDownloadClick = () => {
+    this.setState({ downloadActive: true });
+  };
+
+  onDownloadDismiss = () => {
+    this.setState({ downloadActive: false });
+  };
 
   getMessageForType = (type) => {
     switch (type) {
@@ -163,7 +174,18 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       default:
         return messages.updatesSuccess;
     }
-  }
+  };
+
+  getFields = (type) => {
+    switch (type) {
+      case 'actiontypes':
+        return ACTION_FIELDS;
+      case 'actortypes':
+        return ACTOR_FIELDS;
+      default:
+        return null;
+    }
+  };
 
   mapError = (error, key) => fromJS({
     type: error.data.type,
@@ -282,7 +304,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     const showMap = view === 'map';
     const showTimeline = view === 'time';
 
-    const headerActions = headerOptions && headerOptions.actions && headerOptions.actions.filter(
+    let headerActions = [];
+    headerActions = headerOptions && headerOptions.actions && headerOptions.actions.filter(
       (action) => {
         if (!showList) {
           return !action.showOnListOnly;
@@ -296,6 +319,19 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         return true;
       },
     );
+
+    if (config.downloadCSV) {
+      headerActions = [
+        ...headerActions,
+        {
+          type: 'icon',
+          onClick: () => this.onDownloadClick(),
+          title: 'Download CSV',
+          icon: 'download',
+        },
+      ];
+    }
+
     let viewOptions = [];
     if (hasList && (hasMapOption || hasTimelineOption)) {
       if (hasTimelineOption) {
@@ -337,8 +373,37 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         },
       ];
     }
+
+
     return (
       <div>
+        {config.downloadCSV && this.state.downloadActive && (
+          <ReactModal
+            isOpen
+            contentLabel="test"
+            onRequestClose={() => this.onDownloadDismiss()}
+            className="download-csv-modal"
+            overlayClassName="download-csv-modal-overlay"
+            style={{
+              overlay: { zIndex: 99999999 },
+            }}
+            appElement={document.getElementById('app')}
+          >
+            <EntityListDownload
+              config={config}
+              fields={this.getFields(config.types)}
+              typeId={typeId}
+              entities={entities}
+              taxonomies={taxonomies}
+              connections={connections}
+              onClose={() => this.onDownloadDismiss()}
+              typeNames={{
+                actiontypes: actiontypes.map((type) => intl.formatMessage(appMessages.entities[`actions_${type.get('id')}`].single)).toJS(),
+                actortypes: actortypes.map((type) => intl.formatMessage(appMessages.entities[`actors_${type.get('id')}`].single)).toJS(),
+              }}
+            />
+          </ReactModal>
+        )}
         {headerStyle === 'types' && !printing && (
           <EntityListHeader
             typeId={typeId}
@@ -526,9 +591,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
                   processNo: Math.min(success.size + errors.size + 1, sending.size),
                   totalNo: sending.size,
                   types:
-                  intl.formatMessage(messages[
-                    `type_${progressTypes.size === 1 ? progressTypes.first() : 'save'}`
-                  ]),
+                    intl.formatMessage(messages[
+                      `type_${progressTypes.size === 1 ? progressTypes.first() : 'save'}`
+                    ]),
                 }}
               />
             </ProgressText>
@@ -547,9 +612,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
                   {
                     errorNo: viewDomain.get('errors').size,
                     types:
-                    intl.formatMessage(messages[
-                      `type_${progressTypes.size === 1 ? progressTypes.first() : 'save'}`
-                    ]),
+                      intl.formatMessage(messages[
+                        `type_${progressTypes.size === 1 ? progressTypes.first() : 'save'}`
+                      ]),
                   },
                 )
               }
@@ -776,7 +841,7 @@ function mapDispatchToProps(dispatch, props) {
             ).toJS()
           ));
         }
-      // connections
+        // connections
       } else {
         // figure out connection deletions (not necessary for attributes as deletions will be overridden)
         const deletes = changes
