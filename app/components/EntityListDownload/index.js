@@ -137,8 +137,8 @@ export function EntityListDownload({
   // check action relationships
   let hasActors;
   let hasTargets;
-  let hasParentActions;
-  let hasChildActions;
+  const hasParentActions = false;
+  const hasChildActions = false;
   let hasResources;
 
   if (config.types === 'actiontypes') {
@@ -152,17 +152,15 @@ export function EntityListDownload({
       && ACTIONTYPE_TARGETTYPES[typeId]
       && ACTIONTYPE_TARGETTYPES[typeId].length > 0;
 
-    hasParentActions = config.connections
-      && config.connections.parents
-      && ACTIONTYPE_ACTIONTYPES[typeId]
-      && ACTIONTYPE_ACTIONTYPES[typeId].length > 0;
+    /* hasParentActions = config.connections
+      && config.connections.parents; */
 
-    hasChildActions = config.connections
+    /* hasChildActions = config.connections
       && config.connections.children
       && !!Object.keys(ACTIONTYPE_ACTIONTYPES).find((childtypeId) => {
         const parenttypeIds = ACTIONTYPE_ACTIONTYPES[childtypeId];
         return parenttypeIds.indexOf(typeId) > -1;
-      });
+      }); */
 
     hasResources = config.connections
       && config.connections.resources
@@ -177,8 +175,8 @@ export function EntityListDownload({
   // check actor relationships
   let hasActions;
   let hasActionsAsTarget;
-  let hasMembers;
-  let hasAssociations;
+  const hasMembers = false;
+  const hasAssociations = false;
 
   if (config.types === 'actortypes') {
     hasActions = config.connections
@@ -195,17 +193,17 @@ export function EntityListDownload({
         return actiontypeIds.indexOf(typeId) > -1;
       });
 
-    hasAssociations = config.connections
-      && config.connections.associations
-      && MEMBERSHIPS[typeId]
-      && MEMBERSHIPS[typeId].length > 0;
+    /* hasAssociations = config.connections
+       && config.connections.associations
+       && MEMBERSHIPS[typeId]
+       && MEMBERSHIPS[typeId].length > 0; */
 
-    hasMembers = config.connections
+    /* hasMembers = config.connections
       && config.connections.members
       && !!Object.keys(MEMBERSHIPS).find((membertypeId) => {
         const membertypeIds = MEMBERSHIPS[membertypeId];
         return membertypeIds.indexOf(typeId) > -1;
-      });
+      }); */
 
     hasUsers = isAdmin
       && config.connections
