@@ -295,6 +295,8 @@ export const ACTIONTYPE_RESOURCETYPES = {
   ],
 };
 
+export const USER_ACTIONTYPES = [];
+
 export const ACTION_FIELDS = {
   CONNECTIONS: {
     categories: {
