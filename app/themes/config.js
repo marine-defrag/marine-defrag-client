@@ -206,6 +206,7 @@ export const RESOURCETYPE_GROUPS = {
   },
 };
 
+
 // type compatibility: actors for actions
 export const ACTIONTYPE_ACTORTYPES = {
   [ACTIONTYPES.INTL]: [
@@ -327,17 +328,9 @@ export const ACTION_FIELDS = {
       required: Object.values(ACTIONTYPES), // all types
       type: 'number',
       table: API.ACTIONTYPES,
-    },
-    draft: {
-      defaultValue: true,
-      required: Object.values(ACTIONTYPES), // all types
-      type: 'bool',
-      // ui: 'dropdown',
       skipImport: true,
-      // options: [
-      //   { value: true, message: 'ui.publishStatuses.draft' },
-      //   { value: false, message: 'ui.publishStatuses.public' },
-      // ],
+      exportColumn: 'activity_type',
+      export: true,
     },
     code: {
       optional: Object.values(ACTIONTYPES), // all types
@@ -467,6 +460,67 @@ export const ACTION_FIELDS = {
       optional: [ACTIONTYPES.DONOR],
       type: 'text',
     },
+    draft: {
+      defaultValue: true,
+      required: Object.values(ACTIONTYPES), // all types
+      type: 'bool',
+      skipImport: true,
+    },
+    private: {
+      defaultValue: false,
+      type: 'bool',
+    },
+    is_archive: {
+      defaultValue: false,
+      type: 'bool',
+    },
+    notifications: {
+      defaultValue: true,
+      type: 'bool',
+    },
+    created_at: {
+      skipImport: true,
+      type: 'datetime',
+      adminOnly: true,
+      meta: true,
+    },
+    created_by_id: {
+      skipImport: true,
+      type: 'key',
+      adminOnly: true,
+      meta: true,
+      table: API.USERS,
+      exportColumn: 'created_by',
+    },
+    updated_at: {
+      skipImport: true,
+      type: 'datetime',
+      adminOnly: true,
+      meta: true,
+    },
+    updated_by_id: {
+      skipImport: true,
+      type: 'key',
+      adminOnly: true,
+      meta: true,
+      table: API.USERS,
+      exportColumn: 'updated_by',
+    },
+    relationship_updated_at: {
+      skipImport: true,
+      type: 'datetime',
+      adminOnly: true,
+      meta: true,
+      exportColumn: 'connection_updated_at',
+    },
+    relationship_updated_by_id: {
+      skipImport: true,
+      type: 'key',
+      adminOnly: true,
+      meta: true,
+      table: API.USERS,
+      exportColumn: 'connection_updated_by',
+    },
   },
 };
 
@@ -509,6 +563,7 @@ export const ACTOR_FIELDS = {
       required: Object.values(ACTORTYPES), // all types
       type: 'bool',
       skipImport: true,
+      exportColumn: 'actor_type',
       // ui: 'dropdown',
       // options: [
       //   { value: true, message: 'ui.publishStatuses.draft' },
@@ -559,6 +614,70 @@ export const ACTOR_FIELDS = {
       optional: [ACTORTYPES.COUNTRY],
       type: 'number',
     },
+  },
+  draft: {
+    defaultValue: true,
+    required: true,
+    type: 'bool',
+    skipImport: true,
+    // ui: 'dropdown',
+    // options: [
+    //   { value: true, message: 'ui.publishStatuses.draft' },
+    //   { value: false, message: 'ui.publishStatuses.public' },
+    // ],
+  },
+  private: {
+    defaultValue: false,
+    required: true,
+    type: 'bool',
+  },
+  is_archive: {
+    defaultValue: false,
+    required: true,
+    type: 'bool',
+  },
+  created_at: {
+    skipImport: true,
+    type: 'datetime',
+    adminOnly: true,
+    meta: true,
+  },
+  created_by_id: {
+    skipImport: true,
+    type: 'key',
+    adminOnly: true,
+    meta: true,
+    table: API.USERS,
+    exportColumn: 'created_by',
+  },
+  updated_at: {
+    skipImport: true,
+    type: 'datetime',
+    adminOnly: true,
+    meta: true,
+  },
+  updated_by_id: {
+    skipImport: true,
+    type: 'key',
+    adminOnly: true,
+    meta: true,
+    table: API.USERS,
+    exportColumn: 'updated_by',
+  },
+  relationship_updated_at: {
+    skipImport: true,
+    type: 'datetime',
+    adminOnly: true,
+    meta: true,
+    exportColumn: 'connection_updated_at',
+  },
+  relationship_updated_by_id: {
+    skipImport: true,
+    type: 'key',
+    adminOnly: true,
+    meta: true,
+    table: API.USERS,
+    exportColumn: 'connection_updated_by',
   },
 };
 
