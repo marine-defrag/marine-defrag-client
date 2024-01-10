@@ -296,6 +296,9 @@ export const ACTIONTYPE_RESOURCETYPES = {
 };
 
 export const USER_ACTIONTYPES = [];
+export const USER_ACTORTYPES = Object.values(ACTORTYPES);
+export const MEMBERSHIPS = {
+};
 
 export const ACTION_FIELDS = {
   CONNECTIONS: {
