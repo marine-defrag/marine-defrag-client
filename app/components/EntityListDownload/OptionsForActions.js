@@ -17,10 +17,6 @@ import OptionGroup from './OptionGroup';
 export function OptionsForActions({
   actorsAsRows,
   setActorsAsRows,
-  indicatorsAsRows,
-  setIndicatorsAsRows,
-  indicatorsActive,
-  setIndicatorsActive,
   includeUsers,
   setIncludeUsers,
   attributes,
@@ -45,7 +41,6 @@ export function OptionsForActions({
   hasChildActions,
   hasResources,
   hasUsers,
-  hasIndicators,
 }) {
   const [expandGroup, setExpandGroup] = useState(null);
 
@@ -128,9 +123,7 @@ export function OptionsForActions({
           introNode={(
             <Box gap="small">
               <Text size="small">
-                By default, the resulting CSV file will have one column for each type of actor selected.
-                {(!indicatorsAsRows || !indicatorsActive) && ' Alternatively you can chose to include actors as rows, resulting in one row per activity and actor.'}
-                {indicatorsAsRows && indicatorsActive && ' Alternatively you can chose to include actors as rows, resulting in one row per activity, topic and actor.'}
+                By default, the resulting CSV file will have one column for each type of actor selected. Alternatively you can chose to include actors as rows, resulting in one row per activity and actor.
               </Text>
             </Box>
           )}
@@ -144,9 +137,7 @@ export function OptionsForActions({
           asRowsDisabled={activeActortypeCount === 0}
           asRowsLabels={{
             columns: 'Include actors as columns (one column for each actor type)',
-            rows: indicatorsAsRows
-              ? 'Include actors as rows (one row for each activity, topic and actor)'
-              : 'Include actors as rows (one row for each activity and actor)',
+            rows: 'Include actors as rows (one row for each activity and actor)',
           }}
         />
       )}
@@ -214,37 +205,6 @@ export function OptionsForActions({
           onSetOptions={(options) => setResourcetypes(options)}
         />
       )}
-      {hasIndicators && (
-        <OptionGroup
-          groupId="indicators"
-          label="Topics"
-          expandedId={expandGroup}
-          onExpandGroup={(val) => setExpandGroup(val)}
-          activeOptionCount={indicatorsActive ? 1 : 0}
-          optionCount={1}
-          introNode={(
-            <Box gap="xsmall">
-              <Text size="small">
-                By default, the resulting CSV file will have one column for each topic.
-                {!actorsAsRows && ' Alternatively you can chose to include topics as rows, resulting in one row per activity and topic'}
-                {actorsAsRows && ' Alternatively you can chose to include topics as rows, resulting in one row per activity, actor and topic'}
-              </Text>
-            </Box>
-          )}
-          active={indicatorsActive}
-          onSetActive={(val) => setIndicatorsActive(val)}
-          onActiveLabel="Include topics"
-          onSetAsRows={(val) => setIndicatorsAsRows(val)}
-          asRows={indicatorsAsRows}
-          asRowsDisabled={!indicatorsActive}
-          asRowsLabels={{
-            columns: 'Include topics as columns (one column for each topic)',
-            rows: actorsAsRows
-              ? 'Include topics as rows (one row for each activity, actor and topic)'
-              : 'Include topics as rows (one row for each activity and topic)',
-          }}
-        />
-      )}
       {hasUsers && (
         <OptionGroup
           groupId="users"
@@ -265,10 +225,6 @@ export function OptionsForActions({
 OptionsForActions.propTypes = {
   actorsAsRows: PropTypes.bool,
   setActorsAsRows: PropTypes.func,
-  indicatorsAsRows: PropTypes.bool,
-  setIndicatorsAsRows: PropTypes.func,
-  indicatorsActive: PropTypes.bool,
-  setIndicatorsActive: PropTypes.func,
   includeUsers: PropTypes.bool,
   setIncludeUsers: PropTypes.func,
   attributes: PropTypes.object,
@@ -291,7 +247,6 @@ OptionsForActions.propTypes = {
   hasChildActions: PropTypes.bool,
   hasResources: PropTypes.bool,
   hasUsers: PropTypes.bool,
-  hasIndicators: PropTypes.bool,
   hasAttributes: PropTypes.bool,
   hasTaxonomies: PropTypes.bool,
 };

@@ -23,14 +23,12 @@ import appMessages from 'containers/App/messages';
 import { CONTENT_MODAL } from 'containers/App/constants';
 import {
   ACTIONTYPE_ACTORTYPES,
-  INDICATOR_ACTIONTYPES,
   ACTIONTYPE_ACTIONTYPES,
   ACTIONTYPE_RESOURCETYPES,
   ACTIONTYPE_TARGETTYPES,
   MEMBERSHIPS,
   USER_ACTIONTYPES,
   USER_ACTORTYPES,
-  ACTION_INDICATOR_SUPPORTLEVELS,
 } from 'themes/config';
 import Content from 'components/Content';
 import ContentHeader from 'containers/ContentHeader';
@@ -39,13 +37,11 @@ import ButtonSubmit from 'components/buttons/ButtonSubmit';
 import { filterEntitiesByKeywords } from 'utils/entities';
 import OptionsForActions from './OptionsForActions';
 import OptionsForActors from './OptionsForActors';
-import OptionsForIndicators from './OptionsForIndicators';
 
 import messages from './messages';
 import {
   prepareDataForActions,
   prepareDataForActors,
-  prepareDataForIndicators,
   getAttributes,
   getDateSuffix,
   // getTaxonomies,
@@ -124,8 +120,6 @@ export function EntityListDownload({
   // for actions
   const [actortypes, setActortypes] = useState({});
   const [actorsAsRows, setActorsAsRows] = useState(false);
-  const [indicatorsAsRows, setIndicatorsAsRows] = useState(false);
-  const [indicatorsActive, setIndicatorsActive] = useState(false);
   const [targettypes, setTargettypes] = useState({});
   const [parenttypes, setParenttypes] = useState({});
   const [childtypes, setChildtypes] = useState({});
@@ -136,8 +130,6 @@ export function EntityListDownload({
   const [actiontypesAsTarget, setActiontypesAsTarget] = useState({});
   const [membertypes, setMembertypes] = useState({});
   const [associationtypes, setAssociationtypes] = useState({});
-  // for indicators
-  const [includeSupport, setIncludeSupport] = useState(false);
   // figure out export options
   const hasAttributes = !!config.attributes;
   const hasTaxonomies = !!config.taxonomies;
@@ -145,7 +137,6 @@ export function EntityListDownload({
   // check action relationships
   let hasActors;
   let hasTargets;
-  let hasIndicators;
   let hasParentActions;
   let hasChildActions;
   let hasResources;
@@ -160,11 +151,6 @@ export function EntityListDownload({
       && config.connections.targets
       && ACTIONTYPE_TARGETTYPES[typeId]
       && ACTIONTYPE_TARGETTYPES[typeId].length > 0;
-
-    hasIndicators = config.connections
-      && config.connections.indicators
-      && INDICATOR_ACTIONTYPES.indexOf(typeId) > -1
-      && !!connections.get('indicators');
 
     hasParentActions = config.connections
       && config.connections.parents
@@ -429,7 +415,6 @@ export function EntityListDownload({
     hasTaxonomies,
     hasActors,
     hasTargets,
-    hasIndicators,
     hasParentActions,
     hasChildActions,
     hasResources,
@@ -446,9 +431,6 @@ export function EntityListDownload({
     }
     if (config.types === 'actortypes') {
       title = intl.formatMessage(appMessages.entities[`actors_${typeId}`].plural);
-    }
-    if (config.types === 'indicators') {
-      title = intl.formatMessage(appMessages.entities.indicators.plural);
     }
     setTypeTitle(title);
     setCSVFilename(snakeCase(title));
@@ -609,52 +591,6 @@ export function EntityListDownload({
           return memo;
         }, csvColumns);
       }
-      if (hasIndicators && indicatorsActive) {
-        if (!indicatorsAsRows) {
-          const indicatorColumns = relationships
-            && relationships.get('indicators')
-            && relationships.get('indicators').reduce((memo, indicator) => {
-              let displayName = 'position_topic_';
-              if (indicator.getIn(['attributes', 'code']) && indicator.getIn(['attributes', 'code']).trim() !== '') {
-                displayName += indicator.getIn(['attributes', 'code']);
-              } else {
-                displayName += indicator.get('id');
-              }
-              if (indicator.getIn(['attributes', 'draft'])) {
-                displayName += '_DRAFT';
-              }
-              if (indicator.getIn(['attributes', 'private'])) {
-                displayName += '_PRIVATE';
-              }
-              return [
-                ...memo,
-                {
-                  id: `indicator_${indicator.get('id')}`,
-                  displayName,
-                },
-              ];
-            }, []);
-          csvColumns = [
-            ...csvColumns,
-            ...indicatorColumns,
-          ];
-        } else {
-          csvColumns = [
-            ...csvColumns,
-            { id: 'indicator_id', displayName: 'topic_id' },
-            { id: 'indicator_code', displayName: 'topic_code' },
-            { id: 'indicator_title', displayName: 'topic_title' },
-            { id: 'indicator_supportlevel', displayName: 'topic_position' },
-          ];
-          if (isAdmin) {
-            csvColumns = [
-              ...csvColumns,
-              { id: 'indicator_draft', displayName: 'topic_draft' },
-              { id: 'indicator_private', displayName: 'topic_private' },
-            ];
-          }
-        }
-      }
       if (hasUsers && includeUsers) {
         csvColumns = [
           ...csvColumns,
@@ -679,8 +615,6 @@ export function EntityListDownload({
         childtypes,
         hasResources,
         resourcetypes,
-        hasIndicators: hasIndicators && indicatorsActive,
-        indicatorsAsRows,
         hasUsers: hasUsers && includeUsers,
       });
     }
@@ -790,33 +724,6 @@ export function EntityListDownload({
         hasUsers: hasUsers && includeUsers,
       });
     }
-    if (config.types === 'indicators') {
-      if (includeSupport) {
-        const supportColumns = Object.values(ACTION_INDICATOR_SUPPORTLEVELS).reduce((memo, level) => {
-          if (level.value === '0') {
-            return memo;
-          }
-          return [
-            ...memo,
-            {
-              id: `support_level_${level.value}`,
-              displayName: `no_countries_support_${level.value}`,
-            },
-          ];
-        }, []);
-        csvColumns = [
-          ...csvColumns,
-          { id: 'statement_count', displayName: 'no_statements' },
-          ...supportColumns,
-        ];
-      }
-      csvData = prepareDataForIndicators({
-        entities: searchedEntities,
-        relationships,
-        attributes,
-        includeSupport,
-      });
-    }
   }
   const csvDateSuffix = `_${getDateSuffix()}`;
   return (
@@ -852,15 +759,10 @@ export function EntityListDownload({
             hasChildActions={hasChildActions}
             hasResources={hasResources}
             hasUsers={hasUsers}
-            hasIndicators={hasIndicators}
             hasAttributes={hasAttributes}
             hasTaxonomies={hasTaxonomies}
             actorsAsRows={actorsAsRows}
             setActorsAsRows={setActorsAsRows}
-            indicatorsAsRows={indicatorsAsRows}
-            setIndicatorsAsRows={setIndicatorsAsRows}
-            indicatorsActive={indicatorsActive}
-            setIndicatorsActive={setIndicatorsActive}
             includeUsers={includeUsers}
             setIncludeUsers={setIncludeUsers}
             attributes={attributes}
@@ -905,15 +807,6 @@ export function EntityListDownload({
             hasTaxonomies={hasTaxonomies}
             setTaxonomies={setTaxonomies}
             taxonomyColumns={taxonomyColumns}
-          />
-        )}
-        {config.types === 'indicators' && (
-          <OptionsForIndicators
-            hasAttributes={hasAttributes}
-            attributes={attributes}
-            setAttributes={setAttributes}
-            includeSupport={includeSupport}
-            setIncludeSupport={setIncludeSupport}
           />
         )}
         {hasSearchQuery
