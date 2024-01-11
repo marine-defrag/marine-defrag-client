@@ -8,7 +8,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { Box, Text } from 'grommet';
-import { lowerCase } from 'utils/string';
 
 import OptionGroup from './OptionGroup';
 
@@ -21,22 +20,12 @@ export function OptionsForActors({
   hasActionsAsTarget,
   actiontypesAsTarget,
   setActiontypesAsTarget,
-  hasMembers,
-  membertypes,
-  setMembertypes,
-  hasAssociations,
-  associationtypes,
-  setAssociationtypes,
-  hasUsers,
-  includeUsers,
-  setIncludeUsers,
   hasAttributes,
   attributes,
   setAttributes,
   hasTaxonomies,
   setTaxonomies,
   taxonomyColumns,
-  typeTitle,
 }) {
   const [expandGroup, setExpandGroup] = useState(null);
 
@@ -55,14 +44,6 @@ export function OptionsForActors({
   }, 0);
   const activeActiontypeAsTargetCount = hasActionsAsTarget && Object.keys(actiontypesAsTarget).reduce((counter, actiontypeId) => {
     if (actiontypesAsTarget[actiontypeId].active) return counter + 1;
-    return counter;
-  }, 0);
-  const activeAssociationtypeCount = hasAssociations && Object.keys(associationtypes).reduce((counter, typeId) => {
-    if (associationtypes[typeId].active) return counter + 1;
-    return counter;
-  }, 0);
-  const activeMembertypeCount = hasMembers && Object.keys(membertypes).reduce((counter, typeId) => {
-    if (membertypes[typeId].active) return counter + 1;
     return counter;
   }, 0);
 
@@ -118,16 +99,6 @@ export function OptionsForActors({
                 By default, the resulting CSV file will have one column for each type of activity selected.
                 Alternatively you can chose to include activities as rows, resulting in one row per actor and activity
               </Text>
-              {hasAssociations && (
-                <Text size="small">
-                  {`Please note that activities of other associated actors (the ${lowerCase(typeTitle)} are members of) are not included.`}
-                </Text>
-              )}
-              {!hasAssociations && hasMembers && (
-                <Text size="small">
-                  {`Please note that activities of ${lowerCase(typeTitle)} members are not included.`}
-                </Text>
-              )}
             </Box>
           )}
           options={actiontypes}
@@ -157,16 +128,6 @@ export function OptionsForActors({
               <Text size="small">
                 By default, the resulting CSV file will have one column for each type of activity selected.
               </Text>
-              {hasAssociations && (
-                <Text size="small">
-                  {`Please note that activities targeting associated actors (the ${lowerCase(typeTitle)} are members of) are not included.`}
-                </Text>
-              )}
-              {!hasAssociations && hasMembers && (
-                <Text size="small">
-                  {`Please note that activities targeting ${lowerCase(typeTitle)} members are not included.`}
-                </Text>
-              )}
             </Box>
           )}
           options={actiontypesAsTarget}
@@ -176,59 +137,11 @@ export function OptionsForActors({
           onSetOptions={(options) => setActiontypesAsTarget(options)}
         />
       )}
-      {hasAssociations && (
-        <OptionGroup
-          groupId="associations"
-          label="Memberships"
-          expandedId={expandGroup}
-          onExpandGroup={(val) => setExpandGroup(val)}
-          activeOptionCount={activeAssociationtypeCount}
-          optionCount={Object.keys(associationtypes).length}
-          intro="By default, the resulting CSV file will have one column for each type of association selected."
-          options={associationtypes}
-          optionListLabels={{
-            attributes: 'Select association types',
-          }}
-          onSetOptions={(options) => setAssociationtypes(options)}
-        />
-      )}
-      {hasMembers && (
-        <OptionGroup
-          groupId="members"
-          label="Members"
-          expandedId={expandGroup}
-          onExpandGroup={(val) => setExpandGroup(val)}
-          activeOptionCount={activeMembertypeCount}
-          optionCount={Object.keys(membertypes).length}
-          intro="By default, the resulting CSV file will have one column for each type of member selected."
-          options={membertypes}
-          optionListLabels={{
-            attributes: 'Select member types',
-          }}
-          onSetOptions={(options) => setMembertypes(options)}
-        />
-      )}
-      {hasUsers && (
-        <OptionGroup
-          groupId="users"
-          label="Users"
-          expandedId={expandGroup}
-          onExpandGroup={(val) => setExpandGroup(val)}
-          activeOptionCount={includeUsers ? 1 : 0}
-          optionCount={1}
-          active={includeUsers}
-          onSetActive={(val) => setIncludeUsers(val)}
-          onActiveLabel="Include assigned users"
-        />
-      )}
     </Box>
   );
 }
 
 OptionsForActors.propTypes = {
-  hasUsers: PropTypes.bool,
-  includeUsers: PropTypes.bool,
-  setIncludeUsers: PropTypes.func,
   // attributes
   attributes: PropTypes.object,
   hasAttributes: PropTypes.bool,
@@ -247,15 +160,6 @@ OptionsForActors.propTypes = {
   hasActionsAsTarget: PropTypes.bool,
   actiontypesAsTarget: PropTypes.object,
   setActiontypesAsTarget: PropTypes.func,
-  // members (similar to child actors)
-  hasMembers: PropTypes.bool,
-  membertypes: PropTypes.object,
-  setMembertypes: PropTypes.func,
-  // associations (member of, similar to parent actors)
-  hasAssociations: PropTypes.bool,
-  associationtypes: PropTypes.object,
-  setAssociationtypes: PropTypes.func,
-  typeTitle: PropTypes.string,
 };
 
 export default OptionsForActors;

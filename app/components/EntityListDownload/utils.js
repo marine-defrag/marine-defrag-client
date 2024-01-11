@@ -299,137 +299,6 @@ const prepActionsAsTargetData = ({
   });
 }, data);
 
-const prepParentData = ({
-  entity, // Map
-  parenttypes,
-  parents, // Map
-  data,
-}) => Object.keys(parenttypes).reduce((memo, parenttypeId) => {
-  if (!parenttypes[parenttypeId].active) {
-    return memo;
-  }
-  const entityParentIds = entity.getIn(['parentsByType', parseInt(parenttypeId, 10)]);
-  let parentsValue = '';
-  if (entityParentIds) {
-    parentsValue = entityParentIds.reduce((memo2, parentId) => {
-      const parent = parents && parents.get(parentId.toString());
-      if (parent) {
-        const title = parent.getIn(['attributes', 'title']);
-        const code = parent.getIn(['attributes', 'code']);
-        let parentValue = (code && code !== '') ? `${code}|${title}` : title;
-        parentValue = addWarnings({ value: parentValue, entity: parent });
-        return memo2 === ''
-          ? parentValue
-          : `${memo2}${IN_CELL_SEPARATOR}${parentValue}`;
-      }
-      return memo2;
-    }, '');
-  }
-  return ({
-    ...memo,
-    [`parents_${parenttypeId}`]: sanitiseText(parentsValue),
-  });
-}, data);
-const prepAssociationData = ({
-  entity, // Map
-  associationtypes,
-  associations, // Map
-  data,
-}) => Object.keys(associationtypes).reduce((memo, actortypeId) => {
-  if (!associationtypes[actortypeId].active) {
-    return memo;
-  }
-  const entityAssociationIds = entity.getIn(['associationsByType', parseInt(actortypeId, 10)]);
-  let associationsValue = '';
-  // console.log(entityActorIds)
-  if (entityAssociationIds) {
-    associationsValue = entityAssociationIds.reduce((memo2, actorId) => {
-      // console.log(actorId)
-      const association = associations && associations.get(actorId.toString());
-      if (association) {
-        const title = association.getIn(['attributes', 'title']);
-        const code = associations.getIn(['attributes', 'code']);
-        let associationValue = (code && code !== '') ? `${code}|${title}` : title;
-        associationValue = addWarnings({ value: associationValue, entity: association });
-        return memo2 === ''
-          ? associationValue
-          : `${memo2}${IN_CELL_SEPARATOR}${associationValue}`;
-      }
-      return memo2;
-    }, '');
-  }
-  return ({
-    ...memo,
-    [`associations_${actortypeId}`]: sanitiseText(associationsValue),
-  });
-}, data);
-const prepChildData = ({
-  entity, // Map
-  childtypes,
-  children, // Map
-  data,
-}) => Object.keys(childtypes).reduce((memo, childtypeId) => {
-  if (!childtypes[childtypeId].active) {
-    return memo;
-  }
-  const entityChildrenIds = entity.getIn(['childrenByType', parseInt(childtypeId, 10)]);
-  let childrenValue = '';
-  // console.log(entityActorIds)
-  if (entityChildrenIds) {
-    childrenValue = entityChildrenIds.reduce((memo2, childId) => {
-      // console.log(actorId)
-      const child = children && children.get(childId.toString());
-      if (child) {
-        const title = child.getIn(['attributes', 'title']);
-        const code = child.getIn(['attributes', 'code']);
-        let childValue = (code && code !== '') ? `${code}|${title}` : title;
-        childValue = addWarnings({ value: childValue, entity: child });
-        return memo2 === ''
-          ? childValue
-          : `${memo2}${IN_CELL_SEPARATOR}${childValue}`;
-      }
-      return memo2;
-    }, '');
-  }
-  return ({
-    ...memo,
-    [`children_${childtypeId}`]: sanitiseText(childrenValue),
-  });
-}, data);
-const prepMemberData = ({
-  entity, // Map
-  membertypes,
-  members, // Map
-  data,
-}) => Object.keys(membertypes).reduce((memo, actortypeId) => {
-  if (!membertypes[actortypeId].active) {
-    return memo;
-  }
-  const entityMemberIds = entity.getIn(['membersByType', parseInt(actortypeId, 10)]);
-  let membersValue = '';
-  // console.log(entityActorIds)
-  if (entityMemberIds) {
-    membersValue = entityMemberIds.reduce((memo2, memberId) => {
-      // console.log(actorId)
-      const member = members && members.get(memberId.toString());
-      if (member) {
-        const title = member.getIn(['attributes', 'title']);
-        const code = member.getIn(['attributes', 'code']);
-        let memberValue = (code && code !== '') ? `${code}|${title}` : title;
-        memberValue = addWarnings({ value: memberValue, entity: member });
-        return memo2 === ''
-          ? memberValue
-          : `${memo2}${IN_CELL_SEPARATOR}${memberValue}`;
-      }
-      return memo2;
-    }, '');
-  }
-  return ({
-    ...memo,
-    [`members_${actortypeId}`]: sanitiseText(membersValue),
-  });
-}, data);
-
 const prepResourceData = ({
   entity, // Map
   resourcetypes,
@@ -466,37 +335,6 @@ const prepResourceData = ({
     [`resources_${resourcetypeId}`]: sanitiseText(resourcesValue),
   });
 }, data);
-
-const prepUserData = ({
-  entity, // Map
-  users, // Map
-  data,
-}) => {
-  const entityUsers = entity.get('users');
-  // let actorsValue = '';
-  // // console.log(entityActorIds)
-  if (entityUsers) {
-    const usersValue = entityUsers.reduce((memo, userId) => {
-      // console.log(actorId)
-      const user = users.get(userId.toString());
-      if (user) {
-        const title = user.getIn(['attributes', 'name']);
-        const email = user.getIn(['attributes', 'email']);
-        const indicatorValue = email !== '' ? `${title}(${email})` : title;
-        return memo === ''
-          ? indicatorValue
-          : `${memo}${IN_CELL_SEPARATOR}${indicatorValue}`;
-      }
-      return memo;
-    }, '');
-    return ({
-      ...data,
-      users: sanitiseText(usersValue),
-    });
-  }
-  return data;
-};
-
 
 const prepActorDataAsRows = ({
   entity, // Map
@@ -599,13 +437,8 @@ export const prepareDataForActions = ({
   actortypes,
   hasTargets,
   targettypes,
-  hasParents,
-  parenttypes,
-  hasChildren,
-  childtypes,
   hasResources,
   resourcetypes,
-  hasUsers,
 }) => entities.reduce((memo, entity) => {
   let data = { id: entity.get('id') };
   // add attribute columns
@@ -642,34 +475,11 @@ export const prepareDataForActions = ({
       data,
     });
   }
-  if (hasParents) {
-    data = prepParentData({
-      entity,
-      parenttypes,
-      parents: relationships && relationships.get('parents'),
-      data,
-    });
-  }
-  if (hasChildren) {
-    data = prepChildData({
-      entity,
-      childtypes,
-      children: relationships && relationships.get('children'),
-      data,
-    });
-  }
   if (hasResources) {
     data = prepResourceData({
       entity,
       resourcetypes,
       resources: relationships && relationships.get('resources'),
-      data,
-    });
-  }
-  if (hasUsers) {
-    data = prepUserData({
-      entity,
-      users: relationships && relationships.get('users'),
       data,
     });
   }
@@ -699,11 +509,6 @@ export const prepareDataForActors = ({
   actiontypes,
   hasActionsAsTarget,
   actiontypesAsTarget,
-  hasAssociations,
-  associationtypes,
-  hasMembers,
-  membertypes,
-  hasUsers,
 }) => entities.reduce((memo, entity) => {
   let data = { id: entity.get('id') };
   // add attribute columns
@@ -741,29 +546,7 @@ export const prepareDataForActors = ({
       data,
     });
   }
-  if (hasAssociations) {
-    data = prepAssociationData({
-      entity,
-      associationtypes,
-      associations: relationships && relationships.get('associations'),
-      data,
-    });
-  }
-  if (hasMembers) {
-    data = prepMemberData({
-      entity,
-      membertypes,
-      members: relationships && relationships.get('members'),
-      data,
-    });
-  }
-  if (hasUsers) {
-    data = prepUserData({
-      entity,
-      users: relationships && relationships.get('users'),
-      data,
-    });
-  }
+
   let dataRows = [data];
   if (hasActions && actionsAsRows) {
     dataRows = prepActionDataAsRows({
@@ -797,15 +580,16 @@ export const getAttributes = ({
       if (
         !isAdmin
         && (
-          attValue.adminOnly
-          || (attValue.adminOnlyForTypes && attValue.adminOnlyForTypes.indexOf(typeId) > -1)
+          attValue.exportAdminOnly
+          || (attValue.exportAdminOnlyForTypes && attValue.exportAdminOnlyForTypes.indexOf(typeId) > -1)
         )
       ) {
         passAdmin = false;
       }
+
       if (
         !attValue.skipExport
-        // TODO: adminOnlyForTypes
+        // TODO: exportAdminOnlyForTypes
         && passAdmin
         && (optional || required || (!attValue.optional && !attValue.required))
       ) {

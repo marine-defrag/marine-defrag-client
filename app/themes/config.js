@@ -333,9 +333,16 @@ export const ACTION_FIELDS = {
       required: Object.values(ACTIONTYPES), // all types
       type: 'number',
       table: API.ACTIONTYPES,
+      exportColumn: 'knowledge_category',
+      exportDefault: true,
+    },
+    draft: {
+      defaultValue: true,
+      required: Object.values(ACTIONTYPES), // all types
+      type: 'bool',
       skipImport: true,
-      exportColumn: 'activity_type',
-      export: true,
+      exportAdminOnly: true,
+      exportDefault: true,
     },
     code: {
       optional: Object.values(ACTIONTYPES), // all types
@@ -345,10 +352,17 @@ export const ACTION_FIELDS = {
         ACTIONTYPES.INIT,
       ],
       type: 'text',
+      exportAdminOnlyForTypes: [
+        ACTIONTYPES.NATL,
+        ACTIONTYPES.DONOR,
+        ACTIONTYPES.INIT,
+      ],
+      exportDefault: true,
     },
     title: {
       required: Object.values(ACTIONTYPES), // all types
       type: 'text',
+      exportDefault: true,
     },
     parent_id: {
       skipImport: true,
@@ -375,6 +389,7 @@ export const ACTION_FIELDS = {
         ACTIONTYPES.FACTS,
       ],
       type: 'markdown',
+      exportColumn: 'further_information',
     },
     url: {
       optional: [
@@ -387,6 +402,7 @@ export const ACTION_FIELDS = {
         ACTIONTYPES.FACTS,
       ],
       type: 'url',
+      exportColumn: 'website',
     },
     date_start: {
       optional: [
@@ -465,66 +481,34 @@ export const ACTION_FIELDS = {
       optional: [ACTIONTYPES.DONOR],
       type: 'text',
     },
-    draft: {
-      defaultValue: true,
-      required: Object.values(ACTIONTYPES), // all types
-      type: 'bool',
-      skipImport: true,
-    },
-    private: {
-      defaultValue: false,
-      type: 'bool',
-    },
-    is_archive: {
-      defaultValue: false,
-      type: 'bool',
-    },
-    notifications: {
-      defaultValue: true,
-      type: 'bool',
-    },
     created_at: {
       skipImport: true,
       type: 'datetime',
-      adminOnly: true,
+      exportAdminOnly: true,
       meta: true,
     },
-    created_by_id: {
-      skipImport: true,
-      type: 'key',
-      adminOnly: true,
-      meta: true,
-      table: API.USERS,
-      exportColumn: 'created_by',
-    },
+    // not currentlyi included in server response
+    // created_by_id: {
+    //   skipImport: true,
+    //   type: 'key',
+    //   exportAdminOnly: true,
+    //   meta: true,
+    //   table: API.USERS,
+    //   exportColumn: 'created_by',
+    // },
     updated_at: {
       skipImport: true,
       type: 'datetime',
-      adminOnly: true,
+      exportAdminOnly: true,
       meta: true,
     },
     updated_by_id: {
       skipImport: true,
       type: 'key',
-      adminOnly: true,
+      exportAdminOnly: true,
       meta: true,
       table: API.USERS,
       exportColumn: 'updated_by',
-    },
-    relationship_updated_at: {
-      skipImport: true,
-      type: 'datetime',
-      adminOnly: true,
-      meta: true,
-      exportColumn: 'connection_updated_at',
-    },
-    relationship_updated_by_id: {
-      skipImport: true,
-      type: 'key',
-      adminOnly: true,
-      meta: true,
-      table: API.USERS,
-      exportColumn: 'connection_updated_by',
     },
   },
 };
@@ -562,13 +546,16 @@ export const ACTOR_FIELDS = {
       required: Object.values(ACTORTYPES), // all types
       type: 'number',
       table: API.ACTORTYPES,
+      exportColumn: 'actor_type',
+      exportDefault: true,
     },
     draft: {
       defaultValue: true,
       required: Object.values(ACTORTYPES), // all types
       type: 'bool',
       skipImport: true,
-      exportColumn: 'actor_type',
+      exportAdminOnly: true,
+      exportDefault: true,
       // ui: 'dropdown',
       // options: [
       //   { value: true, message: 'ui.publishStatuses.draft' },
@@ -582,10 +569,16 @@ export const ACTOR_FIELDS = {
         ACTORTYPES.REG,
       ],
       type: 'text',
+      exportAdminOnlyForTypes: [
+        ACTORTYPES.CLASS,
+        ACTORTYPES.REG,
+      ],
+      exportDefault: true,
     },
     title: {
       required: Object.values(ACTORTYPES), // all types
       type: 'text',
+      exportDefault: true,
     },
     description: {
       optional: [
@@ -610,6 +603,7 @@ export const ACTOR_FIELDS = {
         ACTORTYPES.GROUP,
       ],
       type: 'url',
+      exportColumn: 'website',
     },
     gdp: {
       optional: [ACTORTYPES.COUNTRY],
@@ -619,70 +613,35 @@ export const ACTOR_FIELDS = {
       optional: [ACTORTYPES.COUNTRY],
       type: 'number',
     },
-  },
-  draft: {
-    defaultValue: true,
-    required: true,
-    type: 'bool',
-    skipImport: true,
-    // ui: 'dropdown',
-    // options: [
-    //   { value: true, message: 'ui.publishStatuses.draft' },
-    //   { value: false, message: 'ui.publishStatuses.public' },
-    // ],
-  },
-  private: {
-    defaultValue: false,
-    required: true,
-    type: 'bool',
-  },
-  is_archive: {
-    defaultValue: false,
-    required: true,
-    type: 'bool',
-  },
-  created_at: {
-    skipImport: true,
-    type: 'datetime',
-    adminOnly: true,
-    meta: true,
-  },
-  created_by_id: {
-    skipImport: true,
-    type: 'key',
-    adminOnly: true,
-    meta: true,
-    table: API.USERS,
-    exportColumn: 'created_by',
-  },
-  updated_at: {
-    skipImport: true,
-    type: 'datetime',
-    adminOnly: true,
-    meta: true,
-  },
-  updated_by_id: {
-    skipImport: true,
-    type: 'key',
-    adminOnly: true,
-    meta: true,
-    table: API.USERS,
-    exportColumn: 'updated_by',
-  },
-  relationship_updated_at: {
-    skipImport: true,
-    type: 'datetime',
-    adminOnly: true,
-    meta: true,
-    exportColumn: 'connection_updated_at',
-  },
-  relationship_updated_by_id: {
-    skipImport: true,
-    type: 'key',
-    adminOnly: true,
-    meta: true,
-    table: API.USERS,
-    exportColumn: 'connection_updated_by',
+    created_at: {
+      skipImport: true,
+      type: 'datetime',
+      exportAdminOnly: true,
+      meta: true,
+    },
+    // not included in server response
+    // created_by_id: {
+    //   skipImport: true,
+    //   type: 'key',
+    //   exportAdminOnly: true,
+    //   meta: true,
+    //   table: API.USERS,
+    //   exportColumn: 'created_by',
+    // },
+    updated_at: {
+      skipImport: true,
+      type: 'datetime',
+      exportAdminOnly: true,
+      meta: true,
+    },
+    updated_by_id: {
+      skipImport: true,
+      type: 'key',
+      exportAdminOnly: true,
+      meta: true,
+      table: API.USERS,
+      exportColumn: 'updated_by',
+    },
   },
 };
 

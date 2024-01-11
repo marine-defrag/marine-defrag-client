@@ -29,6 +29,7 @@ import {
   selectIncludeActorMembers,
   selectIncludeTargetMembers,
   selectIsPrintView,
+  selectSearchQuery,
 } from 'containers/App/selectors';
 
 import {
@@ -260,6 +261,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       onCreateOption,
       allEntityCount,
       isPrintView,
+      searchQuery,
     } = this.props;
     // detect print to avoid expensive rendering
     const printing = isPrintView || !!(
@@ -401,6 +403,8 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
                 actiontypes: actiontypes.map((type) => intl.formatMessage(appMessages.entities[`actions_${type.get('id')}`].single)).toJS(),
                 actortypes: actortypes.map((type) => intl.formatMessage(appMessages.entities[`actors_${type.get('id')}`].single)).toJS(),
               }}
+              isAdmin={isManager}
+              searchQuery={searchQuery}
             />
           </ReactModal>
         )}
@@ -469,6 +473,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         )}
         {showList && (
           <EntitiesListView
+            searchQuery={searchQuery}
             isPrintView={isPrintView}
             headerOptions={headerOptions}
             allEntityCount={allEntityCount}
@@ -718,6 +723,7 @@ EntityList.propTypes = {
   includeTargetMembers: PropTypes.bool,
   isPrintView: PropTypes.bool,
   allEntityCount: PropTypes.number,
+  searchQuery: PropTypes.string,
 };
 
 EntityList.contextTypes = {
@@ -738,6 +744,7 @@ const mapStateToProps = (state) => ({
   includeActorMembers: selectIncludeActorMembers(state),
   includeTargetMembers: selectIncludeTargetMembers(state),
   isPrintView: selectIsPrintView(state),
+  searchQuery: selectSearchQuery(state),
 });
 
 function mapDispatchToProps(dispatch, props) {

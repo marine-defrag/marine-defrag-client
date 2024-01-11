@@ -25,14 +25,6 @@ export default defineMessages({
     id: 'app.components.EntityListDownload.filenameLabel',
     defaultMessage: 'Enter filename',
   },
-  ignoreSelected: {
-    id: 'app.components.EntityListDownload.ignoreSelected',
-    defaultMessage: 'Ignore selected items',
-  },
-  ignoreKeyword: {
-    id: 'app.components.EntityListDownload.ignoreKeyword',
-    defaultMessage: 'Ignore search keyword',
-  },
   exportDescription: {
     id: 'app.components.EntityListDownload.exportDescription',
     defaultMessage: 'Please select the attributes, categories and/or connections you would like to include',

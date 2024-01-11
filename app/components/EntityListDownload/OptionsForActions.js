@@ -17,8 +17,6 @@ import OptionGroup from './OptionGroup';
 export function OptionsForActions({
   actorsAsRows,
   setActorsAsRows,
-  includeUsers,
-  setIncludeUsers,
   attributes,
   setAttributes,
   taxonomyColumns,
@@ -27,20 +25,13 @@ export function OptionsForActions({
   setActortypes,
   targettypes,
   setTargettypes,
-  parenttypes,
-  setParenttypes,
-  childtypes,
-  setChildtypes,
   resourcetypes,
   setResourcetypes,
   hasAttributes,
   hasTaxonomies,
   hasActors,
   hasTargets,
-  hasParentActions,
-  hasChildActions,
   hasResources,
-  hasUsers,
 }) {
   const [expandGroup, setExpandGroup] = useState(null);
 
@@ -59,14 +50,6 @@ export function OptionsForActions({
   }, 0);
   const activeTargettypeCount = hasTargets && Object.keys(targettypes).reduce((counter, actortypeId) => {
     if (targettypes[actortypeId].active) return counter + 1;
-    return counter;
-  }, 0);
-  const activeParenttypeCount = hasParentActions && Object.keys(parenttypes).reduce((counter, parenttypeId) => {
-    if (parenttypes[parenttypeId].active) return counter + 1;
-    return counter;
-  }, 0);
-  const activeChildtypeCount = hasChildActions && Object.keys(childtypes).reduce((counter, childtypeId) => {
-    if (childtypes[childtypeId].active) return counter + 1;
     return counter;
   }, 0);
   const activeResourcetypeCount = hasResources && Object.keys(resourcetypes).reduce((counter, resourcetypeId) => {
@@ -157,38 +140,7 @@ export function OptionsForActions({
           onSetOptions={(options) => setTargettypes(options)}
         />
       )}
-      {hasParentActions && (
-        <OptionGroup
-          groupId="parents"
-          label="Parent activities"
-          expandedId={expandGroup}
-          onExpandGroup={(val) => setExpandGroup(val)}
-          activeOptionCount={activeParenttypeCount}
-          optionCount={Object.keys(parenttypes).length}
-          intro="By default, the resulting CSV file will have one column for each type of parent activity selected."
-          options={parenttypes}
-          optionListLabels={{
-            attributes: 'Select parent activity types',
-          }}
-          onSetOptions={(options) => setParenttypes(options)}
-        />
-      )}
-      {hasChildActions && (
-        <OptionGroup
-          groupId="children"
-          label="Child activities"
-          expandedId={expandGroup}
-          onExpandGroup={(val) => setExpandGroup(val)}
-          activeOptionCount={activeChildtypeCount}
-          optionCount={Object.keys(childtypes).length}
-          intro="By default, the resulting CSV file will have one column for each type of child activity selected."
-          options={childtypes}
-          optionListLabels={{
-            attributes: 'Select child activity types',
-          }}
-          onSetOptions={(options) => setChildtypes(options)}
-        />
-      )}
+
       {hasResources && (
         <OptionGroup
           groupId="resources"
@@ -205,19 +157,6 @@ export function OptionsForActions({
           onSetOptions={(options) => setResourcetypes(options)}
         />
       )}
-      {hasUsers && (
-        <OptionGroup
-          groupId="users"
-          label="Users"
-          expandedId={expandGroup}
-          onExpandGroup={(val) => setExpandGroup(val)}
-          activeOptionCount={includeUsers ? 1 : 0}
-          optionCount={1}
-          active={includeUsers}
-          onSetActive={(val) => setIncludeUsers(val)}
-          onActiveLabel="Include users"
-        />
-      )}
     </Box>
   );
 }
@@ -225,8 +164,6 @@ export function OptionsForActions({
 OptionsForActions.propTypes = {
   actorsAsRows: PropTypes.bool,
   setActorsAsRows: PropTypes.func,
-  includeUsers: PropTypes.bool,
-  setIncludeUsers: PropTypes.func,
   attributes: PropTypes.object,
   setAttributes: PropTypes.func,
   taxonomyColumns: PropTypes.object,
@@ -235,18 +172,11 @@ OptionsForActions.propTypes = {
   setActortypes: PropTypes.func,
   targettypes: PropTypes.object,
   setTargettypes: PropTypes.func,
-  parenttypes: PropTypes.object,
-  setParenttypes: PropTypes.func,
-  childtypes: PropTypes.object,
-  setChildtypes: PropTypes.func,
   resourcetypes: PropTypes.object,
   setResourcetypes: PropTypes.func,
   hasActors: PropTypes.bool,
   hasTargets: PropTypes.bool,
-  hasParentActions: PropTypes.bool,
-  hasChildActions: PropTypes.bool,
   hasResources: PropTypes.bool,
-  hasUsers: PropTypes.bool,
   hasAttributes: PropTypes.bool,
   hasTaxonomies: PropTypes.bool,
 };
