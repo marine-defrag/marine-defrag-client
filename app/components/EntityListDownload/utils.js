@@ -1,7 +1,7 @@
 import appMessages from 'containers/App/messages';
 
 // const IN_CELL_SEPARATOR = ', \n';
-const IN_CELL_SEPARATOR = ', ';
+const IN_CELL_SEPARATOR = '; ';
 
 export const getDateSuffix = (datetime) => {
   const date = datetime ? new Date(datetime) : new Date();
