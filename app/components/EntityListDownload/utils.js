@@ -140,15 +140,9 @@ const addWarnings = ({
   entity,
 }) => {
   const draft = entity.getIn(['attributes', 'draft']);
-  const isPrivate = entity.getIn(['attributes', 'private']);
   let warnings = [];
-  if (draft || isPrivate) {
-    if (draft) {
-      warnings = [...warnings, 'draft'];
-    }
-    if (isPrivate) {
-      warnings = [...warnings, 'private'];
-    }
+  if (draft) {
+    warnings = [...warnings, 'draft'];
     return `${value} [${warnings.join('/')}]`;
   }
   return value;

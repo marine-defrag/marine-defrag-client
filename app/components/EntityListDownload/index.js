@@ -390,7 +390,6 @@ export function EntityListDownload({
             csvColumns = [
               ...csvColumns,
               { id: 'actor_draft', displayName: 'actor_draft' },
-              { id: 'actor_private', displayName: 'actor_private' },
             ];
           }
         }
@@ -470,7 +469,6 @@ export function EntityListDownload({
             csvColumns = [
               ...csvColumns,
               { id: 'action_draft', displayName: 'action_draft' },
-              { id: 'action_private', displayName: 'action_private' },
             ];
           }
         }
