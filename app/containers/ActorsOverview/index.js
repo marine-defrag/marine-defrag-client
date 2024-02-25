@@ -11,7 +11,7 @@ import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
 
-import { ROUTES, ACTORTYPE_GROUPS } from 'themes/config';
+import { ROUTES, ACTORTYPE_GROUPS, CARDTEASER_ICONS } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import { selectReady, selectIsUserManager } from 'containers/App/selectors';
 
@@ -24,7 +24,6 @@ import Footer from 'containers/Footer';
 import { isMaxSize } from 'utils/responsive';
 import { selectActortypesWithActorCount } from './selectors';
 import { DEPENDENCIES } from './constants';
-
 
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
 const GroupTitle = styled.h5`
@@ -71,6 +70,7 @@ export function ActorsOverview({
                   const path = `${ROUTES.ACTORS}/${typeId}`;
                   const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
                   const { primary } = ACTORTYPE_GROUPS[key];
+                  const iconNames = CARDTEASER_ICONS.ACTORS[typeId];
                   return (
                     <CardTeaser
                       key={typeId}
@@ -89,6 +89,7 @@ export function ActorsOverview({
                       description={
                         intl.formatMessage(appMessages.actortypes_about[typeId])
                       }
+                      iconNames={iconNames}
                     />
                   );
                 })}

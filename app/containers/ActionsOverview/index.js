@@ -11,7 +11,7 @@ import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
 
-import { ROUTES, ACTIONTYPE_GROUPS } from 'themes/config';
+import { ROUTES, ACTIONTYPE_GROUPS, CARDTEASER_ICONS } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import { selectReady } from 'containers/App/selectors';
 
@@ -63,6 +63,7 @@ export function ActionsOverview({
                   const path = `${ROUTES.ACTIONS}/${typeId}`;
                   const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
                   const { primary } = ACTIONTYPE_GROUPS[key];
+                  const iconNames = CARDTEASER_ICONS.ACTIONS[typeId];
                   return (
                     <CardTeaser
                       key={typeId}
@@ -81,6 +82,7 @@ export function ActionsOverview({
                       description={
                         intl.formatMessage(appMessages.actiontypes_about[typeId])
                       }
+                      iconNames={iconNames}
                     />
                   );
                 })}

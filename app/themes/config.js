@@ -1069,3 +1069,23 @@ export const PRINT = {
     landscape: { W: 1100, H: 680 }, // pt
   },
 };
+
+export const CARDTEASER_ICONS = {
+  ACTIONS: {
+    1: ['placeholder', 'actions'],
+    2: ['placeholder', 'actions'],
+    3: ['placeholder', 'actions'],
+    4: ['placeholder', 'actions'],
+    5: ['placeholder', 'actions'],
+    6: ['placeholder', 'actions'],
+  },
+  ACTORS: {
+    1: ['placeholder', 'actors'],
+    2: ['placeholder', 'actors'],
+    3: ['placeholder', 'actors'],
+    4: ['placeholder', 'actors'],
+    5: ['placeholder', 'actors'],
+    6: ['placeholder', 'actors'],
+  },
+
+};

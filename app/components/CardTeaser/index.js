@@ -5,7 +5,7 @@ import NormalImg from 'components/Img';
 import {
   Anchor, Box, Text, Button, ResponsiveContext, ThemeContext,
 } from 'grommet';
-import { Actions } from 'grommet-icons';
+import Icon from 'components/Icon';
 
 import styled from 'styled-components';
 
@@ -34,6 +34,9 @@ const CardGraphic = styled(NormalImg)`
 `;
 const ExploreButton = styled(Anchor)``;
 
+function renderIcons(icons) {
+  return <Box direction="row">{icons.map((icon, index) => <Icon name={icon} key={index} />)}</Box>;
+}
 export function CardTeaser({
   primary,
   onClick,
@@ -43,6 +46,7 @@ export function CardTeaser({
   // dataReady
   description,
   basis,
+  iconNames,
 }) {
   const theme = useContext(ThemeContext);
   const size = useContext(ResponsiveContext);
@@ -74,7 +78,7 @@ export function CardTeaser({
             )}
             <Box justify="between" direction="row" margin={{ top: 'small' }}>
               <ExploreButton label="Explore" />
-              <Actions />
+              {iconNames && renderIcons(iconNames)}
             </Box>
           </Box>
         </Box>
@@ -93,6 +97,7 @@ CardTeaser.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   basis: PropTypes.string,
+  iconNames: PropTypes.array,
   // teaserImage: PropTypes.string,
 };
 
