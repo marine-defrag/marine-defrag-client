@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 
 import NormalImg from 'components/Img';
 import {
-  Box, Text, Button, ResponsiveContext, ThemeContext,
+  Anchor, Box, Text, Button, ResponsiveContext, ThemeContext,
 } from 'grommet';
+import { Actions } from 'grommet-icons';
 
 import styled from 'styled-components';
 
@@ -28,9 +29,11 @@ const Title = styled((p) => <Text weight="bold" {...p} />)`
 `;
 const Description = styled((p) => <Text size="small" {...p} />)`
 `;
-
 const CardGraphic = styled(NormalImg)`
+  width:  ${({ isPrimary }) => isPrimary ? '50%' : '100%'};
 `;
+const ExploreButton = styled(Anchor)``;
+
 export function CardTeaser({
   primary,
   onClick,
@@ -51,22 +54,29 @@ export function CardTeaser({
         href={`${path}`}
         onClick={onClick}
       >
-        <Box direction="column" justify="between" fill="vertical">
-          <CardGraphic src={primary ? theme.media.navCardLarge : theme.media.navCardSmall} alt="Nav card" />
-          <TitleWrap
-            direction={(primary && isMinSize(size, 'medium')) ? 'row' : 'column'}
-            gap={(primary && isMinSize(size, 'medium')) ? 'small' : 'none'}
-          >
-            <Count>{count}</Count>
-            <Title size={primary ? 'xlarge' : 'normal'}>
-              {title}
-            </Title>
-          </TitleWrap>
-          {description && (
-            <Description>
-              {description}
-            </Description>
-          )}
+        <Box direction={primary ? 'row' : 'column'} justify="between" fill="vertical">
+          <CardGraphic
+            isPrimary={primary}
+            src={primary ? theme.media.navCardLarge : theme.media.navCardSmall}
+            alt="Nav card"
+          />
+          <Box justify="end" width={primary ? '50%' : '100%'}>
+            <TitleWrap gap="none">
+              <Count>{count}</Count>
+              <Title size={primary ? 'xlarge' : 'normal'}>
+                {title}
+              </Title>
+            </TitleWrap>
+            {description && (
+              <Description>
+                {description}
+              </Description>
+            )}
+            <Box justify="between" direction="row" margin={{ top: 'small' }}>
+              <ExploreButton label="Explore" />
+              <Actions />
+            </Box>
+          </Box>
         </Box>
       </CardLink>
     </Styled>
