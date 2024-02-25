@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-// import { FormattedMessage, injectIntl } from 'react-intl';
+
+import NormalImg from 'components/Img';
 import {
-  Box, Text, Button, ResponsiveContext,
+  Box, Text, Button, ResponsiveContext, ThemeContext,
 } from 'grommet';
+
 import styled from 'styled-components';
 
 import { isMinSize } from 'utils/responsive';
 
-const Styled = styled((p) => <Box {...p} />)``;
+const Styled = styled((p) => <Box {...p} />)`
+  border-radius: 10px;
+`;
 const CardLink = styled((p) => <Button plain as="a" fill="vertical" {...p} />)`
   padding: 20px 15px;
   min-height: ${({ prim }) => prim ? 180 : 0}px;
@@ -25,6 +29,8 @@ const Title = styled((p) => <Text weight="bold" {...p} />)`
 const Description = styled((p) => <Text size="small" {...p} />)`
 `;
 
+const CardGraphic = styled(NormalImg)`
+`;
 export function CardTeaser({
   primary,
   onClick,
@@ -35,7 +41,9 @@ export function CardTeaser({
   description,
   basis,
 }) {
-  const size = React.useContext(ResponsiveContext);
+  const theme = useContext(ThemeContext);
+  const size = useContext(ResponsiveContext);
+
   return (
     <Styled elevation="small" background="white" basis={basis || 'full'}>
       <CardLink
@@ -44,6 +52,7 @@ export function CardTeaser({
         onClick={onClick}
       >
         <Box direction="column" justify="between" fill="vertical">
+          <CardGraphic src={primary ? theme.media.navCardLarge : theme.media.navCardSmall} alt="Nav card" />
           <TitleWrap
             direction={(primary && isMinSize(size, 'medium')) ? 'row' : 'column'}
             gap={(primary && isMinSize(size, 'medium')) ? 'small' : 'none'}
@@ -77,5 +86,4 @@ CardTeaser.propTypes = {
   // teaserImage: PropTypes.string,
 };
 
-// export default injectIntl(CardTeaser);
 export default CardTeaser;
