@@ -8,6 +8,12 @@ import headerLogoPrint2x from 'themes/media/headerLogoPrint@2x.png';
 import graphicHome from 'themes/media/homeGraphic.png';
 import graphicHome2x from 'themes/media/homeGraphic@2x.png';
 
+import navCard from 'themes/media/navCard.png';
+import navCard2x from 'themes/media/navCard@2x.png';
+
+import navCard2 from 'themes/media/navCard2.png';
+import navCard2_2x from 'themes/media/navCard2@2x.png';
+
 // import impactossLogo from 'themes/media/impactoss.png';
 // import impactossLogo2x from 'themes/media/impactoss@2x.png';
 
@@ -20,6 +26,9 @@ theme.media = {
   headerLogo: [headerLogo, headerLogo2x],
   headerLogoPrint: [headerLogoPrint, headerLogoPrint2x],
   graphicHome: [graphicHome, graphicHome2x],
+  navCardSmall: [navCard, navCard2x],
+  navCardLarge: [navCard2, navCard2_2x],
+
   // impactossLogo: [impactossLogo, impactossLogo2x],
 };
 
