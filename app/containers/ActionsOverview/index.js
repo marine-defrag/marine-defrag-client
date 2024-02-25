@@ -66,7 +66,7 @@ export function ActionsOverview({
                   return (
                     <CardTeaser
                       key={typeId}
-                      basis={primary ? '1/2' : '1/4'}
+                      basis={primary ? 'full' : '1/4'}
                       primary={primary}
                       path={path}
                       onClick={(evt) => {
