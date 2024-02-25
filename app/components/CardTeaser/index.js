@@ -2,8 +2,9 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import NormalImg from 'components/Img';
+
 import {
-  Anchor, Box, Text, Button, ResponsiveContext, ThemeContext,
+  Box, Text, Button, ResponsiveContext, ThemeContext,
 } from 'grommet';
 import Icon from 'components/Icon';
 
@@ -32,10 +33,19 @@ const Description = styled((p) => <Text size="small" {...p} />)`
 const CardGraphic = styled(NormalImg)`
   width:  ${({ isPrimary }) => isPrimary ? '50%' : '100%'};
 `;
-const ExploreButton = styled(Anchor)``;
+const ExploreText = styled((p) => <Text weight="bold" {...p} />)`
+  padding-right: 4px;
+  color: ${({ theme }) => theme.global.colors.text.brand};
+`;
+const ExploreButton = styled.div`
+`;
 
 function renderIcons(icons) {
-  return <Box direction="row">{icons.map((icon, index) => <Icon name={icon} key={index} />)}</Box>;
+  return (
+    <Box direction="row" align="center">
+      {icons.map((icon, index) => <Icon name={icon} key={index} />)}
+    </Box>
+  );
 }
 export function CardTeaser({
   primary,
@@ -77,7 +87,13 @@ export function CardTeaser({
               </Description>
             )}
             <Box justify="between" direction="row" margin={{ top: 'small' }}>
-              <ExploreButton label="Explore" />
+              <ExploreButton
+                onClick={onClick}
+                type="button"
+              >
+                <ExploreText>Explore</ExploreText>
+                <Icon name="arrowRight" size="0.5em" />
+              </ExploreButton>
               {iconNames && renderIcons(iconNames)}
             </Box>
           </Box>
