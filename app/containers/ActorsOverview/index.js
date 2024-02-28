@@ -90,6 +90,7 @@ export function ActorsOverview({
                         intl.formatMessage(appMessages.actortypes_about[typeId])
                       }
                       iconNames={iconNames}
+                      hasSearchField={primary}
                     />
                   );
                 })}
