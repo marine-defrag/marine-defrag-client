@@ -41,20 +41,18 @@ const CardGraphic = styled(NormalImg)`
   width:  ${({ isPrimary }) => isPrimary ? '50%' : '100%'};
 `;
 const ExploreText = styled((p) => <Text weight="bold" {...p} />)`
-`;
-const ExploreButton = styled((p) => <Button {...p} />)`
   color: ${({ theme }) => theme.global.colors.text.brand};
   &:hover {
     color: ${({ theme }) => theme.global.colors.text.highlight};
   }
 `;
-const ExploreWrapper = styled((p) => <Box {...p} justify="between" direction="row" margin={{ right: 'small', left: 'small' }} />)`
-  width:  ${({ isPrimary }) => isPrimary ? '50%' : '100%'};
+const BottomButtons = styled((p) => <Box {...p} />)`
+  padding: ${({ isPrimary }) => isPrimary ? '0px 15px 0px 0px' : '0px 15px'};
   position: absolute;
   right: 0px;
   bottom: 0px;
-  padding: ${({ isPrimary }) => isPrimary ? '0px' : '0px 15px 0px 25px'};
-`;
+  `;
+
 const SearchInput = styled(DebounceInput)`
   &:focus {
     outline: none;
@@ -152,15 +150,18 @@ export function CardTeaser({
             </Box>
           </Box>
         </CardLink>
-        <ExploreWrapper isPrimary={primary}>
-          <ExploreButton size="medium" margin="none" onClick={onClick}>
-            <Box pad="none" direction="row" align="center" gap="small">
-              <ExploreText>Explore</ExploreText>
-              <ArrowIcon name="arrowRight" size="0.5em" />
-            </Box>
-          </ExploreButton>
-          {iconNames && renderIcons(iconNames)}
-        </ExploreWrapper>
+        <BottomButtons isPrimary={primary} direction="row" justify="between" fill="horizontal">
+          {primary && <Box width="100%" />}
+          <Box direction="row" justify="between" fill="horizontal">
+            <Button onClick={onClick}>
+              <Box pad="none" direction="row" align="center" gap="xsmall">
+                <ExploreText>Explore</ExploreText>
+                <ArrowIcon name="arrowRight" size="0.5em" />
+              </Box>
+            </Button>
+            {iconNames && renderIcons(iconNames)}
+          </Box>
+        </BottomButtons>
       </CardWrapper>
     </Styled>
   );
