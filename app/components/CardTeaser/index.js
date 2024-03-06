@@ -7,12 +7,12 @@ import {
   Box, Text, Button, ResponsiveContext, ThemeContext,
 } from 'grommet';
 import Icon from 'components/Icon';
-import DebounceInput from 'react-debounce-input';
 
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 
 import { isMinSize } from 'utils/responsive';
+import Search from './Search';
 
 const Styled = styled((p) => <Box {...p} elevation="small" background="white" pad={{ top: 'small', bottom: 'small' }} />)`
   border-radius: 10px;
@@ -52,30 +52,16 @@ const BottomButtons = styled((p) => <Box {...p} />)`
   right: 0px;
   bottom: 0px;
   `;
-
-const SearchInput = styled(DebounceInput)`
-  &:focus {
-    outline: none;
-  }
-  flex: 1;
-  font-size: 0.85em;
-  @media print {
-    display: none;
-  }
-`;
-const Search = styled.div`
+const SearchWrapper = styled.div`
   position:absolute;
   width: 50%;
-  height: 45px;
   right: 10px;
   top: 10px;
   border-radius: 50px;
-  background-color: ${palette('light', 1)};
-  color: ${palette('dark', 2)};
-  padding: 2px 7px;
-  border: 1px solid ${({ active }) => active ? palette('light', 4) : palette('light', 2)};
-  box-shadow: 0 0 3px 0 ${({ active }) => active ? palette('dark', 2) : 'transparent'};
-  min-height: ${({ small }) => small ? 30 : 36}px;
+ // padding: 2px 7px;
+ // border: 1px solid ${({ active }) => active ? palette('light', 4) : palette('light', 2)};
+ // box-shadow: 0 0 3px 0 ${({ active }) => active ? palette('dark', 2) : 'transparent'};
+ // min-height: ${({ small }) => small ? 30 : 36}px;
 `;
 const ArrowIcon = styled(Icon)`
 font-weight: bold;
@@ -109,19 +95,11 @@ export function CardTeaser({
       <CardWrapper>
         {hasSearchField
           && (
-            <Search>
-              <SearchInput
+            <SearchWrapper>
+              <Search
                 id="search-input"
-                minLength={1}
-                debounceTimeout={500}
-                value=""
-                // active={activeSearchInput}
-                // onChange={(e) => onSearch(e.target.value)}
-                // onFocus={() => setActiveSearchInput(true)}
-                // onBlur={() => setActiveSearchInput(false)}
-                placeholder="Search for a country"
               />
-            </Search>
+            </SearchWrapper>
           )
         }
         <CardLink
