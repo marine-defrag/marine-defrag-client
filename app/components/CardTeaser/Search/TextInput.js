@@ -15,7 +15,7 @@ export default styled(TextInput)`
     font-weight: 400;
     opacity: 0.8;
   }
-  @media (min-width: ${({ theme }) => theme.breakpointsMin.medium}) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     font-size: ${({ theme }) => theme.text.medium.size};
   }
 `;

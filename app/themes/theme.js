@@ -376,9 +376,10 @@ theme.sizes = {
       claim: '1em',
     },
   },
-  searchInput: {
+  navCardSearch: {
     height: 45,
     borderRadius: 20,
+    padding: 15,
   },
 };
 

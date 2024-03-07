@@ -61,7 +61,6 @@ export function NavOptions({
           }}
           onFocus={() => onFocus && onFocus(index)}
           active={index === activeResult}
-        // disabled={country.disabled}
         >
           <Box direction="row" align="end" fill="horizontal" width="100%">
             <Text size="medium">

@@ -6,37 +6,25 @@
 
 import { defineMessages } from 'react-intl';
 
-export const scope = 'app.components.CardTeaser';
-
 export default defineMessages({
   search: {
-    id: `${scope}.search`,
+    id: 'app.components.CardTeaser.Search.search',
     defaultMessage: 'Search',
   },
   allSearch: {
-    id: `${scope}.allSearch`,
+    id: 'app.components.CardTeaser.Search.allSearch',
     defaultMessage: 'Search country',
   },
   exampleSearch: {
-    id: `${scope}.exampleSearch`,
+    id: 'app.components.CardTeaser.Search.exampleSearch',
     defaultMessage: 'e.g. try "Fiji" or "Brazil"',
   },
   countrySearch: {
-    id: `${scope}.countrySearch`,
+    id: 'app.components.CardTeaser.Search.countrySearch',
     defaultMessage: 'Search country',
   },
   noResults: {
-    id: `${scope}.noResults`,
+    id: 'app.components.CardTeaser.Search.noResults',
     defaultMessage: 'We are sorry! Your search did not return any results.',
-  },
-  optionGroups: {
-    overview: {
-      id: `${scope}.optionGroups.overview`,
-      defaultMessage: 'Overview',
-    },
-    countries: {
-      id: `${scope}.optionGroups.countries`,
-      defaultMessage: 'Country profiles',
-    },
   },
 });

@@ -14,8 +14,8 @@ import {
 } from 'grommet';
 
 import NormalImg from 'components/Img';
-import Icon from 'components/Icon';
 import Search from './Search';
+import BottomButtons from './BottomButtons';
 
 const Styled = styled((p) => <Box {...p} elevation="small" background="white" pad={{ top: 'small', bottom: 'small' }} />)`
   border-radius: 10px;
@@ -33,40 +33,17 @@ const CardLink = styled((p) => <Button plain as="a" fill="vertical" {...p} />)`
     color: ${({ theme }) => theme.global.colors.text.highlight};
   }
 `;
-const TitleWrap = styled((p) => <Box gap="none" margin={{ bottom: 'medium' }} {...p} />)``;
-const Count = styled((p) => <Text size="xxxlarge" weight="bold" {...p} />)``;
-const Title = styled((p) => <Text weight="bold" {...p} />)``;
+const TitleWrap = styled((p) => <Box {...p} />)``;
+const Count = styled((p) => <Text {...p} />)``;
+const Title = styled((p) => <Text {...p} />)``;
 const Description = styled((p) => <Text size="small" {...p} />)``;
 const CardGraphic = styled(NormalImg)`
   width:  ${({ isPrimary }) => isPrimary ? '50%' : '100%'};
 `;
-const ExploreText = styled((p) => <Text weight="bold" {...p} />)`
-  color: ${({ theme }) => theme.global.colors.text.brand};
-  &:hover {
-    color: ${({ theme }) => theme.global.colors.text.highlight};
-  }
-`;
-const BottomButtons = styled((p) => <Box {...p} />)`
-  padding: ${({ isPrimary }) => isPrimary ? '0px 15px 0px 0px' : '0px 15px'};
-  position: absolute;
-  right: 0px;
-  bottom: 0px;
-`;
 const SearchWrapper = styled((p) => <Box {...p} />)`
   position:absolute;
-  top: 10px;
+  top: ${({ theme }) => theme.sizes.navCardSearch.padding}px;
 `;
-const ArrowIcon = styled(Icon)`
-  font-weight: bold;
-`;
-
-function renderIcons(icons) {
-  return (
-    <Box direction="row" align="center">
-      {icons.map((icon, index) => <Icon name={icon} key={index} />)}
-    </Box>
-  );
-}
 
 export function CardTeaser({
   primary,
@@ -83,20 +60,17 @@ export function CardTeaser({
 }) {
   const theme = useContext(ThemeContext);
   const size = useContext(ResponsiveContext);
-
   return (
     <Styled basis={basis || 'full'}>
       <CardWrapper>
-        {hasSearchField
-          && (
-            <SearchWrapper direction="row" justify="between" fill="horizontal">
-              <Box width="100%" />
-              <Box direction="row" justify="between" fill="horizontal">
-                <Search options={countries} onSelect={onSelectCountry} placeholder="Quick select country" />
-              </Box>
-            </SearchWrapper>
-          )
-        }
+        {hasSearchField && isMinSize(size, 'medium') && (
+          <SearchWrapper direction="row" justify="between" fill="horizontal">
+            <Box width="100%" />
+            <Box direction="row" justify="between" fill="horizontal">
+              <Search options={countries} onSelect={onSelectCountry} placeholder="Quick select country" />
+            </Box>
+          </SearchWrapper>
+        )}
         <CardLink
           isPrimary={primary && isMinSize(size, 'large')}
           href={`${path}`}
@@ -106,12 +80,12 @@ export function CardTeaser({
             <CardGraphic
               isPrimary={primary}
               src={primary ? theme.media.navCardLarge : theme.media.navCardSmall}
-              alt="Nav card"
+              alt={`${title} - ${description}`}
             />
             <Box justify="end" width={primary ? '50%' : '100%'}>
-              <TitleWrap>
-                <Count size={primary ? 'xxxlarge' : 'xlarge'}>{count}</Count>
-                <Title size={primary ? 'xlarge' : 'normal'}>
+              <TitleWrap gap="none" margin={{ bottom: 'medium' }}>
+                <Count weight="bold" size={primary ? 'xxxlarge' : 'xlarge'}>{count}</Count>
+                <Title weight="bold" size={primary ? 'xlarge' : 'normal'}>
                   {title}
                 </Title>
               </TitleWrap>
@@ -123,18 +97,7 @@ export function CardTeaser({
             </Box>
           </Box>
         </CardLink>
-        <BottomButtons isPrimary={primary} direction="row" justify="between" fill="horizontal">
-          {primary && <Box width="100%" />}
-          <Box direction="row" justify="between" fill="horizontal">
-            <Button onClick={onClick}>
-              <Box pad="none" direction="row" align="center" gap="xsmall">
-                <ExploreText>Explore</ExploreText>
-                <ArrowIcon name="arrowRight" size="0.5em" />
-              </Box>
-            </Button>
-            {iconNames && renderIcons(iconNames)}
-          </Box>
-        </BottomButtons>
+        <BottomButtons primary={primary} iconNames={iconNames} onClick={onClick} />
       </CardWrapper>
     </Styled>
   );

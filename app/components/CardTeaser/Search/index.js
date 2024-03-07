@@ -8,7 +8,6 @@ import React, {
   useState, useRef, useEffect, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl } from 'react-intl';
 import { palette } from 'styled-theme';
 import styled from 'styled-components';
 
@@ -23,10 +22,10 @@ import { prepOptions } from './utils';
 const IconWrapper = styled((p) => <Box {...p} />)`
   cursor: pointer;
   background: ${palette('light', 3)};
-  border-top-right-radius: ${({ theme }) => theme.sizes.searchInput.borderRadius}px; 
-  border-bottom-right-radius: ${({ theme }) => theme.sizes.searchInput.borderRadius}px;   
-  height: ${({ theme }) => theme.sizes.searchInput.height}px;
-  width: ${({ theme }) => theme.sizes.searchInput.height}px; 
+  border-top-right-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px; 
+  border-bottom-right-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;   
+  height: ${({ theme }) => theme.sizes.navCardSearch.height}px;
+  width: ${({ theme }) => theme.sizes.navCardSearch.height}px; 
 `;
 const StyledSearchIcon = styled(SearchIcon)`
   stroke: ${palette('dark', 3)};
@@ -40,8 +39,8 @@ const StyledCloseIcon = styled(Close)`
   }
 `;
 const StyledTextInput = styled(TextInput)`
-  border-top-left-radius: ${({ theme }) => theme.sizes.searchInput.borderRadius}px; 
-  border-bottom-left-radius: ${({ theme }) => theme.sizes.searchInput.borderRadius}px;   
+  border-top-left-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px; 
+  border-bottom-left-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;   
 `;
 
 const Styled = styled.span`
@@ -77,12 +76,6 @@ export function Search({
     }
   };
 
-  /* useEffect(() => {
-     if ((focus || expand) && textInputRef) {
-       textInputRef.current.focus();
-     }
-   }, [focus, expand]); */
-
   useEffect(() => {
     if (hasToggle) {
       document.addEventListener('mousedown', outsideSearchClick);
@@ -104,7 +97,7 @@ export function Search({
         direction="row"
         align="center"
         ref={searchRef}
-        height={`${theme.sizes.searchInput.height}px`}
+        height={`${theme.sizes.navCardSearch.height}px`}
         pad={{ right: 'ms' }}
         margin={{ left: hasToggle ? 'ms' : '0' }}
       >
@@ -163,7 +156,7 @@ export function Search({
             activeResult={activeResult}
             setActiveResult={setActiveResult}
             options={sortedOptions}
-            maxResult={options.length}
+            maxResult={sortedOptions.length}
           />
         </Drop>
       )}
@@ -177,4 +170,4 @@ Search.propTypes = {
   onSelect: PropTypes.func,
 };
 
-export default injectIntl(Search);
+export default Search;
