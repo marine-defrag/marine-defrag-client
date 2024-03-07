@@ -12,12 +12,11 @@ const NavOptionWrap = styled(Box)`
 const StyledText = styled(Text)`
   padding: 0 10px 0 16px;
   margin-bottom: 2px;
+  font-weight: bold;
 `;
 
-export function NavOptionGroup({
-  label,
+export function NavOptions({
   options,
-  optionTextSize = 'medium',
   onClick,
   activeResult,
   focus,
@@ -47,45 +46,40 @@ export function NavOptionGroup({
       myRefs.current[activeResult].focus();
     }
   }, [options, activeResult, focus]);
+
   return (
-    <div>
-      <NavOptionWrap>
-        {label && (
-          <StyledText size="small">
-            {label}
-          </StyledText>
-        )}
-        {options.map((country, index) => (
-          <NavOption
-            key={country.code}
-            onClick={() => onClick(country.code)}
-            ref={(el) => {
-              myRefs.current[index] = el;
-            }}
-            onFocus={() => onFocus && onFocus(index)}
-            active={index === activeResult}
-            disabled={country.disabled}
-          >
-            <Box direction="row" align="end" fill="horizontal" width="100%">
-              <Text size={optionTextSize}>
-                {country.label}
-              </Text>
-            </Box>
-          </NavOption>
-        ))}
-      </NavOptionWrap>
-    </div>
+    <NavOptionWrap>
+      <StyledText size="small">
+        Countries
+      </StyledText>
+      {options.map((country, index) => (
+        <NavOption
+          key={country.code}
+          onClick={() => onClick(country.typeId)}
+          ref={(el) => {
+            myRefs.current[index] = el;
+          }}
+          onFocus={() => onFocus && onFocus(index)}
+          active={index === activeResult}
+          disabled={country.disabled}
+        >
+          <Box direction="row" align="end" fill="horizontal" width="100%">
+            <Text size="medium">
+              {country.label}
+            </Text>
+          </Box>
+        </NavOption>
+      ))}
+    </NavOptionWrap>
   );
 }
 
-NavOptionGroup.propTypes = {
-  label: PropTypes.string,
+NavOptions.propTypes = {
   options: PropTypes.array,
-  optionTextSize: PropTypes.string,
   onClick: PropTypes.func,
   onFocus: PropTypes.func,
   activeResult: PropTypes.number,
   focus: PropTypes.bool,
 };
 
-export default NavOptionGroup;
+export default NavOptions;

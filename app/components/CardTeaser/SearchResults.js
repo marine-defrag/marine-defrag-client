@@ -1,23 +1,17 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-
 import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
-import { Box } from 'grommet';
 
-import {
-  selectCountry,
-} from 'containers/App/actions';
+import { Box } from 'grommet';
 import Hint from './Hint';
+import NavOptions from './NavOptions';
 
 import messages from './messages';
-
-import NavOptionGroup from './NavOptionGroup';
-
 export function SearchResults({
   countries,
-  onSelectCountry,
   onSelect,
   onClose,
+  onSelectCountry,
   activeResult,
   setActiveResult,
   maxResult,
@@ -50,7 +44,7 @@ export function SearchResults({
   const hasCountries = countries && countries.size > 0;
 
   return (
-    <Box flex overflow="auto" pad={{ top: 'medium' }}>
+    <Box flex overflow="auto" margin={{ top: 'small' }} pad={{ top: 'medium' }}>
       {!hasCountries && (
         <Box pad="small">
           <Hint italic>
@@ -60,14 +54,13 @@ export function SearchResults({
       )}
       {hasCountries
         && (
-          <NavOptionGroup
-            label="Countries"
-            options={countries}
+          <NavOptions
+            options={countries.toList().toJS()}
             activeResult={activeResult}
-            onClick={(key) => {
+            onClick={(typeId) => {
               onClose();
               onSelect();
-              onSelectCountry(key);
+              onSelectCountry(typeId);
             }}
             focus={focus}
             onFocus={(index) => setActiveResult(index)
@@ -89,12 +82,5 @@ SearchResults.propTypes = {
   activeResult: PropTypes.number,
   maxResult: PropTypes.number,
 };
-
-export function mapDispatchToProps(dispatch) {
-  return {
-    onSelectCountry: (code) => dispatch(selectCountry(code)),
-    intl: intlShape.isRequired,
-  };
-}
 
 export default injectIntl(SearchResults);

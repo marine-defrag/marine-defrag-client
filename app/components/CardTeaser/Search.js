@@ -4,39 +4,63 @@
  *
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, {
+  useState, useRef, useEffect, useContext,
+} from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl } from 'react-intl';
+import { palette } from 'styled-theme';
+import styled from 'styled-components';
 
-import {
-  Box, Button, Drop, Text,
-} from 'grommet';
-import { Close, Search as SearchIcon } from 'grommet-icons';
+import { ACTORTYPES, ROUTES } from 'themes/config';
 
+import { updatePath } from 'containers/App/actions';
 import { selectActortypeActors } from 'containers/App/selectors';
 
-import { ACTORTYPES } from 'themes/config';
-import messages from './messages';
-import SearchResults from './SearchResults';
-import TextInput from './TextInput';
+import { Box, Drop, ThemeContext } from 'grommet';
+import { Close, Search as SearchIcon } from 'grommet-icons';
 import { prepCountries } from './utils';
 
+import SearchResults from './SearchResults';
+import TextInput from './TextInput';
+
+const IconWrapper = styled((p) => <Box {...p} />)`
+  cursor: pointer;
+  background: ${palette('light', 3)};
+  border-top-right-radius: ${({ theme }) => theme.sizes.searchInput.borderRadius}px; 
+  border-bottom-right-radius: ${({ theme }) => theme.sizes.searchInput.borderRadius}px;   
+  height: ${({ theme }) => theme.sizes.searchInput.height}px;
+  width: ${({ theme }) => theme.sizes.searchInput.height}px; 
+`;
+const StyledSearchIcon = styled(SearchIcon)`
+  stroke: ${palette('dark', 3)};
+  &:hover {
+    stroke: ${palette('dark', 4)};
+  }
+`;
+const StyledCloseIcon = styled(Close)`
+  &:hover {
+    stroke: ${palette('dark', 4)};
+  }
+`;
+const StyledTextInput = styled(TextInput)`
+  border-top-left-radius: ${({ theme }) => theme.sizes.searchInput.borderRadius}px; 
+  border-bottom-left-radius: ${({ theme }) => theme.sizes.searchInput.borderRadius}px;   
+`;
+
+const Styled = styled.span`
+  width: 100%;
+`;
 export function Search({
-  intl,
-  searched,
-  margin,
-  stretch,
   expand,
-  size = 'medium',
   onToggle,
   drop = true,
-  onSearch,
   focus,
   countries,
-  bordersize,
-  bordercolor,
+  onSelectCountry,
 }) {
+  const theme = useContext(ThemeContext);
   const hasToggle = typeof onToggle !== 'undefined';
   const [search, setSearch] = useState('');
   const [activeResult, setActiveResult] = useState(0);
@@ -63,7 +87,7 @@ export function Search({
     if ((focus || expand) && textInputRef) {
       textInputRef.current.focus();
     }
-  }, [searched, focus, expand]);
+  }, [focus, expand]);
 
   useEffect(() => {
     if (hasToggle) {
@@ -81,80 +105,39 @@ export function Search({
   }
 
   return (
-    <Box
-      margin={margin ? { horizontal: 'medium' } : null}
-      style={{ minWidth: expand ? '500px' : 0 }}
-    >
+    <Styled>
       <Box
-        border={{
-          color: expand ? 'dark' : bordercolor,
-          size: expand ? 'small' : bordersize,
-        }}
         direction="row"
         align="center"
-        round="xlarge"
         ref={searchRef}
-        style={stretch ? null : { maxWidth: '500px' }}
-        height="45px"
-        pad={{ horizontal: 'ms' }}
+        height={`${theme.sizes.searchInput.height}px`}
+        pad={{ right: 'ms' }}
         margin={{ left: hasToggle ? 'ms' : '0' }}
       >
-        {hasToggle && !expand && (
-          <Button
+        <>
+          <StyledTextInput
             plain
-            onClick={() => {
-              onToggle(true);
-              setActiveResult(0);
+            value={search}
+            onChange={(evt) => {
+              if (evt && evt.target) {
+                setSearch(evt.target.value);
+                setActiveResult(0);
+              }
             }}
-            label={
-              <Text weight={600}>{intl.formatMessage(messages.search)}</Text>
-            }
-            reverse
-            icon={<SearchIcon size={size} color="dark" />}
-            style={{ textAlign: 'center' }}
-            gap="xsmall"
+            placeholder="Quick select country"
+            ref={textInputRef}
           />
-        )}
-        {((hasToggle && expand) || !hasToggle) && (
-          <>
-            <TextInput
-              plain
-              value={search}
-              onChange={(evt) => {
-                if (evt && evt.target) {
-                  searched(evt.target.value);
-                  setSearch(evt.target.value);
-                  if (onSearch) onSearch(evt.target.value);
-                  setActiveResult(0);
-                }
-              }}
-              placeholder="Quick select country"
-              ref={textInputRef}
-            />
-            {!hasToggle && search.length === 0 && (
-              <Box pad={{ right: 'xsmall' }}>
-                <SearchIcon size={size} color="dark" />
-              </Box>
-            )}
-            {(hasToggle || search.length > 0) && (
-              <Button
-                plain
-                fill="vertical"
-                onClick={() => {
-                  setSearch('');
-                  if (onSearch) onSearch('');
-                  if (hasToggle) onToggle(false);
-                  setActiveResult(0);
-                }}
-                icon={<Close size={size} color="dark" />}
-                style={{
-                  textAlign: 'center',
-                  height: '45px',
-                }}
-              />
-            )}
-          </>
-        )}
+          {search.length === 0 && (
+            <IconWrapper justify="center" align="center">
+              <StyledSearchIcon size="xsmall" />
+            </IconWrapper>
+          )}
+          {search.length > 0 && (
+            <IconWrapper justify="center" align="center">
+              <StyledCloseIcon size="xsmall" />
+            </IconWrapper>
+          )}
+        </>
       </Box>
       {((hasToggle && expand) || !hasToggle) && drop && search.length > 1 && (
         <Drop
@@ -162,7 +145,6 @@ export function Search({
           target={searchRef.current}
           onClickOutside={() => {
             setSearch('');
-            if (onSearch) onSearch('');
             setActiveResult(0);
           }}
           ref={dropRef}
@@ -170,11 +152,11 @@ export function Search({
           <SearchResults
             onClose={() => {
               setSearch('');
-              if (onSearch) onSearch('');
               setActiveResult(0);
             }}
             search={search}
             onSelect={() => hasToggle && onToggle(false)}
+            onSelectCountry={onSelectCountry}
             activeResult={activeResult}
             setActiveResult={setActiveResult}
             countries={sortedCountries}
@@ -182,41 +164,25 @@ export function Search({
           />
         </Drop>
       )}
-    </Box>
+    </Styled>
   );
 }
 
 Search.propTypes = {
-  searched: PropTypes.func.isRequired,
-  onSearch: PropTypes.func,
   onToggle: PropTypes.func,
-  intl: intlShape.isRequired,
-  margin: PropTypes.bool,
-  stretch: PropTypes.bool,
   expand: PropTypes.bool,
   focus: PropTypes.bool,
   drop: PropTypes.bool,
-  size: PropTypes.string,
-  countries: PropTypes.array,
-  bordersize: PropTypes.string,
-  bordercolor: PropTypes.string,
+  countries: PropTypes.object,
+  onSelectCountry: PropTypes.func,
 };
 
-const mapDispatchToProps = () => ({
-  searched: () => {
-    /* dispatch(
-       trackEvent({
-         category: 'Search',
-         action: value,
-       }),
-     ); */
-  },
-  // navigate to location
-  nav: () => {
-    /* dispatch(
-       updatePath();
-   }, */ },
-});
+export function mapDispatchToProps(dispatch) {
+  return {
+    onSelectCountry: (typeId) => dispatch(updatePath(`${ROUTES.ACTOR}/${typeId}`, { replace: true })),
+  };
+}
+
 const mapStateToProps = (state) => ({
   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
 });

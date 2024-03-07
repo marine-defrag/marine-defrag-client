@@ -9,7 +9,6 @@ import {
 import Icon from 'components/Icon';
 
 import styled from 'styled-components';
-import { palette } from 'styled-theme';
 
 import { isMinSize } from 'utils/responsive';
 import Search from './Search';
@@ -52,17 +51,18 @@ const BottomButtons = styled((p) => <Box {...p} />)`
   right: 0px;
   bottom: 0px;
   `;
-const SearchWrapper = styled.div`
+const SearchWrapper = styled((p) => <Box {...p} />)`
   position:absolute;
-  width: 50%;
-  right: 10px;
   top: 10px;
-  border-radius: 50px;
- // padding: 2px 7px;
- // border: 1px solid ${({ active }) => active ? palette('light', 4) : palette('light', 2)};
- // box-shadow: 0 0 3px 0 ${({ active }) => active ? palette('dark', 2) : 'transparent'};
- // min-height: ${({ small }) => small ? 30 : 36}px;
-`;
+ `;
+// border-radius: ${({ theme }) => theme.sizes.searchInput.borderRadius}px;
+// background: ${palette('light', 1)};
+// background-image: linear-gradient(to right,  ${palette('light', 1)} 50%,  ${palette('light', 2)} 50%);
+// padding: 2px 7px;
+// border: 1px solid ${({ active }) => active ? palette('light', 4) : palette('light', 2)};
+// box-shadow: 0 0 3px 0 ${({ active }) => active ? palette('dark', 2) : 'transparent'};
+// min-height: ${({ small }) => small ? 30 : 36}px;
+
 const ArrowIcon = styled(Icon)`
 font-weight: bold;
 `;
@@ -80,13 +80,11 @@ export function CardTeaser({
   path,
   count,
   title,
-  // dataReady
   description,
   basis,
   iconNames,
   hasSearchField = false,
 }) {
-  // const [activeSearchInput, setActiveSearchInput] = useState(false);
   const theme = useContext(ThemeContext);
   const size = useContext(ResponsiveContext);
 
@@ -95,10 +93,11 @@ export function CardTeaser({
       <CardWrapper>
         {hasSearchField
           && (
-            <SearchWrapper>
-              <Search
-                id="search-input"
-              />
+            <SearchWrapper direction="row" justify="between" fill="horizontal">
+              <Box width="100%" />
+              <Box direction="row" justify="between" fill="horizontal">
+                <Search />
+              </Box>
             </SearchWrapper>
           )
         }

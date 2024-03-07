@@ -376,6 +376,10 @@ theme.sizes = {
       claim: '1em',
     },
   },
+  searchInput: {
+    height: 45,
+    borderRadius: 20,
+  },
 };
 
 // headerBrandMain: '2.2em',

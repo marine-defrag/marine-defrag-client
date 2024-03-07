@@ -10,6 +10,7 @@ export const prepCountries = (countries, search) => countries
     .map((country) => ({
       code: country.getIn(['attributes', 'code']),
       label: country.getIn(['attributes', 'title']),
+      typeId: country.get('id'),
     }))
     .filter((country) => filterCountry(country, search))
     .sort((a, b) => (a.label < b.label ? -1 : 1));
