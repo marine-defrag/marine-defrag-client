@@ -156,7 +156,7 @@ export function Search({
             activeResult={activeResult}
             setActiveResult={setActiveResult}
             options={sortedOptions}
-            maxResult={sortedOptions.length}
+            maxResult={sortedOptions.size}
           />
         </Drop>
       )}
