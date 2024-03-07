@@ -52,20 +52,20 @@ export function NavOptions({
       <StyledText size="small">
         Countries
       </StyledText>
-      {options.map((country, index) => (
+      {options.map((option, index) => (
         <NavOption
-          key={country.code}
-          onClick={() => onClick(country.typeId)}
+          key={option.code}
+          onClick={() => onClick(option.typeId)}
           ref={(el) => {
             myRefs.current[index] = el;
           }}
           onFocus={() => onFocus && onFocus(index)}
           active={index === activeResult}
-          disabled={country.disabled}
+        // disabled={country.disabled}
         >
           <Box direction="row" align="end" fill="horizontal" width="100%">
             <Text size="medium">
-              {country.label}
+              {option.label}
             </Text>
           </Box>
         </NavOption>

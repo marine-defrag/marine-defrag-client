@@ -8,22 +8,17 @@ import React, {
   useState, useRef, useEffect, useContext,
 } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { palette } from 'styled-theme';
 import styled from 'styled-components';
 
-import { ACTORTYPES, ROUTES } from 'themes/config';
-
-import { updatePath } from 'containers/App/actions';
-import { selectActortypeActors } from 'containers/App/selectors';
-
 import { Box, Drop, ThemeContext } from 'grommet';
 import { Close, Search as SearchIcon } from 'grommet-icons';
-import { prepCountries } from './utils';
 
 import SearchResults from './SearchResults';
 import TextInput from './TextInput';
+
+import { prepOptions } from './utils';
 
 const IconWrapper = styled((p) => <Box {...p} />)`
   cursor: pointer;
@@ -53,20 +48,19 @@ const Styled = styled.span`
   width: 100%;
 `;
 export function Search({
-  expand,
-  onToggle,
-  drop = true,
-  focus,
-  countries,
-  onSelectCountry,
+  options,
+  onSelect,
+  placeholder,
 }) {
   const theme = useContext(ThemeContext);
-  const hasToggle = typeof onToggle !== 'undefined';
-  const [search, setSearch] = useState('');
-  const [activeResult, setActiveResult] = useState(0);
   const searchRef = useRef(null);
   const textInputRef = useRef(null);
   const dropRef = useRef(null);
+
+  const [hasToggle, onToggle] = useState(false);
+  const [search, setSearch] = useState('');
+  const activeResetIndex = -1;
+  const [activeResult, setActiveResult] = useState(activeResetIndex);
 
   const outsideSearchClick = (e) => {
     // inside search click
@@ -83,11 +77,11 @@ export function Search({
     }
   };
 
-  useEffect(() => {
-    if ((focus || expand) && textInputRef) {
-      textInputRef.current.focus();
-    }
-  }, [focus, expand]);
+  /* useEffect(() => {
+     if ((focus || expand) && textInputRef) {
+       textInputRef.current.focus();
+     }
+   }, [focus, expand]); */
 
   useEffect(() => {
     if (hasToggle) {
@@ -97,11 +91,11 @@ export function Search({
       };
     }
     return () => { };
-  }, [expand]);
+  }, []);
 
-  let sortedCountries = [];
-  if (drop && search.length > 0) {
-    sortedCountries = countries ? prepCountries(countries, search) : [];
+  let sortedOptions = [];
+  if (search.length > 0) {
+    sortedOptions = options ? prepOptions(options, search) : [];
   }
 
   return (
@@ -121,10 +115,10 @@ export function Search({
             onChange={(evt) => {
               if (evt && evt.target) {
                 setSearch(evt.target.value);
-                setActiveResult(0);
+                setActiveResult(activeResetIndex);
               }
             }}
-            placeholder="Quick select country"
+            placeholder={placeholder}
             ref={textInputRef}
           />
           {search.length === 0 && (
@@ -133,34 +127,43 @@ export function Search({
             </IconWrapper>
           )}
           {search.length > 0 && (
-            <IconWrapper justify="center" align="center">
+            <IconWrapper
+              onClick={() => {
+                setSearch('');
+                setActiveResult(activeResetIndex);
+              }}
+              justify="center"
+              align="center"
+            >
               <StyledCloseIcon size="xsmall" />
             </IconWrapper>
           )}
         </>
       </Box>
-      {((hasToggle && expand) || !hasToggle) && drop && search.length > 1 && (
+      {!hasToggle && search.length > 1 && (
         <Drop
           align={{ top: 'bottom', left: 'left' }}
           target={searchRef.current}
           onClickOutside={() => {
             setSearch('');
-            setActiveResult(0);
+            setActiveResult(activeResetIndex);
           }}
           ref={dropRef}
         >
           <SearchResults
             onClose={() => {
               setSearch('');
-              setActiveResult(0);
+              setActiveResult(activeResetIndex);
             }}
             search={search}
-            onSelect={() => hasToggle && onToggle(false)}
-            onSelectCountry={onSelectCountry}
+            onSelect={(typeId) => {
+              onToggle(false);
+              onSelect(typeId);
+            }}
             activeResult={activeResult}
             setActiveResult={setActiveResult}
-            countries={sortedCountries}
-            maxResult={sortedCountries.length}
+            options={sortedOptions}
+            maxResult={options.length}
           />
         </Drop>
       )}
@@ -169,22 +172,9 @@ export function Search({
 }
 
 Search.propTypes = {
-  onToggle: PropTypes.func,
-  expand: PropTypes.bool,
-  focus: PropTypes.bool,
-  drop: PropTypes.bool,
-  countries: PropTypes.object,
-  onSelectCountry: PropTypes.func,
+  placeholder: PropTypes.string,
+  options: PropTypes.object,
+  onSelect: PropTypes.func,
 };
 
-export function mapDispatchToProps(dispatch) {
-  return {
-    onSelectCountry: (typeId) => dispatch(updatePath(`${ROUTES.ACTOR}/${typeId}`, { replace: true })),
-  };
-}
-
-const mapStateToProps = (state) => ({
-  countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(Search));
+export default injectIntl(Search);

@@ -8,10 +8,8 @@ import NavOptions from './NavOptions';
 
 import messages from './messages';
 export function SearchResults({
-  countries,
+  options,
   onSelect,
-  onClose,
-  onSelectCountry,
   activeResult,
   setActiveResult,
   maxResult,
@@ -41,27 +39,23 @@ export function SearchResults({
       document.removeEventListener('keydown', onKey, false);
     };
   }, [activeResult, maxResult]);
-  const hasCountries = countries && countries.size > 0;
+  const hasOptions = options && options.size > 0;
 
   return (
     <Box flex overflow="auto" margin={{ top: 'small' }} pad={{ top: 'medium' }}>
-      {!hasCountries && (
+      {!hasOptions && (
         <Box pad="small">
           <Hint italic>
             <FormattedMessage {...messages.noResults} />
           </Hint>
         </Box>
       )}
-      {hasCountries
+      {hasOptions
         && (
           <NavOptions
-            options={countries.toList().toJS()}
+            options={options.toList().toJS()}
             activeResult={activeResult}
-            onClick={(typeId) => {
-              onClose();
-              onSelect();
-              onSelectCountry(typeId);
-            }}
+            onClick={(typeId) => onSelect(typeId)}
             focus={focus}
             onFocus={(index) => setActiveResult(index)
             }
@@ -72,12 +66,9 @@ export function SearchResults({
 }
 
 SearchResults.propTypes = {
-  onSelectCountry: PropTypes.func,
-  setActiveResult: PropTypes.func,
-  countries: PropTypes.object,
-  onClose: PropTypes.func,
   onSelect: PropTypes.func,
-  search: PropTypes.string,
+  setActiveResult: PropTypes.func,
+  options: PropTypes.object,
   intl: intlShape.isRequired,
   activeResult: PropTypes.number,
   maxResult: PropTypes.number,

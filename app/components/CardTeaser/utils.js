@@ -5,23 +5,23 @@ import {
   lowerCase,
 } from 'utils/string';
 
-export const prepCountries = (countries, search) => countries
-  && countries
-    .map((country) => ({
-      code: country.getIn(['attributes', 'code']),
-      label: country.getIn(['attributes', 'title']),
-      typeId: country.get('id'),
+export const prepOptions = (options, search) => options
+  && options
+    .map((option) => ({
+      code: option.getIn(['attributes', 'code']),
+      label: option.getIn(['attributes', 'title']),
+      typeId: option.get('id'),
     }))
-    .filter((country) => filterCountry(country, search))
+    .filter((option) => filterOption(option, search))
     .sort((a, b) => (a.label < b.label ? -1 : 1));
 
-export const filterCountry = (country, search) => {
+export const filterOption = (option, search) => {
   if (!search || search.length < 2) return true;
   try {
     const regex = new RegExp(regExMultipleWords(search), 'i');
     return (
-      startsWith(lowerCase(country.code), lowerCase(search))
-      || regex.test(cleanupSearchTarget(country.label))
+      startsWith(lowerCase(option.code), lowerCase(search))
+      || regex.test(cleanupSearchTarget(option.label))
     );
   } catch (e) {
     return true;
