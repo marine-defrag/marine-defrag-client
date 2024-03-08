@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import { injectIntl, intlShape } from 'react-intl';
 
 import { isMinSize } from 'utils/responsive';
 import { ACTORTYPES, ROUTES } from 'themes/config';
@@ -16,6 +17,8 @@ import {
 import NormalImg from 'components/Img';
 import Search from './Search';
 import BottomButtons from './BottomButtons';
+
+import messages from './messages';
 
 const Styled = styled((p) => <Box {...p} elevation="small" background="white" pad={{ top: 'small', bottom: 'small' }} />)`
   border-radius: 10px;
@@ -46,6 +49,7 @@ const SearchWrapper = styled((p) => <Box {...p} />)`
 `;
 
 export function CardTeaser({
+  intl,
   primary,
   onClick,
   path,
@@ -67,7 +71,7 @@ export function CardTeaser({
           <SearchWrapper direction="row" justify="between" fill="horizontal">
             <Box width="100%" />
             <Box direction="row" justify="between" fill="horizontal">
-              <Search options={countries} onSelect={onSelectCountry} placeholder="Quick select country" />
+              <Search options={countries} onSelect={onSelectCountry} placeholder={intl.formatMessage(messages.searchPlaceholder)} />
             </Box>
           </SearchWrapper>
         )}
@@ -104,7 +108,7 @@ export function CardTeaser({
 }
 
 CardTeaser.propTypes = {
-  // intl: intlShape.isRequired,
+  intl: intlShape.isRequired,
   primary: PropTypes.bool,
   // dataReady: PropTypes.bool,
   onClick: PropTypes.func,
@@ -130,4 +134,4 @@ const mapStateToProps = (state) => ({
   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CardTeaser);
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(CardTeaser));

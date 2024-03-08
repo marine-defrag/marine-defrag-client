@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import { Box } from 'grommet';
 import Hint from './Hint';
@@ -69,9 +69,8 @@ SearchResults.propTypes = {
   onSelect: PropTypes.func,
   setActiveResult: PropTypes.func,
   options: PropTypes.object,
-  intl: intlShape.isRequired,
   activeResult: PropTypes.number,
   maxResult: PropTypes.number,
 };
 
-export default injectIntl(SearchResults);
+export default SearchResults;

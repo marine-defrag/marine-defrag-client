@@ -11,4 +11,8 @@ export default defineMessages({
     id: 'app.components.CardTeaser.explore',
     defaultMessage: 'Explore',
   },
+  searchPlaceholder: {
+    id: 'app.components.CardTeaser.searchPlaceholder',
+    defaultMessage: 'Quick select country',
+  },
 });
