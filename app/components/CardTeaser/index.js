@@ -20,7 +20,7 @@ import BottomButtons from './BottomButtons';
 
 import messages from './messages';
 
-const Styled = styled((p) => <Box {...p} elevation="small" background="white" pad={{ top: 'small', bottom: 'small' }} />)`
+const Styled = styled((p) => <Box {...p} elevation="small" background="white" />)`
   border-radius: 10px;
 `;
 const CardWrapper = styled.div`
@@ -29,7 +29,7 @@ const CardWrapper = styled.div`
   position: relative;
 `;
 const CardLink = styled((p) => <Button plain as="a" fill="vertical" {...p} />)`
-  padding: ${({ isPrimary }) => isPrimary ? '0px 15px 30px 0px' : '30px 15px'};
+  padding: ${({ isPrimary }) => isPrimary ? '0px 15px 45px 0px' : '35px 15px'};
   min-height: ${({ isPrimary }) => isPrimary ? 180 : 0}px;
   color: ${({ theme }) => theme.global.colors.text.brand};
   &:hover {
@@ -64,10 +64,11 @@ export function CardTeaser({
 }) {
   const theme = useContext(ThemeContext);
   const size = useContext(ResponsiveContext);
+  const isPrimaryLayout = primary && isMinSize(size, 'large');
   return (
     <Styled basis={basis || 'full'}>
       <CardWrapper>
-        {hasSearchField && isMinSize(size, 'medium') && (
+        {hasSearchField && isMinSize(size, 'large') && (
           <SearchWrapper direction="row" justify="between" fill="horizontal">
             <Box width="100%" />
             <Box direction="row" justify="between" fill="horizontal">
@@ -76,20 +77,20 @@ export function CardTeaser({
           </SearchWrapper>
         )}
         <CardLink
-          isPrimary={primary && isMinSize(size, 'large')}
+          isPrimary={isPrimaryLayout}
           href={`${path}`}
           onClick={onClick}
         >
-          <Box direction={primary ? 'row' : 'column'} justify="between" fill="vertical">
+          <Box direction={isPrimaryLayout ? 'row' : 'column'} justify="between" fill="vertical">
             <CardGraphic
-              isPrimary={primary}
-              src={primary ? theme.media.navCardLarge : theme.media.navCardSmall}
+              isPrimary={isPrimaryLayout}
+              src={isPrimaryLayout ? theme.media.navCardLarge : theme.media.navCardSmall}
               alt={`${title} - ${description}`}
             />
-            <Box justify="end" width={primary ? '50%' : '100%'}>
+            <Box justify="end" width={isPrimaryLayout ? '50%' : '100%'}>
               <TitleWrap gap="none" margin={{ bottom: 'medium' }}>
-                <Count weight="bold" size={primary ? 'xxxlarge' : 'xlarge'}>{count}</Count>
-                <Title weight="bold" size={primary ? 'xlarge' : 'normal'}>
+                <Count weight="bold" size={isPrimaryLayout ? 'xxxlarge' : 'xlarge'}>{count}</Count>
+                <Title weight="bold" size={isPrimaryLayout ? 'xlarge' : 'normal'}>
                   {title}
                 </Title>
               </TitleWrap>
@@ -101,7 +102,7 @@ export function CardTeaser({
             </Box>
           </Box>
         </CardLink>
-        <BottomButtons primary={primary} iconConfig={iconConfig} onClick={onClick} />
+        <BottomButtons primary={isPrimaryLayout} iconConfig={iconConfig} onClick={onClick} />
       </CardWrapper>
     </Styled>
   );

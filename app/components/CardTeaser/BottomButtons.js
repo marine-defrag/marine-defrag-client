@@ -22,7 +22,7 @@ const ExploreText = styled((p) => <Text weight="bold" {...p} />)`
   }
 `;
 const Styled = styled((p) => <Box {...p} />)`
-  padding: ${({ isPrimary, theme }) => isPrimary ? `0px ${theme.sizes.navCardSearch.padding}px 0px 0px` : `0px ${theme.sizes.navCardSearch.padding}px`};
+  padding: ${({ isPrimary, theme }) => isPrimary ? `0px ${theme.sizes.navCardSearch.padding}px 15px 0px` : `0px ${theme.sizes.navCardSearch.padding}px 10px 15px`};
   position: absolute;
   right: 0px;
   bottom: 0px;
