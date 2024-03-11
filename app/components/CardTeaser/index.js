@@ -58,7 +58,7 @@ export function CardTeaser({
   graphic,
 }) {
   const size = useContext(ResponsiveContext);
-  const isPrimaryLayout = isLandscape && isMinSize(size, 'large');
+  const isPrimaryLayout = isLandscape && isMinSize(size, 'ms');
   return (
     <Styled basis={basis || 'full'}>
       <CardWrapper>
