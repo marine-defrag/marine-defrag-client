@@ -9,11 +9,6 @@ const NavOptionWrap = styled(Box)`
   padding-top: 10px;
   padding-bottom: 30px;
 `;
-const StyledText = styled(Text)`
-  padding: 0 10px 0 16px;
-  margin-bottom: 2px;
-  font-weight: bold;
-`;
 
 export function NavOptions({
   options,
@@ -49,9 +44,6 @@ export function NavOptions({
 
   return (
     <NavOptionWrap>
-      <StyledText size="small">
-        Countries
-      </StyledText>
       {options.map((option, index) => (
         <NavOption
           key={option.code}
