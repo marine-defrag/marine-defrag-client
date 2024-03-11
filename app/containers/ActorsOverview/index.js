@@ -6,13 +6,15 @@ import { createStructuredSelector } from 'reselect';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Map } from 'immutable';
 import { Box, ResponsiveContext, ThemeContext } from 'grommet';
+import { Globe, List } from 'grommet-icons';
 
 import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
 
 import { ROUTES, ACTORTYPE_GROUPS, ACTORTYPES } from 'themes/config';
-import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
+import { CONFIG } from 'containers/ActorList/constants';
+import { loadEntitiesIfNeeded, updatePath, setView } from 'containers/App/actions';
 import { selectReady, selectIsUserManager, selectActortypeActors } from 'containers/App/selectors';
 
 import HeaderExplore from 'containers/HeaderExplore';
@@ -26,8 +28,6 @@ import { isMaxSize } from 'utils/responsive';
 import qe from 'utils/quasi-equals';
 import { selectActortypesWithActorCount } from './selectors';
 import { DEPENDENCIES } from './constants';
-
-import { getIconConfig } from './utils';
 
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
 const GroupTitle = styled.h5`
@@ -50,6 +50,7 @@ export function ActorsOverview({
   isUserManager,
   countries,
   onSelectActor,
+  onSetView,
 }) {
   useEffect(() => {
     // kick off loading of data
@@ -79,7 +80,28 @@ export function ActorsOverview({
                   {ACTORTYPE_GROUPS[key].types.map((typeId) => {
                     const path = `${ROUTES.ACTORS}/${typeId}`;
                     const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
-                    const iconConfig = getIconConfig(typeId);
+                    const iconConfig = [{
+                      type: 'list',
+                      hasView: CONFIG.views && !!CONFIG.views.list,
+                      icon: List,
+                      onClick: () => {
+                        onSetView('list');
+                        onUpdatePath(path, false);
+                      },
+                    },
+                    {
+                      type: 'map',
+                      hasView: typeId
+                        && CONFIG.views
+                        && CONFIG.views.map
+                        && CONFIG.views.map.types
+                        && CONFIG.views.map.types.indexOf(typeId) > -1,
+                      icon: Globe,
+                      onClick: () => {
+                        onSetView('map');
+                        onUpdatePath(path, false);
+                      },
+                    }];
                     return (
                       <CardTeaser
                         key={typeId}
@@ -122,6 +144,7 @@ ActorsOverview.propTypes = {
   isUserManager: PropTypes.bool,
   onLoadData: PropTypes.func.isRequired,
   onUpdatePath: PropTypes.func.isRequired,
+  onSetView: PropTypes.func.isRequired,
   onSelectActor: PropTypes.func.isRequired,
   types: PropTypes.instanceOf(Map),
   countries: PropTypes.instanceOf(Map),
@@ -140,11 +163,14 @@ export function mapDispatchToProps(dispatch) {
     onLoadData: () => {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
-    onUpdatePath: (path) => {
-      dispatch(updatePath(path, { dropQuery: true }));
+    onUpdatePath: (path, dropQuery = true) => {
+      dispatch(updatePath(path, { dropQuery }));
     },
     onSelectActor: (actorId) => {
       dispatch(updatePath(`${ROUTES.ACTOR}/${actorId}`, { replace: true }));
+    },
+    onSetView: (view) => {
+      dispatch(setView(view));
     },
   };
 }

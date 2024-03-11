@@ -46,9 +46,9 @@ const BottomButtons = ({ primary, iconConfig, onClick }) => {
         </Button>
         {iconConfig && (
           <Box direction="row" align="center" gap="xsmall">
-            {iconConfig.filter((icon) => icon.hasView).map((icon) => {
+            {iconConfig.filter((icon) => icon.hasView).map((icon, index) => {
               const ViewIcon = icon.icon;
-              return <ViewIcon color={iconColor} key={icon.type} size="xsmall" />;
+              return <Button key={index} plain icon={<ViewIcon color={iconColor} key={icon.type} size="xsmall" />} onClick={() => icon.onClick()} />;
             })}
           </Box>
         )}

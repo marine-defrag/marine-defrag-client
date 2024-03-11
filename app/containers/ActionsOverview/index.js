@@ -6,14 +6,16 @@ import { createStructuredSelector } from 'reselect';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Map } from 'immutable';
 import { Box, ResponsiveContext, ThemeContext } from 'grommet';
+import { Globe, Calendar, List } from 'grommet-icons';
 
 import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
 
 import { ROUTES, ACTIONTYPE_GROUPS } from 'themes/config';
-import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
+import { loadEntitiesIfNeeded, updatePath, setView } from 'containers/App/actions';
 import { selectReady } from 'containers/App/selectors';
+import { CONFIG } from 'containers/ActionList/constants';
 
 import HeaderExplore from 'containers/HeaderExplore';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
@@ -28,8 +30,6 @@ import { isMaxSize } from 'utils/responsive';
 import { selectActiontypesWithActionCount } from './selectors';
 import { DEPENDENCIES } from './constants';
 
-import { getIconConfig } from './utils';
-
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
 const GroupTitle = styled.h5`
   font-size: 14px;
@@ -43,7 +43,12 @@ const ViewContainer = styled(Container)`
   }
 `;
 export function ActionsOverview({
-  onLoadData, types, onUpdatePath, intl, dataReady,
+  onLoadData,
+  types,
+  onUpdatePath,
+  intl,
+  dataReady,
+  onSetView,
 }) {
   useEffect(() => {
     // kick off loading of data
@@ -68,7 +73,43 @@ export function ActionsOverview({
                   {ACTIONTYPE_GROUPS[key].types.map((typeId) => {
                     const path = `${ROUTES.ACTIONS}/${typeId}`;
                     const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
-                    const iconConfig = getIconConfig(typeId);
+                    const iconConfig = [{
+                      type: 'list',
+                      hasView: CONFIG.views && !!CONFIG.views.list,
+                      icon: List,
+                      onClick: () => {
+                        onSetView('list');
+                        onUpdatePath(path, false);
+                      },
+                    },
+                    {
+                      type: 'map',
+                      hasView: typeId
+                        && CONFIG.views
+                        && CONFIG.views.map
+                        && CONFIG.views.map.types
+                        && CONFIG.views.map.types.indexOf(typeId) > -1,
+                      icon: Globe,
+                      onClick: () => {
+                        onSetView('map');
+                        onUpdatePath(path, false);
+                      },
+                    },
+                    {
+                      type: 'timeline',
+                      hasView: typeId
+                        && CONFIG.views
+                        && CONFIG.views.timeline
+                        && CONFIG.views.timeline.types
+                        && CONFIG.views.timeline.types.indexOf(typeId) > -1,
+                      icon: Calendar,
+                      onClick: () => {
+                        onSetView('timeline');
+                        onUpdatePath(path, false);
+                      },
+                    },
+                    ];
+
                     return (
                       <CardTeaser
                         key={typeId}
@@ -108,6 +149,7 @@ ActionsOverview.propTypes = {
   dataReady: PropTypes.bool,
   onLoadData: PropTypes.func.isRequired,
   onUpdatePath: PropTypes.func.isRequired,
+  onSetView: PropTypes.func.isRequired,
   types: PropTypes.instanceOf(Map),
 };
 
@@ -121,8 +163,11 @@ export function mapDispatchToProps(dispatch) {
     onLoadData: () => {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
-    onUpdatePath: (path) => {
-      dispatch(updatePath(path, { dropQuery: true }));
+    onUpdatePath: (path, dropQuery = true) => {
+      dispatch(updatePath(path, { dropQuery }));
+    },
+    onSetView: (view) => {
+      dispatch(setView(view));
     },
   };
 }
