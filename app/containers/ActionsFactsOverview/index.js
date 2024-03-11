@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { injectIntl, intlShape } from 'react-intl';
 import { Map, List } from 'immutable';
-import { Box, Button, ResponsiveContext } from 'grommet';
+import {
+  Box, Button, ResponsiveContext, ThemeContext,
+} from 'grommet';
 
 import styled from 'styled-components';
 
@@ -67,6 +69,7 @@ export function ActionsFactsOverview({
       return 'without';
     }
   );
+  const theme = React.useContext(ThemeContext);
   const size = React.useContext(ResponsiveContext);
   return (
     <ContainerWrapper bg>
@@ -137,6 +140,7 @@ export function ActionsFactsOverview({
                               indicator.getIn(['attributes', 'title'])
                             }
                             description={lead}
+                            graphic={theme.media.navCard.indicators[indicator.get('id')]}
                           />
                         );
                       })}

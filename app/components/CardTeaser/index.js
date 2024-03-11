@@ -1,17 +1,12 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
 import { injectIntl, intlShape } from 'react-intl';
 
 import { isMinSize } from 'utils/responsive';
-import { ACTORTYPES, ROUTES } from 'themes/config';
-
-import { updatePath } from 'containers/App/actions';
-import { selectActortypeActors } from 'containers/App/selectors';
 
 import {
-  Box, Text, Button, ResponsiveContext, ThemeContext,
+  Box, Text, Button, ResponsiveContext,
 } from 'grommet';
 
 import NormalImg from 'components/Img';
@@ -29,7 +24,7 @@ const CardWrapper = styled.div`
   position: relative;
 `;
 const CardLink = styled((p) => <Button plain as="a" fill="vertical" {...p} />)`
-  padding: ${({ isPrimary }) => isPrimary ? '0px 15px 45px 0px' : '35px 15px'};
+  padding: ${({ isPrimary }) => isPrimary ? '0px 15px 45px 0px' : '0 15px 35px'};
   min-height: ${({ isPrimary }) => isPrimary ? 180 : 0}px;
   color: ${({ theme }) => theme.global.colors.text.brand};
   &:hover {
@@ -50,7 +45,7 @@ const SearchWrapper = styled((p) => <Box {...p} />)`
 
 export function CardTeaser({
   intl,
-  primary,
+  isLandscape,
   onClick,
   path,
   count,
@@ -58,21 +53,20 @@ export function CardTeaser({
   description,
   basis,
   iconConfig,
-  hasSearchField = false,
-  countries,
-  onSelectCountry,
+  searchOptions,
+  onSelectResult,
+  graphic,
 }) {
-  const theme = useContext(ThemeContext);
   const size = useContext(ResponsiveContext);
-  const isPrimaryLayout = primary && isMinSize(size, 'large');
+  const isPrimaryLayout = isLandscape && isMinSize(size, 'large');
   return (
     <Styled basis={basis || 'full'}>
       <CardWrapper>
-        {hasSearchField && isMinSize(size, 'large') && (
+        {searchOptions && isMinSize(size, 'large') && (
           <SearchWrapper direction="row" justify="between" fill="horizontal">
             <Box width="100%" />
             <Box direction="row" justify="between" fill="horizontal">
-              <Search options={countries} onSelect={onSelectCountry} placeholder={intl.formatMessage(messages.searchPlaceholder)} />
+              <Search options={searchOptions} onSelect={onSelectResult} placeholder={intl.formatMessage(messages.searchPlaceholder)} />
             </Box>
           </SearchWrapper>
         )}
@@ -82,11 +76,13 @@ export function CardTeaser({
           onClick={onClick}
         >
           <Box direction={isPrimaryLayout ? 'row' : 'column'} justify="between" fill="vertical">
-            <CardGraphic
-              isPrimary={isPrimaryLayout}
-              src={isPrimaryLayout ? theme.media.navCardLarge : theme.media.navCardSmall}
-              alt={`${title} - ${description}`}
-            />
+            {graphic && (
+              <CardGraphic
+                isPrimary={isPrimaryLayout}
+                src={isPrimaryLayout ? graphic.landscape : graphic.square}
+                alt={`${title} - ${description}`}
+              />
+            )}
             <Box justify="end" width={isPrimaryLayout ? '50%' : '100%'}>
               <TitleWrap gap="none" margin={{ bottom: 'medium' }}>
                 <Count weight="bold" size={isPrimaryLayout ? 'xxxlarge' : 'xlarge'}>{count}</Count>
@@ -110,7 +106,7 @@ export function CardTeaser({
 
 CardTeaser.propTypes = {
   intl: intlShape.isRequired,
-  primary: PropTypes.bool,
+  isLandscape: PropTypes.bool,
   // dataReady: PropTypes.bool,
   onClick: PropTypes.func,
   path: PropTypes.string,
@@ -119,20 +115,10 @@ CardTeaser.propTypes = {
   description: PropTypes.string,
   basis: PropTypes.string,
   iconConfig: PropTypes.object,
-  hasSearchField: PropTypes.bool,
-  onSelectCountry: PropTypes.func,
-  countries: PropTypes.object,
+  onSelectResult: PropTypes.func,
+  searchOptions: PropTypes.object,
+  graphic: PropTypes.object,
   // teaserImage: PropTypes.string,
 };
 
-export function mapDispatchToProps(dispatch) {
-  return {
-    onSelectCountry: (typeId) => dispatch(updatePath(`${ROUTES.ACTOR}/${typeId}`, { replace: true })),
-  };
-}
-
-const mapStateToProps = (state) => ({
-  countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(CardTeaser));
+export default injectIntl(CardTeaser);

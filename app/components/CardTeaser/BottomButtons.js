@@ -44,15 +44,13 @@ const BottomButtons = ({ primary, iconConfig, onClick }) => {
             <ArrowIcon name="arrowRight" size="0.5em" />
           </Box>
         </Button>
-        {iconConfig
-        && (
+        {iconConfig && (
           <Box direction="row" align="center" gap="xsmall">
-            {iconConfig.hasList && <List size="xsmall" color={iconColor} />}
-            {iconConfig.hasTimeline && <Calendar size="xsmall" color={iconColor} />}
             {iconConfig.hasMap && <Globe size="xsmall" color={iconColor} />}
+            {iconConfig.hasTimeline && <Calendar size="xsmall" color={iconColor} />}
+            {iconConfig.hasList && <List size="xsmall" color={iconColor} />}
           </Box>
-        )
-        }
+        )}
       </Box>
     </Styled>
   );

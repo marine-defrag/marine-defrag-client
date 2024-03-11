@@ -5,7 +5,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Map } from 'immutable';
-import { Box, ResponsiveContext } from 'grommet';
+import { Box, ResponsiveContext, ThemeContext } from 'grommet';
 
 import styled from 'styled-components';
 
@@ -22,6 +22,7 @@ import Content from 'components/styled/ContentSimple';
 import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
 
+import qe from 'utils/quasi-equals';
 import { isMaxSize } from 'utils/responsive';
 import { CONFIG } from 'containers/ActionList/constants';
 import { selectActiontypesWithActionCount } from './selectors';
@@ -46,60 +47,64 @@ export function ActionsOverview({
     // kick off loading of data
     onLoadData();
   }, []);
+  const theme = React.useContext(ThemeContext);
   const size = React.useContext(ResponsiveContext);
+  const hasList = CONFIG.views && !!CONFIG.views.list;
   return (
     <ContainerWrapper bg>
       <HeaderExplore />
       <ViewContainer>
         <Content>
-          {Object.keys(ACTIONTYPE_GROUPS).map((key) => (
-            <Group key={key}>
-              <GroupTitle>
-                <FormattedMessage {...appMessages.actiontypeGroups[key]} />
-              </GroupTitle>
-              <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
-                {ACTIONTYPE_GROUPS[key].types.map((typeId) => {
-                  const path = `${ROUTES.ACTIONS}/${typeId}`;
-                  const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
-                  const { primary } = ACTIONTYPE_GROUPS[key];
-                  const hasList = CONFIG.views && !!CONFIG.views.list;
-                  const hasMapOption = typeId
-                    && CONFIG.views
-                    && CONFIG.views.map
-                    && CONFIG.views.map.types
-                    && CONFIG.views.map.types.indexOf(typeId) > -1;
-                  const hasTimelineOption = typeId
-                    && CONFIG.views
-                    && CONFIG.views.timeline
-                    && CONFIG.views.timeline.types
-                    && CONFIG.views.timeline.types.indexOf(typeId) > -1;
-                  return (
-                    <CardTeaser
-                      key={typeId}
-                      basis={primary ? 'full' : '1/4'}
-                      primary={primary}
-                      path={path}
-                      onClick={(evt) => {
-                        if (evt && evt.preventDefault) evt.preventDefault();
-                        onUpdatePath(path);
-                      }}
-                      dataReady={dataReady}
-                      count={count}
-                      title={
-                        intl.formatMessage(appMessages.actiontypes_long[typeId])
-                      }
-                      description={
-                        intl.formatMessage(appMessages.actiontypes_about[typeId])
-                      }
-                      iconConfig={{
-                        hasList, hasTimeline: hasTimelineOption, hasMap: hasMapOption,
-                      }}
-                    />
-                  );
-                })}
-              </Box>
-            </Group>
-          ))}
+          {Object.keys(ACTIONTYPE_GROUPS).map((key) => {
+            const isLandscape = qe(key, 1);
+            return (
+              <Group key={key}>
+                <GroupTitle>
+                  <FormattedMessage {...appMessages.actiontypeGroups[key]} />
+                </GroupTitle>
+                <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
+                  {ACTIONTYPE_GROUPS[key].types.map((typeId) => {
+                    const path = `${ROUTES.ACTIONS}/${typeId}`;
+                    const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
+                    const hasMapOption = typeId
+                      && CONFIG.views
+                      && CONFIG.views.map
+                      && CONFIG.views.map.types
+                      && CONFIG.views.map.types.indexOf(typeId) > -1;
+                    const hasTimelineOption = typeId
+                      && CONFIG.views
+                      && CONFIG.views.timeline
+                      && CONFIG.views.timeline.types
+                      && CONFIG.views.timeline.types.indexOf(typeId) > -1;
+                    return (
+                      <CardTeaser
+                        key={typeId}
+                        basis={isLandscape ? 'full' : '1/4'}
+                        path={path}
+                        onClick={(evt) => {
+                          if (evt && evt.preventDefault) evt.preventDefault();
+                          onUpdatePath(path);
+                        }}
+                        dataReady={dataReady}
+                        count={count}
+                        title={
+                          intl.formatMessage(appMessages.actiontypes_long[typeId])
+                        }
+                        description={
+                          intl.formatMessage(appMessages.actiontypes_about[typeId])
+                        }
+                        iconConfig={{
+                          hasList, hasTimeline: hasTimelineOption, hasMap: hasMapOption,
+                        }}
+                        isLandscape={isLandscape}
+                        graphic={theme.media.navCard.activities[typeId]}
+                      />
+                    );
+                  })}
+                </Box>
+              </Group>
+            );
+          })}
         </Content>
       </ViewContainer>
       <Footer />

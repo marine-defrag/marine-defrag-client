@@ -5,15 +5,15 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import { Map } from 'immutable';
-import { Box, ResponsiveContext } from 'grommet';
+import { Box, ResponsiveContext, ThemeContext } from 'grommet';
 
 import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
 
-import { ROUTES, ACTORTYPE_GROUPS } from 'themes/config';
+import { ROUTES, ACTORTYPE_GROUPS, ACTORTYPES } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
-import { selectReady, selectIsUserManager } from 'containers/App/selectors';
+import { selectReady, selectIsUserManager, selectActortypeActors } from 'containers/App/selectors';
 
 import HeaderExplore from 'containers/HeaderExplore';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
@@ -23,6 +23,7 @@ import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
 
 import { isMaxSize } from 'utils/responsive';
+import qe from 'utils/quasi-equals';
 import { CONFIG } from 'containers/ActorList/constants';
 import { selectActortypesWithActorCount } from './selectors';
 import { DEPENDENCIES } from './constants';
@@ -46,11 +47,14 @@ export function ActorsOverview({
   intl,
   dataReady,
   isUserManager,
+  countries,
+  onSelectActor,
 }) {
   useEffect(() => {
     // kick off loading of data
     onLoadData();
   }, []);
+  const theme = React.useContext(ThemeContext);
   const size = React.useContext(ResponsiveContext);
   const groupIds = Object.keys(ACTORTYPE_GROUPS).filter(
     (key) => ACTORTYPE_GROUPS[key].managerOnly
@@ -58,53 +62,57 @@ export function ActorsOverview({
       : true
   );
 
+  const hasList = CONFIG.views && !!CONFIG.views.list;
   return (
     <ContainerWrapper bg>
       <HeaderExplore />
       <ViewContainer>
         <Content>
-          {groupIds.map((key) => (
-            <Group key={key}>
-              <GroupTitle>
-                <FormattedMessage {...appMessages.actortypeGroups[key]} />
-              </GroupTitle>
-              <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
-                {ACTORTYPE_GROUPS[key].types.map((typeId) => {
-                  const path = `${ROUTES.ACTORS}/${typeId}`;
-                  const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
-                  const { primary } = ACTORTYPE_GROUPS[key];
-                  const hasList = CONFIG.views && !!CONFIG.views.list;
-                  const hasMapOption = typeId
-                    && CONFIG.views
-                    && CONFIG.views.map
-                    && CONFIG.views.map.types
-                    && CONFIG.views.map.types.indexOf(typeId) > -1;
-                  return (
-                    <CardTeaser
-                      key={typeId}
-                      basis={primary ? 'full' : '1/4'}
-                      primary={primary}
-                      path={path}
-                      onClick={(evt) => {
-                        if (evt && evt.preventDefault) evt.preventDefault();
-                        onUpdatePath(path);
-                      }}
-                      dataReady={dataReady}
-                      count={count}
-                      title={
-                        intl.formatMessage(appMessages.actortypes_long[typeId])
-                      }
-                      description={
-                        intl.formatMessage(appMessages.actortypes_about[typeId])
-                      }
-                      iconConfig={{ hasMap: hasMapOption, hasList }}
-                      hasSearchField={primary}
-                    />
-                  );
-                })}
-              </Box>
-            </Group>
-          ))}
+          {groupIds.map((key) => {
+            const isLandscape = qe(key, 1);
+            return (
+              <Group key={key}>
+                <GroupTitle>
+                  <FormattedMessage {...appMessages.actortypeGroups[key]} />
+                </GroupTitle>
+                <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
+                  {ACTORTYPE_GROUPS[key].types.map((typeId) => {
+                    const path = `${ROUTES.ACTORS}/${typeId}`;
+                    const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
+                    const hasMapOption = typeId
+                      && CONFIG.views
+                      && CONFIG.views.map
+                      && CONFIG.views.map.types
+                      && CONFIG.views.map.types.indexOf(typeId) > -1;
+                    return (
+                      <CardTeaser
+                        key={typeId}
+                        basis={isLandscape ? 'full' : '1/4'}
+                        isLandscape={isLandscape}
+                        path={path}
+                        onClick={(evt) => {
+                          if (evt && evt.preventDefault) evt.preventDefault();
+                          onUpdatePath(path);
+                        }}
+                        dataReady={dataReady}
+                        count={count}
+                        title={
+                          intl.formatMessage(appMessages.actortypes_long[typeId])
+                        }
+                        description={
+                          intl.formatMessage(appMessages.actortypes_about[typeId])
+                        }
+                        iconConfig={{ hasMap: hasMapOption, hasList }}
+                        searchOptions={typeId === ACTORTYPES.COUNTRY ? countries : null}
+                        onSelectResult={(actorId) => onSelectActor(actorId)}
+                        graphic={theme.media.navCard.actors[typeId]}
+                      />
+                    );
+                  })}
+                </Box>
+              </Group>
+            );
+          })}
         </Content>
       </ViewContainer>
       <Footer />
@@ -118,13 +126,17 @@ ActorsOverview.propTypes = {
   isUserManager: PropTypes.bool,
   onLoadData: PropTypes.func.isRequired,
   onUpdatePath: PropTypes.func.isRequired,
+  onSelectActor: PropTypes.func.isRequired,
   types: PropTypes.instanceOf(Map),
+  countries: PropTypes.instanceOf(Map),
 };
 
 const mapStateToProps = createStructuredSelector({
   dataReady: (state) => selectReady(state, DEPENDENCIES),
   types: (state) => selectActortypesWithActorCount(state),
   isUserManager: (state) => selectIsUserManager(state),
+  countries: (state) => selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
+
 });
 
 export function mapDispatchToProps(dispatch) {
@@ -134,6 +146,9 @@ export function mapDispatchToProps(dispatch) {
     },
     onUpdatePath: (path) => {
       dispatch(updatePath(path, { dropQuery: true }));
+    },
+    onSelectActor: (actorId) => {
+      dispatch(updatePath(`${ROUTES.ACTOR}/${actorId}`, { replace: true }));
     },
   };
 }

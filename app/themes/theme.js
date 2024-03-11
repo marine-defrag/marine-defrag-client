@@ -8,12 +8,29 @@ import headerLogoPrint2x from 'themes/media/headerLogoPrint@2x.png';
 import graphicHome from 'themes/media/homeGraphic.png';
 import graphicHome2x from 'themes/media/homeGraphic@2x.png';
 
-import navCard from 'themes/media/navCard.png';
-import navCard2x from 'themes/media/navCard@2x.png';
+import navCardActivities1 from 'themes/media/nav-card-illu-activities-1.png';
+import navCardActivities2 from 'themes/media/nav-card-illu-activities-2.png';
+import navCardActivities3 from 'themes/media/nav-card-illu-activities-3.png';
+import navCardActivities4 from 'themes/media/nav-card-illu-activities-4.png';
+import navCardActivities5 from 'themes/media/nav-card-illu-activities-5.png';
+import navCardActivities6 from 'themes/media/nav-card-illu-activities-6.png';
+import navCardLandscapeActivities5 from 'themes/media/nav-card-illu-activities-5-landscape.png';
+import navCardActors1 from 'themes/media/nav-card-illu-actors-1.png';
+import navCardActors2 from 'themes/media/nav-card-illu-actors-2.png';
+import navCardActors3 from 'themes/media/nav-card-illu-actors-3.png';
+import navCardActors4 from 'themes/media/nav-card-illu-actors-4.png';
+import navCardActors5 from 'themes/media/nav-card-illu-actors-5.png';
+import navCardLandscapeActors1 from 'themes/media/nav-card-illu-actors-1-landscape.png';
 
-import navCard2 from 'themes/media/navCard2.png';
-import navCard2_2x from 'themes/media/navCard2@2x.png';
+import navCardIndicatorDefault from 'themes/media/nav-card-illu-indicators-default.png';
+import navCardLandscapeIndicatorDefault from 'themes/media/nav-card-illu-indicators-default-landscape.png';
 
+// import navCardIndicatorDensity from 'themes/media/nav-card-illu-indicators-density.png';
+import navCardIndicatorPerCapita from 'themes/media/nav-card-illu-indicators-percapita.png';
+// import navCardIndicatorPerCapitaLandscape from 'themes/media/nav-card-illu-indicators-percapita-landscape.png';
+import navCardIndicatorWeight from 'themes/media/nav-card-illu-indicators-weight.png';
+import navCardIndicatorPercentage from 'themes/media/nav-card-illu-indicators-percentage.png';
+import navCardIndicatorValue from 'themes/media/nav-card-illu-indicators-value.png';
 // import impactossLogo from 'themes/media/impactoss.png';
 // import impactossLogo2x from 'themes/media/impactoss@2x.png';
 
@@ -26,9 +43,106 @@ theme.media = {
   headerLogo: [headerLogo, headerLogo2x],
   headerLogoPrint: [headerLogoPrint, headerLogoPrint2x],
   graphicHome: [graphicHome, graphicHome2x],
-  navCardSmall: [navCard, navCard2x],
-  navCardLarge: [navCard2, navCard2_2x],
-
+  navCard: {
+    actors: {
+      1: {
+        square: [navCardActors1],
+        landscape: [navCardLandscapeActors1],
+      },
+      2: {
+        square: [navCardActors2],
+        landscape: [navCardActors2],
+      },
+      3: {
+        square: [navCardActors3],
+        landscape: [navCardActors3],
+      },
+      4: {
+        square: [navCardActors4],
+        landscape: [navCardActors4],
+      },
+      5: {
+        square: [navCardActors5],
+        landscape: [navCardActors5],
+      },
+    },
+    activities: {
+      1: {
+        square: [navCardActivities1],
+        landscape: [navCardActivities1],
+      },
+      2: {
+        square: [navCardActivities2],
+        landscape: [navCardActivities2],
+      },
+      3: {
+        square: [navCardActivities3],
+        landscape: [navCardActivities3],
+      },
+      4: {
+        square: [navCardActivities4],
+        landscape: [navCardActivities4],
+      },
+      5: {
+        square: [navCardActivities5],
+        landscape: [navCardLandscapeActivities5],
+      },
+      6: {
+        square: [navCardActivities6],
+        landscape: [navCardActivities6],
+      },
+    },
+    indicators: {
+      default: {
+        square: [navCardIndicatorDefault],
+        landscape: [navCardLandscapeIndicatorDefault],
+      },
+      716: {
+        square: [navCardIndicatorPerCapita],
+        landscape: [navCardIndicatorPerCapita],
+      },
+      717: {
+        square: [navCardIndicatorPercentage],
+        landscape: [navCardIndicatorPercentage],
+      },
+      731: {
+        square: [navCardIndicatorPercentage],
+        landscape: [navCardIndicatorPercentage],
+      },
+      730: {
+        square: [navCardIndicatorWeight],
+        landscape: [navCardIndicatorWeight],
+      },
+      732: {
+        square: [navCardIndicatorWeight],
+        landscape: [navCardIndicatorWeight],
+      },
+      733: {
+        square: [navCardIndicatorPercentage],
+        landscape: [navCardIndicatorPercentage],
+      },
+      726: {
+        square: [navCardIndicatorValue],
+        landscape: [navCardIndicatorValue],
+      },
+      727: {
+        square: [navCardIndicatorWeight],
+        landscape: [navCardIndicatorWeight],
+      },
+      728: {
+        square: [navCardIndicatorValue],
+        landscape: [navCardIndicatorValue],
+      },
+      729: {
+        square: [navCardIndicatorWeight],
+        landscape: [navCardIndicatorWeight],
+      },
+      814: {
+        square: [navCardIndicatorWeight],
+        landscape: [navCardIndicatorWeight],
+      },
+    },
+  },
   // impactossLogo: [impactossLogo, impactossLogo2x],
 };
 

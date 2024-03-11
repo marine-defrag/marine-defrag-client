@@ -153,7 +153,6 @@ export const ACTIONTYPE_GROUPS = {
   // donor activities
   1: {
     types: [ACTIONTYPES.DONOR], // donor activities
-    primary: true,
   },
   // policies etc
   2: {
@@ -173,7 +172,6 @@ export const ACTORTYPE_GROUPS = {
   // countries
   1: {
     types: [ACTORTYPES.COUNTRY],
-    primary: true,
   },
   // policies etc
   2: {
