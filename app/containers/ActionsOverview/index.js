@@ -24,9 +24,11 @@ import Footer from 'containers/Footer';
 
 import qe from 'utils/quasi-equals';
 import { isMaxSize } from 'utils/responsive';
-import { CONFIG } from 'containers/ActionList/constants';
+
 import { selectActiontypesWithActionCount } from './selectors';
 import { DEPENDENCIES } from './constants';
+
+import { getIconConfig } from './utils';
 
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
 const GroupTitle = styled.h5`
@@ -49,7 +51,7 @@ export function ActionsOverview({
   }, []);
   const theme = React.useContext(ThemeContext);
   const size = React.useContext(ResponsiveContext);
-  const hasList = CONFIG.views && !!CONFIG.views.list;
+
   return (
     <ContainerWrapper bg>
       <HeaderExplore />
@@ -66,16 +68,7 @@ export function ActionsOverview({
                   {ACTIONTYPE_GROUPS[key].types.map((typeId) => {
                     const path = `${ROUTES.ACTIONS}/${typeId}`;
                     const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
-                    const hasMapOption = typeId
-                      && CONFIG.views
-                      && CONFIG.views.map
-                      && CONFIG.views.map.types
-                      && CONFIG.views.map.types.indexOf(typeId) > -1;
-                    const hasTimelineOption = typeId
-                      && CONFIG.views
-                      && CONFIG.views.timeline
-                      && CONFIG.views.timeline.types
-                      && CONFIG.views.timeline.types.indexOf(typeId) > -1;
+                    const iconConfig = getIconConfig(typeId);
                     return (
                       <CardTeaser
                         key={typeId}
@@ -93,9 +86,7 @@ export function ActionsOverview({
                         description={
                           intl.formatMessage(appMessages.actiontypes_about[typeId])
                         }
-                        iconConfig={{
-                          hasList, hasTimeline: hasTimelineOption, hasMap: hasMapOption,
-                        }}
+                        iconConfig={iconConfig}
                         isLandscape={isLandscape}
                         graphic={theme.media.navCard.activities[typeId]}
                       />

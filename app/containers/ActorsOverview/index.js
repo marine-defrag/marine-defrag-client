@@ -24,9 +24,10 @@ import Footer from 'containers/Footer';
 
 import { isMaxSize } from 'utils/responsive';
 import qe from 'utils/quasi-equals';
-import { CONFIG } from 'containers/ActorList/constants';
 import { selectActortypesWithActorCount } from './selectors';
 import { DEPENDENCIES } from './constants';
+
+import { getIconConfig } from './utils';
 
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
 const GroupTitle = styled.h5`
@@ -62,7 +63,6 @@ export function ActorsOverview({
       : true
   );
 
-  const hasList = CONFIG.views && !!CONFIG.views.list;
   return (
     <ContainerWrapper bg>
       <HeaderExplore />
@@ -79,11 +79,7 @@ export function ActorsOverview({
                   {ACTORTYPE_GROUPS[key].types.map((typeId) => {
                     const path = `${ROUTES.ACTORS}/${typeId}`;
                     const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
-                    const hasMapOption = typeId
-                      && CONFIG.views
-                      && CONFIG.views.map
-                      && CONFIG.views.map.types
-                      && CONFIG.views.map.types.indexOf(typeId) > -1;
+                    const iconConfig = getIconConfig(typeId);
                     return (
                       <CardTeaser
                         key={typeId}
@@ -102,7 +98,7 @@ export function ActorsOverview({
                         description={
                           intl.formatMessage(appMessages.actortypes_about[typeId])
                         }
-                        iconConfig={{ hasMap: hasMapOption, hasList }}
+                        iconConfig={iconConfig}
                         searchOptions={typeId === ACTORTYPES.COUNTRY ? countries : null}
                         onSelectResult={(actorId) => onSelectActor(actorId)}
                         graphic={theme.media.navCard.actors[typeId]}

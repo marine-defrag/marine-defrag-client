@@ -114,7 +114,7 @@ CardTeaser.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   basis: PropTypes.string,
-  iconConfig: PropTypes.object,
+  iconConfig: PropTypes.array,
   onSelectResult: PropTypes.func,
   searchOptions: PropTypes.object,
   graphic: PropTypes.object,

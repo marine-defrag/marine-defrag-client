@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import {
   Box, Text, Button, ThemeContext,
 } from 'grommet';
-import { Globe, Calendar, List } from 'grommet-icons';
 import Icon from 'components/Icon';
+
 import { FormattedMessage } from 'react-intl';
 
 import messages from './messages';
@@ -46,9 +46,10 @@ const BottomButtons = ({ primary, iconConfig, onClick }) => {
         </Button>
         {iconConfig && (
           <Box direction="row" align="center" gap="xsmall">
-            {iconConfig.hasMap && <Globe size="xsmall" color={iconColor} />}
-            {iconConfig.hasTimeline && <Calendar size="xsmall" color={iconColor} />}
-            {iconConfig.hasList && <List size="xsmall" color={iconColor} />}
+            {iconConfig.filter((icon) => icon.hasView).map((icon) => {
+              const ViewIcon = icon.icon;
+              return <ViewIcon color={iconColor} key={icon.type} size="xsmall" />;
+            })}
           </Box>
         )}
       </Box>
@@ -59,7 +60,7 @@ const BottomButtons = ({ primary, iconConfig, onClick }) => {
 BottomButtons.propTypes = {
   primary: PropTypes.bool,
   onClick: PropTypes.func,
-  iconConfig: PropTypes.object,
+  iconConfig: PropTypes.array,
 };
 
 export default BottomButtons;
