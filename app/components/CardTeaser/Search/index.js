@@ -136,7 +136,7 @@ export function Search({
       {!hasToggle && search.length > 1 && (
         <Drop
           align={{ top: 'bottom', left: 'left' }}
-          target={textInputRef.current}
+          target={searchRef.current}
           onClickOutside={() => {
             setSearch('');
             setActiveResult(activeResetIndex);
