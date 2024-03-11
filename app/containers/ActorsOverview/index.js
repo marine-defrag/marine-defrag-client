@@ -11,7 +11,7 @@ import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
 
-import { ROUTES, ACTORTYPE_GROUPS, CARDTEASER_ICONS } from 'themes/config';
+import { ROUTES, ACTORTYPE_GROUPS } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import { selectReady, selectIsUserManager } from 'containers/App/selectors';
 
@@ -21,7 +21,9 @@ import Container from 'components/styled/Container';
 import Content from 'components/styled/ContentSimple';
 import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
+
 import { isMaxSize } from 'utils/responsive';
+import { CONFIG } from 'containers/ActorList/constants';
 import { selectActortypesWithActorCount } from './selectors';
 import { DEPENDENCIES } from './constants';
 
@@ -55,6 +57,7 @@ export function ActorsOverview({
       ? isUserManager
       : true
   );
+
   return (
     <ContainerWrapper bg>
       <HeaderExplore />
@@ -70,7 +73,12 @@ export function ActorsOverview({
                   const path = `${ROUTES.ACTORS}/${typeId}`;
                   const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
                   const { primary } = ACTORTYPE_GROUPS[key];
-                  const iconNames = CARDTEASER_ICONS.ACTORS[typeId];
+                  const hasList = CONFIG.views && !!CONFIG.views.list;
+                  const hasMapOption = typeId
+                    && CONFIG.views
+                    && CONFIG.views.map
+                    && CONFIG.views.map.types
+                    && CONFIG.views.map.types.indexOf(typeId) > -1;
                   return (
                     <CardTeaser
                       key={typeId}
@@ -89,7 +97,7 @@ export function ActorsOverview({
                       description={
                         intl.formatMessage(appMessages.actortypes_about[typeId])
                       }
-                      iconNames={iconNames}
+                      iconConfig={{ hasMap: hasMapOption, hasList }}
                       hasSearchField={primary}
                     />
                   );

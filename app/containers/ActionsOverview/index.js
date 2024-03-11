@@ -11,7 +11,7 @@ import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
 
-import { ROUTES, ACTIONTYPE_GROUPS, CARDTEASER_ICONS } from 'themes/config';
+import { ROUTES, ACTIONTYPE_GROUPS } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import { selectReady } from 'containers/App/selectors';
 
@@ -23,9 +23,9 @@ import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
 
 import { isMaxSize } from 'utils/responsive';
+import { CONFIG } from 'containers/ActionList/constants';
 import { selectActiontypesWithActionCount } from './selectors';
 import { DEPENDENCIES } from './constants';
-
 
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;
 const GroupTitle = styled.h5`
@@ -47,7 +47,6 @@ export function ActionsOverview({
     onLoadData();
   }, []);
   const size = React.useContext(ResponsiveContext);
-
   return (
     <ContainerWrapper bg>
       <HeaderExplore />
@@ -63,7 +62,17 @@ export function ActionsOverview({
                   const path = `${ROUTES.ACTIONS}/${typeId}`;
                   const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
                   const { primary } = ACTIONTYPE_GROUPS[key];
-                  const iconNames = CARDTEASER_ICONS.ACTIONS[typeId];
+                  const hasList = CONFIG.views && !!CONFIG.views.list;
+                  const hasMapOption = typeId
+                    && CONFIG.views
+                    && CONFIG.views.map
+                    && CONFIG.views.map.types
+                    && CONFIG.views.map.types.indexOf(typeId) > -1;
+                  const hasTimelineOption = typeId
+                    && CONFIG.views
+                    && CONFIG.views.timeline
+                    && CONFIG.views.timeline.types
+                    && CONFIG.views.timeline.types.indexOf(typeId) > -1;
                   return (
                     <CardTeaser
                       key={typeId}
@@ -82,7 +91,9 @@ export function ActionsOverview({
                       description={
                         intl.formatMessage(appMessages.actiontypes_about[typeId])
                       }
-                      iconNames={iconNames}
+                      iconConfig={{
+                        hasList, hasTimeline: hasTimelineOption, hasMap: hasMapOption,
+                      }}
                     />
                   );
                 })}

@@ -57,7 +57,7 @@ export function CardTeaser({
   title,
   description,
   basis,
-  iconNames,
+  iconConfig,
   hasSearchField = false,
   countries,
   onSelectCountry,
@@ -101,7 +101,7 @@ export function CardTeaser({
             </Box>
           </Box>
         </CardLink>
-        <BottomButtons primary={primary} iconNames={iconNames} onClick={onClick} />
+        <BottomButtons primary={primary} iconConfig={iconConfig} onClick={onClick} />
       </CardWrapper>
     </Styled>
   );
@@ -117,7 +117,7 @@ CardTeaser.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   basis: PropTypes.string,
-  iconNames: PropTypes.array,
+  iconConfig: PropTypes.object,
   hasSearchField: PropTypes.bool,
   onSelectCountry: PropTypes.func,
   countries: PropTypes.object,

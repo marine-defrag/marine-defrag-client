@@ -1,9 +1,12 @@
 
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import { Box, Text, Button } from 'grommet';
+import {
+  Box, Text, Button, ThemeContext,
+} from 'grommet';
+import { Globe, Calendar, List } from 'grommet-icons';
 import Icon from 'components/Icon';
 import { FormattedMessage } from 'react-intl';
 
@@ -25,34 +28,40 @@ const Styled = styled((p) => <Box {...p} />)`
   bottom: 0px;
 `;
 
-function renderIcons(icons) {
+const BottomButtons = ({ primary, iconConfig, onClick }) => {
+  const theme = useContext(ThemeContext);
+  const iconColor = theme.global.colors.text.brand;
+
   return (
-    <Box direction="row" align="center">
-      {icons.map((icon, index) => <Icon name={icon} key={index} />)}
-    </Box>
+    <Styled isPrimary={primary} direction="row" justify="between" fill="horizontal">
+      {primary && <Box width="100%" />}
+      <Box direction="row" justify="between" fill="horizontal">
+        <Button onClick={onClick}>
+          <Box pad="none" direction="row" align="center" gap="xsmall">
+            <ExploreText>
+              <FormattedMessage {...messages.explore} />
+            </ExploreText>
+            <ArrowIcon name="arrowRight" size="0.5em" />
+          </Box>
+        </Button>
+        {iconConfig
+        && (
+          <Box direction="row" align="center" gap="xsmall">
+            {iconConfig.hasList && <List size="xsmall" color={iconColor} />}
+            {iconConfig.hasTimeline && <Calendar size="xsmall" color={iconColor} />}
+            {iconConfig.hasMap && <Globe size="xsmall" color={iconColor} />}
+          </Box>
+        )
+        }
+      </Box>
+    </Styled>
   );
-}
-const BottomButtons = ({ primary, iconNames, onClick }) => (
-  <Styled isPrimary={primary} direction="row" justify="between" fill="horizontal">
-    {primary && <Box width="100%" />}
-    <Box direction="row" justify="between" fill="horizontal">
-      <Button onClick={onClick}>
-        <Box pad="none" direction="row" align="center" gap="xsmall">
-          <ExploreText>
-            <FormattedMessage {...messages.explore} />
-          </ExploreText>
-          <ArrowIcon name="arrowRight" size="0.5em" />
-        </Box>
-      </Button>
-      {iconNames && renderIcons(iconNames)}
-    </Box>
-  </Styled>
-);
+};
 
 BottomButtons.propTypes = {
   primary: PropTypes.bool,
   onClick: PropTypes.func,
-  iconNames: PropTypes.array,
+  iconConfig: PropTypes.object,
 };
 
 export default BottomButtons;
