@@ -22,7 +22,7 @@ export function NavOptions({
     (event) => {
       // on enter
       if (event.keyCode === 13) {
-        if (options[activeResult]) onClick(options[activeResult].code);
+        if (options[activeResult]) onClick(options[activeResult].typeId);
       }
     },
     [options, activeResult],
