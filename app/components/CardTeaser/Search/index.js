@@ -22,10 +22,10 @@ import { prepOptions } from './utils';
 const IconWrapper = styled((p) => <Box {...p} />)`
   cursor: pointer;
   background: ${palette('light', 3)};
-  border-top-right-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px; 
-  border-bottom-right-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;   
+  border-top-right-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
+  border-bottom-right-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
   height: ${({ theme }) => theme.sizes.navCardSearch.height}px;
-  width: ${({ theme }) => theme.sizes.navCardSearch.height}px; 
+  width: ${({ theme }) => theme.sizes.navCardSearch.height}px;
 `;
 const StyledSearchIcon = styled(SearchIcon)`
   stroke: ${palette('dark', 3)};
@@ -39,8 +39,8 @@ const StyledCloseIcon = styled(Close)`
   }
 `;
 const StyledTextInput = styled(TextInput)`
-  border-top-left-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px; 
-  border-bottom-left-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;   
+  border-top-left-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
+  border-bottom-left-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
 `;
 
 const Styled = styled.span`
@@ -136,7 +136,10 @@ export function Search({
       {!hasToggle && search.length > 1 && (
         <Drop
           align={{ top: 'bottom', left: 'left' }}
-          target={searchRef.current}
+          margin={{ top: 'xsmall' }}
+          elevation="large"
+          round="large"
+          target={textInputRef.current}
           onClickOutside={() => {
             setSearch('');
             setActiveResult(activeResetIndex);

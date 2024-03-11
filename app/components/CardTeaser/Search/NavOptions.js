@@ -5,10 +5,7 @@ import { Box, Text } from 'grommet';
 
 import NavOption from './NavOption';
 
-const NavOptionWrap = styled(Box)`
-  padding-top: 10px;
-  padding-bottom: 30px;
-`;
+const NavOptionWrap = styled(Box)``;
 
 export function NavOptions({
   options,
@@ -53,6 +50,7 @@ export function NavOptions({
           }}
           onFocus={() => onFocus && onFocus(index)}
           active={index === activeResult}
+          last={index === options.length - 1}
         >
           <Box direction="row" align="end" fill="horizontal" width="100%">
             <Text size="medium">

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { injectIntl, intlShape } from 'react-intl';
+import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 
 import { isMinSize } from 'utils/responsive';
 
@@ -10,10 +10,17 @@ import {
 } from 'grommet';
 
 import NormalImg from 'components/Img';
+import Icon from 'components/Icon';
+
 import Search from './Search';
 import BottomButtons from './BottomButtons';
 
 import messages from './messages';
+
+const ArrowIcon = styled(Icon)`
+  font-weight: bold;
+`;
+const ExploreText = styled((p) => <Text weight="bold" {...p} />)``;
 
 const Styled = styled((p) => <Box {...p} elevation="small" background="white" />)`
   border-radius: 10px;
@@ -24,11 +31,11 @@ const CardWrapper = styled.div`
   position: relative;
 `;
 const CardLink = styled((p) => <Button plain as="a" fill="vertical" {...p} />)`
-  padding: ${({ isPrimary }) => isPrimary ? '0px 15px 45px 0px' : '0 15px 35px'};
+  padding: 0px 15px;
   min-height: ${({ isPrimary }) => isPrimary ? 180 : 0}px;
-  color: ${({ theme }) => theme.global.colors.text.brand};
+  color: ${({ theme }) => theme.global.colors.brand};
   &:hover {
-    color: ${({ theme }) => theme.global.colors.text.highlight};
+    color: ${({ theme }) => theme.global.colors.highlight};
   }
 `;
 const TitleWrap = styled((p) => <Box {...p} />)``;
@@ -52,7 +59,7 @@ export function CardTeaser({
   title,
   description,
   basis,
-  iconConfig,
+  viewLinks,
   searchOptions,
   onSelectResult,
   graphic,
@@ -95,10 +102,24 @@ export function CardTeaser({
                   {description}
                 </Description>
               )}
+              <Box
+                margin={{ top: 'medium', bottom: 'small' }}
+                pad="none"
+                direction="row"
+                align="center"
+                gap="xsmall"
+              >
+                <ExploreText>
+                  <FormattedMessage {...messages.explore} />
+                </ExploreText>
+                <ArrowIcon name="arrowRight" size="0.5em" />
+              </Box>
             </Box>
           </Box>
         </CardLink>
-        <BottomButtons primary={isPrimaryLayout} iconConfig={iconConfig} onClick={onClick} />
+        {viewLinks && viewLinks.length > 0 && (
+          <BottomButtons viewLinks={viewLinks} />
+        )}
       </CardWrapper>
     </Styled>
   );
@@ -114,7 +135,7 @@ CardTeaser.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   basis: PropTypes.string,
-  iconConfig: PropTypes.array,
+  viewLinks: PropTypes.array,
   onSelectResult: PropTypes.func,
   searchOptions: PropTypes.object,
   graphic: PropTypes.object,

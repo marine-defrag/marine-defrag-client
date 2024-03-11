@@ -493,7 +493,7 @@ theme.sizes = {
   navCardSearch: {
     height: 45,
     borderRadius: 20,
-    padding: 15,
+    padding: 30,
   },
 };
 

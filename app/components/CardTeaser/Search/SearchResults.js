@@ -43,7 +43,7 @@ export function SearchResults({
   const hasOptions = options && options.size > 0;
 
   return (
-    <Box flex overflow="auto">
+    <Box flex overflow="auto" margin="none">
       {!hasOptions && (
         <Box pad="small">
           <Hint italic>
