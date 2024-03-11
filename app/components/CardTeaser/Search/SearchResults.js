@@ -32,6 +32,7 @@ export function SearchResults({
     },
     [activeResult, maxResult],
   );
+
   useEffect(() => {
     document.addEventListener('keydown', onKey, false);
 
@@ -42,7 +43,7 @@ export function SearchResults({
   const hasOptions = options && options.size > 0;
 
   return (
-    <Box flex overflow="auto" margin={{ top: 'small' }} pad={{ top: 'medium' }}>
+    <Box flex overflow="auto">
       {!hasOptions && (
         <Box pad="small">
           <Hint italic>
