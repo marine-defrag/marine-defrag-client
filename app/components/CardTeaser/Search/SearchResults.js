@@ -43,25 +43,31 @@ export function SearchResults({
   const hasOptions = options && options.size > 0;
 
   return (
-    <Box flex overflow="auto" margin="none">
-      {!hasOptions && (
-        <Box pad="small">
-          <Hint italic>
-            <FormattedMessage {...messages.noResults} />
-          </Hint>
-        </Box>
-      )}
-      {hasOptions
-        && (
-          <NavOptions
-            options={options.toList().toJS()}
-            activeResult={activeResult}
-            onClick={(typeId) => onSelect(typeId)}
-            focus={focus}
-            onFocus={(index) => setActiveResult(index)
-            }
-          />
+    <Box
+      elevation="medium"
+      round="xsmall"
+      background="white"
+    >
+      <Box flex overflow="auto" margin="none">
+        {!hasOptions && (
+          <Box pad="small">
+            <Hint italic>
+              <FormattedMessage {...messages.noResults} />
+            </Hint>
+          </Box>
         )}
+        {hasOptions
+          && (
+            <NavOptions
+              options={options.toList().toJS()}
+              activeResult={activeResult}
+              onClick={(typeId) => onSelect(typeId)}
+              focus={focus}
+              onFocus={(index) => setActiveResult(index)
+              }
+            />
+          )}
+      </Box>
     </Box>
   );
 }

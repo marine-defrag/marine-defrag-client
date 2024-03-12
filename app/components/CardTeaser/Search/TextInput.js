@@ -9,6 +9,8 @@ export default styled(TextInput)`
 
   background-color: ${palette('light', 1)};
   color: ${palette('dark', 2)};
+  padding-left: 12px;
+  padding-right: 12px;
 
   &::placeholder {
     color: ${({ theme }) => theme.global.colors.dark};
@@ -17,5 +19,7 @@ export default styled(TextInput)`
   }
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     font-size: ${({ theme }) => theme.text.medium.size};
+    padding-right: 16px;
+    padding-left: 16px;
   }
 `;

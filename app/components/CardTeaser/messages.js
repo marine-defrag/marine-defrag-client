@@ -13,6 +13,6 @@ export default defineMessages({
   },
   searchPlaceholder: {
     id: 'app.components.CardTeaser.searchPlaceholder',
-    defaultMessage: 'Quick select country',
+    defaultMessage: 'Search country or territory (by name or ISO-code)',
   },
 });

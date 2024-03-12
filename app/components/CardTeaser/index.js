@@ -90,7 +90,7 @@ export function CardTeaser({
                 alt={`${title} - ${description}`}
               />
             )}
-            <Box justify="end" width={isPrimaryLayout ? '50%' : '100%'}>
+            <Box margin={graphic ? 'none' : { top: 'small' }} justify="end" width={isPrimaryLayout ? '50%' : '100%'}>
               <TitleWrap gap="none" margin={{ bottom: 'medium' }}>
                 <Count weight="bold" size={isPrimaryLayout ? 'xxxlarge' : 'xlarge'}>{count}</Count>
                 <Title weight="bold" size={isPrimaryLayout ? 'xlarge' : 'normal'}>

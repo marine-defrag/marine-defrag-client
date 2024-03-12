@@ -135,10 +135,11 @@ export function Search({
       </Box>
       {!hasToggle && search.length > 1 && (
         <Drop
+          plain
+          overflow="visible"
+          background="transparent"
           align={{ top: 'bottom', left: 'left' }}
           margin={{ top: 'xsmall' }}
-          elevation="large"
-          round="large"
           target={textInputRef.current}
           onClickOutside={() => {
             setSearch('');

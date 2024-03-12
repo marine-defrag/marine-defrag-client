@@ -13,15 +13,14 @@ export default styled(OptionButton)`
   padding: 8px 12px;
   position: relative;
   background: transparent;
-  border-left: 4px solid
     ${({ theme, active }) => active ? theme.global.colors.dark : 'transparent'};
   &:last-child {
     border-bottom: 1px solid ${({ theme }) => theme.global.colors.border.light};
   }
   &:hover {
-    border-left: 4px solid ${({ theme }) => theme.global.colors.dark};
+    color: ${({ theme }) => theme.global.colors.highlight};
   }
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
-    padding: 10px 16px 10px 12px;
+    padding: 10px 16px;
   }
 `;
