@@ -25,7 +25,7 @@ import Content from 'components/styled/ContentSimple';
 import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
 
-import { isMaxSize } from 'utils/responsive';
+import { isMinSize } from 'utils/responsive';
 import qe from 'utils/quasi-equals';
 import { selectActortypesWithActorCount } from './selectors';
 import { DEPENDENCIES } from './constants';
@@ -76,7 +76,11 @@ export function ActorsOverview({
                 <GroupTitle>
                   <FormattedMessage {...appMessages.actortypeGroups[key]} />
                 </GroupTitle>
-                <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
+                <Box
+                  direction="row"
+                  wrap
+                  margin={{ horizontal: '-6px' }}
+                >
                   {ACTORTYPE_GROUPS[key].types.map((typeId) => {
                     const path = `${ROUTES.ACTORS}/${typeId}`;
                     const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
@@ -106,10 +110,17 @@ export function ActorsOverview({
                         },
                       ];
                     }
+                    let basis = 'full';
+                    if (!isLandscape && isMinSize(size, 'medium')) {
+                      basis = '1/2';
+                    }
+                    if (!isLandscape && isMinSize(size, 'large')) {
+                      basis = '1/4';
+                    }
                     return (
                       <CardTeaser
                         key={typeId}
-                        basis={isLandscape ? 'full' : '1/4'}
+                        basis={basis}
                         isLandscape={isLandscape}
                         path={path}
                         onClick={(evt) => {

@@ -25,7 +25,7 @@ import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
 
 import qe from 'utils/quasi-equals';
-import { isMaxSize } from 'utils/responsive';
+import { isMinSize } from 'utils/responsive';
 
 import { selectActiontypesWithActionCount } from './selectors';
 import { DEPENDENCIES } from './constants';
@@ -68,7 +68,11 @@ export function ActionsOverview({
                 <GroupTitle>
                   <FormattedMessage {...appMessages.actiontypeGroups[key]} />
                 </GroupTitle>
-                <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
+                <Box
+                  direction="row"
+                  wrap
+                  margin={{ horizontal: '-6px' }}
+                >
                   {ACTIONTYPE_GROUPS[key].types.map((typeId) => {
                     const path = `${ROUTES.ACTIONS}/${typeId}`;
                     const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
@@ -109,12 +113,18 @@ export function ActionsOverview({
                         },
                       ];
                     }
-
+                    let basis = 'full';
+                    if (!isLandscape && isMinSize(size, 'medium')) {
+                      basis = '1/2';
+                    }
+                    if (!isLandscape && isMinSize(size, 'large')) {
+                      basis = '1/4';
+                    }
                     return (
                       <CardTeaser
                         key={typeId}
-                        basis={isLandscape ? 'full' : '1/4'}
                         path={path}
+                        basis={basis}
                         onClick={(evt) => {
                           if (evt && evt.preventDefault) evt.preventDefault();
                           onUpdatePath(path);

@@ -12,7 +12,7 @@ import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
-import { isMaxSize } from 'utils/responsive';
+import { isMinSize } from 'utils/responsive';
 
 import { ROUTES, FF_ACTIONTYPE } from 'themes/config';
 import { updatePath } from 'containers/App/actions';
@@ -88,12 +88,13 @@ export function ActionsFactsOverview({
                   && connections
                   && connections.getIn(['resources', resourceId.toString()]);
                 const resourceIndicators = indicatorsByResourceId.get(resourceId);
+                const isLandscape = isMinSize(size, 'large') && resourceIndicators && resourceIndicators.size < 3;
                 return (
                   <Group key={`res-${resourceId}`}>
                     {resource && (
                       <Box
-                        pad={{ vertical: 'medium' }}
-                        direction={isMaxSize(size, 'medium') ? 'column' : 'row'}
+                        pad={{ top: 'medium', bottom: 'small' }}
+                        direction={isMinSize(size, 'ms') ? 'row' : 'column'}
                         gap="xsmall"
                       >
                         <Box>
@@ -122,14 +123,25 @@ export function ActionsFactsOverview({
                         Without resource
                       </GroupTitle>
                     )}
-                    <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
+                    <Box
+                      direction="row"
+                      wrap
+                      margin={{ horizontal: '-6px' }}
+                    >
                       {resourceIndicators && resourceIndicators.map((indicator) => {
                         const path = `${ROUTES.ACTION}/${indicator.get('id')}`;
                         const [lead] = indicator.getIn(['attributes', 'description']).split('\n');
+                        let basis = 'full';
+                        if (isMinSize(size, 'medium')) {
+                          basis = '1/2';
+                        }
+                        if (!isLandscape && isMinSize(size, 'large')) {
+                          basis = '1/4';
+                        }
                         return (
                           <CardTeaser
                             key={indicator.get('id')}
-                            basis="1/3"
+                            basis={basis}
                             path={path}
                             onClick={(evt) => {
                               if (evt && evt.preventDefault) evt.preventDefault();
@@ -140,6 +152,7 @@ export function ActionsFactsOverview({
                               indicator.getIn(['attributes', 'title'])
                             }
                             description={lead}
+                            isLandscape={isLandscape}
                             graphic={theme.media.navCard.indicators[indicator.get('id')]}
                           />
                         );

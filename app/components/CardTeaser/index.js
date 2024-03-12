@@ -22,10 +22,12 @@ const ArrowIcon = styled(Icon)`
 `;
 const ExploreText = styled((p) => <Text weight="bold" {...p} />)``;
 
-const Styled = styled((p) => <Box {...p} elevation="small" background="white" />)`
-  border-radius: 10px;
+const Styled = styled((p) => (
+  <Box pad="xsmall" responsive={false} {...p} />
+))`
 `;
-const CardWrapper = styled.div`
+const CardWrapper = styled((p) => <Box elevation="small" background="white" {...p} />)`
+  border-radius: 10px;
   width:100%;
   height: 100%;
   position: relative;
@@ -90,7 +92,7 @@ export function CardTeaser({
                 alt={`${title} - ${description}`}
               />
             )}
-            <Box margin={graphic ? 'none' : { top: 'small' }} justify="end" width={isPrimaryLayout ? '50%' : '100%'}>
+            <Box margin={graphic && !isPrimaryLayout ? 'none' : { top: 'small' }} justify="end" width={isPrimaryLayout ? '50%' : '100%'}>
               <TitleWrap gap="none" margin={{ bottom: 'medium' }}>
                 <Count weight="bold" size={isPrimaryLayout ? 'xxxlarge' : 'xlarge'}>{count}</Count>
                 <Title weight="bold" size={isPrimaryLayout ? 'xlarge' : 'normal'}>
