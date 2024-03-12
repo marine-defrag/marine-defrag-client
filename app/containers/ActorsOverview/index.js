@@ -137,7 +137,7 @@ export function ActorsOverview({
           })}
         </Content>
       </ViewContainer>
-      <Footer />
+      <Footer backgroundImage="landscape_1" />
     </ContainerWrapper>
   );
 }

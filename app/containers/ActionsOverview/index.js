@@ -139,7 +139,7 @@ export function ActionsOverview({
           })}
         </Content>
       </ViewContainer>
-      <Footer />
+      <Footer backgroundImage="aerial_2" />
     </ContainerWrapper>
   );
 }

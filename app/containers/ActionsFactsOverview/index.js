@@ -152,7 +152,7 @@ export function ActionsFactsOverview({
           </Box>
         </Content>
       </ViewContainer>
-      <Footer />
+      <Footer backgroundImage="litter_1" />
     </ContainerWrapper>
   );
 }
