@@ -87,6 +87,7 @@ export function ActionsOverview({
                           key: 'map',
                           icon: <Icon name="mapView" />,
                           onClick: () => onUpdatePath(path, 'map'),
+                          title: 'Go to map view',
                         },
                       ];
                     }
@@ -100,6 +101,7 @@ export function ActionsOverview({
                           key: 'timeline',
                           icon: <Icon name="timelineView" />,
                           onClick: () => onUpdatePath(path, 'time'),
+                          title: 'Go to timeline view',
                         },
                       ];
                     }
@@ -110,6 +112,7 @@ export function ActionsOverview({
                           key: 'list',
                           icon: <Icon name="listView" />,
                           onClick: () => onUpdatePath(path, 'list'),
+                          title: 'Go to list view',
                         },
                       ];
                     }
@@ -149,7 +152,7 @@ export function ActionsOverview({
           })}
         </Content>
       </ViewContainer>
-      <Footer backgroundImage="aerial_2" />
+      <Footer backgroundImage="footer_actions" />
     </ContainerWrapper>
   );
 }

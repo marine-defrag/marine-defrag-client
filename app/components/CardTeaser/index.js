@@ -26,17 +26,20 @@ const Styled = styled((p) => (
   <Box pad="xsmall" responsive={false} {...p} />
 ))`
 `;
-const CardWrapper = styled((p) => <Box elevation="small" background="white" {...p} />)`
-  border-radius: 10px;
+const CardWrapper = styled((p) => <Box {...p} />)`
   width:100%;
   height: 100%;
   position: relative;
 `;
 const CardLink = styled((p) => <Button plain as="a" fill="vertical" {...p} />)`
+  border-radius: 10px;
   padding: 0px 15px;
   min-height: ${({ isPrimary }) => isPrimary ? 180 : 0}px;
+  box-shadow: 0px 2px 4px rgba(0,0,0,0.20);
   color: ${({ theme }) => theme.global.colors.brand};
+  background: white;
   &:hover {
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.33);
     color: ${({ theme }) => theme.global.colors.highlight};
   }
 `;
@@ -45,7 +48,7 @@ const Count = styled((p) => <Text {...p} />)``;
 const Title = styled((p) => <Text {...p} />)``;
 const Description = styled((p) => <Text size="small" {...p} />)``;
 const CardGraphic = styled(NormalImg)`
-  width:  ${({ isPrimary }) => isPrimary ? '50%' : '100%'};
+  margin: ${({ isPrimary }) => isPrimary ? 0 : '0px -15px'};
 `;
 const SearchWrapper = styled((p) => <Box {...p} />)`
   position:absolute;
@@ -84,15 +87,29 @@ export function CardTeaser({
           href={`${path}`}
           onClick={onClick}
         >
-          <Box direction={isPrimaryLayout ? 'row' : 'column'} justify="between" fill="vertical">
+          <Box
+            direction={isPrimaryLayout ? 'row' : 'column'}
+            justify="between"
+            fill="vertical"
+          >
             {graphic && (
-              <CardGraphic
-                isPrimary={isPrimaryLayout}
-                src={isPrimaryLayout ? graphic.landscape : graphic.square}
-                alt={`${title} - ${description}`}
-              />
+              <Box
+                basis={isPrimaryLayout ? '1/2' : 'auto'}
+                fill={isPrimaryLayout ? 'vertical' : 'horizontal'}
+                justify={isPrimaryLayout ? 'end' : 'start'}
+              >
+                <CardGraphic
+                  src={isPrimaryLayout ? graphic.landscape : graphic.square}
+                  alt={`${title} - ${description}`}
+                  isPrimary={isPrimaryLayout}
+                />
+              </Box>
             )}
-            <Box margin={graphic && !isPrimaryLayout ? 'none' : { top: 'small' }} justify="end" width={isPrimaryLayout ? '50%' : '100%'}>
+            <Box
+              margin={graphic && !isPrimaryLayout ? 'none' : { top: 'small' }}
+              justify="end"
+              basis={isPrimaryLayout ? '1/2' : 'auto'}
+            >
               <TitleWrap gap="none" margin={{ bottom: 'medium' }}>
                 <Count weight="bold" size={isPrimaryLayout ? 'xxxlarge' : 'xlarge'}>{count}</Count>
                 <Title weight="bold" size={isPrimaryLayout ? 'xlarge' : 'normal'}>

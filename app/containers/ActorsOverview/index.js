@@ -97,6 +97,7 @@ export function ActorsOverview({
                           key: 'map',
                           icon: <Icon name="mapView" />,
                           onClick: () => onUpdatePath(path, 'map'),
+                          title: 'Go to map view',
                         },
                       ];
                     }
@@ -107,6 +108,7 @@ export function ActorsOverview({
                           key: 'list',
                           icon: <Icon name="listView" />,
                           onClick: () => onUpdatePath(path, 'list'),
+                          title: 'Go to list view',
                         },
                       ];
                     }
@@ -148,7 +150,7 @@ export function ActorsOverview({
           })}
         </Content>
       </ViewContainer>
-      <Footer backgroundImage="landscape_1" />
+      <Footer backgroundImage="footer_actors" />
     </ContainerWrapper>
   );
 }

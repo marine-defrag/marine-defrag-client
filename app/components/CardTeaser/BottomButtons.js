@@ -31,7 +31,11 @@ const BottomButtons = ({ primary, viewLinks }) => {
     <Styled isPrimary={primary}>
       <Box direction="row" align="center" gap="xsmall" margin={{ bottom: 'xsmall', right: '15px' }}>
         {viewLinks.map((viewLink) => (
-          <ViewLinkButton key={viewLink.key} onClick={() => viewLink.onClick()}>
+          <ViewLinkButton
+            key={viewLink.key}
+            onClick={() => viewLink.onClick()}
+            title={viewLink.title || viewLink.key}
+          >
             {viewLink.icon}
           </ViewLinkButton>
         ))}

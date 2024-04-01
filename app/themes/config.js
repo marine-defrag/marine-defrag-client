@@ -984,16 +984,9 @@ export const FOOTER = {
   LINK_TARGET_INTERNAL: false,
   LINK_TARGET_INTERNAL_ID: 1,
   IMAGE_URLS: {
-    litter_1: 'https://marine-defrag-test-pdb.web.app/footer_litter_1.png',
-    litter_2: 'https://marine-defrag-test-pdb.web.app/footer_litter_2.png',
-    litter_3: 'https://marine-defrag-test-pdb.web.app/footer_litter_3.png',
-    litter_4: 'https://marine-defrag-test-pdb.web.app/footer_litter_4.png',
-    aerial_1: 'https://marine-defrag-test-pdb.web.app/footer_aerial_1.png',
-    aerial_2: 'https://marine-defrag-test-pdb.web.app/footer_aerial_2.png',
-    aerial_3: 'https://marine-defrag-test-pdb.web.app/footer_aerial_3.png',
-    aerial_4: 'https://marine-defrag-test-pdb.web.app/footer_aerial_4.png',
-    landscape_1: 'https://marine-defrag-test-pdb.web.app/footer_landscape_1.png',
-    landscape_2: 'https://marine-defrag-test-pdb.web.app/footer_landscape_2.png',
+    footer_actions: 'https://marine-defrag-test-pdb.web.app/footer_aerial_2.png',
+    footer_facts: 'https://marine-defrag-test-pdb.web.app/footer_aerial_1.png',
+    footer_actors: 'https://marine-defrag-test-pdb.web.app/footer_aerial_3.png',
   },
 };
 
