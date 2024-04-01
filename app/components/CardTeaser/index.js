@@ -75,9 +75,8 @@ export function CardTeaser({
     <Styled basis={basis || 'full'}>
       <CardWrapper>
         {searchOptions && isMinSize(size, 'large') && (
-          <SearchWrapper direction="row" justify="between" fill="horizontal">
-            <Box width="100%" />
-            <Box direction="row" justify="between" fill="horizontal">
+          <SearchWrapper direction="row" justify="end" fill="horizontal" style={{ pointerEvents: 'none' }}>
+            <Box basis="1/2" style={{ pointerEvents: 'all' }}>
               <Search options={searchOptions} onSelect={onSelectResult} placeholder={intl.formatMessage(messages.searchPlaceholder)} />
             </Box>
           </SearchWrapper>
@@ -110,7 +109,7 @@ export function CardTeaser({
               justify="end"
               basis={isPrimaryLayout ? '1/2' : 'auto'}
             >
-              <TitleWrap gap="none" margin={{ bottom: 'medium' }}>
+              <TitleWrap gap="none" margin={{ bottom: 'small' }}>
                 <Count weight="bold" size={isPrimaryLayout ? 'xxxlarge' : 'xlarge'}>{count}</Count>
                 <Title weight="bold" size={isPrimaryLayout ? 'xlarge' : 'normal'}>
                   {title}

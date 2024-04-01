@@ -20,7 +20,7 @@ import TextInput from './TextInput';
 import { prepOptions } from './utils';
 
 const IconWrapper = styled((p) => <Box {...p} />)`
-  cursor: pointer;
+  cursor: ${({ onClick }) => onClick ? 'pointer' : 'auto'};
   background: ${palette('light', 3)};
   border-top-right-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
   border-bottom-right-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
@@ -29,9 +29,6 @@ const IconWrapper = styled((p) => <Box {...p} />)`
 `;
 const StyledSearchIcon = styled(SearchIcon)`
   stroke: ${palette('dark', 3)};
-  &:hover {
-    stroke: ${palette('dark', 4)};
-  }
 `;
 const StyledCloseIcon = styled(Close)`
   &:hover {
@@ -90,7 +87,6 @@ export function Search({
   if (search.length > 0) {
     sortedOptions = options ? prepOptions(options, search) : [];
   }
-
   return (
     <Styled>
       <Box
@@ -146,6 +142,7 @@ export function Search({
             setActiveResult(activeResetIndex);
           }}
           ref={dropRef}
+          style={{ maxWidth: `${textInputRef.current.clientWidth}px` }}
         >
           <SearchResults
             onClose={() => {
