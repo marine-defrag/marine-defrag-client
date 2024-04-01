@@ -21,9 +21,11 @@ class Icon extends React.PureComponent {
       textLeft,
       hasStroke,
       printHide,
+      isPrint,
+      hideScreenreader,
+      isPresentation,
     } = this.props;
     const icon = icons[name];
-
     if (icon) {
       const iSize = icon.size || iconSize;
       const iconPaths = icon.paths || icon.path || icon;
@@ -31,7 +33,8 @@ class Icon extends React.PureComponent {
         <SVG
           viewBox={`0 0 ${iSize} ${iSize}`}
           preserveAspectRatio="xMidYMid meet"
-          role="img"
+          role={isPresentation ? 'presentation' : 'img'}
+          aria-hidden={hideScreenreader}
           palette={palette}
           paletteIndex={paletteIndex}
           size={size || `${iSize}px`}
@@ -42,8 +45,11 @@ class Icon extends React.PureComponent {
           hasStroke={hasStroke}
           sizes={sizes}
           printHide={printHide}
+          isPrint={isPrint}
         >
-          <title>{title || `Icon: ${name}`}</title>
+          {!isPresentation && (
+            <title>{title || `Icon: ${name}`}</title>
+          )}
           <path d={asArray(iconPaths).reduce((memo, path) => `${memo}${path}`, '')}></path>
         </SVG>
       );
@@ -66,12 +72,17 @@ Icon.propTypes = {
   hasStroke: PropTypes.bool,
   sizes: PropTypes.object,
   printHide: PropTypes.bool,
+  isPrint: PropTypes.bool,
+  hideScreenreader: PropTypes.bool,
+  isPresentation: PropTypes.bool,
 };
 Icon.defaultProps = {
   name: 'placeholder',
   iconSize: 24,
   textLeft: false,
   textRight: false,
+  hideScreenreader: true,
+  isPresentation: true,
 };
 
 

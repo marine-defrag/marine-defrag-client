@@ -1,9 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
 import styled from 'styled-components';
-import { Box, Text, ResponsiveContext } from 'grommet';
+import {
+  Box, Text, Image, ResponsiveContext,
+} from 'grommet';
 
-import { VERSION } from 'themes/config';
+import { VERSION, FOOTER } from 'themes/config';
 import Container from 'components/styled/Container';
 import PrintHide from 'components/styled/PrintHide';
 import BoxPrint from 'components/styled/BoxPrint';
@@ -14,7 +17,8 @@ import { isMinSize } from 'utils/responsive';
 import appMessages from 'containers/App/messages';
 import messages from './messages';
 
-const FooterMain = styled.div`
+const FooterMain = styled.div``;
+const FooterContent = styled.div`
   background-color: ${({ isPrint }) => isPrint ? 'transparent' : '#183863'};
   color: ${({ isPrint, theme }) => isPrint ? theme.global.colors.text.secondary : 'white'};
   border-top: 1px solid;
@@ -57,77 +61,88 @@ const Between = styled((p) => <Box plain {...p} />)`
 `;
 function Footer({
   intl,
+  backgroundImage,
 }) {
   const size = React.useContext(ResponsiveContext);
   const appTitle = `${intl.formatMessage(appMessages.app.claim)} - ${intl.formatMessage(appMessages.app.title)}`;
   const isPrint = usePrint();
   return (
     <FooterMain isPrint={isPrint}>
-      <Container noPaddingBottom>
-        <Box direction={isMinSize(size, 'medium') ? 'row' : 'column'} fill="vertical">
-          <BoxPrint
-            pad="medium"
-            padPrintHorizontal="none"
-            fill
-            basis="1/2"
-          >
-            <Text size="small">
-              {appTitle}
-            </Text>
-            <Text size="xsmall">
-              {`Version: ${VERSION}`}
-            </Text>
-          </BoxPrint>
-          <PrintHide>
-            <Between direction={isMinSize(size, 'medium') ? 'row' : 'column'} />
-          </PrintHide>
-          <BoxPrint
-            pad="medium"
-            padPrintHorizontal={0}
-            fill
-            basis="1/2"
-            gap="small"
-            style={{ minHeight: '150px' }}
-          >
-            <Text size="small">
-              <FormattedMessage {...messages.disclaimer} />
-            </Text>
-            <Text size="small">
-              <FormattedMessage
-                {...messages.disclaimer2}
-                values={{
-                  contact1: (
-                    <FooterLink
-                      isPrint={isPrint}
-                      target="_blank"
-                      href={`mailto:${intl.formatMessage(messages.contact.email)}`}
-                      title={intl.formatMessage(messages.contact.anchor)}
-                    >
-                      <FormattedMessage {...messages.contact.anchor} />
-                    </FooterLink>
-                  ),
-                  contact2: (
-                    <FooterLink
-                      isPrint={isPrint}
-                      target="_blank"
-                      href={`mailto:${intl.formatMessage(messages.contact2.email)}`}
-                      title={intl.formatMessage(messages.contact2.anchor)}
-                    >
-                      <FormattedMessage {...messages.contact2.anchor} />
-                    </FooterLink>
-                  ),
-                }}
-              />
-            </Text>
-          </BoxPrint>
-        </Box>
-      </Container>
+      {backgroundImage && FOOTER.IMAGE_URLS[backgroundImage] && (
+        <PrintHide>
+          <Box>
+            <Image src={FOOTER.IMAGE_URLS[backgroundImage]} />
+          </Box>
+        </PrintHide>
+      )}
+      <FooterContent>
+        <Container noPaddingBottom>
+          <Box direction={isMinSize(size, 'medium') ? 'row' : 'column'} fill="vertical">
+            <BoxPrint
+              pad="medium"
+              padPrintHorizontal="none"
+              fill
+              basis="1/2"
+            >
+              <Text size="small">
+                {appTitle}
+              </Text>
+              <Text size="xsmall">
+                {`Version: ${VERSION}`}
+              </Text>
+            </BoxPrint>
+            <PrintHide>
+              <Between direction={isMinSize(size, 'medium') ? 'row' : 'column'} />
+            </PrintHide>
+            <BoxPrint
+              pad="medium"
+              padPrintHorizontal={0}
+              fill
+              basis="1/2"
+              gap="small"
+              style={{ minHeight: '150px' }}
+            >
+              <Text size="small">
+                <FormattedMessage {...messages.disclaimer} />
+              </Text>
+              <Text size="small">
+                <FormattedMessage
+                  {...messages.disclaimer2}
+                  values={{
+                    contact1: (
+                      <FooterLink
+                        isPrint={isPrint}
+                        target="_blank"
+                        href={`mailto:${intl.formatMessage(messages.contact.email)}`}
+                        title={intl.formatMessage(messages.contact.anchor)}
+                      >
+                        <FormattedMessage {...messages.contact.anchor} />
+                      </FooterLink>
+                    ),
+                    contact2: (
+                      <FooterLink
+                        isPrint={isPrint}
+                        target="_blank"
+                        href={`mailto:${intl.formatMessage(messages.contact2.email)}`}
+                        title={intl.formatMessage(messages.contact2.anchor)}
+                      >
+                        <FormattedMessage {...messages.contact2.anchor} />
+                      </FooterLink>
+                    ),
+                  }}
+                />
+              </Text>
+            </BoxPrint>
+          </Box>
+        </Container>
+      </FooterContent>
     </FooterMain>
   );
 }
 
 Footer.propTypes = {
   intl: intlShape.isRequired,
+  backgroundImage: PropTypes.string,
 };
 
 // Wrap the component to inject dispatch and state into it
