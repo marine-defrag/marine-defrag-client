@@ -4,13 +4,15 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { injectIntl, intlShape } from 'react-intl';
 import { Map, List } from 'immutable';
-import { Box, Button, ResponsiveContext } from 'grommet';
+import {
+  Box, Button, ResponsiveContext, ThemeContext,
+} from 'grommet';
 
 import styled from 'styled-components';
 
 import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
-import { isMaxSize } from 'utils/responsive';
+import { isMinSize } from 'utils/responsive';
 
 import { ROUTES, FF_ACTIONTYPE } from 'themes/config';
 import { updatePath } from 'containers/App/actions';
@@ -20,6 +22,7 @@ import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
 import Content from 'components/styled/ContentSimple';
 import CardTeaser from 'components/CardTeaser';
+import Loading from 'components/Loading';
 import Footer from 'containers/Footer';
 import ButtonFactory from 'components/buttons/ButtonFactory';
 
@@ -67,6 +70,7 @@ export function ActionsFactsOverview({
       return 'without';
     }
   );
+  const theme = React.useContext(ThemeContext);
   const size = React.useContext(ResponsiveContext);
   return (
     <ContainerWrapper bg>
@@ -78,77 +82,98 @@ export function ActionsFactsOverview({
               <ButtonFactory button={optionNew} />
             </Box>
           )}
-          <Box>
-            {dataReady && indicatorsByResourceId && indicatorsByResourceId.keySeq().map(
-              (resourceId) => {
-                const resource = !qe(resourceId, 'without')
-                  && connections
-                  && connections.getIn(['resources', resourceId.toString()]);
-                const resourceIndicators = indicatorsByResourceId.get(resourceId);
-                return (
-                  <Group key={`res-${resourceId}`}>
-                    {resource && (
+          {!dataReady && (
+            <Box margin={{ top: 'large' }}>
+              <Loading />
+            </Box>
+          )}
+          {dataReady && (
+            <Box>
+              {indicatorsByResourceId && indicatorsByResourceId.keySeq().map(
+                (resourceId) => {
+                  const resource = !qe(resourceId, 'without')
+                    && connections
+                    && connections.getIn(['resources', resourceId.toString()]);
+                  const resourceIndicators = indicatorsByResourceId.get(resourceId);
+                  const isLandscape = isMinSize(size, 'large') && resourceIndicators && resourceIndicators.size < 3;
+                  return (
+                    <Group key={`res-${resourceId}`}>
+                      {resource && (
+                        <Box
+                          pad={{ top: 'medium', bottom: 'small' }}
+                          direction={isMinSize(size, 'ms') ? 'row' : 'column'}
+                          gap="xsmall"
+                        >
+                          <Box>
+                            <GroupTitleLabel>
+                              Publication
+                            </GroupTitleLabel>
+                          </Box>
+                          <Box>
+                            <ResourceButton
+                              as="a"
+                              href={`${ROUTES.RESOURCE}/${resourceId}`}
+                              onClick={(e) => {
+                                if (e) e.preventDefault();
+                                onUpdatePath(`${ROUTES.RESOURCE}/${resourceId}`);
+                              }}
+                            >
+                              <GroupTitle>
+                                {resource.getIn(['attributes', 'title'])}
+                              </GroupTitle>
+                            </ResourceButton>
+                          </Box>
+                        </Box>
+                      )}
+                      {!resource && (
+                        <GroupTitle>
+                          Without resource
+                        </GroupTitle>
+                      )}
                       <Box
-                        pad={{ vertical: 'medium' }}
-                        direction={isMaxSize(size, 'medium') ? 'column' : 'row'}
-                        gap="xsmall"
+                        direction="row"
+                        wrap
+                        margin={{ horizontal: '-6px' }}
                       >
-                        <Box>
-                          <GroupTitleLabel>
-                            Publication
-                          </GroupTitleLabel>
-                        </Box>
-                        <Box>
-                          <ResourceButton
-                            as="a"
-                            href={`${ROUTES.RESOURCE}/${resourceId}`}
-                            onClick={(e) => {
-                              if (e) e.preventDefault();
-                              onUpdatePath(`${ROUTES.RESOURCE}/${resourceId}`);
-                            }}
-                          >
-                            <GroupTitle>
-                              {resource.getIn(['attributes', 'title'])}
-                            </GroupTitle>
-                          </ResourceButton>
-                        </Box>
+                        {resourceIndicators && resourceIndicators.map((indicator) => {
+                          const path = `${ROUTES.ACTION}/${indicator.get('id')}`;
+                          const [lead] = indicator.getIn(['attributes', 'description']).split('\n');
+                          let basis = 'full';
+                          if (isMinSize(size, 'medium')) {
+                            basis = '1/2';
+                          }
+                          if (!isLandscape && isMinSize(size, 'large')) {
+                            basis = '1/4';
+                          }
+                          return (
+                            <CardTeaser
+                              key={indicator.get('id')}
+                              basis={basis}
+                              path={path}
+                              onClick={(evt) => {
+                                if (evt && evt.preventDefault) evt.preventDefault();
+                                onUpdatePath(path);
+                              }}
+                              dataReady={dataReady}
+                              title={
+                                indicator.getIn(['attributes', 'title'])
+                              }
+                              description={lead}
+                              isLandscape={isLandscape}
+                              graphic={theme.media.navCard.indicators[indicator.get('id')]}
+                            />
+                          );
+                        })}
                       </Box>
-                    )}
-                    {!resource && (
-                      <GroupTitle>
-                        Without resource
-                      </GroupTitle>
-                    )}
-                    <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
-                      {resourceIndicators && resourceIndicators.map((indicator) => {
-                        const path = `${ROUTES.ACTION}/${indicator.get('id')}`;
-                        const [lead] = indicator.getIn(['attributes', 'description']).split('\n');
-                        return (
-                          <CardTeaser
-                            key={indicator.get('id')}
-                            basis="1/3"
-                            path={path}
-                            onClick={(evt) => {
-                              if (evt && evt.preventDefault) evt.preventDefault();
-                              onUpdatePath(path);
-                            }}
-                            dataReady={dataReady}
-                            title={
-                              indicator.getIn(['attributes', 'title'])
-                            }
-                            description={lead}
-                          />
-                        );
-                      })}
-                    </Box>
-                  </Group>
-                );
-              }
-            )}
-          </Box>
+                    </Group>
+                  );
+                }
+              )}
+            </Box>
+          )}
         </Content>
       </ViewContainer>
-      <Footer />
+      <Footer backgroundImage="footer_facts" />
     </ContainerWrapper>
   );
 }

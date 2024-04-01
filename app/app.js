@@ -38,9 +38,18 @@ import '!file-loader?name=[name].[ext]!./favicon-32x32.png';
 import '!file-loader?name=[name].[ext]!./android-chrome-192x192.png';
 import '!file-loader?name=[name].[ext]!./android-chrome-256x256.png';
 import '!file-loader?name=[name].[ext]!./mstile-150x150.png';
-import '!file-loader?name=[name].[ext]!./apple-touch-icon.png';
 import '!file-loader?name=[name].[ext]!./safari-pinned-tab.svg';
 import 'file-loader?name=[name].[ext]!./.htaccess';
+import '!file-loader?name=[name].[ext]!./themes/media/footer_litter_1.png';
+import '!file-loader?name=[name].[ext]!./themes/media/footer_litter_2.png';
+import '!file-loader?name=[name].[ext]!./themes/media/footer_litter_3.png';
+import '!file-loader?name=[name].[ext]!./themes/media/footer_litter_4.png';
+import '!file-loader?name=[name].[ext]!./themes/media/footer_aerial_1.png';
+import '!file-loader?name=[name].[ext]!./themes/media/footer_aerial_2.png';
+import '!file-loader?name=[name].[ext]!./themes/media/footer_aerial_3.png';
+import '!file-loader?name=[name].[ext]!./themes/media/footer_aerial_4.png';
+import '!file-loader?name=[name].[ext]!./themes/media/footer_landscape_1.png';
+import '!file-loader?name=[name].[ext]!./themes/media/footer_landscape_2.png';
 /* eslint-enable import/no-unresolved, import/extensions */
 
 import configureStore from './store';
