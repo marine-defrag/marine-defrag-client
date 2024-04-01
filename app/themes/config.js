@@ -24,6 +24,8 @@ export const ENDPOINTS = {
   VALIDATE_TOKEN: 'auth/validate_token',
 };
 
+export const CLIENT_URL = 'https://marine-defrag-test-pdb.web.app';
+
 // user roles
 export const USER_ROLES = {
   ADMIN: { value: 1, message: 'ui.userRoles.admin' },
@@ -984,9 +986,9 @@ export const FOOTER = {
   LINK_TARGET_INTERNAL: false,
   LINK_TARGET_INTERNAL_ID: 1,
   IMAGE_URLS: {
-    footer_actions: 'https://marine-defrag-test-pdb.web.app/footer_aerial_2.png',
-    footer_facts: 'https://marine-defrag-test-pdb.web.app/footer_aerial_1.png',
-    footer_actors: 'https://marine-defrag-test-pdb.web.app/footer_aerial_3.png',
+    footer_actions: `${CLIENT_URL}/footer_aerial_2.png`,
+    footer_facts: `${CLIENT_URL}/footer_aerial_1.png`,
+    footer_actors: `${CLIENT_URL}/footer_aerial_3.png`,
   },
 };
 
