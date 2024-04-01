@@ -529,6 +529,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             onDismissError={onDismissError}
             typeId={typeId}
             hasFilters={filters && filters.length > 0}
+            filters={filters}
             showCode={showCode}
             mapSubject={mapSubject}
             onSetMapSubject={onSetMapSubject}
@@ -578,8 +579,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             headerOptions={headerOptions}
             typeId={typeId}
             hasFilters={filters && filters.length > 0}
-            mapSubject={mapSubject}
-            onSetMapSubject={onSetMapSubject}
             onSetIncludeActorMembers={onSetIncludeActorMembers}
             onSetIncludeTargetMembers={onSetIncludeTargetMembers}
             includeActorMembers={includeActorMembers}

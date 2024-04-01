@@ -21,11 +21,11 @@ class Icon extends React.PureComponent {
       textLeft,
       hasStroke,
       printHide,
+      isPrint,
       hideScreenreader,
       isPresentation,
     } = this.props;
     const icon = icons[name];
-
     if (icon) {
       const iSize = icon.size || iconSize;
       const iconPaths = icon.paths || icon.path || icon;
@@ -45,6 +45,7 @@ class Icon extends React.PureComponent {
           hasStroke={hasStroke}
           sizes={sizes}
           printHide={printHide}
+          isPrint={isPrint}
         >
           {!isPresentation && (
             <title>{title || `Icon: ${name}`}</title>
@@ -71,6 +72,7 @@ Icon.propTypes = {
   hasStroke: PropTypes.bool,
   sizes: PropTypes.object,
   printHide: PropTypes.bool,
+  isPrint: PropTypes.bool,
   hideScreenreader: PropTypes.bool,
   isPresentation: PropTypes.bool,
 };
