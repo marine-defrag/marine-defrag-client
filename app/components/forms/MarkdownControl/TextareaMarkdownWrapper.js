@@ -76,13 +76,10 @@ const ViewButton = styled((p) => (
     background: none;
     opacity: ${({ active }) => active ? 1 : 0.6};
     border-bottom: 3px solid;
-    border-bottom-color: ${(
-    { active, theme }
-  ) => active ? theme.global.colors.aHover : 'transparent'
-};
+    border-bottom-color: ${({ active, theme }) => active ? theme.global.colors.a : 'transparent'};
     &:hover {
-      opacity: 0.8;
-      border-bottom-color: ${palette('light', 2)};
+      opacity: ${({ active }) => active ? 1 : 0.8};
+      border-bottom-color: ${({ active, theme }) => active ? theme.global.colors.a : palette('light', 4)};
     }
   `;
 const MDButtonText = styled((p) => (
