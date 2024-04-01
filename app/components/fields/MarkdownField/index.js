@@ -22,8 +22,20 @@ const Markdown = styled(ReactMarkdown)`
   }
 `;
 
+const RenderLink = ({ href, children }) => {
+  if (!href.startsWith('http')) {
+    return href;
+  }
+  return <a href={href} rel="nofollow noreferrer noopener" target="_blank">{children}</a>;
+};
+
+RenderLink.propTypes = {
+  href: PropTypes.string,
+  children: PropTypes.node,
+};
+
 // TODO also render HTML if not markdown
-export function MarkdownField({ field }) {
+function MarkdownField({ field }) {
   const isPrint = usePrint();
   return (
     <FieldWrap>
@@ -34,7 +46,12 @@ export function MarkdownField({ field }) {
           </Label>
         )
       }
-      <Markdown source={field.value} className="react-markdown" isPrint={isPrint} />
+      <Markdown
+        source={field.value}
+        linkTarget="_blank"
+        className="react-markdown"
+        isPrint={isPrint}
+      />
     </FieldWrap>
   );
 }

@@ -142,6 +142,7 @@ export function ContentHeader({
               <InfoOverlay
                 title={info.title}
                 content={info.content}
+                markdown
               />
             )}
           </Box>
