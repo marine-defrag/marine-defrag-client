@@ -20,6 +20,7 @@ import InfoOverlay from 'components/InfoOverlay';
 import A from 'components/styled/A';
 import messages from './messages';
 
+const MAX_TEXTAREA_HEIGHT = 640;
 const MIN_TEXTAREA_HEIGHT = 320;
 
 const MarkdownHint = styled.div`
@@ -41,6 +42,7 @@ const StyledTextareaMarkdown = styled(
     border-radius: 0.5em;
     color: ${palette('text', 0)};
     min-height: ${MIN_TEXTAREA_HEIGHT}px;
+    max-height: ${MAX_TEXTAREA_HEIGHT}px;
     resize: "none";
   `;
 const Preview = styled((p) => <Box {...p} />)`
