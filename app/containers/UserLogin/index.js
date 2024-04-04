@@ -148,7 +148,20 @@ export function mapDispatchToProps(dispatch) {
       dispatch(formActions.reset('userLogin.form.data'));
     },
     handleSubmit: (formData) => {
-      dispatch(login(formData.toJS()));
+      const jsData = formData.toJS();
+      const sanitisedData = Object.keys(jsData).reduce(
+        (memo, key) => {
+          const value = typeof jsData[key] === 'string'
+            ? jsData[key].trim()
+            : jsData[key];
+          return {
+            ...memo,
+            [key]: value,
+          };
+        },
+        {},
+      );
+      dispatch(login(sanitisedData));
       dispatch(dismissQueryMessages());
     },
     handleCancel: () => {
