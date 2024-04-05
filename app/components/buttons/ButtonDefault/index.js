@@ -35,7 +35,8 @@ const ButtonDefault = styled(Button)`
   border: 1px solid ${({ theme, inactive }) => !inactive ? palette('buttonDefault', 1) : theme.global.colors['light-4']};
   padding: 0.4em 1.2em;
   cursor: ${(props) => props.disabled ? 'default' : 'pointer'};
-  &:hover {
+
+  &:hover, &:focus-visible {
     color: ${(props) => props.inactive
     ? palette('buttonToggleInactiveHover', 0)
     : palette('buttonDefaultHover', 0)

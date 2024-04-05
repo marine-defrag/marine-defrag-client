@@ -19,6 +19,12 @@ const TypeButton = styled((p) => <Button plain {...p} />)`
   border-bottom: 2px solid;
   border-bottom-color: ${({ active }) => active ? 'auto' : 'transparent'};
   background: none;
+  &:focus-visible {
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    border-radius: 2px;
+    box-shadow: none;
+  }
 `;
 const TextWrap = styled((p) => <Box {...p} />)`
   border-bottom: 1px solid;

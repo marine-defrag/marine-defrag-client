@@ -94,6 +94,19 @@ const EntityListSearch = styled((p) => <Box justify="end" direction="row" gap="m
 
 const ButtonOptions = styled((p) => <Button plain {...p} />)`
   color: ${palette('buttonFlat', 1)};
+  &:focus-visible {
+    color: ${palette('buttonFlat', 0)};
+    outline-offset: 4px;
+    outline: 2px solid ${palette('buttonFlat', 0)};
+    border-radius: 2px;
+    box-shadow: none;
+    svg {
+      stroke: ${palette('buttonFlat', 0)};
+    }
+    span {
+      color: ${palette('buttonFlat', 0)};
+    }
+  }
 `;
 
 const Label = styled.div`
@@ -142,6 +155,12 @@ const TypeOption = styled(ButtonOld)`
   text-align: left;
   &:hover {
     color:${palette('headerNavMainItemHover', 0)};
+  }
+  &:focus-visible {
+    box-shadow: none;
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    border-radius: 1px;
   }
   color: ${(props) => props.active ? palette('headerNavMainItem', 1) : 'inherit'};
 `;

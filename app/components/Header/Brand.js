@@ -7,6 +7,11 @@ export default styled.a`
     color: white;
     opacity: ${({ isPrint }) => isPrint ? 1 : 0.9};
   }
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    outline-offset: 0px;
+    border-radius: 1px;
+  }
   @media print {
     color: ${({ theme }) => theme.global.colors.text.brand} !important;
   }

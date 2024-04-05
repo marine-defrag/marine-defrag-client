@@ -52,6 +52,12 @@ const BarButton = styled((p) => <Button plain {...p} />)`
     }
     return issecondary ? 0.6 : 1;
   }};
+  &:focus-visible {
+    box-shadow: none;
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    outline-offset: 0px;
+  }
 `;
 
 const StyledLinkTT = styled(

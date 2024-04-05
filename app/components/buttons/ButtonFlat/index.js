@@ -15,13 +15,17 @@ const ButtonFlat = styled(Button)`
     }
     return props.primary ? palette('buttonFlat', 0) : palette('buttonFlat', 1);
   }};
-  &:hover {
+  &:hover, &:focus-visible {
     color: ${(props) => {
     if (props.disabled) {
       return palette('buttonFlat', 2);
     }
     return props.primary ? palette('buttonFlatHover', 0) : palette('buttonFlatHover', 1);
   }};
+  }
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    border-radius: 2px;
   }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     letter-spacing: 1px;

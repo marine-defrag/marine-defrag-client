@@ -6,6 +6,12 @@ import { usePrint } from 'containers/App/PrintContext';
 const Styled = styled((p) => <Button as="a" plain {...p} />)`
   text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
   line-height: ${({ isPrint, theme, size = 'xsmallTight' }) => isPrint ? theme.textPrint[size].height : theme.text[size].height}};
+  &:focus-visible {
+    box-shadow: none;
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    border-radius: 2px;
+  }
   @media print {
     line-height: ${({ theme, size = 'xsmallTight' }) => theme.textPrint[size].height};
   }

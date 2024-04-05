@@ -8,12 +8,20 @@ export default styled((p) => <Button plain {...p} />)`
   color:${({ theme, active }) => active ? theme.global.colors.brand : theme.global.colors['dark-3']};
   background-color: ${({ active }) => active ? 'transparent' : 'transparent'};
   border-bottom: 4px solid ${({ theme, active }) => active ? theme.global.colors.brand : 'transparent'};
+  height: ${(props) => props.theme.sizes.headerExplore.nav.heightMobile - 1}px;
+  padding: 8px 0.5em;
+  
   &:hover {
     color:${({ theme, active }) => active ? theme.global.colors.brand : theme.global.colors.highlight};
     border-bottom: 4px solid ${({ theme, active }) => active ? theme.global.colors.brand : 'transparent'};
   }
-  height: ${(props) => props.theme.sizes.headerExplore.nav.heightMobile - 1}px;
-  padding: 8px 0.5em;
+  &:focus-visible {
+    color:${({ theme }) => theme.global.colors.highlight};
+    border-bottom: 4px solid ${({ theme, active }) => active ? theme.global.colors.highlight : 'transparent'};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    border-radius: 2px;
+    box-shadow: none;
+  }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     height: ${(props) => props.theme.sizes.headerExplore.nav.height - 1}px;
   }
