@@ -13,6 +13,7 @@ import ScreenReaderOnly from 'components/styled/ScreenReaderOnly';
 import PrintOnly from 'components/styled/PrintOnly';
 import PrintHide from 'components/styled/PrintHide';
 import BoxPrint from 'components/styled/BoxPrint';
+import SkipContent from 'components/styled/SkipContent';
 
 import Brand from './Brand';
 import Logo from './Logo';
@@ -219,6 +220,12 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
             >
               <Box direction="row" fill>
                 <Box>
+                  <SkipContent
+                    href="#main-content"
+                    title={this.context.intl.formatMessage(appMessages.screenreader.skipBackToContent)}
+                  >
+                    <FormattedMessage {...appMessages.screenreader.skipBackToContent} />
+                  </SkipContent>
                   <Brand
                     as={isPrintView ? 'div' : 'a'}
                     href={isPrintView ? '' : '/'}

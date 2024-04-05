@@ -2260,6 +2260,16 @@ export default defineMessages({
       defaultMessage: '{entityType} created successfully. It will become publicly available once verified and published by an authorised user.',
     },
   },
+  screenreader: {
+    skipToContent: {
+      id: 'app.containers.App.screenreader.skipToContent',
+      defaultMessage: 'Skip to content',
+    },
+    skipBackToContent: {
+      id: 'app.containers.App.screenreader.skipBackToContent',
+      defaultMessage: 'Skip back to content',
+    },
+  },
   ui: {
     userRoles: {
       admin: {

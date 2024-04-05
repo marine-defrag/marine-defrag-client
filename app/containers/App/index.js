@@ -271,7 +271,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             currentPath={location.pathname}
           />
         )}
-        <Main isHome={isHomeOrAuth} isPrint={isPrintView}>
+        <Main isHome={isHomeOrAuth} isPrint={isPrintView} role="main" id="main-content">
           {isPrintView && (<PrintUI />)}
           <PrintWrapper
             isPrint={isPrintView}
