@@ -44,6 +44,13 @@ const SidebarWrapper = styled.div`
   right: 0;
   z-index: 100;
 `;
+const StyledButton = styled((p) => <Button {...p} />)`
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    color: ${({ theme }) => theme.global.colors.highlight};
+    border-radius: 2px;
+  }
+`;
 
 const STATE_INITIAL = {
   expandedGroups: {
@@ -122,9 +129,9 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
               <Box direction="row" justify="between" align="center">
                 {isEditPanel && <SupTitle title={intl.formatMessage(messages.header.edit)} />}
                 {!isEditPanel && <SupTitle title={intl.formatMessage(messages.header.filter)} />}
-                <Button plain onClick={onHideSidebar}>
+                <StyledButton plain onClick={onHideSidebar}>
                   <Icon name="close" />
-                </Button>
+                </StyledButton>
               </Box>
               {memberOption && (
                 <Box margin={{ top: 'small' }}>

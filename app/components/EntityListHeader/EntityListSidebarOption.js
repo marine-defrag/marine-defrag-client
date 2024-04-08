@@ -31,10 +31,15 @@ const Styled = styled((p) => (
   color:  ${(props) => props.active ? palette('asideListItem', 1) : palette('asideListItem', 0)};
 `;
 
-const StyledButton = styled((p) => <Button plain fill="horizontal" focusIndicator={false} {...p} />)`
+const StyledButton = styled((p) => <Button plain fill="horizontal" {...p} />)`
   padding: 0.25em 8px;
   padding-left: 2px;
   text-align: left;
+  &:focus-visible {
+    outline: 1.5px solid ${({ theme }) => theme.global.colors.highlightHover};
+    outline-offset: -2px;
+    border-radius: 2px;
+  }
 `;
 
 function EntityListSidebarOption({

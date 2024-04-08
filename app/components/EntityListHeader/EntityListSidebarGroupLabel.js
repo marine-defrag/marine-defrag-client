@@ -22,6 +22,9 @@ const Styled = styled((p) => <Button plain {...p} />)`
     color: ${palette('asideListGroupHover', 0)};
     /* background-color: ${palette('asideListGroupHover', 1)}; */
   }
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlightHover};
+  }
 `;
 
 class EntityListSidebarGroupLabel extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function

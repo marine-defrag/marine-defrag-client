@@ -94,18 +94,23 @@ const EntityListSearch = styled((p) => <Box justify="end" direction="row" gap="m
 
 const ButtonOptions = styled((p) => <Button plain {...p} />)`
   color: ${palette('buttonFlat', 1)};
-  &:focus-visible {
-    color: ${palette('buttonFlat', 0)};
-    outline-offset: 4px;
-    outline: 2px solid ${palette('buttonFlat', 0)};
-    border-radius: 2px;
+
+  &:focus {
     box-shadow: none;
+  }
+  &:hover, &:focus-visible {
+    color: ${palette('buttonFlat', 0)};
     svg {
       stroke: ${palette('buttonFlat', 0)};
     }
     span {
       color: ${palette('buttonFlat', 0)};
     }
+  }
+  &:focus-visible {
+    outline-offset: 4px;
+    outline: 2px solid ${palette('buttonFlat', 0)};
+    border-radius: 2px;
   }
 `;
 

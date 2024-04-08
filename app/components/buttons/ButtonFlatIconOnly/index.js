@@ -9,6 +9,7 @@ const ButtonFlatIconOnly = styled(Button)`
     color: ${({ subtle }) => (subtle ? palette('buttonFlat', 0) : palette('buttonFlatHover', 0))};
   }
   &:focus-visible {
+    border-radius: 2px;
     svg {
       fill: ${({ subtle }) => (subtle ? palette('buttonFlat', 0) : palette('buttonFlatHover', 0))} !important;
     }

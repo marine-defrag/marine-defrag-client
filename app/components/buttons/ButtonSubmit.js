@@ -22,6 +22,11 @@ const ButtonSubmit = styled(ButtonForm)`
     : palette('buttonDefaultHover', 0)
 };
   }
+
+  &:focus-visible {
+    outline: 2px solid  ${palette('primary', 0)};
+    outline-offset: 0px;
+  }
 `;
 
 export default ButtonSubmit;

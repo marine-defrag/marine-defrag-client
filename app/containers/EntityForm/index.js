@@ -96,6 +96,11 @@ const ButtonPreDelete = styled(Button)`
   &:hover {
     color: ${palette('linkHover', 2)};
   }
+  &:focus-visible {
+    color: ${palette('linkHover', 2)};
+    outline: 2px solid ${palette('linkHover', 2)};
+    border-radius: 2px;
+  }
 `;
 
 const controls = {
