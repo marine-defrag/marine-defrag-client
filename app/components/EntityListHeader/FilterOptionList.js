@@ -20,6 +20,7 @@ export function FilterOptionList({
   onShowForm,
   onHideOptions,
   intl,
+  formOptions,
 }) {
   return (
     <Box>
@@ -28,6 +29,7 @@ export function FilterOptionList({
         groupId={group.get('id')}
         groupType={group.get('type')}
         onShowForm={onShowForm}
+        formOptions={formOptions}
       />
       {option.get('currentFilters') && option.get('currentFilters').size > 0 && (
         <Box
@@ -73,6 +75,7 @@ FilterOptionList.propTypes = {
   onShowForm: PropTypes.func.isRequired,
   onHideOptions: PropTypes.func,
   intl: intlShape.isRequired,
+  formOptions: PropTypes.node,
 };
 
 export default injectIntl(FilterOptionList);

@@ -124,6 +124,7 @@ export function EntitiesTable({
   memberOption,
   subjectOptions,
   isPrintView,
+  skipGroupTargetId,
 }) {
   const size = React.useContext(ResponsiveContext);
   return (
@@ -196,9 +197,20 @@ export function EntitiesTable({
           </TableHeader>
         )}
         <TableBody>
-          {entities.length > 0 && entities.map((entity, key) => (
-            <TableRow key={key}>
-              {columns.map((col, i) => entity[col.id]
+          {entities.length > 0 && entities.map((entity, index, list) => {
+            let skipTargetId = null;
+            if (list.length > index + 1) {
+              const nextEntity = list[index + 1];
+              skipTargetId = nextEntity
+                ? `#list-item-${nextEntity.id}`
+                : null;
+            } else if (skipGroupTargetId) {
+              skipTargetId = skipGroupTargetId;
+            }
+
+            return (
+              <TableRow key={index} id={`list-item-${entity.id}`}>
+                {columns.map((col, i) => entity[col.id]
                 && (isMinSize(size, 'large') || isPrintView || col.type === 'main')
                 && (
                   <TableCellBody
@@ -215,6 +227,7 @@ export function EntitiesTable({
                           entity={entity[col.id]}
                           canEdit={canEdit && !isPrintView}
                           column={col}
+                          skipTargetId={skipTargetId}
                         />
                       )}
                       {(
@@ -283,10 +296,10 @@ export function EntitiesTable({
                       )}
                     </TableCellBodyInner>
                   </TableCellBody>
-                ))
-              }
-            </TableRow>
-          ))}
+                ))}
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </Box>
@@ -304,6 +317,7 @@ EntitiesTable.propTypes = {
   memberOption: PropTypes.node,
   subjectOptions: PropTypes.node,
   isPrintView: PropTypes.bool,
+  skipGroupTargetId: PropTypes.string,
 };
 
 export default EntitiesTable;

@@ -43,7 +43,7 @@ const StyledButton = styled((p) => <Button plain fill="horizontal" {...p} />)`
 `;
 
 function EntityListSidebarOption({
-  option, onShowForm, groupId, groupType, intl,
+  option, onShowForm, groupId, groupType, intl, formOptions,
 }) {
   let label = option.get('message')
     ? appMessage(intl, option.get('message'))
@@ -72,6 +72,7 @@ function EntityListSidebarOption({
           <Text size="small" weight={500}>{label}</Text>
         </Box>
       </StyledButton>
+      {option.get('active') && formOptions}
       {option.get('info') && (
         <InfoOverlay
           title={label}
@@ -90,6 +91,7 @@ EntityListSidebarOption.propTypes = {
   groupType: PropTypes.string,
   onShowForm: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
+  formOptions: PropTypes.node,
 };
 
 export default injectIntl(EntityListSidebarOption);

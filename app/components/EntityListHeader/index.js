@@ -694,6 +694,33 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                   }
                   : null
                 }
+                formOptions={formOptions && (
+                  <EntityListForm
+                    model={formModel}
+                    activeOptionId={`${activeOption.group}-${activeOption.optionId}`}
+                    formOptions={formOptions}
+                    buttons={showEditOptions
+                      ? this.getFormButtons(activeOption, intl)
+                      : null
+                    }
+                    onCancel={this.onHideForm}
+                    showCancelButton={showFilters}
+                    onSelect={() => {
+                      if (showFilters) {
+                        this.onHideForm();
+                        // onHideFilters();
+                      }
+                    }}
+                    onSubmit={showEditOptions
+                      ? (associations) => {
+                        // close and reset option panel
+                        this.setState({ activeOption: null });
+                        onUpdate(associations, activeOption);
+                      }
+                      : null
+                    }
+                  />
+                )}
               />
             )}
             {headerStyle !== 'simple' && showEditOptions && (
@@ -704,33 +731,33 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                 panelGroups={panelGroups}
                 onHideSidebar={onHideEditOptions}
                 setActiveOption={this.onSetActiveOption}
-              />
-            )}
-            {headerStyle !== 'simple' && activeOption && formOptions && (
-              <EntityListForm
-                model={formModel}
-                activeOptionId={`${activeOption.group}-${activeOption.optionId}`}
-                formOptions={formOptions}
-                buttons={showEditOptions
-                  ? this.getFormButtons(activeOption, intl)
-                  : null
-                }
-                onCancel={this.onHideForm}
-                showCancelButton={showFilters}
-                onSelect={() => {
-                  if (showFilters) {
-                    this.onHideForm();
-                    // onHideFilters();
-                  }
-                }}
-                onSubmit={showEditOptions
-                  ? (associations) => {
-                  // close and reset option panel
-                    this.setState({ activeOption: null });
-                    onUpdate(associations, activeOption);
-                  }
-                  : null
-                }
+                formOptions={formOptions && (
+                  <EntityListForm
+                    model={formModel}
+                    activeOptionId={`${activeOption.group}-${activeOption.optionId}`}
+                    formOptions={formOptions}
+                    buttons={showEditOptions
+                      ? this.getFormButtons(activeOption, intl)
+                      : null
+                    }
+                    onCancel={this.onHideForm}
+                    showCancelButton={showFilters}
+                    onSelect={() => {
+                      if (showFilters) {
+                        this.onHideForm();
+                        // onHideFilters();
+                      }
+                    }}
+                    onSubmit={showEditOptions
+                      ? (associations) => {
+                        // close and reset option panel
+                        this.setState({ activeOption: null });
+                        onUpdate(associations, activeOption);
+                      }
+                      : null
+                    }
+                  />
+                )}
               />
             )}
           </Styled>

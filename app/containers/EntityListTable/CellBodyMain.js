@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Box } from 'grommet';
 import styled from 'styled-components';
 
+import SkipContent from 'components/styled/SkipContent';
 import PrintHide from 'components/styled/PrintHide';
 import TextPrint from 'components/styled/TextPrint';
 import Link from './Link';
@@ -21,6 +22,7 @@ export function CellBodyMain({
   entity,
   // column,
   canEdit,
+  skipTargetId,
 }) {
   return (
     <Box direction="row" align="center" justify="start">
@@ -66,6 +68,14 @@ export function CellBodyMain({
             </TextPrint>
           </Box>
         )}
+        {skipTargetId && (
+          <SkipContent
+            href={skipTargetId}
+            title="Skip to next list item or group, continue to list item details"
+          >
+            Skip to next list item or group, continue to list item details
+          </SkipContent>
+        )}
       </Box>
     </Box>
   );
@@ -75,6 +85,7 @@ CellBodyMain.propTypes = {
   entity: PropTypes.object,
   // column: PropTypes.object,
   canEdit: PropTypes.bool,
+  skipTargetId: PropTypes.string,
 };
 
 export default CellBodyMain;

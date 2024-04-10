@@ -68,12 +68,12 @@ const Markdown = styled(ReactMarkdown)`
 `;
 const StyledButton = styled((p) => <Button {...p} />)`
   &:focus-visible {
-    color: ${palette('primary', 0)};
-    outline: 2px solid ${palette('primary', 0)};
-    outline-offset: 3px;
+    color: ${({ dark }) => dark ? palette('light', 5) : palette('primary', 0)};
+    outline: 2px solid ${({ dark }) => dark ? palette('light', 5) : palette('primary', 0)};
+    outline-offset: ${({ dark }) => dark ? '2px' : '3px'};
     border-radius: 2px;
     svg {
-      stroke: ${palette('primary', 0)};
+      stroke: ${({ dark }) => dark ? palette('light', 5) : palette('primary', 0)};
     }
   }
 `;
@@ -102,6 +102,7 @@ function InfoOverlay({
         style={inline ? { width: 'auto', display: 'inline-block' } : null}
       >
         <StyledButton
+          dark={dark}
           plain
           icon={
             (tooltip || icon === 'question')

@@ -51,6 +51,7 @@ const StyledButton = styled((p) => <Button {...p} />)`
     border-radius: 2px;
   }
 `;
+const ButtonWrapper = styled.span``;
 
 const STATE_INITIAL = {
   expandedGroups: {
@@ -82,7 +83,14 @@ const STATE_INITIAL = {
 export class EntityListSidebar extends React.Component { // eslint-disable-line react/prefer-stateless-function
   constructor() {
     super();
+    this.buttonWrapper = React.createRef();
     this.state = STATE_INITIAL;
+  }
+
+  componentDidMount() {
+    if (this.buttonWrapper && this.buttonWrapper.current) {
+      this.buttonWrapper.current.children[0].focus();
+    }
   }
 
   UNSAFE_componentWillMount() {
@@ -119,8 +127,10 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
       onHideOptions,
       onUpdateQuery,
       memberOption,
+      formOptions,
     } = this.props;
     const { intl } = this.context;
+
     return (
       <SidebarWrapper onClick={onHideSidebar}>
         <Sidebar onClick={(evt) => evt.stopPropagation()}>
@@ -129,9 +139,12 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
               <Box direction="row" justify="between" align="center">
                 {isEditPanel && <SupTitle title={intl.formatMessage(messages.header.edit)} />}
                 {!isEditPanel && <SupTitle title={intl.formatMessage(messages.header.filter)} />}
-                <StyledButton plain onClick={onHideSidebar}>
-                  <Icon name="close" />
-                </StyledButton>
+
+                <ButtonWrapper ref={this.buttonWrapper}>
+                  <StyledButton plain onClick={onHideSidebar}>
+                    <Icon name="close" />
+                  </StyledButton>
+                </ButtonWrapper>
               </Box>
               {memberOption && (
                 <Box margin={{ top: 'small' }}>
@@ -148,6 +161,7 @@ export class EntityListSidebar extends React.Component { // eslint-disable-line 
                   onToggleGroup={this.onToggleGroup}
                   expanded={this.state.expandedGroups}
                   onUpdateQuery={onUpdateQuery}
+                  formOptions={formOptions}
                 />
               )}
               { isEditPanel && hasEntities && !hasSelected && (
@@ -173,6 +187,7 @@ EntityListSidebar.propTypes = {
   setActiveOption: PropTypes.func,
   onUpdateQuery: PropTypes.func,
   memberOption: PropTypes.object,
+  formOptions: PropTypes.node,
 };
 
 EntityListSidebar.contextTypes = {
