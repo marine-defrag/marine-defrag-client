@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import styled from 'styled-components';
@@ -65,9 +65,8 @@ const MoreLink = styled(A)`
 const SHOW_INCREMENT = 20;
 
 function OptionList(props) {
+  const lastOptionRef = createRef();
   const [noItems, setNoItems] = useState(SHOW_INCREMENT);
-
-
   // do groups not slice
   const options = props.groups
     ? props.options
@@ -81,6 +80,7 @@ function OptionList(props) {
       : Map().set('options', group));
 
   const hasMore = options.size < props.options.size;
+
   return (
     <Styled>
       <ListWrapper>
@@ -92,8 +92,10 @@ function OptionList(props) {
               </GroupTitle>
             )}
             <OptionsWrapper>
-              { group.get('options') && group.get('options').map((option, i) => {
+              {group.get('options') && group.get('options').map((option, i, list) => {
                 const id = `${i}-${kebabCase(option.get('value'))}`;
+                const optionRef = list.size - 1 === i
+                  && props.keyboardNavAutoCloseEnabled ? lastOptionRef : null;
                 return (
                   <Option
                     key={id}
@@ -101,6 +103,8 @@ function OptionList(props) {
                     option={option}
                     secondary={props.secondary}
                     onCheckboxChange={props.onCheckboxChange}
+                    optionRef={optionRef}
+                    handleKeyDown={(event) => props.handleKeyDown(event)}
                   />
                 );
               })}
@@ -147,6 +151,9 @@ OptionList.propTypes = {
   secondary: PropTypes.bool,
   onCheckboxChange: PropTypes.func,
   groups: PropTypes.object,
+  keyboardNavAutoCloseEnabled: PropTypes.bool,
+  handleKeyDown: PropTypes.func,
+  optionRef: PropTypes.object,
 };
 
 export default OptionList;

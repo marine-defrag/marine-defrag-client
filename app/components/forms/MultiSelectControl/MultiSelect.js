@@ -71,6 +71,11 @@ const ControlFooter = styled.div`
   right: 0;
   background-color: ${palette('background', 1)};
   box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.2);
+  &:focus-visible { 
+    button {
+      outline-offset: 0px !important;
+    }
+  }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     height: 50px;
   }
@@ -387,6 +392,18 @@ class MultiSelect extends React.Component {
     }
   }
 
+  handleKeyboardNavOptionList(event) {
+    if (event.keyCode === 9) {
+      this.props.onCancel();
+    }
+  }
+
+  handleKeyboardNavTagList(event) {
+    if (event.keyCode === 9) {
+      this.onSetOpenTagGroup(null);
+    }
+  }
+
   renderButton = (action, i, hasChanges) => (
     <ButtonFactory
       key={i}
@@ -452,6 +469,7 @@ class MultiSelect extends React.Component {
                 onTagSelected={this.onTagSelected}
                 openId={this.state.tagGroupOpenId}
                 setOpen={this.onSetOpenTagGroup}
+                handleKeyDown={(event) => this.handleKeyboardNavTagList(event)}
               />
             )}
             {this.props.typeFilter && (
@@ -491,6 +509,8 @@ class MultiSelect extends React.Component {
               onCheckboxChange={(checkedState, option) => {
                 this.props.onChange(this.getNextValues(checkedState, option));
               }}
+              keyboardNavAutoCloseEnabled={!this.props.buttons}
+              handleKeyDown={(event) => this.handleKeyboardNavOptionList(event)}
             />
           </ListWrap>
         </ControlMain>
@@ -514,16 +534,16 @@ class MultiSelect extends React.Component {
         )}
         {this.props.buttons && (
           <ControlFooter>
-            <ButtonGroup>
-              {
-                this.props.buttons.map((action, i) => action && action.position !== 'left' && this.renderButton(action, i, hasChanges))
-              }
-            </ButtonGroup>
             <ButtonGroup left>
               {
                 this.props.buttons.map((action, i) => (
                   action && action.position === 'left' && this.renderButton(action, i, hasChanges)
                 ))
+              }
+            </ButtonGroup>
+            <ButtonGroup>
+              {
+                this.props.buttons.map((action, i) => action && action.position !== 'left' && this.renderButton(action, i, hasChanges))
               }
             </ButtonGroup>
           </ControlFooter>
