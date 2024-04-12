@@ -199,15 +199,16 @@ export function EntitiesTable({
         <TableBody>
           {entities.length > 0 && entities.map((entity, index, list) => {
             let skipTargetId = null;
-            if (list.length > index + 1) {
-              const nextEntity = list[index + 1];
-              skipTargetId = nextEntity
-                ? `#list-item-${nextEntity.id}`
-                : null;
-            } else if (skipGroupTargetId) {
-              skipTargetId = skipGroupTargetId;
+            if (columns.length > 1) {
+              if (list.length > index + 1) {
+                const nextEntity = list[index + 1];
+                skipTargetId = nextEntity
+                  ? `#list-item-${nextEntity.id}`
+                  : null;
+              } else if (skipGroupTargetId) {
+                skipTargetId = skipGroupTargetId;
+              }
             }
-
             return (
               <TableRow key={index} id={`list-item-${entity.id}`}>
                 {columns.map((col, i) => entity[col.id]

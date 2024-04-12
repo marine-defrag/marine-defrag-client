@@ -23,6 +23,7 @@ import {
 const Styled = styled(ContainerWithSidebar)`
   z-index: ${(props) => props.sidebarResponsiveLarge ? 99 : 101};
   background-color: rgba(0,0,0,0.2);
+  position: fixed;
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
     z-index: 99;
   }

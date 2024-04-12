@@ -15,6 +15,9 @@ const ButtonTagFilter = styled(Button)`
     color: ${palette('text', 2)};
     background-color: ${(props) => palette(props.disabled ? props.paletteHover : props.palette, props.pIndex || 0)};
   }
+  &:focus-visible {
+    outline-offset: 4px;
+  }
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     padding:${({ isPrint }) => isPrint ? ' 1px 4px' : '1px 6px'};
     font-size:${({ isPrint }) => isPrint ? '9pt' : '0.85em'};
