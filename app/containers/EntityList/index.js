@@ -560,6 +560,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
             isPrintView={isPrintView}
+            hideMap={() => onSetView('list')}
           />
         )}
         {showTimeline && (

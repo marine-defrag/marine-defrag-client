@@ -3,7 +3,7 @@
  * EntitiesMap
  *
  */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 // import React, { useEffect } from 'react';
 import { injectIntl, intlShape } from 'react-intl';
 import PropTypes from 'prop-types';
@@ -68,7 +68,9 @@ const Styled = styled((p) => <ContainerWrapper {...p} />)`
   box-shadow: none;
   padding: 0;
 `;
-
+const KeyboardNavWrapper = styled.div`
+  tabindex: 0;
+`;
 export function EntitiesMap(props) {
   const {
     dataReady,
@@ -105,6 +107,7 @@ export function EntitiesMap(props) {
     // connectedTaxonomies,
     // locationQuery,
     // taxonomies,
+    hideMap,
   } = props;
   // useEffect(() => {
   //   onSetMapLoading('ll-map-list');
@@ -131,6 +134,25 @@ export function EntitiesMap(props) {
   let circleLayerConfig;
   let mapSubjectClean = mapSubject || 'actors';
   const entitiesTotal = entities ? entities.size : 0;
+  const mapRef = useRef(null);
+  const onKeyboardNavMapEnter = (event) => {
+    if (event.keyCode === 9) {
+      hideMap();
+    }
+  };
+  useEffect(() => {
+    const element = mapRef && mapRef.current;
+    if (element) {
+      element.addEventListener('keydown', onKeyboardNavMapEnter, false);
+    }
+    return () => {
+      if (element) {
+        element.removeEventListener('keydown', onKeyboardNavMapEnter, false);
+      }
+    };
+  }, [mapRef]);
+
+
   // let cleanMapSubject = 'actors';
   if (dataReady) {
     // actors ===================================================
@@ -826,58 +848,60 @@ export function EntitiesMap(props) {
     }],
   );
   return (
-    <Styled headerStyle="types" noOverflow isPrint={isPrintView}>
-      {isPrintView && (
-        <HeaderPrint argsRemove={['subj', 'ac', 'tc', 'actontype']} />
-      )}
-      {dataReady && (
-        <MapControl
-          isPrintView={isPrintView}
-          fullMap
-          reduceCountryAreas={reduceCountryAreas}
-          reducePoints={reducePoints}
-          mapData={{
-            mapId: 'll-map-list',
-            typeLabels,
-            indicator,
-            indicatorPoints: ffIndicatorId,
-            includeSecondaryMembers: includeActorMembers || includeTargetMembers,
-            scrollWheelZoom: true,
-            mapSubject: mapSubjectClean,
-            hasPointOption: false,
-            hasPointOverlay: true,
-            circleLayerConfig,
-            fitBounds: true,
-          }}
-          onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
-          mapInfo={[{
-            id: 'countries',
-            tabTitle: 'Activities',
-            title: infoTitle,
-            titlePrint: infoTitlePrint,
-            subTitle: infoSubTitle,
-            subjectOptions: hasByTarget && subjectOptions,
-            memberOption,
-          },
-          {
-            id: 'indicators',
-            tabTitle: 'Facts & Figures',
-            onUpdateFFIndicator: (id) => onSetFFOverlay(id),
-            ffActiveOptionId: ffIndicatorId,
-            ffOptions,
-            isLocationData: ffLocationIndicators && ffLocationIndicators.has(ffIndicatorId),
-          }]}
-        />
-      )}
-      {viewOptions && viewOptions.length > 1 && !isPrintView && (
-        <EntityListViewOptions options={viewOptions} isOnMap />
-      )}
-      {!dataReady && (
-        <LoadingWrap>
-          <Loading />
-        </LoadingWrap>
-      )}
-    </Styled>
+    <KeyboardNavWrapper ref={mapRef}>
+      <Styled headerStyle="types" noOverflow isPrint={isPrintView}>
+        {isPrintView && (
+          <HeaderPrint argsRemove={['subj', 'ac', 'tc', 'actontype']} />
+        )}
+        {dataReady && (
+          <MapControl
+            isPrintView={isPrintView}
+            fullMap
+            reduceCountryAreas={reduceCountryAreas}
+            reducePoints={reducePoints}
+            mapData={{
+              mapId: 'll-map-list',
+              typeLabels,
+              indicator,
+              indicatorPoints: ffIndicatorId,
+              includeSecondaryMembers: includeActorMembers || includeTargetMembers,
+              scrollWheelZoom: true,
+              mapSubject: mapSubjectClean,
+              hasPointOption: false,
+              hasPointOverlay: true,
+              circleLayerConfig,
+              fitBounds: true,
+            }}
+            onActorClick={(id) => onEntityClick(id, ROUTES.ACTOR)}
+            mapInfo={[{
+              id: 'countries',
+              tabTitle: 'Activities',
+              title: infoTitle,
+              titlePrint: infoTitlePrint,
+              subTitle: infoSubTitle,
+              subjectOptions: hasByTarget && subjectOptions,
+              memberOption,
+            },
+            {
+              id: 'indicators',
+              tabTitle: 'Facts & Figures',
+              onUpdateFFIndicator: (id) => onSetFFOverlay(id),
+              ffActiveOptionId: ffIndicatorId,
+              ffOptions,
+              isLocationData: ffLocationIndicators && ffLocationIndicators.has(ffIndicatorId),
+            }]}
+          />
+        )}
+        {viewOptions && viewOptions.length > 1 && !isPrintView && (
+          <EntityListViewOptions options={viewOptions} isOnMap />
+        )}
+        {!dataReady && (
+          <LoadingWrap>
+            <Loading />
+          </LoadingWrap>
+        )}
+      </Styled>
+    </KeyboardNavWrapper>
   );
 }
 
@@ -911,6 +935,7 @@ EntitiesMap.propTypes = {
   onEntityClick: PropTypes.func,
   onSetFFOverlay: PropTypes.func,
   onSelectAction: PropTypes.func,
+  hideMap: PropTypes.func,
   // onSetMapLoading: PropTypes.func,
   ffIndicatorId: PropTypes.string,
   intl: intlShape.isRequired,
