@@ -107,7 +107,7 @@ export function EntitiesMap(props) {
     // connectedTaxonomies,
     // locationQuery,
     // taxonomies,
-    hideMap,
+    onKeyboardNavEnter,
   } = props;
   // useEffect(() => {
   //   onSetMapLoading('ll-map-list');
@@ -135,19 +135,15 @@ export function EntitiesMap(props) {
   let mapSubjectClean = mapSubject || 'actors';
   const entitiesTotal = entities ? entities.size : 0;
   const mapRef = useRef(null);
-  const onKeyboardNavMapEnter = (event) => {
-    if (event.keyCode === 9) {
-      hideMap();
-    }
-  };
+
   useEffect(() => {
     const element = mapRef && mapRef.current;
     if (element) {
-      element.addEventListener('keydown', onKeyboardNavMapEnter, false);
+      element.addEventListener('keydown', onKeyboardNavEnter, false);
     }
     return () => {
       if (element) {
-        element.removeEventListener('keydown', onKeyboardNavMapEnter, false);
+        element.removeEventListener('keydown', onKeyboardNavEnter, false);
       }
     };
   }, [mapRef]);
@@ -935,7 +931,7 @@ EntitiesMap.propTypes = {
   onEntityClick: PropTypes.func,
   onSetFFOverlay: PropTypes.func,
   onSelectAction: PropTypes.func,
-  hideMap: PropTypes.func,
+  onKeyboardNavEnter: PropTypes.func,
   // onSetMapLoading: PropTypes.func,
   ffIndicatorId: PropTypes.string,
   intl: intlShape.isRequired,

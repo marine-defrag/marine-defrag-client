@@ -203,6 +203,12 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 
   filterByError = (entities, errors) => entities.filter((entity) => errors.has(entity.get('id')));
 
+  onMapKeyboardNavEnter = (event) => {
+    if (event.keyCode === 9) {
+      this.props.onSetView('list');
+    }
+  }
+
   render() {
     const { intl } = this.context;
     // make sure selected entities are still actually on page
@@ -560,7 +566,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
             isPrintView={isPrintView}
-            hideMap={() => onSetView('list')}
+            onKeyboardNavEnter={(event) => this.onMapKeyboardNavEnter(event)}
           />
         )}
         {showTimeline && (

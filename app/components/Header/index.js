@@ -222,9 +222,9 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                 <Box>
                   <SkipContent
                     href="#main-content"
-                    title={this.context.intl.formatMessage(appMessages.screenreader.skipBackToContent)}
+                    title={this.context.intl.formatMessage(appMessages.screenreader.skipToContent)}
                   >
-                    <FormattedMessage {...appMessages.screenreader.skipBackToContent} />
+                    <FormattedMessage {...appMessages.screenreader.skipToContent} />
                   </SkipContent>
                   <Brand
                     as={isPrintView ? 'div' : 'a'}
