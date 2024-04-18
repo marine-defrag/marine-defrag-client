@@ -154,6 +154,7 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
     const { viewType } = this.state;
 
     let type;
+    let hasByActor;
     let hasByTarget;
     let hasByUser;
     let isTarget;
@@ -165,11 +166,22 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
     let headerColumnsUtility;
     let mapSubjectClean = mapSubject;
     let includeTargetMembersClean = includeTargetMembers;
+    let headerTitle;
+    let headerSubTitle;
+    if (entityTitle) {
+      headerTitle = entities
+        ? `${entities.size} ${entities.size === 1 ? entityTitle.single : entityTitle.plural}`
+        : entityTitle.plural;
+    }
+    if (hasFilters) {
+      headerSubTitle = `of ${allEntityCount} total`;
+    }
     // ACTIONS =================================================================
 
     if (config.types === 'actiontypes' && dataReady) {
       columns = ACTIONTYPES_CONFIG[typeId] && ACTIONTYPES_CONFIG[typeId].columns;
       type = actiontypes.find((at) => qe(at.get('id'), typeId));
+      hasByActor = ACTIONTYPE_ACTORTYPES[typeId] && ACTIONTYPE_ACTORTYPES[typeId].length > 0;
       hasByTarget = type.getIn(['attributes', 'has_target']);
       hasByUser = isAdmin && USER_ACTIONTYPES && USER_ACTIONTYPES.indexOf(typeId) > -1;
       if (!hasByTarget && mapSubject === 'targets') {
@@ -203,6 +215,24 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
               disabled: mapSubjectClean === 'targets',
             },
           ];
+          // if (mapSubjectClean === 'targets') {
+          //   headerTitle = `${headerTitle} by target`;
+          // }
+        }
+        if (hasByActor) {
+          subjectOptions = [
+            ...subjectOptions,
+            {
+              type: 'secondary',
+              title: qe(ACTIONTYPES.DONOR, typeId) ? 'By donor' : 'By actor',
+              onClick: () => onSetMapSubject('actors'),
+              active: mapSubjectClean === 'actors',
+              disabled: mapSubjectClean === 'actors',
+            },
+          ];
+          // if (mapSubjectClean === 'actors') {
+          //   headerTitle = `${headerTitle} by actor`;
+          // }
         }
         if (hasByUser) {
           subjectOptions = [
@@ -366,16 +396,6 @@ class EntitiesListView extends React.Component { // eslint-disable-line react/pr
           attributes: ['menu_title', 'title'],
         },
       ];
-    }
-    let headerTitle;
-    let headerSubTitle;
-    if (entityTitle) {
-      headerTitle = entities
-        ? `${entities.size} ${entities.size === 1 ? entityTitle.single : entityTitle.plural}`
-        : entityTitle.plural;
-    }
-    if (hasFilters) {
-      headerSubTitle = `of ${allEntityCount} total`;
     }
     return (
       <ContainerWrapper
