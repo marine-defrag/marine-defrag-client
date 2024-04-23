@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
@@ -83,8 +83,6 @@ function Option({
   optionId,
   intl,
   secondary,
-  optionRef,
-  handleKeyDown,
 }) {
   const emphasis = option.get('labelEmphasis');
   const reference = typeof option.get('reference') !== 'undefined' && option.get('reference') ? option.get('reference').toString() : '';
@@ -105,18 +103,6 @@ function Option({
   } else {
     optionLabel = label;
   }
-
-  useEffect(() => {
-    const element = optionRef && optionRef.current;
-    if (element) {
-      element.addEventListener('keydown', handleKeyDown, false);
-    }
-    return () => {
-      if (element) {
-        element.removeEventListener('keydown', handleKeyDown, false);
-      }
-    };
-  }, [optionRef]);
 
   return (
     <Styled
@@ -139,7 +125,6 @@ function Option({
         { !isIndeterminate
           && (
             <input
-              ref={optionRef}
               id={optionId}
               type="checkbox"
               checked={checked}
@@ -192,7 +177,6 @@ Option.propTypes = {
   onCheckboxChange: PropTypes.func,
   intl: intlShape.isRequired,
   handleKeyDown: PropTypes.func,
-  optionRef: PropTypes.object,
 };
 
 export default injectIntl(Option);

@@ -53,6 +53,7 @@ function EntityListSidebarOption({
     <Styled active={option.get('active')}>
       <StyledButton
         plain
+        id={`side-bar-option-${option.get('id')}`}
         onClick={() => onShowForm({
           group: groupType || groupId,
           optionId: option.get('id'),

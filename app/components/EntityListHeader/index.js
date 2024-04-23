@@ -16,7 +16,7 @@ import {
 import { isEqual } from 'lodash/lang';
 import { truncateText } from 'utils/string';
 import { isMinSize } from 'utils/responsive';
-import { setFocusByRef } from 'utils/accessability';
+import { setFocusById, setFocusByRef } from 'utils/accessability';
 
 import { TEXT_TRUNCATE } from 'themes/config';
 import { FILTER_FORM_MODEL, EDIT_FORM_MODEL } from 'containers/EntityListForm/constants';
@@ -273,6 +273,9 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
 
   onHideForm = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    if (this.state.activeOption) {
+      setFocusById(`side-bar-option-${this.state.activeOption.optionId}`);
+    }
     this.setState({ activeOption: null });
   };
 

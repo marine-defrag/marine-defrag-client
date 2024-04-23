@@ -13,6 +13,7 @@ import TagSearch from 'components/TagSearch';
 
 import IndeterminateCheckbox, { STATES as CHECKBOX_STATES } from 'components/forms/IndeterminateCheckbox';
 
+import { setFocusById } from 'utils/accessability';
 import {
   sortOptions,
   filterOptionsByTags,
@@ -392,14 +393,20 @@ class MultiSelect extends React.Component {
     }
   }
 
-  handleKeyboardNavOptionList(event) {
-    if (event.keyCode === 9) {
+  handleKeyboardNavOptionList(evt) {
+    if (evt && evt.preventDefault) evt.preventDefault();
+
+    if (evt.key === 'Tab') {
       this.props.onCancel();
     }
   }
 
-  handleKeyboardNavTagList(event) {
-    if (event.keyCode === 9) {
+  handleKeyboardNavTagList(evt) {
+    if (evt && evt.preventDefault) evt.preventDefault();
+
+    if (evt.key !== 'Tab') return;
+    if (this.state.tagGroupOpenId !== null) {
+      setFocusById(`tag-filter-group-${this.state.tagGroupOpenId}`);
       this.onSetOpenTagGroup(null);
     }
   }
@@ -509,7 +516,7 @@ class MultiSelect extends React.Component {
               onCheckboxChange={(checkedState, option) => {
                 this.props.onChange(this.getNextValues(checkedState, option));
               }}
-              keyboardNavAutoCloseEnabled={!this.props.buttons}
+              keyboardAutoCloseEnabled={!this.props.buttons}
               handleKeyDown={(event) => this.handleKeyboardNavOptionList(event)}
             />
           </ListWrap>
