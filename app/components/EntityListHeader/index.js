@@ -16,6 +16,7 @@ import {
 import { isEqual } from 'lodash/lang';
 import { truncateText } from 'utils/string';
 import { isMinSize } from 'utils/responsive';
+import { setFocusByRef } from 'utils/accessability';
 
 import { TEXT_TRUNCATE } from 'themes/config';
 import { FILTER_FORM_MODEL, EDIT_FORM_MODEL } from 'containers/EntityListForm/constants';
@@ -88,6 +89,13 @@ const SelectType = styled(ButtonOld)`
     padding-left: 2px;
     padding-right: 2px;
     max-width: 100%;
+  }
+  &:focus {
+    outline: none;
+  }
+  &:focus-visible {
+    outline: 2px solid ${palette('primary', 0)};
+    border-radius: 3px;
   }
 `;
 const EntityListSearch = styled((p) => <Box justify="end" direction="row" gap="medium" {...p} />)``;
@@ -204,6 +212,12 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     window.addEventListener('mousedown', this.handleClickOutside);
   }
 
+  componentDidUpdate() {
+    if (this.state.showTypes && this.typeWrapperRef && this.typeWrapperRef.current && this.typeWrapperRef.current.lastElementChild) {
+      this.typeWrapperRef.current.lastElementChild.addEventListener('keydown', this.onKeyboardHideTypes);
+    }
+  }
+
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (
       this.props.showFilters !== nextProps.showFilters
@@ -236,6 +250,9 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
   componentWillUnmount() {
     window.removeEventListener('resize', this.resize);
     window.removeEventListener('mousedown', this.handleClickOutside);
+    if (this.typeWrapperRef && this.typeWrapperRef.current && this.typeWrapperRef.current.lastElementChild) {
+      this.typeWrapperRef.current.lastElementChild.removeEventListener('keydown', this.onKeyboardHideTypes);
+    }
   }
 
   handleClickOutside = (evt) => {
@@ -254,10 +271,6 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     this.setState({ activeOption: option });
   };
 
-  // onShowForm = (option) => {
-  //   this.setState({ activeOption: option.active ? null : option });
-  // };
-
   onHideForm = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     this.setState({ activeOption: null });
@@ -270,6 +283,12 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
 
   onHideTypes = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    this.setState({ showTypes: false });
+  };
+
+  onKeyboardHideTypes = (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    setFocusByRef(this.typeButtonRef);
     this.setState({ showTypes: false });
   };
 
@@ -548,9 +567,10 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                           <TypeOption
                             key={option.value}
                             active={option.active}
-                            onClick={() => {
+                            onClick={(event) => {
                               this.onHideTypes();
                               onSelectType(option.value);
+                              if (event.pointerType !== 'touch') setFocusByRef(this.typeButtonRef);
                             }}
                           >
                             {option.label}
