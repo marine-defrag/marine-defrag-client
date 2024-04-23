@@ -46,6 +46,7 @@ import appMessages from 'containers/App/messages';
 
 import { USER_ROLES, ACTION_FIELDS, ACTOR_FIELDS } from 'themes/config';
 
+import { setFocusById } from 'utils/accessability';
 import EntitiesMap from './EntitiesMap';
 import EntitiesListView from './EntitiesListView';
 import EntitiesOverTime from './EntitiesOverTime';
@@ -126,6 +127,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 
   onHideFilters = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    setFocusById('show-filters-button');
     this.setState({ visibleFilters: false });
   };
 

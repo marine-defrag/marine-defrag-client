@@ -599,6 +599,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
               {dataReady && onShowFilters && isMinSize(size, 'large') && (
                 <HeaderSection align="center">
                   <ButtonOptions
+                    id="show-filters-button"
                     onClick={onShowFilters}
                     label={(
                       <Box direction="row" gap="small" align="center">
