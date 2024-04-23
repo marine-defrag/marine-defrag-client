@@ -166,6 +166,11 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     this.setState({ downloadActive: false });
   };
 
+  onMapKeyboardNavFocus = (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    this.props.onSetView('list');
+  };
+
   getMessageForType = (type) => {
     switch (type) {
       case 'new':
@@ -202,12 +207,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
   }, Map());
 
   filterByError = (entities, errors) => entities.filter((entity) => errors.has(entity.get('id')));
-
-  onMapKeyboardNavEnter = (event) => {
-    if (event.keyCode === 9) {
-      this.props.onSetView('list');
-    }
-  }
 
   render() {
     const { intl } = this.context;
@@ -352,6 +351,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             active: showTimeline,
             disabled: showTimeline,
             isFirst: true,
+            id: 'view-options-time',
           },
         ];
       }
@@ -365,6 +365,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             active: showMap,
             disabled: showMap,
             isFirst: !hasTimelineOption,
+            id: 'view-options-map',
           },
         ];
       }
@@ -378,6 +379,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           disabled: showList,
           isLast: true,
           isFirst: !hasMapOption && !hasTimelineOption,
+          id: 'view-options-list',
         },
       ];
     }
@@ -566,7 +568,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
             isPrintView={isPrintView}
-            onKeyboardNavEnter={(event) => this.onMapKeyboardNavEnter(event)}
+            onKeyboardFocusExitView={this.onMapKeyboardNavFocus}
           />
         )}
         {showTimeline && (

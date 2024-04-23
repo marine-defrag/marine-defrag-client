@@ -634,6 +634,7 @@
   "app.containers.App.messages.createdAsGuest": "{entityType} created successfully. It will become publicly available once verified and published by an authorised user.",
   "app.containers.App.screenreader.skipBackToContent": "Skip back to content",
   "app.containers.App.screenreader.skipToContent": "Skip to content",
+  "app.containers.App.screenreader.disabledMapView": "Map view is currently disabled with keyboard navigation. Press any key to see the content in list view.",
   "app.containers.App.ui.userRoles.admin": "Administrator",
   "app.containers.App.ui.userRoles.manager": "Manager",
   "app.containers.App.ui.userRoles.analyst": "Analyst",

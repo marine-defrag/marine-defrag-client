@@ -39,6 +39,7 @@ class ButtonFactory extends React.PureComponent { // eslint-disable-line react/p
             inactive={!button.active}
             isLast={button.isLast}
             isFirst={button.isFirst}
+            id={button.id}
           >
             {button.title}
           </ButtonDefaultGrouped>

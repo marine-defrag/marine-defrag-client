@@ -3,9 +3,8 @@
  * EntitiesMap
  *
  */
-import React, { useEffect, useRef } from 'react';
-// import React, { useEffect } from 'react';
-import { injectIntl, intlShape } from 'react-intl';
+import React, { useEffect, useRef, useState } from 'react';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
@@ -44,12 +43,12 @@ import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import HeaderPrint from 'components/Header/HeaderPrint';
 import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
+import ButtonClose from 'components/buttons/ButtonClose';
 
 import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
 import { hasGroupActors } from 'utils/entities';
 import MapControl from 'containers/MapControl';
-// import messages from './messages';
 
 const LoadingWrap = styled.div`
   position: absolute;
@@ -68,9 +67,29 @@ const Styled = styled((p) => <ContainerWrapper {...p} />)`
   box-shadow: none;
   padding: 0;
 `;
-const KeyboardNavWrapper = styled.div`
-  tabindex: 0;
+const KeyboardNavWrapper = styled.div``;
+const DisableMapOverlay = styled.div`
+  width: 100%;
+  height: 100%;
+  z-index: 102;
+  background-color: rgba(0,0,0,0.2);
+  position: absolute;
+  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
+    z-index: 99;
+  }
 `;
+const ScreenReaderWrapper = styled.div`
+  position: relative;
+  width: 330px;
+  padding: 50px;
+  z-index: 100;
+  margin: auto;
+  background: white;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 103;
+`;
+
 export function EntitiesMap(props) {
   const {
     dataReady,
@@ -107,7 +126,7 @@ export function EntitiesMap(props) {
     // connectedTaxonomies,
     // locationQuery,
     // taxonomies,
-    onKeyboardNavEnter,
+    onKeyboardFocusExitView,
   } = props;
   // useEffect(() => {
   //   onSetMapLoading('ll-map-list');
@@ -134,21 +153,26 @@ export function EntitiesMap(props) {
   let circleLayerConfig;
   let mapSubjectClean = mapSubject || 'actors';
   const entitiesTotal = entities ? entities.size : 0;
-  const mapRef = useRef(null);
+  const keyboardNavRef = useRef(null);
+  const skipMapViewRef = useRef(null);
+  const [disableMapView, setDisableMapView] = useState(false);
+
+  const onKeyboardFocus = () => {
+    setDisableMapView(true);
+    skipMapViewRef.current.focus();
+  };
 
   useEffect(() => {
-    const element = mapRef && mapRef.current;
-    if (element) {
-      element.addEventListener('keydown', onKeyboardNavEnter, false);
+    const element = keyboardNavRef && keyboardNavRef.current;
+    if (dataReady && element) {
+      element.addEventListener('focus', onKeyboardFocus);
     }
     return () => {
       if (element) {
-        element.removeEventListener('keydown', onKeyboardNavEnter, false);
+        element.removeEventListener('focus', onKeyboardFocus);
       }
     };
-  }, [mapRef]);
-
-
+  }, [keyboardNavRef, dataReady]);
   // let cleanMapSubject = 'actors';
   if (dataReady) {
     // actors ===================================================
@@ -844,7 +868,19 @@ export function EntitiesMap(props) {
     }],
   );
   return (
-    <KeyboardNavWrapper ref={mapRef}>
+    <KeyboardNavWrapper tabIndex={0} ref={keyboardNavRef}>
+      {disableMapView && (
+        <DisableMapOverlay>
+          <ScreenReaderWrapper tabIndex={0} ref={skipMapViewRef} onKeyDown={onKeyboardFocusExitView}>
+            <FormattedMessage {...appMessages.screenreader.disabledMapView} />
+            <ButtonClose
+              onClose={() => {
+                setDisableMapView(false);
+              }}
+            />
+          </ScreenReaderWrapper>
+        </DisableMapOverlay>
+      )}
       <Styled headerStyle="types" noOverflow isPrint={isPrintView}>
         {isPrintView && (
           <HeaderPrint argsRemove={['subj', 'ac', 'tc', 'actontype']} />
@@ -931,7 +967,7 @@ EntitiesMap.propTypes = {
   onEntityClick: PropTypes.func,
   onSetFFOverlay: PropTypes.func,
   onSelectAction: PropTypes.func,
-  onKeyboardNavEnter: PropTypes.func,
+  onKeyboardFocusExitView: PropTypes.func,
   // onSetMapLoading: PropTypes.func,
   ffIndicatorId: PropTypes.string,
   intl: intlShape.isRequired,

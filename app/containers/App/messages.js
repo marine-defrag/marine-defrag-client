@@ -2269,6 +2269,10 @@ export default defineMessages({
       id: 'app.containers.App.screenreader.skipBackToContent',
       defaultMessage: 'Skip back to content',
     },
+    disabledMapView: {
+      id: 'app.containers.App.screenreader.disabledMapView',
+      defaultMessage: 'Map view is currently disabled with keyboard navigation. Press any key to see the content in list view.',
+    },
   },
   ui: {
     userRoles: {
