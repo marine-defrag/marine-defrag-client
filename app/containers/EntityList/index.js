@@ -170,7 +170,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 
   onMapKeyboardNavFocus = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    this.props.onSetView('list');
+    if (evt.key === 'Enter') {
+      this.props.onSetView('list');
+    }
   };
 
   getMessageForType = (type) => {

@@ -2271,7 +2271,7 @@ export default defineMessages({
     },
     disabledMapView: {
       id: 'app.containers.App.screenreader.disabledMapView',
-      defaultMessage: 'Map view is currently disabled with keyboard navigation. Press any key to see the content in list view.',
+      defaultMessage: 'Map view is currently disabled with keyboard navigation. Please press enter to see the content in list view.',
     },
   },
   ui: {
