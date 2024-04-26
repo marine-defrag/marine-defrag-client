@@ -10,7 +10,7 @@ import styled, { withTheme } from 'styled-components';
 import { Map, List } from 'immutable';
 import { palette } from 'styled-theme';
 import {
-  Box, Text, Button, ResponsiveContext,
+  Box, Text, Button, ResponsiveContext, Keyboard,
 } from 'grommet';
 
 import { isEqual } from 'lodash/lang';
@@ -212,12 +212,6 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     window.addEventListener('mousedown', this.handleClickOutside);
   }
 
-  componentDidUpdate() {
-    if (this.state.showTypes && this.typeWrapperRef && this.typeWrapperRef.current && this.typeWrapperRef.current.lastElementChild) {
-      this.typeWrapperRef.current.lastElementChild.addEventListener('keydown', this.onKeyboardHideTypes);
-    }
-  }
-
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (
       this.props.showFilters !== nextProps.showFilters
@@ -250,9 +244,6 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
   componentWillUnmount() {
     window.removeEventListener('resize', this.resize);
     window.removeEventListener('mousedown', this.handleClickOutside);
-    if (this.typeWrapperRef && this.typeWrapperRef.current && this.typeWrapperRef.current.lastElementChild) {
-      this.typeWrapperRef.current.lastElementChild.removeEventListener('keydown', this.onKeyboardHideTypes);
-    }
   }
 
   handleClickOutside = (evt) => {
@@ -291,8 +282,8 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
 
   onKeyboardHideTypes = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    setFocusByRef(this.typeButtonRef);
     this.setState({ showTypes: false });
+    setFocusByRef(this.typeButtonRef);
   };
 
   getFormButtons = (activeOption, intl) => {
@@ -566,19 +557,36 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                   {this.state.showTypes && typeOptions && (
                     <PrintHide>
                       <TypeOptions ref={this.typeWrapperRef}>
-                        {typeOptions.map((option) => (
-                          <TypeOption
-                            key={option.value}
-                            active={option.active}
-                            onClick={(event) => {
-                              this.onHideTypes();
-                              onSelectType(option.value);
-                              if (event.pointerType !== 'touch') setFocusByRef(this.typeButtonRef);
-                            }}
-                          >
-                            {option.label}
-                          </TypeOption>
-                        ))}
+                        {typeOptions.map((option, i, list) => {
+                          const typeOption = (
+                            <TypeOption
+                              key={option.value}
+                              active={option.active}
+                              onClick={(event) => {
+                                this.onHideTypes();
+                                onSelectType(option.value);
+                                if (event.pointerType !== 'touch') setFocusByRef(this.typeButtonRef);
+                              }}
+                            >
+                              {option.label}
+                            </TypeOption>
+                          );
+                          if (i === list.length - 1) {
+                            // add keyboard tab listener on last element
+                            return (
+                              <Keyboard
+                                key={`${option.value}-keyboard`}
+                                onTab={(event) => {
+                                  this.onKeyboardHideTypes(event);
+                                }}
+                              >
+                                {typeOption}
+                              </Keyboard>
+                            );
+                          }
+
+                          return typeOption;
+                        })}
                       </TypeOptions>
                     </PrintHide>
                   )}
