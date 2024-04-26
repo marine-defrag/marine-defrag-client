@@ -12,6 +12,7 @@ import { palette } from 'styled-theme';
 
 import { Map, List, fromJS } from 'immutable';
 import ReactModal from 'react-modal';
+import { Keyboard } from 'grommet';
 
 // import { getEntityReference } from 'utils/entities';
 import Messages from 'components/Messages';
@@ -19,6 +20,7 @@ import Loading from 'components/Loading';
 
 import EntityListHeader from 'components/EntityListHeader';
 import EntityListDownload from 'components/EntityListDownload';
+import ButtonClose from 'components/buttons/ButtonClose';
 
 import {
   selectHasUserRole,
@@ -47,6 +49,7 @@ import appMessages from 'containers/App/messages';
 import { USER_ROLES, ACTION_FIELDS, ACTOR_FIELDS } from 'themes/config';
 
 import { setFocusById } from 'utils/accessability';
+import KeyboardListener from './KeyboardListener';
 import EntitiesMap from './EntitiesMap';
 import EntitiesListView from './EntitiesListView';
 import EntitiesOverTime from './EntitiesOverTime';
@@ -100,13 +103,37 @@ const ProgressText = styled.div`
     font-size: ${(props) => props.theme.sizes.print.default};
   }
 `;
+// const StyledOverlay = styled((p) => <Layer {...p} />)``;
+// const ScreenReaderWrapper = styled((p) => <Box pad="medium" gap="small" width="medium" />)``;
+// const KeyboardNavWrapper = styled.div``;
+const DisableVisOverlay = styled.div`
+  width: 100%;
+  height: 100%;
+  z-index: 102;
+  background-color: rgba(0,0,0,0.2);
+  position: absolute;
+  @media (min-width: ${({ theme }) => theme.breakpoints.large}) {
+    z-index: 99;
+  }
+`;
+const ScreenReaderWrapper = styled.div`
+  position: relative;
+  width: 330px;
+  padding: 50px;
+  z-index: 100;
+  margin: auto;
+  background: white;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 103;
+`;
 
 const STATE_INITIAL = {
   downloadActive: false,
   visibleFilters: null,
   visibleEditOptions: null,
+  disableVisView: false,
 };
-
 export class EntityList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   constructor() {
     super();
@@ -168,11 +195,18 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
     this.setState({ downloadActive: false });
   };
 
-  onMapKeyboardNavFocus = (evt) => {
-    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-    if (evt.key === 'Enter') {
-      this.props.onSetView('list');
+  onTabInVisView = (event) => {
+    if (event !== undefined && event.preventDefault) event.preventDefault();
+    if (this.props.view !== 'list') {
+      this.setState({ disableVisView: true });
+      // setFocusById('screen-reader-overlay');
     }
+  };
+
+  setListViewOnKeyNav = (event) => {
+    if (event !== undefined && event.preventDefault) event.preventDefault();
+    this.setState({ disableVisView: false });
+    this.props.onSetView('list');
   };
 
   getMessageForType = (type) => {
@@ -552,52 +586,55 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           />
         )}
         {showMap && (
-          <EntitiesMap
-            viewOptions={viewOptions}
-            entities={entities}
-            actortypes={actortypes}
-            actiontypes={actiontypes}
-            targettypes={targettypes}
-            config={config}
-            dataReady={dataReady}
-            onEntityClick={(id, path) => onEntityClick(
-              id, path, viewDomain.get('errors')
-            )}
-            typeId={typeId}
-            hasFilters={filters && filters.length > 0}
-            mapSubject={mapSubject}
-            onSetMapSubject={onSetMapSubject}
-            onSetIncludeActorMembers={onSetIncludeActorMembers}
-            onSetIncludeTargetMembers={onSetIncludeTargetMembers}
-            includeActorMembers={includeActorMembers}
-            includeTargetMembers={includeTargetMembers}
-            isPrintView={isPrintView}
-            onKeyboardFocusExitView={this.onMapKeyboardNavFocus}
-          />
+          <KeyboardListener onTab={this.onTabInVisView}>
+            <EntitiesMap
+              viewOptions={viewOptions}
+              entities={entities}
+              actortypes={actortypes}
+              actiontypes={actiontypes}
+              targettypes={targettypes}
+              config={config}
+              dataReady={dataReady}
+              onEntityClick={(id, path) => onEntityClick(
+                id, path, viewDomain.get('errors')
+              )}
+              typeId={typeId}
+              hasFilters={filters && filters.length > 0}
+              mapSubject={mapSubject}
+              onSetMapSubject={onSetMapSubject}
+              onSetIncludeActorMembers={onSetIncludeActorMembers}
+              onSetIncludeTargetMembers={onSetIncludeTargetMembers}
+              includeActorMembers={includeActorMembers}
+              includeTargetMembers={includeTargetMembers}
+              isPrintView={isPrintView}
+            />
+          </KeyboardListener>
         )}
         {showTimeline && (
-          <EntitiesOverTime
-            viewOptions={viewOptions}
-            entities={entities}
-            actortypes={actortypes}
-            actiontypes={actiontypes}
-            targettypes={targettypes}
-            config={config}
-            entityTitle={entityTitle}
-            allEntityCount={allEntityCount}
-            dataReady={dataReady}
-            onEntityClick={(id, path) => onEntityClick(
-              id, path, viewDomain.get('errors')
-            )}
-            headerOptions={headerOptions}
-            typeId={typeId}
-            hasFilters={filters && filters.length > 0}
-            onSetIncludeActorMembers={onSetIncludeActorMembers}
-            onSetIncludeTargetMembers={onSetIncludeTargetMembers}
-            includeActorMembers={includeActorMembers}
-            includeTargetMembers={includeTargetMembers}
-            isPrintView={isPrintView}
-          />
+          <KeyboardListener onTab={this.onTabInVisView}>
+            <EntitiesOverTime
+              viewOptions={viewOptions}
+              entities={entities}
+              actortypes={actortypes}
+              actiontypes={actiontypes}
+              targettypes={targettypes}
+              config={config}
+              entityTitle={entityTitle}
+              allEntityCount={allEntityCount}
+              dataReady={dataReady}
+              onEntityClick={(id, path) => onEntityClick(
+                id, path, viewDomain.get('errors')
+              )}
+              headerOptions={headerOptions}
+              typeId={typeId}
+              hasFilters={filters && filters.length > 0}
+              onSetIncludeActorMembers={onSetIncludeActorMembers}
+              onSetIncludeTargetMembers={onSetIncludeTargetMembers}
+              includeActorMembers={includeActorMembers}
+              includeTargetMembers={includeTargetMembers}
+              isPrintView={isPrintView}
+            />
+          </KeyboardListener>
         )}
         {isManagerAndCanEdit && (progress !== null && progress < 100) && (
           <Progress>
@@ -659,6 +696,28 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               autoDismiss={2000}
             />
           </Progress>
+        )}
+        {this.state.disableVisView && (
+          <DisableVisOverlay>
+            <Keyboard
+              onEnter={(event) => this.setListViewOnKeyNav(event)}
+              onEsc={() => {
+                this.setState({ disableVisView: false });
+              }}
+            >
+              <ScreenReaderWrapper
+                tabIndex={0}
+                id="screen-reader-overlay"
+              >
+                <ButtonClose
+                  onClose={() => {
+                    this.setState({ disableVisView: false });
+                  }}
+                />
+                <FormattedMessage {...appMessages.screenreader.disabledMapView} />
+              </ScreenReaderWrapper>
+            </Keyboard>
+          </DisableVisOverlay>
         )}
       </div>
     );
