@@ -12,15 +12,14 @@ import { palette } from 'styled-theme';
 
 import { Map, List, fromJS } from 'immutable';
 import ReactModal from 'react-modal';
-import { Keyboard } from 'grommet';
 
 // import { getEntityReference } from 'utils/entities';
 import Messages from 'components/Messages';
 import Loading from 'components/Loading';
+import Keyboard from 'containers/Keyboard';
 
 import EntityListHeader from 'components/EntityListHeader';
 import EntityListDownload from 'components/EntityListDownload';
-import ButtonClose from 'components/buttons/ButtonClose';
 
 import {
   selectHasUserRole,
@@ -49,10 +48,11 @@ import appMessages from 'containers/App/messages';
 import { USER_ROLES, ACTION_FIELDS, ACTOR_FIELDS } from 'themes/config';
 
 import { setFocusById } from 'utils/accessability';
-import KeyboardListener from './KeyboardListener';
+// import Keyboard from './Keyboard';
 import EntitiesMap from './EntitiesMap';
 import EntitiesListView from './EntitiesListView';
 import EntitiesOverTime from './EntitiesOverTime';
+import DisableView from './DisableView';
 
 import {
   selectDomain,
@@ -102,30 +102,6 @@ const ProgressText = styled.div`
   @media print {
     font-size: ${(props) => props.theme.sizes.print.default};
   }
-`;
-// const StyledOverlay = styled((p) => <Layer {...p} />)``;
-// const ScreenReaderWrapper = styled((p) => <Box pad="medium" gap="small" width="medium" />)``;
-// const KeyboardNavWrapper = styled.div``;
-const DisableVisOverlay = styled.div`
-  width: 100%;
-  height: 100%;
-  z-index: 102;
-  background-color: rgba(0,0,0,0.2);
-  position: absolute;
-  @media (min-width: ${({ theme }) => theme.breakpoints.large}) {
-    z-index: 99;
-  }
-`;
-const ScreenReaderWrapper = styled.div`
-  position: relative;
-  width: 330px;
-  padding: 50px;
-  z-index: 100;
-  margin: auto;
-  background: white;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 103;
 `;
 
 const STATE_INITIAL = {
@@ -197,9 +173,10 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 
   onTabInVisView = (event) => {
     if (event !== undefined && event.preventDefault) event.preventDefault();
-    if (this.props.view !== 'list') {
+    if (this.state.disableVisView) {
+      setFocusById('screen-reader-overlay');
+    } else if (this.props.view !== 'list') {
       this.setState({ disableVisView: true });
-      // setFocusById('screen-reader-overlay');
     }
   };
 
@@ -389,7 +366,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             active: showTimeline,
             disabled: showTimeline,
             isFirst: true,
-            id: 'view-options-time',
           },
         ];
       }
@@ -403,7 +379,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             active: showMap,
             disabled: showMap,
             isFirst: !hasTimelineOption,
-            id: 'view-options-map',
           },
         ];
       }
@@ -417,12 +392,9 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           disabled: showList,
           isLast: true,
           isFirst: !hasMapOption && !hasTimelineOption,
-          id: 'view-options-list',
         },
       ];
     }
-
-
     return (
       <div>
         {config.downloadCSV && this.state.downloadActive && (
@@ -537,7 +509,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             connections={connections}
             connectedTaxonomies={connectedTaxonomies}
             entityIdsSelected={entityIdsSelectedFiltered}
-
             config={config}
             columns={columns}
             headerColumnsUtility={headerColumnsUtility}
@@ -586,7 +557,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           />
         )}
         {showMap && (
-          <KeyboardListener onTab={this.onTabInVisView}>
+          <Keyboard onTab={this.onTabInVisView}>
             <EntitiesMap
               viewOptions={viewOptions}
               entities={entities}
@@ -608,10 +579,10 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               includeTargetMembers={includeTargetMembers}
               isPrintView={isPrintView}
             />
-          </KeyboardListener>
+          </Keyboard>
         )}
         {showTimeline && (
-          <KeyboardListener onTab={this.onTabInVisView}>
+          <Keyboard onTab={this.onTabInVisView}>
             <EntitiesOverTime
               viewOptions={viewOptions}
               entities={entities}
@@ -634,7 +605,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               includeTargetMembers={includeTargetMembers}
               isPrintView={isPrintView}
             />
-          </KeyboardListener>
+          </Keyboard>
         )}
         {isManagerAndCanEdit && (progress !== null && progress < 100) && (
           <Progress>
@@ -698,26 +669,12 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           </Progress>
         )}
         {this.state.disableVisView && (
-          <DisableVisOverlay>
-            <Keyboard
-              onEnter={(event) => this.setListViewOnKeyNav(event)}
-              onEsc={() => {
-                this.setState({ disableVisView: false });
-              }}
-            >
-              <ScreenReaderWrapper
-                tabIndex={0}
-                id="screen-reader-overlay"
-              >
-                <ButtonClose
-                  onClose={() => {
-                    this.setState({ disableVisView: false });
-                  }}
-                />
-                <FormattedMessage {...appMessages.screenreader.disabledMapView} />
-              </ScreenReaderWrapper>
-            </Keyboard>
-          </DisableVisOverlay>
+          <DisableView
+            onEnter={(event) => this.setListViewOnKeyNav(event)}
+            onEsc={() => {
+              this.setState({ disableVisView: false });
+            }}
+          />
         )}
       </div>
     );
