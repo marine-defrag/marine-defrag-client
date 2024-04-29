@@ -105,7 +105,6 @@ const STATE_INITIAL = {
   downloadActive: false,
   visibleFilters: null,
   visibleEditOptions: null,
-  disableVisView: false,
 };
 export class EntityList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   constructor() {
