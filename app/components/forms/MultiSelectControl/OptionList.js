@@ -9,7 +9,7 @@ import { Box } from 'grommet';
 
 import A from 'components/styled/A';
 
-import { getLastTabbableElement } from 'utils/accessability';
+import { getLastTabbableElement } from 'utils/accessibility';
 import Option from './Option';
 
 import messages from './messages';

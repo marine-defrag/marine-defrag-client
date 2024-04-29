@@ -13,7 +13,7 @@ import TagSearch from 'components/TagSearch';
 
 import IndeterminateCheckbox, { STATES as CHECKBOX_STATES } from 'components/forms/IndeterminateCheckbox';
 
-import { setFocusById } from 'utils/accessability';
+import { setFocusById } from 'utils/accessibility';
 import {
   sortOptions,
   filterOptionsByTags,

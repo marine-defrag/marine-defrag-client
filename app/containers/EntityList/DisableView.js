@@ -10,7 +10,7 @@ import Keyboard from 'containers/Keyboard';
 import { Box } from 'grommet';
 
 import appMessages from 'containers/App/messages';
-import { setFocusById } from 'utils/accessability';
+import { setFocusById } from 'utils/accessibility';
 
 const StyledBox = styled((p) => <Box {...p} />)`
   background: white;
