@@ -49,6 +49,7 @@ import '!file-loader?name=[name].[ext]!./themes/media/footer_giz_2.png';
 import '!file-loader?name=[name].[ext]!./themes/media/footer_giz_3.png';
 import '!file-loader?name=[name].[ext]!./themes/media/footer_pexels_1.png';
 import '!file-loader?name=[name].[ext]!./themes/media/footer_unsplash_1.png';
+import '!file-loader?name=[name].[ext]!./themes/media/footer_unsplash_2.png';
 import '!file-loader?name=[name].[ext]!./themes/media/footer_unsplash_3.png';
 import '!file-loader?name=[name].[ext]!./themes/media/footer_unsplash_4.png';
 import '!file-loader?name=[name].[ext]!./themes/media/footer_unsplash_5.png';
