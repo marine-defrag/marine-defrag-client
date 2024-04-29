@@ -9,9 +9,3 @@ export const setFocusById = (id) => {
 };
 
 export const setFocusByRef = (ref) => ref && ref.current && ref.current.focus({ focusVisible: true });
-
-export const getLastTabbableElement = (parent) => {
-  const tabableElementsSelector = 'button:not([disabled]), input:not([disabled]), a[href]:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled]), textarea:not([disabled]), select:not([disabled])';
-  const tabableElements = [...parent.querySelectorAll(tabableElementsSelector)];
-  return tabableElements.pop() || null;
-};

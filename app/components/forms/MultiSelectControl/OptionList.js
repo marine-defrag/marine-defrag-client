@@ -1,4 +1,4 @@
-import React, { useState, createRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
 import styled from 'styled-components';
@@ -9,7 +9,7 @@ import { Box } from 'grommet';
 
 import A from 'components/styled/A';
 
-import { getLastTabbableElement } from 'utils/accessability';
+import Keyboard from 'containers/Keyboard';
 import Option from './Option';
 
 import messages from './messages';
@@ -66,8 +66,7 @@ const MoreLink = styled(A)`
 const SHOW_INCREMENT = 20;
 
 function OptionList(props) {
-  const listWrapperRef = createRef(null);
-  const { keyboardAutoCloseEnabled, handleKeyDown } = props;
+  const { keyboardAutoCloseEnabled, handleKeyboardClose } = props;
   const [noItems, setNoItems] = useState(SHOW_INCREMENT);
   // do groups not slice
   const options = props.groups
@@ -83,23 +82,9 @@ function OptionList(props) {
 
   const hasMore = options.size < props.options.size;
 
-  useEffect(() => {
-    if (!keyboardAutoCloseEnabled) return undefined;
-
-    const element = listWrapperRef.current;
-    const lastElement = element ? getLastTabbableElement(element) : null;
-    if (lastElement) {
-      lastElement.addEventListener('keydown', handleKeyDown);
-      // cleanup
-      return () => lastElement.removeEventListener('keydown', handleKeyDown);
-    }
-
-    return undefined;
-  }, [keyboardAutoCloseEnabled, listWrapperRef]);
-
   return (
     <Styled>
-      <ListWrapper ref={listWrapperRef}>
+      <ListWrapper>
         { groups && groups.toList().map((group, gid) => (
           <GroupWrapper key={gid}>
             { group.get('title') && (
@@ -108,9 +93,9 @@ function OptionList(props) {
               </GroupTitle>
             )}
             <OptionsWrapper>
-              {group.get('options') && group.get('options').map((option, i) => {
+              {group.get('options') && group.get('options').map((option, i, list) => {
                 const id = `${i}-${kebabCase(option.get('value'))}`;
-                return (
+                const optionElement = (
                   <Option
                     key={id}
                     optionId={id}
@@ -119,6 +104,12 @@ function OptionList(props) {
                     onCheckboxChange={props.onCheckboxChange}
                   />
                 );
+                if (keyboardAutoCloseEnabled && list.size - 1 === i) {
+                  return (
+                    <Keyboard key={`${id}-keyboard`} onTab={handleKeyboardClose}>{optionElement}</Keyboard>
+                  );
+                }
+                return optionElement;
               })}
             </OptionsWrapper>
           </GroupWrapper>
@@ -163,8 +154,7 @@ OptionList.propTypes = {
   secondary: PropTypes.bool,
   onCheckboxChange: PropTypes.func,
   groups: PropTypes.object,
-  keyboardNavAutoCloseEnabled: PropTypes.bool,
-  handleKeyDown: PropTypes.func,
+  handleKeyboardClose: PropTypes.func,
   keyboardAutoCloseEnabled: PropTypes.bool,
 };
 

@@ -73,7 +73,7 @@ class TagFilters extends React.PureComponent {
       tagFilterGroups,
       onTagSelected,
       queryTags,
-      handleKeyDown,
+      handleKeyboardClose,
     } = this.props;
     if (tagFilterGroups.length === 0) return null;
     return (
@@ -108,7 +108,7 @@ class TagFilters extends React.PureComponent {
                         onTagSelected(active, tagOption);
                       }}
                       keyboardAutoCloseEnabled
-                      handleKeyDown={(event) => handleKeyDown(event)}
+                      handleKeyboardClose={handleKeyboardClose}
                     />
                   </Dropdown>
                 )
@@ -128,7 +128,7 @@ TagFilters.propTypes = {
   onTagSelected: PropTypes.func,
   openId: PropTypes.number,
   setOpen: PropTypes.func,
-  handleKeyDown: PropTypes.func,
+  handleKeyboardClose: PropTypes.func,
 };
 
 export default TagFilters;

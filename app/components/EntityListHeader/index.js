@@ -265,7 +265,8 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
   onHideForm = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     if (this.state.activeOption) {
-      setFocusById(`side-bar-option-${this.state.activeOption.optionId}`);
+      const { optionId, group } = this.state.activeOption;
+      setFocusById(`side-bar-option-${group}-${optionId}`);
     }
     this.setState({ activeOption: null });
   };

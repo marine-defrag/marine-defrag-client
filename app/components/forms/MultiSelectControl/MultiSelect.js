@@ -11,6 +11,8 @@ import qe from 'utils/quasi-equals';
 import ButtonFactory from 'components/buttons/ButtonFactory';
 import TagSearch from 'components/TagSearch';
 
+import Keyboard from 'containers/Keyboard';
+
 import IndeterminateCheckbox, { STATES as CHECKBOX_STATES } from 'components/forms/IndeterminateCheckbox';
 
 import { setFocusById } from 'utils/accessability';
@@ -395,16 +397,11 @@ class MultiSelect extends React.Component {
 
   handleKeyboardNavOptionList(evt) {
     if (evt && evt.preventDefault) evt.preventDefault();
-
-    if (evt.key === 'Tab') {
-      this.props.onCancel();
-    }
+    this.props.onCancel();
   }
 
   handleKeyboardNavTagList(evt) {
     if (evt && evt.preventDefault) evt.preventDefault();
-
-    if (evt.key !== 'Tab') return;
     if (this.state.tagGroupOpenId !== null) {
       setFocusById(`tag-filter-group-${this.state.tagGroupOpenId}`);
       this.onSetOpenTagGroup(null);
@@ -453,21 +450,24 @@ class MultiSelect extends React.Component {
           <FilterWrap>
             {this.props.search && (
               <Search>
-                <TagSearch
-                  onSearch={this.onSearch}
-                  onClear={this.onResetFilters}
-                  filters={this.currentFilters({
-                    queryTags: this.state.queryTags,
-                    filterGroups: this.props.tagFilterGroups,
-                  },
-                  {
-                    queryType: this.state.queryType,
-                    typeFilter: this.props.typeFilter,
-                  })}
-                  searchQuery={this.state.query || ''}
-                  multiselect
-                />
+                <Keyboard onTab={(event) => options.size === 0 ? this.handleKeyboardNavOptionList(event) : null}>
+                  <TagSearch
+                    onSearch={this.onSearch}
+                    onClear={this.onResetFilters}
+                    filters={this.currentFilters({
+                      queryTags: this.state.queryTags,
+                      filterGroups: this.props.tagFilterGroups,
+                    },
+                    {
+                      queryType: this.state.queryType,
+                      typeFilter: this.props.typeFilter,
+                    })}
+                    searchQuery={this.state.query || ''}
+                    multiselect
+                  />
+                </Keyboard>
               </Search>
+
             )}
             {this.props.advanced && this.props.tagFilterGroups && (
               <TagFilters
@@ -476,7 +476,7 @@ class MultiSelect extends React.Component {
                 onTagSelected={this.onTagSelected}
                 openId={this.state.tagGroupOpenId}
                 setOpen={this.onSetOpenTagGroup}
-                handleKeyDown={(event) => this.handleKeyboardNavTagList(event)}
+                handleKeyboardClose={(event) => this.handleKeyboardNavTagList(event)}
               />
             )}
             {this.props.typeFilter && (
@@ -517,7 +517,7 @@ class MultiSelect extends React.Component {
                 this.props.onChange(this.getNextValues(checkedState, option));
               }}
               keyboardAutoCloseEnabled={!this.props.buttons}
-              handleKeyDown={(event) => this.handleKeyboardNavOptionList(event)}
+              handleKeyboardClose={(event) => this.handleKeyboardNavOptionList(event)}
             />
           </ListWrap>
         </ControlMain>

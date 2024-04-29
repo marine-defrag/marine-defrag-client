@@ -49,14 +49,16 @@ function EntityListSidebarOption({
     ? appMessage(intl, option.get('message'))
     : option.get('label');
   label = option.get('memberType') ? `${label} (via members)` : label;
+  const group = groupType || groupId;
+  const optionId = option.get('id');
   return (
     <Styled active={option.get('active')}>
       <StyledButton
         plain
-        id={`side-bar-option-${option.get('id')}`}
+        id={`side-bar-option-${group}-${optionId}`}
         onClick={() => onShowForm({
-          group: groupType || groupId,
-          optionId: option.get('id'),
+          group,
+          optionId,
           path: option.get('path'),
           connection: option.get('connection'),
           key: option.get('key'),
