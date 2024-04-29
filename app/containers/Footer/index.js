@@ -31,6 +31,14 @@ const FooterContent = styled.div`
   }
 `;
 
+const ImageCredit = styled(Box)`
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 2px 6px;
+  margin: 6px;
+  background-color: rgba(255, 255, 255, 0.66);
+`;
 const FooterLink = styled.a`
   font-weight: bold;
   color: ${({ isPrint, theme }) => isPrint ? theme.global.colors.text.secondary : 'white'};
@@ -70,8 +78,13 @@ function Footer({
     <FooterMain isPrint={isPrint}>
       {backgroundImage && FOOTER.IMAGE_URLS[backgroundImage] && (
         <PrintHide>
-          <Box>
+          <Box style={{ position: 'relative' }}>
             <Image src={FOOTER.IMAGE_URLS[backgroundImage]} />
+            <ImageCredit>
+              <Text size="xxxsmall">
+                <FormattedMessage {...messages.imageCredit[backgroundImage]} />
+              </Text>
+            </ImageCredit>
           </Box>
         </PrintHide>
       )}

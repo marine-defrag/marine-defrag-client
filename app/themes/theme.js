@@ -658,6 +658,7 @@ theme.text = {
   xsmall: { size: '13px', height: '16px', maxWidth: '600px' },
   xsmallTight: { size: '13px', height: '14px', maxWidth: '600px' },
   xxsmall: { size: '12px', height: '14px', maxWidth: '500px' },
+  xxxsmall: { size: '10px', height: '11px', maxWidth: '500px' },
 };
 theme.textPrint = {
   xxxlarge: { size: '24pt', height: '32pt' },
