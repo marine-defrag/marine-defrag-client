@@ -4,7 +4,7 @@
  *
  */
 import React from 'react';
-import { injectIntl, intlShape } from 'react-intl';
+import { injectIntl, intlShape, FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import { Map, List } from 'immutable';
 import { connect } from 'react-redux';
@@ -42,6 +42,7 @@ import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import HeaderPrint from 'components/Header/HeaderPrint';
 import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
+import SkipContent from 'components/styled/SkipContent';
 
 import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
@@ -101,6 +102,7 @@ export function EntitiesMap(props) {
     // connectedTaxonomies,
     // locationQuery,
     // taxonomies,
+    onSetListView,
   } = props;
   // useEffect(() => {
   //   onSetMapLoading('ll-map-list');
@@ -826,6 +828,19 @@ export function EntitiesMap(props) {
       {isPrintView && (
         <HeaderPrint argsRemove={['subj', 'ac', 'tc', 'actontype']} />
       )}
+      {viewOptions && viewOptions.length > 1 && !isPrintView && (
+        <EntityListViewOptions options={viewOptions} isOnMap />
+      )}
+      {onSetListView && (
+        <SkipContent as="button" onClick={() => onSetListView()}>
+          <FormattedMessage {...appMessages.screenreader.skipMapToList} />
+        </SkipContent>
+      )}
+      {!dataReady && (
+        <LoadingWrap>
+          <Loading />
+        </LoadingWrap>
+      )}
       {dataReady && (
         <MapControl
           isPrintView={isPrintView}
@@ -865,14 +880,6 @@ export function EntitiesMap(props) {
           }]}
         />
       )}
-      {viewOptions && viewOptions.length > 1 && !isPrintView && (
-        <EntityListViewOptions options={viewOptions} isOnMap />
-      )}
-      {!dataReady && (
-        <LoadingWrap>
-          <Loading />
-        </LoadingWrap>
-      )}
     </Styled>
   );
 }
@@ -907,6 +914,7 @@ EntitiesMap.propTypes = {
   onEntityClick: PropTypes.func,
   onSetFFOverlay: PropTypes.func,
   onSelectAction: PropTypes.func,
+  onSetListView: PropTypes.func,
   // onSetMapLoading: PropTypes.func,
   ffIndicatorId: PropTypes.string,
   intl: intlShape.isRequired,

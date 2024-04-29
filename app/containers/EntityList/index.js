@@ -16,7 +16,6 @@ import ReactModal from 'react-modal';
 // import { getEntityReference } from 'utils/entities';
 import Messages from 'components/Messages';
 import Loading from 'components/Loading';
-import Keyboard from 'containers/Keyboard';
 
 import EntityListHeader from 'components/EntityListHeader';
 import EntityListDownload from 'components/EntityListDownload';
@@ -47,12 +46,10 @@ import appMessages from 'containers/App/messages';
 
 import { USER_ROLES, ACTION_FIELDS, ACTOR_FIELDS } from 'themes/config';
 
-import { setFocusById } from 'utils/accessability';
-// import Keyboard from './Keyboard';
+import { setFocusById } from 'utils/accessibility';
 import EntitiesMap from './EntitiesMap';
 import EntitiesListView from './EntitiesListView';
 import EntitiesOverTime from './EntitiesOverTime';
-import DisableView from './DisableView';
 
 import {
   selectDomain,
@@ -169,21 +166,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 
   onDownloadDismiss = () => {
     this.setState({ downloadActive: false });
-  };
-
-  onTabInVisView = (event) => {
-    if (event !== undefined && event.preventDefault) event.preventDefault();
-    if (this.state.disableVisView) {
-      setFocusById('screen-reader-overlay');
-    } else if (this.props.view !== 'list') {
-      this.setState({ disableVisView: true });
-    }
-  };
-
-  setListViewOnKeyNav = (event) => {
-    if (event !== undefined && event.preventDefault) event.preventDefault();
-    this.setState({ disableVisView: false });
-    this.props.onSetView('list');
   };
 
   getMessageForType = (type) => {
@@ -557,55 +539,53 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
           />
         )}
         {showMap && (
-          <Keyboard onTab={this.onTabInVisView}>
-            <EntitiesMap
-              viewOptions={viewOptions}
-              entities={entities}
-              actortypes={actortypes}
-              actiontypes={actiontypes}
-              targettypes={targettypes}
-              config={config}
-              dataReady={dataReady}
-              onEntityClick={(id, path) => onEntityClick(
-                id, path, viewDomain.get('errors')
-              )}
-              typeId={typeId}
-              hasFilters={filters && filters.length > 0}
-              mapSubject={mapSubject}
-              onSetMapSubject={onSetMapSubject}
-              onSetIncludeActorMembers={onSetIncludeActorMembers}
-              onSetIncludeTargetMembers={onSetIncludeTargetMembers}
-              includeActorMembers={includeActorMembers}
-              includeTargetMembers={includeTargetMembers}
-              isPrintView={isPrintView}
-            />
-          </Keyboard>
+          <EntitiesMap
+            viewOptions={viewOptions}
+            entities={entities}
+            actortypes={actortypes}
+            actiontypes={actiontypes}
+            targettypes={targettypes}
+            config={config}
+            dataReady={dataReady}
+            onEntityClick={(id, path) => onEntityClick(
+              id, path, viewDomain.get('errors')
+            )}
+            typeId={typeId}
+            hasFilters={filters && filters.length > 0}
+            mapSubject={mapSubject}
+            onSetMapSubject={onSetMapSubject}
+            onSetIncludeActorMembers={onSetIncludeActorMembers}
+            onSetIncludeTargetMembers={onSetIncludeTargetMembers}
+            includeActorMembers={includeActorMembers}
+            includeTargetMembers={includeTargetMembers}
+            isPrintView={isPrintView}
+            onSetListView={() => onSetView('list')}
+          />
         )}
         {showTimeline && (
-          <Keyboard onTab={this.onTabInVisView}>
-            <EntitiesOverTime
-              viewOptions={viewOptions}
-              entities={entities}
-              actortypes={actortypes}
-              actiontypes={actiontypes}
-              targettypes={targettypes}
-              config={config}
-              entityTitle={entityTitle}
-              allEntityCount={allEntityCount}
-              dataReady={dataReady}
-              onEntityClick={(id, path) => onEntityClick(
-                id, path, viewDomain.get('errors')
-              )}
-              headerOptions={headerOptions}
-              typeId={typeId}
-              hasFilters={filters && filters.length > 0}
-              onSetIncludeActorMembers={onSetIncludeActorMembers}
-              onSetIncludeTargetMembers={onSetIncludeTargetMembers}
-              includeActorMembers={includeActorMembers}
-              includeTargetMembers={includeTargetMembers}
-              isPrintView={isPrintView}
-            />
-          </Keyboard>
+          <EntitiesOverTime
+            viewOptions={viewOptions}
+            entities={entities}
+            actortypes={actortypes}
+            actiontypes={actiontypes}
+            targettypes={targettypes}
+            config={config}
+            entityTitle={entityTitle}
+            allEntityCount={allEntityCount}
+            dataReady={dataReady}
+            onEntityClick={(id, path) => onEntityClick(
+              id, path, viewDomain.get('errors')
+            )}
+            headerOptions={headerOptions}
+            typeId={typeId}
+            hasFilters={filters && filters.length > 0}
+            onSetIncludeActorMembers={onSetIncludeActorMembers}
+            onSetIncludeTargetMembers={onSetIncludeTargetMembers}
+            includeActorMembers={includeActorMembers}
+            includeTargetMembers={includeTargetMembers}
+            isPrintView={isPrintView}
+            onSetListView={() => onSetView('list')}
+          />
         )}
         {isManagerAndCanEdit && (progress !== null && progress < 100) && (
           <Progress>
@@ -667,14 +647,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
               autoDismiss={2000}
             />
           </Progress>
-        )}
-        {this.state.disableVisView && (
-          <DisableView
-            onEnter={(event) => this.setListViewOnKeyNav(event)}
-            onEsc={() => {
-              this.setState({ disableVisView: false });
-            }}
-          />
         )}
       </div>
     );
