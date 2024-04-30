@@ -986,9 +986,9 @@ export const FOOTER = {
   LINK_TARGET_INTERNAL: false,
   LINK_TARGET_INTERNAL_ID: 1,
   IMAGE_URLS: {
-    footer_actions: `${CLIENT_URL}/footer_aerial_2.png`,
-    footer_facts: `${CLIENT_URL}/footer_aerial_1.png`,
-    footer_actors: `${CLIENT_URL}/footer_aerial_3.png`,
+    footer_actions: `${CLIENT_URL}/footer_unsplash_5.png`,
+    footer_actors: `${CLIENT_URL}/footer_unsplash_6.png`,
+    footer_facts: `${CLIENT_URL}/footer_unsplash_9.png`,
   },
 };
 

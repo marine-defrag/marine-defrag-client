@@ -46,9 +46,9 @@ import PlotHintWrapper from 'components/EntitiesOverTime//PlotHintWrapper';
 import HeaderPrint from 'components/Header/HeaderPrint';
 import Loading from 'components/Loading';
 import EntityListViewOptions from 'components/EntityListViewOptions';
+import SkipContent from 'components/styled/SkipContent';
 
-
-// import appMessages from 'containers/App/messages';
+import appMessages from 'containers/App/messages';
 // import qe from 'utils/quasi-equals';
 
 import messages from './messages';
@@ -120,6 +120,7 @@ export function EntitiesOverTime({
   highlightCategory,
   onEntityClick,
   printArgs,
+  onSetListView,
 }) {
   const [hint, setHint] = useState(null);
   const [hoverId, setHover] = useState(null);
@@ -156,6 +157,11 @@ export function EntitiesOverTime({
         <PrintHide>
           <EntityListViewOptions isPrintView={isPrintView} options={viewOptions} />
         </PrintHide>
+      )}
+      {onSetListView && (
+        <SkipContent as="button" onClick={() => onSetListView()}>
+          <FormattedMessage {...appMessages.screenreader.skipTimelineToList} />
+        </SkipContent>
       )}
       <Container ref={scrollReference} isPrint={isPrintView}>
         <ContentSimple isPrint={isPrintView}>
@@ -268,6 +274,7 @@ EntitiesOverTime.propTypes = {
   onResetCategory: PropTypes.func,
   // intl: intlShape.isRequired,
   onEntityClick: PropTypes.func,
+  onSetListView: PropTypes.func,
   printArgs: PropTypes.object,
   // onSelectAction: PropTypes.func,
 };

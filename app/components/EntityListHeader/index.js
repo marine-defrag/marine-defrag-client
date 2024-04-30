@@ -16,7 +16,7 @@ import {
 import { isEqual } from 'lodash/lang';
 import { truncateText } from 'utils/string';
 import { isMinSize } from 'utils/responsive';
-import { setFocusById, setFocusByRef } from 'utils/accessability';
+import { setFocusById, setFocusByRef } from 'utils/accessibility';
 
 import { TEXT_TRUNCATE } from 'themes/config';
 import { FILTER_FORM_MODEL, EDIT_FORM_MODEL } from 'containers/EntityListForm/constants';

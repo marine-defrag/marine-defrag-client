@@ -66,4 +66,18 @@ export default defineMessages({
       defaultMessage: 'IMPACT OSS',
     },
   },
+  imageCredit: {
+    footer_actions: {
+      id: 'app.containers.Footer.imageCredit.footer_actions',
+      defaultMessage: 'Photo by Nathan Anderson on Unsplash',
+    },
+    footer_actors: {
+      id: 'app.containers.Footer.imageCredit.footer_actors',
+      defaultMessage: 'Photo by Claudio Schwarz on Unsplash',
+    },
+    footer_facts: {
+      id: 'app.containers.Footer.imageCredit.footer_facts',
+      defaultMessage: 'Photo by Bernd Dittrich on Unsplash',
+    },
+  },
 });
