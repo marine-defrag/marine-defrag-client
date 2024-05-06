@@ -11,7 +11,9 @@ import PropTypes from 'prop-types';
 import { palette } from 'styled-theme';
 import styled from 'styled-components';
 
-import { Box, Drop, ThemeContext } from 'grommet';
+import {
+  Box, Button, Drop, ThemeContext,
+} from 'grommet';
 import { Close, Search as SearchIcon } from 'grommet-icons';
 
 import SearchResults from './SearchResults';
@@ -19,7 +21,7 @@ import TextInput from './TextInput';
 
 import { prepOptions } from './utils';
 
-const IconWrapper = styled((p) => <Box {...p} />)`
+const SearchBarButton = styled((p) => <Button {...p} />)`
   cursor: ${({ onClick }) => onClick ? 'pointer' : 'auto'};
   background: ${palette('light', 3)};
   border-top-right-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
@@ -111,21 +113,18 @@ export function Search({
             ref={textInputRef}
           />
           {search.length === 0 && (
-            <IconWrapper justify="center" align="center">
-              <StyledSearchIcon size="xsmall" />
-            </IconWrapper>
+            <SearchBarButton justify="center" align="center" icon={<StyledSearchIcon size="xsmall" />} />
           )}
           {search.length > 0 && (
-            <IconWrapper
+            <SearchBarButton
               onClick={() => {
                 setSearch('');
                 setActiveResult(activeResetIndex);
               }}
               justify="center"
               align="center"
-            >
-              <StyledCloseIcon size="xsmall" />
-            </IconWrapper>
+              icon={<StyledCloseIcon size="xsmall" />}
+            />
           )}
         </>
       </Box>
