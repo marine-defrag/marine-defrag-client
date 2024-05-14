@@ -28,6 +28,10 @@ const SearchBarButton = styled((p) => <Button {...p} />)`
   border-bottom-right-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
   height: ${({ theme }) => theme.sizes.navCardSearch.height}px;
   width: ${({ theme }) => theme.sizes.navCardSearch.height}px;
+  &:focus {
+    outline: 5px auto rgb(77, 144, 254);
+    z-index: 1;
+  }
 `;
 const StyledSearchIcon = styled(SearchIcon)`
   stroke: ${palette('dark', 3)};
@@ -40,11 +44,22 @@ const StyledCloseIcon = styled(Close)`
 const StyledTextInput = styled(TextInput)`
   border-top-left-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
   border-bottom-left-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  height: ${({ theme }) => theme.sizes.navCardSearch.height}px;
+  &:focus {
+    outline: 5px auto rgb(77, 144, 254);
+    z-index: 1;
+  }
 `;
 
-const Styled = styled.span`
+const Styled = styled((p) => <Box {...p} />)`
   width: 100%;
 `;
+
+const SearchBox = styled(
+  React.forwardRef((p, ref) => <Box {...p} ref={ref} />)
+)``;
 export function Search({
   options,
   onSelect,
@@ -89,15 +104,16 @@ export function Search({
   if (search.length > 0) {
     sortedOptions = options ? prepOptions(options, search) : [];
   }
+
   return (
-    <Styled>
-      <Box
+    <Styled
+      pad={{ right: 'ms' }}
+    >
+      <SearchBox
         direction="row"
         align="center"
         ref={searchRef}
         height={`${theme.sizes.navCardSearch.height}px`}
-        pad={{ right: 'ms' }}
-        margin={{ left: hasToggle ? 'ms' : '0' }}
       >
         <>
           <StyledTextInput
@@ -113,7 +129,12 @@ export function Search({
             ref={textInputRef}
           />
           {search.length === 0 && (
-            <SearchBarButton justify="center" align="center" icon={<StyledSearchIcon size="xsmall" />} />
+            <SearchBarButton
+              tabIndex={-1}
+              justify="center"
+              align="center"
+              icon={<StyledSearchIcon size="xsmall" />}
+            />
           )}
           {search.length > 0 && (
             <SearchBarButton
@@ -127,7 +148,7 @@ export function Search({
             />
           )}
         </>
-      </Box>
+      </SearchBox>
       {!hasToggle && search.length > 1 && (
         <Drop
           plain
