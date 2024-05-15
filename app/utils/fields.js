@@ -4,7 +4,11 @@ import { sortEntities, sortCategories } from 'utils/sort';
 import isNumber from 'utils/is-number';
 
 import {
-  USER_ROLES, TEXT_TRUNCATE, ROUTES, API,
+  USER_ROLES,
+  TEXT_TRUNCATE,
+  ROUTES,
+  API,
+  USER_STATUSES,
 } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
@@ -152,6 +156,22 @@ export const getRoleField = (entity) => ({
   type: 'role',
   value: entity.get('roles') && getHighestUserRoleId(entity.get('roles')),
   options: Object.values(USER_ROLES),
+});
+export const getUserStatusField = (
+  entity,
+  defaultValue = 'false',
+) => ({
+  controlType: 'info',
+  type: 'status',
+  label: appMessages.attributes.is_archived,
+  value: (
+    entity
+    && entity.getIn(['attributes', 'is_archived']) !== null
+    && typeof entity.getIn(['attributes', 'is_archived']) !== 'undefined'
+  )
+    ? entity.getIn(['attributes', 'is_archived'])
+    : defaultValue,
+  options: USER_STATUSES,
 });
 
 export const getMetaField = (entity) => {

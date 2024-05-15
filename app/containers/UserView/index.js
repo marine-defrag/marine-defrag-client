@@ -17,6 +17,7 @@ import {
   getEmailField,
   getTaxonomyFields,
   getHighestUserRoleId,
+  getUserStatusField,
 } from 'utils/fields';
 import { getEntityTitle } from 'utils/entities';
 import { keydownHandlerPrint } from 'utils/print';
@@ -57,6 +58,7 @@ const getHeaderMainFields = (entity, isManager) => ([{ // fieldGroup
 
 const getHeaderAsideFields = (entity) => ([{
   fields: [
+    getUserStatusField(entity),
     getRoleField(entity),
     getMetaField(entity),
   ],
