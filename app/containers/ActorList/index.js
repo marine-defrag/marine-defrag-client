@@ -184,11 +184,13 @@ export function ActorList({
       type: 'text',
       title: intl.formatMessage(appMessages.buttons.import),
       onClick: () => handleImport(),
+      icon: 'import',
       isManager,
     });
     headerOptions.actions.push({
       type: 'text',
       title: 'Create new',
+      icon: 'add',
       onClick: () => handleNew(typeId),
       isManager,
     });
