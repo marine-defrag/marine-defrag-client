@@ -66,6 +66,13 @@ export function CellBodyMain({
             </TextPrint>
           </Box>
         )}
+        {entity.isArchived && (
+          <Box>
+            <TextPrint color="warning" size="xxsmall">
+              [ARCHIVED]
+            </TextPrint>
+          </Box>
+        )}
       </Box>
     </Box>
   );
