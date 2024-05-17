@@ -23,7 +23,7 @@ class StatusField extends React.PureComponent { // eslint-disable-line react/pre
         <Label>
           <FormattedMessage {...(field.label || appMessages.attributes.draft)} />
         </Label>
-        <Status>
+        <Status type={field.type}>
           { status && status.message
             ? appMessage(intl, status.message)
             : ((status && status.label) || field.value)

@@ -56,13 +56,21 @@ const getHeaderMainFields = (entity, isManager) => ([{ // fieldGroup
   fields: [getTitleField(entity, isManager, 'name', appMessages.attributes.name)],
 }]);
 
-const getHeaderAsideFields = (entity) => ([{
-  fields: [
-    getUserStatusField(entity),
+const getHeaderAsideFields = (entity) => {
+  let fields = [];
+  if (entity.getIn(['attributes', 'is_archived'])) {
+    fields = [
+      ...fields,
+      getUserStatusField(entity),
+    ];
+  }
+  fields = [
+    ...fields,
     getRoleField(entity),
     getMetaField(entity),
-  ],
-}]);
+  ];
+  return ([{ fields }]);
+};
 
 const getBodyMainFields = (entity) => ([{
   fields: [getEmailField(entity)],

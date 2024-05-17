@@ -162,7 +162,7 @@ export const getUserStatusField = (
   defaultValue = 'false',
 ) => ({
   controlType: 'info',
-  type: 'status',
+  type: 'warning',
   label: appMessages.attributes.is_archived,
   value: (
     entity
