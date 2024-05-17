@@ -191,6 +191,9 @@ export const getMetaField = (entity) => {
     fields.push({
       label: appMessages.attributes.meta.updated_by_id,
       value: entity.get('user') && entity.getIn(['user', 'attributes', 'name']),
+      info: entity.get('user') && entity.getIn(['user', 'attributes', 'is_archived'])
+        ? 'ARCHIVED'
+        : null,
     });
   }
   return {
