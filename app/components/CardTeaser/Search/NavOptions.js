@@ -1,9 +1,11 @@
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Box, Text } from 'grommet';
 
+import Keyboard from 'containers/Keyboard';
 import NavOption from './NavOption';
+
 
 const NavOptionWrap = styled(Box)``;
 
@@ -15,23 +17,6 @@ export function NavOptions({
   onFocus,
 }) {
   const myRefs = useRef([]);
-  const onEnter = useCallback(
-    (event) => {
-      // on enter
-      if (event.keyCode === 13) {
-        if (options[activeResult]) onClick(options[activeResult].typeId);
-      }
-    },
-    [options, activeResult],
-  );
-
-  useEffect(() => {
-    document.addEventListener('keydown', onEnter, false);
-
-    return () => {
-      document.removeEventListener('keydown', onEnter, false);
-    };
-  }, [options, activeResult]);
 
   useEffect(() => {
     if (focus && myRefs && myRefs.current && myRefs.current[activeResult]) {
@@ -42,22 +27,30 @@ export function NavOptions({
   return (
     <NavOptionWrap>
       {options.map((option, index) => (
-        <NavOption
+        <Keyboard
           key={option.code}
-          onClick={() => onClick(option.typeId)}
-          ref={(el) => {
-            myRefs.current[index] = el;
+          onEnter={() => {
+            if (options[activeResult]) onClick(options[activeResult].typeId);
           }}
-          onFocus={() => onFocus && onFocus(index)}
-          active={index === activeResult}
-          last={index === options.length - 1}
         >
-          <Box direction="row" align="end" fill="horizontal" width="100%">
-            <Text size="medium">
-              {option.label}
-            </Text>
-          </Box>
-        </NavOption>
+          <NavOption
+            onClick={() => {
+              onClick(option.typeId);
+            }}
+            ref={(el) => {
+              myRefs.current[index] = el;
+            }}
+            onFocus={() => onFocus && onFocus(index)}
+            active={index === activeResult}
+            last={index === options.length - 1}
+          >
+            <Box direction="row" align="end" fill="horizontal" width="100%">
+              <Text size="medium">
+                {option.label}
+              </Text>
+            </Box>
+          </NavOption>
+        </Keyboard>
       ))}
     </NavOptionWrap>
   );
