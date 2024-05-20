@@ -12,14 +12,17 @@ import { palette } from 'styled-theme';
 import styled from 'styled-components';
 
 import {
-  Box, Button, Drop, ThemeContext,
+  Box, Button, ThemeContext,
 } from 'grommet';
 import { Close, Search as SearchIcon } from 'grommet-icons';
 
+import PrintHide from 'components/styled/PrintHide';
+import { setFocusByRef } from 'utils/accessibility';
 import SearchResults from './SearchResults';
 import TextInput from './TextInput';
 
 import { prepOptions } from './utils';
+
 
 const SearchBarButton = styled((p) => <Button {...p} />)`
   cursor: ${({ onClick }) => onClick ? 'pointer' : 'auto'};
@@ -60,6 +63,21 @@ const Styled = styled((p) => <Box {...p} />)`
 const SearchBox = styled(
   React.forwardRef((p, ref) => <Box {...p} ref={ref} />)
 )``;
+
+const DropDown = styled.div`
+  display: none;
+  background: white;
+  box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.2);
+  z-index: 999;
+  margin-top: 6px;
+  border-radius: 6px;
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+    position: absolute;
+    top: 100%;
+    display: block;
+  }
+`;
+
 export function Search({
   options,
   onSelect,
@@ -141,6 +159,7 @@ export function Search({
               onClick={() => {
                 setSearch('');
                 setActiveResult(activeResetIndex);
+                if (textInputRef) setFocusByRef(textInputRef);
               }}
               justify="center"
               align="center"
@@ -150,36 +169,26 @@ export function Search({
         </>
       </SearchBox>
       {!hasToggle && search.length > 1 && (
-        <Drop
-          plain
-          overflow="visible"
-          background="transparent"
-          align={{ top: 'bottom', left: 'left' }}
-          margin={{ top: 'xsmall' }}
-          target={textInputRef.current}
-          onClickOutside={() => {
-            setSearch('');
-            setActiveResult(activeResetIndex);
-          }}
-          ref={dropRef}
-          style={{ maxWidth: `${textInputRef.current.clientWidth}px` }}
-        >
-          <SearchResults
-            onClose={() => {
-              setSearch('');
-              setActiveResult(activeResetIndex);
-            }}
-            search={search}
-            onSelect={(typeId) => {
-              onToggle(false);
-              onSelect(typeId);
-            }}
-            activeResult={activeResult}
-            setActiveResult={setActiveResult}
-            options={sortedOptions}
-            maxResult={sortedOptions.size}
-          />
-        </Drop>
+        <PrintHide>
+          <DropDown ref={dropRef}>
+            <SearchResults
+              onClose={() => {
+                setSearch('');
+                setActiveResult(activeResetIndex);
+              }}
+              search={search}
+              onSelect={(typeId) => {
+                onToggle(false);
+                onSelect(typeId);
+              }}
+              activeResult={activeResult}
+              setActiveResult={setActiveResult}
+              options={sortedOptions}
+              maxResult={sortedOptions.size}
+              dropdownWidth={textInputRef.current.clientWidth}
+            />
+          </DropDown>
+        </PrintHide>
       )}
     </Styled>
   );

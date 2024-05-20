@@ -1,18 +1,23 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
+import styled from 'styled-components';
 
 import { Box } from 'grommet';
 import Hint from './Hint';
 import NavOptions from './NavOptions';
 
 import messages from './messages';
+const Styled = styled((p) => <Box {...p} />)`
+  width: ${({ dropdownWidth }) => dropdownWidth}px;
+`;
 export function SearchResults({
   options,
   onSelect,
   activeResult,
   setActiveResult,
   maxResult,
+  dropdownWidth,
 }) {
   const [focus, setFocus] = useState(false);
   const onKey = useCallback(
@@ -48,7 +53,7 @@ export function SearchResults({
       round="xsmall"
       background="white"
     >
-      <Box flex overflow="auto" margin="none">
+      <Styled flex overflow="auto" margin="none" dropdownWidth={dropdownWidth}>
         {!hasOptions && (
           <Box pad="small">
             <Hint italic>
@@ -67,7 +72,7 @@ export function SearchResults({
               }
             />
           )}
-      </Box>
+      </Styled>
     </Box>
   );
 }
@@ -78,6 +83,7 @@ SearchResults.propTypes = {
   options: PropTypes.object,
   activeResult: PropTypes.number,
   maxResult: PropTypes.number,
+  dropdownWidth: PropTypes.number,
 };
 
 export default SearchResults;
