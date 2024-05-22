@@ -748,10 +748,11 @@ export const getMarkdownFormField = (formatMessage, required, attribute = 'descr
 });
 
 // unused
-export const getTextareaField = (formatMessage, attribute = 'description') => getFormField({
+export const getTextareaField = (formatMessage, attribute = 'description', required, type) => getFormField({
   formatMessage,
-  controlType: 'textarea',
+  controlType: type || 'textarea',
   attribute,
+  required,
 });
 
 export const getDateField = (formatMessage, attribute, required = false, label, onChange) => {
