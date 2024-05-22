@@ -13,7 +13,7 @@ export function* save({ data }) {
   yield put(newEntity({
     path: API.FEEDBACKS,
     entity: data,
-    redirect: '/',
+    // redirect: '/',
   }));
 }
 

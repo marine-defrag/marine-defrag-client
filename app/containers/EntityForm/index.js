@@ -470,7 +470,7 @@ const mapStateToProps = (state) => ({
 EntityForm.propTypes = {
   handleSubmitFail: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  handleCancel: PropTypes.func.isRequired,
+  handleCancel: PropTypes.func,
   handleDelete: PropTypes.func,
   handleUpdate: PropTypes.func,
   model: PropTypes.string,

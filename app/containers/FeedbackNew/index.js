@@ -72,15 +72,26 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
   getBodyMainFields = () => {
     const { intl } = this.context;
     return ([{
-      fields: [getTextareaField(intl.formatMessage, 'message_content', true, 'textareaLarge')],
+      fields: [getTextareaField(
+        intl.formatMessage,
+        'message_content',
+        false,
+        'textareaLarge',
+        2000,
+      )],
     }]);
   };
 
   render() {
     const { intl } = this.context;
     const { viewDomain, dataReady } = this.props;
-    const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
-
+    const {
+      saveSending,
+      saveError,
+      submitValid,
+      saveSuccess,
+    } = viewDomain.get('page').toJS();
+    // console.log('saveSuccess', saveSuccess, viewDomain.toJS())
     return (
       <div>
         <Helmet
@@ -94,11 +105,20 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle)}
           />
-          <Box margin={{ bottom: 'large' }}>
-            <Text>
-              {intl.formatMessage(messages.intro)}
-            </Text>
-          </Box>
+          {!saveSuccess && (
+            <Box margin={{ bottom: 'large' }}>
+              <Text>
+                {intl.formatMessage(messages.intro)}
+              </Text>
+            </Box>
+          )}
+          {saveSuccess && (
+            <Box margin={{ bottom: 'large' }}>
+              <Text>
+                Success
+              </Text>
+            </Box>
+          )}
           {!submitValid && (
             <Messages
               type="error"
@@ -114,7 +134,7 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
             />
           )}
           {(saveSending || !dataReady) && <Loading />}
-          {dataReady && (
+          {dataReady && !saveSuccess && (
             <EntityForm
               model="feedbackNew.form.data"
               formData={viewDomain.getIn(['form', 'data'])}
