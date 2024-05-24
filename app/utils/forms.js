@@ -15,6 +15,7 @@ import validateRequired from 'components/forms/validators/validate-required';
 import validateNumber from 'components/forms/validators/validate-number';
 import validateEmailFormat from 'components/forms/validators/validate-email-format';
 import validateMinLength from 'components/forms/validators/validate-min-length';
+import validateMaxLength from 'components/forms/validators/validate-max-length';
 
 import {
   PUBLISH_STATUSES,
@@ -885,7 +886,7 @@ export const getFormField = ({
   onChange,
   type,
   model,
-  // maxLength = 6000,
+  maxLength = 6000,
 }) => {
   const field = {
     id: attribute,
@@ -898,6 +899,8 @@ export const getFormField = ({
     errorMessages: {},
     hint,
   };
+  field.validators.maxFieldLength = (val) => validateMaxLength(val, maxLength);
+  field.errorMessages.maxFieldLength = formatMessage(appMessages.forms.fieldMaxLengthError, { maxLength });
   if (onChange) {
     field.changeAction = onChange;
   }

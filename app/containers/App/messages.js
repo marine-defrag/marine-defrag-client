@@ -635,6 +635,10 @@ export default defineMessages({
       id: 'app.containers.App.forms.referenceRequiredError',
       defaultMessage: '"Reference" is required. ',
     },
+    fieldMaxLengthError: {
+      id: 'app.containers.App.forms.fieldMaxLengthError',
+      defaultMessage: 'Content exceeds the maximum allowed length of {maxLength} characters.',
+    },
   },
   hints: {
     autoReference: {
