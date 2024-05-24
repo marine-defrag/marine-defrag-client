@@ -150,7 +150,6 @@ export function Search({
               }}
             >
               <TextInput
-                fill
                 plain
                 value={search}
                 ref={textInputRef}
@@ -176,14 +175,20 @@ export function Search({
               />
             )}
           </Box>
-          <SearchButton
-            justify="center"
-            align="center"
-            onClick={() => {
-              setActiveResult(0);
+          <Keyboard
+            onEnter={() => {
+              if (sortedOptions.size > 0) setActiveResult(0);
             }}
-            icon={<StyledSearchIcon size="xsmall" />}
-          />
+          >
+            <SearchButton
+              justify="center"
+              align="center"
+              onClick={() => {
+                setActiveResult(0);
+              }}
+              icon={<StyledSearchIcon size="xsmall" />}
+            />
+          </Keyboard>
         </>
       </SearchBox>
       {!hasToggle && search.length > 1 && (
