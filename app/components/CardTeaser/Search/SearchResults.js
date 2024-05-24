@@ -1,9 +1,10 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 
 import { Box } from 'grommet';
+import Keyboard from 'containers/Keyboard';
 import Hint from './Hint';
 import NavOptions from './NavOptions';
 
@@ -20,31 +21,13 @@ export function SearchResults({
   dropdownWidth,
 }) {
   const [focus, setFocus] = useState(false);
-  const onKey = useCallback(
-    (event) => {
-      // UP
-      if (event.keyCode === 38) {
-        setActiveResult(Math.max(0, activeResult - 1));
-        setFocus(true);
-        event.preventDefault();
-      }
-      // DOWN
-      if (event.keyCode === 40) {
-        setActiveResult(Math.min(activeResult + 1, maxResult - 1));
-        setFocus(true);
-        event.preventDefault();
-      }
-    },
-    [activeResult, maxResult],
-  );
 
   useEffect(() => {
-    document.addEventListener('keydown', onKey, false);
+    if (activeResult !== -1 && !focus) {
+      setFocus(true);
+    }
+  }, [activeResult, focus]);
 
-    return () => {
-      document.removeEventListener('keydown', onKey, false);
-    };
-  }, [activeResult, maxResult]);
   const hasOptions = options && options.size > 0;
 
   return (
@@ -63,14 +46,25 @@ export function SearchResults({
         )}
         {hasOptions
           && (
-            <NavOptions
-              options={options.toList().toJS()}
-              activeResult={activeResult}
-              onClick={(typeId) => onSelect(typeId)}
-              focus={focus}
-              onFocus={(index) => setActiveResult(index)
-              }
-            />
+            <Keyboard
+              onUp={() => {
+                setActiveResult(Math.max(0, activeResult - 1));
+                setFocus(true);
+              }}
+              onDown={() => {
+                setActiveResult(Math.min(activeResult + 1, maxResult - 1));
+                setFocus(true);
+              }}
+            >
+              <NavOptions
+                options={options.toList().toJS()}
+                activeResult={activeResult}
+                onClick={(typeId) => onSelect(typeId)}
+                focus={focus}
+                onFocus={(index) => setActiveResult(index)
+                }
+              />
+            </Keyboard>
           )}
       </Styled>
     </Box>

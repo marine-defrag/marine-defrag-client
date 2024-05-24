@@ -17,14 +17,14 @@ import {
 import { Close, Search as SearchIcon } from 'grommet-icons';
 
 import PrintHide from 'components/styled/PrintHide';
+import Keyboard from 'containers/Keyboard';
 import { setFocusByRef } from 'utils/accessibility';
 import SearchResults from './SearchResults';
 import TextInput from './TextInput';
 
 import { prepOptions } from './utils';
 
-
-const SearchBarButton = styled((p) => <Button {...p} />)`
+const SearchButton = styled((p) => <Button {...p} />)`
   cursor: ${({ onClick }) => onClick ? 'pointer' : 'auto'};
   background: ${palette('light', 3)};
   border-top-right-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
@@ -36,23 +36,24 @@ const SearchBarButton = styled((p) => <Button {...p} />)`
     z-index: 1;
   }
 `;
-const StyledSearchIcon = styled(SearchIcon)`
-  stroke: ${palette('dark', 3)};
+const ClearButton = styled((p) => <Button {...p} />)`
+  cursor: ${({ onClick }) => onClick ? 'pointer' : 'auto'};
+  height: ${({ theme }) => theme.sizes.navCardSearch.height}px;
+  width: ${({ theme }) => theme.sizes.navCardSearch.height}px;
+  background-color: ${palette('light', 1)};
+  &:focus {
+    outline: 5px auto rgb(77, 144, 254);
+    z-index: 1;
+  }
 `;
-const StyledCloseIcon = styled(Close)`
+const StyledSearchIcon = styled(SearchIcon)`
   &:hover {
     stroke: ${palette('dark', 4)};
   }
 `;
-const StyledTextInput = styled(TextInput)`
-  border-top-left-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
-  border-bottom-left-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  height: ${({ theme }) => theme.sizes.navCardSearch.height}px;
-  &:focus {
-    outline: 5px auto rgb(77, 144, 254);
-    z-index: 1;
+const StyledCloseIcon = styled(Close)`
+  &:hover {
+    stroke: ${palette('dark', 4)};
   }
 `;
 
@@ -86,6 +87,7 @@ export function Search({
   const theme = useContext(ThemeContext);
   const searchRef = useRef(null);
   const textInputRef = useRef(null);
+  const textInputWrapperRef = useRef(null);
   const dropRef = useRef(null);
 
   const [hasToggle, onToggle] = useState(false);
@@ -134,38 +136,54 @@ export function Search({
         height={`${theme.sizes.navCardSearch.height}px`}
       >
         <>
-          <StyledTextInput
-            plain
-            value={search}
-            onChange={(evt) => {
-              if (evt && evt.target) {
-                setSearch(evt.target.value);
-                setActiveResult(activeResetIndex);
-              }
-            }}
-            placeholder={placeholder}
-            ref={textInputRef}
-          />
-          {search.length === 0 && (
-            <SearchBarButton
-              tabIndex={-1}
-              justify="center"
-              align="center"
-              icon={<StyledSearchIcon size="xsmall" />}
-            />
-          )}
-          {search.length > 0 && (
-            <SearchBarButton
-              onClick={() => {
-                setSearch('');
-                setActiveResult(activeResetIndex);
-                if (textInputRef) setFocusByRef(textInputRef);
+          <Box
+            width="large"
+            fill="horizontal"
+            direction="row"
+            align="center"
+            ref={textInputWrapperRef}
+            style={{ display: 'flex' }}
+          >
+            <Keyboard
+              onEnter={() => {
+                if (sortedOptions.size > 0) setActiveResult(0);
               }}
-              justify="center"
-              align="center"
-              icon={<StyledCloseIcon size="xsmall" />}
-            />
-          )}
+            >
+              <TextInput
+                fill
+                plain
+                value={search}
+                ref={textInputRef}
+                onChange={(evt) => {
+                  if (evt && evt.target) {
+                    setSearch(evt.target.value);
+                    setActiveResult(activeResetIndex);
+                  }
+                }}
+                placeholder={placeholder}
+              />
+            </Keyboard>
+            {search.length > 0 && (
+              <ClearButton
+                onClick={() => {
+                  setSearch('');
+                  setActiveResult(activeResetIndex);
+                  setFocusByRef(textInputRef);
+                }}
+                justify="center"
+                align="center"
+                icon={<StyledCloseIcon size="xsmall" />}
+              />
+            )}
+          </Box>
+          <SearchButton
+            justify="center"
+            align="center"
+            onClick={() => {
+              setActiveResult(0);
+            }}
+            icon={<StyledSearchIcon size="xsmall" />}
+          />
         </>
       </SearchBox>
       {!hasToggle && search.length > 1 && (
@@ -185,7 +203,7 @@ export function Search({
               setActiveResult={setActiveResult}
               options={sortedOptions}
               maxResult={sortedOptions.size}
-              dropdownWidth={textInputRef.current.clientWidth}
+              dropdownWidth={textInputWrapperRef.current.clientWidth}
             />
           </DropDown>
         </PrintHide>
