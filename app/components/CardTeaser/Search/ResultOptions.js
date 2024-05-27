@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import { Box, Text } from 'grommet';
 
 import Keyboard from 'containers/Keyboard';
-import NavOption from './NavOption';
+import ResultOption from './ResultOption';
 
 
-const NavOptionWrap = styled(Box)``;
+const ResultOptionWrap = styled(Box)``;
 
-export function NavOptions({
+export function ResultOptions({
   options,
   onClick,
   activeResult,
@@ -17,15 +17,15 @@ export function NavOptions({
   onFocus,
 }) {
   const myRefs = useRef([]);
-
   useEffect(() => {
+    // when focus is inside the drop down, highlight the correct option
     if (focus && myRefs && myRefs.current && myRefs.current[activeResult]) {
       myRefs.current[activeResult].focus();
     }
-  }, [options, activeResult, focus]);
+  }, [activeResult, focus]);
 
   return (
-    <NavOptionWrap>
+    <ResultOptionWrap>
       {options.map((option, index) => (
         <Keyboard
           key={option.code}
@@ -33,14 +33,14 @@ export function NavOptions({
             if (options[activeResult]) onClick(options[activeResult].typeId);
           }}
         >
-          <NavOption
+          <ResultOption
             onClick={() => {
               onClick(option.typeId);
             }}
             ref={(el) => {
               myRefs.current[index] = el;
             }}
-            onFocus={() => onFocus && onFocus(index)}
+            onFocus={() => onFocus(index)}
             active={index === activeResult}
             last={index === options.length - 1}
           >
@@ -49,14 +49,14 @@ export function NavOptions({
                 {option.label}
               </Text>
             </Box>
-          </NavOption>
+          </ResultOption>
         </Keyboard>
       ))}
-    </NavOptionWrap>
+    </ResultOptionWrap>
   );
 }
 
-NavOptions.propTypes = {
+ResultOptions.propTypes = {
   options: PropTypes.array,
   onClick: PropTypes.func,
   onFocus: PropTypes.func,
@@ -64,4 +64,4 @@ NavOptions.propTypes = {
   focus: PropTypes.bool,
 };
 
-export default NavOptions;
+export default ResultOptions;

@@ -24,7 +24,7 @@ export default styled(OptionButton)`
   &:last-child {
     border-bottom: 1px solid ${({ theme }) => theme.global.colors.border.light};
   }
-  &:hover {
+  &:hover, :focus-visible {
     color: ${({ theme }) => theme.global.colors.highlight};
   }
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
