@@ -1,30 +1,49 @@
-import React from 'react';
+import React, { useRef, useEffect, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
+import { palette } from 'styled-theme';
 
-import { Box } from 'grommet';
+import { Box, Button } from 'grommet';
 import Keyboard from 'containers/Keyboard';
+import { setFocusByRef } from 'utils/accessibility';
 import Hint from './Hint';
 import ResultOptions from './ResultOptions';
 
 import messages from './messages';
 
+
 const Styled = styled((p) => <Box {...p} />)`
   width: ${({ dropdownWidth }) => dropdownWidth}px;
+`;
+
+const StyledButton = styled(forwardRef((p, ref) => <Button {...p} ref={ref} />))`
+  &:focus-visible {
+    outline-offset: -2px;
+    outline: 2px solid ${palette('primary', 0)};
+    border-radius: 5px;
+  }
 `;
 export function SearchResults({
   options,
   onSelect,
   activeResult,
   setActiveResult,
+  activeResetIndex,
   maxResult,
   dropdownWidth,
   focus,
-  onShiftDown,
   onToggle,
+  focusTextInput,
 }) {
   const hasOptions = options && options.size > 0;
+  const noResultsRef = useRef(null);
+
+  useEffect(() => {
+    if (activeResult === (activeResetIndex + 1) && !hasOptions) {
+      setFocusByRef(noResultsRef);
+    }
+  }, [activeResult, hasOptions]);
 
   return (
     <Box
@@ -35,18 +54,37 @@ export function SearchResults({
       <Styled flex overflow="auto" margin="none" dropdownWidth={dropdownWidth}>
         {!hasOptions
           && (
-            <Box pad="small">
-              <Hint italic>
-                <FormattedMessage {...messages.noResults} />
-              </Hint>
-            </Box>
+            <Keyboard
+              onEnter={() => {
+                onToggle(false);
+                setActiveResult(activeResetIndex);
+                focusTextInput();
+              }}
+              onTab={() => {
+                onToggle(false);
+                setActiveResult(activeResetIndex);
+              }}
+            >
+              <StyledButton ref={noResultsRef}>
+                <Box pad="small">
+                  <Hint italic>
+                    <FormattedMessage {...messages.noResults} />
+                  </Hint>
+                </Box>
+              </StyledButton>
+            </Keyboard>
           )}
         {hasOptions
           && (
             <Keyboard
-              onUp={() => setActiveResult(Math.max(0, activeResult - 1))}
-              onDown={() => setActiveResult(Math.min(activeResult + 1, maxResult - 1))}
-              onShift={() => onShiftDown(true)}
+              onUp={(event) => {
+                event.preventDefault();
+                setActiveResult(Math.max(0, activeResult - 1));
+              }}
+              onDown={(event) => {
+                event.preventDefault();
+                setActiveResult(Math.min(activeResult + 1, maxResult - 1));
+              }}
               onTab={() => {
               // if end of the dropdown has been reached, toggle drop
                 if (activeResult + 1 === maxResult) {
@@ -77,9 +115,10 @@ SearchResults.propTypes = {
   activeResult: PropTypes.number,
   maxResult: PropTypes.number,
   dropdownWidth: PropTypes.number,
-  onShiftDown: PropTypes.func,
   focus: PropTypes.bool,
   onToggle: PropTypes.func,
+  focusTextInput: PropTypes.func,
+  activeResetIndex: PropTypes.number,
 };
 
 export default SearchResults;

@@ -98,7 +98,6 @@ export function Search({
   const searchButtonRef = useRef(null);
 
   const [hasToggle, onToggle] = useState(false);
-  const [shiftDown, onShiftDown] = useState(false);
   const [textInputFocused, onTextInputFocused] = useState(false);
   const [dropFocused, onDropFocused] = useState(false);
 
@@ -116,6 +115,10 @@ export function Search({
   const outsideSearchClick = (e) => {
     // inside search click
     if (searchRef.current && searchRef.current.contains(e.target)) {
+      return;
+    }
+    // inside drop click
+    if (dropRef.current && dropRef.current.contains(e.target)) {
       return;
     }
     // outside click
@@ -140,9 +143,9 @@ export function Search({
       onTextInputFocused(false);
     };
     const handleInputFocus = () => {
-      onTextInputFocused(true);
       onDropFocused(false);
       setActiveResult(activeResetIndex);
+      onTextInputFocused(true);
     };
     const handleInputBlur = () => onTextInputFocused(false);
 
@@ -173,17 +176,6 @@ export function Search({
     sortedOptions = options ? prepOptions(options, search) : [];
   }
   const searchHasResults = sortedOptions.size > 0 && search.length > 1;
-  /*
-  for clear button
-    <Keyboard
-    onTab={() => {
-    if (search.length <= 1 || !searchHasResults) {
-    onToggle(false);
-    }
-    }}
-    spanStyle={{ 'width': 'auto' }}
-    >
-  */
 
   return (
     <Styled
@@ -204,10 +196,17 @@ export function Search({
             ref={textInputWrapperRef}
           >
             <Keyboard
+              onTab={(event) => {
+                const { shiftKey } = event;
+                if (shiftKey) {
+                  onToggle(false);
+                }
+              }}
               onEnter={() => {
-                if (searchHasResults) {
-                  setActiveResult(0);
+                if (search.length > 1) {
+                  setActiveResult(activeResetIndex + 1);
                   onDropFocused(true);
+                  onToggle(true);
                 }
               }}
               spanStyle={{ width: 'inherit' }}
@@ -243,19 +242,15 @@ export function Search({
           <Keyboard
             onEnter={() => {
               if (searchHasResults) {
-                setActiveResult(0);
+                setActiveResult(activeResetIndex + 1);
                 onDropFocused(true);
               }
             }}
-            onShift={() => {
-              onShiftDown(true);
-            }}
-            onTab={() => {
-              if (searchHasResults && !shiftDown) {
-                setActiveResult(0);
+            onTab={(event) => {
+              const { shiftKey } = event;
+              if (searchHasResults && !shiftKey) {
+                setActiveResult(activeResetIndex + 1);
                 onDropFocused(true);
-              } else {
-                onShiftDown(false);
               }
             }}
           >
@@ -265,7 +260,7 @@ export function Search({
               tabIndex={searchHasResults ? 0 : -1}
               ref={searchButtonRef}
               onClick={() => {
-                setActiveResult(0);
+                setActiveResult(activeResetIndex + 1);
                 onDropFocused(true);
                 onToggle(true);
               }}
@@ -291,12 +286,13 @@ export function Search({
                 }}
                 activeResult={activeResult}
                 setActiveResult={setActiveResult}
+                activeResetIndex={activeResetIndex}
                 options={sortedOptions}
                 maxResult={sortedOptions.size}
                 dropdownWidth={textInputWrapperRef.current.clientWidth}
+                focusTextInput={() => setFocusByRef(textInputRef)}
                 focus={dropFocused}
                 setFocus={onDropFocused}
-                onShiftDown={onShiftDown}
                 onToggle={onToggle}
               />
             </DropDown>
