@@ -235,6 +235,7 @@ export function Search({
                   }}
                   justify="center"
                   align="center"
+                  title="Clear"
                   icon={<StyledCloseIcon size="xsmall" />}
                 />
               )}
@@ -268,6 +269,7 @@ export function Search({
                 onDropFocused(true);
                 onToggle(true);
               }}
+              title="Search"
               icon={<StyledSearchIcon size="xsmall" />}
             />
           </Keyboard>
