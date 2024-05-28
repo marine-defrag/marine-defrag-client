@@ -10,6 +10,8 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { actions as formActions } from 'react-redux-form/immutable';
 import { Box, Text } from 'grommet';
+import styled from 'styled-components';
+
 import {
   getTitleFormField,
   getTextareaField,
@@ -33,6 +35,7 @@ import Messages from 'components/Messages';
 import Loading from 'components/Loading';
 import ContentNarrow from 'components/ContentNarrow';
 import ContentHeader from 'containers/ContentHeader';
+import ButtonSubmit from 'components/buttons/ButtonSubmit';
 
 import EntityForm from 'containers/EntityForm';
 
@@ -42,6 +45,10 @@ import messages from './messages';
 import { save } from './actions';
 import { DEPENDENCIES, FORM_INITIAL } from './constants';
 
+const StyledResetButton = styled(ButtonSubmit)`
+  margin-top: 20px;
+  border-radius: 5px;
+`;
 export class FeedbackNew extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   UNSAFE_componentWillMount() {
     this.props.loadEntitiesIfNeeded();
@@ -91,7 +98,7 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
       submitValid,
       saveSuccess,
     } = viewDomain.get('page').toJS();
-    // console.log('saveSuccess', saveSuccess, viewDomain.toJS())
+    console.log('saveSuccess', saveSuccess, viewDomain.toJS());
     return (
       <div>
         <Helmet
@@ -114,9 +121,15 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
           )}
           {saveSuccess && (
             <Box margin={{ bottom: 'large' }}>
-              <Text>
-                Success
-              </Text>
+              <Text>{intl.formatMessage(messages.sendSuccess)}</Text>
+              <StyledResetButton
+                type="primary"
+                onClick={() => {
+                  this.props.initialiseForm('feedbackNew.form.data', FORM_INITIAL);
+                }}
+              >
+                <Text>{intl.formatMessage(messages.resetForm)}</Text>
+              </StyledResetButton>
             </Box>
           )}
           {!submitValid && (
@@ -189,6 +202,9 @@ function mapDispatchToProps(dispatch) {
     initialiseForm: (model, formData) => {
       dispatch(formActions.reset(model));
       dispatch(formActions.change(model, formData, { silent: true }));
+    },
+    resetForm: (model) => {
+      dispatch(formActions.reset(model));
     },
     loadEntitiesIfNeeded: () => {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
