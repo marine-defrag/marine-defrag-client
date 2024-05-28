@@ -729,6 +729,8 @@ export const getMenuOrderFormField = (formatMessage) => {
     formatMessage,
     controlType: 'short',
     attribute: 'order',
+    required: true,
+    hint: appMessages.hints.order && formatMessage(appMessages.hints.order),
   });
   field.validators.number = validateNumber;
   field.errorMessages.number = formatMessage(appMessages.forms.numberError);
