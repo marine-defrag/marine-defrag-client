@@ -164,7 +164,10 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
   }
 
   preparePageMenuPages = (pages, currentPath) => sortEntities(
-    pages.filter((page) => page.getIn(['attributes', 'order']) > 0),
+    pages.filter(
+      (page) => !page.getIn(['attributes', 'order'])
+        || page.getIn(['attributes', 'order']) > -1
+    ),
     'asc',
     'order',
     'number'
