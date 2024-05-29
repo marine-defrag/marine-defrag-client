@@ -66,7 +66,6 @@ jobs:
     needs: build-and-push-image
 
     env:
-      BUNDLE_GEMFILE: gemfiles/deploy
       DOCKER_BUILDKIT: 1
 
     steps:
