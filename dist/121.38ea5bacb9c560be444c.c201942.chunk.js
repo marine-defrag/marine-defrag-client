@@ -1,0 +1,5 @@
+(window.webpackJsonp = window.webpackJsonp || []).push([[121], {
+  cd308c07a033e1213712(e, t, a) {
+    a.r(t); const c = a('54f683fcda7806277002'); const r = a('3ad3c1378076e862aab0'); const s = a('4e2e9348dad8fe460c1d'); const u = a('1dfca9f44be16af281fa'); const n = a('f363639bc5c3c97af546'); const o = a('fcb99a06256635f70435'); const d = Object(c.fromJS)({ authSending: !1, authSuccess: !1, authError: !1 }); const f = Object(c.fromJS)({ email: '', password: '' }); t.default = Object(s.combineReducers)({ page() { const e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : d; const t = arguments.length > 1 ? arguments[1] : void 0; switch (t.type) { case r.LOCATION_CHANGE: return d; case o.e: return e.set('authSending', !0).set('authSuccess', !1).set('authError', !1); case o.f: return e.set('authSending', !1).set('authSuccess', !0); case o.c: return e.set('authSending', !1).set('authSuccess', !1).set('authError', Object(n.a)(t.error)); default: return e; } }, form: Object(u.combineForms)({ data: f }, 'userLogin.form') });
+  },
+}]);
