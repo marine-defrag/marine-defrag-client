@@ -62,6 +62,7 @@ const Main = styled.div`
   bottom:0;
   overflow: ${({ isPrint }) => isPrint ? 'auto' : 'hidden'};
   width: auto;
+  overflow-y: auto;
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     top: ${({ isHome, theme }) => isHome
     ? 0
