@@ -52,6 +52,8 @@ export const ROUTES = {
   LOGIN: '/login',
   LOGOUT: '/logout',
   REGISTER: '/register',
+  RESET_PASSWORD: '/resetpassword',
+  RECOVER_PASSWORD: '/recoverpassword',
   UNAUTHORISED: '/unauthorised',
   USERS: '/users',
   ACTIONS: '/actions',
@@ -945,7 +947,7 @@ export const ACTIONTYPES_CONFIG = {
 };
 
 
-export const KEEP_QUERY_ARGS = ['view', 'subj', 'msubj', 'tm', 'am', 'mvw'];
+export const KEEP_QUERY_ARGS = ['view', 'subj', 'msubj', 'tm', 'am', 'mvw', 'info'];
 
 // Language and date settings ********************
 // Note: you may also set the locales in i18n.js
