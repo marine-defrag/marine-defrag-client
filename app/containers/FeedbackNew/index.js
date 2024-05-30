@@ -40,6 +40,7 @@ import ContentHeader from 'containers/ContentHeader';
 import ButtonDefault from 'components/buttons/ButtonDefault';
 
 import EntityForm from 'containers/EntityForm';
+import Footer from 'containers/Footer';
 
 import { selectDomain } from './selectors';
 
@@ -158,7 +159,10 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
               model="feedbackNew.form.data"
               formData={viewDomain.getIn(['form', 'data'])}
               saving={saveSending}
-              handleSubmit={(formData) => this.props.handleSubmit(formData)}
+              handleSubmit={(formData) => this.props.handleSubmit(
+                formData,
+                'feedbackNew.form.data'
+              )}
               handleSubmitFail={this.props.handleSubmitFail}
               handleUpdate={this.props.handleUpdate}
               fields={{
@@ -174,6 +178,7 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
           )}
           {saveSending && <Loading />}
         </ContentNarrow>
+        <Footer />
       </div>
     );
   }
@@ -232,12 +237,17 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData) => {
+    handleSubmit: (formData, model) => {
       const data = formData
         .setIn(['attributes', 'content'], formData.getIn(['attributes', 'message_content']))
         .deleteIn(['attributes', 'message_content']);
-      console.log(data);
-      dispatch(save(data.toJS()));
+      const onSaveSuccess = () => {
+        dispatch(formActions.reset(model));
+      };
+      dispatch(save(
+        data.toJS(),
+        onSaveSuccess,
+      ));
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));

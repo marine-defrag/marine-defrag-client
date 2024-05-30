@@ -9,10 +9,11 @@ import {
   RESET_FORM,
 } from './constants';
 
-export function save(data) {
+export function save(data, onSuccess) {
   return {
     type: SAVE,
     data,
+    onSuccess,
   };
 }
 

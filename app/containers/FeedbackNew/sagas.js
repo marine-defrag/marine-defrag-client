@@ -9,11 +9,11 @@ import { API } from 'themes/config';
 
 import { SAVE } from './constants';
 
-export function* save({ data }) {
+export function* save({ data, onSuccess }) {
   yield put(newEntity({
     path: API.FEEDBACKS,
     entity: data,
-    // redirect: '/',
+    onSuccess,
   }));
 }
 
