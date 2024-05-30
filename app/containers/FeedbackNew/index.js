@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { actions as formActions } from 'react-redux-form/immutable';
+
 import { Box, Text } from 'grommet';
 import styled from 'styled-components';
 
@@ -25,6 +26,7 @@ import {
   updateEntityForm,
   submitInvalid,
   saveErrorDismiss,
+  resetEntityForm,
 } from 'containers/App/actions';
 import {
   selectReady,
@@ -35,7 +37,7 @@ import Messages from 'components/Messages';
 import Loading from 'components/Loading';
 import ContentNarrow from 'components/ContentNarrow';
 import ContentHeader from 'containers/ContentHeader';
-import ButtonSubmit from 'components/buttons/ButtonSubmit';
+import ButtonDefault from 'components/buttons/ButtonDefault';
 
 import EntityForm from 'containers/EntityForm';
 
@@ -45,9 +47,9 @@ import messages from './messages';
 import { save } from './actions';
 import { DEPENDENCIES, FORM_INITIAL } from './constants';
 
-const StyledResetButton = styled(ButtonSubmit)`
-  margin-top: 20px;
-  border-radius: 5px;
+const StyledResetButton = styled(ButtonDefault)`
+  display: block;
+  margin: 0 auto 0 0;
 `;
 export class FeedbackNew extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   UNSAFE_componentWillMount() {
@@ -82,7 +84,7 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
       fields: [getTextareaField(
         intl.formatMessage,
         'message_content',
-        false,
+        true,
         'textareaLarge',
         2000,
       )],
@@ -91,14 +93,14 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
 
   render() {
     const { intl } = this.context;
-    const { viewDomain, dataReady } = this.props;
+    const { viewDomain, dataReady, resetForm } = this.props;
     const {
       saveSending,
       saveError,
       submitValid,
       saveSuccess,
     } = viewDomain.get('page').toJS();
-    console.log('saveSuccess', saveSuccess, viewDomain.toJS());
+
     return (
       <div>
         <Helmet
@@ -112,24 +114,28 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle)}
           />
+          {saveSuccess && (
+            <Box fill="horizontal" margin={{ bottom: 'large' }}>
+              <Box margin={{ bottom: 'medium' }}>
+                <Text>{intl.formatMessage(messages.sendSuccess)}</Text>
+              </Box>
+              <Box justify="start">
+                <StyledResetButton
+                  type="primary"
+                  onClick={() => {
+                    resetForm('feedbackNew.form.data');
+                  }}
+                >
+                  <Text>{intl.formatMessage(messages.resetForm)}</Text>
+                </StyledResetButton>
+              </Box>
+            </Box>
+          )}
           {!saveSuccess && (
             <Box margin={{ bottom: 'large' }}>
               <Text>
                 {intl.formatMessage(messages.intro)}
               </Text>
-            </Box>
-          )}
-          {saveSuccess && (
-            <Box margin={{ bottom: 'large' }}>
-              <Text>{intl.formatMessage(messages.sendSuccess)}</Text>
-              <StyledResetButton
-                type="primary"
-                onClick={() => {
-                  this.props.initialiseForm('feedbackNew.form.data', FORM_INITIAL);
-                }}
-              >
-                <Text>{intl.formatMessage(messages.resetForm)}</Text>
-              </StyledResetButton>
             </Box>
           )}
           {!submitValid && (
@@ -185,6 +191,7 @@ FeedbackNew.propTypes = {
   dataReady: PropTypes.bool,
   authReady: PropTypes.bool,
   initialiseForm: PropTypes.func,
+  resetForm: PropTypes.func,
 };
 
 FeedbackNew.contextTypes = {
@@ -204,6 +211,7 @@ function mapDispatchToProps(dispatch) {
       dispatch(formActions.change(model, formData, { silent: true }));
     },
     resetForm: (model) => {
+      dispatch(resetEntityForm());
       dispatch(formActions.reset(model));
     },
     loadEntitiesIfNeeded: () => {
@@ -228,6 +236,7 @@ function mapDispatchToProps(dispatch) {
       const data = formData
         .setIn(['attributes', 'content'], formData.getIn(['attributes', 'message_content']))
         .deleteIn(['attributes', 'message_content']);
+      console.log(data);
       dispatch(save(data.toJS()));
     },
     handleUpdate: (formData) => {

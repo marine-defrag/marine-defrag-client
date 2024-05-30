@@ -32,6 +32,6 @@ export default defineMessages({
   },
   resetForm: {
     id: 'app.containers.FeedbackNew.resetForm',
-    defaultMessage: 'Reset form',
+    defaultMessage: 'Send another message',
   },
 });
