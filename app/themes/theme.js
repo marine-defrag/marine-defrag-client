@@ -141,6 +141,10 @@ theme.media = {
         square: [navCardIndicatorWeight],
         landscape: [navCardIndicatorWeight],
       },
+      1120: {
+        square: [navCardIndicatorWeight],
+        landscape: [navCardIndicatorWeight],
+      },
     },
   },
   // impactossLogo: [impactossLogo, impactossLogo2x],

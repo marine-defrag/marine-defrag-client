@@ -24,7 +24,7 @@ export const ENDPOINTS = {
   VALIDATE_TOKEN: 'auth/validate_token',
 };
 
-export const CLIENT_URL = 'https://marine-defrag-test-pdb.web.app';
+export const CLIENT_URL = 'https://marine-defrag.web.app';
 
 // user roles
 export const USER_ROLES = {
