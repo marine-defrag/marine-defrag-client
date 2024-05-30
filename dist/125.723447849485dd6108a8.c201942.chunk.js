@@ -1,5 +1,0 @@
-(window.webpackJsonp = window.webpackJsonp || []).push([[125], {
-  '8ff431ff6ab9d25e5861': function (s, e, r) {
-    r.r(e); const a = r('54f683fcda7806277002'); const o = r('3ad3c1378076e862aab0'); const c = r('f363639bc5c3c97af546'); const d = r('4e2e9348dad8fe460c1d'); const t = r('1dfca9f44be16af281fa'); const n = r('174bc3ebd1bfff6074fe'); const f = Object(a.fromJS)({ passwordSending: !1, passwordSuccess: !1, passwordError: !1 }); const w = Object(a.fromJS)({ attributes: { password: '', passwordNew: '', passwordConfirmation: '' } }); e.default = Object(d.combineReducers)({ page() { const s = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : f; const e = arguments.length > 1 ? arguments[1] : void 0; switch (e.type) { case o.LOCATION_CHANGE: return f; case n.b: return s.set('passwordSending', !0).set('passwordSuccess', !1).set('passwordError', !1); case n.c: return s.set('passwordSending', !1).set('passwordSuccess', !0); case n.a: return s.set('passwordSending', !1).set('passwordSuccess', !1).set('passwordError', Object(c.a)(e.error)); default: return s; } }, form: Object(t.combineForms)({ data: w }, 'userPassword.form') });
-  },
-}]);

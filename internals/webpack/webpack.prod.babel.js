@@ -8,6 +8,19 @@ const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const WebpackGitHash = require('webpack-git-hash');
 
+// Allow us to provide the git hash as an environment variable
+WebpackGitHash.prototype.getSkipHash = function(length) {
+  if (process.env.COMMIT_SHA) {
+    return process.env.COMMIT_SHA.substr(0, 7);
+  }
+
+  var skipHash = child_process.execSync(
+    'git rev-parse --short=' + length + ' HEAD',
+    { encoding: 'utf8' },
+  );
+  return skipHash.trim();
+};
+
 module.exports = require('./webpack.base.babel')({
   mode: 'production',
 
@@ -152,6 +165,7 @@ module.exports = require('./webpack.base.babel')({
   ],
 
   performance: {
-    assetFilter: (assetFilename) => !/(\.map$)|(^(main\.|favicon\.))/.test(assetFilename),
+    assetFilter: assetFilename =>
+      !/(\.map$)|(^(main\.|favicon\.))/.test(assetFilename),
   },
 });
