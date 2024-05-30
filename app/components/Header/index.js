@@ -329,22 +329,6 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                             ))}
                           </Section>
                         )}
-                        <Section
-                          fill={wide ? 'vertical' : 'horizontal'}
-                          justify={wide ? 'center' : 'end'}
-                          align={wide ? 'end' : 'center'}
-                          direction={wide ? 'row' : 'column'}
-                          wide={wide}
-                        >
-                          <LinkPage
-                            href={ROUTES.FEEDBACK}
-                            active={this.props.currentPath === ROUTES.FEEDBACK}
-                            onClick={(evt) => this.onClick(evt, ROUTES.FEEDBACK)}
-                            wide={wide}
-                          >
-                            Contact us
-                          </LinkPage>
-                        </Section>
                         {navItems && navItems.length > 0 && (
                           <Section
                             fill={wide ? 'vertical' : 'horizontal'}
