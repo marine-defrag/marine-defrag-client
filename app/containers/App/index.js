@@ -53,10 +53,7 @@ const Main = styled.div`
     }
     return 'absolute';
   }};
-  top: ${({ isHome, theme }) => isHome
-    ? 0
-    : theme.sizes.header.banner.heightMobile
-}px;
+  top: ${({ theme }) => theme.sizes.header.banner.heightMobile}px;
   left: 0;
   right: 0;
   bottom:0;
