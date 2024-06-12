@@ -657,6 +657,10 @@ export default defineMessages({
       id: 'app.containers.App.hints.content',
       defaultMessage: 'content hint',
     },
+    order: {
+      id: 'app.containers.App.hints.order',
+      defaultMessage: 'Note: a negative number will add it to the footer',
+    },
   },
   textValues: {
     user_only: {

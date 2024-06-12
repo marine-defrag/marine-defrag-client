@@ -183,7 +183,7 @@ export function mapDispatchToProps(dispatch) {
       dispatch(updatePath(path, { view }));
     },
     onSelectActor: (actorId) => {
-      dispatch(updatePath(`${ROUTES.ACTOR}/${actorId}`, { replace: true }));
+      dispatch(updatePath(`${ROUTES.ACTOR}/${actorId}`));
     },
   };
 }

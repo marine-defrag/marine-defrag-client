@@ -293,6 +293,7 @@
   "app.containers.App.hints.content": "Note: first paragraph styled as lead paragraph",
   "app.containers.App.hints.printListMore": "List only showing {no} items.",
   "app.containers.App.hints.amount": "Note: please do not use thousands separator and do not enter decimals",
+  "app.containers.App.hints.order": "Note: a negative number will add it to the footer",
   "app.containers.App.textValues.user_only": "Categorises users only",
   "app.containers.App.import.hint": "IMPORTANT: This row provides additional information about the columns only. Please replace or remove it before importing.",
   "app.containers.App.import.required": "Required",
