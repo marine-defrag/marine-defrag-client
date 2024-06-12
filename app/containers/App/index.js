@@ -44,16 +44,11 @@ import { PrintContext } from './PrintContext';
 import messages from './messages';
 
 const Main = styled.div`
-  position: ${({ isHome, isPrintView }) => {
-    if (isPrintView) {
-      return 'absolute';
-    }
-    if (isHome) {
-      return 'absolute';
-    }
-    return 'absolute';
-  }};
-  top: ${({ theme }) => theme.sizes.header.banner.heightMobile}px;
+  position: absolute;
+  top: ${({ isHome, theme }) => isHome
+    ? 0
+    : theme.sizes.header.banner.heightMobile
+}px;
   left: 0;
   right: 0;
   bottom:0;
@@ -241,7 +236,6 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       || location.pathname.startsWith(ROUTES.REGISTER)
       || location.pathname.startsWith(ROUTES.LOGOUT)
       || location.pathname.startsWith(ROUTES.UNAUTHORISED);
-    const isHomeOrAuth = isHome || isAuth;
 
     return (
       <div id="app-inner" className={isPrintView ? 'print-view' : ''}>
@@ -272,7 +266,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             currentPath={location.pathname}
           />
         )}
-        <Main isHome={isHomeOrAuth} isPrint={isPrintView}>
+        <Main isHome={isHome} isPrint={isPrintView}>
           {isPrintView && (<PrintUI />)}
           <PrintWrapper
             isPrint={isPrintView}
