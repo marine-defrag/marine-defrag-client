@@ -24,8 +24,9 @@ const GlobalStyle = createGlobalStyle`
     font-size: 1em;
     margin: 0;
   }
-  :focus, :visited:focus {
-    outline: 5px auto rgb(77, 144, 254); /* TODO: improve focus styles and individualise for specific buttons and links */
+  *:focus-visible {
+    outline: 2px solid #0077d8;
+    outline-offset: 0px;
   }
   #app {
     background-color: #FFF;
@@ -321,7 +322,7 @@ const GlobalStyle = createGlobalStyle`
     *:focus-visible {
       outline: 2px solid black;
       outline-offset: 2px;
-    }  
+    }
   `}
 `;
 

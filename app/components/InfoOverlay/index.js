@@ -68,12 +68,12 @@ const Markdown = styled(ReactMarkdown)`
 `;
 const StyledButton = styled((p) => <Button {...p} />)`
   &:focus-visible {
-    color: ${({ dark }) => dark ? palette('light', 5) : palette('primary', 0)};
-    outline: 2px solid ${({ dark }) => dark ? palette('light', 5) : palette('primary', 0)};
+    color: ${({ dark }) => dark ? palette('light', 5) : palette('primary', 2)};
+    outline: 2px solid ${({ dark }) => dark ? palette('light', 5) : palette('primary', 2)};
     outline-offset: ${({ dark }) => dark ? '2px' : '3px'};
-    border-radius: 2px;
+    border-radius: 999px;
     svg {
-      stroke: ${({ dark }) => dark ? palette('light', 5) : palette('primary', 0)};
+      stroke: ${({ dark }) => dark ? palette('light', 5) : palette('primary', 2)};
     }
   }
 `;

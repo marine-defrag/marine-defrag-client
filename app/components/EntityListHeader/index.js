@@ -95,7 +95,6 @@ const SelectType = styled(ButtonOld)`
   }
   &:focus-visible {
     outline: 2px solid ${palette('primary', 0)};
-    border-radius: 3px;
   }
 `;
 const EntityListSearch = styled((p) => <Box justify="end" direction="row" gap="medium" {...p} />)``;
@@ -116,9 +115,8 @@ const ButtonOptions = styled((p) => <Button plain {...p} />)`
     }
   }
   &:focus-visible {
-    outline-offset: 4px;
+    outline-offset: 0px;
     outline: 2px solid ${palette('buttonFlat', 0)};
-    border-radius: 2px;
   }
 `;
 
@@ -166,6 +164,7 @@ const TypeOption = styled(ButtonOld)`
   display: block;
   width: 100%;
   text-align: left;
+  color: ${(props) => props.active ? palette('headerNavMainItem', 1) : 'inherit'};
   &:hover {
     color:${palette('headerNavMainItemHover', 0)};
   }
@@ -173,9 +172,8 @@ const TypeOption = styled(ButtonOld)`
     box-shadow: none;
     color: ${({ theme }) => theme.global.colors.highlight};
     outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
-    border-radius: 1px;
+    outline-offset: 0;
   }
-  color: ${(props) => props.active ? palette('headerNavMainItem', 1) : 'inherit'};
 `;
 
 const STATE_INITIAL = {

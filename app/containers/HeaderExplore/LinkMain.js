@@ -21,7 +21,7 @@ export default styled((p) => <Button plain {...p} />)`
     color:${({ theme }) => theme.global.colors.highlight};
     border-bottom: 4px solid ${({ theme, active }) => active ? theme.global.colors.highlight : 'transparent'};
     outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
-    border-radius: 2px;
+    outline-offset: 0px;
   }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     height: ${(props) => props.theme.sizes.headerExplore.nav.height - 1}px;

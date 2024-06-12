@@ -92,14 +92,16 @@ const LinkPage = styled((p) => <Button plain as="a" justify="center" fill="verti
   font-size: ${({ theme }) => theme.text.small.size};
   line-height: ${({ theme }) => theme.text.small.height};
   font-weight: ${({ wide, active }) => (!wide && active) ? 500 : 300};
-  &:hover, &:focus-visible {
+  &:hover {
     color: ${({ wide, theme }) => theme.global.colors.text[!wide ? 'light' : 'dark']};
     background-color:${({ theme, wide }) => wide ? theme.global.colors.highlightHover : 'transparent'};
   }
   &:focus-visible {
-    outline-color: ${({ theme }) => theme.global.colors.highlightHover};
+    outline-color: transparent;
     border-color: none;
     box-shadow: none;
+    outline-offset: 0;
+    background-color:${({ theme }) => theme.global.colors.highlightHover};
   }
   &:focus {
     box-shadow: none;

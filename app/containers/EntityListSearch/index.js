@@ -57,16 +57,19 @@ const SearchInput = styled(DebounceInput)`
   }
 `;
 const Clear = styled(Button)`
-  padding: ${({ small }) => small ? '4px 6px' : '8px 6px'};
+  padding: ${({ small }) => small ? '4px 6px' : '6px 6px'};
   position: absolute;
   top: 0;
   right: 0;
   background-color: ${palette('background', 4)};
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
-    padding: ${({ small }) => small ? '4px 6px' : '8px 6px'};
+    padding: ${({ small }) => small ? '4px 6px' : '6px 6px'};
   }
   @media print {
     display: none;
+  }
+  &:focus-visible {
+    border-radius: 5px;
   }
 `;
 

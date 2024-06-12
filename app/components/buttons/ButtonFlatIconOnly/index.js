@@ -5,14 +5,12 @@ import Button from '../Button';
 
 const ButtonFlatIconOnly = styled(Button)`
   color: ${({ subtle }) => (subtle ? palette('text', 1) : palette('buttonFlat', 0))};
-  &:hover, &:focus-visible {
+  &:hover {
     color: ${({ subtle }) => (subtle ? palette('buttonFlat', 0) : palette('buttonFlatHover', 0))};
   }
   &:focus-visible {
-    border-radius: 2px;
-    svg {
-      fill: ${({ subtle }) => (subtle ? palette('buttonFlat', 0) : palette('buttonFlatHover', 0))} !important;
-    }
+    color: ${({ subtle }) => (subtle ? palette('buttonFlat', 0) : palette('buttonFlatHover', 0))};
+    fill: ${({ subtle }) => (subtle ? palette('buttonFlat', 0) : palette('buttonFlatHover', 0))} !important;
   }
 `;
 

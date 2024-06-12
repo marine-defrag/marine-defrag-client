@@ -23,10 +23,6 @@ const ButtonFlat = styled(Button)`
     return props.primary ? palette('buttonFlatHover', 0) : palette('buttonFlatHover', 1);
   }};
   }
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
-    border-radius: 2px;
-  }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     letter-spacing: 1px;
     padding: ${(props) => props.inForm ? '1em 1.2em' : '10px 12px'};

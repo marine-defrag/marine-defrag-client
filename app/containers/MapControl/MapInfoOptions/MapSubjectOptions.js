@@ -22,7 +22,6 @@ const TypeButton = styled((p) => <Button plain {...p} />)`
   &:focus-visible {
     color: ${({ theme }) => theme.global.colors.highlight};
     outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
-    border-radius: 2px;
     box-shadow: none;
   }
 `;
@@ -46,7 +45,11 @@ function MapSubjectOptions({ options, inList, align = 'start' }) {
             {
               options.map((option, i) => option && (
                 <Box key={i}>
-                  <TypeButton active={option.active} onClick={option.onClick} inList={inList}>
+                  <TypeButton
+                    active={option.active}
+                    onClick={option.onClick}
+                    inList={inList}
+                  >
                     <TextPrint size={inList ? 'medium' : 'large'}>
                       {option.title}
                     </TextPrint>

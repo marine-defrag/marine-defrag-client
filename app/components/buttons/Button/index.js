@@ -21,6 +21,9 @@ const Button = styled.button`
     box-shadow: none;
     border: none;
   }
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+  }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${(props) => props.small ? 0.9 : 1}em;
     padding: 6px 12px;
