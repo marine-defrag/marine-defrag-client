@@ -48,7 +48,6 @@ const StyledButton = styled((p) => <Button {...p} />)`
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
     color: ${({ theme }) => theme.global.colors.highlight};
-    border-radius: 2px;
   }
 `;
 const ButtonWrapper = styled.span``;

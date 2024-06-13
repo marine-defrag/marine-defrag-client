@@ -320,8 +320,8 @@ const GlobalStyle = createGlobalStyle`
       }
     }
     *:focus-visible {
-      outline: 2px solid black;
-      outline-offset: 2px;
+      outline: 2px solid #0077d8;
+      outline-offset: 0px;
     }
   `}
 `;

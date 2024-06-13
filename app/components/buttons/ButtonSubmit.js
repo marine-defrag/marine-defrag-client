@@ -22,10 +22,12 @@ const ButtonSubmit = styled(ButtonForm)`
     : palette('buttonDefaultHover', 0)
 };
   }
-
   &:focus-visible {
-    outline: 2px solid  ${palette('primary', 0)};
-    outline-offset: 0px;
+    outline: 0 solid transparent;
+    border-color: none;
+    box-shadow: none;
+    outline-offset: 0;
+    background-color:${({ theme }) => theme.global.colors.highlightHover};
   }
 `;
 

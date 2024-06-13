@@ -19,19 +19,22 @@ import {
   Text,
 } from 'grommet';
 
-import appMessages from 'containers/App/messages';
-import { CONTENT_MODAL } from 'containers/App/constants';
 import {
   ACTIONTYPE_ACTORTYPES,
   ACTIONTYPE_RESOURCETYPES,
   ACTIONTYPE_TARGETTYPES,
 } from 'themes/config';
+
+import { filterEntitiesByKeywords } from 'utils/entities';
+
 import Content from 'components/Content';
-import ContentHeader from 'containers/ContentHeader';
-import ButtonForm from 'components/buttons/ButtonForm';
+import SupTitle from 'components/SupTitle';
+import ButtonCancel from 'components/buttons/ButtonCancel';
 import ButtonSubmit from 'components/buttons/ButtonSubmit';
 import Checkbox from 'components/styled/Checkbox';
-import { filterEntitiesByKeywords } from 'utils/entities';
+
+import appMessages from 'containers/App/messages';
+
 import OptionsForActions from './OptionsForActions';
 import OptionsForActors from './OptionsForActors';
 
@@ -50,12 +53,7 @@ const Footer = styled.div`
 `;
 
 // color: white;
-const StyledButtonCancel = styled(ButtonForm)`
-  opacity: 0.9;
-  &:hover {
-    opacity: 0.8;
-  }
-`;
+const StyledButtonCancel = styled(ButtonCancel)``;
 
 const Main = styled.div`
   padding: 0 0 10px;
@@ -78,9 +76,11 @@ const TextInput = styled(DebounceInput)`
   flex: 1;
   font-size: 0.85em;
   width: 200px;
-  border-radius: 0.5em;
+  border-radius: 2px;
+  border: 1px solid;
+  border-color: ${({ active, theme }) => active ? theme.global.colors.highlight : palette('light', 2)};
   &:focus {
-    outline: none;
+    outline: 1px solid ${({ active, theme }) => active ? theme.global.colors.highlight : 'transparent'};
   }
 `;
 
@@ -120,6 +120,8 @@ export function EntityListDownload({
   const [actiontypes, setActiontypes] = useState({});
   const [actionsAsRows, setActionsAsRows] = useState(false);
   const [actiontypesAsTarget, setActiontypesAsTarget] = useState({});
+
+  const [activeTextbox, setActiveTextbox] = useState(+false);
   // figure out export options
   const hasAttributes = !!config.attributes;
   const hasTaxonomies = !!config.taxonomies;
@@ -508,15 +510,10 @@ export function EntityListDownload({
   const csvDateSuffix = `_${getDateSuffix()}`;
   return (
     <Content inModal>
-      <ContentHeader
-        title={intl.formatMessage(messages.downloadCsvTitle)}
-        type={CONTENT_MODAL}
-        buttons={[{
-          type: 'cancel',
-          onClick: () => onClose(),
-        }]}
-      />
-      <Main margin={{ bottom: 'large' }}>
+      <Main>
+        <Box pad={{ vertical: 'small' }}>
+          <SupTitle title={intl.formatMessage(messages.downloadCsvTitle)} />
+        </Box>
         <Box margin={{ bottom: 'large' }} gap="small">
           <Text size="xxlarge">
             <strong>
@@ -578,11 +575,14 @@ export function EntityListDownload({
             </OptionLabel>
             <Box direction="row" align="center">
               <TextInput
+                style={{ maxWidth: '250px', textAlign: 'right' }}
                 minLength={1}
                 debounceTimeout={500}
                 value={csvFilename}
+                active={activeTextbox}
+                onFocus={() => setActiveTextbox(+true)}
+                onBlur={() => setActiveTextbox(+false)}
                 onChange={(evt) => setCSVFilename(evt.target.value)}
-                style={{ maxWidth: '250px', textAlign: 'right' }}
               />
               <Text>
                 {`${csvSuffix ? csvDateSuffix : ''}.csv`}
@@ -611,6 +611,8 @@ export function EntityListDownload({
             <FormattedMessage {...appMessages.buttons.cancel} />
           </StyledButtonCancel>
           <CsvDownloader
+            role={undefined}
+            tabIndex={undefined}
             datas={csvData}
             columns={csvColumns}
             filename={`${csvFilename}${csvSuffix ? csvDateSuffix : ''}`}

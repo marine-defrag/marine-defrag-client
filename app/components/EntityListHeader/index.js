@@ -105,7 +105,8 @@ const ButtonOptions = styled((p) => <Button plain {...p} />)`
   &:focus {
     box-shadow: none;
   }
-  &:hover, &:focus-visible {
+  &:hover,
+  &:focus-visible {
     color: ${palette('buttonFlat', 0)};
     svg {
       stroke: ${palette('buttonFlat', 0)};
@@ -115,7 +116,7 @@ const ButtonOptions = styled((p) => <Button plain {...p} />)`
     }
   }
   &:focus-visible {
-    outline-offset: 0px;
+    outline-offset: 1px;
     outline: 2px solid ${palette('buttonFlat', 0)};
   }
 `;

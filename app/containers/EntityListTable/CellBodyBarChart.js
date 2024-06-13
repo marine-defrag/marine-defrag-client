@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import { ROUTES } from 'themes/config';
 
 import DropEntityList from './DropEntityList';
-import LinkTT from './LinkTT';
+import LinkTooltip from './LinkTooltip';
 
 const Value = styled.div`
   width: 30px !important;
@@ -55,7 +55,7 @@ const BarButton = styled((p) => <Button plain {...p} />)`
 `;
 
 const StyledLinkTT = styled(
-  React.forwardRef((p, ref) => <LinkTT plain {...p} ref={ref} />)
+  React.forwardRef((p, ref) => <LinkTooltip plain {...p} ref={ref} />)
 )`
   padding: 0 4px;
 `;

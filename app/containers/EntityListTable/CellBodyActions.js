@@ -7,8 +7,8 @@ import { ROUTES } from 'themes/config';
 import DropEntityList from './DropEntityList';
 import Link from './Link';
 import Label from './Label';
-import LabelTT from './LabelTT';
-import LinkTT from './LinkTT';
+import LabelTooltip from './LabelTooltip';
+import LinkTooltip from './LinkTooltip';
 
 const getActionLink = (action) => `${ROUTES.ACTION}/${action.get('id')}`;
 
@@ -37,15 +37,15 @@ export function CellBodyActions({
         </Link>
       )}
       {entity.tooltip && (
-        <LinkTT
+        <LinkTooltip
           ref={buttonRef}
           alignSelf={align}
           onClick={() => setShowContent(!showContent)}
         >
-          <LabelTT textAlign={align}>
+          <LabelTooltip textAlign={align}>
             {entity.value}
-          </LabelTT>
-        </LinkTT>
+          </LabelTooltip>
+        </LinkTooltip>
       )}
       {entity.tooltip && showContent && buttonRef.current && (
         <Drop

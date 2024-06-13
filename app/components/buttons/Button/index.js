@@ -19,7 +19,7 @@ const Button = styled.button`
   border-radius: 0;
   &:focus {
     box-shadow: none;
-    border: none;
+    border-color: transparent;
   }
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.global.colors.highlight};

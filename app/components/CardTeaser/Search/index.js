@@ -35,8 +35,7 @@ const SearchButton = styled(
   width: ${({ theme }) => theme.sizes.navCardSearch.height}px;
   &:focus-visible {
     z-index: 1;
-    outline: 5px auto ${palette('primary', 0)};
-    outline-offset: 2px;
+    outline: 2px auto ${palette('primary', 0)};
   }
 `;
 const ClearButton = styled((p) => <Button {...p} />)`
@@ -46,8 +45,7 @@ const ClearButton = styled((p) => <Button {...p} />)`
   background-color: ${palette('light', 1)};
   &:focus-visible {
     z-index: 1;
-    outline: 5px auto  ${palette('primary', 0)};
-    outline-offset: 2px;
+    outline: 2px auto  ${palette('primary', 0)};
   }
 `;
 const StyledSearchIcon = styled(SearchIcon)`
@@ -63,14 +61,15 @@ const StyledCloseIcon = styled(Close)`
 
 const Styled = styled((p) => <Box {...p} />)`
   width: 100%;
+  position: relative;
 `;
 
 // eslint-disable-next-line react/no-multi-comp
 const StyledSearchBox = styled(forwardRef((p, ref) => <Box {...p} ref={ref} />))`
-  border-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius}px;
-  border: 2px solid ${({ active }) => active ? palette('primary', 0) : 'transparent'};
-  padding: 1px;
- `;
+  border-radius: ${({ theme }) => theme.sizes.navCardSearch.borderRadius + 1}px;
+  outline: 2px solid ${({ active }) => active ? palette('primary', 0) : 'transparent'};
+  outline-offset: 2px;
+`;
 
 const DropDown = styled.div`
   display: none;
@@ -78,9 +77,9 @@ const DropDown = styled.div`
   box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.2);
   z-index: 999;
   margin-top: 6px;
-  border-radius: 6px;
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     position: absolute;
+    left: 3px;
     top: 100%;
     display: block;
   }
@@ -224,20 +223,19 @@ export function Search({
                 placeholder={placeholder}
               />
             </Keyboard>
-            {search.length > 0
-              && (
-                <ClearButton
-                  onClick={() => {
-                    setSearch('');
-                    setActiveResult(activeResetIndex);
-                    setFocusByRef(textInputRef);
-                  }}
-                  justify="center"
-                  align="center"
-                  title="Clear"
-                  icon={<StyledCloseIcon size="xsmall" />}
-                />
-              )}
+            {search.length > 0 && (
+              <ClearButton
+                onClick={() => {
+                  setSearch('');
+                  setActiveResult(activeResetIndex);
+                  setFocusByRef(textInputRef);
+                }}
+                justify="center"
+                align="center"
+                title="Clear"
+                icon={<StyledCloseIcon size="xsmall" />}
+              />
+            )}
           </Box>
           <Keyboard
             onEnter={() => {
@@ -270,34 +268,33 @@ export function Search({
           </Keyboard>
         </>
       </StyledSearchBox>
-      {hasToggle && search.length > 1
-        && (
-          <PrintHide>
-            <DropDown ref={dropRef}>
-              <SearchResults
-                onClose={() => {
-                  setSearch('');
-                  setActiveResult(activeResetIndex);
-                }}
-                search={search}
-                onSelect={(typeId) => {
-                  onDropFocused(false);
-                  onSelect(typeId);
-                }}
-                activeResult={activeResult}
-                setActiveResult={setActiveResult}
-                activeResetIndex={activeResetIndex}
-                options={sortedOptions}
-                maxResult={sortedOptions.size}
-                dropdownWidth={textInputWrapperRef.current.clientWidth}
-                focusTextInput={() => setFocusByRef(textInputRef)}
-                focus={dropFocused}
-                setFocus={onDropFocused}
-                onToggle={onToggle}
-              />
-            </DropDown>
-          </PrintHide>
-        )}
+      {hasToggle && search.length > 1 && (
+        <PrintHide>
+          <DropDown ref={dropRef}>
+            <SearchResults
+              onClose={() => {
+                setSearch('');
+                setActiveResult(activeResetIndex);
+              }}
+              search={search}
+              onSelect={(typeId) => {
+                onDropFocused(false);
+                onSelect(typeId);
+              }}
+              activeResult={activeResult}
+              setActiveResult={setActiveResult}
+              activeResetIndex={activeResetIndex}
+              options={sortedOptions}
+              maxResult={sortedOptions.size}
+              dropdownWidth={textInputWrapperRef.current.clientWidth}
+              focusTextInput={() => setFocusByRef(textInputRef)}
+              focus={dropFocused}
+              setFocus={onDropFocused}
+              onToggle={onToggle}
+            />
+          </DropDown>
+        </PrintHide>
+      )}
     </Styled>
   );
 }

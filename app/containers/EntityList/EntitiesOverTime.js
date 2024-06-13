@@ -36,7 +36,7 @@ import PrintHide from 'components/styled/PrintHide';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Container from 'components/styled/Container';
 import ContentSimple from 'components/styled/ContentSimple';
-import ContentHeader from 'containers/ContentHeader';
+import ContentHeader from 'components/ContentHeader';
 import ChartTimelineLegend from 'components/EntitiesOverTime/ChartTimelineLegend';
 import ChartTimeline from 'components/EntitiesOverTime/ChartTimeline';
 import ChartTimelineCategories from 'components/EntitiesOverTime/ChartTimelineCategories';

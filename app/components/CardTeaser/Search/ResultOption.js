@@ -16,16 +16,16 @@ export default styled(OptionButton)`
   background: transparent;
   width: 100%;
     ${({ theme, active }) => active ? theme.global.colors.dark : 'transparent'};
-  &:focus-visible {
-    outline-offset: -2px;
-    outline: 2px solid ${palette('primary', 0)};
-    border-radius: 5px;
-  }
   &:last-child {
     border-bottom: 1px solid ${({ theme }) => theme.global.colors.border.light};
   }
-  &:hover, :focus-visible {
+  &:hover {
     color: ${({ theme }) => theme.global.colors.highlight};
+  }
+  &:focus-visible {
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline-offset: -2px;
+    outline: 2px solid ${palette('primary', 0)};
   }
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     padding: 10px 16px;

@@ -36,9 +36,8 @@ const StyledButton = styled((p) => <Button plain fill="horizontal" {...p} />)`
   padding-left: 2px;
   text-align: left;
   &:focus-visible {
-    outline: 1.5px solid ${({ theme }) => theme.global.colors.highlightHover};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlightHover};
     outline-offset: -2px;
-    border-radius: 2px;
   }
 `;
 
