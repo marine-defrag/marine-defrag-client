@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import SkipContent from 'components/styled/SkipContent';
 import PrintHide from 'components/styled/PrintHide';
 import TextPrint from 'components/styled/TextPrint';
+import Checkbox from 'components/styled/Checkbox';
+
 import Link from './Link';
 import Label from './Label';
 
@@ -15,9 +17,6 @@ const Select = styled(PrintHide)`
   padding-right: 6px;
 `;
 
-const StyledInput = styled.input`
-  accent-color: ${({ theme }) => theme.global.colors.highlight};
-`;
 export function CellBodyMain({
   entity,
   // column,
@@ -29,8 +28,7 @@ export function CellBodyMain({
       {canEdit && (
         <PrintHide>
           <Select>
-            <StyledInput
-              type="checkbox"
+            <Checkbox
               checked={entity.selected}
               onChange={(evt) => entity.onSelect(evt.target.checked)}
             />

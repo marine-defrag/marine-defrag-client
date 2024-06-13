@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { Box } from 'grommet';
 import TextPrint from 'components/styled/TextPrint';
+import Checkbox from 'components/styled/Checkbox';
 
 import { usePrint } from 'containers/App/PrintContext';
 
@@ -34,9 +35,8 @@ export function MapOption({ option, type = 'option', align = 'start' }) {
       active={active}
       printHide={printHide}
     >
-      <input
+      <Checkbox
         id={`map-${type}-${key}`}
-        type="checkbox"
         checked={active}
         onChange={onClick}
       />

@@ -30,6 +30,7 @@ import Content from 'components/Content';
 import ContentHeader from 'containers/ContentHeader';
 import ButtonForm from 'components/buttons/ButtonForm';
 import ButtonSubmit from 'components/buttons/ButtonSubmit';
+import Checkbox from 'components/styled/Checkbox';
 import { filterEntitiesByKeywords } from 'utils/entities';
 import OptionsForActions from './OptionsForActions';
 import OptionsForActors from './OptionsForActors';
@@ -83,9 +84,9 @@ const TextInput = styled(DebounceInput)`
   }
 `;
 
-const StyledInput = styled.input`
-  accent-color: ${({ theme }) => theme.global.colors.highlight};
-`;
+// const StyledInput = styled.input`
+//   accent-color: ${({ theme }) => theme.global.colors.highlight};
+// `;
 
 const OptionLabel = styled((p) => <Text as="label" {...p} />)`
   opacity: ${({ disabled }) => disabled ? 0.5 : 1};
@@ -591,9 +592,8 @@ export function EntityListDownload({
           <Box direction="row" align="center" fill={false}>
             <Box direction="row" align="center">
               <Select>
-                <StyledInput
+                <Checkbox
                   id="check-timestamp"
-                  type="checkbox"
                   checked={csvSuffix}
                   onChange={(evt) => setCSVSuffix(evt.target.checked)}
                 />

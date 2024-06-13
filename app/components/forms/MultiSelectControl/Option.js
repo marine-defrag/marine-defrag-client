@@ -9,6 +9,7 @@ import { lowerCase } from 'utils/string';
 import appMessage from 'utils/app-message';
 import IndeterminateCheckbox from 'components/forms/IndeterminateCheckbox';
 import InfoOverlay from 'components/InfoOverlay';
+import Checkbox from 'components/styled/Checkbox';
 
 import messages from './messages';
 
@@ -124,9 +125,8 @@ function Option({
         }
         { !isIndeterminate
           && (
-            <input
+            <Checkbox
               id={optionId}
-              type="checkbox"
               checked={checked}
               onChange={(evt) => {
                 evt.stopPropagation();
