@@ -56,4 +56,8 @@ export default defineMessages({
       defaultMessage: '{entitiesTotal} {type}',
     },
   },
+  skipNext: {
+    id: 'app.containers.EntityListTable.skipNext',
+    defaultMessage: 'Skip to next list item or group, continue to list item details',
+  },
 });

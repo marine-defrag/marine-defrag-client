@@ -11,8 +11,11 @@ import qe from 'utils/quasi-equals';
 import ButtonFactory from 'components/buttons/ButtonFactory';
 import TagSearch from 'components/TagSearch';
 
+import Keyboard from 'containers/Keyboard';
+
 import IndeterminateCheckbox, { STATES as CHECKBOX_STATES } from 'components/forms/IndeterminateCheckbox';
 
+import { setFocusById } from 'utils/accessibility';
 import {
   sortOptions,
   filterOptionsByTags,
@@ -71,6 +74,11 @@ const ControlFooter = styled.div`
   right: 0;
   background-color: ${palette('background', 1)};
   box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.2);
+  &:focus-visible { 
+    button {
+      outline-offset: 0px !important;
+    }
+  }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     height: 50px;
   }
@@ -387,6 +395,19 @@ class MultiSelect extends React.Component {
     }
   }
 
+  handleKeyboardNavOptionList(evt) {
+    if (evt && evt.preventDefault) evt.preventDefault();
+    this.props.onCancel();
+  }
+
+  handleKeyboardNavTagList(evt) {
+    if (evt && evt.preventDefault) evt.preventDefault();
+    if (this.state.tagGroupOpenId !== null) {
+      setFocusById(`tag-filter-group-${this.state.tagGroupOpenId}`);
+      this.onSetOpenTagGroup(null);
+    }
+  }
+
   renderButton = (action, i, hasChanges) => (
     <ButtonFactory
       key={i}
@@ -429,21 +450,24 @@ class MultiSelect extends React.Component {
           <FilterWrap>
             {this.props.search && (
               <Search>
-                <TagSearch
-                  onSearch={this.onSearch}
-                  onClear={this.onResetFilters}
-                  filters={this.currentFilters({
-                    queryTags: this.state.queryTags,
-                    filterGroups: this.props.tagFilterGroups,
-                  },
-                  {
-                    queryType: this.state.queryType,
-                    typeFilter: this.props.typeFilter,
-                  })}
-                  searchQuery={this.state.query || ''}
-                  multiselect
-                />
+                <Keyboard onTab={(event) => options.size === 0 ? this.handleKeyboardNavOptionList(event) : null}>
+                  <TagSearch
+                    onSearch={this.onSearch}
+                    onClear={this.onResetFilters}
+                    filters={this.currentFilters({
+                      queryTags: this.state.queryTags,
+                      filterGroups: this.props.tagFilterGroups,
+                    },
+                    {
+                      queryType: this.state.queryType,
+                      typeFilter: this.props.typeFilter,
+                    })}
+                    searchQuery={this.state.query || ''}
+                    multiselect
+                  />
+                </Keyboard>
               </Search>
+
             )}
             {this.props.advanced && this.props.tagFilterGroups && (
               <TagFilters
@@ -452,6 +476,7 @@ class MultiSelect extends React.Component {
                 onTagSelected={this.onTagSelected}
                 openId={this.state.tagGroupOpenId}
                 setOpen={this.onSetOpenTagGroup}
+                handleKeyboardClose={(event) => this.handleKeyboardNavTagList(event)}
               />
             )}
             {this.props.typeFilter && (
@@ -491,6 +516,8 @@ class MultiSelect extends React.Component {
               onCheckboxChange={(checkedState, option) => {
                 this.props.onChange(this.getNextValues(checkedState, option));
               }}
+              keyboardAutoCloseEnabled={!this.props.buttons}
+              handleKeyboardClose={(event) => this.handleKeyboardNavOptionList(event)}
             />
           </ListWrap>
         </ControlMain>
@@ -514,16 +541,16 @@ class MultiSelect extends React.Component {
         )}
         {this.props.buttons && (
           <ControlFooter>
-            <ButtonGroup>
-              {
-                this.props.buttons.map((action, i) => action && action.position !== 'left' && this.renderButton(action, i, hasChanges))
-              }
-            </ButtonGroup>
             <ButtonGroup left>
               {
                 this.props.buttons.map((action, i) => (
                   action && action.position === 'left' && this.renderButton(action, i, hasChanges)
                 ))
+              }
+            </ButtonGroup>
+            <ButtonGroup>
+              {
+                this.props.buttons.map((action, i) => action && action.position !== 'left' && this.renderButton(action, i, hasChanges))
               }
             </ButtonGroup>
           </ControlFooter>

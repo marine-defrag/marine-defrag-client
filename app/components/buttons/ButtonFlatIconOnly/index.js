@@ -8,6 +8,10 @@ const ButtonFlatIconOnly = styled(Button)`
   &:hover {
     color: ${({ subtle }) => (subtle ? palette('buttonFlat', 0) : palette('buttonFlatHover', 0))};
   }
+  &:focus-visible {
+    color: ${({ subtle }) => (subtle ? palette('buttonFlat', 0) : palette('buttonFlatHover', 0))};
+    fill: ${({ subtle }) => (subtle ? palette('buttonFlat', 0) : palette('buttonFlatHover', 0))} !important;
+  }
 `;
 
 export default ButtonFlatIconOnly;

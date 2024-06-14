@@ -7,48 +7,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { palette } from 'styled-theme';
-import DebounceInput from 'react-debounce-input';
 
 import styled from 'styled-components';
 import { Box, Text } from 'grommet';
 
+import CheckboxButton from 'components/buttons/CheckboxButton';
+
 import OptionGroupToggle from './OptionGroupToggle';
 import OptionListHeader from './OptionListHeader';
+import ExportOption from './ExportOption';
 
-const Select = styled.div`
-  width: 20px;
-  text-align: center;
-  padding-right: 6px;
-`;
-
-const TextInput = styled(DebounceInput)`
-  background-color: ${palette('background', 0)};
-  padding: 3px;
-  flex: 1;
-  font-size: 0.85em;
-  width: 200px;
-  border-radius: 0.5em;
-  &:focus {
-    outline: none;
-  }
-
-`;
-
-const Group = styled((p) => (
-  <Box {...p} />
-))`
+const Group = styled(Box)`
+  margin-bottom: 2px;
   border-top: 1px solid ${palette('light', 2)};
   &:last-child {
     border-bottom: 1px solid ${palette('light', 2)};
   }
-`;
-
-const StyledInput = styled.input`
-  accent-color: ${({ theme }) => theme.global.colors.highlight};
-`;
-
-const OptionLabel = styled((p) => <Text as="label" {...p} />)`
-  opacity: ${({ disabled }) => disabled ? 0.5 : 1};
 `;
 
 export function OptionGroup({
@@ -94,19 +68,12 @@ export function OptionGroup({
           )}
           {!intro && introNode}
           {onSetActive && (
-            <Box direction="row" gap="small" align="center" justify="start">
-              <Select>
-                <StyledInput
-                  id={`check-${groupId}`}
-                  type="checkbox"
-                  checked={active}
-                  onChange={(evt) => onSetActive(evt.target.checked)}
-                />
-              </Select>
-              <OptionLabel htmlFor={`check-${groupId}`}>
-                {onActiveLabel}
-              </OptionLabel>
-            </Box>
+            <CheckboxButton
+              name={`check-${groupId}`}
+              checked={active}
+              onChange={(evt) => onSetActive(evt.target.checked)}
+              label={onActiveLabel}
+            />
           )}
           {options && (
             <Box margin={{ top: 'medium' }}>
@@ -127,92 +94,39 @@ export function OptionGroup({
                 }}
               />
               <Box gap="xsmall">
-                {Object.keys(options).map((key) => {
-                  const option = options[key];
-                  return (
-                    <Box key={key} direction="row" gap="small" align="center" justify="between">
-                      <Box direction="row" gap="small" align="center" justify="start">
-                        <Select>
-                          <StyledInput
-                            id={`check-${groupId}-${key}`}
-                            type="checkbox"
-                            checked={option.exportRequired || option.active}
-                            disabled={option.exportRequired}
-                            onChange={(evt) => {
-                              onSetOptions({
-                                ...options,
-                                [key]: {
-                                  ...option,
-                                  active: evt.target.checked,
-                                },
-                              });
-                            }}
-                          />
-                        </Select>
-                        <OptionLabel htmlFor={`check-${groupId}-${key}`}>
-                          {option.label}
-                        </OptionLabel>
-                      </Box>
-                      {editColumnNames && option.column && (
-                        <Box>
-                          <TextInput
-                            minLength={1}
-                            debounceTimeout={500}
-                            value={option.column}
-                            onChange={(evt) => {
-                              onSetOptions({
-                                ...options,
-                                [key]: {
-                                  ...option,
-                                  column: evt.target.value,
-                                },
-                              });
-                            }}
-                          />
-                        </Box>
-                      )}
-                    </Box>
-                  );
-                })}
+                {Object.keys(options).map((key) => (
+                  <ExportOption
+                    key={key}
+                    options={options}
+                    optionKey={key}
+                    groupId={groupId}
+                    editColumnNames={editColumnNames}
+                    onSetOptions={onSetOptions}
+                  />
+                ))}
               </Box>
             </Box>
           )}
           {onSetAsRows && (
             <Box gap="edge">
-              <Box direction="row" gap="small" align="center" justify="start">
-                <Select>
-                  <StyledInput
-                    id={`check-${groupId}-as-columns`}
-                    type="radio"
-                    checked={!asRows}
-                    onChange={(evt) => onSetAsRows(!evt.target.checked)}
-                    disabled={asRowsDisabled}
-                  />
-                </Select>
-                <OptionLabel
-                  htmlFor={`check-${groupId}-as-columns`}
-                  disabled={asRowsDisabled}
-                >
-                  {asRowsLabels.columns}
-                </OptionLabel>
-              </Box>
-              <Box direction="row" gap="small" align="center" justify="start">
-                <Select>
-                  <StyledInput
-                    id={`check-${groupId}-as-rows`}
-                    type="radio"
-                    checked={asRows}
-                    onChange={(evt) => onSetAsRows(evt.target.checked)}
-                    disabled={asRowsDisabled}
-                  />
-                </Select>
-                <OptionLabel
-                  htmlFor={`check-${groupId}-as-rows`}
-                  disabled={asRowsDisabled}
-                >
-                  {asRowsLabels.rows}
-                </OptionLabel>
-              </Box>
+              <CheckboxButton
+                type="radio"
+                group={`check-${groupId}`}
+                name={`check-${groupId}-as-columns`}
+                checked={!asRows}
+                onChange={(evt) => onSetAsRows(!evt.target.checked)}
+                disabled={asRowsDisabled}
+                label={asRowsLabels.columns}
+              />
+              <CheckboxButton
+                type="radio"
+                group={`check-${groupId}`}
+                name={`check-${groupId}-as-rows`}
+                checked={!asRows}
+                onChange={(evt) => onSetAsRows(evt.target.checked)}
+                disabled={asRowsDisabled}
+                label={asRowsLabels.rows}
+              />
             </Box>
           )}
         </Box>

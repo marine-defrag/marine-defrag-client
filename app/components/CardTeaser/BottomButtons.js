@@ -16,8 +16,11 @@ const Styled = styled.div`
 const ViewLinkButton = styled(Button)`
   padding: 0;
   color: #777b7e;
-  &:hover {
+  &:hover, &:focus-visible {
     color: ${({ theme }) => theme.global.colors.highlight};
+  }
+  &:focus-visible {
+    outline-offset: 4px;
   }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding: 0;

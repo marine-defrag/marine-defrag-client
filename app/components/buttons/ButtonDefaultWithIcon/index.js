@@ -18,6 +18,9 @@ const Button = styled(ButtonDefault)`
   font-size: 0.85em;
   min-width: 80px;
   min-height: 2.2em;
+  &:focus-visible {
+    outline-offset: 4px;
+  }
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: 0.85em;
     padding: 0.3em 1em 0.2em;

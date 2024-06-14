@@ -43,7 +43,13 @@ const ViewContainer = styled(Container)`
   }
 `;
 
-const ResourceButton = styled((p) => <Button plain {...p} />)``;
+const ResourceButton = styled((p) => <Button plain {...p} />)`
+  &:focus-visible {
+    outline: none;
+    border-radius: 2px;
+    border-bottom: 2px solid ${({ theme }) => theme.global.colors.highlight};
+  }
+`;
 
 export function ActionsFactsOverview({
   entities, intl, dataReady, handleNew, isManager, connections, onUpdatePath,

@@ -17,6 +17,9 @@ const Styled = styled(A)`
   &:hover {
     color: ${({ theme }) => theme.global.colors.highlight};
   }
+  &:focus-visible {
+    outline-offset: 4px;
+  }
 `;
 
 export function Url(props) {

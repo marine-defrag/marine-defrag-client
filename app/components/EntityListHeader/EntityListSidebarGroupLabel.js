@@ -20,7 +20,10 @@ const Styled = styled((p) => <Button plain {...p} />)`
   padding-right: 4px;
   &:hover {
     color: ${palette('asideListGroupHover', 0)};
-    /* background-color: ${palette('asideListGroupHover', 1)}; */
+  }
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlightHover};
+    outline-offset: -2px;
   }
 `;
 

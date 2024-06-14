@@ -37,11 +37,13 @@ const Search = styled.div`
   background-color: ${palette('background', 0)};
   color: ${palette('dark', 2)};
   padding: 2px 7px;
-  border: 1px solid ${({ active }) => active ? palette('light', 4) : palette('light', 2)};
-  box-shadow: 0 0 3px 0 ${({ active }) => active ? palette('dark', 2) : 'transparent'};
   min-height: ${({ small }) => small ? 30 : 36}px;
   border-radius: 5px;
   position: relative;
+  border: 1px solid;
+  border-color: ${({ active, theme }) => active ? theme.global.colors.highlight : palette('light', 2)};
+  outline: 1px solid ${({ active, theme }) => active ? theme.global.colors.highlight : 'transparent'};
+
 `;
 const SearchInput = styled(DebounceInput)`
   background-color: ${palette('background', 0)};
@@ -57,16 +59,19 @@ const SearchInput = styled(DebounceInput)`
   }
 `;
 const Clear = styled(Button)`
-  padding: ${({ small }) => small ? '4px 6px' : '8px 6px'};
+  padding: ${({ small }) => small ? '4px 6px' : '6px 6px'};
   position: absolute;
   top: 0;
   right: 0;
   background-color: ${palette('background', 4)};
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
-    padding: ${({ small }) => small ? '4px 6px' : '8px 6px'};
+    padding: ${({ small }) => small ? '4px 6px' : '6px 6px'};
   }
   @media print {
     display: none;
+  }
+  &:focus-visible {
+    border-radius: 5px;
   }
 `;
 

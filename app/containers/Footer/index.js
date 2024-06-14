@@ -69,7 +69,14 @@ const FooterLinkPage = styled((p) => <Button plain as="a" justify="center" fill=
   font-weight: 300;
   &:hover {
     color: ${({ isPrint, theme }) => isPrint ? theme.global.colors.text.secondary : 'white'};
-    background-color: rgba(255,255,255,0.3);
+    background-color:${({ theme }) => theme.global.colors.highlightHover};
+  }
+  &:focus-visible {
+    outline-color: transparent;
+    border-color: none;
+    box-shadow: none;
+    outline-offset: 0;
+    background-color:${({ theme }) => theme.global.colors.highlightHover};
   }
 `;
 

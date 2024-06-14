@@ -709,5 +709,12 @@ theme.table = {
 theme.radioButton = {
   size: '18px',
 };
-
+theme.button = {
+  // remove default grommet button green outline on focus
+  extend: () => `
+      &:focus {
+        box-shadow: none;
+      }
+    `,
+};
 export default theme;

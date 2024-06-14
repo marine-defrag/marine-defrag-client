@@ -1,14 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-// import styled from 'styled-components';
+import styled from 'styled-components';
 
 import { startsWith } from 'utils/string';
 import { updatePath } from 'containers/App/actions';
 import { getNextQueryString } from 'containers/App/sagas';
 import { selectActortypeQuery, selectActiontypeQuery } from 'containers/App/selectors';
 
-// const A = styled.a``;
+const A = styled.a`
+  &:focus {
+    box-shadow:none;
+  }
+`;
 
 const Link = ({
   to, children, onClick, actortypeId, actiontypeId, args, ...p
@@ -24,7 +28,7 @@ const Link = ({
   }
   const href = `${to}?${getNextQueryString(query)}`;
   return (
-    <a
+    <A
       href={href}
       target={external ? '_blank' : '_self'}
       onClick={(e) => {
@@ -36,7 +40,7 @@ const Link = ({
       {...p}
     >
       {children}
-    </a>
+    </A>
   );
 };
 

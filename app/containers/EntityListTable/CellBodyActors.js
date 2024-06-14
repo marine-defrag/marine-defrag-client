@@ -7,9 +7,9 @@ import { truncateText } from 'utils/string';
 import { ROUTES } from 'themes/config';
 import DropEntityList from './DropEntityList';
 import Link from './Link';
-import LinkTT from './LinkTT';
+import LinkTooltip from './LinkTooltip';
 import Label from './Label';
-import LabelTT from './LabelTT';
+import LabelTooltip from './LabelTooltip';
 
 const getActorLink = (actor) => `${ROUTES.ACTOR}/${actor.get('id')}`;
 
@@ -41,15 +41,15 @@ export function CellBodyActors({
         </Link>
       )}
       {entity.tooltip && (
-        <LinkTT
+        <LinkTooltip
           ref={buttonRef}
           alignSelf={align}
           onClick={() => setShowContent(!showContent)}
         >
-          <LabelTT textAlign={align}>
+          <LabelTooltip textAlign={align}>
             {entity.value}
-          </LabelTT>
-        </LinkTT>
+          </LabelTooltip>
+        </LinkTooltip>
       )}
       {entity.tooltip && showContent && buttonRef.current && (
         <Drop

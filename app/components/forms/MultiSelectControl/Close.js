@@ -10,8 +10,12 @@ const Styled = styled(Button)`
   right:0;
   top:0;
   color: ${palette('link', 3)};
-  &:hover {
+  &:hover, &:focus-visible {
     color: ${palette('linkHover', 3)};
+  }
+  &:focus-visible {
+    outline: 2px solid ${palette('linkHover', 3)};
+    outline-offset: -5px;
   }
 `;
 

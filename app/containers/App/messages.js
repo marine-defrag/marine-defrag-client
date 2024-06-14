@@ -2268,6 +2268,24 @@ export default defineMessages({
       defaultMessage: '{entityType} created successfully. It will become publicly available once verified and published by an authorised user.',
     },
   },
+  screenreader: {
+    skipToContent: {
+      id: 'app.containers.App.screenreader.skipToContent',
+      defaultMessage: 'Skip to content',
+    },
+    skipBackToContent: {
+      id: 'app.containers.App.screenreader.skipBackToContent',
+      defaultMessage: 'Skip back to content',
+    },
+    skipMapToList: {
+      id: 'app.containers.App.screenreader.skipMapToList',
+      defaultMessage: 'Map view is currently disabled with keyboard navigation. Please press enter to see the content in list view.',
+    },
+    skipTimelineToList: {
+      id: 'app.containers.App.screenreader.skipTimelineToList',
+      defaultMessage: 'Map view is currently disabled with keyboard navigation. Please press enter to see the content in list view.',
+    },
+  },
   ui: {
     userRoles: {
       admin: {

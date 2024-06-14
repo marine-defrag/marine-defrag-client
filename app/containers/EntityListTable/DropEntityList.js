@@ -11,10 +11,15 @@ import { truncateText } from 'utils/string';
 import { ACTORTYPES_CONFIG, ACTIONTYPES_CONFIG, ROUTES } from 'themes/config';
 import appMessages from 'containers/App/messages';
 
-const LinkInTT = styled((p) => <Button as="a" plain {...p} />)`
+const LinkInTooltip = styled((p) => <Button as="a" plain {...p} />)`
   line-height: 13px;
+  &:focus-visible {
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    outline-offset: 2px;
+  }
 `;
-const LabelInTT = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
+const LabelInTooltip = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
   line-height: 13px;
 `;
 
@@ -100,7 +105,7 @@ export function DropEntityList({
                     ).map(
                       (entity) => (
                         <Box key={entity.get('id')} flex={{ shrink: 0 }}>
-                          <LinkInTT
+                          <LinkInTooltip
                             key={entity.get('id')}
                             href={getEntityLink(entity, entityType)}
                             onClick={(evt) => {
@@ -109,15 +114,15 @@ export function DropEntityList({
                             }}
                             title={entity.getIn(['attributes', 'title'])}
                           >
-                            <LabelInTT>
+                            <LabelInTooltip>
                               {truncateText(entity.getIn(['attributes', 'title']), 30)}
                               {footnote && entity.get('mark') && (
                                 <Text color="dark-3" size="xxsmall">
                                   {' *'}
                                 </Text>
                               )}
-                            </LabelInTT>
-                          </LinkInTT>
+                            </LabelInTooltip>
+                          </LinkInTooltip>
                         </Box>
                       )
                     )

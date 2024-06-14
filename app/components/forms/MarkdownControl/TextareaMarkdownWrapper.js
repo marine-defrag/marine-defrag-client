@@ -58,6 +58,8 @@ const MDButton = styled((p) => (
   <Button
     plain
     as="div"
+    tabIndex="0"
+    role="button"
     {...p}
   />
 ))`
@@ -65,6 +67,15 @@ const MDButton = styled((p) => (
     min-height: 30px;
     text-align: center;
     padding: 4px 7px;
+    &:focus-visible {
+      color: ${palette('primary', 0)};
+      outline: 2px solid ${palette('primary', 0)};
+      outline-offset: 0px;
+      border-radius: 2px;
+      svg {
+        stroke: ${palette('primary', 0)};
+      }
+    }
     &:hover {
       background-color: ${({ disabled }) => disabled ? 'transparent' : palette('light', 2)};
     }
@@ -79,9 +90,16 @@ const ViewButton = styled((p) => (
     opacity: ${({ active }) => active ? 1 : 0.6};
     border-bottom: 3px solid;
     border-bottom-color: ${({ active, theme }) => active ? theme.global.colors.a : 'transparent'};
+    
     &:hover {
       opacity: ${({ active }) => active ? 1 : 0.8};
       border-bottom-color: ${({ active, theme }) => active ? theme.global.colors.a : palette('light', 4)};
+    }
+    &:focus-visible {
+      color: ${palette('primary', 0)};
+      outline: 2px solid ${palette('primary', 0)};
+      outline-offset: 3px;
+      border-radius: 2px;
     }
   `;
 const MDButtonText = styled((p) => (
@@ -265,6 +283,7 @@ function TextareaMarkdownWrapper(props) {
             ref={textareaRef}
             options={{
               preferredItalicSyntax: '_',
+              enableIndentExtension: false,
             }}
             {...props}
           />

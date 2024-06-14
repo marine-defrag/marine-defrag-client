@@ -9,12 +9,12 @@ import styled from 'styled-components';
 import appMessages from 'containers/App/messages';
 
 import { ROUTES } from 'themes/config';
-import LinkTT from './LinkTT';
+import LinkTooltip from './LinkTooltip';
 
-const LinkInTT = styled((p) => <Button as="a" plain {...p} />)`
+const LinkInTooltip = styled((p) => <Button as="a" plain {...p} />)`
   line-height: 13px;
 `;
-const LabelInTT = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
+const LabelInTooltip = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
   line-height: 13px;
 `;
 
@@ -36,13 +36,13 @@ export function CellBodyHasResource({
   return (
     <Box alignContent={align}>
       {entity.value && (
-        <LinkTT
+        <LinkTooltip
           ref={buttonRef}
           alignSelf={align}
           onClick={() => setShowContent(!showContent)}
         >
           <StatusGood size="small" color="dark-2" />
-        </LinkTT>
+        </LinkTooltip>
       )}
       {!entity.value && (
         <Box fill={false} align="end">
@@ -82,15 +82,15 @@ export function CellBodyHasResource({
               </Text>
             </Box>
             <Box flex={{ shrink: 0 }}>
-              <LinkInTT
+              <LinkInTooltip
                 href={getLink(entity.value)}
                 onClick={getOnClick(entity.value, onEntityClick)}
                 title={entity.value.getIn(['attributes', 'title'])}
               >
-                <LabelInTT>
+                <LabelInTooltip>
                   {entity.value.getIn(['attributes', 'title'])}
-                </LabelInTT>
-              </LinkInTT>
+                </LabelInTooltip>
+              </LinkInTooltip>
             </Box>
           </Box>
         </Drop>

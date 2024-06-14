@@ -9,6 +9,7 @@ import { Box } from 'grommet';
 
 import A from 'components/styled/A';
 
+import Keyboard from 'containers/Keyboard';
 import Option from './Option';
 
 import messages from './messages';
@@ -65,9 +66,8 @@ const MoreLink = styled(A)`
 const SHOW_INCREMENT = 20;
 
 function OptionList(props) {
+  const { keyboardAutoCloseEnabled, handleKeyboardClose } = props;
   const [noItems, setNoItems] = useState(SHOW_INCREMENT);
-
-
   // do groups not slice
   const options = props.groups
     ? props.options
@@ -81,6 +81,7 @@ function OptionList(props) {
       : Map().set('options', group));
 
   const hasMore = options.size < props.options.size;
+
   return (
     <Styled>
       <ListWrapper>
@@ -92,9 +93,9 @@ function OptionList(props) {
               </GroupTitle>
             )}
             <OptionsWrapper>
-              { group.get('options') && group.get('options').map((option, i) => {
+              {group.get('options') && group.get('options').map((option, i, list) => {
                 const id = `${i}-${kebabCase(option.get('value'))}`;
-                return (
+                const optionElement = (
                   <Option
                     key={id}
                     optionId={id}
@@ -103,6 +104,12 @@ function OptionList(props) {
                     onCheckboxChange={props.onCheckboxChange}
                   />
                 );
+                if (keyboardAutoCloseEnabled && list.size - 1 === i) {
+                  return (
+                    <Keyboard key={`${id}-keyboard`} onTab={handleKeyboardClose}>{optionElement}</Keyboard>
+                  );
+                }
+                return optionElement;
               })}
             </OptionsWrapper>
           </GroupWrapper>
@@ -147,6 +154,8 @@ OptionList.propTypes = {
   secondary: PropTypes.bool,
   onCheckboxChange: PropTypes.func,
   groups: PropTypes.object,
+  handleKeyboardClose: PropTypes.func,
+  keyboardAutoCloseEnabled: PropTypes.bool,
 };
 
 export default OptionList;

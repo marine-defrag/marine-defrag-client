@@ -10,12 +10,13 @@ import styled, { withTheme } from 'styled-components';
 import { Map, List } from 'immutable';
 import { palette } from 'styled-theme';
 import {
-  Box, Text, Button, ResponsiveContext,
+  Box, Text, Button, ResponsiveContext, Keyboard,
 } from 'grommet';
 
 import { isEqual } from 'lodash/lang';
 import { truncateText } from 'utils/string';
 import { isMinSize } from 'utils/responsive';
+import { setFocusById, setFocusByRef } from 'utils/accessibility';
 
 import { TEXT_TRUNCATE } from 'themes/config';
 import { FILTER_FORM_MODEL, EDIT_FORM_MODEL } from 'containers/EntityListForm/constants';
@@ -89,11 +90,35 @@ const SelectType = styled(ButtonOld)`
     padding-right: 2px;
     max-width: 100%;
   }
+  &:focus {
+    outline: none;
+  }
+  &:focus-visible {
+    outline: 2px solid ${palette('primary', 0)};
+  }
 `;
 const EntityListSearch = styled((p) => <Box justify="end" direction="row" gap="medium" {...p} />)``;
 
 const ButtonOptions = styled((p) => <Button plain {...p} />)`
   color: ${palette('buttonFlat', 1)};
+
+  &:focus {
+    box-shadow: none;
+  }
+  &:hover,
+  &:focus-visible {
+    color: ${palette('buttonFlat', 0)};
+    svg {
+      stroke: ${palette('buttonFlat', 0)};
+    }
+    span {
+      color: ${palette('buttonFlat', 0)};
+    }
+  }
+  &:focus-visible {
+    outline-offset: 1px;
+    outline: 2px solid ${palette('buttonFlat', 0)};
+  }
 `;
 
 const Label = styled.div`
@@ -140,10 +165,16 @@ const TypeOption = styled(ButtonOld)`
   display: block;
   width: 100%;
   text-align: left;
+  color: ${(props) => props.active ? palette('headerNavMainItem', 1) : 'inherit'};
   &:hover {
     color:${palette('headerNavMainItemHover', 0)};
   }
-  color: ${(props) => props.active ? palette('headerNavMainItem', 1) : 'inherit'};
+  &:focus-visible {
+    box-shadow: none;
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    outline-offset: 0;
+  }
 `;
 
 const STATE_INITIAL = {
@@ -230,12 +261,12 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
     this.setState({ activeOption: option });
   };
 
-  // onShowForm = (option) => {
-  //   this.setState({ activeOption: option.active ? null : option });
-  // };
-
   onHideForm = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    if (this.state.activeOption) {
+      const { optionId, group } = this.state.activeOption;
+      setFocusById(`side-bar-option-${group}-${optionId}`);
+    }
     this.setState({ activeOption: null });
   };
 
@@ -247,6 +278,12 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
   onHideTypes = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     this.setState({ showTypes: false });
+  };
+
+  onKeyboardHideTypes = (evt) => {
+    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    this.setState({ showTypes: false });
+    setFocusByRef(this.typeButtonRef);
   };
 
   getFormButtons = (activeOption, intl) => {
@@ -520,18 +557,36 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                   {this.state.showTypes && typeOptions && (
                     <PrintHide>
                       <TypeOptions ref={this.typeWrapperRef}>
-                        {typeOptions.map((option) => (
-                          <TypeOption
-                            key={option.value}
-                            active={option.active}
-                            onClick={() => {
-                              this.onHideTypes();
-                              onSelectType(option.value);
-                            }}
-                          >
-                            {option.label}
-                          </TypeOption>
-                        ))}
+                        {typeOptions.map((option, i, list) => {
+                          const typeOption = (
+                            <TypeOption
+                              key={option.value}
+                              active={option.active}
+                              onClick={(event) => {
+                                this.onHideTypes();
+                                onSelectType(option.value);
+                                if (event.pointerType !== 'touch') setFocusByRef(this.typeButtonRef);
+                              }}
+                            >
+                              {option.label}
+                            </TypeOption>
+                          );
+                          if (i === list.length - 1) {
+                            // add keyboard tab listener on last element
+                            return (
+                              <Keyboard
+                                key={`${option.value}-keyboard`}
+                                onTab={(event) => {
+                                  this.onKeyboardHideTypes(event);
+                                }}
+                              >
+                                {typeOption}
+                              </Keyboard>
+                            );
+                          }
+
+                          return typeOption;
+                        })}
                       </TypeOptions>
                     </PrintHide>
                   )}
@@ -555,6 +610,7 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
               {dataReady && onShowFilters && isMinSize(size, 'large') && (
                 <HeaderSection align="center">
                   <ButtonOptions
+                    id="show-filters-button"
                     onClick={onShowFilters}
                     label={(
                       <Box direction="row" gap="small" align="center">
@@ -670,6 +726,33 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                   }
                   : null
                 }
+                formOptions={formOptions && (
+                  <EntityListForm
+                    model={formModel}
+                    activeOptionId={`${activeOption.group}-${activeOption.optionId}`}
+                    formOptions={formOptions}
+                    buttons={showEditOptions
+                      ? this.getFormButtons(activeOption, intl)
+                      : null
+                    }
+                    onCancel={this.onHideForm}
+                    showCancelButton={showFilters}
+                    onSelect={() => {
+                      if (showFilters) {
+                        this.onHideForm();
+                        // onHideFilters();
+                      }
+                    }}
+                    onSubmit={showEditOptions
+                      ? (associations) => {
+                        // close and reset option panel
+                        this.setState({ activeOption: null });
+                        onUpdate(associations, activeOption);
+                      }
+                      : null
+                    }
+                  />
+                )}
               />
             )}
             {headerStyle !== 'simple' && showEditOptions && (
@@ -680,33 +763,33 @@ export class EntityListHeader extends React.Component { // eslint-disable-line r
                 panelGroups={panelGroups}
                 onHideSidebar={onHideEditOptions}
                 setActiveOption={this.onSetActiveOption}
-              />
-            )}
-            {headerStyle !== 'simple' && activeOption && formOptions && (
-              <EntityListForm
-                model={formModel}
-                activeOptionId={`${activeOption.group}-${activeOption.optionId}`}
-                formOptions={formOptions}
-                buttons={showEditOptions
-                  ? this.getFormButtons(activeOption, intl)
-                  : null
-                }
-                onCancel={this.onHideForm}
-                showCancelButton={showFilters}
-                onSelect={() => {
-                  if (showFilters) {
-                    this.onHideForm();
-                    // onHideFilters();
-                  }
-                }}
-                onSubmit={showEditOptions
-                  ? (associations) => {
-                  // close and reset option panel
-                    this.setState({ activeOption: null });
-                    onUpdate(associations, activeOption);
-                  }
-                  : null
-                }
+                formOptions={formOptions && (
+                  <EntityListForm
+                    model={formModel}
+                    activeOptionId={`${activeOption.group}-${activeOption.optionId}`}
+                    formOptions={formOptions}
+                    buttons={showEditOptions
+                      ? this.getFormButtons(activeOption, intl)
+                      : null
+                    }
+                    onCancel={this.onHideForm}
+                    showCancelButton={showFilters}
+                    onSelect={() => {
+                      if (showFilters) {
+                        this.onHideForm();
+                        // onHideFilters();
+                      }
+                    }}
+                    onSubmit={showEditOptions
+                      ? (associations) => {
+                        // close and reset option panel
+                        this.setState({ activeOption: null });
+                        onUpdate(associations, activeOption);
+                      }
+                      : null
+                    }
+                  />
+                )}
               />
             )}
           </Styled>

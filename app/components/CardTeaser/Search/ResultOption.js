@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { palette } from 'styled-theme';
 import { Button } from 'grommet';
 
 const OptionButton = React.forwardRef((props, ref) => (
@@ -13,12 +14,18 @@ export default styled(OptionButton)`
   padding: 8px 12px;
   position: relative;
   background: transparent;
+  width: 100%;
     ${({ theme, active }) => active ? theme.global.colors.dark : 'transparent'};
   &:last-child {
     border-bottom: 1px solid ${({ theme }) => theme.global.colors.border.light};
   }
   &:hover {
     color: ${({ theme }) => theme.global.colors.highlight};
+  }
+  &:focus-visible {
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline-offset: -2px;
+    outline: 2px solid ${palette('primary', 0)};
   }
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
     padding: 10px 16px;

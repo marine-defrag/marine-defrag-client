@@ -13,6 +13,7 @@ import ScreenReaderOnly from 'components/styled/ScreenReaderOnly';
 import PrintOnly from 'components/styled/PrintOnly';
 import PrintHide from 'components/styled/PrintHide';
 import BoxPrint from 'components/styled/BoxPrint';
+import SkipContent from 'components/styled/SkipContent';
 
 import Brand from './Brand';
 import Logo from './Logo';
@@ -94,6 +95,17 @@ const LinkPage = styled((p) => <Button plain as="a" justify="center" fill="verti
   &:hover {
     color: ${({ wide, theme }) => theme.global.colors.text[!wide ? 'light' : 'dark']};
     background-color:${({ theme, wide }) => wide ? theme.global.colors.highlightHover : 'transparent'};
+  }
+  &:focus-visible {
+    outline-color: transparent;
+    border-color: none;
+    box-shadow: none;
+    outline-offset: 0;
+    background-color:${({ theme }) => theme.global.colors.highlightHover};
+  }
+  &:focus {
+    box-shadow: none;
+    border: none;
   }
 `;
 const LinkAccount = LinkPage;
@@ -212,6 +224,12 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
             >
               <Box direction="row" fill>
                 <Box>
+                  <SkipContent
+                    href="#main-content"
+                    title={this.context.intl.formatMessage(appMessages.screenreader.skipToContent)}
+                  >
+                    <FormattedMessage {...appMessages.screenreader.skipToContent} />
+                  </SkipContent>
                   <Brand
                     as={isPrintView ? 'div' : 'a'}
                     href={isPrintView ? '' : '/'}

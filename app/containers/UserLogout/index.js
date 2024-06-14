@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import Loading from 'components/Loading';
 import ContentNarrow from 'components/ContentNarrow';
-import ContentHeader from 'containers/ContentHeader';
+import ContentHeader from 'components/ContentHeader';
 
 import { logout } from 'containers/App/actions';
 

@@ -31,26 +31,33 @@ const Styled = styled((p) => (
   color:  ${(props) => props.active ? palette('asideListItem', 1) : palette('asideListItem', 0)};
 `;
 
-const StyledButton = styled((p) => <Button plain fill="horizontal" focusIndicator={false} {...p} />)`
+const StyledButton = styled((p) => <Button plain fill="horizontal" {...p} />)`
   padding: 0.25em 8px;
   padding-left: 2px;
   text-align: left;
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlightHover};
+    outline-offset: -2px;
+  }
 `;
 
 function EntityListSidebarOption({
-  option, onShowForm, groupId, groupType, intl,
+  option, onShowForm, groupId, groupType, intl, formOptions,
 }) {
   let label = option.get('message')
     ? appMessage(intl, option.get('message'))
     : option.get('label');
   label = option.get('memberType') ? `${label} (via members)` : label;
+  const group = groupType || groupId;
+  const optionId = option.get('id');
   return (
     <Styled active={option.get('active')}>
       <StyledButton
         plain
+        id={`side-bar-option-${group}-${optionId}`}
         onClick={() => onShowForm({
-          group: groupType || groupId,
-          optionId: option.get('id'),
+          group,
+          optionId,
           path: option.get('path'),
           connection: option.get('connection'),
           key: option.get('key'),
@@ -67,6 +74,7 @@ function EntityListSidebarOption({
           <Text size="small" weight={500}>{label}</Text>
         </Box>
       </StyledButton>
+      {option.get('active') && formOptions}
       {option.get('info') && (
         <InfoOverlay
           title={label}
@@ -85,6 +93,7 @@ EntityListSidebarOption.propTypes = {
   groupType: PropTypes.string,
   onShowForm: PropTypes.func.isRequired,
   intl: intlShape.isRequired,
+  formOptions: PropTypes.node,
 };
 
 export default injectIntl(EntityListSidebarOption);
