@@ -642,6 +642,8 @@
   "app.containers.App.ui.userRoles.default": "Guest (no role assigned)",
   "app.containers.App.ui.publishStatuses.draft": "Draft",
   "app.containers.App.ui.publishStatuses.public": "Published",
+  "app.containers.App.ui.userStatuses.archived": "Archived",
+  "app.containers.App.ui.userStatuses.active": "Active",
   "app.containers.App.ui.docPublishStatuses.public": "Published",
   "app.containers.App.ui.docPublishStatuses.private": "Private",
   "app.containers.App.ui.checkAttributeStatuses.true": "Yes",

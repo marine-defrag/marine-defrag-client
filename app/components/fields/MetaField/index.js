@@ -27,10 +27,12 @@ class MetaField extends React.PureComponent { // eslint-disable-line react/prefe
               ? `, ${intl.formatTime(new Date(metaField.value))}`
               : '';
             const label = intl.formatMessage(metaField.label);
+            let result = `${label}: ${value}${time}`;
+            if (metaField.info) {
+              result = `${result} [${metaField.info}]`;
+            }
             return (
-              <Meta key={i}>
-                {`${label}: ${value}${time}`}
-              </Meta>
+              <Meta key={i}>{result}</Meta>
             );
           })
         }

@@ -22,5 +22,6 @@ export const FORM_INITIAL = fromJS({
   attributes: {
     email: '',
     name: '',
+    is_archived: false,
   },
 });
