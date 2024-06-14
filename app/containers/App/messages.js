@@ -1039,6 +1039,10 @@ export default defineMessages({
       id: 'app.containers.App.attributes.status',
       defaultMessage: 'Status',
     },
+    is_archived: {
+      id: 'app.containers.App.attributes.is_archived',
+      defaultMessage: 'User status',
+    },
   },
   attributeInfo: {
     gdp: {
@@ -2309,6 +2313,16 @@ export default defineMessages({
       public: {
         id: 'app.containers.App.ui.publishStatuses.public',
         defaultMessage: 'Public',
+      },
+    },
+    userStatuses: {
+      archived: {
+        id: 'app.containers.App.ui.userStatuses.archived',
+        defaultMessage: 'Archived',
+      },
+      active: {
+        id: 'app.containers.App.ui.userStatuses.active',
+        defaultMessage: 'Active',
       },
     },
     docPublishStatuses: {
