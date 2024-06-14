@@ -18,6 +18,7 @@ import validateLength from 'components/forms/validators/validate-length';
 
 import {
   PUBLISH_STATUSES,
+  USER_STATUSES,
   USER_ROLES,
   DATE_FORMAT,
   API,
@@ -663,6 +664,13 @@ export const getStatusField = (formatMessage) => ({
   model: '.attributes.draft',
   label: formatMessage(appMessages.attributes.draft),
   options: PUBLISH_STATUSES,
+});
+export const getUserStatusField = (formatMessage) => ({
+  id: 'userStatus',
+  controlType: 'select',
+  model: '.attributes.is_archived',
+  label: formatMessage(appMessages.attributes.is_archived),
+  options: USER_STATUSES,
 });
 
 export const getTitleFormField = (formatMessage, controlType = 'title', attribute = 'title', required) => getFormField({

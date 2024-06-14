@@ -4,7 +4,11 @@ import { sortEntities, sortCategories } from 'utils/sort';
 import isNumber from 'utils/is-number';
 
 import {
-  USER_ROLES, TEXT_TRUNCATE, ROUTES, API,
+  USER_ROLES,
+  TEXT_TRUNCATE,
+  ROUTES,
+  API,
+  USER_STATUSES,
 } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
@@ -153,6 +157,22 @@ export const getRoleField = (entity) => ({
   value: entity.get('roles') && getHighestUserRoleId(entity.get('roles')),
   options: Object.values(USER_ROLES),
 });
+export const getUserStatusField = (
+  entity,
+  defaultValue = 'false',
+) => ({
+  controlType: 'info',
+  type: 'warning',
+  label: appMessages.attributes.is_archived,
+  value: (
+    entity
+    && entity.getIn(['attributes', 'is_archived']) !== null
+    && typeof entity.getIn(['attributes', 'is_archived']) !== 'undefined'
+  )
+    ? entity.getIn(['attributes', 'is_archived'])
+    : defaultValue,
+  options: USER_STATUSES,
+});
 
 export const getMetaField = (entity) => {
   const fields = [];
@@ -171,6 +191,9 @@ export const getMetaField = (entity) => {
     fields.push({
       label: appMessages.attributes.meta.updated_by_id,
       value: entity.get('user') && entity.getIn(['user', 'attributes', 'name']),
+      info: entity.get('user') && entity.getIn(['user', 'attributes', 'is_archived'])
+        ? 'ARCHIVED'
+        : null,
     });
   }
   return {

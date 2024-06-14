@@ -161,7 +161,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
     this.setState({ showMenu: false });
   };
 
-  onClick = (evt, path, currentPath) => {
+  onClick = (evt, path, currentPath, query) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     this.onHideMenu();
     if (currentPath) {
@@ -170,6 +170,8 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
       } else {
         this.props.onPageLink(path, { query: { arg: 'redirectOnAuthSuccess', value: currentPath } });
       }
+    } else if (query) {
+      this.props.onPageLink(path, { query });
     } else {
       this.props.onPageLink(path);
     }
@@ -345,7 +347,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                                 onClick={(evt) => {
                                   evt.stopPropagation();
                                   this.onHideMenu();
-                                  this.onClick(evt, item.path);
+                                  this.onClick(evt, item.path, null, item.query);
                                 }}
                                 wide={wide}
                               >

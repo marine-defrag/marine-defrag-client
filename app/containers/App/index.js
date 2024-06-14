@@ -205,6 +205,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
         },
         {
           path: ROUTES.USERS,
+          query: { arg: 'where', value: 'is_archived:false' },
           title: intl.formatMessage(messages.nav.users),
           isAdmin: true,
           active: currentPath === ROUTES.USERS,

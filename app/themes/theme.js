@@ -616,6 +616,7 @@ theme.global = {
     borderLight: '#CECED2',
     hint: '#777b7e', // on light background (empowerment)
     textSecondary: '#777b7e', // on light background (empowerment)
+    warning: 'rgb(211, 90, 76)',
     text: {
       brand: '#183863',
       dark: '#FFFFFF', //  on dark background
