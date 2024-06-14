@@ -1,8 +1,8 @@
-import { toLower as loCase, deburr } from 'lodash/string';
+import { toLower, toUpper, deburr } from 'lodash/string';
 import { reduce } from 'lodash/collection';
 import { TEXT_TRUNCATE } from 'themes/config';
 
-export const lowerCase = (str) => loCase(str)
+export const lowerCase = (str) => toLower(str)
   .replace('\bun\b', 'UN')
   .replace('\bhr\b', 'HR')
   .replace('\bupr\b', 'UPR')
@@ -11,11 +11,13 @@ export const lowerCase = (str) => loCase(str)
   .replace('\bsmart\b', 'SMART')
   .replace('sustainable development goal', 'Sustainable Development Goal');
 
+export const upperCase = (str) => toUpper(str);
+
 export const getPathFromUrl = (url) => url.split(/[?#]/)[0];
 
 export const getFilenameFromUrl = (url) => url.split('/').pop();
 
-export const cleanupSearchTarget = (str) => deburr(loCase(str));
+export const cleanupSearchTarget = (str) => deburr(toLower(str));
 
 // adapted from
 // https://stackoverflow.com/questions/19793221/javascript-text-between-double-quotes
