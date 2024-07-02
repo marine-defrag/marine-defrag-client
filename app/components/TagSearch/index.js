@@ -138,36 +138,38 @@ export class TagSearch extends React.Component { // eslint-disable-line react/pr
         )}
         {filters.length > 0 && (
           <Tags flex={{ shrink: 0 }}>
-            {filters.map((filter, i) => filter.inverse
-              ? (
-                <ButtonTagFilterInverse
-                  key={i}
-                  onClick={filter.onClick}
-                  palette={filter.type || 'attributes'}
-                  paletteHover={`${filter.type || 'attributes'}Hover`}
-                  pIndex={parseInt(filter.id, 10) || 0}
-                  disabled={!filter.onClick}
-                >
-                  {this.getFilterLabel(filter)}
-                  {filter.onClick && <Icon name="removeSmall" text textRight printHide />}
-                </ButtonTagFilterInverse>
-              )
-              : (
-                <ButtonTagFilter
-                  key={i}
-                  onClick={filter.onClick}
-                  palette={filter.type || 'attributes'}
-                  paletteHover={`${filter.type || 'attributes'}Hover`}
-                  pIndex={parseInt(filter.id, 10) || 0}
-                  disabled={!filter.onClick}
-                >
-                  {this.getFilterLabel(filter)}
-                  { filter.onClick
-                  && <Icon name="removeSmall" text textRight printHide />
-                  }
-                </ButtonTagFilter>
-              ))
-            }
+            {filters.map((filter, i) => {
+              const label = this.getFilterLabel(filter);
+              return filter.inverse
+                ? (
+                  <ButtonTagFilterInverse
+                    key={i}
+                    onClick={filter.onClick}
+                    palette={filter.type || 'attributes'}
+                    paletteHover={`${filter.type || 'attributes'}Hover`}
+                    pIndex={parseInt(filter.id, 10) || 0}
+                    disabled={!filter.onClick}
+                    label={label}
+                  >
+                    {label}
+                    {filter.onClick && <Icon name="removeSmall" text textRight printHide />}
+                  </ButtonTagFilterInverse>
+                )
+                : (
+                  <ButtonTagFilter
+                    key={i}
+                    onClick={filter.onClick}
+                    palette={filter.type || 'attributes'}
+                    paletteHover={`${filter.type || 'attributes'}Hover`}
+                    pIndex={parseInt(filter.id, 10) || 0}
+                    disabled={!filter.onClick}
+                    label={label}
+                  >
+                    {label}
+                    {filter.onClick && <Icon name="removeSmall" text textRight printHide />}
+                  </ButtonTagFilter>
+                );
+            })}
           </Tags>
         )}
         <Box direction="row" align="center" fill="horizontal">

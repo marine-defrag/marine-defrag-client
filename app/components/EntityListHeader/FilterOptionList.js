@@ -44,6 +44,7 @@ export function FilterOptionList({
           {option.get('currentFilters').map(
             (f, j) => {
               const filter = f.toJS();
+              const label = getFilterLabel(filter, intl, true);
               return (
                 <Box key={j} align="start">
                   <ButtonTagFilter
@@ -55,8 +56,9 @@ export function FilterOptionList({
                     paletteHover={`${filter.type || 'attributes'}Hover`}
                     pIndex={parseInt(filter.id, 10) || 0}
                     disabled={!filter.onClick}
+                    label={label}
                   >
-                    {getFilterLabel(filter, intl, true)}
+                    {label}
                     {filter.onClick && <Icon name="removeSmall" text textRight printHide />}
                   </ButtonTagFilter>
                 </Box>

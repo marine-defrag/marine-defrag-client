@@ -1,9 +1,11 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { palette } from 'styled-theme';
 
 import Button from '../Button';
 
-const ButtonTagFilter = styled(Button)`
+const Styled = styled(Button)`
   color: ${({ theme, isPrint }) => isPrint ? theme.global.colors.text.brand : palette('text', 2)};
   background-color: ${(props) => props.isPrint ? 'white' : palette(props.palette, props.pIndex || 0)};
   padding:${({ isPrint }) => isPrint ? ' 1px 4px' : '1px 6px'};
@@ -22,5 +24,21 @@ const ButtonTagFilter = styled(Button)`
     font-size:${({ isPrint }) => isPrint ? '9pt' : '0.85em'};
   }
 `;
+
+export function ButtonTagFilter({
+  onClick,
+  label,
+  ...props
+}) {
+  const title = onClick
+    ? `${label}. Click to remove filter`
+    : label;
+  return <Styled title={title} {...props} />;
+}
+
+ButtonTagFilter.propTypes = {
+  onClick: PropTypes.func,
+  label: PropTypes.string,
+};
 
 export default ButtonTagFilter;
