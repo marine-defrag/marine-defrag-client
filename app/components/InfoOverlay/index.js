@@ -7,25 +7,17 @@
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
+import { palette } from 'styled-theme';
 
 import styled from 'styled-components';
 import {
   Box,
   Button,
-  Drop,
   Layer,
   Text,
 } from 'grommet';
 import { CircleInformation, CircleQuestion, FormClose } from 'grommet-icons';
-const DropContent = styled(({ dropBackground, ...p }) => (
-  <Box
-    pad="xxsmall"
-    background={dropBackground}
-    {...p}
-  />
-))`
-  max-width: 280px;
-`;
+
 const LayerWrap = styled((p) => (
   <Box
     background="white"
@@ -65,18 +57,26 @@ const Markdown = styled(ReactMarkdown)`
     font-size: ${(props) => props.theme.sizes.print.markdown};
   }
 `;
-
+const StyledButton = styled((p) => <Button {...p} />)`
+  &:focus-visible {
+    color: ${({ dark }) => dark ? palette('light', 5) : palette('primary', 2)};
+    outline: 2px solid ${({ dark }) => dark ? palette('light', 5) : palette('primary', 2)};
+    outline-offset: ${({ dark }) => dark ? '2px' : '3px'};
+    border-radius: 999px;
+    svg {
+      stroke: ${({ dark }) => dark ? palette('light', 5) : palette('primary', 2)};
+    }
+  }
+`;
 function InfoOverlay({
   dark,
   content,
-  tooltip,
   title,
   padButton = null,
   colorButton,
   icon,
   markdown,
   inline,
-  dropBackground,
 }) {
   const infoRef = useRef(null);
   const [info, showInfo] = useState(false);
@@ -90,10 +90,11 @@ function InfoOverlay({
         flex={inline ? false : { grow: 0, shrink: 0 }}
         style={inline ? { width: 'auto', display: 'inline-block' } : null}
       >
-        <Button
+        <StyledButton
+          dark={dark}
           plain
           icon={
-            (tooltip || icon === 'question')
+            (icon === 'question')
               ? (
                 <CircleQuestion
                   color={colorButton || (dark ? 'light-5' : 'dark-5')}
@@ -108,30 +109,10 @@ function InfoOverlay({
               )
           }
           fill={false}
-          onMouseOver={() => tooltip && showInfo(true)}
-          onMouseLeave={() => tooltip && showInfo(false)}
-          onFocus={() => tooltip && showInfo(true)}
-          onBlur={() => null}
-          onClick={() => !tooltip && showInfo(!info)}
+          onClick={() => showInfo(!info)}
         />
       </Box>
-      {info && infoRef && tooltip && (
-        <Drop
-          align={{ bottom: 'top' }}
-          target={infoRef.current}
-          plain
-        >
-          <DropContent dropBackground={dropBackground}>
-            {markdown && (
-              <div>
-                <Markdown source={content} className="react-markdown" linkTarget="_blank" />
-              </div>
-            )}
-            {!markdown && content}
-          </DropContent>
-        </Drop>
-      )}
-      {info && !tooltip && (
+      {info && (
         <Layer
           onEsc={() => showInfo(false)}
           onClickOutside={() => showInfo(false)}
@@ -147,7 +128,7 @@ function InfoOverlay({
                 )}
               </Box>
               <Box flex={{ grow: 0 }}>
-                <Button plain icon={<FormClose size="medium" />} onClick={() => showInfo(false)} />
+                <StyledButton plain icon={<FormClose size="medium" />} onClick={() => showInfo(false)} />
               </Box>
             </LayerHeader>
             <LayerContent flex={{ grow: 1 }}>
@@ -169,14 +150,12 @@ InfoOverlay.propTypes = {
   dark: PropTypes.bool,
   markdown: PropTypes.bool,
   inline: PropTypes.bool,
-  tooltip: PropTypes.bool,
   content: PropTypes.oneOfType([
     PropTypes.node,
     PropTypes.string,
   ]),
   title: PropTypes.string,
   icon: PropTypes.string,
-  dropBackground: PropTypes.string,
   colorButton: PropTypes.string,
   padButton: PropTypes.oneOfType([
     PropTypes.object,

@@ -46,6 +46,7 @@ import appMessages from 'containers/App/messages';
 
 import { USER_ROLES, ACTION_FIELDS, ACTOR_FIELDS } from 'themes/config';
 
+import { setFocusById } from 'utils/accessibility';
 import EntitiesMap from './EntitiesMap';
 import EntitiesListView from './EntitiesListView';
 import EntitiesOverTime from './EntitiesOverTime';
@@ -105,7 +106,6 @@ const STATE_INITIAL = {
   visibleFilters: null,
   visibleEditOptions: null,
 };
-
 export class EntityList extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   constructor() {
     super();
@@ -126,6 +126,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
 
   onHideFilters = (evt) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+    setFocusById('show-filters-button');
     this.setState({ visibleFilters: false });
   };
 
@@ -375,8 +376,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
         },
       ];
     }
-
-
     return (
       <div>
         {config.downloadCSV && this.state.downloadActive && (
@@ -491,7 +490,6 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             connections={connections}
             connectedTaxonomies={connectedTaxonomies}
             entityIdsSelected={entityIdsSelectedFiltered}
-
             config={config}
             columns={columns}
             headerColumnsUtility={headerColumnsUtility}
@@ -560,6 +558,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
             isPrintView={isPrintView}
+            onSetListView={() => onSetView('list')}
           />
         )}
         {showTimeline && (
@@ -584,6 +583,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             includeActorMembers={includeActorMembers}
             includeTargetMembers={includeTargetMembers}
             isPrintView={isPrintView}
+            onSetListView={() => onSetView('list')}
           />
         )}
         {isManagerAndCanEdit && (progress !== null && progress < 100) && (

@@ -18,11 +18,15 @@ const Styled = styled((p) => <Button plain {...p} />)`
   color: ${palette('asideListGroup', 0)};
   padding: 0.25em 0;
   padding-right: 4px;
+  border-bottom: 1px solid;
+  border-bottom-color: ${({ expanded }) => expanded ? palette('light', 2) : 'transparent'};
   &:hover {
     color: ${palette('asideListGroupHover', 0)};
   }
-  border-bottom: 1px solid;
-  border-bottom-color: ${({ expanded }) => expanded ? palette('light', 2) : 'transparent'};
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    outline-offset: 0px;
+  }
 `;
 
 const Count = styled((p) => <Box {...p} />)`

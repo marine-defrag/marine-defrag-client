@@ -24,8 +24,7 @@ const ExploreText = styled((p) => <Text weight="bold" {...p} />)``;
 
 const Styled = styled((p) => (
   <Box pad="xsmall" responsive={false} {...p} />
-))`
-`;
+))``;
 const CardWrapper = styled((p) => <Box {...p} />)`
   width:100%;
   height: 100%;
@@ -38,9 +37,14 @@ const CardLink = styled((p) => <Button plain as="a" fill="vertical" {...p} />)`
   box-shadow: 0px 2px 4px rgba(0,0,0,0.20);
   color: ${({ theme }) => theme.global.colors.brand};
   background: white;
-  &:hover {
+  &:hover, &:focus-visible {
     box-shadow: 0px 2px 8px rgba(0,0,0,0.33);
     color: ${({ theme }) => theme.global.colors.highlight};
+  }
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    border-radius: 10px;
+    box-shadow: none;
   }
 `;
 const TitleWrap = styled((p) => <Box {...p} />)``;
