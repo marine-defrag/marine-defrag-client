@@ -33,7 +33,7 @@ export function ButtonTagFilter({
   const title = onClick
     ? `${label}. Click to remove filter`
     : label;
-  return <Styled title={title} {...props} />;
+  return <Styled title={title} onClick={onClick} {...props} />;
 }
 
 ButtonTagFilter.propTypes = {
