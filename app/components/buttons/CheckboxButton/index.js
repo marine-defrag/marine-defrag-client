@@ -23,11 +23,13 @@ export function CheckboxButton({
   label,
   onChange,
   type = 'checkbox',
+  innerRef,
 }) {
   return (
     <Box direction="row" align="center">
       <Wrapper>
         <Checkbox
+          ref={innerRef}
           id={name}
           name={group}
           type={type}
@@ -57,6 +59,7 @@ CheckboxButton.propTypes = {
     PropTypes.node,
   ]),
   onChange: PropTypes.func,
+  innerRef: PropTypes.object,
 };
 
 export default CheckboxButton;

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useRef, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { Box, Text } from 'grommet';
 import styled from 'styled-components';
 
@@ -34,6 +34,9 @@ import qe from 'utils/quasi-equals';
 
 import messages from './messages';
 
+const MyCheckboxButton = forwardRef(
+  (props, ref) => <CheckboxButton innerRef={ref} {...props} />
+);
 
 const Styled = styled.div`
   position: relative;
@@ -95,9 +98,16 @@ export function PrintUI({
   printConfig,
   close,
   onPrint,
-  intl,
   pageItems,
 }) {
+  const focusElementRef = useRef();
+  useEffect(() => {
+    // set focus on first checkbox
+    if (focusElementRef && focusElementRef.current) {
+      focusElementRef.current.focus();
+    }
+  }, [focusElementRef]);
+
   const {
     printType,
     printTabs,
@@ -110,8 +120,7 @@ export function PrintUI({
     printMapMarkers,
   } = printConfig;
   const printAllPages = printItems === 'all' || pageItems === 'all';
-  // qe(printType, PRINT_TYPES.SINGLE)
-  //   || (qe(printType, PRINT_TYPES.LIST) && view === 'list');
+
   return (
     <Styled>
       <StyledContainer>
@@ -143,20 +152,29 @@ export function PrintUI({
                     </FormFieldWrap>
                     <FormFieldWrap>
                       <Box direction="row" gap="medium">
-                        <CheckboxButton
+                        <MyCheckboxButton
+                          ref={focusElementRef}
                           type="radio"
                           name="radio-orient-1"
                           checked={printOrientation === 'portrait'}
-                          label={<Label>{intl.formatMessage(messages.orientationPortrait)}</Label>}
+                          label={(
+                            <Label>
+                              <FormattedMessage {...messages.orientationPortrait} />
+                            </Label>
+                          )}
                           onChange={() => onPrint({
                             printOrientation: 'portrait',
                           })}
                         />
-                        <CheckboxButton
+                        <MyCheckboxButton
                           type="radio"
                           name="radio-orient-2"
                           checked={printOrientation === 'landscape'}
-                          label={<Label>{intl.formatMessage(messages.orientationLandscape)}</Label>}
+                          label={(
+                            <Label>
+                              <FormattedMessage {...messages.orientationLandscape} />
+                            </Label>
+                          )}
                           onChange={() => onPrint({
                             printOrientation: 'landscape',
                           })}
@@ -172,7 +190,7 @@ export function PrintUI({
                     </FormFieldWrap>
                     <FormFieldWrap>
                       <Box direction="row" gap="medium">
-                        <CheckboxButton
+                        <MyCheckboxButton
                           type="radio"
                           group="radio-size"
                           name="radio-size-1"
@@ -182,7 +200,7 @@ export function PrintUI({
                             printSize: 'A4',
                           })}
                         />
-                        <CheckboxButton
+                        <MyCheckboxButton
                           type="radio"
                           group="radio-size"
                           name="radio-size-2"
@@ -224,22 +242,30 @@ export function PrintUI({
                           </FormFieldWrap>
                           <FormFieldWrap>
                             <Box direction="row" gap="medium">
-                              <CheckboxButton
+                              <MyCheckboxButton
                                 type="radio"
                                 group="radio-pages"
                                 name="radio-pages-1"
                                 checked={!printAllPages}
-                                label={<Label>{intl.formatMessage(messages.pagesCurrent)}</Label>}
+                                label={(
+                                  <Label>
+                                    <FormattedMessage {...messages.pagesCurrent} />
+                                  </Label>
+                                )}
                                 onChange={() => onPrint({
                                   printItems: 'current',
                                 })}
                               />
-                              <CheckboxButton
+                              <MyCheckboxButton
                                 type="radio"
                                 group="radio-pages"
                                 name="radio-pages-2"
                                 checked={printAllPages}
-                                label={<Label>{intl.formatMessage(messages.pagesAll)}</Label>}
+                                label={(
+                                  <Label>
+                                    <FormattedMessage {...messages.pagesAll} />
+                                  </Label>
+                                )}
                                 onChange={() => onPrint({
                                   printItems: 'all',
                                 })}
@@ -257,22 +283,30 @@ export function PrintUI({
                           </FormFieldWrap>
                           <FormFieldWrap>
                             <Box direction="row" gap="medium">
-                              <CheckboxButton
+                              <MyCheckboxButton
                                 type="radio"
                                 group="radio-tabs"
                                 name="radio-tabs-1"
                                 checked={printTabs !== 'all'}
-                                label={<Label>{intl.formatMessage(messages.tabsCurrent)}</Label>}
+                                label={(
+                                  <Label>
+                                    <FormattedMessage {...messages.tabsCurrent} />
+                                  </Label>
+                                )}
                                 onChange={() => onPrint({
                                   printTabs: 'current',
                                 })}
                               />
-                              <CheckboxButton
+                              <MyCheckboxButton
                                 type="radio"
                                 group="radio-tabs"
                                 name="radio-tabs-2"
                                 checked={printTabs === 'all'}
-                                label={<Label>{intl.formatMessage(messages.tabsAll)}</Label>}
+                                label={(
+                                  <Label>
+                                    <FormattedMessage {...messages.tabsAll} />
+                                  </Label>
+                                )}
                                 onChange={() => onPrint({
                                   printTabs: 'all',
                                 })}
@@ -290,22 +324,30 @@ export function PrintUI({
                           </FormFieldWrap>
                           <FormFieldWrap>
                             <Box direction="row" gap="medium">
-                              <CheckboxButton
+                              <MyCheckboxButton
                                 type="radio"
                                 group="radio-types"
                                 name="radio-types-1"
                                 checked={printAllTypes !== 'all'}
-                                label={<Label>{intl.formatMessage(messages.typesCurrent)}</Label>}
+                                label={(
+                                  <Label>
+                                    <FormattedMessage {...messages.typesCurrent} />
+                                  </Label>
+                                )}
                                 onChange={() => onPrint({
                                   printAllTypes: 'current',
                                 })}
                               />
-                              <CheckboxButton
+                              <MyCheckboxButton
                                 type="radio"
                                 group="radio-types"
                                 name="radio-types-2"
                                 checked={printAllTypes === 'all'}
-                                label={<Label>{intl.formatMessage(messages.typesAll)}</Label>}
+                                label={(
+                                  <Label>
+                                    <FormattedMessage {...messages.typesAll} />
+                                  </Label>
+                                )}
                                 onChange={() => onPrint({
                                   printAllTypes: 'all',
                                 })}
@@ -350,10 +392,14 @@ export function PrintUI({
                           </FormFieldWrap>
                           <FormFieldWrap>
                             <Box direction="row" gap="medium">
-                              <CheckboxButton
+                              <MyCheckboxButton
                                 name="checkbox-markers-1"
                                 checked={printMapMarkers}
-                                label={<Label>{intl.formatMessage(messages.mapMarkersLabel)}</Label>}
+                                label={(
+                                  <Label>
+                                    <FormattedMessage {...messages.mapMarkersLabel} />
+                                  </Label>
+                                )}
                                 onChange={() => onPrint({
                                   printMapMarkers: !printMapMarkers,
                                 })}
@@ -412,7 +458,6 @@ PrintUI.propTypes = {
   pageItems: PropTypes.string,
   close: PropTypes.func,
   onPrint: PropTypes.func,
-  intl: intlShape.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -431,4 +476,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(PrintUI));
+export default connect(mapStateToProps, mapDispatchToProps)(PrintUI);

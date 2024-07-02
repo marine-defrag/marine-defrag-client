@@ -119,7 +119,7 @@ function HeaderPrint({
           </Meta>
           <Meta>
             {`${intl.formatMessage(messages.urlLabelPrint)} `}
-            <Link href={url} title="link">
+            <Link href={url} title="link" tabIndex="-1">
               {url}
             </Link>
           </Meta>
