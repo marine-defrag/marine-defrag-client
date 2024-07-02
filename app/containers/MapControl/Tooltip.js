@@ -82,6 +82,13 @@ const CountryButton = styled((p) => <Button {...p} />)`
   }
 `;
 
+const CloseButton = styled((p) => <Button plain {...p} />)`
+  &:focus-visible {
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    box-shadow: none;
+  }
+`;
 const Feature = styled((p) => (
   <Box
     pad="small"
@@ -148,8 +155,7 @@ const Tooltip = ({
                     <TTTitle>{feature.title}</TTTitle>
                   </Box>
                   <PrintHide>
-                    <Button
-                      plain
+                    <CloseButton
                       icon={<FormClose size="small" />}
                       onClick={() => onClose(feature.id)}
                     />
@@ -172,8 +178,7 @@ const Tooltip = ({
               {!feature.title && (
                 <PrintHide>
                   <TTCloseFloat>
-                    <Button
-                      plain
+                    <CloseButton
                       icon={<FormClose size="small" />}
                       onClick={() => onClose(feature.id)}
                     />

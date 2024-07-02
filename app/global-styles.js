@@ -28,6 +28,12 @@ const GlobalStyle = createGlobalStyle`
     outline: 2px solid #0077d8;
     outline-offset: 0px;
   }
+  .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+    :focus-visible {
+      outline: 2px solid #0077d8 !important;
+      box-shadow: none;
+    }
+  }
   #app {
     background-color: #FFF;
     min-height: 100%;
@@ -185,6 +191,7 @@ const GlobalStyle = createGlobalStyle`
     display: inline-block;
   }
 
+
   @media print and (color){
     #app {
       -webkit-print-color-adjust: exact;
@@ -259,6 +266,7 @@ const GlobalStyle = createGlobalStyle`
       display: none;
     }
   }
+
   ${({ isPrint }) => isPrint && css`
     body {
       font-size: 10pt;

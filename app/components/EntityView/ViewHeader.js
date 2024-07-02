@@ -42,7 +42,6 @@ const MyButton = styled((p) => <Button plain {...p} />)`
   }
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
-    border-radius: 2px;
   }
 `;
 
