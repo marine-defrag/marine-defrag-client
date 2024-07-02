@@ -124,6 +124,7 @@ export const getPointLayer = ({ data, config, markerEvents }) => {
         zIndex: 1,
         pane: 'markerPane',
         icon: svgIcon,
+        keyboard: false,
       }).on(events);
     },
   });

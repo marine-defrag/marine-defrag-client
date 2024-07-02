@@ -20,6 +20,7 @@ export function FilterOptionList({
   onShowForm,
   onHideOptions,
   intl,
+  formOptions,
 }) {
   return (
     <Box>
@@ -28,6 +29,7 @@ export function FilterOptionList({
         groupId={group.get('id')}
         groupType={group.get('type')}
         onShowForm={onShowForm}
+        formOptions={formOptions}
       />
       {option.get('currentFilters') && option.get('currentFilters').size > 0 && (
         <Box
@@ -42,6 +44,7 @@ export function FilterOptionList({
           {option.get('currentFilters').map(
             (f, j) => {
               const filter = f.toJS();
+              const label = getFilterLabel(filter, intl, true);
               return (
                 <Box key={j} align="start">
                   <ButtonTagFilter
@@ -53,8 +56,9 @@ export function FilterOptionList({
                     paletteHover={`${filter.type || 'attributes'}Hover`}
                     pIndex={parseInt(filter.id, 10) || 0}
                     disabled={!filter.onClick}
+                    label={label}
                   >
-                    {getFilterLabel(filter, intl, true)}
+                    {label}
                     {filter.onClick && <Icon name="removeSmall" text textRight printHide />}
                   </ButtonTagFilter>
                 </Box>
@@ -73,6 +77,7 @@ FilterOptionList.propTypes = {
   onShowForm: PropTypes.func.isRequired,
   onHideOptions: PropTypes.func,
   intl: intlShape.isRequired,
+  formOptions: PropTypes.node,
 };
 
 export default injectIntl(FilterOptionList);

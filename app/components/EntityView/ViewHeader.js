@@ -36,9 +36,12 @@ const Between = styled((p) => <Box plain {...p} />)`
 const MyButton = styled((p) => <Button plain {...p} />)`
   color: ${({ theme }) => theme.global.colors.brand};
   stroke: ${({ theme }) => theme.global.colors.brand};
-  &:hover {
+  &:hover, &:focus-visible {
     color: ${({ theme }) => theme.global.colors.highlight};
     stroke: ${({ theme }) => theme.global.colors.highlight};
+  }
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
   }
 `;
 

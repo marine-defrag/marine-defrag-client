@@ -28,6 +28,9 @@ const EntityListItemMainTitleWrap = styled.a`
   &:hover {
     color: ${palette('mainListItemHover', 0)};
   }
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+  }
   @media print {
     padding: 1px 0 5px;
   }

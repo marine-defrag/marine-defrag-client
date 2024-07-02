@@ -99,6 +99,7 @@ export function MapControl({
   onSetMapViewLocal,
   showAsCircles,
   onSetShowFFasCircles,
+  mapDescription,
   // intl,
 }) {
   const {
@@ -205,51 +206,6 @@ export function MapControl({
   // const ref = React.useRef();
   return (
     <Styled>
-      <MapContainer
-        isPrint={isPrintView}
-        orient={printArgs && printArgs.printOrientation}
-      >
-        <MapWrapperLeaflet
-          printArgs={printArgs}
-          isPrintView={isPrintView}
-          countryData={countryData}
-          countryPointData={countryPointData}
-          locationData={locationData}
-          countryFeatures={countriesJSON.features}
-          indicator={indicator}
-          mapSubject={mapSubject}
-          scrollWheelZoom={scrollWheelZoom}
-          typeLabels={typeLabels}
-          includeSecondaryMembers={includeSecondaryMembers}
-          maxValueCountries={minMaxValues
-            && minMaxValues.countries
-            ? minMaxValues.countries.max
-            : null
-          }
-          circleLayerConfig={{
-            ...circleLayerConfig,
-            rangeMax: minMaxValues && minMaxValues.points && minMaxValues.points.max,
-          }}
-          fitBounds={fitBounds}
-          fitBoundsToCountryOverlay={fitBoundsData}
-          fullMap={fullMap}
-          projection={projection}
-          mapId={mapId}
-          hasInfo={mapInfo && mapInfo.length > 0}
-          mapTooltips={mapTooltips}
-          mapView={mapViewLocal || (fullMap ? mapView : null)}
-          setMapLoaded={onSetMapLoaded}
-          setMapTooltips={onSetMapTooltips}
-          onSetMapView={(view) => {
-            if (onSetMapViewLocal) {
-              onSetMapViewLocal(view);
-            } else if (fullMap) {
-              onSetMapView(view, mapId, mapView);
-            }
-          }}
-          onActorClick={(id) => onActorClick(id)}
-        />
-      </MapContainer>
       {mapInfo && mapInfo.length > 0 && (
         <MapInfoOptions
           isPrintView={isPrintView}
@@ -292,6 +248,52 @@ export function MapControl({
           )}
         </MapOptions>
       )}
+      <MapContainer
+        isPrint={isPrintView}
+        orient={printArgs && printArgs.printOrientation}
+      >
+        <MapWrapperLeaflet
+          mapDescription={mapDescription}
+          printArgs={printArgs}
+          isPrintView={isPrintView}
+          countryData={countryData}
+          countryPointData={countryPointData}
+          locationData={locationData}
+          countryFeatures={countriesJSON.features}
+          indicator={indicator}
+          mapSubject={mapSubject}
+          scrollWheelZoom={scrollWheelZoom}
+          typeLabels={typeLabels}
+          includeSecondaryMembers={includeSecondaryMembers}
+          maxValueCountries={minMaxValues
+            && minMaxValues.countries
+            ? minMaxValues.countries.max
+            : null
+          }
+          circleLayerConfig={{
+            ...circleLayerConfig,
+            rangeMax: minMaxValues && minMaxValues.points && minMaxValues.points.max,
+          }}
+          fitBounds={fitBounds}
+          fitBoundsToCountryOverlay={fitBoundsData}
+          fullMap={fullMap}
+          projection={projection}
+          mapId={mapId}
+          hasInfo={mapInfo && mapInfo.length > 0}
+          mapTooltips={mapTooltips}
+          mapView={mapViewLocal || (fullMap ? mapView : null)}
+          setMapLoaded={onSetMapLoaded}
+          setMapTooltips={onSetMapTooltips}
+          onSetMapView={(view) => {
+            if (onSetMapViewLocal) {
+              onSetMapViewLocal(view);
+            } else if (fullMap) {
+              onSetMapView(view, mapId, mapView);
+            }
+          }}
+          onActorClick={(id) => onActorClick(id)}
+        />
+      </MapContainer>
     </Styled>
   );
 }
@@ -315,6 +317,7 @@ MapControl.propTypes = {
   mapTooltips: PropTypes.array,
   fullMap: PropTypes.bool,
   showAsCircles: PropTypes.bool,
+  mapDescription: PropTypes.string,
 };
 
 const mapStateToProps = (state, { mapData }) => ({

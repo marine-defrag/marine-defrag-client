@@ -28,7 +28,7 @@ import Button from 'components/buttons/Button';
 import Container from 'components/styled/Container';
 import ContainerWrapper from 'components/styled/Container/ContainerWrapper';
 import Loading from 'components/Loading';
-import ContentHeader from 'containers/ContentHeader';
+import ContentHeader from 'components/ContentHeader';
 import TagSearch from 'components/TagSearch';
 import Content from 'components/styled/ContentSimple';
 

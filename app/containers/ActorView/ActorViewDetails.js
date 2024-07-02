@@ -42,6 +42,11 @@ const SubjectButton = styled((p) => <Button plain {...p} />)`
   border-bottom: 2px solid;
   border-bottom-color: ${({ active }) => active ? 'brand' : 'transparent'};
   background: none;
+  &:focus-visible {
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    box-shadow: none;
+  }
 `;
 const PrintSectionTitleWrapper = styled(
   (p) => <Box margin={{ top: 'large', bottom: 'small' }} pad={{ bottom: 'small' }} border="bottom" {...p} />
