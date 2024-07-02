@@ -43,7 +43,7 @@ const CardLink = styled((p) => <Button plain as="a" fill="vertical" {...p} />)`
   }
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
-    border-radius: 2px;
+    border-radius: 10px;
     box-shadow: none;
   }
 `;
