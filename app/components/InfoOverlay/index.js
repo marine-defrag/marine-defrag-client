@@ -13,20 +13,11 @@ import styled from 'styled-components';
 import {
   Box,
   Button,
-  Drop,
   Layer,
   Text,
 } from 'grommet';
 import { CircleInformation, CircleQuestion, FormClose } from 'grommet-icons';
-const DropContent = styled(({ dropBackground, ...p }) => (
-  <Box
-    pad="xxsmall"
-    background={dropBackground}
-    {...p}
-  />
-))`
-  max-width: 280px;
-`;
+
 const LayerWrap = styled((p) => (
   <Box
     background="white"
@@ -80,14 +71,12 @@ const StyledButton = styled((p) => <Button {...p} />)`
 function InfoOverlay({
   dark,
   content,
-  tooltip,
   title,
   padButton = null,
   colorButton,
   icon,
   markdown,
   inline,
-  dropBackground,
 }) {
   const infoRef = useRef(null);
   const [info, showInfo] = useState(false);
@@ -105,7 +94,7 @@ function InfoOverlay({
           dark={dark}
           plain
           icon={
-            (tooltip || icon === 'question')
+            (icon === 'question')
               ? (
                 <CircleQuestion
                   color={colorButton || (dark ? 'light-5' : 'dark-5')}
@@ -120,30 +109,10 @@ function InfoOverlay({
               )
           }
           fill={false}
-          onMouseOver={() => tooltip && showInfo(true)}
-          onMouseLeave={() => tooltip && showInfo(false)}
-          onFocus={() => tooltip && showInfo(true)}
-          onBlur={() => null}
-          onClick={() => !tooltip && showInfo(!info)}
+          onClick={() => showInfo(!info)}
         />
       </Box>
-      {info && infoRef && tooltip && (
-        <Drop
-          align={{ bottom: 'top' }}
-          target={infoRef.current}
-          plain
-        >
-          <DropContent dropBackground={dropBackground}>
-            {markdown && (
-              <div>
-                <Markdown source={content} className="react-markdown" linkTarget="_blank" />
-              </div>
-            )}
-            {!markdown && content}
-          </DropContent>
-        </Drop>
-      )}
-      {info && !tooltip && (
+      {info && (
         <Layer
           onEsc={() => showInfo(false)}
           onClickOutside={() => showInfo(false)}
@@ -181,14 +150,12 @@ InfoOverlay.propTypes = {
   dark: PropTypes.bool,
   markdown: PropTypes.bool,
   inline: PropTypes.bool,
-  tooltip: PropTypes.bool,
   content: PropTypes.oneOfType([
     PropTypes.node,
     PropTypes.string,
   ]),
   title: PropTypes.string,
   icon: PropTypes.string,
-  dropBackground: PropTypes.string,
   colorButton: PropTypes.string,
   padButton: PropTypes.oneOfType([
     PropTypes.object,
