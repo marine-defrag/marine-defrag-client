@@ -180,7 +180,7 @@ export function mapDispatchToProps(dispatch) {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
     onUpdatePath: (path, view) => {
-      dispatch(updatePath(path, { view }));
+      dispatch(updatePath(path, { query: { arg: 'view', value: view, replace: true } }));
     },
     onSelectActor: (actorId) => {
       dispatch(updatePath(`${ROUTES.ACTOR}/${actorId}`));
