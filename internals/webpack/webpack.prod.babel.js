@@ -7,20 +7,20 @@ const { HashedModuleIdsPlugin } = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const WebpackGitHash = require('webpack-git-hash');
+const child_process = require('child_process');
 
 // Allow us to provide the git hash as an environment variable
-// de-activating due to build error "child_process is not defined"
-// WebpackGitHash.prototype.getSkipHash = function(length) {
-//   if (process.env.COMMIT_SHA) {
-//     return process.env.COMMIT_SHA.substr(0, 7);
-//   }
-//
-//   var skipHash = child_process.execSync(
-//     'git rev-parse --short=' + length + ' HEAD',
-//     { encoding: 'utf8' },
-//   );
-//   return skipHash.trim();
-// };
+WebpackGitHash.prototype.getSkipHash = function (length) {
+  if (process.env.COMMIT_SHA) {
+    return process.env.COMMIT_SHA.substr(0, 7);
+  }
+
+  var skipHash = child_process.execSync(
+    'git rev-parse --short=' + length + ' HEAD',
+    { encoding: 'utf8' },
+  );
+  return skipHash.trim();
+};
 
 module.exports = require('./webpack.base.babel')({
   mode: 'production',
