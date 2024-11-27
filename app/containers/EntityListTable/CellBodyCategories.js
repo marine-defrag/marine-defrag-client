@@ -7,10 +7,10 @@ import { truncateText } from 'utils/string';
 
 import appMessages from 'containers/App/messages';
 import Label from './Label';
-import LabelTT from './LabelTT';
-import LinkTT from './LinkTT';
+import LabelTooltip from './LabelTooltip';
+import LinkTooltip from './LinkTooltip';
 
-const LabelInTT = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
+const LabelInTooltip = styled((p) => <Text size="xsmall" wordBreak="keep-all" {...p} />)`
   line-height: 13px;
 `;
 
@@ -29,16 +29,16 @@ export function CellBodyCategories({
         </Label>
       )}
       {entity.tooltip && (
-        <LinkTT
+        <LinkTooltip
           ref={buttonRef}
           alignSelf={align}
           onClick={() => setShowContent(!showContent)}
           active={showContent}
         >
-          <LabelTT textAlign={align}>
+          <LabelTooltip textAlign={align}>
             {entity.value}
-          </LabelTT>
-        </LinkTT>
+          </LabelTooltip>
+        </LinkTooltip>
       )}
       {entity.tooltip && showContent && buttonRef.current && (
         <Drop
@@ -78,9 +78,9 @@ export function CellBodyCategories({
                 ).map(
                   (category) => (
                     <Box key={category.get('id')} flex={{ shrink: 0 }}>
-                      <LabelInTT>
+                      <LabelInTooltip>
                         {truncateText(category.getIn(['attributes', 'title']), 30)}
-                      </LabelInTT>
+                      </LabelInTooltip>
                     </Box>
                   )
                 )

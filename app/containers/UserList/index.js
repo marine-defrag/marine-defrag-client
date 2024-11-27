@@ -20,10 +20,11 @@ import {
   selectReadyForAuthCheck,
   selectUserConnections,
   selectUserTaxonomies,
+  selectEntities,
 } from 'containers/App/selectors';
 
 import appMessages from 'containers/App/messages';
-import { USER_ROLES } from 'themes/config';
+import { USER_ROLES, API } from 'themes/config';
 
 import EntityList from 'containers/EntityList';
 
@@ -48,7 +49,7 @@ export class UserList extends React.PureComponent { // eslint-disable-line react
 
   render() {
     const { intl } = this.context;
-    const { dataReady } = this.props;
+    const { dataReady, allEntities } = this.props;
     const headerOptions = {
       supTitle: intl.formatMessage(messages.pageTitle),
       icon: 'users',
@@ -65,6 +66,7 @@ export class UserList extends React.PureComponent { // eslint-disable-line react
         {dataReady && (
           <EntityList
             entities={this.props.entities}
+            allEntityCount={allEntities && allEntities.size}
             taxonomies={this.props.taxonomies}
             connections={this.props.connections}
             config={CONFIG}
@@ -92,6 +94,7 @@ UserList.propTypes = {
   entities: PropTypes.instanceOf(List).isRequired,
   taxonomies: PropTypes.instanceOf(Map),
   connections: PropTypes.instanceOf(Map),
+  allEntities: PropTypes.instanceOf(Map),
   location: PropTypes.object,
 };
 
@@ -105,6 +108,7 @@ const mapStateToProps = (state, props) => ({
   entities: selectUsers(state, fromJS(props.location.query)),
   taxonomies: selectUserTaxonomies(state),
   connections: selectUserConnections(state),
+  allEntities: selectEntities(state, API.USERS),
 });
 function mapDispatchToProps(dispatch) {
   return {

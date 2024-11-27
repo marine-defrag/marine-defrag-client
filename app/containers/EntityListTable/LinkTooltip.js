@@ -9,14 +9,23 @@ const Styled = styled(
 )`
   text-align: ${({ align }) => align === 'end' ? 'right' : 'left'};
   line-height: ${({ isPrint, theme, size = 'xsmallTight' }) => isPrint ? theme.textPrint[size].height : theme.text[size].height}};
+
+  &:focus {
+    box-shadow: none;
+  }
+  &:focus-visible {
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    outline-offset: 2px;
+  }
   @media print {
     line-height: ${({ theme, size = 'xsmallTight' }) => theme.textPrint[size].height};
   }
 `;
 
-const LinkTT = React.forwardRef((props, ref) => {
+const LinkTooltip = React.forwardRef((props, ref) => {
   const isPrint = usePrint();
   return <Styled isPrint={isPrint} {...props} ref={ref} />;
 });
 
-export default LinkTT;
+export default LinkTooltip;

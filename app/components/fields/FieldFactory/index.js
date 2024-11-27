@@ -32,6 +32,7 @@ const renderField = (field) => {
       return (<MetaField field={field} />);
     case 'reference':
       return (<ReferenceField field={field} />);
+    case 'warning':
     case 'status':
       return (<StatusField field={field} />);
     case 'role':

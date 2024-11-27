@@ -24,8 +24,15 @@ const GlobalStyle = createGlobalStyle`
     font-size: 1em;
     margin: 0;
   }
-  :focus, :visited:focus {
-    outline: 5px auto rgb(77, 144, 254); /* TODO: improve focus styles and individualise for specific buttons and links */
+  *:focus-visible {
+    outline: 2px solid #0077d8;
+    outline-offset: 0px;
+  }
+  .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+    :focus-visible {
+      outline: 2px solid #0077d8 !important;
+      box-shadow: none;
+    }
   }
   #app {
     background-color: #FFF;
@@ -184,6 +191,7 @@ const GlobalStyle = createGlobalStyle`
     display: inline-block;
   }
 
+
   @media print and (color){
     #app {
       -webkit-print-color-adjust: exact;
@@ -258,6 +266,7 @@ const GlobalStyle = createGlobalStyle`
       display: none;
     }
   }
+
   ${({ isPrint }) => isPrint && css`
     body {
       font-size: 10pt;
@@ -317,6 +326,10 @@ const GlobalStyle = createGlobalStyle`
           }
         }
       }
+    }
+    *:focus-visible {
+      outline: 2px solid #0077d8;
+      outline-offset: 0px;
     }
   `}
 `;

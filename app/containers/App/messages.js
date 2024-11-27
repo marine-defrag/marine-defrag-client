@@ -1059,6 +1059,10 @@ export default defineMessages({
       id: 'app.containers.App.attributes.status',
       defaultMessage: 'Status',
     },
+    is_archived: {
+      id: 'app.containers.App.attributes.is_archived',
+      defaultMessage: 'User status',
+    },
   },
   attributeInfo: {
     gdp: {
@@ -2284,6 +2288,24 @@ export default defineMessages({
       defaultMessage: '{entityType} created successfully. It will become publicly available once verified and published by an authorised user.',
     },
   },
+  screenreader: {
+    skipToContent: {
+      id: 'app.containers.App.screenreader.skipToContent',
+      defaultMessage: 'Skip to content',
+    },
+    skipBackToContent: {
+      id: 'app.containers.App.screenreader.skipBackToContent',
+      defaultMessage: 'Skip back to content',
+    },
+    skipMapToList: {
+      id: 'app.containers.App.screenreader.skipMapToList',
+      defaultMessage: 'Map view is currently disabled with keyboard navigation. Please press enter to see the content in list view.',
+    },
+    skipTimelineToList: {
+      id: 'app.containers.App.screenreader.skipTimelineToList',
+      defaultMessage: 'Map view is currently disabled with keyboard navigation. Please press enter to see the content in list view.',
+    },
+  },
   ui: {
     userRoles: {
       admin: {
@@ -2311,6 +2333,16 @@ export default defineMessages({
       public: {
         id: 'app.containers.App.ui.publishStatuses.public',
         defaultMessage: 'Public',
+      },
+    },
+    userStatuses: {
+      archived: {
+        id: 'app.containers.App.ui.userStatuses.archived',
+        defaultMessage: 'Archived',
+      },
+      active: {
+        id: 'app.containers.App.ui.userStatuses.active',
+        defaultMessage: 'Active',
       },
     },
     docPublishStatuses: {

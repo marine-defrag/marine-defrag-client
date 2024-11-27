@@ -21,8 +21,9 @@ import Messages from 'components/Messages';
 import Loading from 'components/Loading';
 import Icon from 'components/Icon';
 import ContentNarrow from 'components/ContentNarrow';
-import ContentHeader from 'containers/ContentHeader';
+import ContentHeader from 'components/ContentHeader';
 import Footer from 'containers/Footer';
+
 import AuthForm from 'components/forms/AuthForm';
 import A from 'components/styled/A';
 
