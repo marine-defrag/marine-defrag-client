@@ -13,6 +13,7 @@ import ScreenReaderOnly from 'components/styled/ScreenReaderOnly';
 import PrintOnly from 'components/styled/PrintOnly';
 import PrintHide from 'components/styled/PrintHide';
 import BoxPrint from 'components/styled/BoxPrint';
+import SkipContent from 'components/styled/SkipContent';
 
 import Brand from './Brand';
 import Logo from './Logo';
@@ -95,6 +96,17 @@ const LinkPage = styled((p) => <Button plain as="a" justify="center" fill="verti
     color: ${({ wide, theme }) => theme.global.colors.text[!wide ? 'light' : 'dark']};
     background-color:${({ theme, wide }) => wide ? theme.global.colors.highlightHover : 'transparent'};
   }
+  &:focus-visible {
+    outline-color: transparent;
+    border-color: none;
+    box-shadow: none;
+    outline-offset: 0;
+    background-color:${({ theme }) => theme.global.colors.highlightHover};
+  }
+  &:focus {
+    box-shadow: none;
+    border: none;
+  }
 `;
 const LinkAccount = LinkPage;
 
@@ -161,7 +173,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
     this.setState({ showMenu: false });
   };
 
-  onClick = (evt, path, currentPath) => {
+  onClick = (evt, path, currentPath, query) => {
     if (evt !== undefined && evt.preventDefault) evt.preventDefault();
     this.onHideMenu();
     if (currentPath) {
@@ -170,6 +182,8 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
       } else {
         this.props.onPageLink(path, { query: { arg: 'redirectOnAuthSuccess', value: currentPath } });
       }
+    } else if (query) {
+      this.props.onPageLink(path, { query });
     } else {
       this.props.onPageLink(path);
     }
@@ -210,6 +224,12 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
             >
               <Box direction="row" fill>
                 <Box>
+                  <SkipContent
+                    href="#main-content"
+                    title={this.context.intl.formatMessage(appMessages.screenreader.skipToContent)}
+                  >
+                    <FormattedMessage {...appMessages.screenreader.skipToContent} />
+                  </SkipContent>
                   <Brand
                     as={isPrintView ? 'div' : 'a'}
                     href={isPrintView ? '' : '/'}
@@ -345,7 +365,7 @@ class Header extends React.PureComponent { // eslint-disable-line react/prefer-s
                                 onClick={(evt) => {
                                   evt.stopPropagation();
                                   this.onHideMenu();
-                                  this.onClick(evt, item.path);
+                                  this.onClick(evt, item.path, null, item.query);
                                 }}
                                 wide={wide}
                               >

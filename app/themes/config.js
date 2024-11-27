@@ -38,6 +38,10 @@ export const PUBLISH_STATUSES = [
   { value: true, message: 'ui.publishStatuses.draft' },
   { value: false, message: 'ui.publishStatuses.public' },
 ];
+export const USER_STATUSES = [
+  { value: false, message: 'ui.userStatuses.active' },
+  { value: true, message: 'ui.userStatuses.archived' },
+];
 
 // client app routes **************************
 export const ROUTES = {

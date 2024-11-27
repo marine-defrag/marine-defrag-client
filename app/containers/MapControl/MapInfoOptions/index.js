@@ -46,6 +46,15 @@ const Pane = styled((p) => <Box {...p} />)`
   right: 0;
   width: 100%;
 `;
+
+const TabButton = styled((p) => <Button plain {...p} />)`
+  &:focus-visible {
+    color: ${({ theme }) => theme.global.colors.highlight};
+    text-decoration: underline;
+    box-shadow: none;
+  }
+`;
+
 // const X = styled((p) => (
 //   <Box
 //     elevation="small"
@@ -92,8 +101,9 @@ export function MapInfoOptions({
             style={{ zIndex: active ? 2 : 0 }}
             background={(shadow || active) ? 'white' : ''}
           >
-            <Button
-              plain
+            <TabButton
+              tabIndex={shadow ? -1 : 'auto'}
+              ariaHidden={!!shadow}
               onClick={() => setTab(option.id)}
             >
               <Box pad={{ vertical: 'xsmall', horizontal: 'small' }}>
@@ -102,12 +112,13 @@ export function MapInfoOptions({
                   weight={active ? 500 : 300}
                   style={{
                     opacity: shadow ? 0 : 1,
+                    color: 'inherit',
                   }}
                 >
                   {option.tabTitle}
                 </Text>
               </Box>
-            </Button>
+            </TabButton>
           </Box>
         );
       }
@@ -119,7 +130,13 @@ export function MapInfoOptions({
           <Box fill="horizontal" direction="row" style={{ zIndex: 1 }}>
             {renderTabs(true)}
           </Box>
-          <Box flex={{ grow: 1 }} direction="row" elevation="medium" background="white" style={{ zIndex: 2 }} />
+          <Box
+            flex={{ grow: 1 }}
+            direction="row"
+            elevation="medium"
+            background="white"
+            style={{ zIndex: 2 }}
+          />
         </Pane>
       </PrintHide>
       <PrintHide>

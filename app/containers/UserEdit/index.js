@@ -18,6 +18,7 @@ import {
   getEmailField,
   getHighestUserRoleId,
   getRoleFormField,
+  getUserStatusField,
 } from 'utils/forms';
 
 import {
@@ -48,7 +49,7 @@ import { ROUTES, USER_ROLES } from 'themes/config';
 import Messages from 'components/Messages';
 import Loading from 'components/Loading';
 import Content from 'components/Content';
-import ContentHeader from 'containers/ContentHeader';
+import ContentHeader from 'components/ContentHeader';
 import EntityForm from 'containers/EntityForm';
 
 import {
@@ -111,18 +112,25 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
 
   getHeaderAsideFields = (entity, roles) => {
     const { intl } = this.context;
-    return ([
-      {
-        fields: (roles && roles.size > 0) ? [
-          getRoleFormField(intl.formatMessage, roles),
-          getMetaField(entity),
-        ]
-          : [
-            getRoleField(entity),
-            getMetaField(entity),
-          ],
-      },
-    ]);
+    let fields = [
+      getUserStatusField(intl.formatMessage),
+    ];
+    if (roles && roles.size > 0) {
+      fields = [
+        ...fields,
+        getRoleFormField(intl.formatMessage, roles),
+      ];
+    } else {
+      fields = [
+        ...fields,
+        getRoleField(entity),
+      ];
+    }
+    fields = [
+      ...fields,
+      getMetaField(entity),
+    ];
+    return ([{ fields }]);
   };
 
   getBodyMainFields = () => {
@@ -328,7 +336,7 @@ function mapDispatchToProps(dispatch) {
           : memo,
         List()),
       }));
-
+      console.log(saveData.toJS());
       dispatch(save(saveData.toJS()));
     },
     handleCancel: (reference) => {

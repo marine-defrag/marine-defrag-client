@@ -111,6 +111,7 @@ export function MapWrapperLeaflet({
   mapView,
   printArgs,
   fullMap,
+  mapDescription,
 }) {
   const size = React.useContext(ResponsiveContext);
   const [refHeight, setRefHeight] = useState(null);
@@ -137,6 +138,7 @@ export function MapWrapperLeaflet({
     center: mapView ? mapView.center : VIEW_INITIAL.center,
     zoom: mapView ? mapView.zoom : VIEW_INITIAL.zoom,
     debounceMoveend: true,
+    keyboard: false,
     // center: mapOptions.CENTER,
     // zoom: size === 'small' ? mapOptions.ZOOM.MIN : mapOptions.ZOOM.INIT,
   };
@@ -657,7 +659,12 @@ export function MapWrapperLeaflet({
   // if (mapRef) onSetMapRef(mapRef, mapId);
   return (
     <Styled hasInfo={hasInfo} ref={ref} isPrint={isPrintView} fullMap={fullMap}>
-      <Map id={mapId} styleType={styleType} />
+      <Map
+        id={mapId}
+        styleType={styleType}
+        role="presentation"
+        alt={mapDescription || "A map of the world's countries that are colored according to their number of associated activities"}
+      />
       {tooltip && tooltip.features && tooltip.features.length > 0 && (
         <Tooltip
           isPrintView={isPrintView}
@@ -708,6 +715,7 @@ MapWrapperLeaflet.propTypes = {
   setMapTooltips: PropTypes.func,
   mapView: PropTypes.object,
   onSetMapView: PropTypes.func,
+  mapDescription: PropTypes.string,
   // onSetMapSubject: PropTypes.func,
 };
 

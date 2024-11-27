@@ -19,6 +19,11 @@ const TypeButton = styled((p) => <Button plain {...p} />)`
   border-bottom: 2px solid;
   border-bottom-color: ${({ active }) => active ? 'auto' : 'transparent'};
   background: none;
+  &:focus-visible {
+    color: ${({ theme }) => theme.global.colors.highlight};
+    outline: 2px solid ${({ theme }) => theme.global.colors.highlight};
+    box-shadow: none;
+  }
 `;
 const TextWrap = styled((p) => <Box {...p} />)`
   border-bottom: 1px solid;
@@ -40,7 +45,11 @@ function MapSubjectOptions({ options, inList, align = 'start' }) {
             {
               options.map((option, i) => option && (
                 <Box key={i}>
-                  <TypeButton active={option.active} onClick={option.onClick} inList={inList}>
+                  <TypeButton
+                    active={option.active}
+                    onClick={option.onClick}
+                    inList={inList}
+                  >
                     <TextPrint size={inList ? 'medium' : 'large'}>
                       {option.title}
                     </TextPrint>

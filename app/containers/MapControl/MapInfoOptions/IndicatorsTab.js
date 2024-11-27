@@ -96,7 +96,6 @@ export function IndicatorsTab({
                 <InfoOverlay
                   title={activeIndicatorOption.title}
                   content={activeIndicatorOption.info}
-                  tooltip
                   inline
                 />
               )}

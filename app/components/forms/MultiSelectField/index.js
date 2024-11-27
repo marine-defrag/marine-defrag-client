@@ -208,38 +208,6 @@ class MultiSelectField extends React.Component { // eslint-disable-line react/pr
             <Icon name={this.state.multiselectOpen === id ? 'dropdownClose' : 'dropdownOpen'} />
           </MultiSelectDropdownIcon>
         </MultiSelectDropdown>
-        <MultiselectActiveOptions>
-          {options.size > 0 && (
-            <MultiselectActiveOptionList>
-              {options.map((option, i) => (
-                <MultiSelectActiveOption
-                  key={i}
-                  option={option}
-                  field={field}
-                  onItemRemove={this.onMultiSelectItemRemove}
-                  onConnectionAttributeChange={this.onMultiSelectItemConnectionAttributeChange}
-                />
-              ))}
-            </MultiselectActiveOptionList>
-          )}
-          {options.size === 0 && (
-            <MultiSelectWithout>
-              <FormattedMessage
-                {...messages.empty}
-                values={{ entities: lowerCase(field.label) }}
-              />
-              <MultiSelectWithoutLink
-                href="#add"
-                onClick={(evt) => {
-                  if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                  this.onToggleMultiselect(field);
-                }}
-              >
-                <FormattedMessage {...messages.emptyLink} />
-              </MultiSelectWithoutLink>
-            </MultiSelectWithout>
-          )}
-        </MultiselectActiveOptions>
         {this.state.multiselectOpen === id && (
           <MultiSelectWrapper
             ref={this.controlRef}
@@ -275,6 +243,38 @@ class MultiSelectField extends React.Component { // eslint-disable-line react/pr
             />
           </MultiSelectWrapper>
         )}
+        <MultiselectActiveOptions>
+          {options.size > 0 && (
+            <MultiselectActiveOptionList>
+              {options.map((option, i) => (
+                <MultiSelectActiveOption
+                  key={i}
+                  option={option}
+                  field={field}
+                  onItemRemove={this.onMultiSelectItemRemove}
+                  onConnectionAttributeChange={this.onMultiSelectItemConnectionAttributeChange}
+                />
+              ))}
+            </MultiselectActiveOptionList>
+          )}
+          {options.size === 0 && (
+            <MultiSelectWithout>
+              <FormattedMessage
+                {...messages.empty}
+                values={{ entities: lowerCase(field.label) }}
+              />
+              <MultiSelectWithoutLink
+                href="#add"
+                onClick={(evt) => {
+                  if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                  this.onToggleMultiselect(field);
+                }}
+              >
+                <FormattedMessage {...messages.emptyLink} />
+              </MultiSelectWithoutLink>
+            </MultiSelectWithout>
+          )}
+        </MultiselectActiveOptions>
       </MultiSelectFieldWrapper>
     );
   }

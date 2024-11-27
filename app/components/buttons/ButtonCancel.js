@@ -8,6 +8,11 @@ const ButtonCancel = styled(ButtonForm)`
   &:hover {
     color: ${palette('buttonCancelHover', 0)};
   }
+  &:focus-visible {
+    color: ${palette('buttonCancelHover', 0)};
+    outline: 2px solid ${palette('buttonCancelHover', 0)};
+    outline-offset: -2px;
+  }
 `;
 
 export default ButtonCancel;

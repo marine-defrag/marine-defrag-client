@@ -44,15 +44,7 @@ import { PrintContext } from './PrintContext';
 import messages from './messages';
 
 const Main = styled.div`
-  position: ${({ isHome, isPrintView }) => {
-    if (isPrintView) {
-      return 'absolute';
-    }
-    if (isHome) {
-      return 'absolute';
-    }
-    return 'absolute';
-  }};
+  position: absolute;
   top: ${({ isHome, theme }) => isHome
     ? 0
     : theme.sizes.header.banner.heightMobile
@@ -160,8 +152,27 @@ const PrintWrapper = styled.div`
 // overflow: ${(props) => props.isHome ? 'auto' : 'hidden'};
 
 class App extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+  inertRef = React.createRef();
+
   UNSAFE_componentWillMount() {
     this.props.validateToken();
+    this.updateInert();
+  }
+
+  componentDidUpdate() {
+    this.updateInert();
+  }
+
+  updateInert() {
+    if (this.inertRef && this.inertRef.current) {
+      if (this.props.isPrintView) {
+        this.inertRef.current.setAttribute('aria-hidden', 'true');
+        this.inertRef.current.setAttribute('tab-index', '-1');
+      } else {
+        this.inertRef.current.removeAttribute('aria-hidden');
+        this.inertRef.current.removeAttribute('tab-index');
+      }
+    }
   }
 
   preparePageMenuPages = (pages, currentPath) => sortEntities(
@@ -213,6 +224,7 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
         },
         {
           path: ROUTES.USERS,
+          query: { arg: 'where', value: 'is_archived:false' },
           title: intl.formatMessage(messages.nav.users),
           isAdmin: true,
           active: currentPath === ROUTES.USERS,
@@ -244,7 +256,6 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
       || location.pathname.startsWith(ROUTES.REGISTER)
       || location.pathname.startsWith(ROUTES.LOGOUT)
       || location.pathname.startsWith(ROUTES.UNAUTHORISED);
-    const isHomeOrAuth = isHome || isAuth;
 
     return (
       <div id="app-inner" className={isPrintView ? 'print-view' : ''}>
@@ -275,10 +286,13 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             currentPath={location.pathname}
           />
         )}
-        <Main isHome={isHomeOrAuth} isPrint={isPrintView}>
-          {isPrintView && (<PrintUI />)}
+        <Main isHome={isHome} isPrint={isPrintView} role="main" id="main-content">
+          {isPrintView && (
+            <PrintUI />
+          )}
           <PrintWrapper
             isPrint={isPrintView}
+            ref={this.inertRef}
             fixed={printArgs.fixed}
             orient={printArgs.printOrientation}
             size={printArgs.printSize}

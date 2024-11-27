@@ -72,7 +72,6 @@ export function NumberField({ field, intl, secondary }) {
                   title={label}
                   content={field.info}
                   padButton={{ horizontal: 'xxsmall' }}
-                  tooltip
                 />
               )}
             </Box>

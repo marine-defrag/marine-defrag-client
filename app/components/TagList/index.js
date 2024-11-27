@@ -100,22 +100,26 @@ export class TagList extends React.Component { // eslint-disable-line react/pref
                     {group}
                   </ConnectionGroupLabel>
                   <Box direction="row">
-                    {groupedFilters[group].map((filter, j) => (
-                      <ButtonTagFilter
-                        key={j}
-                        onClick={filter.onClick}
-                        palette={filter.type || 'attributes'}
-                        paletteHover={`${filter.type || 'attributes'}Hover`}
-                        pIndex={parseInt(filter.id, 10) || 0}
-                        disabled={!filter.onClick || isPrintView}
-                        isPrint={isPrintView}
-                      >
-                        {getFilterLabel(filter, intl, long)}
-                        {filter.onClick
-                          && <Icon name="removeSmall" text textRight printHide isPrint={isPrintView} />
-                        }
-                      </ButtonTagFilter>
-                    ))}
+                    {groupedFilters[group].map((filter, j) => {
+                      const label = getFilterLabel(filter, intl, long);
+                      return (
+                        <ButtonTagFilter
+                          key={j}
+                          onClick={filter.onClick}
+                          palette={filter.type || 'attributes'}
+                          paletteHover={`${filter.type || 'attributes'}Hover`}
+                          pIndex={parseInt(filter.id, 10) || 0}
+                          disabled={!filter.onClick || isPrintView}
+                          isPrint={isPrintView}
+                          label={label}
+                        >
+                          {label}
+                          {filter.onClick
+                            && <Icon name="removeSmall" text textRight printHide isPrint={isPrintView} />
+                          }
+                        </ButtonTagFilter>
+                      );
+                    })}
                   </Box>
                 </Box>
               ))}

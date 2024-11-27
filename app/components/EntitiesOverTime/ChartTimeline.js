@@ -61,6 +61,7 @@ export function ChartTimeline({
   hoverId,
   setHover,
   printArgs,
+  chartDescription,
 }) {
   const isPrint = usePrint();
   const targetRef = useRef();
@@ -171,7 +172,10 @@ export function ChartTimeline({
   }
   return (
     <div ref={targetRef}>
-      <ChartWrapper>
+      <ChartWrapper
+        role="presentation"
+        alt={chartDescription || "A timeline visualisation of the countries' activities"}
+      >
         {chartData && (
           <FlexibleWidthXYPlot
             height={chartHeight}
@@ -291,6 +295,7 @@ ChartTimeline.propTypes = {
   hint: PropTypes.object,
   printArgs: PropTypes.object,
   hoverId: PropTypes.string,
+  chartDescription: PropTypes.string,
   intl: intlShape.isRequired,
   onEntityClick: PropTypes.func,
 };
