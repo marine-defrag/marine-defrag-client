@@ -50,7 +50,7 @@ export class UserLogin extends React.PureComponent { // eslint-disable-line reac
     const { authError, authSending } = this.props.viewDomain.get('page').toJS();
 
     return (
-      <div>
+      <>
         <Helmet
           title={`${intl.formatMessage(messages.pageTitle)}`}
           meta={[
@@ -128,7 +128,7 @@ export class UserLogin extends React.PureComponent { // eslint-disable-line reac
           </BottomLinks>
         </ContentNarrow>
         <Footer />
-      </div>
+      </>
     );
   }
 }

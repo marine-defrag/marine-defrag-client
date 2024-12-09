@@ -23,6 +23,7 @@ import ContentNarrow from 'components/ContentNarrow';
 import ContentHeader from 'components/ContentHeader';
 import AuthForm from 'components/forms/AuthForm';
 import A from 'components/styled/A';
+import Footer from 'containers/Footer';
 
 import { ROUTES } from 'themes/config';
 
@@ -49,7 +50,7 @@ export class UserPasswordRecover extends React.PureComponent { // eslint-disable
     const { error, sending } = this.props.viewDomain.get('page').toJS();
 
     return (
-      <div>
+      <>
         <Helmet
           title={`${intl.formatMessage(messages.pageTitle)}`}
           meta={[
@@ -98,7 +99,8 @@ export class UserPasswordRecover extends React.PureComponent { // eslint-disable
             </p>
           </BottomLinks>
         </ContentNarrow>
-      </div>
+        <Footer />
+      </>
     );
   }
 }

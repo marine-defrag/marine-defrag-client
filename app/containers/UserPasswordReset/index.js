@@ -20,6 +20,7 @@ import Loading from 'components/Loading';
 import ContentNarrow from 'components/ContentNarrow';
 import ContentHeader from 'components/ContentHeader';
 import AuthForm from 'components/forms/AuthForm';
+import Footer from 'containers/Footer';
 
 import { updatePath } from 'containers/App/actions';
 
@@ -38,7 +39,7 @@ export class UserPasswordReset extends React.PureComponent { // eslint-disable-l
     const { resetSending, resetError } = this.props.viewDomain.get('page').toJS();
 
     return (
-      <div>
+      <>
         <Helmet
           title={`${intl.formatMessage(messages.pageTitle)}`}
           meta={[
@@ -74,7 +75,8 @@ export class UserPasswordReset extends React.PureComponent { // eslint-disable-l
             )
           }
         </ContentNarrow>
-      </div>
+        <Footer />
+      </>
     );
   }
 }
