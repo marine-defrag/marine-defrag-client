@@ -22,6 +22,8 @@ import Loading from 'components/Loading';
 import Icon from 'components/Icon';
 import ContentNarrow from 'components/ContentNarrow';
 import ContentHeader from 'components/ContentHeader';
+import Footer from 'containers/Footer';
+
 import AuthForm from 'components/forms/AuthForm';
 import A from 'components/styled/A';
 
@@ -118,6 +120,7 @@ export class UserLogin extends React.PureComponent { // eslint-disable-line reac
             </p>
           </BottomLinks>
         </ContentNarrow>
+        <Footer />
       </div>
     );
   }
