@@ -55,6 +55,11 @@ import {
   UPDATE_PATH,
   AUTHENTICATE_FORWARD,
   UPDATE_ENTITY_FORM,
+  RESET_PASSWORD,
+  RECOVER_PASSWORD,
+  RECOVER_SENDING,
+  RECOVER_SUCCESS,
+  RECOVER_ERROR,
   RESET_ENTITY_FORM,
   CLOSE_ENTITY,
   OPEN_NEW_ENTITY_MODAL,
@@ -119,6 +124,28 @@ export function saveErrorDismiss() {
 export function saveError(error, data) {
   return {
     type: SAVE_ERROR,
+    data,
+    error,
+  };
+}
+
+export function recoverSending(data) {
+  return {
+    type: RECOVER_SENDING,
+    data,
+  };
+}
+
+export function recoverSuccess(data) {
+  return {
+    type: RECOVER_SUCCESS,
+    data,
+  };
+}
+
+export function recoverError(error, data) {
+  return {
+    type: RECOVER_ERROR,
     data,
     error,
   };
@@ -354,6 +381,19 @@ export function authenticateSending(sending) {
 export function authenticate(data) {
   return {
     type: AUTHENTICATE,
+    data,
+  };
+}
+
+export function resetPassword(data) {
+  return {
+    type: RESET_PASSWORD,
+    data,
+  };
+}
+export function recoverPassword(data) {
+  return {
+    type: RECOVER_PASSWORD,
     data,
   };
 }
