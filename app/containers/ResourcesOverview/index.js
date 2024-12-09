@@ -9,6 +9,8 @@ import { Box, ResponsiveContext } from 'grommet';
 
 import styled from 'styled-components';
 
+import { isMaxSize } from 'utils/responsive';
+
 import appMessages from 'containers/App/messages';
 import { usePrint } from 'containers/App/PrintContext';
 
@@ -20,7 +22,6 @@ import Container from 'components/styled/Container';
 import Content from 'components/styled/ContentSimple';
 import CardTeaser from 'components/CardTeaser';
 import Footer from 'containers/Footer';
-import { isMaxSize } from 'utils/responsive';
 
 import { selectResourcetypesWithResourceCount } from './selectors';
 import { DEPENDENCIES } from './constants';
@@ -33,10 +34,7 @@ const GroupTitle = styled.h5`
   color: ${({ theme }) => theme.global.colors.text.brand};
 `;
 const ViewContainer = styled(Container)`
-  min-height: ${({ isPrint }) => isPrint ? '50vH' : '85vH'};
-  @media print {
-    min-height: 50vH;
-  }
+  min-height: 50vH;
 `;
 export function ResourcesOverview({
   onLoadData, types, onUpdatePath, intl, dataReady,
@@ -48,47 +46,49 @@ export function ResourcesOverview({
   const size = React.useContext(ResponsiveContext);
   const isPrint = usePrint();
   return (
-    <ContainerWrapper bg>
-      <ViewContainer isPrint={isPrint}>
-        <Content>
-          {Object.keys(RESOURCETYPE_GROUPS).map((key) => (
-            <Group key={key}>
-              <GroupTitle>
-                <FormattedMessage {...appMessages.resourcetypeGroups[key]} />
-              </GroupTitle>
-              <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
-                {RESOURCETYPE_GROUPS[key].types.map((typeId) => {
-                  const path = `${ROUTES.RESOURCES}/${typeId}`;
-                  const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
-                  const { primary } = RESOURCETYPE_GROUPS[key];
-                  return (
-                    <CardTeaser
-                      key={typeId}
-                      basis={primary ? '1/2' : '1/4'}
-                      primary={primary}
-                      path={path}
-                      onClick={(evt) => {
-                        if (evt && evt.preventDefault) evt.preventDefault();
-                        onUpdatePath(path);
-                      }}
-                      dataReady={dataReady}
-                      count={count}
-                      title={
-                        intl.formatMessage(appMessages.resourcetypes_long[typeId])
-                      }
-                      description={
-                        intl.formatMessage(appMessages.resourcetypes_about[typeId])
-                      }
-                    />
-                  );
-                })}
-              </Box>
-            </Group>
-          ))}
-        </Content>
-      </ViewContainer>
+    <>
+      <ContainerWrapper isStatic bg>
+        <ViewContainer isPrint={isPrint}>
+          <Content>
+            {Object.keys(RESOURCETYPE_GROUPS).map((key) => (
+              <Group key={key}>
+                <GroupTitle>
+                  <FormattedMessage {...appMessages.resourcetypeGroups[key]} />
+                </GroupTitle>
+                <Box direction={isMaxSize(size, 'medium') ? 'column' : 'row'} gap="small">
+                  {RESOURCETYPE_GROUPS[key].types.map((typeId) => {
+                    const path = `${ROUTES.RESOURCES}/${typeId}`;
+                    const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
+                    const { primary } = RESOURCETYPE_GROUPS[key];
+                    return (
+                      <CardTeaser
+                        key={typeId}
+                        basis={primary ? '1/2' : '1/4'}
+                        primary={primary}
+                        path={path}
+                        onClick={(evt) => {
+                          if (evt && evt.preventDefault) evt.preventDefault();
+                          onUpdatePath(path);
+                        }}
+                        dataReady={dataReady}
+                        count={count}
+                        title={
+                          intl.formatMessage(appMessages.resourcetypes_long[typeId])
+                        }
+                        description={
+                          intl.formatMessage(appMessages.resourcetypes_about[typeId])
+                        }
+                      />
+                    );
+                  })}
+                </Box>
+              </Group>
+            ))}
+          </Content>
+        </ViewContainer>
+      </ContainerWrapper>
       <Footer />
-    </ContainerWrapper>
+    </>
   );
 }
 
@@ -101,7 +101,7 @@ ResourcesOverview.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  dataReady: (state) => selectReady(state, DEPENDENCIES),
+  dataReady: (state) => selectReady(state, { path: DEPENDENCIES }),
   types: (state) => selectResourcetypesWithResourceCount(state),
 });
 

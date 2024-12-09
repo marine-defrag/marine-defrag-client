@@ -8,7 +8,7 @@ import {
 } from 'grommet';
 
 import { updatePath } from 'containers/App/actions';
-import { selectEntitiesWhere } from 'containers/App/selectors';
+import { selectEntitiesWhere, selectIsSignedIn } from 'containers/App/selectors';
 
 import { VERSION, FOOTER, ROUTES } from 'themes/config';
 import Container from 'components/styled/Container';
@@ -43,17 +43,6 @@ const ImageCredit = styled(Box)`
   padding: 2px 6px;
   margin: 6px;
   background-color: rgba(255, 255, 255, 0.66);
-`;
-const FooterLink = styled.a`
-  font-weight: bold;
-  color: ${({ isPrint, theme }) => isPrint ? theme.global.colors.text.secondary : 'white'};
-  &:hover {
-    color: white;
-    text-decoration: underline;
-  }
-  @media print {
-    color: ${({ theme }) => theme.global.colors.text.secondary} !important;
-  }
 `;
 
 const FooterLinkPage = styled((p) => <Button plain as="a" justify="center" fill="vertical" {...p} />)`
@@ -100,7 +89,9 @@ function Footer({
   intl,
   backgroundImage,
   pages,
+  hasContactLink,
   onPageLink,
+  backgroundColor,
 }) {
   const size = React.useContext(ResponsiveContext);
   const isMobile = isMaxSize(size, 'small');
@@ -112,11 +103,17 @@ function Footer({
     'order',
     'number'
   );
+  const hasFooterPages = (footerPages && footerPages.size > 0) || hasContactLink;
   return (
     <FooterMain isPrint={isPrint}>
       {backgroundImage && FOOTER.IMAGE_URLS[backgroundImage] && (
         <PrintHide>
-          <Box style={{ position: 'relative' }}>
+          <Box
+            style={{
+              position: 'relative',
+              background: backgroundColor ? '#f1f0f1' : 'transparent',
+            }}
+          >
             <Image src={FOOTER.IMAGE_URLS[backgroundImage]} />
             <ImageCredit>
               <Text size="xxxsmall">
@@ -126,9 +123,13 @@ function Footer({
           </Box>
         </PrintHide>
       )}
-      <FooterContent>
+      <FooterContent isPrint={isPrint}>
         <Container noPaddingBottom>
-          <Box direction={isMinSize(size, 'medium') ? 'row' : 'column'} fill="vertical">
+          <Box
+            direction={isMinSize(size, 'medium') ? 'row' : 'column'}
+            fill="vertical"
+            style={{ minHeight: '150px' }}
+          >
             <BoxPrint
               pad="medium"
               padPrintHorizontal="none"
@@ -151,77 +152,62 @@ function Footer({
               fill
               basis="1/2"
               gap="small"
-              style={{ minHeight: '150px' }}
             >
               <Text size="small">
                 <FormattedMessage {...messages.disclaimer} />
               </Text>
-              <Text size="small">
-                <FormattedMessage
-                  {...messages.disclaimer2}
-                  values={{
-                    contact1: (
-                      <FooterLink
-                        isPrint={isPrint}
-                        target="_blank"
-                        href={`mailto:${intl.formatMessage(messages.contact.email)}`}
-                        title={intl.formatMessage(messages.contact.anchor)}
-                      >
-                        <FormattedMessage {...messages.contact.anchor} />
-                      </FooterLink>
-                    ),
-                    contact2: (
-                      <FooterLink
-                        isPrint={isPrint}
-                        target="_blank"
-                        href={`mailto:${intl.formatMessage(messages.contact2.email)}`}
-                        title={intl.formatMessage(messages.contact2.anchor)}
-                      >
-                        <FormattedMessage {...messages.contact2.anchor} />
-                      </FooterLink>
-                    ),
-                  }}
-                />
-              </Text>
+              <PrintHide>
+                {hasContactLink && (
+                  <Text size="small">
+                    <FormattedMessage {...messages.contactHint} />
+                  </Text>
+                )}
+              </PrintHide>
             </BoxPrint>
           </Box>
-          <Box gap={isMobile ? 'medium' : 'xsmall'}>
-            <Box
-              direction={isMobile ? 'column' : 'row'}
-              justify={isMobile ? 'start' : 'between'}
-              align="start"
-              gap={isMobile ? 'small' : 'none'}
-              pad={{ horizontal: 'medium' }}
-            >
-              <Box
-                direction={isMobile ? 'column' : 'row'}
-                gap="hair"
-                align={isMobile ? 'start' : 'end'}
-              >
-                <FooterLinkPage
-                  href={ROUTES.FEEDBACK}
-                  onClick={(evt) => {
-                    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                    onPageLink(ROUTES.FEEDBACK);
-                  }}
+          <PrintHide>
+            {hasFooterPages && (
+              <Box gap={isMobile ? 'medium' : 'xsmall'}>
+                <Box
+                  direction={isMobile ? 'column' : 'row'}
+                  justify={isMobile ? 'start' : 'between'}
+                  align="start"
+                  gap={isMobile ? 'small' : 'none'}
+                  pad={{ horizontal: 'medium' }}
                 >
-                  <FormattedMessage {...messages.contactUs} />
-                </FooterLinkPage>
-                {footerPages && footerPages.size > 0 && footerPages.toList().map((page) => (
-                  <FooterLinkPage
-                    key={page.get('id')}
-                    onClick={(evt) => {
-                      if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                      onPageLink(`${ROUTES.PAGES}/${page.get('id')}`);
-                    }}
-                    href={`${ROUTES.PAGES}/${page.get('id')}`}
+                  <Box
+                    direction={isMobile ? 'column' : 'row'}
+                    gap="hair"
+                    align={isMobile ? 'start' : 'end'}
                   >
-                    {page.getIn(['attributes', 'menu_title']) || page.getIn(['attributes', 'title'])}
-                  </FooterLinkPage>
-                ))}
+                    {hasContactLink && (
+                      <FooterLinkPage
+                        href={ROUTES.FEEDBACK}
+                        onClick={(evt) => {
+                          if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                          onPageLink(ROUTES.FEEDBACK);
+                        }}
+                      >
+                        <FormattedMessage {...messages.contactUs} />
+                      </FooterLinkPage>
+                    )}
+                    {footerPages && footerPages.size > 0 && footerPages.toList().map((page) => (
+                      <FooterLinkPage
+                        key={page.get('id')}
+                        onClick={(evt) => {
+                          if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                          onPageLink(`${ROUTES.PAGES}/${page.get('id')}`);
+                        }}
+                        href={`${ROUTES.PAGES}/${page.get('id')}`}
+                      >
+                        {page.getIn(['attributes', 'menu_title']) || page.getIn(['attributes', 'title'])}
+                      </FooterLinkPage>
+                    ))}
+                  </Box>
+                </Box>
               </Box>
-            </Box>
-          </Box>
+            )}
+          </PrintHide>
         </Container>
       </FooterContent>
     </FooterMain>
@@ -232,6 +218,8 @@ Footer.propTypes = {
   intl: intlShape.isRequired,
   backgroundImage: PropTypes.string,
   onPageLink: PropTypes.func.isRequired,
+  hasContactLink: PropTypes.bool,
+  backgroundColor: PropTypes.bool,
   pages: PropTypes.object,
 };
 
@@ -240,6 +228,7 @@ const mapStateToProps = (state) => ({
     path: 'pages',
     where: { draft: false },
   }),
+  hasContactLink: selectIsSignedIn(state),
 });
 
 function mapDispatchToProps(dispatch) {

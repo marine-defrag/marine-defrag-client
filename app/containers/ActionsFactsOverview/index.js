@@ -37,7 +37,6 @@ const GroupTitleLabel = styled(GroupTitle)`
   color: ${({ theme }) => theme.global.colors.text.brand};
 `;
 const ViewContainer = styled(Container)`
-  min-height: 70vH;
   @media print {
     min-height: 50vH;
   }
@@ -79,108 +78,110 @@ export function ActionsFactsOverview({
   const theme = React.useContext(ThemeContext);
   const size = React.useContext(ResponsiveContext);
   return (
-    <ContainerWrapper bg>
-      <HeaderExplore />
-      <ViewContainer>
-        <Content>
-          {optionNew && (
-            <Box align="end" margin={{ top: 'small' }}>
-              <ButtonFactory button={optionNew} />
-            </Box>
-          )}
-          {!dataReady && (
-            <Box margin={{ top: 'large' }}>
-              <Loading />
-            </Box>
-          )}
-          {dataReady && (
-            <Box>
-              {indicatorsByResourceId && indicatorsByResourceId.keySeq().map(
-                (resourceId) => {
-                  const resource = !qe(resourceId, 'without')
-                    && connections
-                    && connections.getIn(['resources', resourceId.toString()]);
-                  const resourceIndicators = indicatorsByResourceId.get(resourceId);
-                  const isLandscape = isMinSize(size, 'large') && resourceIndicators && resourceIndicators.size < 3;
-                  return (
-                    <Group key={`res-${resourceId}`}>
-                      {resource && (
+    <>
+      <ContainerWrapper isStatic bg>
+        <HeaderExplore />
+        <ViewContainer>
+          <Content>
+            {optionNew && (
+              <Box align="end" margin={{ top: 'small' }}>
+                <ButtonFactory button={optionNew} />
+              </Box>
+            )}
+            {!dataReady && (
+              <Box margin={{ top: 'large' }}>
+                <Loading />
+              </Box>
+            )}
+            {dataReady && (
+              <Box>
+                {indicatorsByResourceId && indicatorsByResourceId.keySeq().map(
+                  (resourceId) => {
+                    const resource = !qe(resourceId, 'without')
+                      && connections
+                      && connections.getIn(['resources', resourceId.toString()]);
+                    const resourceIndicators = indicatorsByResourceId.get(resourceId);
+                    const isLandscape = isMinSize(size, 'large') && resourceIndicators && resourceIndicators.size < 3;
+                    return (
+                      <Group key={`res-${resourceId}`}>
+                        {resource && (
+                          <Box
+                            pad={{ top: 'medium', bottom: 'small' }}
+                            direction={isMinSize(size, 'ms') ? 'row' : 'column'}
+                            gap="xsmall"
+                          >
+                            <Box>
+                              <GroupTitleLabel>
+                                Publication
+                              </GroupTitleLabel>
+                            </Box>
+                            <Box>
+                              <ResourceButton
+                                as="a"
+                                href={`${ROUTES.RESOURCE}/${resourceId}`}
+                                onClick={(e) => {
+                                  if (e) e.preventDefault();
+                                  onUpdatePath(`${ROUTES.RESOURCE}/${resourceId}`);
+                                }}
+                              >
+                                <GroupTitle>
+                                  {resource.getIn(['attributes', 'title'])}
+                                </GroupTitle>
+                              </ResourceButton>
+                            </Box>
+                          </Box>
+                        )}
+                        {!resource && (
+                          <GroupTitle>
+                            Without resource
+                          </GroupTitle>
+                        )}
                         <Box
-                          pad={{ top: 'medium', bottom: 'small' }}
-                          direction={isMinSize(size, 'ms') ? 'row' : 'column'}
-                          gap="xsmall"
+                          direction="row"
+                          wrap
+                          margin={{ horizontal: '-6px' }}
                         >
-                          <Box>
-                            <GroupTitleLabel>
-                              Publication
-                            </GroupTitleLabel>
-                          </Box>
-                          <Box>
-                            <ResourceButton
-                              as="a"
-                              href={`${ROUTES.RESOURCE}/${resourceId}`}
-                              onClick={(e) => {
-                                if (e) e.preventDefault();
-                                onUpdatePath(`${ROUTES.RESOURCE}/${resourceId}`);
-                              }}
-                            >
-                              <GroupTitle>
-                                {resource.getIn(['attributes', 'title'])}
-                              </GroupTitle>
-                            </ResourceButton>
-                          </Box>
+                          {resourceIndicators && resourceIndicators.map((indicator) => {
+                            const path = `${ROUTES.ACTION}/${indicator.get('id')}`;
+                            const [lead] = indicator.getIn(['attributes', 'description']).split('\n');
+                            let basis = 'full';
+                            if (isMinSize(size, 'medium')) {
+                              basis = '1/2';
+                            }
+                            if (!isLandscape && isMinSize(size, 'large')) {
+                              basis = '1/4';
+                            }
+                            return (
+                              <CardTeaser
+                                key={indicator.get('id')}
+                                basis={basis}
+                                path={path}
+                                onClick={(evt) => {
+                                  if (evt && evt.preventDefault) evt.preventDefault();
+                                  onUpdatePath(path);
+                                }}
+                                dataReady={dataReady}
+                                title={
+                                  indicator.getIn(['attributes', 'title'])
+                                }
+                                description={lead}
+                                isLandscape={isLandscape}
+                                graphic={theme.media.navCard.indicators[indicator.get('id')]}
+                              />
+                            );
+                          })}
                         </Box>
-                      )}
-                      {!resource && (
-                        <GroupTitle>
-                          Without resource
-                        </GroupTitle>
-                      )}
-                      <Box
-                        direction="row"
-                        wrap
-                        margin={{ horizontal: '-6px' }}
-                      >
-                        {resourceIndicators && resourceIndicators.map((indicator) => {
-                          const path = `${ROUTES.ACTION}/${indicator.get('id')}`;
-                          const [lead] = indicator.getIn(['attributes', 'description']).split('\n');
-                          let basis = 'full';
-                          if (isMinSize(size, 'medium')) {
-                            basis = '1/2';
-                          }
-                          if (!isLandscape && isMinSize(size, 'large')) {
-                            basis = '1/4';
-                          }
-                          return (
-                            <CardTeaser
-                              key={indicator.get('id')}
-                              basis={basis}
-                              path={path}
-                              onClick={(evt) => {
-                                if (evt && evt.preventDefault) evt.preventDefault();
-                                onUpdatePath(path);
-                              }}
-                              dataReady={dataReady}
-                              title={
-                                indicator.getIn(['attributes', 'title'])
-                              }
-                              description={lead}
-                              isLandscape={isLandscape}
-                              graphic={theme.media.navCard.indicators[indicator.get('id')]}
-                            />
-                          );
-                        })}
-                      </Box>
-                    </Group>
-                  );
-                }
-              )}
-            </Box>
-          )}
-        </Content>
-      </ViewContainer>
-      <Footer backgroundImage="footer_facts" />
-    </ContainerWrapper>
+                      </Group>
+                    );
+                  }
+                )}
+              </Box>
+            )}
+          </Content>
+        </ViewContainer>
+      </ContainerWrapper>
+      <Footer backgroundImage="footer_facts" backgroundColor />
+    </>
   );
 }
 

@@ -377,7 +377,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
       ];
     }
     return (
-      <div>
+      <>
         {config.downloadCSV && this.state.downloadActive && (
           <ReactModal
             isOpen
@@ -647,7 +647,7 @@ export class EntityList extends React.PureComponent { // eslint-disable-line rea
             />
           </Progress>
         )}
-      </div>
+      </>
     );
   }
 }

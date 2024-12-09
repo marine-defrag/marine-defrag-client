@@ -22,7 +22,7 @@ const Content = React.forwardRef(
       <ContainerWrapper
         bg={isSingle}
         ref={ref}
-        isStatic={withoutHeaderNav || isStatic}
+        isStatic={withoutHeaderNav || isSingle || isStatic}
         isContent
         isPrint={isPrint}
         onClick={(e) => {

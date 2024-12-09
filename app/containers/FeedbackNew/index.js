@@ -103,7 +103,7 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
     } = viewDomain.get('page').toJS();
 
     return (
-      <div>
+      <>
         <Helmet
           title={`${intl.formatMessage(messages.pageTitle)}`}
           meta={[{
@@ -179,7 +179,7 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
           {saveSending && <Loading />}
         </ContentNarrow>
         <Footer />
-      </div>
+      </>
     );
   }
 }

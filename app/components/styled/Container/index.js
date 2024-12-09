@@ -4,7 +4,7 @@ const Container = styled.div`
   margin-right: auto;
   margin-left: auto;
   max-width: 100%;
-  padding-bottom: ${({ noPaddingBottom, inModal, isPrint }) => (isPrint || noPaddingBottom || inModal) ? 0 : '3em'};
+  padding-bottom: ${({ noPaddingBottom, inModal }) => (noPaddingBottom || inModal) ? 0 : '100px'};
   padding-left: ${({ inModal }) => inModal ? 0 : 12}px;
   padding-right: ${({ inModal }) => inModal ? 0 : 12}px;
   background-color: ${({ inModal, bg, theme }) => (inModal || bg) ? theme.global.colors.background : 'transparent'};
@@ -25,7 +25,7 @@ const Container = styled.div`
   @media print {
     max-width: 100%;
     width: 100%;
-    padding: 0;
+    padding-bottom: 100px;
     margin: 0;
     background-color: transparent;
   }

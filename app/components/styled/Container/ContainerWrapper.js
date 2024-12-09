@@ -3,6 +3,7 @@ import React from 'react';
 import { usePrint } from 'containers/App/PrintContext';
 
 const Styled = styled.div`
+  flex: 1;
   position: ${({ isStatic, isPrint }) => (isPrint || isStatic) ? 'static' : 'absolute'};
   top: ${({ headerStyle, theme }) => {
     if (headerStyle === 'types') {

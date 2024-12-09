@@ -37,7 +37,6 @@ const GroupTitle = styled.h5`
   color: ${({ theme }) => theme.global.colors.text.brand};
 `;
 const ViewContainer = styled(Container)`
-  min-height: 70vH;
   @media print {
     min-height: 50vH;
   }
@@ -65,93 +64,95 @@ export function ActorsOverview({
   );
 
   return (
-    <ContainerWrapper bg>
-      <HeaderExplore />
-      <ViewContainer>
-        <Content>
-          {groupIds.map((key) => {
-            const isLandscape = qe(key, 1);
-            return (
-              <Group key={key}>
-                <GroupTitle>
-                  <FormattedMessage {...appMessages.actortypeGroups[key]} />
-                </GroupTitle>
-                <Box
-                  direction="row"
-                  wrap
-                  margin={{ horizontal: '-6px' }}
-                >
-                  {ACTORTYPE_GROUPS[key].types.map((typeId) => {
-                    const path = `${ROUTES.ACTORS}/${typeId}`;
-                    const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
-                    let viewLinks = [];
+    <>
+      <ContainerWrapper isStatic bg>
+        <HeaderExplore />
+        <ViewContainer>
+          <Content>
+            {groupIds.map((key) => {
+              const isLandscape = qe(key, 1);
+              return (
+                <Group key={key}>
+                  <GroupTitle>
+                    <FormattedMessage {...appMessages.actortypeGroups[key]} />
+                  </GroupTitle>
+                  <Box
+                    direction="row"
+                    wrap
+                    margin={{ horizontal: '-6px' }}
+                  >
+                    {ACTORTYPE_GROUPS[key].types.map((typeId) => {
+                      const path = `${ROUTES.ACTORS}/${typeId}`;
+                      const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
+                      let viewLinks = [];
 
-                    if (CONFIG.views
-                      && CONFIG.views.map
-                      && CONFIG.views.map.types
-                      && CONFIG.views.map.types.indexOf(typeId) > -1
-                    ) {
-                      viewLinks = [
-                        ...viewLinks,
-                        {
-                          key: 'map',
-                          icon: <Icon name="mapView" />,
-                          onClick: () => onUpdatePath(path, 'map'),
-                          title: 'Go to map view',
-                        },
-                      ];
-                    }
-                    if (CONFIG.views && !!CONFIG.views.list) {
-                      viewLinks = [
-                        ...viewLinks,
-                        {
-                          key: 'list',
-                          icon: <Icon name="listView" />,
-                          onClick: () => onUpdatePath(path, 'list'),
-                          title: 'Go to list view',
-                        },
-                      ];
-                    }
-                    let basis = 'full';
-                    if (!isLandscape && isMinSize(size, 'medium')) {
-                      basis = '1/2';
-                    }
-                    if (!isLandscape && isMinSize(size, 'large')) {
-                      basis = '1/4';
-                    }
-                    return (
-                      <CardTeaser
-                        key={typeId}
-                        basis={basis}
-                        isLandscape={isLandscape}
-                        path={path}
-                        onClick={(evt) => {
-                          if (evt && evt.preventDefault) evt.preventDefault();
-                          onUpdatePath(path);
-                        }}
-                        dataReady={dataReady}
-                        count={count}
-                        title={
-                          intl.formatMessage(appMessages.actortypes_long[typeId])
-                        }
-                        description={
-                          intl.formatMessage(appMessages.actortypes_about[typeId])
-                        }
-                        viewLinks={viewLinks}
-                        searchOptions={typeId === ACTORTYPES.COUNTRY ? countries : null}
-                        onSelectResult={(actorId) => onSelectActor(actorId)}
-                        graphic={theme.media.navCard.actors[typeId]}
-                      />
-                    );
-                  })}
-                </Box>
-              </Group>
-            );
-          })}
-        </Content>
-      </ViewContainer>
-      <Footer backgroundImage="footer_actors" />
-    </ContainerWrapper>
+                      if (CONFIG.views
+                        && CONFIG.views.map
+                        && CONFIG.views.map.types
+                        && CONFIG.views.map.types.indexOf(typeId) > -1
+                      ) {
+                        viewLinks = [
+                          ...viewLinks,
+                          {
+                            key: 'map',
+                            icon: <Icon name="mapView" />,
+                            onClick: () => onUpdatePath(path, 'map'),
+                            title: 'Go to map view',
+                          },
+                        ];
+                      }
+                      if (CONFIG.views && !!CONFIG.views.list) {
+                        viewLinks = [
+                          ...viewLinks,
+                          {
+                            key: 'list',
+                            icon: <Icon name="listView" />,
+                            onClick: () => onUpdatePath(path, 'list'),
+                            title: 'Go to list view',
+                          },
+                        ];
+                      }
+                      let basis = 'full';
+                      if (!isLandscape && isMinSize(size, 'medium')) {
+                        basis = '1/2';
+                      }
+                      if (!isLandscape && isMinSize(size, 'large')) {
+                        basis = '1/4';
+                      }
+                      return (
+                        <CardTeaser
+                          key={typeId}
+                          basis={basis}
+                          isLandscape={isLandscape}
+                          path={path}
+                          onClick={(evt) => {
+                            if (evt && evt.preventDefault) evt.preventDefault();
+                            onUpdatePath(path);
+                          }}
+                          dataReady={dataReady}
+                          count={count}
+                          title={
+                            intl.formatMessage(appMessages.actortypes_long[typeId])
+                          }
+                          description={
+                            intl.formatMessage(appMessages.actortypes_about[typeId])
+                          }
+                          viewLinks={viewLinks}
+                          searchOptions={typeId === ACTORTYPES.COUNTRY ? countries : null}
+                          onSelectResult={(actorId) => onSelectActor(actorId)}
+                          graphic={theme.media.navCard.actors[typeId]}
+                        />
+                      );
+                    })}
+                  </Box>
+                </Group>
+              );
+            })}
+          </Content>
+        </ViewContainer>
+      </ContainerWrapper>
+      <Footer backgroundImage="footer_actors" backgroundColor />
+    </>
   );
 }
 
@@ -167,7 +168,7 @@ ActorsOverview.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  dataReady: (state) => selectReady(state, DEPENDENCIES),
+  dataReady: (state) => selectReady(state, { path: DEPENDENCIES }),
   types: (state) => selectActortypesWithActorCount(state),
   isUserManager: (state) => selectIsUserManager(state),
   countries: (state) => selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),

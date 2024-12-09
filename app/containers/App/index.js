@@ -97,6 +97,9 @@ const getPrintWidth = ({
   return '100%';
 };
 const PrintWrapperInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   position: ${({ isPrint, fixed = false }) => (isPrint && fixed) ? 'absolute' : 'static'};
   top: ${({ isPrint }) => isPrint ? 20 : 0}px;
   bottom: ${({ isPrint, fixed = false }) => {
@@ -111,6 +114,7 @@ const PrintWrapperInner = styled.div`
   right: ${({ isPrint }) => isPrint ? 20 : 0}px;
   left: ${({ isPrint }) => isPrint ? 20 : 0}px;
   @media print {
+    display: initial;
     position: absolute;
     top: 0;
     left: 0;
@@ -121,7 +125,11 @@ const PrintWrapperInner = styled.div`
   }
 `;
 const PrintWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   position: relative;
+  width: ${(props) => getPrintWidth(props)};
+  min-height: ${(props) => getPrintHeight(props)};
   margin-bottom: ${({ isPrint }) => isPrint ? '140px' : '0px'};
   margin-right: ${({ isPrint }) => isPrint ? 'auto' : '0px'};
   margin-left: ${({ isPrint }) => isPrint ? 'auto' : '0px'};
@@ -134,12 +142,12 @@ const PrintWrapper = styled.div`
     }
     return 0;
   }};
-  width: ${(props) => getPrintWidth(props)};
-  height: ${(props) => getPrintHeight(props)};
-  min-height: ${(props) => props.isPrint ? getPrintHeight({ ...props, fixed: true }) : 'auto'};
   box-shadow: ${({ isPrint }) => isPrint ? '0px 0px 5px 0px rgb(0 0 0 / 50%)' : 'none'};
   padding: ${({ isPrint }) => isPrint ? 20 : 0}px;
+  overflow: hidden;
   @media print {
+    min-height: ${(props) => props.isPrint ? getPrintHeight({ ...props, fixed: true }) : 'auto'};
+    display: static;
     position: static;
     box-shadow: none;
     padding: 0;

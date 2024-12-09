@@ -10,33 +10,13 @@ export default defineMessages({
     id: 'app.containers.Footer.disclaimer',
     defaultMessage: 'Every care has been taken to ensure the accuracy of this data and information. Please send any feedback to ',
   },
-  disclaimer2: {
-    id: 'app.containers.Footer.disclaimer2',
+  contactHint: {
+    id: 'app.containers.Footer.contactHint',
     defaultMessage: 'Every care has been taken to ensure the accuracy of this data and information. Please send any feedback to ',
-  },
-  contact: {
-    email: {
-      id: 'app.containers.Footer.contact.email',
-      defaultMessage: 'contact@project.url',
-    },
-    anchor: {
-      id: 'app.containers.Footer.contact.anchor',
-      defaultMessage: 'contact@project.url',
-    },
   },
   contactUs: {
     id: 'app.containers.Footer.contactUs',
     defaultMessage: 'Contact us',
-  },
-  contact2: {
-    email: {
-      id: 'app.containers.Footer.contact2.email',
-      defaultMessage: 'contact@project.url',
-    },
-    anchor: {
-      id: 'app.containers.Footer.contact2.anchor',
-      defaultMessage: 'contact@project.url',
-    },
   },
   responsible: {
     text: {

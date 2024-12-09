@@ -53,7 +53,7 @@ export class UserRegister extends React.PureComponent { // eslint-disable-line r
     const { registerError, registerSending } = this.props.viewDomain.get('page').toJS();
 
     return (
-      <div>
+      <>
         <Helmet
           title={`${intl.formatMessage(messages.pageTitle)}`}
           meta={[
@@ -126,7 +126,7 @@ export class UserRegister extends React.PureComponent { // eslint-disable-line r
           </BottomLinks>
         </ContentNarrow>
         <Footer />
-      </div>
+      </>
     );
   }
 }
