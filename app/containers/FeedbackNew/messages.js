@@ -28,7 +28,7 @@ export default defineMessages({
   },
   sendSuccess: {
     id: 'app.containers.FeedbackNew.sendSuccess',
-    defaultMessage: 'Message was sent successfully.',
+    defaultMessage: 'Thank you very much! Your message was sent successfully.',
   },
   resetForm: {
     id: 'app.containers.FeedbackNew.resetForm',
