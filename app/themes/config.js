@@ -17,7 +17,7 @@ export const VERSION = `${version}${IS_DEV ? ' [DEV]' : ''}`;
 export const ENDPOINTS = {
   API: IS_DEV
     ? 'https://marine-defrag-api.herokuapp.com'
-    : 'https://67vn6.hatchboxapp.com', // server API endpoint
+    : 'https://api.marine-defrag.org', // server API endpoint
   SIGN_IN: 'auth/sign_in',
   SIGN_OUT: 'auth/sign_out',
   PASSWORD: 'auth/password',
@@ -71,6 +71,7 @@ export const ROUTES = {
   CATEGORY: '/category',
   PAGES: '/pages',
   SEARCH: '/search',
+  FEEDBACK: '/contact',
 };
 
 // Server endpoints for database tables **************************
@@ -98,6 +99,7 @@ export const API = {
   ROLES: 'roles',
   PAGES: 'pages',
   BOOKMARKS: 'bookmarks',
+  FEEDBACKS: 'feedbacks',
 };
 
 export const ACTIONTYPES = {
