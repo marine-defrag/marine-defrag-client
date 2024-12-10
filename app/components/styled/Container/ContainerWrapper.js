@@ -18,7 +18,7 @@ const Styled = styled.div`
   left: 0;
   right: 0;
   overflow-x: initial;
-  overflow-y: initial;
+  overflow-y: ${({ isScrollContainer }) => isScrollContainer ? 'auto' : 'initial'};
   z-index: 90;
   background-color: ${({ bg, isPrint }) => (bg && !isPrint) ? '#f1f0f1' : 'transparent'};
   @media print {
