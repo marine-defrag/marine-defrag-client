@@ -38,6 +38,7 @@ import { keydownHandlerPrint } from 'utils/print';
 import Loading from 'components/Loading';
 import Content from 'components/Content';
 import EntityView from 'components/EntityView';
+import Footer from 'containers/Footer';
 
 import {
   selectReady,
@@ -207,7 +208,7 @@ export function ResourceView({
     : `${pageTitle}: ${params.id}`;
   // const isPrint = usePrint();
   return (
-    <div>
+    <>
       <Helmet
         title={metaTitle}
         meta={[
@@ -256,7 +257,8 @@ export function ResourceView({
           )
         }
       </Content>
-    </div>
+      <Footer />
+    </>
   );
 }
 

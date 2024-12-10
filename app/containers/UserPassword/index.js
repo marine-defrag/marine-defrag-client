@@ -21,6 +21,7 @@ import Loading from 'components/Loading';
 import ContentNarrow from 'components/ContentNarrow';
 import ContentHeader from 'components/ContentHeader';
 import AuthForm from 'components/forms/AuthForm';
+import Footer from 'containers/Footer';
 
 import { updatePath } from 'containers/App/actions';
 
@@ -41,7 +42,7 @@ export class UserPassword extends React.PureComponent { // eslint-disable-line r
     const reference = this.props.params.id;
 
     return (
-      <div>
+      <>
         <Helmet
           title={`${intl.formatMessage(messages.pageTitle)}`}
           meta={[
@@ -78,7 +79,8 @@ export class UserPassword extends React.PureComponent { // eslint-disable-line r
             )
           }
         </ContentNarrow>
-      </div>
+        <Footer />
+      </>
     );
   }
 }

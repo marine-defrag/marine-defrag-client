@@ -60,6 +60,7 @@ import ViewPanel from 'components/EntityView/ViewPanel';
 import ViewPanelInside from 'components/EntityView/ViewPanelInside';
 import FieldGroup from 'components/fields/FieldGroup';
 import HeaderPrint from 'components/Header/HeaderPrint';
+import Footer from 'containers/Footer';
 
 import appMessages from 'containers/App/messages';
 import messages from './messages';
@@ -155,7 +156,7 @@ export function ActorView({
     || hasTaxonomyCategories(viewTaxonomies)
     || associationsByType;
   return (
-    <div>
+    <>
       <Helmet
         title={metaTitle}
         meta={[
@@ -310,7 +311,8 @@ export function ActorView({
           </ViewWrapper>
         )}
       </Content>
-    </div>
+      <Footer />
+    </>
   );
 }
 

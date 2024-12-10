@@ -32,10 +32,18 @@ const BrandTitle = styled((p) => <Heading level={1} {...p} />)`
   margin: 0;
   font-family: ${(props) => props.theme.fonts.title};
   font-size: ${(props) => props.theme.text.small.size};
-  line-height: ${(props) => props.theme.text.small.size};
+  line-height: ${(props) => props.theme.text.smallTight.height};
   font-weight: 500;
   padding: 0;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    font-size: ${(props) => props.theme.text.large.size};
+    line-height: ${(props) => props.theme.text.large.size};
+  }
+  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
+    font-size: ${(props) => props.theme.text.small.size};
+    line-height: ${(props) => props.theme.text.smallTight.height};
+  }
+  @media (min-width: ${(props) => props.theme.breakpoints.xlarge}) {
     font-size: ${(props) => props.theme.text.large.size};
     line-height: ${(props) => props.theme.text.large.size};
   }

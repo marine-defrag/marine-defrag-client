@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+// import styled, { keyframes, css } from 'styled-components';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 
 import { isMinSize } from 'utils/responsive';
@@ -11,16 +12,37 @@ import {
 
 import NormalImg from 'components/Img';
 import Icon from 'components/Icon';
+import Loading from 'components/Loading';
 
 import Search from './Search';
 import BottomButtons from './BottomButtons';
 
 import messages from './messages';
 
+// const pulsateOpacity = keyframes`
+//   0% {
+//     opacity: 1;
+//   }
+//   50% {
+//     opacity: 0.6;
+//   }
+//   100% {
+//     opacity: 1;
+//   }
+// `;
+//
+//   opacity: 1;
+//   ${({ isLoading }) => isLoading && css`
+//     animation: ${pulsateOpacity} 1.5s infinite;
+//     pointer-events: none;
+//   `}
+
+
 const ArrowIcon = styled(Icon)`
   font-weight: bold;
 `;
 const ExploreText = styled((p) => <Text weight="bold" {...p} />)``;
+
 
 const Styled = styled((p) => (
   <Box pad="xsmall" responsive={false} {...p} />
@@ -72,11 +94,16 @@ export function CardTeaser({
   searchOptions,
   onSelectResult,
   graphic,
+  dataReady,
 }) {
   const size = useContext(ResponsiveContext);
-  const isPrimaryLayout = isLandscape && isMinSize(size, 'ms');
+  const isPrimaryLayout = isLandscape && isMinSize(size, 'medium');
+
   return (
-    <Styled basis={basis || 'full'}>
+    <Styled
+      basis={basis || 'full'}
+      isLoading={!dataReady}
+    >
       <CardWrapper>
         {searchOptions && isMinSize(size, 'large') && (
           <SearchWrapper direction="row" justify="end" fill="horizontal" style={{ pointerEvents: 'none' }}>
@@ -114,7 +141,22 @@ export function CardTeaser({
               basis={isPrimaryLayout ? '1/2' : 'auto'}
             >
               <TitleWrap gap="none" margin={{ bottom: 'small' }}>
-                <Count weight="bold" size={isPrimaryLayout ? 'xxxlarge' : 'xlarge'}>{count}</Count>
+                {!dataReady && (
+                  <Box
+                    margin={{ vertical: 'small' }}
+                    style={{ maxWidth: isPrimaryLayout ? '120px' : '60px' }}
+                  >
+                    <Loading />
+                  </Box>
+                )}
+                {dataReady && (
+                  <Count
+                    weight="bold"
+                    size={isPrimaryLayout ? 'xxxlarge' : 'xlarge'}
+                  >
+                    {count}
+                  </Count>
+                )}
                 <Title weight="bold" size={isPrimaryLayout ? 'xlarge' : 'normal'}>
                   {title}
                 </Title>
@@ -150,7 +192,7 @@ export function CardTeaser({
 CardTeaser.propTypes = {
   intl: intlShape.isRequired,
   isLandscape: PropTypes.bool,
-  // dataReady: PropTypes.bool,
+  dataReady: PropTypes.bool,
   onClick: PropTypes.func,
   path: PropTypes.string,
   count: PropTypes.number,

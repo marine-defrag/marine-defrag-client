@@ -2,16 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Keyboard as KeyboardListener } from 'grommet';
 
-import styled from 'styled-components';
-
-const StyledSpan = styled.span`
-`;
-
 const Keyboard = ({ children, spanStyle, ...props }) => (
   <KeyboardListener {...props}>
-    <StyledSpan style={spanStyle}>
+    <span style={spanStyle}>
       {children}
-    </StyledSpan>
+    </span>
   </KeyboardListener>
 );
 

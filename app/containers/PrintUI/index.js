@@ -72,7 +72,7 @@ const StyledGroupLabel = styled(GroupLabel)`
 
 const Label = styled((p) => <Text size="small" {...p} />)``;
 
-const Footer = styled.div`
+const ComponentFooter = styled.div`
   position: fixed;
   width: 100%;
   left: 0;
@@ -434,7 +434,7 @@ export function PrintUI({
           </Box>
         </StyledForm>
       </StyledContainer>
-      <Footer>
+      <ComponentFooter>
         <FooterContainer>
           <Box direction="row" justify="end">
             <StyledButtonCancel type="button" onClick={close}>
@@ -448,7 +448,7 @@ export function PrintUI({
             </ButtonSubmit>
           </Box>
         </FooterContainer>
-      </Footer>
+      </ComponentFooter>
     </Styled>
   );
 }

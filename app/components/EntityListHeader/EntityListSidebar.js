@@ -33,17 +33,21 @@ const ListEntitiesEmpty = styled.div`
   padding: 1.5em;
   color: ${palette('text', 1)};
   @media print {
-    font-size: ${(props) => props.theme.sizes.print.large};
+    font-size: ${({ theme }) => theme.sizes.print.large};
   }
 `;
 
 const SidebarWrapper = styled.div`
-  position: absolute;
-  top: 0;
+  position: fixed;
+  top: ${({ theme }) => theme.sizes.header.banner.heightMobile}px;
   bottom: 0;
   right: 0;
   z-index: 100;
+  @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
+    top: ${({ theme }) => theme.sizes.header.banner.height}px;
+  }
 `;
+
 const StyledButton = styled((p) => <Button {...p} />)`
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.global.colors.highlight};

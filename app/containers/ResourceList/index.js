@@ -130,7 +130,7 @@ export function ResourceList({
 
   // connectedTaxonomies={connectedTaxonomies}
   return (
-    <div>
+    <>
       <Helmet
         title={`${intl.formatMessage(messages.pageTitle)}`}
         meta={[
@@ -155,7 +155,7 @@ export function ResourceList({
         onSelectType={onSelectType}
         typeId={typeId}
       />
-    </div>
+    </>
   );
 }
 

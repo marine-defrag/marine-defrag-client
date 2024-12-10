@@ -48,15 +48,12 @@ import messages from './messages';
 import { selectViewEntity } from './selectors';
 import { DEPENDENCIES } from './constants';
 
-const StyledContainerWrapper = styled((p) => <ContainerWrapper {...p} />)`
+const StyledContainerWrapper = styled((p) => <ContainerWrapper isStatic {...p} />)`
   background-color: ${palette('primary', 4)}
 `;
 
 const ViewContainer = styled(Container)`
-  min-height: ${({ isPrint }) => isPrint ? '50vH' : '85vH'};
-  @media print {
-    min-height: 50vH;
-  }
+  min-height: 50vH;
 `;
 
 const getBodyAsideFields = (entity) => ([{
@@ -132,7 +129,7 @@ export function PageView({
     }
   }
   return (
-    <div>
+    <>
       <Helmet
         title={page ? page.getIn(['attributes', 'title']) : `${intl.formatMessage(messages.pageTitle)}: ${params.id}`}
         meta={[
@@ -161,9 +158,9 @@ export function PageView({
             />
           )}
         </ViewContainer>
-        <Footer />
       </StyledContainerWrapper>
-    </div>
+      <Footer />
+    </>
   );
 }
 

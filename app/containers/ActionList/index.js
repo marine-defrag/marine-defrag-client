@@ -201,7 +201,7 @@ export function ActionList({
   }
 
   return (
-    <div>
+    <>
       <Helmet
         title={intl.formatMessage(messages.pageTitle)}
         meta={[
@@ -245,7 +245,7 @@ export function ActionList({
           isManager={isManager}
         />
       )}
-    </div>
+    </>
   );
 }
 

@@ -52,7 +52,8 @@ const Main = styled.div`
   left: 0;
   right: 0;
   bottom:0;
-  overflow: ${({ isPrint }) => isPrint ? 'auto' : 'hidden'};
+  overflow-x: ${({ isPrint }) => isPrint ? 'auto' : 'hidden'};
+  overflow-y: auto;
   width: auto;
   overflow-y: auto;
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
@@ -96,6 +97,9 @@ const getPrintWidth = ({
   return '100%';
 };
 const PrintWrapperInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   position: ${({ isPrint, fixed = false }) => (isPrint && fixed) ? 'absolute' : 'static'};
   top: ${({ isPrint }) => isPrint ? 20 : 0}px;
   bottom: ${({ isPrint, fixed = false }) => {
@@ -110,6 +114,7 @@ const PrintWrapperInner = styled.div`
   right: ${({ isPrint }) => isPrint ? 20 : 0}px;
   left: ${({ isPrint }) => isPrint ? 20 : 0}px;
   @media print {
+    display: initial;
     position: absolute;
     top: 0;
     left: 0;
@@ -120,7 +125,11 @@ const PrintWrapperInner = styled.div`
   }
 `;
 const PrintWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   position: relative;
+  width: ${(props) => getPrintWidth(props)};
+  min-height: ${(props) => getPrintHeight(props)};
   margin-bottom: ${({ isPrint }) => isPrint ? '140px' : '0px'};
   margin-right: ${({ isPrint }) => isPrint ? 'auto' : '0px'};
   margin-left: ${({ isPrint }) => isPrint ? 'auto' : '0px'};
@@ -133,12 +142,12 @@ const PrintWrapper = styled.div`
     }
     return 0;
   }};
-  width: ${(props) => getPrintWidth(props)};
-  height: ${(props) => getPrintHeight(props)};
-  min-height: ${(props) => props.isPrint ? getPrintHeight({ ...props, fixed: true }) : 'auto'};
   box-shadow: ${({ isPrint }) => isPrint ? '0px 0px 5px 0px rgb(0 0 0 / 50%)' : 'none'};
   padding: ${({ isPrint }) => isPrint ? 20 : 0}px;
+  overflow: hidden;
   @media print {
+    min-height: ${(props) => props.isPrint ? getPrintHeight({ ...props, fixed: true }) : 'auto'};
+    display: static;
     position: static;
     box-shadow: none;
     padding: 0;
@@ -154,13 +163,33 @@ const PrintWrapper = styled.div`
 class App extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   inertRef = React.createRef();
 
+  scrollRef = React.createRef();
+
   UNSAFE_componentWillMount() {
     this.props.validateToken();
     this.updateInert();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     this.updateInert();
+    this.resetScroll(prevProps);
+  }
+
+  resetScroll(prevProps) {
+    if (this.scrollRef.current) {
+      if (prevProps.location.pathname !== this.props.location.pathname) {
+        this.scrollRef.current.scrollTo({ top: 0 });
+      } else if (prevProps.location.query && this.props.location.query) {
+        const prevQuery = prevProps.location.query;
+        const { query } = this.props.location;
+        if (
+          prevQuery.page !== query.page
+          || prevQuery.items !== query.items
+        ) {
+          this.scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+    }
   }
 
   updateInert() {
@@ -286,7 +315,13 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             currentPath={location.pathname}
           />
         )}
-        <Main isHome={isHome} isPrint={isPrintView} role="main" id="main-content">
+        <Main
+          id="main-content"
+          role="main"
+          ref={this.scrollRef}
+          isHome={isHome}
+          isPrint={isPrintView}
+        >
           {isPrintView && (
             <PrintUI />
           )}

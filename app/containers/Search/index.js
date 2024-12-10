@@ -31,6 +31,7 @@ import Loading from 'components/Loading';
 import ContentHeader from 'components/ContentHeader';
 import TagSearch from 'components/TagSearch';
 import Content from 'components/styled/ContentSimple';
+import Footer from 'containers/Footer';
 
 import EntityListItem from 'components/EntityListItem';
 
@@ -140,14 +141,14 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
     }];
 
     return (
-      <div>
+      <>
         <Helmet
           title={intl.formatMessage(messages.pageTitle)}
           meta={[
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <ContainerWrapper>
+        <ContainerWrapper isStatic>
           <Container>
             <Content>
               <ContentHeader
@@ -279,7 +280,8 @@ export class Search extends React.PureComponent { // eslint-disable-line react/p
             </Content>
           </Container>
         </ContainerWrapper>
-      </div>
+        <Footer />
+      </>
     );
   }
 }

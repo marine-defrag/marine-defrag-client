@@ -37,7 +37,6 @@ const GroupTitle = styled.h5`
   color: ${({ theme }) => theme.global.colors.text.brand};
 `;
 const ViewContainer = styled(Container)`
-  min-height: 70vH;
   @media print {
     min-height: 50vH;
   }
@@ -55,105 +54,106 @@ export function ActionsOverview({
   }, []);
   const theme = React.useContext(ThemeContext);
   const size = React.useContext(ResponsiveContext);
-
   return (
-    <ContainerWrapper bg>
-      <HeaderExplore />
-      <ViewContainer>
-        <Content>
-          {Object.keys(ACTIONTYPE_GROUPS).map((key) => {
-            const isLandscape = qe(key, 1);
-            return (
-              <Group key={key}>
-                <GroupTitle>
-                  <FormattedMessage {...appMessages.actiontypeGroups[key]} />
-                </GroupTitle>
-                <Box
-                  direction="row"
-                  wrap
-                  margin={{ horizontal: '-6px' }}
-                >
-                  {ACTIONTYPE_GROUPS[key].types.map((typeId) => {
-                    const path = `${ROUTES.ACTIONS}/${typeId}`;
-                    const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
-                    let viewLinks = [];
-                    if (CONFIG.views
-                      && CONFIG.views.map
-                      && CONFIG.views.map.types
-                      && CONFIG.views.map.types.indexOf(typeId) > -1) {
-                      viewLinks = [
-                        ...viewLinks,
-                        {
-                          key: 'map',
-                          icon: <Icon name="mapView" />,
-                          onClick: () => onUpdatePath(path, 'map'),
-                          title: 'Go to map view',
-                        },
-                      ];
-                    }
-                    if (CONFIG.views
-                      && CONFIG.views.timeline
-                      && CONFIG.views.timeline.types
-                      && CONFIG.views.timeline.types.indexOf(typeId) > -1) {
-                      viewLinks = [
-                        ...viewLinks,
-                        {
-                          key: 'timeline',
-                          icon: <Icon name="timelineView" />,
-                          onClick: () => onUpdatePath(path, 'time'),
-                          title: 'Go to timeline view',
-                        },
-                      ];
-                    }
-                    if (CONFIG.views && !!CONFIG.views.list) {
-                      viewLinks = [
-                        ...viewLinks,
-                        {
-                          key: 'list',
-                          icon: <Icon name="listView" />,
-                          onClick: () => onUpdatePath(path, 'list'),
-                          title: 'Go to list view',
-                        },
-                      ];
-                    }
-                    let basis = 'full';
-                    if (!isLandscape && isMinSize(size, 'medium')) {
-                      basis = '1/2';
-                    }
-                    if (!isLandscape && isMinSize(size, 'large')) {
-                      basis = '1/4';
-                    }
-                    return (
-                      <CardTeaser
-                        key={typeId}
-                        path={path}
-                        basis={basis}
-                        onClick={(evt) => {
-                          if (evt && evt.preventDefault) evt.preventDefault();
-                          onUpdatePath(path);
-                        }}
-                        dataReady={dataReady}
-                        count={count}
-                        title={
-                          intl.formatMessage(appMessages.actiontypes_long[typeId])
-                        }
-                        description={
-                          intl.formatMessage(appMessages.actiontypes_about[typeId])
-                        }
-                        viewLinks={viewLinks}
-                        isLandscape={isLandscape}
-                        graphic={theme.media.navCard.activities[typeId]}
-                      />
-                    );
-                  })}
-                </Box>
-              </Group>
-            );
-          })}
-        </Content>
-      </ViewContainer>
-      <Footer backgroundImage="footer_actions" />
-    </ContainerWrapper>
+    <>
+      <ContainerWrapper isStatic bg>
+        <HeaderExplore />
+        <ViewContainer>
+          <Content>
+            {Object.keys(ACTIONTYPE_GROUPS).map((key) => {
+              const isLandscape = qe(key, 1);
+              return (
+                <Group key={key}>
+                  <GroupTitle>
+                    <FormattedMessage {...appMessages.actiontypeGroups[key]} />
+                  </GroupTitle>
+                  <Box
+                    direction="row"
+                    wrap
+                    margin={{ horizontal: '-6px' }}
+                  >
+                    {ACTIONTYPE_GROUPS[key].types.map((typeId) => {
+                      const path = `${ROUTES.ACTIONS}/${typeId}`;
+                      const count = types.getIn([typeId, 'count']) ? parseInt(types.getIn([typeId, 'count']), 10) : 0;
+                      let viewLinks = [];
+                      if (CONFIG.views
+                        && CONFIG.views.map
+                        && CONFIG.views.map.types
+                        && CONFIG.views.map.types.indexOf(typeId) > -1) {
+                        viewLinks = [
+                          ...viewLinks,
+                          {
+                            key: 'map',
+                            icon: <Icon name="mapView" />,
+                            onClick: () => onUpdatePath(path, 'map'),
+                            title: 'Go to map view',
+                          },
+                        ];
+                      }
+                      if (CONFIG.views
+                        && CONFIG.views.timeline
+                        && CONFIG.views.timeline.types
+                        && CONFIG.views.timeline.types.indexOf(typeId) > -1) {
+                        viewLinks = [
+                          ...viewLinks,
+                          {
+                            key: 'timeline',
+                            icon: <Icon name="timelineView" />,
+                            onClick: () => onUpdatePath(path, 'time'),
+                            title: 'Go to timeline view',
+                          },
+                        ];
+                      }
+                      if (CONFIG.views && !!CONFIG.views.list) {
+                        viewLinks = [
+                          ...viewLinks,
+                          {
+                            key: 'list',
+                            icon: <Icon name="listView" />,
+                            onClick: () => onUpdatePath(path, 'list'),
+                            title: 'Go to list view',
+                          },
+                        ];
+                      }
+                      let basis = 'full';
+                      if (!isLandscape && isMinSize(size, 'medium')) {
+                        basis = '1/2';
+                      }
+                      if (!isLandscape && isMinSize(size, 'large')) {
+                        basis = '1/4';
+                      }
+                      return (
+                        <CardTeaser
+                          key={typeId}
+                          path={path}
+                          basis={basis}
+                          onClick={(evt) => {
+                            if (evt && evt.preventDefault) evt.preventDefault();
+                            onUpdatePath(path);
+                          }}
+                          dataReady={dataReady}
+                          count={count}
+                          title={
+                            intl.formatMessage(appMessages.actiontypes_long[typeId])
+                          }
+                          description={
+                            intl.formatMessage(appMessages.actiontypes_about[typeId])
+                          }
+                          viewLinks={viewLinks}
+                          isLandscape={isLandscape}
+                          graphic={theme.media.navCard.activities[typeId]}
+                        />
+                      );
+                    })}
+                  </Box>
+                </Group>
+              );
+            })}
+          </Content>
+        </ViewContainer>
+      </ContainerWrapper>
+      <Footer backgroundImage="footer_actions" backgroundColor />
+    </>
   );
 }
 
@@ -166,7 +166,7 @@ ActionsOverview.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  dataReady: (state) => selectReady(state, DEPENDENCIES),
+  dataReady: (state) => selectReady(state, { path: DEPENDENCIES }),
   types: (state) => selectActiontypesWithActionCount(state),
 });
 

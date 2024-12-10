@@ -68,6 +68,7 @@ import ViewPanel from 'components/EntityView/ViewPanel';
 import ViewPanelInside from 'components/EntityView/ViewPanelInside';
 import FieldGroup from 'components/fields/FieldGroup';
 import HeaderPrint from 'components/Header/HeaderPrint';
+import Footer from 'containers/Footer';
 
 import appMessages from 'containers/App/messages';
 import messages from './messages';
@@ -199,7 +200,7 @@ export function ActionView({
     datesEqual = ds === de;
   }
   return (
-    <div>
+    <>
       <Helmet
         title={metaTitle}
         meta={[
@@ -423,7 +424,8 @@ export function ActionView({
           </ViewWrapper>
         )}
       </Content>
-    </div>
+      <Footer />
+    </>
   );
 }
 

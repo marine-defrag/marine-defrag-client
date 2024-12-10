@@ -45,6 +45,7 @@ import { PRINT_TYPES } from 'containers/App/constants';
 import Loading from 'components/Loading';
 import Content from 'components/Content';
 import EntityView from 'components/EntityView';
+import Footer from 'containers/Footer';
 
 import {
   selectReady,
@@ -339,7 +340,7 @@ function CategoryView({
   }
 
   return (
-    <div>
+    <>
       <Helmet
         title={metaTitle}
         meta={[
@@ -390,7 +391,8 @@ function CategoryView({
           />
         )}
       </Content>
-    </div>
+      <Footer />
+    </>
   );
 }
 

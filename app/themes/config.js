@@ -24,7 +24,7 @@ export const ENDPOINTS = {
   VALIDATE_TOKEN: 'auth/validate_token',
 };
 
-export const CLIENT_URL = 'https://marine-defrag.web.app';
+export const CLIENT_URL = 'https://marine-defrag.org';
 
 // user roles
 export const USER_ROLES = {
@@ -56,6 +56,8 @@ export const ROUTES = {
   LOGIN: '/login',
   LOGOUT: '/logout',
   REGISTER: '/register',
+  RESET_PASSWORD: '/resetpassword',
+  RECOVER_PASSWORD: '/recoverpassword',
   UNAUTHORISED: '/unauthorised',
   USERS: '/users',
   ACTIONS: '/actions',
@@ -69,6 +71,7 @@ export const ROUTES = {
   CATEGORY: '/category',
   PAGES: '/pages',
   SEARCH: '/search',
+  FEEDBACK: '/contact',
 };
 
 // Server endpoints for database tables **************************
@@ -96,6 +99,7 @@ export const API = {
   ROLES: 'roles',
   PAGES: 'pages',
   BOOKMARKS: 'bookmarks',
+  FEEDBACKS: 'feedbacks',
 };
 
 export const ACTIONTYPES = {
@@ -949,7 +953,7 @@ export const ACTIONTYPES_CONFIG = {
 };
 
 
-export const KEEP_QUERY_ARGS = ['view', 'subj', 'msubj', 'tm', 'am', 'mvw'];
+export const KEEP_QUERY_ARGS = ['view', 'subj', 'msubj', 'tm', 'am', 'mvw', 'info'];
 
 // Language and date settings ********************
 // Note: you may also set the locales in i18n.js

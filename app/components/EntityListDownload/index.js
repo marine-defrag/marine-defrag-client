@@ -48,7 +48,7 @@ import {
 } from './utils';
 
 
-const Footer = styled.div`
+const ModalFooter = styled.div`
   width: 100%;
 `;
 
@@ -605,7 +605,7 @@ export function EntityListDownload({
           </Box>
         </Box>
       </Main>
-      <Footer>
+      <ModalFooter>
         <Box direction="row" justify="end">
           <StyledButtonCancel type="button" onClick={() => onClose()}>
             <FormattedMessage {...appMessages.buttons.cancel} />
@@ -629,7 +629,7 @@ export function EntityListDownload({
             </ButtonSubmit>
           </CsvDownloader>
         </Box>
-      </Footer>
+      </ModalFooter>
     </Content>
   );
 }

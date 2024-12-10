@@ -41,9 +41,12 @@ const GraphicHome = styled(NormalImg)`
 
 const Styled = styled.div`
   background: ${({ theme }) => theme.global.colors.background};
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 `;
 const SectionTop = styled.div`
-  min-height: 90vH;
+  flex: 1;
   display: ${(props) => props.hasBrand ? 'block' : 'table'};
   width: ${(props) => props.hasBrand ? 'auto' : '100%'};
   color: ${({ theme }) => theme.global.colors.brand};
