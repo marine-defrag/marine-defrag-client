@@ -6,7 +6,7 @@
   "app.containers.App.nav.logout": "Sign out",
   "app.containers.App.nav.register": "Register",
   "app.containers.Footer.disclaimer": "Every care has been taken to ensure the accuracy of this data and information.",
-  "app.containers.Footer.contactHint": "Please send any feedback on data and content using the contact form linked below",
+  "app.containers.Footer.contactHint": "Please send any feedback on data and content using the contact form linked below.",
   "app.containers.Footer.responsible.text": "Made available by",
   "app.containers.Footer.responsible.url": "https://www.giz.de/",
   "app.containers.Footer.responsible.anchor": "Deutsche Gesellschaft für Internationale Zusammenarbeit",
