@@ -483,7 +483,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Content ref={this.scrollContainer}>
+        <Content isScrollContainer ref={this.scrollContainer}>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}

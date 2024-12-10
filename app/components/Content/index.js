@@ -14,6 +14,7 @@ const Content = React.forwardRef(
       onClose,
       inModal,
       children,
+      isScrollContainer,
     },
     ref,
   ) => {
@@ -24,6 +25,7 @@ const Content = React.forwardRef(
         ref={ref}
         isStatic={withoutHeaderNav || isSingle || isStatic}
         isContent
+        isScrollContainer={isScrollContainer}
         isPrint={isPrint}
         onClick={(e) => {
           if (inModal && onClose) {
@@ -50,6 +52,7 @@ Content.propTypes = {
   withoutHeaderNav: PropTypes.bool,
   isStatic: PropTypes.bool,
   isSingle: PropTypes.bool,
+  isScrollContainer: PropTypes.bool,
   onClose: PropTypes.func,
 };
 

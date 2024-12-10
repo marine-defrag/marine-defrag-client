@@ -257,7 +257,7 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
             },
           ]}
         />
-        <Content ref={this.scrollContainer}>
+        <Content isScrollContainer ref={this.scrollContainer}>
           <ContentHeader
             title={pageTitle}
             type={CONTENT_SINGLE}

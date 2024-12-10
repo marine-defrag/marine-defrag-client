@@ -397,7 +397,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
             },
           ]}
         />
-        <Content ref={this.scrollContainer}>
+        <Content isScrollContainer ref={this.scrollContainer}>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}
