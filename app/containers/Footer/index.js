@@ -156,13 +156,11 @@ function Footer({
               <Text size="small">
                 <FormattedMessage {...messages.disclaimer} />
               </Text>
-              <PrintHide>
-                {hasContactLink && (
-                  <Text size="small">
-                    <FormattedMessage {...messages.contactHint} />
-                  </Text>
-                )}
-              </PrintHide>
+              {hasContactLink && !isPrint && (
+                <Text size="small">
+                  <FormattedMessage {...messages.contactHint} />
+                </Text>
+              )}
             </BoxPrint>
           </Box>
           <PrintHide>
