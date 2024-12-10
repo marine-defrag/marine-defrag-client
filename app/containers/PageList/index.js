@@ -51,7 +51,7 @@ function PageList({
     }],
   };
   return (
-    <div>
+    <>
       <Helmet
         title={intl.formatMessage(messages.pageTitle)}
         meta={[
@@ -71,7 +71,7 @@ function PageList({
           plural: intl.formatMessage(appMessages.entities.pages.plural),
         }}
       />
-    </div>
+    </>
   );
 }
 

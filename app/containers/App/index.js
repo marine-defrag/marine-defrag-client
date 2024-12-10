@@ -163,13 +163,33 @@ const PrintWrapper = styled.div`
 class App extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   inertRef = React.createRef();
 
+  scrollRef = React.createRef();
+
   UNSAFE_componentWillMount() {
     this.props.validateToken();
     this.updateInert();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     this.updateInert();
+    this.resetScroll(prevProps);
+  }
+
+  resetScroll(prevProps) {
+    if (this.scrollRef.current) {
+      if (prevProps.location.pathname !== this.props.location.pathname) {
+        this.scrollRef.current.scrollTo({ top: 0 });
+      } else if (prevProps.location.query && this.props.location.query) {
+        const prevQuery = prevProps.location.query;
+        const { query } = this.props.location;
+        if (
+          prevQuery.page !== query.page
+          || prevQuery.items !== query.items
+        ) {
+          this.scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+    }
   }
 
   updateInert() {
@@ -295,7 +315,13 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
             currentPath={location.pathname}
           />
         )}
-        <Main isHome={isHome} isPrint={isPrintView} role="main" id="main-content">
+        <Main
+          id="main-content"
+          role="main"
+          ref={this.scrollRef}
+          isHome={isHome}
+          isPrint={isPrintView}
+        >
           {isPrintView && (
             <PrintUI />
           )}

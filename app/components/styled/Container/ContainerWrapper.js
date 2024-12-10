@@ -17,8 +17,8 @@ const Styled = styled.div`
   bottom: ${({ isPrint }) => isPrint ? 'auto' : 0};
   left: 0;
   right: 0;
-  overflow-x: hidden;
-  overflow-y: ${({ noOverflow }) => noOverflow ? 'hidden' : 'auto'};
+  overflow-x: initial;
+  overflow-y: initial;
   z-index: 90;
   background-color: ${({ bg, isPrint }) => (bg && !isPrint) ? '#f1f0f1' : 'transparent'};
   @media print {

@@ -97,7 +97,8 @@ export function CardTeaser({
   dataReady,
 }) {
   const size = useContext(ResponsiveContext);
-  const isPrimaryLayout = isLandscape && isMinSize(size, 'ms');
+  const isPrimaryLayout = isLandscape && isMinSize(size, 'medium');
+
   return (
     <Styled
       basis={basis || 'full'}

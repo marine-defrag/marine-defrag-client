@@ -23,9 +23,9 @@ const Styled = styled.div`
   right: ${({ isPrint }) => isPrint ? 0 : 'auto'};
   max-width: ${({ isPrint }) => isPrint ? '100%' : '380px'};
   border-top: ${({ isPrint }) => isPrint ? '1px solid #f1f0f1' : 'none'};
-  @media (min-width: 370px) {
+  @media (min-width: ${({ theme }) => theme.breakpoints.ms}) {
     left: ${({ isPrint }) => isPrint ? 0 : 10}px;
-    bottom: ${({ isPrint }) => isPrint ? 0 : 50}px;
+    bottom: ${({ isPrint }) => isPrint ? 0 : 10}px;
   }
   @media print {
     height: auto;
