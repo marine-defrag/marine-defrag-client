@@ -29,6 +29,7 @@ import LanguageProvider from 'containers/LanguageProvider';
 // import { ThemeProvider } from 'styled-components';
 import theme from 'themes/theme';
 import { Grommet } from 'grommet';
+import './fonts/fonts.css';
 
 // Load the favicon, and the .htaccess file
 /* eslint-disable import/no-unresolved, import/extensions */
