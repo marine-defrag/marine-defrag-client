@@ -154,7 +154,7 @@ export class PageEdit extends React.Component { // eslint-disable-line react/pre
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Content ref={this.scrollContainer}>
+        <Content hasOverflow ref={this.scrollContainer}>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle)}
             type={CONTENT_SINGLE}

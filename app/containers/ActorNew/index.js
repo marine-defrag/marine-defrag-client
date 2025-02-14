@@ -318,7 +318,7 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
             },
           ]}
         />
-        <Content ref={this.scrollContainer}>
+        <Content hasOverflow ref={this.scrollContainer}>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}

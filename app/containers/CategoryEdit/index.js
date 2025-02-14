@@ -304,7 +304,7 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Content ref={this.scrollContainer}>
+        <Content hasOverflow ref={this.scrollContainer}>
           <ContentHeader
             title={pageTitle}
             type={CONTENT_SINGLE}
