@@ -16,7 +16,7 @@ import {
   entityOptions,
   taxonomyOptions,
   getTitleFormField,
-  getStatusField,
+  getStatusFormField,
   getMarkdownFormField,
   getCodeFormField,
   renderTaxonomyControl,
@@ -181,7 +181,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
     return ([
       {
         fields: [
-          getStatusField(intl.formatMessage),
+          getStatusFormField(intl.formatMessage),
           getMetaField(entity),
         ],
       },

@@ -18,7 +18,7 @@ import {
   getMarkdownFormField,
   getFormField,
   getCheckboxField,
-  getStatusField,
+  getStatusFormField,
   getShortTitleFormField,
   // renderUserControl,
   // renderActionControl,
@@ -119,7 +119,7 @@ export class CategoryNew extends React.PureComponent { // eslint-disable-line re
     const groups = []; // fieldGroups
     groups.push({
       fields: [
-        getStatusField(intl.formatMessage),
+        getStatusFormField(intl.formatMessage),
       ],
     });
     if (taxonomy.getIn(['attributes', 'tags_users'])) {

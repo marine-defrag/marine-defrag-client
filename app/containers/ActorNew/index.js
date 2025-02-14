@@ -15,7 +15,7 @@ import { Map, List, fromJS } from 'immutable';
 import {
   getConnectionUpdatesFromFormData,
   getTitleFormField,
-  getStatusField,
+  getStatusFormField,
   getMarkdownFormField,
   getCodeFormField,
   renderTaxonomyControl,
@@ -141,7 +141,7 @@ export class ActorNew extends React.PureComponent { // eslint-disable-line react
     const { intl } = this.context;
     return ([
       {
-        fields: [getStatusField(intl.formatMessage)],
+        fields: [getStatusFormField(intl.formatMessage)],
       },
       { // fieldGroup
         label: intl.formatMessage(appMessages.entities.taxonomies.plural),

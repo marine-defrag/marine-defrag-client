@@ -14,7 +14,7 @@ import {
   getTitleFormField,
   getMenuTitleFormField,
   getMarkdownFormField,
-  getStatusField,
+  getStatusFormField,
   getMenuOrderFormField,
 } from 'utils/forms';
 
@@ -89,7 +89,10 @@ export class PageNew extends React.PureComponent { // eslint-disable-line react/
   getHeaderAsideFields = () => {
     const { intl } = this.context;
     return ([{
-      fields: [getStatusField(intl.formatMessage)],
+      fields: [
+        getStatusFormField(intl.formatMessage),
+        getStatusFormField(intl.formatMessage, 'private'),
+      ],
     }]);
   };
 

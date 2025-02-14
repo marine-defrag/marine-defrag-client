@@ -16,7 +16,7 @@ import {
   entityOptions,
   taxonomyOptions,
   getTitleFormField,
-  getStatusField,
+  getStatusFormField,
   getMarkdownFormField,
   getDateField,
   getTextareaField,
@@ -208,7 +208,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
 
     groups.push({
       fields: [
-        getStatusField(intl.formatMessage),
+        getStatusFormField(intl.formatMessage),
         getMetaField(entity),
       ],
     });

@@ -851,6 +851,10 @@ export default defineMessages({
       id: 'app.containers.App.attributes.draft',
       defaultMessage: 'Status',
     },
+    private: {
+      id: 'app.containers.App.attributes.private',
+      defaultMessage: 'Private',
+    },
     code: {
       id: 'app.containers.App.attributes.code',
       defaultMessage: 'Code',
@@ -982,10 +986,6 @@ export default defineMessages({
     parent_id: {
       id: 'app.containers.App.attributes.parent_id',
       defaultMessage: 'Parent/predecessor',
-    },
-    private: {
-      id: 'app.containers.App.attributes.private',
-      defaultMessage: 'Private',
     },
     is_archive: {
       id: 'app.containers.App.attributes.is_archive',
@@ -2332,6 +2332,16 @@ export default defineMessages({
       },
       public: {
         id: 'app.containers.App.ui.publishStatuses.public',
+        defaultMessage: 'Public',
+      },
+    },
+    privacyStatuses: {
+      private: {
+        id: 'app.containers.App.ui.privacyStatuses.private',
+        defaultMessage: 'Private',
+      },
+      public: {
+        id: 'app.containers.App.ui.privacyStatuses.public',
         defaultMessage: 'Public',
       },
     },

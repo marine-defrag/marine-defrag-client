@@ -18,7 +18,7 @@ import {
   getMenuTitleFormField,
   getMenuOrderFormField,
   getMarkdownFormField,
-  getStatusField,
+  getStatusFormField,
 } from 'utils/forms';
 
 import {
@@ -124,7 +124,8 @@ export class PageEdit extends React.Component { // eslint-disable-line react/pre
     return ([
       {
         fields: [
-          getStatusField(intl.formatMessage),
+          getStatusFormField(intl.formatMessage),
+          getStatusFormField(intl.formatMessage, 'private'),
           getMetaField(entity),
         ],
       },

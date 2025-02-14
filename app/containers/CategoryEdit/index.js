@@ -21,7 +21,7 @@ import {
   getMarkdownFormField,
   getFormField,
   getCheckboxField,
-  getStatusField,
+  getStatusFormField,
   parentCategoryOptions,
   getShortTitleFormField,
   // renderUserControl,
@@ -154,7 +154,7 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
     const groups = []; // fieldGroups
     groups.push({
       fields: [
-        getStatusField(intl.formatMessage),
+        getStatusFormField(intl.formatMessage),
         getMetaField(entity),
       ],
     });

@@ -15,7 +15,7 @@ import { Map, fromJS } from 'immutable';
 import {
   entityOptions,
   getTitleFormField,
-  getStatusField,
+  getStatusFormField,
   getMarkdownFormField,
   getDateField,
   getLinkFormField,
@@ -145,7 +145,7 @@ export class ResourceEdit extends React.PureComponent { // eslint-disable-line r
     return ([
       {
         fields: [
-          getStatusField(intl.formatMessage),
+          getStatusFormField(intl.formatMessage),
           getMetaField(entity),
         ],
       },

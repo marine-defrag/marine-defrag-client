@@ -18,7 +18,7 @@ import {
   getMarkdownFormField,
   renderActionsByActiontypeControl,
   getLinkFormField,
-  getStatusField,
+  getStatusFormField,
   getDateField,
 } from 'utils/forms';
 import { getInfoField } from 'utils/fields';
@@ -124,7 +124,7 @@ export class ResourceNew extends React.PureComponent { // eslint-disable-line re
     const { intl } = this.context;
     return ([
       {
-        fields: [getStatusField(intl.formatMessage)],
+        fields: [getStatusFormField(intl.formatMessage)],
       },
     ]);
   }
