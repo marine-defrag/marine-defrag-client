@@ -7,10 +7,23 @@ import {
   Box, Text, Image, ResponsiveContext, Button,
 } from 'grommet';
 
-import { updatePath } from 'containers/App/actions';
-import { selectEntitiesWhere, selectIsSignedIn } from 'containers/App/selectors';
+import {
+  updatePath,
+  loadEntitiesIfNeeded,
+} from 'containers/App/actions';
+import {
+  selectEntitiesWhere,
+  selectIsSignedIn,
+  selectReady,
+} from 'containers/App/selectors';
 
-import { VERSION, FOOTER, ROUTES } from 'themes/config';
+import {
+  API,
+  VERSION,
+  FOOTER,
+  ROUTES,
+} from 'themes/config';
+
 import Container from 'components/styled/Container';
 import PrintHide from 'components/styled/PrintHide';
 import BoxPrint from 'components/styled/BoxPrint';
@@ -85,6 +98,9 @@ const Between = styled((p) => <Box plain {...p} />)`
     border-top: ${({ direction }) => direction === 'column' ? 1 : 0}px solid rgba(0, 0, 0, 1);
   }
 `;
+
+export const DEPENDENCIES = [API.PAGES];
+
 function Footer({
   intl,
   backgroundImage,
@@ -92,18 +108,25 @@ function Footer({
   hasContactLink,
   onPageLink,
   backgroundColor,
+  dataReady,
+  onLoadData,
 }) {
+  React.useEffect(() => {
+    // kick off loading of data
+    onLoadData();
+  }, []);
   const size = React.useContext(ResponsiveContext);
   const isMobile = isMaxSize(size, 'small');
   const appTitle = `${intl.formatMessage(appMessages.app.claim)} - ${intl.formatMessage(appMessages.app.title)}`;
   const isPrint = usePrint();
-  const footerPages = pages && sortEntities(
+  const footerPages = dataReady && pages && sortEntities(
     pages.filter((page) => page.getIn(['attributes', 'order']) < 0),
     'desc',
     'order',
     'number'
   );
   const hasFooterPages = (footerPages && footerPages.size > 0) || hasContactLink;
+
   return (
     <FooterMain isPrint={isPrint}>
       {backgroundImage && FOOTER.IMAGE_URLS[backgroundImage] && (
@@ -214,14 +237,17 @@ function Footer({
 
 Footer.propTypes = {
   intl: intlShape.isRequired,
+  onLoadData: PropTypes.func,
   backgroundImage: PropTypes.string,
   onPageLink: PropTypes.func.isRequired,
   hasContactLink: PropTypes.bool,
   backgroundColor: PropTypes.bool,
+  dataReady: PropTypes.bool,
   pages: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
+  dataReady: selectReady(state, { path: DEPENDENCIES }),
   pages: selectEntitiesWhere(state, {
     path: 'pages',
     where: { draft: false },
@@ -231,6 +257,9 @@ const mapStateToProps = (state) => ({
 
 function mapDispatchToProps(dispatch) {
   return {
+    onLoadData: () => {
+      DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
+    },
     onPageLink: (path) => {
       dispatch(updatePath(path));
     },
