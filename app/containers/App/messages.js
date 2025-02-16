@@ -15,6 +15,18 @@ export default defineMessages({
       id: 'app.containers.App.app.claim',
       defaultMessage: 'Samoa\'s home of human rights implementation',
     },
+    about1: {
+      id: 'app.containers.App.app.about1',
+      defaultMessage: 'About 1',
+    },
+    aboutSectionTitle: {
+      id: 'app.containers.App.app.aboutSectionTitle',
+      defaultMessage: 'About',
+    },
+    about2: {
+      id: 'app.containers.App.app.about2',
+      defaultMessage: 'About 2',
+    },
   },
   actorroles: {
     0: {

@@ -25,6 +25,8 @@ import {
 } from 'themes/config';
 
 import Container from 'components/styled/Container';
+import ContentSimple from 'components/styled/ContentSimple';
+
 import PrintHide from 'components/styled/PrintHide';
 import BoxPrint from 'components/styled/BoxPrint';
 import { usePrint } from 'containers/App/PrintContext';
@@ -154,36 +156,39 @@ function Footer({
             style={{ minHeight: '150px' }}
           >
             <BoxPrint
-              pad="medium"
-              padPrintHorizontal="none"
+              pad={{ top: 'medium' }}
               fill
               basis="1/2"
             >
-              <Text size="small">
-                {appTitle}
-              </Text>
-              <Text size="xsmall">
-                {`Version: ${VERSION}`}
-              </Text>
+              <ContentSimple>
+                <Box gap="xsmall">
+                  <Text size="small" as="div">
+                    <FormattedMessage {...messages.disclaimer} />
+                  </Text>
+                  {hasContactLink && !isPrint && (
+                    <Text size="small" as="div">
+                      <FormattedMessage {...messages.contactHint} />
+                    </Text>
+                  )}
+                </Box>
+              </ContentSimple>
             </BoxPrint>
             <PrintHide>
               <Between direction={isMinSize(size, 'medium') ? 'row' : 'column'} />
             </PrintHide>
             <BoxPrint
-              pad="medium"
-              padPrintHorizontal={0}
+              pad={{ top: 'medium' }}
               fill
               basis="1/2"
-              gap="small"
             >
-              <Text size="small">
-                <FormattedMessage {...messages.disclaimer} />
-              </Text>
-              {hasContactLink && !isPrint && (
-                <Text size="small">
-                  <FormattedMessage {...messages.contactHint} />
+              <ContentSimple>
+                <Text size="small" as="div">
+                  {appTitle}
                 </Text>
-              )}
+                <Text size="small" as="div">
+                  {`Version: ${VERSION}`}
+                </Text>
+              </ContentSimple>
             </BoxPrint>
           </Box>
           <PrintHide>
@@ -194,37 +199,38 @@ function Footer({
                   justify={isMobile ? 'start' : 'between'}
                   align="start"
                   gap={isMobile ? 'small' : 'none'}
-                  pad={{ horizontal: 'medium' }}
                 >
-                  <Box
-                    direction={isMobile ? 'column' : 'row'}
-                    gap="hair"
-                    align={isMobile ? 'start' : 'end'}
-                  >
-                    {hasContactLink && (
-                      <FooterLinkPage
-                        href={ROUTES.FEEDBACK}
-                        onClick={(evt) => {
-                          if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                          onPageLink(ROUTES.FEEDBACK);
-                        }}
-                      >
-                        <FormattedMessage {...messages.contactUs} />
-                      </FooterLinkPage>
-                    )}
-                    {footerPages && footerPages.size > 0 && footerPages.toList().map((page) => (
-                      <FooterLinkPage
-                        key={page.get('id')}
-                        onClick={(evt) => {
-                          if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                          onPageLink(`${ROUTES.PAGES}/${page.get('id')}`);
-                        }}
-                        href={`${ROUTES.PAGES}/${page.get('id')}`}
-                      >
-                        {page.getIn(['attributes', 'menu_title']) || page.getIn(['attributes', 'title'])}
-                      </FooterLinkPage>
-                    ))}
-                  </Box>
+                  <ContentSimple>
+                    <Box
+                      direction={isMobile ? 'column' : 'row'}
+                      gap="hair"
+                      align={isMobile ? 'start' : 'end'}
+                    >
+                      {hasContactLink && (
+                        <FooterLinkPage
+                          href={ROUTES.FEEDBACK}
+                          onClick={(evt) => {
+                            if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                            onPageLink(ROUTES.FEEDBACK);
+                          }}
+                        >
+                          <FormattedMessage {...messages.contactUs} />
+                        </FooterLinkPage>
+                      )}
+                      {footerPages && footerPages.size > 0 && footerPages.toList().map((page) => (
+                        <FooterLinkPage
+                          key={page.get('id')}
+                          onClick={(evt) => {
+                            if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                            onPageLink(`${ROUTES.PAGES}/${page.get('id')}`);
+                          }}
+                          href={`${ROUTES.PAGES}/${page.get('id')}`}
+                        >
+                          {page.getIn(['attributes', 'menu_title']) || page.getIn(['attributes', 'title'])}
+                        </FooterLinkPage>
+                      ))}
+                    </Box>
+                  </ContentSimple>
                 </Box>
               </Box>
             )}

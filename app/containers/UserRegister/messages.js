@@ -32,6 +32,6 @@ export default defineMessages({
   },
   registerHint: {
     id: 'app.containers.UserRegister.registerHint',
-    defaultMessage: 'Once registered, please contact the administrator to reuqest full access using the contact form linked in the footer (requires sign in)',
+    defaultMessage: 'Once registered, please contact the administrator to request full access using the contact form linked in the footer (requires sign in)',
   },
 });

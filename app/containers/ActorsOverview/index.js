@@ -14,7 +14,12 @@ import appMessages from 'containers/App/messages';
 import { ROUTES, ACTORTYPE_GROUPS, ACTORTYPES } from 'themes/config';
 import { CONFIG } from 'containers/ActorList/constants';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
-import { selectReady, selectIsUserManager, selectActortypeActors } from 'containers/App/selectors';
+import {
+  selectReady,
+  selectIsUserManager,
+  selectActortypeActors,
+  selectActortypesWithActorCount,
+} from 'containers/App/selectors';
 
 import Icon from 'components/Icon';
 
@@ -27,7 +32,6 @@ import Footer from 'containers/Footer';
 
 import { isMinSize } from 'utils/responsive';
 import qe from 'utils/quasi-equals';
-import { selectActortypesWithActorCount } from './selectors';
 import { DEPENDENCIES } from './constants';
 
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;

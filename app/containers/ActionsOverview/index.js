@@ -14,7 +14,7 @@ import appMessages from 'containers/App/messages';
 import Icon from 'components/Icon';
 import { ROUTES, ACTIONTYPE_GROUPS } from 'themes/config';
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
-import { selectReady } from 'containers/App/selectors';
+import { selectReady, selectActiontypesWithActionCount } from 'containers/App/selectors';
 import { CONFIG } from 'containers/ActionList/constants';
 
 import HeaderExplore from 'containers/HeaderExplore';
@@ -27,7 +27,6 @@ import Footer from 'containers/Footer';
 import qe from 'utils/quasi-equals';
 import { isMinSize } from 'utils/responsive';
 
-import { selectActiontypesWithActionCount } from './selectors';
 import { DEPENDENCIES } from './constants';
 
 const Group = styled((p) => <Box margin={{ bottom: 'large', top: 'medium' }} {...p} />)``;

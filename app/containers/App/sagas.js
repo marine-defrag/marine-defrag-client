@@ -249,8 +249,10 @@ export function* recoverSaga(payload) {
 export function* authChangeSaga() {
   const redirectPathname = yield select(selectRedirectOnAuthSuccessPath);
   if (redirectPathname) {
+    // console.log('authChangeSaga: redirectPathname', redirectPathname)
     yield put(updatePath(redirectPathname, { replace: true }));
   } else {
+    // console.log('authChangeSaga: home')
     // forward to home
     yield put(updatePath('/', { replace: true }));
   }
