@@ -99,6 +99,9 @@ export function CardTeaser({
 }) {
   const size = useContext(ResponsiveContext);
   const isPrimaryLayout = isLandscape && isMinSize(size, 'medium');
+  let countSize = 'xlarge';
+  if (isHome) countSize = 'xxlarge';
+  if (isPrimaryLayout) countSize = 'xxxlarge';
 
   return (
     <Styled
@@ -153,14 +156,14 @@ export function CardTeaser({
                 {dataReady && (
                   <Count
                     weight="bold"
-                    size={(isHome || isPrimaryLayout) ? 'xxlarge' : 'xlarge'}
+                    size={countSize}
                   >
                     {count}
                   </Count>
                 )}
                 <Title
                   weight="bold"
-                  size={(isHome || isPrimaryLayout) ? 'xlarge' : 'normal'}
+                  size={isPrimaryLayout ? 'xlarge' : 'medium'}
                 >
                   {title}
                 </Title>

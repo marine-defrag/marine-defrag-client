@@ -12,6 +12,7 @@ import Container from 'components/styled/Container';
 import ContentSimple from 'components/styled/ContentSimple';
 import ButtonHero from 'components/buttons/ButtonHero';
 import CardTeaser from 'components/CardTeaser';
+import Slider from './Slider';
 //
 // import Loading from 'components/Loading';
 
@@ -68,9 +69,9 @@ function TeaserSection({
           </Box>
           <Box
             gap="large"
-            direction={isMinSize(size, 'large') ? 'row' : 'column'}
+            direction={isMinSize(size, 'medium') ? 'row' : 'column'}
           >
-            <Box basis={isMinSize(size, 'large') ? '1/3' : '1'}>
+            <Box basis={isMinSize(size, 'medium') ? '1/3' : '1'}>
               <Markdown source={teaser} className="react-markdown" />
               <div>
                 <ButtonExplore onClick={() => onUpdatePath(overviewPath)}>
@@ -78,24 +79,26 @@ function TeaserSection({
                 </ButtonExplore>
               </div>
             </Box>
-            {cards && cards.length > 0 && isMinSize(size, 'medium') && (
-              <Box direction="row" wrap basis={isMinSize(size, 'large') ? '2/3' : '1'}>
-                {cards.map((card, id) => (
-                  <CardTeaser
-                    key={id}
-                    path={getCardPath(card.id)}
-                    onClick={(evt) => {
-                      if (evt && evt.preventDefault) evt.preventDefault();
-                      onUpdatePath(getCardPath(card.id));
-                    }}
-                    dataReady
-                    title={getCardTitle(card)}
-                    count={card.count}
-                    graphic={getCardGraphic(card.id)}
-                    basis={isMinSize(size, 'large') ? '1/2' : '1/4'}
-                    isHome
-                  />
-                ))}
+            {cards && cards.length > 0 && isMinSize(size, 'ms') && (
+              <Box basis={isMinSize(size, 'medium') ? '2/3' : '1'}>
+                <Slider cardNumber={isMinSize(size, 'large') ? 3 : 2}>
+                  {cards.map((card, id) => (
+                    <Box key={id} fill="vertical">
+                      <CardTeaser
+                        path={getCardPath(card.id)}
+                        onClick={(evt) => {
+                          if (evt && evt.preventDefault) evt.preventDefault();
+                          onUpdatePath(getCardPath(card.id));
+                        }}
+                        dataReady
+                        title={getCardTitle(card)}
+                        count={card.count}
+                        graphic={getCardGraphic(card.id)}
+                        isHome
+                      />
+                    </Box>
+                  ))}
+                </Slider>
               </Box>
             )}
           </Box>
