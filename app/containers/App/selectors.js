@@ -1397,6 +1397,33 @@ export const selectActionResourcesGroupedByAction = createSelector(
       )
     ),
 );
+
+export const selectFactsOrdered = createSelector(
+  (state) => selectActiontypeActions(state, { type: FF_ACTIONTYPE }),
+  selectActionResourcesGroupedByAction,
+  (facts, resourceAssociationsGrouped) => facts
+    && resourceAssociationsGrouped
+    && facts.toList().sort(
+      (a, b) => {
+        const aResourceIds = resourceAssociationsGrouped.get(
+          parseInt(a.get('id'), 10)
+        );
+        const bResourceIds = resourceAssociationsGrouped.get(
+          parseInt(b.get('id'), 10)
+        );
+        if (!aResourceIds && !bResourceIds) return 0;
+        if (aResourceIds && !bResourceIds) return -1;
+        if (!aResourceIds && bResourceIds) return 1;
+        // console.log(aResourceIds.toJS(), aResourceIds.first())
+        // console.log(bResourceIds.toJS(), bResourceIds.first())
+        const aValue = parseInt(aResourceIds.first(), 10);
+        const bValue = parseInt(bResourceIds.first(), 10);
+        if (aValue === bValue) return 0;
+        return aValue < bValue ? -1 : 1;
+      }
+    )
+);
+
 export const selectActionActorsGroupedByAction = createSelector(
   (state) => selectEntities(state, API.ACTION_ACTORS),
   (connections) => connections

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import ReactMarkdown from 'react-markdown';
-import { Map, OrderedMap } from 'immutable';
+import { Map, List } from 'immutable';
 
 import styled, { withTheme } from 'styled-components';
 import {
@@ -19,7 +19,6 @@ import {
 } from 'grommet';
 
 import { isMinSize } from 'utils/responsive';
-import qe from 'utils/quasi-equals';
 
 import { loadEntitiesIfNeeded, updatePath } from 'containers/App/actions';
 import {
@@ -27,7 +26,7 @@ import {
   selectIsUserAnalyst,
   selectActiontypesWithActionCount,
   selectActortypesWithActorCount,
-  selectActiontypeActions,
+  selectFactsOrdered,
   selectAuthReady,
 } from 'containers/App/selectors';
 
@@ -40,7 +39,13 @@ import Loading from 'components/Loading';
 
 import appMessages from 'containers/App/messages';
 
-import { ROUTES, FF_ACTIONTYPE, VERSION } from 'themes/config';
+import {
+  ROUTES,
+  FF_ACTIONTYPE,
+  VERSION,
+  ACTIONTYPE_GROUPS,
+  ACTORTYPE_GROUPS,
+} from 'themes/config';
 
 import TeaserSection from './TeaserSection';
 import { DEPENDENCIES } from './constants';
@@ -54,9 +59,12 @@ const SectionTop = styled.div`
   background-color: #183863;
   color: #fff;
   text-align: center;
-  padding-top: 80px;
+  padding-top: 0px;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    padding-top: 80px;
+  }
 `;
-const SectionAbout = styled.div`
+const Section = styled.div`
   padding-top: 60px;
   padding-bottom: 80px;
   color: ${({ theme }) => theme.global.colors.brand};
@@ -155,7 +163,7 @@ const MainButton = styled(ButtonHero)`
 
 function HomePageOverview({
   intl,
-  onPageLink,
+  onUpdatePath,
   dataReady,
   authReady,
   onLoadEntitiesIfNeeded,
@@ -171,6 +179,31 @@ function HomePageOverview({
   const theme = React.useContext(ThemeContext);
 
   const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
+
+  const actionTypesReady = dataReady
+    && actionTypes
+    && Object.values(ACTIONTYPE_GROUPS).reduce(
+      (memo, group) => ([
+        ...memo,
+        ...group.types.map(
+          (id) => actionTypes.get(id) ? actionTypes.get(id).toJS() : { id }
+        ),
+      ]),
+      [],
+    );
+  const actorTypesReady = dataReady
+    && actorTypes
+    && Object.values(ACTORTYPE_GROUPS).filter(
+      (group) => !group.managerOnly
+    ).reduce(
+      (memo, group) => ([
+        ...memo,
+        ...group.types.map(
+          (id) => actorTypes.get(id) ? actorTypes.get(id).toJS() : { id }
+        ),
+      ]),
+      [],
+    );
   return (
     <div>
       <SectionTop>
@@ -191,65 +224,126 @@ function HomePageOverview({
             <Loading />
           )}
           {authReady && !isUserAnalyst && (
-            <div>
-              <Text as="div" size="small">
-                <FormattedMessage {...messages.noRoleAssigned} />
-              </Text>
-            </div>
+            <HomeActions>
+              <Box align="center" margin={{ bottom: 'xsmall' }}>
+                <Text as="div" size="xlarge" color="white" style={{ maxWidth: '600px' }}>
+                  <FormattedMessage {...messages.noRoleAssigned} />
+                </Text>
+              </Box>
+              <Box align="center">
+                <MainButton
+                  space
+                  onClick={() => {
+                    onUpdatePath(
+                      ROUTES.CONTACT,
+                      {
+                        query: {
+                          arg: 'subject',
+                          value: 'access',
+                        },
+                      },
+                    );
+                  }}
+                  count={1}
+                >
+                  Request Access
+                </MainButton>
+              </Box>
+            </HomeActions>
           )}
           {authReady && isUserAnalyst && (
             <HomeActions>
               <Box>
-                <Box>
-                  <Intro hint source={intl.formatMessage(messages.goTo)} />
-                </Box>
-                <Box direction="row" justify="center">
-                  <MainButton
-                    space
-                    onClick={() => onPageLink(ROUTES.ACTIONS)}
-                    count={3}
-                  >
-                    <FormattedMessage {...appMessages.nav.actions} />
-                  </MainButton>
-                  <MainButton
-                    space
-                    onClick={() => onPageLink(ROUTES.ACTORS)}
-                    count={3}
-                  >
-                    <FormattedMessage {...appMessages.nav.actors} />
-                  </MainButton>
-                  <MainButton
-                    space
-                    onClick={() => onPageLink(`${ROUTES.ACTIONS}/${FF_ACTIONTYPE}`)}
-                    count={3}
-                  >
-                    <FormattedMessage {...appMessages.actiontypes[FF_ACTIONTYPE]} />
-                  </MainButton>
-                </Box>
+                <Intro hint source={intl.formatMessage(messages.goTo)} />
+              </Box>
+              <Box
+                direction={isMinSize(size, 'ms') ? 'row' : 'column'}
+                justify="center"
+              >
+                <MainButton
+                  space
+                  onClick={() => onUpdatePath(ROUTES.ACTIONS)}
+                  count={3}
+                >
+                  <FormattedMessage {...appMessages.nav.actions} />
+                </MainButton>
+                <MainButton
+                  space
+                  onClick={() => onUpdatePath(ROUTES.ACTORS)}
+                  count={3}
+                >
+                  <FormattedMessage {...appMessages.nav.actors} />
+                </MainButton>
+                <MainButton
+                  space
+                  onClick={() => onUpdatePath(`${ROUTES.ACTIONS}/${FF_ACTIONTYPE}`)}
+                  count={3}
+                >
+                  <FormattedMessage {...appMessages.actiontypes[FF_ACTIONTYPE]} />
+                </MainButton>
               </Box>
             </HomeActions>
           )}
         </Container>
       </SectionTop>
-      <TeaserSection
-        title={intl.formatMessage(appMessages.nav.actions)}
-        teaser={intl.formatMessage(messages.teaserActions)}
-        type="actions"
-        cards={actionTypes && actionTypes.filter((t) => !qe(t.id, FF_ACTIONTYPE))}
-      />
-      <TeaserSection
-        title={intl.formatMessage(appMessages.nav.actors)}
-        teaser={intl.formatMessage(messages.teaserActors)}
-        type="actors"
-        cards={actorTypes}
-      />
-      <TeaserSection
-        title={intl.formatMessage(appMessages.actiontypes[FF_ACTIONTYPE])}
-        teaser={intl.formatMessage(messages.teaserFacts)}
-        type="facts"
-        cards={facts}
-      />
-      <SectionAbout>
+      {!dataReady && isUserAnalyst && (
+        <Section>
+          <Container>
+            <Loading />
+          </Container>
+        </Section>
+      )}
+      {authReady && dataReady && isUserAnalyst && (
+        <>
+          {actionTypesReady && (
+            <TeaserSection
+              title={intl.formatMessage(appMessages.nav.actions)}
+              teaser={intl.formatMessage(messages.teaserActions)}
+              overviewPath={ROUTES.ACTIONS}
+              getCardPath={(typeId) => `${ROUTES.ACTIONS}/${typeId}`}
+              onUpdatePath={onUpdatePath}
+              getCardTitle={
+                (type) => intl.formatMessage(appMessages.actiontypes_long[type.id])
+              }
+              getCardGraphic={
+                (typeId) => theme.media.navCard.activities[typeId]
+              }
+              cards={actionTypesReady}
+            />
+          )}
+          {actorTypesReady && (
+            <TeaserSection
+              title={intl.formatMessage(appMessages.nav.actors)}
+              teaser={intl.formatMessage(messages.teaserActors)}
+              overviewPath={ROUTES.ACTORS}
+              getCardPath={(typeId) => `${ROUTES.ACTORS}/${typeId}`}
+              getCardTitle={
+                (type) => intl.formatMessage(appMessages.actortypes_long[type.id])
+              }
+              getCardGraphic={
+                (typeId) => theme.media.navCard.actors[typeId]
+              }
+              onUpdatePath={onUpdatePath}
+              cards={actorTypesReady}
+            />
+          )}
+          {facts && (
+            <TeaserSection
+              title={intl.formatMessage(appMessages.actiontypes[FF_ACTIONTYPE])}
+              teaser={intl.formatMessage(messages.teaserFacts)}
+              overviewPath={`${ROUTES.ACTIONS}/${FF_ACTIONTYPE}`}
+              getCardPath={(factId) => `${ROUTES.ACTION}/${factId}`}
+              getCardTitle={(fact) => fact.attributes.title}
+              getCardGraphic={
+                (factId) => theme.media.navCard.indicators[factId]
+              }
+              onUpdatePath={onUpdatePath}
+              cards={facts.toJS()}
+            />
+          )}
+        </>
+      )}
+      <Section>
         <Container noPaddingBottom>
           <ContentSimple>
             <h3><FormattedMessage {...appMessages.app.aboutSectionTitle} /></h3>
@@ -257,7 +351,7 @@ function HomePageOverview({
             <p><FormattedMessage {...appMessages.app.about2} /></p>
           </ContentSimple>
         </Container>
-      </SectionAbout>
+      </Section>
       <SectionPartners>
         <Container noPaddingBottom>
           <ContentSimple>
@@ -280,10 +374,10 @@ function HomePageOverview({
 }
 
 HomePageOverview.propTypes = {
-  onPageLink: PropTypes.func.isRequired,
+  onUpdatePath: PropTypes.func.isRequired,
   actionTypes: PropTypes.instanceOf(Map),
   actorTypes: PropTypes.instanceOf(Map),
-  facts: PropTypes.instanceOf(OrderedMap),
+  facts: PropTypes.instanceOf(List),
   theme: PropTypes.object.isRequired,
   authReady: PropTypes.bool,
   dataReady: PropTypes.bool,
@@ -298,7 +392,7 @@ const mapStateToProps = (state) => ({
   isUserAnalyst: selectIsUserAnalyst(state),
   actionTypes: selectActiontypesWithActionCount(state),
   actorTypes: selectActortypesWithActorCount(state),
-  facts: selectActiontypeActions(state, { type: FF_ACTIONTYPE }),
+  facts: selectFactsOrdered(state),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -306,8 +400,8 @@ function mapDispatchToProps(dispatch) {
     onLoadEntitiesIfNeeded: () => {
       DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
     },
-    onPageLink: (path) => {
-      dispatch(updatePath(path));
+    onUpdatePath: (path, args) => {
+      dispatch(updatePath(path, args));
     },
   };
 }
