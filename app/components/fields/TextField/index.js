@@ -21,8 +21,15 @@ class TextField extends React.PureComponent { // eslint-disable-line react/prefe
             {field.title}
           </Label>
         )}
-        { !!field.value && (<p>{field.value}</p>)}
-        { !field.value
+        {!!field.value && !field.large && (
+          <p>{field.value}</p>
+        )}
+        {!!field.value && field.large && (
+          <p style={{ fontWeight: '500', fontSize: '22px' }}>
+            {field.value}
+          </p>
+        )}
+        {!field.value
           && field.showEmpty
           && (
             <EmptyHint>

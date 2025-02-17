@@ -696,7 +696,7 @@
   "app.containers.HomePage.introGuest": "Welcome to the actor and activity mapping tool (version {version})",
   "app.containers.HomePageOverview.intro": "Showing data of global actors and activities contributing to the efforts to combat marine litter and plastic pollution.",
   "app.containers.HomePageOverview.goTo": "Go directly to",
-  "app.containers.HomePageOverview.noRoleAssigned": "You do not have sufficient rights to access the content of this platform. Please contact the platform administrator",
+  "app.containers.HomePageOverview.noRoleAssigned": "You do not have sufficient rights to access the content of this platform. Please request access by contacting the platform administrator.",
   "app.containers.NotFoundPage.header": "Page not found",
   "app.containers.PageEdit.pageTitle": "Edit Page",
   "app.containers.PageEdit.metaDescription": "Edit Page page description",

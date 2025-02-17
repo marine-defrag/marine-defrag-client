@@ -722,7 +722,7 @@ export default function createRoutes(store) {
         importModules.catch(errorLoading);
       },
     }, {
-      path: ROUTES.FEEDBACK,
+      path: ROUTES.CONTACT,
       name: 'feedbackNew',
       onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
       getComponent(nextState, cb) {

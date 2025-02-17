@@ -76,7 +76,7 @@ export const ROUTES = {
   CATEGORY: '/category',
   PAGES: '/pages',
   SEARCH: '/search',
-  FEEDBACK: '/contact',
+  CONTACT: '/contact',
 };
 
 // Server endpoints for database tables **************************

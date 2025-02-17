@@ -208,10 +208,10 @@ function Footer({
                     >
                       {hasContactLink && (
                         <FooterLinkPage
-                          href={ROUTES.FEEDBACK}
+                          href={ROUTES.CONTACT}
                           onClick={(evt) => {
                             if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                            onPageLink(ROUTES.FEEDBACK);
+                            onPageLink(ROUTES.CONTACT);
                           }}
                         >
                           <FormattedMessage {...messages.contactUs} />

@@ -129,6 +129,7 @@ const Intro = styled(ReactMarkdown)`
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
     font-size: ${({ hint, theme }) => theme.text[hint ? 'medium' : 'large'].size};
     line-height: ${({ hint, theme }) => theme.text[hint ? 'medium' : 'large'].height};
+    max-width: 666px;
   }
   @media print {
     font-size: ${(props) => props.theme.sizes.print.large};

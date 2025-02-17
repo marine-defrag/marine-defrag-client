@@ -57,11 +57,14 @@ const checkEmpty = (
   val
 ) => typeof val !== 'undefined' && val !== null && val.toString().trim().length > 0;
 
-export const getInfoField = (att, value, large = false) => checkEmpty(value) && ({
+export const getInfoField = (
+  att, value, large = false, noPadding,
+) => checkEmpty(value) && ({
   controlType: 'info',
   value,
   large,
   label: appMessages.attributes[att],
+  noPadding,
 });
 export const getIdField = (entity) => checkEmpty(entity.get('id')) && ({
   controlType: 'info',
