@@ -155,7 +155,7 @@ export function ActorsOverview({
           </Content>
         </ViewContainer>
       </ContainerWrapper>
-      <Footer backgroundImage="footer_actors" backgroundColor />
+      <Footer backgroundImage="footer_actors" backgroundColor="#f1f0f1" />
     </>
   );
 }

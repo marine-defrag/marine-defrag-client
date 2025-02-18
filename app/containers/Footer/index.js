@@ -24,6 +24,7 @@ import {
   ROUTES,
 } from 'themes/config';
 
+import Icon from 'components/Icon';
 import Container from 'components/styled/Container';
 import ContentSimple from 'components/styled/ContentSimple';
 
@@ -39,7 +40,7 @@ import messages from './messages';
 
 const FooterMain = styled.div``;
 const FooterContent = styled.div`
-  background-color: ${({ isPrint }) => isPrint ? 'transparent' : '#183863'};
+  background-color: ${({ isPrint }) => isPrint ? 'transparent' : '#00214d'};
   color: ${({ isPrint, theme }) => isPrint ? theme.global.colors.text.secondary : 'white'};
   border-top: 1px solid;
   border-color: ${({ isPrint, theme }) => isPrint ? theme.global.colors.text.secondary : 'transparent'};
@@ -136,15 +137,17 @@ function Footer({
           <Box
             style={{
               position: 'relative',
-              background: backgroundColor ? '#f1f0f1' : 'transparent',
+              background: backgroundColor || 'transparent',
             }}
           >
             <Image src={FOOTER.IMAGE_URLS[backgroundImage]} />
-            <ImageCredit>
-              <Text size="xxxsmall">
-                <FormattedMessage {...messages.imageCredit[backgroundImage]} />
-              </Text>
-            </ImageCredit>
+            {messages.imageCredit[backgroundImage] && (
+              <ImageCredit>
+                <Text size="xxxsmall">
+                  <FormattedMessage {...messages.imageCredit[backgroundImage]} />
+                </Text>
+              </ImageCredit>
+            )}
           </Box>
         </PrintHide>
       )}
@@ -153,12 +156,12 @@ function Footer({
           <Box
             direction={isMinSize(size, 'medium') ? 'row' : 'column'}
             fill="vertical"
-            style={{ minHeight: '150px' }}
+            style={{ minHeight: '133px' }}
           >
             <BoxPrint
               pad={{ top: 'medium' }}
               fill
-              basis="1/2"
+              basis="2/3"
             >
               <ContentSimple>
                 <Box gap="xsmall">
@@ -179,15 +182,39 @@ function Footer({
             <BoxPrint
               pad={{ top: 'medium' }}
               fill
-              basis="1/2"
+              basis="1/3"
             >
-              <ContentSimple>
-                <Text size="small" as="div">
-                  {appTitle}
-                </Text>
-                <Text size="small" as="div">
-                  {`Version: ${VERSION}`}
-                </Text>
+              <ContentSimple style={{ paddingLeft: 0 }}>
+                <Box gap="ms">
+                  <Box gap="xxsmall">
+                    <Text size="xxsmall" as="div">
+                      {appTitle}
+                    </Text>
+                    <Text size="xxsmall" as="div">
+                      {`Version: ${VERSION}`}
+                    </Text>
+                  </Box>
+                  <Box gap="xsmall">
+                    <Text size="xxxsmall" as="div">
+                      Design and Development by
+                    </Text>
+                    <Box direction="row" gap="small">
+                      <Icon
+                        name="logoDumpark"
+                        size="42px"
+                        title="dumpark.com - Data visualisation & information design"
+                      />
+                      <Box gap="hair">
+                        <Text size="small" weight={500} as="div">
+                          dumpark.com
+                        </Text>
+                        <Text size="xxsmall" as="div">
+                          Data visualisation & information design
+                        </Text>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
               </ContentSimple>
             </BoxPrint>
           </Box>
@@ -247,7 +274,7 @@ Footer.propTypes = {
   backgroundImage: PropTypes.string,
   onPageLink: PropTypes.func.isRequired,
   hasContactLink: PropTypes.bool,
-  backgroundColor: PropTypes.bool,
+  backgroundColor: PropTypes.string,
   dataReady: PropTypes.bool,
   pages: PropTypes.object,
 };

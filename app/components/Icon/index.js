@@ -24,6 +24,7 @@ class Icon extends React.PureComponent {
       isPrint,
       hideScreenreader,
       isPresentation,
+      rotate = 0,
     } = this.props;
     const icon = icons[name];
     if (icon) {
@@ -46,6 +47,7 @@ class Icon extends React.PureComponent {
           sizes={sizes}
           printHide={printHide}
           isPrint={isPrint}
+          rotate={rotate}
         >
           {!isPresentation && (
             <title>{title || `Icon: ${name}`}</title>
@@ -65,6 +67,7 @@ Icon.propTypes = {
   paletteIndex: PropTypes.number,
   size: PropTypes.string,
   iconSize: PropTypes.number,
+  rotate: PropTypes.number,
   color: PropTypes.string,
   text: PropTypes.bool,
   textLeft: PropTypes.bool,

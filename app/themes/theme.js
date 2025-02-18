@@ -5,8 +5,9 @@ import headerLogo2x from 'themes/media/headerLogo@2x.png';
 import headerLogoPrint from 'themes/media/headerLogoPrint.png';
 import headerLogoPrint2x from 'themes/media/headerLogoPrint@2x.png';
 
-import graphicHome from 'themes/media/homeGraphic.png';
-import graphicHome2x from 'themes/media/homeGraphic@2x.png';
+import logoZUG from 'themes/media/logoZUG.png';
+import logoGIZ from 'themes/media/logoGIZ.png';
+import logoBMUV from 'themes/media/logoBMUV.png';
 
 import navCardActivities1 from 'themes/media/nav-card-illu-activities-1.png';
 import navCardActivities2 from 'themes/media/nav-card-illu-activities-2.png';
@@ -42,7 +43,9 @@ const theme = {};
 theme.media = {
   headerLogo: [headerLogo, headerLogo2x],
   headerLogoPrint: [headerLogoPrint, headerLogoPrint2x],
-  graphicHome: [graphicHome, graphicHome2x],
+  logoBMUV: [logoBMUV, logoBMUV],
+  logoGIZ: [logoGIZ, logoGIZ],
+  logoZUG: [logoZUG, logoZUG],
   navCard: {
     actors: {
       1: {

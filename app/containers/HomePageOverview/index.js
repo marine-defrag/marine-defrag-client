@@ -14,6 +14,7 @@ import styled, { withTheme } from 'styled-components';
 import {
   Box,
   Text,
+  Image,
   ResponsiveContext,
   ThemeContext,
 } from 'grommet';
@@ -33,7 +34,7 @@ import {
 import Container from 'components/styled/Container';
 import ButtonHero from 'components/buttons/ButtonHero';
 // import ButtonFlat from 'components/buttons/ButtonFlat';
-import NormalImg from 'components/Img';
+import Icon from 'components/Icon';
 import ContentSimple from 'components/styled/ContentSimple';
 import Loading from 'components/Loading';
 
@@ -45,21 +46,25 @@ import {
   VERSION,
   ACTIONTYPE_GROUPS,
   ACTORTYPE_GROUPS,
+  FOOTER,
 } from 'themes/config';
+import Partners from 'containers/HomePage/Partners';
 
 import TeaserSection from './TeaserSection';
+import QuoteSection from './QuoteSection';
+import GapSection from './GapSection';
 import { DEPENDENCIES } from './constants';
 
 import messages from './messages';
 
-const GraphicHome = styled(NormalImg)`
-  width: 100px;
-`;
 const SectionTop = styled.div`
+  position: relative;
+  /* background-color: rgb(24 56 99 / 50%); */
   background-color: #183863;
   color: #fff;
   text-align: center;
   padding-top: 0px;
+  padding-bottom: 80px;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     padding-top: 80px;
   }
@@ -69,28 +74,10 @@ const Section = styled.div`
   padding-bottom: 80px;
   color: ${({ theme }) => theme.global.colors.brand};
 `;
-const SectionPartners = styled.div`
-  padding-top: 10px;
-  padding-bottom: 50px;
-`;
-
-const Partner = styled((p) => <Box {...p} />)`
-  padding: 20px 50px 0;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    border-right: 1px solid #b5babe;
-    border-left: 1px solid #b5babe;
-    &:first-child {
-      border-left-color: transparent;
-    }
-    &:last-child {
-      border-right-color: transparent;
-    }
-  }
-`;
 
 const HomeActions = styled.div`
   margin-top: 30px;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
     margin-top: 50px;
   }
@@ -207,8 +194,19 @@ function HomePageOverview({
   return (
     <div>
       <SectionTop>
-        <Container>
-          <GraphicHome src={theme.media.graphicHome} alt={appTitle} />
+        <div
+          style={{
+            position: 'absolute', top: 0, right: 0, left: 0, bottom: 0, overflow: 'hidden',
+          }}
+        >
+          <Image src={FOOTER.IMAGE_URLS.home_top} style={{ opacity: 0.33 }} />
+        </div>
+        <Container style={{ position: 'relative' }}>
+          <Icon
+            name="brand"
+            title={appTitle}
+            size={isMinSize(size, 'medium') ? '200px' : '120px'}
+          />
           <Box>
             <Claim>
               <FormattedMessage {...appMessages.app.claim} />
@@ -221,10 +219,12 @@ function HomePageOverview({
             <Intro source={intl.formatMessage(messages.intro, { version: VERSION })} />
           </Box>
           {!authReady && (
-            <Loading />
+            <div style={{ minHeight: '120px' }}>
+              <Loading />
+            </div>
           )}
           {authReady && !isUserAnalyst && (
-            <HomeActions>
+            <HomeActions style={{ minHeight: '120px' }}>
               <Box align="center" margin={{ bottom: 'xsmall' }}>
                 <Text as="div" size="xlarge" color="white" style={{ maxWidth: '600px' }}>
                   <FormattedMessage {...messages.noRoleAssigned} />
@@ -252,7 +252,7 @@ function HomePageOverview({
             </HomeActions>
           )}
           {authReady && isUserAnalyst && (
-            <HomeActions>
+            <HomeActions style={{ minHeight: '120px' }}>
               <Box>
                 <Intro hint source={intl.formatMessage(messages.goTo)} />
               </Box>
@@ -285,9 +285,40 @@ function HomePageOverview({
             </HomeActions>
           )}
         </Container>
+        <svg
+          viewBox="0 0 1920 377"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            width: '100%',
+            paddingTop: '20%',
+            transform: 'translateY(25%)',
+          }}
+        >
+          <path
+            fill="#183863"
+            d="M1920,88.05S1575.51-29.36,1205.3,6.98c-370.21,36.34-635.98,99.54-833.78,94C173.73,95.44,0,33.7,0,33.7v217.87h1920V88.05Z"
+          />
+          <path
+            fill="#00214d"
+            d="M1920,162.71s-171.87,67.66-369.96,73.73c-198.09,6.07-464.23-63.19-834.99-103.01C344.29,93.61,0,222.27,0,222.27v87.1s173.73,61.74,371.51,67.28c197.8,5.54,463.57-57.66,833.78-94,370.21-36.34,714.7,81.07,714.7,81.07"
+          />
+        </svg>
+        <Box align="center">
+          <Icon name="arrowCircle" rotate={90} />
+        </Box>
       </SectionTop>
       {!dataReady && isUserAnalyst && (
-        <Section>
+        <Section
+          style={{
+            background: theme.global.colors.backgroundX,
+            minHeight: '0.5vH',
+          }}
+        >
           <Container>
             <Loading />
           </Container>
@@ -295,6 +326,12 @@ function HomePageOverview({
       )}
       {authReady && dataReady && isUserAnalyst && (
         <>
+          <Section
+            style={{
+              background: theme.global.colors.backgroundX,
+              paddingTop: '10%',
+            }}
+          />
           {actionTypesReady && (
             <TeaserSection
               title={intl.formatMessage(appMessages.nav.actions)}
@@ -309,6 +346,12 @@ function HomePageOverview({
                 (typeId) => theme.media.navCard.activities[typeId]
               }
               cards={actionTypesReady}
+            />
+          )}
+          {actionTypesReady && (
+            <QuoteSection
+              quote="The protection of the oceans is of fundamental importance for the existence of mankind: the oceans feed us, they give us oxygen to breathe and they are indispensable climate protectors because they bind enormous amounts of CO2."
+              source="Federal Environment Minister Steffi Lenke"
             />
           )}
           {actorTypesReady && (
@@ -327,6 +370,7 @@ function HomePageOverview({
               cards={actorTypesReady}
             />
           )}
+          <GapSection />
           {facts && (
             <TeaserSection
               title={intl.formatMessage(appMessages.actiontypes[FF_ACTIONTYPE])}
@@ -343,7 +387,7 @@ function HomePageOverview({
           )}
         </>
       )}
-      <Section>
+      <Section style={{ background: '#fff' }}>
         <Container noPaddingBottom>
           <ContentSimple>
             <h3><FormattedMessage {...appMessages.app.aboutSectionTitle} /></h3>
@@ -352,23 +396,7 @@ function HomePageOverview({
           </ContentSimple>
         </Container>
       </Section>
-      <SectionPartners>
-        <Container noPaddingBottom>
-          <ContentSimple>
-            <Box direction={isMinSize(size, 'medium') ? 'row' : 'column'}>
-              <Partner basis="1/3">
-                ZUG LOGO
-              </Partner>
-              <Partner basis="1/3">
-                GIZ LOGO
-              </Partner>
-              <Partner basis="1/3">
-                BMU LOGO
-              </Partner>
-            </Box>
-          </ContentSimple>
-        </Container>
-      </SectionPartners>
+      <Partners />
     </div>
   );
 }

@@ -8,8 +8,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import styled from 'styled-components';
+import { Box, Image } from 'grommet';
+
+import { FOOTER } from 'themes/config';
 
 import { updatePath } from 'containers/App/actions';
+
 import {
   selectIsSigningIn,
   selectIsSignedIn,
@@ -20,13 +24,19 @@ import Loading from 'components/Loading';
 import HomePageOverview from 'containers/HomePageOverview';
 import Footer from 'containers/Footer';
 
+
 import Guest from './Guest';
 // import { DEPENDENCIES } from './constants';
 
 import messages from './messages';
 
 const Styled = styled.div`
-  background: ${({ theme }) => theme.global.colors.background};
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  overflow-y: auto;
 `;
 
 export class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
@@ -46,18 +56,39 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        {isUserSigningIn && !isUserSignedIn && (
-          <Loading />
-        )}
-        {!isUserSigningIn && !isUserSignedIn && (
-          <Guest
-            onPageLink={onPageLink}
-          />
-        )}
         {isUserSignedIn && (
-          <HomePageOverview />
+          <Box
+            style={{
+              position: 'fixed',
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: -1,
+            }}
+          >
+            <Image
+              src={FOOTER.IMAGE_URLS.home_background}
+            />
+          </Box>
         )}
-        <Footer backgroundImage="footer_actions" />
+        <div style={{ position: 'relative' }}>
+          {isUserSigningIn && !isUserSignedIn && (
+            <Loading />
+          )}
+          {!isUserSigningIn && !isUserSignedIn && (
+            <Guest
+              onPageLink={onPageLink}
+            />
+          )}
+          {isUserSignedIn && (
+            <HomePageOverview />
+          )}
+          <Footer
+            backgroundImage="footer_home"
+            backgroundColor="#fff"
+          />
+        </div>
       </Styled>
     );
   }

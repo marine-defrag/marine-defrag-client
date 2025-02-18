@@ -151,7 +151,7 @@ export function ActionsOverview({
           </Content>
         </ViewContainer>
       </ContainerWrapper>
-      <Footer backgroundImage="footer_actions" backgroundColor />
+      <Footer backgroundImage="footer_actions" backgroundColor="#f1f0f1" />
     </>
   );
 }

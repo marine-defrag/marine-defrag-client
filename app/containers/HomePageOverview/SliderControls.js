@@ -7,27 +7,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Next, Previous } from 'grommet-icons';
 import { Box } from 'grommet';
 
 import styled from 'styled-components';
-// import convert from 'color-convert';
 
+import Icon from 'components/Icon';
 import ButtonSimple from 'components/buttons/ButtonSimple';
 
 // prettier-ignore
 const StyledButtonIcon = styled(ButtonSimple)`
-  border-radius: 9999px;
-  border: 2px solid ${({ theme, disabled }) => disabled ? '#d2d4d6' : theme.global.colors.a};
-  stroke: ${({ theme, disabled }) => disabled ? '#d2d4d6' : theme.global.colors.a};
-  padding: 5px;
+  color: ${({ theme, disabled }) => disabled ? '#d2d4d6' : theme.global.colors.a};
   opacity: 1;
   &:hover {
-    border-color: ${({ theme, disabled }) => disabled ? '#d2d4d6' : theme.global.colors.brand};
-    stroke: ${({ theme, disabled }) => disabled ? '#d2d4d6' : theme.global.colors.brand};
-  }
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    padding: 5px;
+    color: ${({ theme, disabled }) => disabled ? '#d2d4d6' : theme.global.colors.brand};
   }
 `;
 
@@ -52,7 +44,7 @@ const SliderControls = ({
           disabled={!hasLeft}
           plain
         >
-          <Previous size="small" style={{ stroke: 'inherit' }} />
+          <Icon name="arrowCircle" rotate={180} />
         </StyledButtonIcon>
       </Box>
       <Box align="center">
@@ -60,7 +52,7 @@ const SliderControls = ({
           onClick={next}
           disabled={!hasRight}
         >
-          <Next size="small" style={{ stroke: 'inherit' }} />
+          <Icon name="arrowCircle" />
         </StyledButtonIcon>
       </Box>
     </Box>

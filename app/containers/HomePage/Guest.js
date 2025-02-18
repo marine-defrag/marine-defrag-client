@@ -7,7 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import ReactMarkdown from 'react-markdown';
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 import { Box, ResponsiveContext } from 'grommet';
 
 import { isMinSize } from 'utils/responsive';
@@ -15,51 +15,31 @@ import { isMinSize } from 'utils/responsive';
 import Container from 'components/styled/Container';
 import ContentSimple from 'components/styled/ContentSimple';
 import ButtonHero from 'components/buttons/ButtonHero';
-// import ButtonFlat from 'components/buttons/ButtonFlat';
-import NormalImg from 'components/Img';
+import Icon from 'components/Icon';
 
 import appMessages from 'containers/App/messages';
 
 import { ROUTES, VERSION } from 'themes/config';
 
+import Partners from './Partners';
 import messages from './messages';
 
-const GraphicHome = styled(NormalImg)`
-  width: 100px;
-`;
 const SectionTop = styled.div`
   background: ${({ theme }) => theme.global.colors.backgroundX};
   color: ${({ theme }) => theme.global.colors.brand};
   text-align: center;
   padding-top: 80px;
+  position: relative;
 `;
 const SectionAbout = styled.div`
-  padding-top: 60px;
+  padding-top: 120px;
   padding-bottom: 80px;
   color: ${({ theme }) => theme.global.colors.brand};
-`;
-const SectionPartners = styled.div`
-  padding-top: 10px;
-  padding-bottom: 50px;
-`;
-
-const Partner = styled((p) => <Box {...p} />)`
-  padding: 20px 50px 0;
-  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    border-right: 1px solid #b5babe;
-    border-left: 1px solid #b5babe;
-    &:first-child {
-      border-left-color: transparent;
-    }
-    &:last-child {
-      border-right-color: transparent;
-    }
-  }
 `;
 
 const HomeActions = styled.div`
   margin-top: 30px;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
   @media (min-width: ${(props) => props.theme.breakpoints.large}) {
     margin-top: 50px;
   }
@@ -134,15 +114,19 @@ const MainButton = styled(ButtonHero)`
 
 function Guest({
   intl,
-  theme,
   onPageLink,
 }) {
+  const size = React.useContext(ResponsiveContext);
   const appTitle = `${intl.formatMessage(appMessages.app.title)} - ${intl.formatMessage(appMessages.app.claim)}`;
   return (
     <>
       <SectionTop>
         <Container>
-          <GraphicHome src={theme.media.graphicHome} alt={appTitle} />
+          <Icon
+            name="brand"
+            title={appTitle}
+            size={isMinSize(size, 'medium') ? '200px' : '120px'}
+          />
           <Box>
             <Claim>
               <FormattedMessage {...appMessages.app.claim} />
@@ -178,6 +162,26 @@ function Guest({
             </Box>
           </HomeActions>
         </Container>
+        <svg
+          viewBox="0 0 1920 237"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            width: '100%',
+            paddingTop: '20%',
+            transform: 'translateY(20%)',
+          }}
+        >
+          <path
+            fill="#e8e8e8"
+            d="M715.31,133.53c370.89,39.85,637.13,109.17,835.29,103.09,183.57-5.63,346.41-64.15,369.4-72.73v-75.77S1576.08-29.38,1205.73,6.98c-370.35,36.37-636.21,99.62-834.09,94.07C173.8,95.51,0,33.72,0,33.72v188.72s344.42-128.77,715.31-88.91Z"
+          >
+          </path>
+        </svg>
       </SectionTop>
       <SectionAbout>
         <Container noPaddingBottom>
@@ -188,36 +192,15 @@ function Guest({
           </ContentSimple>
         </Container>
       </SectionAbout>
-      <SectionPartners>
-        <Container noPaddingBottom>
-          <ContentSimple>
-            <ResponsiveContext.Consumer>
-              {(size) => (
-                <Box direction={isMinSize(size, 'medium') ? 'row' : 'column'}>
-                  <Partner basis="1/3">
-                    ZUG LOGO
-                  </Partner>
-                  <Partner basis="1/3">
-                    GIZ LOGO
-                  </Partner>
-                  <Partner basis="1/3">
-                    BMU LOGO
-                  </Partner>
-                </Box>
-              )}
-            </ResponsiveContext.Consumer>
-          </ContentSimple>
-        </Container>
-      </SectionPartners>
+      <Partners />
     </>
   );
 }
 
 Guest.propTypes = {
   onPageLink: PropTypes.func.isRequired,
-  theme: PropTypes.object.isRequired,
   intl: intlShape,
 };
 
 // Wrap the component to inject dispatch and state into it
-export default injectIntl(withTheme(Guest));
+export default injectIntl(Guest);

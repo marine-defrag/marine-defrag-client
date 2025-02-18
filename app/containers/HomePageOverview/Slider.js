@@ -37,7 +37,7 @@ export function Slider({
     <SliderWrapper>
       <Carousel
         responsive={responsive}
-        swipeable={false}
+        swipeable
         draggable={false}
         slidesToSlide={cardNumber}
         arrows={false}

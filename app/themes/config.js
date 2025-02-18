@@ -999,6 +999,10 @@ export const FOOTER = {
   LINK_TARGET_INTERNAL: false,
   LINK_TARGET_INTERNAL_ID: 1,
   IMAGE_URLS: {
+    home_top: './claudio-schwarz-unsplash.jpg',
+    home_background: './naja-bertolt-jensen-unsplash.jpg',
+    home_quote: './home-quote.png',
+    footer_home: './footer_image_home.png',
     footer_actions: `${CLIENT_URL}/footer_unsplash_6.png`,
     footer_actors: `${CLIENT_URL}/footer_unsplash_9.png`,
     footer_facts: `${CLIENT_URL}/footer_unsplash_11.png`,
