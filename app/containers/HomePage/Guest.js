@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from 'react-intl';
 import ReactMarkdown from 'react-markdown';
 import styled from 'styled-components';
-import { Box, ResponsiveContext } from 'grommet';
+import { Text, Box, ResponsiveContext } from 'grommet';
 
 import { isMinSize } from 'utils/responsive';
 
@@ -25,31 +25,39 @@ import Partners from './Partners';
 import messages from './messages';
 
 const SectionTop = styled.div`
+  position: relative;
   background: ${({ theme }) => theme.global.colors.backgroundX};
   color: ${({ theme }) => theme.global.colors.brand};
   text-align: center;
-  padding-top: 80px;
-  position: relative;
+  min-height: 500px;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    min-height: calc(100vH - ${({ theme }) => theme.sizes.header.banner.height}px)};
+  }
 `;
+const SectionTopInner = styled((p) => <Box {...p} />)`
+  min-height: 500px;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    height: calc(100vH - ${({ theme }) => theme.sizes.header.banner.height}px)};
+  }
+`;
+
 const SectionAbout = styled.div`
   padding-top: 120px;
   padding-bottom: 80px;
   color: ${({ theme }) => theme.global.colors.brand};
 `;
 
-const HomeActions = styled.div`
-  margin-top: 30px;
-  margin-bottom: 10px;
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    margin-top: 50px;
-  }
+const HomeActions = styled(
+  (p) => <Box fill="horizontal" align="center" justify="center" {...p} />
+)`
+  min-height: 120px;
 `;
+
 const Title = styled.h1`
-  margin: 5px 0 20px;
-  color: ${({ theme }) => theme.global.colors.brand};
   font-family: ${(props) => props.theme.fonts.title};
   font-size: ${({ theme }) => theme.text.xxlarge.size};
   line-height: ${({ theme }) => theme.text.xxlarge.size.height};
+  margin: 0;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${({ theme }) => theme.text.xxxlarge.size};
     line-height: ${({ theme }) => theme.text.xxxlarge.size.height};
@@ -59,15 +67,10 @@ const Title = styled.h1`
   }
 `;
 
-const Claim = styled.p`
-  color: ${({ theme }) => theme.global.colors.text.brand};
+const Claim = styled.div`
   font-family: ${(props) => props.theme.fonts.claim};
   font-size: ${(props) => props.theme.sizes.home.text.claimMobile};
   font-weight: 100;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 20px;
-  margin-bottom: 0px;
   line-height: 1.3;
   font-size: ${({ theme }) => theme.text.large.size};
   line-height: ${({ theme }) => theme.text.large.size.height};
@@ -81,14 +84,13 @@ const Claim = styled.p`
 `;
 
 const Intro = styled(ReactMarkdown)`
-  font-size: ${({ hint, theme }) => theme.text[hint ? 'small' : 'medium'].size};
-  line-height: ${({ hint, theme }) => theme.text[hint ? 'small' : 'medium'].height};
-  color: ${({ hint, theme }) => theme.global.colors.text[hint ? 'secondary' : 'brand']};
-  margin-left: auto;
-  margin-right: auto;
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    font-size: ${({ hint, theme }) => theme.text[hint ? 'medium' : 'large'].size};
-    line-height: ${({ hint, theme }) => theme.text[hint ? 'medium' : 'large'].height};
+  font-size: ${({ theme }) => theme.text.large.size};
+  line-height: ${({ theme }) => theme.text.large.height};
+  margin: 0 auto;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    font-size: ${({ theme }) => theme.text.xlarge.size};
+    line-height: ${({ theme }) => theme.text.xlarge.height};
+    max-width: 666px;
   }
   @media print {
     font-size: ${(props) => props.theme.sizes.print.large};
@@ -96,7 +98,7 @@ const Intro = styled(ReactMarkdown)`
 `;
 
 const MainButton = styled(ButtonHero)`
-  max-width: ${({ single }) => single ? 'auto' : '250px'};
+  max-width: ${({ single }) => single ? 'auto' : '200px'};
   width: 100%;
   display: block;
   margin: 10px auto;
@@ -104,8 +106,9 @@ const MainButton = styled(ButtonHero)`
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: inline-block;
     margin: 10px 5px 0;
+    padding: 0.5em;
     min-width: auto;
-    width: ${({ single }) => single ? 'auto' : '250px'};
+    width: ${({ single }) => single ? 'auto' : '200px'};
   }
   @media print {
     display: none;
@@ -121,28 +124,55 @@ function Guest({
   return (
     <>
       <SectionTop>
-        <Container>
-          <Icon
-            name="brand"
-            title={appTitle}
-            size={isMinSize(size, 'medium') ? '200px' : '120px'}
-          />
-          <Box>
+        <svg
+          viewBox="0 0 1920 237"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            width: '100%',
+            paddingTop: '20%',
+            transform: 'translateY(20%)',
+            pointerEvents: 'none',
+          }}
+        >
+          <path
+            fill="#e8e8e8"
+            d="M715.31,133.53c370.89,39.85,637.13,109.17,835.29,103.09,183.57-5.63,346.41-64.15,369.4-72.73v-75.77S1576.08-29.38,1205.73,6.98c-370.35,36.37-636.21,99.62-834.09,94.07C173.8,95.51,0,33.72,0,33.72v188.72s344.42-128.77,715.31-88.91Z"
+          >
+          </path>
+        </svg>
+        <SectionTopInner
+          style={{ position: 'relative' }}
+          align="center"
+          justify="evenly"
+          fill="vertical"
+          flex={{ grow: 1 }}
+        >
+          <Box pad={{ top: 'ms' }} align="center" style={{ minHeight: '80px' }}>
+            <Icon
+              name="brand"
+              title={appTitle}
+              size={isMinSize(size, 'medium') ? '200px' : '120px'}
+            />
+          </Box>
+          <Box gap="xsmall" align="center">
             <Claim>
               <FormattedMessage {...appMessages.app.claim} />
             </Claim>
             <Title>
               <FormattedMessage {...appMessages.app.title} />
             </Title>
-          </Box>
-          <Box>
             <Intro source={intl.formatMessage(messages.introGuest, { version: VERSION })} />
           </Box>
           <HomeActions>
             <Box>
-              <Box>
-                <Intro hint source={intl.formatMessage(messages.notSignedIn)} />
-              </Box>
+              <Text size="small" color="#777b7e">
+                <FormattedMessage {...messages.notSignedIn} />
+              </Text>
               <Box direction="row" justify="center">
                 <MainButton
                   space
@@ -161,27 +191,8 @@ function Guest({
               </Box>
             </Box>
           </HomeActions>
-        </Container>
-        <svg
-          viewBox="0 0 1920 237"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            width: '100%',
-            paddingTop: '20%',
-            transform: 'translateY(20%)',
-          }}
-        >
-          <path
-            fill="#e8e8e8"
-            d="M715.31,133.53c370.89,39.85,637.13,109.17,835.29,103.09,183.57-5.63,346.41-64.15,369.4-72.73v-75.77S1576.08-29.38,1205.73,6.98c-370.35,36.37-636.21,99.62-834.09,94.07C173.8,95.51,0,33.72,0,33.72v188.72s344.42-128.77,715.31-88.91Z"
-          >
-          </path>
-        </svg>
+          <Box margin={{ bottom: 'small' }} style={{ minHeight: '58px' }} />
+        </SectionTopInner>
       </SectionTop>
       <SectionAbout>
         <Container noPaddingBottom>

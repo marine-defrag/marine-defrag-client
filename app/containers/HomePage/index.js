@@ -60,7 +60,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
           <Box
             style={{
               position: 'fixed',
-              top: 0,
+              top: '50px',
               bottom: 0,
               left: 0,
               right: 0,

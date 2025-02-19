@@ -653,7 +653,7 @@ theme.layer = {
 };
 
 theme.text = {
-  xxxlarge: { size: '48px', height: '60px', maxWidth: '800px' },
+  xxxlarge: { size: '40px', height: '48px', maxWidth: '800px' },
   xxlarge: { size: '30px', height: '36px', maxWidth: '800px' },
   xlarge: { size: '21px', height: '28px', maxWidth: '800px' },
   large: { size: '18px', height: '24px', maxWidth: '800px' },

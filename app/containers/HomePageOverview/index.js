@@ -59,14 +59,19 @@ import messages from './messages';
 
 const SectionTop = styled.div`
   position: relative;
-  /* background-color: rgb(24 56 99 / 50%); */
+  background-color: rgb(24 56 99 / 70%);
   background-color: #183863;
   color: #fff;
   text-align: center;
-  padding-top: 0px;
-  padding-bottom: 80px;
+  min-height: 500px;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    padding-top: 80px;
+    height: calc(100vH - ${({ theme }) => theme.sizes.header.banner.height}px)};
+  }
+`;
+const SectionTopInner = styled((p) => <Box {...p} />)`
+  min-height: 500px;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    height: calc(100vH - ${({ theme }) => theme.sizes.header.banner.height}px)};
   }
 `;
 const Section = styled.div`
@@ -75,18 +80,17 @@ const Section = styled.div`
   color: ${({ theme }) => theme.global.colors.brand};
 `;
 
-const HomeActions = styled.div`
-  margin-top: 30px;
-  margin-bottom: 10px;
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    margin-top: 50px;
-  }
+const HomeActions = styled(
+  (p) => <Box fill="horizontal" align="center" justify="center" {...p} />
+)`
+  min-height: 120px;
 `;
+
 const Title = styled.h1`
-  margin: 5px 0 20px;
   font-family: ${(props) => props.theme.fonts.title};
   font-size: ${({ theme }) => theme.text.xxlarge.size};
   line-height: ${({ theme }) => theme.text.xxlarge.size.height};
+  margin: 0;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     font-size: ${({ theme }) => theme.text.xxxlarge.size};
     line-height: ${({ theme }) => theme.text.xxxlarge.size.height};
@@ -96,14 +100,10 @@ const Title = styled.h1`
   }
 `;
 
-const Claim = styled.p`
+const Claim = styled.div`
   font-family: ${(props) => props.theme.fonts.claim};
   font-size: ${(props) => props.theme.sizes.home.text.claimMobile};
   font-weight: 100;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 20px;
-  margin-bottom: 0px;
   line-height: 1.3;
   font-size: ${({ theme }) => theme.text.large.size};
   line-height: ${({ theme }) => theme.text.large.size.height};
@@ -117,13 +117,12 @@ const Claim = styled.p`
 `;
 
 const Intro = styled(ReactMarkdown)`
-  font-size: ${({ hint, theme }) => theme.text[hint ? 'small' : 'medium'].size};
-  line-height: ${({ hint, theme }) => theme.text[hint ? 'small' : 'medium'].height};
-  margin-left: auto;
-  margin-right: auto;
-  @media (min-width: ${(props) => props.theme.breakpoints.large}) {
-    font-size: ${({ hint, theme }) => theme.text[hint ? 'medium' : 'large'].size};
-    line-height: ${({ hint, theme }) => theme.text[hint ? 'medium' : 'large'].height};
+  font-size: ${({ theme }) => theme.text.large.size};
+  line-height: ${({ theme }) => theme.text.large.height};
+  margin: 0 auto;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    font-size: ${({ theme }) => theme.text.xlarge.size};
+    line-height: ${({ theme }) => theme.text.xlarge.height};
     max-width: 666px;
   }
   @media print {
@@ -132,7 +131,7 @@ const Intro = styled(ReactMarkdown)`
 `;
 
 const MainButton = styled(ButtonHero)`
-  max-width: ${({ single }) => single ? 'auto' : '250px'};
+  max-width: ${({ single }) => single ? 'auto' : '200px'};
   width: 100%;
   display: block;
   margin: 10px auto;
@@ -140,12 +139,22 @@ const MainButton = styled(ButtonHero)`
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
     display: inline-block;
     margin: 10px 5px 0;
+    padding: 0.5em;
     min-width: auto;
-    width: ${({ single }) => single ? 'auto' : '250px'};
+    width: ${({ single }) => single ? 'auto' : '200px'};
   }
   @media print {
     display: none;
   }
+`;
+
+const BackgroundImage = styled(Box)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  overflow: hidden;
 `;
 
 function HomePageOverview({
@@ -194,43 +203,67 @@ function HomePageOverview({
   return (
     <div>
       <SectionTop>
-        <div
+        <BackgroundImage>
+          <Image src={FOOTER.IMAGE_URLS.home_top} style={{ opacity: 0.33 }} />
+        </BackgroundImage>
+        <svg
+          viewBox="0 0 1920 377"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
           style={{
-            position: 'absolute', top: 0, right: 0, left: 0, bottom: 0, overflow: 'hidden',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            width: '100%',
+            paddingTop: '20%',
+            transform: 'translateY(25%)',
+            pointerEvents: 'none',
           }}
         >
-          <Image src={FOOTER.IMAGE_URLS.home_top} style={{ opacity: 0.33 }} />
-        </div>
-        <Container style={{ position: 'relative' }}>
-          <Icon
-            name="brand"
-            title={appTitle}
-            size={isMinSize(size, 'medium') ? '200px' : '120px'}
+          <path
+            fill="#183863"
+            d="M1920,88.05S1575.51-29.36,1205.3,6.98c-370.21,36.34-635.98,99.54-833.78,94C173.73,95.44,0,33.7,0,33.7v217.87h1920V88.05Z"
           />
-          <Box>
+          <path
+            fill="#00214d"
+            d="M1920,162.71s-171.87,67.66-369.96,73.73c-198.09,6.07-464.23-63.19-834.99-103.01C344.29,93.61,0,222.27,0,222.27v87.1s173.73,61.74,371.51,67.28c197.8,5.54,463.57-57.66,833.78-94,370.21-36.34,714.7,81.07,714.7,81.07"
+          />
+        </svg>
+        <SectionTopInner
+          style={{ position: 'relative' }}
+          align="center"
+          justify="evenly"
+          fill="vertical"
+          flex={{ grow: 1 }}
+        >
+          <Box pad={{ top: 'ms' }} align="center" style={{ minHeight: '80px' }}>
+            <Icon
+              name="brand"
+              title={appTitle}
+              size={isMinSize(size, 'medium') ? '200px' : '120px'}
+            />
+          </Box>
+          <Box gap="xsmall" align="center">
             <Claim>
               <FormattedMessage {...appMessages.app.claim} />
             </Claim>
             <Title>
               <FormattedMessage {...appMessages.app.title} />
             </Title>
-          </Box>
-          <Box>
             <Intro source={intl.formatMessage(messages.intro, { version: VERSION })} />
           </Box>
-          {!authReady && (
-            <div style={{ minHeight: '120px' }}>
-              <Loading />
-            </div>
-          )}
-          {authReady && !isUserAnalyst && (
-            <HomeActions style={{ minHeight: '120px' }}>
+          <HomeActions>
+            {(!authReady || !dataReady) && (
+              <Box style={{ width: '66%' }}>
+                <Loading />
+              </Box>
+            )}
+            {authReady && dataReady && !isUserAnalyst && (
               <Box align="center" margin={{ bottom: 'xsmall' }}>
                 <Text as="div" size="xlarge" color="white" style={{ maxWidth: '600px' }}>
                   <FormattedMessage {...messages.noRoleAssigned} />
                 </Text>
-              </Box>
-              <Box align="center">
                 <MainButton
                   space
                   onClick={() => {
@@ -249,80 +282,53 @@ function HomePageOverview({
                   Request Access
                 </MainButton>
               </Box>
-            </HomeActions>
-          )}
-          {authReady && isUserAnalyst && (
-            <HomeActions style={{ minHeight: '120px' }}>
+            )}
+            {authReady && dataReady && isUserAnalyst && (
               <Box>
-                <Intro hint source={intl.formatMessage(messages.goTo)} />
+                <Text size="small">
+                  <FormattedMessage {...messages.goTo} />
+                </Text>
+                <Box
+                  direction={isMinSize(size, 'ms') ? 'row' : 'column'}
+                  justify="center"
+                >
+                  <MainButton
+                    space
+                    onClick={() => onUpdatePath(ROUTES.ACTIONS)}
+                    count={3}
+                  >
+                    <FormattedMessage {...appMessages.nav.actions} />
+                  </MainButton>
+                  <MainButton
+                    space
+                    onClick={() => onUpdatePath(ROUTES.ACTORS)}
+                    count={3}
+                  >
+                    <FormattedMessage {...appMessages.nav.actors} />
+                  </MainButton>
+                  <MainButton
+                    space
+                    onClick={() => onUpdatePath(`${ROUTES.ACTIONS}/${FF_ACTIONTYPE}`)}
+                    count={3}
+                  >
+                    <FormattedMessage {...appMessages.actiontypes[FF_ACTIONTYPE]} />
+                  </MainButton>
+                </Box>
               </Box>
-              <Box
-                direction={isMinSize(size, 'ms') ? 'row' : 'column'}
-                justify="center"
-              >
-                <MainButton
-                  space
-                  onClick={() => onUpdatePath(ROUTES.ACTIONS)}
-                  count={3}
-                >
-                  <FormattedMessage {...appMessages.nav.actions} />
-                </MainButton>
-                <MainButton
-                  space
-                  onClick={() => onUpdatePath(ROUTES.ACTORS)}
-                  count={3}
-                >
-                  <FormattedMessage {...appMessages.nav.actors} />
-                </MainButton>
-                <MainButton
-                  space
-                  onClick={() => onUpdatePath(`${ROUTES.ACTIONS}/${FF_ACTIONTYPE}`)}
-                  count={3}
-                >
-                  <FormattedMessage {...appMessages.actiontypes[FF_ACTIONTYPE]} />
-                </MainButton>
-              </Box>
-            </HomeActions>
-          )}
-        </Container>
-        <svg
-          viewBox="0 0 1920 377"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            width: '100%',
-            paddingTop: '20%',
-            transform: 'translateY(25%)',
-          }}
-        >
-          <path
-            fill="#183863"
-            d="M1920,88.05S1575.51-29.36,1205.3,6.98c-370.21,36.34-635.98,99.54-833.78,94C173.73,95.44,0,33.7,0,33.7v217.87h1920V88.05Z"
-          />
-          <path
-            fill="#00214d"
-            d="M1920,162.71s-171.87,67.66-369.96,73.73c-198.09,6.07-464.23-63.19-834.99-103.01C344.29,93.61,0,222.27,0,222.27v87.1s173.73,61.74,371.51,67.28c197.8,5.54,463.57-57.66,833.78-94,370.21-36.34,714.7,81.07,714.7,81.07"
-          />
-        </svg>
-        <Box align="center">
-          <Icon name="arrowCircle" rotate={90} />
-        </Box>
+            )}
+          </HomeActions>
+          <Box margin={{ bottom: 'small' }} style={{ minHeight: '58px' }}>
+            <Icon name="arrowCircle" rotate={90} />
+          </Box>
+        </SectionTopInner>
       </SectionTop>
-      {!dataReady && isUserAnalyst && (
+      {(!authReady || !dataReady) && isUserAnalyst && (
         <Section
           style={{
             background: theme.global.colors.backgroundX,
             minHeight: '0.5vH',
           }}
-        >
-          <Container>
-            <Loading />
-          </Container>
-        </Section>
+        />
       )}
       {authReady && dataReady && isUserAnalyst && (
         <>
@@ -387,6 +393,25 @@ function HomePageOverview({
           )}
         </>
       )}
+      <Section style={{ background: '#f1f0f1', position: 'relative' }}>
+        <svg
+          viewBox="0 0 1920 190"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            width: '100%',
+          }}
+        >
+          <path
+            fill="#fff"
+            d="M1920,88.05S1575.51-29.36,1205.3,6.98c-370.21,36.34-635.98,99.54-833.78,94C173.73,95.44,0,33.7,0,33.7v217.87h1920V88.05Z"
+          />
+        </svg>
+      </Section>
       <Section style={{ background: '#fff' }}>
         <Container noPaddingBottom>
           <ContentSimple>
