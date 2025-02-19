@@ -148,6 +148,26 @@ const MainButton = styled(ButtonHero)`
   }
 `;
 
+const ButtonPage = styled(ButtonHero)`
+  display: inline-flex;
+  flex-grow: 0;
+  padding: 0.2em 0;
+  min-width: auto;
+  background: transparent;
+  color: #0077d8;
+  border: 0;
+  border-radius: 2px;
+  @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
+    min-width: auto;
+    padding: 0.3em 0;
+  }
+  &:hover, &:focus-visible {
+    background: transparent;
+    color: #183863;
+    border: 0;
+  }
+`;
+
 const BackgroundImage = styled(Box)`
   position: absolute;
   top: 0;
@@ -415,9 +435,33 @@ function HomePageOverview({
       <Section style={{ background: '#fff' }}>
         <Container noPaddingBottom>
           <ContentSimple>
-            <h3><FormattedMessage {...appMessages.app.aboutSectionTitle} /></h3>
-            <p><FormattedMessage {...appMessages.app.about1} /></p>
-            <p><FormattedMessage {...appMessages.app.about2} /></p>
+            <Box>
+              <h3><FormattedMessage {...appMessages.app.aboutSectionTitle} /></h3>
+              <p><FormattedMessage {...appMessages.app.about1} /></p>
+              <p><FormattedMessage {...appMessages.app.about2} /></p>
+            </Box>
+            <Box direction="row" gap="medium">
+              <ButtonPage
+                onClick={() => {
+                  onUpdatePath(`${ROUTES.PAGES}/${FOOTER.LINK_TARGET_ABOUT_ID}`);
+                }}
+              >
+                <Box direction="row" gap="xsmall" justify="center" align="center">
+                  <Text size="large">Read more</Text>
+                  <Icon name="arrow" />
+                </Box>
+              </ButtonPage>
+              <ButtonPage
+                onClick={() => {
+                  onUpdatePath(`${ROUTES.PAGES}/${FOOTER.LINK_TARGET_NEW_ID}`);
+                }}
+              >
+                <Box direction="row" gap="xsmall" justify="center" align="center">
+                  <Text size="large">What&apos;s new</Text>
+                  <Icon name="arrow" />
+                </Box>
+              </ButtonPage>
+            </Box>
           </ContentSimple>
         </Container>
       </Section>

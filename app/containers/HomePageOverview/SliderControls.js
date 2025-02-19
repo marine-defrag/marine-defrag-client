@@ -40,6 +40,8 @@ const SliderControls = ({
     >
       <Box align="center">
         <StyledButtonIcon
+          title="Click to show previous navigation options"
+          tabIndex={-1}
           onClick={previous}
           disabled={!hasLeft}
           plain
@@ -49,6 +51,8 @@ const SliderControls = ({
       </Box>
       <Box align="center">
         <StyledButtonIcon
+          title="Click to show next navigation options"
+          tabIndex={-1}
           onClick={next}
           disabled={!hasRight}
         >
