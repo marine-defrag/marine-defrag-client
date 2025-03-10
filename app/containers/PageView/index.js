@@ -22,7 +22,7 @@ import {
 import { keydownHandlerPrint } from 'utils/print';
 
 import { CONTENT_PAGE, PRINT_TYPES } from 'containers/App/constants';
-import { ROUTES } from 'themes/config';
+import { ROUTES, PRIVACY_STATUSES } from 'themes/config';
 
 import Footer from 'containers/Footer';
 import Loading from 'components/Loading';
@@ -59,6 +59,12 @@ const ViewContainer = styled(Container)`
 const getBodyAsideFields = (entity) => ([{
   fields: [
     getStatusField(entity),
+    getStatusField(
+      entity,
+      'private',
+      PRIVACY_STATUSES,
+
+    ),
     getMetaField(entity),
   ],
 }]);

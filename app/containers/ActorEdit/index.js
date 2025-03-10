@@ -16,7 +16,7 @@ import {
   entityOptions,
   taxonomyOptions,
   getTitleFormField,
-  getStatusField,
+  getStatusFormField,
   getMarkdownFormField,
   getCodeFormField,
   renderTaxonomyControl,
@@ -181,7 +181,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
     return ([
       {
         fields: [
-          getStatusField(intl.formatMessage),
+          getStatusFormField(intl.formatMessage),
           getMetaField(entity),
         ],
       },
@@ -365,7 +365,7 @@ export class ActorEdit extends React.PureComponent { // eslint-disable-line reac
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Content isScrollContainer ref={this.scrollContainer}>
+        <Content hasOverflow ref={this.scrollContainer}>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}

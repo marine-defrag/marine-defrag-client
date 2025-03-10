@@ -142,7 +142,7 @@ export const getStatusField = (
     ? entity.getIn(['attributes', attribute])
     : defaultValue,
   options,
-  label,
+  label: label || appMessages.attributes[attribute],
 });
 
 // only show the highest rated role (lower role ids means higher)

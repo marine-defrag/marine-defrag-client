@@ -14,7 +14,7 @@ import {
   getTitleFormField,
   getMenuTitleFormField,
   getMarkdownFormField,
-  getStatusField,
+  getStatusFormField,
   getMenuOrderFormField,
 } from 'utils/forms';
 
@@ -89,7 +89,10 @@ export class PageNew extends React.PureComponent { // eslint-disable-line react/
   getHeaderAsideFields = () => {
     const { intl } = this.context;
     return ([{
-      fields: [getStatusField(intl.formatMessage)],
+      fields: [
+        getStatusFormField(intl.formatMessage),
+        getStatusFormField(intl.formatMessage, 'private'),
+      ],
     }]);
   };
 
@@ -116,7 +119,7 @@ export class PageNew extends React.PureComponent { // eslint-disable-line react/
             },
           ]}
         />
-        <Content isScrollContainer ref={this.scrollContainer}>
+        <Content hasOverflow ref={this.scrollContainer}>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle)}
             type={CONTENT_SINGLE}

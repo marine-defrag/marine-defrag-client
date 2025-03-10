@@ -745,7 +745,6 @@ export default function createRoutes(store) {
       },
     }, {
       path: `${ROUTES.PAGES}${ROUTES.ID}`,
-      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
       name: 'pageView',
       getComponent(nextState, cb) {
         const importModules = Promise.all([

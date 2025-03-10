@@ -19,6 +19,7 @@ import validateMaxLength from 'components/forms/validators/validate-max-length';
 
 import {
   PUBLISH_STATUSES,
+  PRIVACY_STATUSES,
   USER_STATUSES,
   USER_ROLES,
   DATE_FORMAT,
@@ -659,13 +660,25 @@ export const getRoleFormField = (formatMessage, roleOptions) => ({
     || userRole.value === USER_ROLES.DEFAULT.value)),
 });
 
-export const getStatusField = (formatMessage) => ({
-  id: 'status',
-  controlType: 'select',
-  model: '.attributes.draft',
-  label: formatMessage(appMessages.attributes.draft),
-  options: PUBLISH_STATUSES,
-});
+export const getStatusFormField = (
+  formatMessage, attribute = 'draft',
+) => {
+  let myOptions = [];
+  if (attribute === 'draft') {
+    myOptions = PUBLISH_STATUSES;
+  }
+  if (attribute === 'private') {
+    myOptions = PRIVACY_STATUSES;
+  }
+  return {
+    id: `status-${attribute}`,
+    controlType: 'select',
+    model: `.attributes.${attribute}`,
+    label: formatMessage(appMessages.attributes[attribute]),
+    options: myOptions,
+  };
+};
+
 export const getUserStatusField = (formatMessage) => ({
   id: 'userStatus',
   controlType: 'select',
@@ -896,7 +909,7 @@ export const getFormField = ({
   onChange,
   type,
   model,
-  maxLength = 6000,
+  maxLength = 10000,
 }) => {
   const field = {
     id: attribute,
@@ -932,11 +945,11 @@ const getCategoryFields = (args, formatMessage) => ({
       ? [{
         fields: [
           getCheckboxField(formatMessage, 'user_only'),
-          getStatusField(formatMessage),
+          getStatusFormField(formatMessage),
         ],
       }]
       : [{
-        fields: [getStatusField(formatMessage)],
+        fields: [getStatusFormField(formatMessage)],
       }],
   },
   body: {
@@ -965,7 +978,7 @@ const getActorFields = (formatMessage) => ({
     }],
     aside: [{ // fieldGroup
       fields: [
-        getStatusField(formatMessage),
+        getStatusFormField(formatMessage),
       ],
     }],
   },
@@ -987,7 +1000,7 @@ const getActionFields = (formatMessage) => ({
     }],
     aside: [{ // fieldGroup
       fields: [
-        getStatusField(formatMessage),
+        getStatusFormField(formatMessage),
       ],
     }],
   },
@@ -1014,7 +1027,7 @@ const getResourceFields = (formatMessage) => ({
     }],
     aside: [{ // fieldGroup
       fields: [
-        getStatusField(formatMessage),
+        getStatusFormField(formatMessage),
       ],
     }],
   },

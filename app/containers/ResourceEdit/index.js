@@ -15,7 +15,7 @@ import { Map, fromJS } from 'immutable';
 import {
   entityOptions,
   getTitleFormField,
-  getStatusField,
+  getStatusFormField,
   getMarkdownFormField,
   getDateField,
   getLinkFormField,
@@ -145,7 +145,7 @@ export class ResourceEdit extends React.PureComponent { // eslint-disable-line r
     return ([
       {
         fields: [
-          getStatusField(intl.formatMessage),
+          getStatusFormField(intl.formatMessage),
           getMetaField(entity),
         ],
       },
@@ -254,7 +254,7 @@ export class ResourceEdit extends React.PureComponent { // eslint-disable-line r
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Content isScrollContainer ref={this.scrollContainer}>
+        <Content hasOverflow ref={this.scrollContainer}>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}

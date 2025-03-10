@@ -16,7 +16,7 @@ import { Map, List, fromJS } from 'immutable';
 import {
   getConnectionUpdatesFromFormData,
   getTitleFormField,
-  getStatusField,
+  getStatusFormField,
   getMarkdownFormField,
   getCodeFormField,
   renderActorsByActortypeControl,
@@ -152,7 +152,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
     const groups = [];
     groups.push({
       fields: [
-        getStatusField(intl.formatMessage),
+        getStatusFormField(intl.formatMessage),
       ],
     });
     groups.push({ // fieldGroup
@@ -397,7 +397,7 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
             },
           ]}
         />
-        <Content isScrollContainer ref={this.scrollContainer}>
+        <Content hasOverflow ref={this.scrollContainer}>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}
