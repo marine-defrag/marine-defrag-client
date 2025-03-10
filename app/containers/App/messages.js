@@ -1075,6 +1075,18 @@ export default defineMessages({
       id: 'app.containers.App.attributes.is_archived',
       defaultMessage: 'User status',
     },
+    document_upload: {
+      id: 'app.containers.App.attributes.document_upload',
+      defaultMessage: 'Upload document',
+    },
+    document_url: {
+      id: 'app.containers.App.attributes.document_url',
+      defaultMessage: 'Attached document',
+    },
+    document_uploading: {
+      id: 'app.containers.App.attributes.document_uploading',
+      defaultMessage: 'Uploading document',
+    },
   },
   attributeInfo: {
     gdp: {

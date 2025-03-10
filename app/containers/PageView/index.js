@@ -42,6 +42,7 @@ import {
   getStatusField,
   getMetaField,
   getMarkdownField,
+  getDownloadField,
 } from 'utils/fields';
 
 import messages from './messages';
@@ -56,18 +57,35 @@ const ViewContainer = styled(Container)`
   min-height: 50vH;
 `;
 
-const getBodyAsideFields = (entity) => ([{
-  fields: [
-    getStatusField(entity),
-    getStatusField(
-      entity,
-      'private',
-      PRIVACY_STATUSES,
+const getBodyAsideFields = (entity, isAdmin) => {
+  let fields = [];
+  if (isAdmin) {
+    fields = [
+      ...fields,
+      {
+        fields: [
+          getStatusField(entity),
+          getStatusField(
+            entity,
+            'private',
+            PRIVACY_STATUSES,
 
-    ),
-    getMetaField(entity),
-  ],
-}]);
+          ),
+          getMetaField(entity),
+        ],
+      },
+    ];
+  }
+  if (entity.getIn(['attributes', 'document_url'])) {
+    fields = [
+      ...fields,
+      {
+        fields: [getDownloadField(entity)],
+      },
+    ];
+  }
+  return fields;
+};
 
 const getBodyMainFields = (entity) => ([{
   fields: [getMarkdownField(entity, 'content', false)],
@@ -76,8 +94,8 @@ const getBodyMainFields = (entity) => ([{
 const getFields = (entity, isAdmin, isPrint) => ({
   body: {
     main: getBodyMainFields(entity),
-    aside: (isAdmin && !isPrint)
-      ? getBodyAsideFields(entity)
+    aside: !isPrint
+      ? getBodyAsideFields(entity, isAdmin)
       : null,
   },
 });

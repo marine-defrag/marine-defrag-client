@@ -16,6 +16,7 @@ import {
   getMarkdownFormField,
   getStatusFormField,
   getMenuOrderFormField,
+  getUploadField,
 } from 'utils/forms';
 
 import { scrollToTop } from 'utils/scroll-to-component';
@@ -99,7 +100,10 @@ export class PageNew extends React.PureComponent { // eslint-disable-line react/
   getBodyMainFields = () => {
     const { intl } = this.context;
     return ([{
-      fields: [getMarkdownFormField(intl.formatMessage, true, 'content')],
+      fields: [
+        getUploadField(intl.formatMessage),
+        getMarkdownFormField(intl.formatMessage, true, 'content'),
+      ],
     }]);
   };
 

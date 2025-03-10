@@ -21,6 +21,7 @@ import {
   getLinkFormField,
   renderActionsByActiontypeControl,
   getConnectionUpdatesFromFormData,
+  getUploadField,
 } from 'utils/forms';
 import { getInfoField, getMetaField } from 'utils/fields';
 
@@ -167,6 +168,9 @@ export class ResourceEdit extends React.PureComponent { // eslint-disable-line r
           intl.formatMessage,
           checkResourceRequired(typeId, 'url'),
           'url',
+        ),
+        checkResourceAttribute(typeId, 'document_url') && getUploadField(
+          intl.formatMessage,
         ),
       ],
     });

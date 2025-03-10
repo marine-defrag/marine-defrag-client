@@ -15,7 +15,14 @@ export const upperCase = (str) => toUpper(str);
 
 export const getPathFromUrl = (url) => url.split(/[?#]/)[0];
 
-export const getFilenameFromUrl = (url) => url.split('/').pop();
+export const getFilenameFromUrl = (url, truncate) => {
+  let fn = url.split('/').pop();
+  if (truncate) {
+    const [name, ext] = fn.split('.');
+    fn = `${truncateText(name, 25, false)}.${ext}`;
+  }
+  return fn;
+};
 
 export const cleanupSearchTarget = (str) => deburr(toLower(str));
 

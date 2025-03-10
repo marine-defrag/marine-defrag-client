@@ -20,6 +20,7 @@ export const ENDPOINTS = {
     : 'https://api.marine-defrag.org', // server API endpoint
   SIGN_IN: 'auth/sign_in',
   SIGN_OUT: 'auth/sign_out',
+  S3_SIGN_URL: 's3/sign', // server AWS S3 signing url endpoint
   PASSWORD: 'auth/password',
   VALIDATE_TOKEN: 'auth/validate_token',
 };
@@ -703,6 +704,10 @@ export const RESOURCE_FIELDS = {
       type: 'markdown',
     },
     url: {
+      optional: Object.values(RESOURCETYPES), // all types,
+      type: 'url',
+    },
+    document_url: {
       optional: Object.values(RESOURCETYPES), // all types,
       type: 'url',
     },

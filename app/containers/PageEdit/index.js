@@ -19,6 +19,7 @@ import {
   getMenuOrderFormField,
   getMarkdownFormField,
   getStatusFormField,
+  getUploadField,
 } from 'utils/forms';
 
 import {
@@ -135,7 +136,10 @@ export class PageEdit extends React.Component { // eslint-disable-line react/pre
   getBodyMainFields = () => {
     const { intl } = this.context;
     return ([{
-      fields: [getMarkdownFormField(intl.formatMessage, true, 'content')],
+      fields: [
+        getUploadField(intl.formatMessage),
+        getMarkdownFormField(intl.formatMessage, true, 'content'),
+      ],
     }]);
   };
 
