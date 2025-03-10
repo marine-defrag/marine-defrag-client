@@ -17,6 +17,7 @@ import {
   getTitleFormField,
   getTextareaField,
 } from 'utils/forms';
+import { getInfoField } from 'utils/fields';
 
 import { USER_ROLES } from 'themes/config';
 
@@ -27,6 +28,7 @@ import {
   submitInvalid,
   saveErrorDismiss,
   resetEntityForm,
+  updateRouteQuery,
 } from 'containers/App/actions';
 import {
   selectReady,
@@ -68,13 +70,22 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
     }
   }
 
-  getHeaderMainFields = () => {
+  getHeaderMainFields = (isRequestAccess) => {
     const { intl } = this.context;
     return ([ // fieldGroups
       { // fieldGroup
-        fields: [
-          getTitleFormField(intl.formatMessage, 'title', 'subject', true),
-        ],
+        fields: isRequestAccess
+          ? [
+            getInfoField(
+              'subject', // attribute
+              'Request Access', // value
+              true, // large
+              true, // noPadding
+            ),
+          ]
+          : [
+            getTitleFormField(intl.formatMessage, 'title', 'subject', true),
+          ],
       },
     ]);
   }
@@ -94,7 +105,16 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
 
   render() {
     const { intl } = this.context;
-    const { viewDomain, dataReady, resetForm } = this.props;
+    const {
+      viewDomain,
+      dataReady,
+      resetForm,
+      location,
+      onUpdateQuery,
+    } = this.props;
+    const { query } = location;
+    const isRequestAccess = query && query.subject && query.subject === 'access';
+
     const {
       saveSending,
       saveError,
@@ -102,10 +122,14 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
       saveSuccess,
     } = viewDomain.get('page').toJS();
 
+    let title = intl.formatMessage(messages.pageTitle);
+    if (isRequestAccess) {
+      title = intl.formatMessage(messages.pageTitleAccess);
+    }
     return (
       <>
         <Helmet
-          title={`${intl.formatMessage(messages.pageTitle)}`}
+          title={title}
           meta={[{
             name: 'description',
             content: intl.formatMessage(messages.metaDescription),
@@ -113,7 +137,7 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
         />
         <ContentNarrow withoutHeaderNav>
           <ContentHeader
-            title={intl.formatMessage(messages.pageTitle)}
+            title={title}
           />
           {saveSuccess && (
             <Box fill="horizontal" margin={{ bottom: 'large' }}>
@@ -125,6 +149,12 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
                   type="primary"
                   onClick={() => {
                     resetForm('feedbackNew.form.data');
+                    if (isRequestAccess) {
+                      onUpdateQuery({
+                        arg: 'subject',
+                        remove: true,
+                      });
+                    }
                   }}
                 >
                   <Text>{intl.formatMessage(messages.resetForm)}</Text>
@@ -134,9 +164,16 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
           )}
           {!saveSuccess && (
             <Box margin={{ bottom: 'large' }}>
-              <Text>
-                {intl.formatMessage(messages.intro)}
-              </Text>
+              {!isRequestAccess && (
+                <Text>
+                  {intl.formatMessage(messages.intro)}
+                </Text>
+              )}
+              {isRequestAccess && (
+                <Text>
+                  {intl.formatMessage(messages.introAccess)}
+                </Text>
+              )}
             </Box>
           )}
           {!submitValid && (
@@ -161,19 +198,24 @@ export class FeedbackNew extends React.PureComponent { // eslint-disable-line re
               saving={saveSending}
               handleSubmit={(formData) => this.props.handleSubmit(
                 formData,
-                'feedbackNew.form.data'
+                'feedbackNew.form.data',
+                isRequestAccess ? 'Request Access' : null,
               )}
               handleSubmitFail={this.props.handleSubmitFail}
               handleUpdate={this.props.handleUpdate}
               fields={{
                 header: {
-                  main: this.getHeaderMainFields(),
+                  main: this.getHeaderMainFields(isRequestAccess),
                 },
                 body: {
                   main: this.getBodyMainFields(),
                 },
               }}
-              labels={{ submit: intl.formatMessage(messages.submit) }}
+              labels={{
+                submit: isRequestAccess
+                  ? intl.formatMessage(messages.submitAccess)
+                  : intl.formatMessage(messages.submit),
+              }}
             />
           )}
           {saveSending && <Loading />}
@@ -193,10 +235,12 @@ FeedbackNew.propTypes = {
   onErrorDismiss: PropTypes.func.isRequired,
   onServerErrorDismiss: PropTypes.func.isRequired,
   viewDomain: PropTypes.object,
+  location: PropTypes.object,
   dataReady: PropTypes.bool,
   authReady: PropTypes.bool,
   initialiseForm: PropTypes.func,
   resetForm: PropTypes.func,
+  onUpdateQuery: PropTypes.func,
 };
 
 FeedbackNew.contextTypes = {
@@ -237,10 +281,14 @@ function mapDispatchToProps(dispatch) {
     handleSubmitRemote: (model) => {
       dispatch(formActions.submit(model));
     },
-    handleSubmit: (formData, model) => {
-      const data = formData
+    handleSubmit: (formData, model, subject) => {
+      let data = formData
         .setIn(['attributes', 'content'], formData.getIn(['attributes', 'message_content']))
         .deleteIn(['attributes', 'message_content']);
+      if (subject) {
+        // override/set (empty) subject
+        data = data.setIn(['attributes', 'subject'], subject);
+      }
       const onSaveSuccess = () => {
         dispatch(formActions.reset(model));
       };
@@ -251,6 +299,9 @@ function mapDispatchToProps(dispatch) {
     },
     handleUpdate: (formData) => {
       dispatch(updateEntityForm(formData));
+    },
+    onUpdateQuery: (query) => {
+      dispatch(updateRouteQuery(query));
     },
   };
 }

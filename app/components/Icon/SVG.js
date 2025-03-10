@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { palette } from 'styled-theme';
 
 const SVG = styled.svg`
+  transform: rotate(${({ rotate }) => rotate || 0}deg);
   display: ${({ printHide, isPrint }) => (printHide && isPrint) ? 'none' : 'inline-block'};
   fill: ${(props) => props.palette ? palette(props.paletteIndex) : 'currentColor'} !important;
   stroke: ${(props) => {

@@ -127,7 +127,7 @@ export class UserLogin extends React.PureComponent { // eslint-disable-line reac
             </p>
           </BottomLinks>
         </ContentNarrow>
-        <Footer />
+        <Footer backgroundImage="footer_home" />
       </>
     );
   }

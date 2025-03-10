@@ -14,24 +14,44 @@ export default defineMessages({
     id: 'app.containers.HomePage.metaDescription',
     defaultMessage: 'Home page description',
   },
-  intro: {
-    id: 'app.containers.HomePage.intro',
-    defaultMessage: 'Welcome to Sadata, this is the introductory text that provides the user with some context and a brief overview about this site and its purpose. Two or three sentences will likely be sufficient to provide the user with some guidance.',
+  introGuest: {
+    id: 'app.containers.HomePage.introGuest',
+    defaultMessage: 'intro guest',
   },
-  signingIn: {
-    id: 'app.containers.HomePage.signingIn',
-    defaultMessage: 'Signing in...',
-  },
-  loading: {
-    id: 'app.containers.HomePage.loading',
-    defaultMessage: 'Loading initial data...',
-  },
+  // signingIn: {
+  //   id: 'app.containers.HomePage.signingIn',
+  //   defaultMessage: 'Signing in...',
+  // },
+  // loading: {
+  //   id: 'app.containers.HomePage.loading',
+  //   defaultMessage: 'Loading initial data...',
+  // },
   notSignedIn: {
     id: 'app.containers.HomePage.notSignedIn',
     defaultMessage: 'Please sign in or register to use this platform',
   },
-  noRoleAssigned: {
-    id: 'app.containers.HomePage.noRoleAssigned',
-    defaultMessage: 'You do not have sufficient rights to access the content of this platform. Please contact the platform administrator',
+  hrefZUG: {
+    id: 'app.containers.HomePage.hrefZUG',
+    defaultMessage: 'https://www.z-u-g.org',
+  },
+  titleZUG: {
+    id: 'app.containers.HomePage.titleZUG',
+    defaultMessage: 'A project by ZUG - Zukunft Umwelt Gesellschaft',
+  },
+  hrefGIZ: {
+    id: 'app.containers.HomePage.hrefGIZ',
+    defaultMessage: 'https://www.giz.de',
+  },
+  titleGIZ: {
+    id: 'app.containers.HomePage.titleGIZ',
+    defaultMessage: 'Implemented by GIZ - Deutsche Gesellschft für Internationale Zusammenarbeit (GIZ) GmbH',
+  },
+  hrefBMUV: {
+    id: 'app.containers.HomePage.hrefBMUV',
+    defaultMessage: 'https://www.bmuv.de/',
+  },
+  titleBMUV: {
+    id: 'app.containers.HomePage.titleBMUV',
+    defaultMessage: 'On behalf of the Federal Ministry for the Environment, Nature Conservation, Nuclear Safety and Consumer Protection',
   },
 });

@@ -106,6 +106,12 @@ export const selectIsSignedIn = createSelector(
   (sessionUser) => sessionUser && sessionUser.get('isSignedIn')
 );
 
+export const selectAuthReady = createSelector(
+  selectIsSignedIn,
+  selectReadyUserRoles,
+  (signedIn, rolesReady) => signedIn && rolesReady
+);
+
 export const selectSessionUserAttributes = createSelector(
   selectSessionUser,
   (sessionUser) => sessionUser && sessionUser.get('attributes')
@@ -566,6 +572,21 @@ export const selectActiontypes = createSelector(
       : sorted.filter((t) => !qe(t.get('id'), FF_ACTIONTYPE));
   }
 );
+export const selectActiontypesWithActionCount = createSelector(
+  selectActions,
+  selectActiontypes,
+  (actions, types) => actions && types && types.map((type) => {
+    const typeActions = actions.filter(
+      (action) => qe(
+        action.getIn(['attributes', 'measuretype_id']),
+        type.get('id'),
+      )
+    );
+    return type.set('count', typeActions.size);
+  })
+);
+
+
 // all facts action types
 export const selectFactsActiontype = createSelector(
   (state) => selectEntities(state, API.ACTIONTYPES),
@@ -587,6 +608,17 @@ export const selectActortypesForActiontype = createSelector(
     );
   }
 );
+
+export const selectActortypesWithActorCount = createSelector(
+  selectActors,
+  selectActortypes,
+  (actors, types) => actors && types && types.map((type) => {
+    const typeActors = actors.filter((actor) => qe(actor.getIn(['attributes', 'actortype_id']), type.get('id')));
+    return type.set('count', typeActors.size);
+  })
+);
+
+
 export const selectResourcetypesForActiontype = createSelector(
   (state, { type }) => type,
   selectResourcetypes,
@@ -1365,6 +1397,33 @@ export const selectActionResourcesGroupedByAction = createSelector(
       )
     ),
 );
+
+export const selectFactsOrdered = createSelector(
+  (state) => selectActiontypeActions(state, { type: FF_ACTIONTYPE }),
+  selectActionResourcesGroupedByAction,
+  (facts, resourceAssociationsGrouped) => facts
+    && resourceAssociationsGrouped
+    && facts.toList().sort(
+      (a, b) => {
+        const aResourceIds = resourceAssociationsGrouped.get(
+          parseInt(a.get('id'), 10)
+        );
+        const bResourceIds = resourceAssociationsGrouped.get(
+          parseInt(b.get('id'), 10)
+        );
+        if (!aResourceIds && !bResourceIds) return 0;
+        if (aResourceIds && !bResourceIds) return -1;
+        if (!aResourceIds && bResourceIds) return 1;
+        // console.log(aResourceIds.toJS(), aResourceIds.first())
+        // console.log(bResourceIds.toJS(), bResourceIds.first())
+        const aValue = parseInt(aResourceIds.first(), 10);
+        const bValue = parseInt(bResourceIds.first(), 10);
+        if (aValue === bValue) return 0;
+        return aValue < bValue ? -1 : 1;
+      }
+    )
+);
+
 export const selectActionActorsGroupedByAction = createSelector(
   (state) => selectEntities(state, API.ACTION_ACTORS),
   (connections) => connections

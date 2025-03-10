@@ -10,21 +10,29 @@ export default defineMessages({
     id: 'app.containers.FeedbackNew.pageTitle',
     defaultMessage: 'Submit Feedback',
   },
+  pageTitleAccess: {
+    id: 'app.containers.FeedbackNew.pageTitleAccess',
+    defaultMessage: 'Request Access',
+  },
   metaDescription: {
     id: 'app.containers.FeedbackNew.metaDescription',
     defaultMessage: 'Submit Feedback page description',
   },
-  header: {
-    id: 'app.containers.FeedbackNew.header',
-    defaultMessage: 'Submit Feedback',
-  },
   intro: {
     id: 'app.containers.FeedbackNew.intro',
-    defaultMessage: 'Please use the contact form below to contact us and provide feedback on content and user experience',
+    defaultMessage: 'Please use the contact form below to contact us and provide feedback on content and user experience.',
+  },
+  introAccess: {
+    id: 'app.containers.FeedbackNew.introAccess',
+    defaultMessage: 'Please use the contact form below to request access.',
   },
   submit: {
     id: 'app.containers.FeedbackNew.submit',
-    defaultMessage: 'Submit',
+    defaultMessage: 'Submit feedback',
+  },
+  submitAccess: {
+    id: 'app.containers.FeedbackNew.submitAccess',
+    defaultMessage: 'Submit request',
   },
   sendSuccess: {
     id: 'app.containers.FeedbackNew.sendSuccess',

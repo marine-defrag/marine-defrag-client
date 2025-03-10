@@ -125,7 +125,7 @@ export class UserRegister extends React.PureComponent { // eslint-disable-line r
             </p>
           </BottomLinks>
         </ContentNarrow>
-        <Footer />
+        <Footer backgroundImage="footer_home" />
       </>
     );
   }

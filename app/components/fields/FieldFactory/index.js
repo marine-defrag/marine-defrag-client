@@ -83,7 +83,7 @@ export function FieldFactory({ field, nested }) {
     ? (
       <Field
         nested={nested}
-        noPadding={field.type === 'reference'}
+        noPadding={field.type === 'reference' || field.noPadding}
         printHide={field.printHide}
       >
         {renderField(field)}

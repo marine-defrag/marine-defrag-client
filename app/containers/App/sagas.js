@@ -249,8 +249,10 @@ export function* recoverSaga(payload) {
 export function* authChangeSaga() {
   const redirectPathname = yield select(selectRedirectOnAuthSuccessPath);
   if (redirectPathname) {
+    // console.log('authChangeSaga: redirectPathname', redirectPathname)
     yield put(updatePath(redirectPathname, { replace: true }));
   } else {
+    // console.log('authChangeSaga: home')
     // forward to home
     yield put(updatePath('/', { replace: true }));
   }
@@ -261,7 +263,7 @@ export function* logoutSaga() {
     yield call(apiRequest, 'delete', ENDPOINTS.SIGN_OUT);
     yield call(clearAuthValues);
     yield put(logoutSuccess());
-    yield put(updatePath(ROUTES.LOGIN, { replace: true }));
+    yield put(updatePath('/', { replace: true }));
   } catch (err) {
     yield call(clearAuthValues);
     yield put(authenticateError(err));

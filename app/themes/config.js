@@ -76,7 +76,7 @@ export const ROUTES = {
   CATEGORY: '/category',
   PAGES: '/pages',
   SEARCH: '/search',
-  FEEDBACK: '/contact',
+  CONTACT: '/contact',
 };
 
 // Server endpoints for database tables **************************
@@ -997,8 +997,14 @@ export const SHOW_HEADER_PATTERN_HOME_GRAPHIC = false;
 export const FOOTER = {
   PARTNERS: false,
   LINK_TARGET_INTERNAL: false,
-  LINK_TARGET_INTERNAL_ID: 1,
+  LINK_TARGET_ABOUT_ID: 1,
+  LINK_TARGET_NEW_ID: 2,
   IMAGE_URLS: {
+    home_top: './claudio-schwarz-unsplash.jpg',
+    home_background: './naja-bertolt-jensen-unsplash-2.jpg',
+    // home_background: './naja-bertolt-jensen-unsplash.jpg',
+    home_quote: './home-quote.png',
+    footer_home: './footer_image_home.png',
     footer_actions: `${CLIENT_URL}/footer_unsplash_6.png`,
     footer_actors: `${CLIENT_URL}/footer_unsplash_9.png`,
     footer_facts: `${CLIENT_URL}/footer_unsplash_11.png`,
