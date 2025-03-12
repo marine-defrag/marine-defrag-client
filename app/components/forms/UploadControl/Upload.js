@@ -11,7 +11,7 @@ import appMessages from 'containers/App/messages';
 import { ENDPOINTS } from 'themes/config';
 
 import Icon from 'components/Icon';
-import DocumentView from 'components/DocumentView';
+import DownloadFile from 'components/DownloadFile';
 import DocumentWrap from 'components/fields/DocumentWrap';
 import ButtonFlatIconOnly from 'components/buttons/ButtonFlatIconOnly';
 
@@ -144,7 +144,7 @@ class Upload extends React.Component { // eslint-disable-line react/prefer-state
           this.props.value
           && (
             <DocumentWrapEdit remove>
-              <DocumentView url={this.props.value} status />
+              <DownloadFile url={this.props.value} />
               <Remove onClick={this.handleRemove}>
                 <Icon name="removeLarge" />
               </Remove>

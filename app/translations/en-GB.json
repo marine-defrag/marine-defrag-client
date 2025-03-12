@@ -13,6 +13,7 @@
   "app.containers.Footer.imageCredit.footer_actions": "Photo by Claudio Schwarz on Unsplash",
   "app.containers.Footer.imageCredit.footer_actors": "Photo by Bernd Dittrich on Unsplash",
   "app.containers.Footer.imageCredit.footer_facts": "Photo by Lukas Kienzler on Unsplash",
+  "app.containers.Footer.imageCredit.footer_home": "Photos by Person One, Person Two and Person Three on Unsplash",
   "app.components.ColumnSelect.selectAll": "Select all {number}.",
   "app.components.ColumnSelect.sortAttributes.id": "Created at",
   "app.components.ColumnSelect.sortAttributes.reference": "Reference",

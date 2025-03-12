@@ -374,7 +374,7 @@ function HomePageOverview({
             getCardGraphic={
               (typeId) => theme.media.navCard.activities[typeId]
             }
-            cards={actionTypesReady}
+            cards={actionTypesReady || null}
           />
           <QuoteSection
             quote={intl.formatMessage(messages.quote)}
@@ -392,7 +392,7 @@ function HomePageOverview({
               (typeId) => theme.media.navCard.actors[typeId]
             }
             onUpdatePath={onUpdatePath}
-            cards={actorTypesReady}
+            cards={actorTypesReady || null}
           />
           <GapSection />
           <TeaserSection
@@ -405,7 +405,7 @@ function HomePageOverview({
               (factId) => theme.media.navCard.indicators[factId]
             }
             onUpdatePath={onUpdatePath}
-            cards={facts && facts.toJS()}
+            cards={facts ? facts.toJS() : null}
           />
         </>
       )}

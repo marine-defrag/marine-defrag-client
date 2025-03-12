@@ -16,6 +16,8 @@ const DownloadA = styled(A)`
 
 const FileName = styled.div`
   overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   font-weight: 500;
   font-size: ${({ theme }) => theme.text.small.size};
   @media print {
@@ -31,7 +33,7 @@ const DownloadIcon = styled.div`
 `;
 
 const DownloadFile = ({ url }) => {
-  const filename = getFilenameFromUrl(url, true);
+  const filename = getFilenameFromUrl(url);
   return (
     <DownloadA href={url} download>
       <FileName>{filename}</FileName>
