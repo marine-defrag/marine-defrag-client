@@ -113,6 +113,7 @@ function Footer({
   backgroundColor,
   dataReady,
   onLoadData,
+  backgroundImageCredit,
 }) {
   React.useEffect(() => {
     // kick off loading of data
@@ -129,7 +130,12 @@ function Footer({
     'number'
   );
   const hasFooterPages = (footerPages && footerPages.size > 0) || hasContactLink;
-
+  let credit;
+  if (backgroundImageCredit && messages.imageCredit[backgroundImageCredit]) {
+    credit = intl.formatMessage(messages.imageCredit[backgroundImageCredit]);
+  } else if (messages.imageCredit[backgroundImage]) {
+    credit = intl.formatMessage(messages.imageCredit[backgroundImage]);
+  }
   return (
     <FooterMain isPrint={isPrint}>
       {backgroundImage && FOOTER.IMAGE_URLS[backgroundImage] && (
@@ -141,11 +147,9 @@ function Footer({
             }}
           >
             <Image src={FOOTER.IMAGE_URLS[backgroundImage]} />
-            {messages.imageCredit[backgroundImage] && (
+            {credit && (
               <ImageCredit>
-                <Text size="xxxsmall">
-                  <FormattedMessage {...messages.imageCredit[backgroundImage]} />
-                </Text>
+                <Text size="xxxsmall">{credit}</Text>
               </ImageCredit>
             )}
           </Box>
@@ -272,6 +276,7 @@ Footer.propTypes = {
   intl: intlShape.isRequired,
   onLoadData: PropTypes.func,
   backgroundImage: PropTypes.string,
+  backgroundImageCredit: PropTypes.string,
   onPageLink: PropTypes.func.isRequired,
   hasContactLink: PropTypes.bool,
   backgroundColor: PropTypes.string,

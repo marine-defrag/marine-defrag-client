@@ -87,6 +87,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
           )}
           <Footer
             backgroundImage="footer_home"
+            backgroundImageCredit={isUserSignedIn ? 'footer_home_overview' : 'footer_home'}
             backgroundColor="#fff"
           />
         </div>
