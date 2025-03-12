@@ -20,6 +20,7 @@ import {
   getLinkFormField,
   getStatusFormField,
   getDateField,
+  getUploadField,
 } from 'utils/forms';
 import { getInfoField } from 'utils/fields';
 
@@ -144,6 +145,9 @@ export class ResourceNew extends React.PureComponent { // eslint-disable-line re
           intl.formatMessage,
           checkResourceRequired(typeId, 'url'),
           'url',
+        ),
+        checkResourceAttribute(typeId, 'document_url') && getUploadField(
+          intl.formatMessage,
         ),
       ],
     });
