@@ -30,4 +30,12 @@ export default defineMessages({
     id: 'app.containers.HomePageOverview.teaserFacts',
     defaultMessage: 'Find **publications** and **data sets** available relevant for marine litter and plastic pollution.',
   },
+  quote: {
+    id: 'app.containers.HomePageOverview.quote',
+    defaultMessage: 'Let’s put the oceans first.',
+  },
+  quoteSource: {
+    id: 'app.containers.HomePageOverview.quoteSource',
+    defaultMessage: 'António Guterres, UN Secretary-General, at his opening speech at the World Oceans Day 2023',
+  },
 });

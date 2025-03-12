@@ -224,7 +224,11 @@ function HomePageOverview({
     <div>
       <SectionTop>
         <BackgroundImage>
-          <Image src={FOOTER.IMAGE_URLS.home_top} style={{ opacity: 0.33 }} />
+          <Image
+            src={FOOTER.IMAGE_URLS.home_top}
+            style={{ opacity: 0.33 }}
+            fit="cover"
+          />
         </BackgroundImage>
         <svg
           viewBox="0 0 1920 377"
@@ -274,12 +278,12 @@ function HomePageOverview({
             <Intro source={intl.formatMessage(messages.intro, { version: VERSION })} />
           </Box>
           <HomeActions>
-            {(!authReady || !dataReady) && (
+            {!authReady && (
               <Box style={{ width: '66%' }}>
                 <Loading />
               </Box>
             )}
-            {authReady && dataReady && !isUserAnalyst && (
+            {authReady && !isUserAnalyst && (
               <Box align="center" margin={{ bottom: 'xsmall' }}>
                 <Text as="div" size="xlarge" color="white" style={{ maxWidth: '600px' }}>
                   <FormattedMessage {...messages.noRoleAssigned} />
@@ -303,7 +307,7 @@ function HomePageOverview({
                 </MainButton>
               </Box>
             )}
-            {authReady && dataReady && isUserAnalyst && (
+            {authReady && isUserAnalyst && (
               <Box>
                 <Text size="small">
                   <FormattedMessage {...messages.goTo} />
@@ -350,7 +354,7 @@ function HomePageOverview({
           }}
         />
       )}
-      {authReady && dataReady && isUserAnalyst && (
+      {authReady && isUserAnalyst && (
         <>
           <Section
             style={{
@@ -358,59 +362,51 @@ function HomePageOverview({
               paddingTop: '10%',
             }}
           />
-          {actionTypesReady && (
-            <TeaserSection
-              title={intl.formatMessage(appMessages.nav.actions)}
-              teaser={intl.formatMessage(messages.teaserActions)}
-              overviewPath={ROUTES.ACTIONS}
-              getCardPath={(typeId) => `${ROUTES.ACTIONS}/${typeId}`}
-              onUpdatePath={onUpdatePath}
-              getCardTitle={
-                (type) => intl.formatMessage(appMessages.actiontypes_long[type.id])
-              }
-              getCardGraphic={
-                (typeId) => theme.media.navCard.activities[typeId]
-              }
-              cards={actionTypesReady}
-            />
-          )}
-          {actionTypesReady && (
-            <QuoteSection
-              quote="The protection of the oceans is of fundamental importance for the existence of mankind: the oceans feed us, they give us oxygen to breathe and they are indispensable climate protectors because they bind enormous amounts of CO2."
-              source="Federal Environment Minister Steffi Lenke"
-            />
-          )}
-          {actorTypesReady && (
-            <TeaserSection
-              title={intl.formatMessage(appMessages.nav.actors)}
-              teaser={intl.formatMessage(messages.teaserActors)}
-              overviewPath={ROUTES.ACTORS}
-              getCardPath={(typeId) => `${ROUTES.ACTORS}/${typeId}`}
-              getCardTitle={
-                (type) => intl.formatMessage(appMessages.actortypes_long[type.id])
-              }
-              getCardGraphic={
-                (typeId) => theme.media.navCard.actors[typeId]
-              }
-              onUpdatePath={onUpdatePath}
-              cards={actorTypesReady}
-            />
-          )}
+          <TeaserSection
+            title={intl.formatMessage(appMessages.nav.actions)}
+            teaser={intl.formatMessage(messages.teaserActions)}
+            overviewPath={ROUTES.ACTIONS}
+            getCardPath={(typeId) => `${ROUTES.ACTIONS}/${typeId}`}
+            onUpdatePath={onUpdatePath}
+            getCardTitle={
+              (type) => intl.formatMessage(appMessages.actiontypes_long[type.id])
+            }
+            getCardGraphic={
+              (typeId) => theme.media.navCard.activities[typeId]
+            }
+            cards={actionTypesReady}
+          />
+          <QuoteSection
+            quote={intl.formatMessage(messages.quote)}
+            source={intl.formatMessage(messages.quoteSource)}
+          />
+          <TeaserSection
+            title={intl.formatMessage(appMessages.nav.actors)}
+            teaser={intl.formatMessage(messages.teaserActors)}
+            overviewPath={ROUTES.ACTORS}
+            getCardPath={(typeId) => `${ROUTES.ACTORS}/${typeId}`}
+            getCardTitle={
+              (type) => intl.formatMessage(appMessages.actortypes_long[type.id])
+            }
+            getCardGraphic={
+              (typeId) => theme.media.navCard.actors[typeId]
+            }
+            onUpdatePath={onUpdatePath}
+            cards={actorTypesReady}
+          />
           <GapSection />
-          {facts && (
-            <TeaserSection
-              title={intl.formatMessage(appMessages.actiontypes[FF_ACTIONTYPE])}
-              teaser={intl.formatMessage(messages.teaserFacts)}
-              overviewPath={`${ROUTES.ACTIONS}/${FF_ACTIONTYPE}`}
-              getCardPath={(factId) => `${ROUTES.ACTION}/${factId}`}
-              getCardTitle={(fact) => fact.attributes.title}
-              getCardGraphic={
-                (factId) => theme.media.navCard.indicators[factId]
-              }
-              onUpdatePath={onUpdatePath}
-              cards={facts.toJS()}
-            />
-          )}
+          <TeaserSection
+            title={intl.formatMessage(appMessages.actiontypes[FF_ACTIONTYPE])}
+            teaser={intl.formatMessage(messages.teaserFacts)}
+            overviewPath={`${ROUTES.ACTIONS}/${FF_ACTIONTYPE}`}
+            getCardPath={(factId) => `${ROUTES.ACTION}/${factId}`}
+            getCardTitle={(fact) => fact.attributes.title}
+            getCardGraphic={
+              (factId) => theme.media.navCard.indicators[factId]
+            }
+            onUpdatePath={onUpdatePath}
+            cards={facts && facts.toJS()}
+          />
         </>
       )}
       <Section style={{ background: '#f1f0f1', position: 'relative' }}>

@@ -69,6 +69,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
           >
             <Image
               src={FOOTER.IMAGE_URLS.home_background}
+              fit="cover"
             />
           </Box>
         )}

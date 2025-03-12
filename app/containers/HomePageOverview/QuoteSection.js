@@ -12,11 +12,11 @@ import ContentSimple from 'components/styled/ContentSimple';
 
 const MarkdownQuote = styled(ReactMarkdown)`
   color: white;
-  font-size: ${(props) => props.theme.text.xlarge.size};
-  line-height: ${(props) => props.theme.text.xlarge.height};
+  font-size: ${(props) => props.theme.text.xxlarge.size};
+  line-height: ${(props) => props.theme.text.xxlarge.height};
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    font-size: ${(props) => props.theme.text.xxlarge.size};
-    line-height: ${(props) => props.theme.text.xxlarge.height};
+    font-size: ${(props) => props.theme.text.xxxlarge.size};
+    line-height: ${(props) => props.theme.text.xxxlarge.height};
   }
   @media print {
     font-size: ${(props) => props.theme.sizes.print.large};
@@ -24,14 +24,15 @@ const MarkdownQuote = styled(ReactMarkdown)`
 `;
 const MarkdownSource = styled(ReactMarkdown)`
   color: white;
-  font-size: ${(props) => props.theme.text.large.size};
-  line-height: ${(props) => props.theme.text.large.height};
+  opacity: 0.85;
+  font-size: ${(props) => props.theme.text.xsmall.size};
+  line-height: ${(props) => props.theme.text.xsmall.height};
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    font-size: ${(props) => props.theme.text.xlarge.size};
-    line-height: ${(props) => props.theme.text.xlarge.height};
+    font-size: ${(props) => props.theme.text.small.size};
+    line-height: ${(props) => props.theme.text.small.height};
   }
   @media print {
-    font-size: ${(props) => props.theme.sizes.print.large};
+    font-size: ${(props) => props.theme.sizes.print.small};
   }
 `;
 
@@ -68,11 +69,11 @@ function QuoteSection({ quote, source }) {
             d="M1920,88.05S1575.51-29.36,1205.3,6.98c-370.21,36.34-635.98,99.54-833.78,94C173.73,95.44,0,33.7,0,33.7v217.87h1920V88.05Z"
           />
         </svg>
-        <Container noPaddingBottom>
+        <Container style={{ paddingBottom: '20px' }}>
           <ContentSimple>
-            <Box gap="xsmall">
-              <MarkdownQuote source={quote} className="react-markdown" />
-              <MarkdownSource source={source} className="react-markdown" />
+            <Box responsive={false} gap="xsmall">
+              <MarkdownQuote source={`“${quote}”`} className="react-markdown-quote" />
+              <MarkdownSource source={source} className="react-markdown-quote" />
             </Box>
           </ContentSimple>
         </Container>

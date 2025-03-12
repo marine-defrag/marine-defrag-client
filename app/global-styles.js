@@ -90,6 +90,11 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  .react-markdown-quote {
+    p {
+      margin-bottom: 0;
+    }
+  }
   .react-markdown {
     h1, h2, h3, h4, h5, h6 {
       font-weight: 700;
