@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import DocumentView from 'components/DocumentView';
+import DownloadFile from 'components/DownloadFile';
 import { FormattedMessage } from 'react-intl';
 
 import appMessages from 'containers/App/messages';
@@ -17,13 +17,11 @@ class DownloadField extends React.PureComponent { // eslint-disable-line react/p
         <Label>
           <FormattedMessage {...(field.label || appMessages.attributes.document_url)} />
         </Label>
-        { field.value
-          && (
-            <DocumentWrap>
-              <DocumentView url={field.value} />
-            </DocumentWrap>
-          )
-        }
+        {field.value && (
+          <DocumentWrap>
+            <DownloadFile url={field.value} />
+          </DocumentWrap>
+        )}
       </FieldWrap>
     );
   }
