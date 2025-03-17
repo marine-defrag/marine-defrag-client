@@ -20,6 +20,7 @@ export const ENDPOINTS = {
     : 'https://api.marine-defrag.org', // server API endpoint
   SIGN_IN: 'auth/sign_in',
   SIGN_OUT: 'auth/sign_out',
+  S3_SIGN_URL: 's3/sign', // server AWS S3 signing url endpoint
   PASSWORD: 'auth/password',
   VALIDATE_TOKEN: 'auth/validate_token',
 };
@@ -37,6 +38,11 @@ export const USER_ROLES = {
 export const PUBLISH_STATUSES = [
   { value: true, message: 'ui.publishStatuses.draft' },
   { value: false, message: 'ui.publishStatuses.public' },
+];
+// Entity publish statuses
+export const PRIVACY_STATUSES = [
+  { value: true, message: 'ui.privacyStatuses.private' },
+  { value: false, message: 'ui.privacyStatuses.public' },
 ];
 export const USER_STATUSES = [
   { value: false, message: 'ui.userStatuses.active' },
@@ -71,7 +77,7 @@ export const ROUTES = {
   CATEGORY: '/category',
   PAGES: '/pages',
   SEARCH: '/search',
-  FEEDBACK: '/contact',
+  CONTACT: '/contact',
 };
 
 // Server endpoints for database tables **************************
@@ -701,6 +707,10 @@ export const RESOURCE_FIELDS = {
       optional: Object.values(RESOURCETYPES), // all types,
       type: 'url',
     },
+    document_url: {
+      optional: Object.values(RESOURCETYPES), // all types,
+      type: 'url',
+    },
     publication_date: {
       optional: Object.values(RESOURCETYPES), // all types,
       type: 'date',
@@ -992,11 +1002,16 @@ export const SHOW_HEADER_PATTERN_HOME_GRAPHIC = false;
 export const FOOTER = {
   PARTNERS: false,
   LINK_TARGET_INTERNAL: false,
-  LINK_TARGET_INTERNAL_ID: 1,
+  LINK_TARGET_ABOUT_ID: 1,
+  LINK_TARGET_NEW_ID: 2,
   IMAGE_URLS: {
-    footer_actions: `${CLIENT_URL}/footer_unsplash_6.png`,
-    footer_actors: `${CLIENT_URL}/footer_unsplash_9.png`,
-    footer_facts: `${CLIENT_URL}/footer_unsplash_11.png`,
+    home_top: '/claudio-schwarz-unsplash.jpg',
+    home_background: '/naja-bertolt-jensen-unsplash-2.jpg',
+    home_quote: '/home-quote.png',
+    footer_home: '/footer_unsplash_9.png',
+    footer_actions: '/footer_unsplash_6.png',
+    footer_actors: '/footer_unsplash_9.png',
+    footer_facts: '/footer_unsplash_11.png',
   },
 };
 

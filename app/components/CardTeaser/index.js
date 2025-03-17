@@ -95,9 +95,13 @@ export function CardTeaser({
   onSelectResult,
   graphic,
   dataReady,
+  isHome,
 }) {
   const size = useContext(ResponsiveContext);
   const isPrimaryLayout = isLandscape && isMinSize(size, 'medium');
+  let countSize = 'xlarge';
+  if (isHome) countSize = 'xxlarge';
+  if (isPrimaryLayout) countSize = 'xxxlarge';
 
   return (
     <Styled
@@ -119,7 +123,7 @@ export function CardTeaser({
         >
           <Box
             direction={isPrimaryLayout ? 'row' : 'column'}
-            justify="between"
+            justify={isHome ? 'start' : 'between'}
             fill="vertical"
           >
             {graphic && (
@@ -137,7 +141,7 @@ export function CardTeaser({
             )}
             <Box
               margin={graphic && !isPrimaryLayout ? 'none' : { top: 'small' }}
-              justify="end"
+              justify={isHome ? 'start' : 'end'}
               basis={isPrimaryLayout ? '1/2' : 'auto'}
             >
               <TitleWrap gap="none" margin={{ bottom: 'small' }}>
@@ -152,12 +156,15 @@ export function CardTeaser({
                 {dataReady && (
                   <Count
                     weight="bold"
-                    size={isPrimaryLayout ? 'xxxlarge' : 'xlarge'}
+                    size={countSize}
                   >
                     {count}
                   </Count>
                 )}
-                <Title weight="bold" size={isPrimaryLayout ? 'xlarge' : 'normal'}>
+                <Title
+                  weight="bold"
+                  size={isPrimaryLayout ? 'xlarge' : 'medium'}
+                >
                   {title}
                 </Title>
               </TitleWrap>
@@ -166,18 +173,20 @@ export function CardTeaser({
                   {description}
                 </Description>
               )}
-              <Box
-                margin={{ top: 'medium', bottom: 'small' }}
-                pad="none"
-                direction="row"
-                align="center"
-                gap="xsmall"
-              >
-                <ExploreText>
-                  <FormattedMessage {...messages.explore} />
-                </ExploreText>
-                <ArrowIcon name="arrowRight" size="0.5em" />
-              </Box>
+              {!isHome && (
+                <Box
+                  margin={{ top: 'medium', bottom: 'small' }}
+                  pad="none"
+                  direction="row"
+                  align="center"
+                  gap="xsmall"
+                >
+                  <ExploreText>
+                    <FormattedMessage {...messages.explore} />
+                  </ExploreText>
+                  <ArrowIcon name="arrowRight" size="0.5em" />
+                </Box>
+              )}
             </Box>
           </Box>
         </CardLink>
@@ -203,6 +212,7 @@ CardTeaser.propTypes = {
   onSelectResult: PropTypes.func,
   searchOptions: PropTypes.object,
   graphic: PropTypes.object,
+  isHome: PropTypes.bool,
   // teaserImage: PropTypes.string,
 };
 

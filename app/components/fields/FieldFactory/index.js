@@ -18,6 +18,7 @@ import NumberField from 'components/fields/NumberField';
 import TitleField from 'components/fields/TitleField';
 import TitleTextField from 'components/fields/TitleTextField';
 import TitleShortField from 'components/fields/TitleShortField';
+import DownloadField from 'components/fields/DownloadField';
 
 // class FieldFactory extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
 const renderField = (field) => {
@@ -54,6 +55,8 @@ const renderField = (field) => {
       return (<ConnectionsField field={field} />);
     case 'number':
       return (<NumberField field={field} />);
+    case 'download':
+      return (<DownloadField field={field} />);
     case 'text':
     default:
       return (<TextField field={field} />);
@@ -83,7 +86,7 @@ export function FieldFactory({ field, nested }) {
     ? (
       <Field
         nested={nested}
-        noPadding={field.type === 'reference'}
+        noPadding={field.type === 'reference' || field.noPadding}
         printHide={field.printHide}
       >
         {renderField(field)}

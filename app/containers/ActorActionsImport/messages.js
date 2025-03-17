@@ -18,8 +18,4 @@ export default defineMessages({
     id: 'app.containers.ActorActionsImport.header',
     defaultMessage: 'Import actor connections with values',
   },
-  // filename: {
-  //   id: 'app.containers.ActorActionsImport.filename',
-  //   defaultMessage: 'actors_template',
-  // },
 });

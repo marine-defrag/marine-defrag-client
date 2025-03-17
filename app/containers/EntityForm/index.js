@@ -51,6 +51,7 @@ import ControlSelect from 'components/forms/ControlSelect';
 import MarkdownControl from 'components/forms/MarkdownControl';
 import DateControl from 'components/forms/DateControl';
 import RadioControl from 'components/forms/RadioControl';
+import UploadControl from 'components/forms/UploadControl';
 import Required from 'components/forms/Required';
 import MultiSelectField from 'components/forms/MultiSelectField';
 
@@ -119,6 +120,8 @@ const controls = {
   radio: RadioControl,
   checkbox: ControlCheckbox,
   button: Control.button,
+  file: UploadControl,
+  uploader: UploadControl,
 };
 
 // These props will be omitted before being passed to the Control component
@@ -277,7 +280,12 @@ class EntityForm extends React.Component { // eslint-disable-line react/prefer-s
       )}
       {group.fields.map((field, i) => field
         ? (
-          <Field labelledGroup={!!group.label} key={i} printHide={field.printHide}>
+          <Field
+            key={i}
+            labelledGroup={!!group.label}
+            printHide={field.printHide}
+            noPadding={group.fields.length < 2}
+          >
             {this.renderFormField(
               field,
               false,

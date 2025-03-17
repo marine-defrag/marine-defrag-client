@@ -57,11 +57,14 @@ const checkEmpty = (
   val
 ) => typeof val !== 'undefined' && val !== null && val.toString().trim().length > 0;
 
-export const getInfoField = (att, value, large = false) => checkEmpty(value) && ({
+export const getInfoField = (
+  att, value, large = false, noPadding,
+) => checkEmpty(value) && ({
   controlType: 'info',
   value,
   large,
   label: appMessages.attributes[att],
+  noPadding,
 });
 export const getIdField = (entity) => checkEmpty(entity.get('id')) && ({
   controlType: 'info',
@@ -142,7 +145,7 @@ export const getStatusField = (
     ? entity.getIn(['attributes', attribute])
     : defaultValue,
   options,
-  label,
+  label: label || appMessages.attributes[attribute],
 });
 
 // only show the highest rated role (lower role ids means higher)
@@ -548,6 +551,11 @@ export const getManagerField = (entity, messageLabel, messageEmpty) => ({
   type: 'manager',
   value: entity.get('manager') && entity.getIn(['manager', 'attributes', 'name']),
   showEmpty: messageEmpty,
+});
+
+export const getDownloadField = (entity) => ({
+  type: 'download',
+  value: entity.getIn(['attributes', 'document_url']),
 });
 
 export const getEmailField = (entity) => ({

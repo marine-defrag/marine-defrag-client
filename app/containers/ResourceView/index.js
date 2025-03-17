@@ -18,6 +18,7 @@ import {
   getLinkField,
   getActionConnectionField,
   getDateField,
+  getDownloadField,
 } from 'utils/fields';
 // import { qe } from 'utils/quasi-equals';
 import { getEntityTitleTruncated, checkResourceAttribute } from 'utils/entities';
@@ -96,6 +97,7 @@ const getBodyMainFields = (
     {
       fields: [
         checkResourceAttribute(typeId, 'url') && getLinkField(entity),
+        checkResourceAttribute(typeId, 'document_url') && getDownloadField(entity),
         checkResourceAttribute(typeId, 'description')
         && getMarkdownField(entity, 'description', true),
         checkResourceAttribute(typeId, 'status')

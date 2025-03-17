@@ -180,7 +180,7 @@ export function ActionsFactsOverview({
           </Content>
         </ViewContainer>
       </ContainerWrapper>
-      <Footer backgroundImage="footer_facts" backgroundColor />
+      <Footer backgroundImage="footer_facts" backgroundColor="#f1f0f1" />
     </>
   );
 }

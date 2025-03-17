@@ -18,7 +18,8 @@ import {
   getMenuTitleFormField,
   getMenuOrderFormField,
   getMarkdownFormField,
-  getStatusField,
+  getStatusFormField,
+  getUploadField,
 } from 'utils/forms';
 
 import {
@@ -124,7 +125,8 @@ export class PageEdit extends React.Component { // eslint-disable-line react/pre
     return ([
       {
         fields: [
-          getStatusField(intl.formatMessage),
+          getStatusFormField(intl.formatMessage),
+          getStatusFormField(intl.formatMessage, 'private'),
           getMetaField(entity),
         ],
       },
@@ -134,7 +136,10 @@ export class PageEdit extends React.Component { // eslint-disable-line react/pre
   getBodyMainFields = () => {
     const { intl } = this.context;
     return ([{
-      fields: [getMarkdownFormField(intl.formatMessage, true, 'content')],
+      fields: [
+        getUploadField(intl.formatMessage),
+        getMarkdownFormField(intl.formatMessage, true, 'content'),
+      ],
     }]);
   };
 
@@ -154,7 +159,7 @@ export class PageEdit extends React.Component { // eslint-disable-line react/pre
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Content isScrollContainer ref={this.scrollContainer}>
+        <Content hasOverflow ref={this.scrollContainer}>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle)}
             type={CONTENT_SINGLE}

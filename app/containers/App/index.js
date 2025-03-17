@@ -45,10 +45,7 @@ import messages from './messages';
 
 const Main = styled.div`
   position: absolute;
-  top: ${({ isHome, theme }) => isHome
-    ? 0
-    : theme.sizes.header.banner.heightMobile
-}px;
+  top: ${({ theme }) => theme.sizes.header.banner.heightMobile}px;
   left: 0;
   right: 0;
   bottom:0;
@@ -57,10 +54,7 @@ const Main = styled.div`
   width: auto;
   overflow-y: auto;
   @media (min-width: ${({ theme }) => theme.breakpoints.medium}) {
-    top: ${({ isHome, theme }) => isHome
-    ? 0
-    : theme.sizes.header.banner.height
-}px;
+    top: ${({ theme }) => theme.sizes.header.banner.height}px;
   }
   @media print {
     background: transparent;
@@ -289,32 +283,31 @@ class App extends React.PureComponent { // eslint-disable-line react/prefer-stat
     return (
       <div id="app-inner" className={isPrintView ? 'print-view' : ''}>
         <Helmet titleTemplate={`%s - ${title}`} defaultTitle={title} />
-        {!isHome && (
-          <Header
-            isSignedIn={isUserSignedIn}
-            isAnalyst={isAnalyst}
-            isPrintView={isPrintView}
-            user={user}
-            pages={!isPrintView && pages && this.preparePageMenuPages(pages, location.pathname)}
-            navItems={!isPrintView && this.prepareMainMenuItems(
-              isUserSignedIn && isManager,
-              isUserSignedIn && isAnalyst,
-              location.pathname,
-            )}
-            search={!isUserSignedIn
-              ? null
-              : {
-                path: ROUTES.SEARCH,
-                title: intl.formatMessage(messages.nav.search),
-                active: location.pathname.startsWith(ROUTES.SEARCH),
-                icon: 'search',
-              }
+        <Header
+          isHome={isHome}
+          isSignedIn={isUserSignedIn}
+          isAnalyst={isAnalyst}
+          isPrintView={isPrintView}
+          user={user}
+          pages={!isPrintView && pages && this.preparePageMenuPages(pages, location.pathname)}
+          navItems={!isPrintView && this.prepareMainMenuItems(
+            isUserSignedIn && isManager,
+            isUserSignedIn && isAnalyst,
+            location.pathname,
+          )}
+          search={!isUserSignedIn
+            ? null
+            : {
+              path: ROUTES.SEARCH,
+              title: intl.formatMessage(messages.nav.search),
+              active: location.pathname.startsWith(ROUTES.SEARCH),
+              icon: 'search',
             }
-            onPageLink={onPageLink}
-            isAuth={isAuth}
-            currentPath={location.pathname}
-          />
-        )}
+          }
+          onPageLink={onPageLink}
+          isAuth={isAuth}
+          currentPath={location.pathname}
+        />
         <Main
           id="main-content"
           role="main"

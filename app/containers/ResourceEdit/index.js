@@ -15,12 +15,13 @@ import { Map, fromJS } from 'immutable';
 import {
   entityOptions,
   getTitleFormField,
-  getStatusField,
+  getStatusFormField,
   getMarkdownFormField,
   getDateField,
   getLinkFormField,
   renderActionsByActiontypeControl,
   getConnectionUpdatesFromFormData,
+  getUploadField,
 } from 'utils/forms';
 import { getInfoField, getMetaField } from 'utils/fields';
 
@@ -145,7 +146,7 @@ export class ResourceEdit extends React.PureComponent { // eslint-disable-line r
     return ([
       {
         fields: [
-          getStatusField(intl.formatMessage),
+          getStatusFormField(intl.formatMessage),
           getMetaField(entity),
         ],
       },
@@ -167,6 +168,9 @@ export class ResourceEdit extends React.PureComponent { // eslint-disable-line r
           intl.formatMessage,
           checkResourceRequired(typeId, 'url'),
           'url',
+        ),
+        checkResourceAttribute(typeId, 'document_url') && getUploadField(
+          intl.formatMessage,
         ),
       ],
     });
@@ -254,7 +258,7 @@ export class ResourceEdit extends React.PureComponent { // eslint-disable-line r
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Content isScrollContainer ref={this.scrollContainer}>
+        <Content hasOverflow ref={this.scrollContainer}>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}

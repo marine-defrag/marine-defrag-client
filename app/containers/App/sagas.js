@@ -153,38 +153,37 @@ export function* loadEntitiesSaga({ path }) {
 
     // If haven't requested yet, do so now.
     if (!requestedAt) {
-      const signedIn = yield select(selectIsSignedIn);
-      if (signedIn) {
-        try {
-          // First record that we are requesting
-          yield put(entitiesRequested(path, Date.now()));
-          // check role to prevent requesting endpoints not authorised
-          // TODO check could be refactored
-          // Call the API, cancel on invalidate
-          // console.log('call', path)
-          const { response } = yield race({
-            response: call(apiRequest, 'get', path),
-            cancel: take(INVALIDATE_ENTITIES), // will also reset entities requested
-          });
-          if (response && response.data) {
-            // Save response
-            yield put(entitiesLoaded(keyBy(response.data, 'id'), path, Date.now()));
-          } else {
-            yield put(entitiesRequested(path, false));
-            throw new Error(response.statusText || 'error');
-          }
-        } catch (err) {
-          // Whoops Save error
-          // Clear the request time on error, This will cause us to try again next time, which we probably want to do?
+      // const signedIn = yield select(selectIsSignedIn);
+      // if (signedIn || path === API.PAGES) {
+      try {
+        // First record that we are requesting
+        yield put(entitiesRequested(path, Date.now()));
+        // check role to prevent requesting endpoints not authorised
+        // TODO check could be refactored
+        // Call the API, cancel on invalidate
+        // console.log('call', path)
+        const { response } = yield race({
+          response: call(apiRequest, 'get', path),
+          cancel: take(INVALIDATE_ENTITIES), // will also reset entities requested
+        });
+        if (response && response.data) {
+          // Save response
+          yield put(entitiesLoaded(keyBy(response.data, 'id'), path, Date.now()));
+        } else {
           yield put(entitiesRequested(path, false));
-          // throw error
-          throw new Error((err.response && err.response.status) || err);
+          throw new Error(response.statusText || 'error');
         }
-      } else {
-        // console.log('error: not signedin', )
+      } catch (err) {
+        // Whoops Save error
+        // Clear the request time on error, This will cause us to try again next time, which we probably want to do?
         yield put(entitiesRequested(path, false));
-        throw new Error('not signed in');
+        // throw error
+        throw new Error((err.response && err.response.status) || err);
       }
+    } else {
+      // console.log('error: not signedin', )
+      yield put(entitiesRequested(path, false));
+      throw new Error('not signed in');
     }
   }
 }
@@ -250,8 +249,10 @@ export function* recoverSaga(payload) {
 export function* authChangeSaga() {
   const redirectPathname = yield select(selectRedirectOnAuthSuccessPath);
   if (redirectPathname) {
+    // console.log('authChangeSaga: redirectPathname', redirectPathname)
     yield put(updatePath(redirectPathname, { replace: true }));
   } else {
+    // console.log('authChangeSaga: home')
     // forward to home
     yield put(updatePath('/', { replace: true }));
   }
@@ -262,7 +263,7 @@ export function* logoutSaga() {
     yield call(apiRequest, 'delete', ENDPOINTS.SIGN_OUT);
     yield call(clearAuthValues);
     yield put(logoutSuccess());
-    yield put(updatePath(ROUTES.LOGIN, { replace: true }));
+    yield put(updatePath('/', { replace: true }));
   } catch (err) {
     yield call(clearAuthValues);
     yield put(authenticateError(err));

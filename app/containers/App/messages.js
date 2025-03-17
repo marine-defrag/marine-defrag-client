@@ -15,6 +15,18 @@ export default defineMessages({
       id: 'app.containers.App.app.claim',
       defaultMessage: 'Samoa\'s home of human rights implementation',
     },
+    about1: {
+      id: 'app.containers.App.app.about1',
+      defaultMessage: 'About 1',
+    },
+    aboutSectionTitle: {
+      id: 'app.containers.App.app.aboutSectionTitle',
+      defaultMessage: 'About',
+    },
+    about2: {
+      id: 'app.containers.App.app.about2',
+      defaultMessage: 'About 2',
+    },
   },
   actorroles: {
     0: {
@@ -851,6 +863,10 @@ export default defineMessages({
       id: 'app.containers.App.attributes.draft',
       defaultMessage: 'Status',
     },
+    private: {
+      id: 'app.containers.App.attributes.private',
+      defaultMessage: 'Private',
+    },
     code: {
       id: 'app.containers.App.attributes.code',
       defaultMessage: 'Code',
@@ -983,10 +999,6 @@ export default defineMessages({
       id: 'app.containers.App.attributes.parent_id',
       defaultMessage: 'Parent/predecessor',
     },
-    private: {
-      id: 'app.containers.App.attributes.private',
-      defaultMessage: 'Private',
-    },
     is_archive: {
       id: 'app.containers.App.attributes.is_archive',
       defaultMessage: 'Is archived',
@@ -1062,6 +1074,18 @@ export default defineMessages({
     is_archived: {
       id: 'app.containers.App.attributes.is_archived',
       defaultMessage: 'User status',
+    },
+    document_upload: {
+      id: 'app.containers.App.attributes.document_upload',
+      defaultMessage: 'Upload document',
+    },
+    document_url: {
+      id: 'app.containers.App.attributes.document_url',
+      defaultMessage: 'Attached document',
+    },
+    document_uploading: {
+      id: 'app.containers.App.attributes.document_uploading',
+      defaultMessage: 'Uploading document',
     },
   },
   attributeInfo: {
@@ -2332,6 +2356,16 @@ export default defineMessages({
       },
       public: {
         id: 'app.containers.App.ui.publishStatuses.public',
+        defaultMessage: 'Public',
+      },
+    },
+    privacyStatuses: {
+      private: {
+        id: 'app.containers.App.ui.privacyStatuses.private',
+        defaultMessage: 'Private',
+      },
+      public: {
+        id: 'app.containers.App.ui.privacyStatuses.public',
         defaultMessage: 'Public',
       },
     },

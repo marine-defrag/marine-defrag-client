@@ -21,7 +21,7 @@ import {
   getMarkdownFormField,
   getFormField,
   getCheckboxField,
-  getStatusField,
+  getStatusFormField,
   parentCategoryOptions,
   getShortTitleFormField,
   // renderUserControl,
@@ -154,7 +154,7 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
     const groups = []; // fieldGroups
     groups.push({
       fields: [
-        getStatusField(intl.formatMessage),
+        getStatusFormField(intl.formatMessage),
         getMetaField(entity),
       ],
     });
@@ -304,7 +304,7 @@ export class CategoryEdit extends React.PureComponent { // eslint-disable-line r
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Content isScrollContainer ref={this.scrollContainer}>
+        <Content hasOverflow ref={this.scrollContainer}>
           <ContentHeader
             title={pageTitle}
             type={CONTENT_SINGLE}

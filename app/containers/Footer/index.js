@@ -7,11 +7,27 @@ import {
   Box, Text, Image, ResponsiveContext, Button,
 } from 'grommet';
 
-import { updatePath } from 'containers/App/actions';
-import { selectEntitiesWhere, selectIsSignedIn } from 'containers/App/selectors';
+import {
+  updatePath,
+  loadEntitiesIfNeeded,
+} from 'containers/App/actions';
+import {
+  selectEntitiesWhere,
+  selectIsSignedIn,
+  selectReady,
+} from 'containers/App/selectors';
 
-import { VERSION, FOOTER, ROUTES } from 'themes/config';
+import {
+  API,
+  VERSION,
+  FOOTER,
+  ROUTES,
+} from 'themes/config';
+
+import Icon from 'components/Icon';
 import Container from 'components/styled/Container';
+import ContentSimple from 'components/styled/ContentSimple';
+
 import PrintHide from 'components/styled/PrintHide';
 import BoxPrint from 'components/styled/BoxPrint';
 import { usePrint } from 'containers/App/PrintContext';
@@ -24,7 +40,7 @@ import messages from './messages';
 
 const FooterMain = styled.div``;
 const FooterContent = styled.div`
-  background-color: ${({ isPrint }) => isPrint ? 'transparent' : '#183863'};
+  background-color: ${({ isPrint }) => isPrint ? 'transparent' : '#00214d'};
   color: ${({ isPrint, theme }) => isPrint ? theme.global.colors.text.secondary : 'white'};
   border-top: 1px solid;
   border-color: ${({ isPrint, theme }) => isPrint ? theme.global.colors.text.secondary : 'transparent'};
@@ -85,6 +101,9 @@ const Between = styled((p) => <Box plain {...p} />)`
     border-top: ${({ direction }) => direction === 'column' ? 1 : 0}px solid rgba(0, 0, 0, 1);
   }
 `;
+
+export const DEPENDENCIES = [API.PAGES];
+
 function Footer({
   intl,
   backgroundImage,
@@ -92,18 +111,31 @@ function Footer({
   hasContactLink,
   onPageLink,
   backgroundColor,
+  dataReady,
+  onLoadData,
+  backgroundImageCredit,
 }) {
+  React.useEffect(() => {
+    // kick off loading of data
+    onLoadData();
+  }, []);
   const size = React.useContext(ResponsiveContext);
   const isMobile = isMaxSize(size, 'small');
   const appTitle = `${intl.formatMessage(appMessages.app.claim)} - ${intl.formatMessage(appMessages.app.title)}`;
   const isPrint = usePrint();
-  const footerPages = pages && sortEntities(
+  const footerPages = dataReady && pages && sortEntities(
     pages.filter((page) => page.getIn(['attributes', 'order']) < 0),
     'desc',
     'order',
     'number'
   );
   const hasFooterPages = (footerPages && footerPages.size > 0) || hasContactLink;
+  let credit;
+  if (backgroundImageCredit && messages.imageCredit[backgroundImageCredit]) {
+    credit = intl.formatMessage(messages.imageCredit[backgroundImageCredit]);
+  } else if (messages.imageCredit[backgroundImage]) {
+    credit = intl.formatMessage(messages.imageCredit[backgroundImage]);
+  }
   return (
     <FooterMain isPrint={isPrint}>
       {backgroundImage && FOOTER.IMAGE_URLS[backgroundImage] && (
@@ -111,15 +143,15 @@ function Footer({
           <Box
             style={{
               position: 'relative',
-              background: backgroundColor ? '#f1f0f1' : 'transparent',
+              background: backgroundColor || 'transparent',
             }}
           >
             <Image src={FOOTER.IMAGE_URLS[backgroundImage]} />
-            <ImageCredit>
-              <Text size="xxxsmall">
-                <FormattedMessage {...messages.imageCredit[backgroundImage]} />
-              </Text>
-            </ImageCredit>
+            {credit && (
+              <ImageCredit>
+                <Text size="xxxsmall">{credit}</Text>
+              </ImageCredit>
+            )}
           </Box>
         </PrintHide>
       )}
@@ -128,39 +160,66 @@ function Footer({
           <Box
             direction={isMinSize(size, 'medium') ? 'row' : 'column'}
             fill="vertical"
-            style={{ minHeight: '150px' }}
+            style={{ minHeight: '133px' }}
           >
             <BoxPrint
-              pad="medium"
-              padPrintHorizontal="none"
+              pad={{ top: 'medium' }}
               fill
-              basis="1/2"
+              basis="2/3"
             >
-              <Text size="small">
-                {appTitle}
-              </Text>
-              <Text size="xsmall">
-                {`Version: ${VERSION}`}
-              </Text>
+              <ContentSimple>
+                <Box gap="xsmall">
+                  <Text size="small" as="div">
+                    <FormattedMessage {...messages.disclaimer} />
+                  </Text>
+                  {hasContactLink && !isPrint && (
+                    <Text size="small" as="div">
+                      <FormattedMessage {...messages.contactHint} />
+                    </Text>
+                  )}
+                </Box>
+              </ContentSimple>
             </BoxPrint>
             <PrintHide>
               <Between direction={isMinSize(size, 'medium') ? 'row' : 'column'} />
             </PrintHide>
             <BoxPrint
-              pad="medium"
-              padPrintHorizontal={0}
+              pad={{ top: 'medium' }}
               fill
-              basis="1/2"
-              gap="small"
+              basis="1/3"
             >
-              <Text size="small">
-                <FormattedMessage {...messages.disclaimer} />
-              </Text>
-              {hasContactLink && !isPrint && (
-                <Text size="small">
-                  <FormattedMessage {...messages.contactHint} />
-                </Text>
-              )}
+              <ContentSimple style={{ paddingLeft: 0 }}>
+                <Box gap="ms">
+                  <Box gap="xxsmall">
+                    <Text size="xxsmall" as="div">
+                      {appTitle}
+                    </Text>
+                    <Text size="xxsmall" as="div">
+                      {`Version: ${VERSION}`}
+                    </Text>
+                  </Box>
+                  <Box gap="xsmall">
+                    <Text size="xxxsmall" as="div">
+                      Design and Development by
+                    </Text>
+                    <Box direction="row" gap="small">
+                      <Icon
+                        name="logoDumpark"
+                        size="42px"
+                        title="dumpark.com - Data visualisation & information design"
+                      />
+                      <Box gap="hair">
+                        <Text size="small" weight={500} as="div">
+                          dumpark.com
+                        </Text>
+                        <Text size="xxsmall" as="div">
+                          Data visualisation & information design
+                        </Text>
+                      </Box>
+                    </Box>
+                  </Box>
+                </Box>
+              </ContentSimple>
             </BoxPrint>
           </Box>
           <PrintHide>
@@ -171,37 +230,38 @@ function Footer({
                   justify={isMobile ? 'start' : 'between'}
                   align="start"
                   gap={isMobile ? 'small' : 'none'}
-                  pad={{ horizontal: 'medium' }}
                 >
-                  <Box
-                    direction={isMobile ? 'column' : 'row'}
-                    gap="hair"
-                    align={isMobile ? 'start' : 'end'}
-                  >
-                    {hasContactLink && (
-                      <FooterLinkPage
-                        href={ROUTES.FEEDBACK}
-                        onClick={(evt) => {
-                          if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                          onPageLink(ROUTES.FEEDBACK);
-                        }}
-                      >
-                        <FormattedMessage {...messages.contactUs} />
-                      </FooterLinkPage>
-                    )}
-                    {footerPages && footerPages.size > 0 && footerPages.toList().map((page) => (
-                      <FooterLinkPage
-                        key={page.get('id')}
-                        onClick={(evt) => {
-                          if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                          onPageLink(`${ROUTES.PAGES}/${page.get('id')}`);
-                        }}
-                        href={`${ROUTES.PAGES}/${page.get('id')}`}
-                      >
-                        {page.getIn(['attributes', 'menu_title']) || page.getIn(['attributes', 'title'])}
-                      </FooterLinkPage>
-                    ))}
-                  </Box>
+                  <ContentSimple>
+                    <Box
+                      direction={isMobile ? 'column' : 'row'}
+                      gap="hair"
+                      align={isMobile ? 'start' : 'end'}
+                    >
+                      {hasContactLink && (
+                        <FooterLinkPage
+                          href={ROUTES.CONTACT}
+                          onClick={(evt) => {
+                            if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                            onPageLink(ROUTES.CONTACT);
+                          }}
+                        >
+                          <FormattedMessage {...messages.contactUs} />
+                        </FooterLinkPage>
+                      )}
+                      {footerPages && footerPages.size > 0 && footerPages.toList().map((page) => (
+                        <FooterLinkPage
+                          key={page.get('id')}
+                          onClick={(evt) => {
+                            if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                            onPageLink(`${ROUTES.PAGES}/${page.get('id')}`);
+                          }}
+                          href={`${ROUTES.PAGES}/${page.get('id')}`}
+                        >
+                          {page.getIn(['attributes', 'menu_title']) || page.getIn(['attributes', 'title'])}
+                        </FooterLinkPage>
+                      ))}
+                    </Box>
+                  </ContentSimple>
                 </Box>
               </Box>
             )}
@@ -214,14 +274,18 @@ function Footer({
 
 Footer.propTypes = {
   intl: intlShape.isRequired,
+  onLoadData: PropTypes.func,
   backgroundImage: PropTypes.string,
+  backgroundImageCredit: PropTypes.string,
   onPageLink: PropTypes.func.isRequired,
   hasContactLink: PropTypes.bool,
-  backgroundColor: PropTypes.bool,
+  backgroundColor: PropTypes.string,
+  dataReady: PropTypes.bool,
   pages: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
+  dataReady: selectReady(state, { path: DEPENDENCIES }),
   pages: selectEntitiesWhere(state, {
     path: 'pages',
     where: { draft: false },
@@ -231,6 +295,9 @@ const mapStateToProps = (state) => ({
 
 function mapDispatchToProps(dispatch) {
   return {
+    onLoadData: () => {
+      DEPENDENCIES.forEach((path) => dispatch(loadEntitiesIfNeeded(path)));
+    },
     onPageLink: (path) => {
       dispatch(updatePath(path));
     },

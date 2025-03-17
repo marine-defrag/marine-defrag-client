@@ -16,7 +16,7 @@ import {
   entityOptions,
   taxonomyOptions,
   getTitleFormField,
-  getStatusField,
+  getStatusFormField,
   getMarkdownFormField,
   getDateField,
   getTextareaField,
@@ -208,7 +208,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
 
     groups.push({
       fields: [
-        getStatusField(intl.formatMessage),
+        getStatusFormField(intl.formatMessage),
         getMetaField(entity),
       ],
     });
@@ -483,7 +483,7 @@ export class ActionEdit extends React.Component { // eslint-disable-line react/p
             { name: 'description', content: intl.formatMessage(messages.metaDescription) },
           ]}
         />
-        <Content isScrollContainer ref={this.scrollContainer}>
+        <Content hasOverflow ref={this.scrollContainer}>
           <ContentHeader
             title={intl.formatMessage(messages.pageTitle, { type })}
             type={CONTENT_SINGLE}

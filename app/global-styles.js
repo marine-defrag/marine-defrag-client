@@ -35,7 +35,7 @@ const GlobalStyle = createGlobalStyle`
     }
   }
   #app {
-    background-color: #FFF;
+    background-color: transparent;
     min-height: 100%;
     min-width: 100%;
   }
@@ -63,10 +63,10 @@ const GlobalStyle = createGlobalStyle`
   }
   h1 {
     font-weight: 700;
-    font-size: 2em;
+    font-size: 2.2em;
   }
   h2 {
-    font-size: 1.9em;
+    font-size: 2em;
   }
   h3 {
     font-size: 1.7em;
@@ -90,6 +90,11 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
+  .react-markdown-quote {
+    p {
+      margin-bottom: 0;
+    }
+  }
   .react-markdown {
     h1, h2, h3, h4, h5, h6 {
       font-weight: 700;

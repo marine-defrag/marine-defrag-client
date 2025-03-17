@@ -62,19 +62,9 @@ const Styled = styled.div`
   top: 0;
   left: 0;
   right: 0;
-  height:${(props) => {
-    if (props.hasBrand) {
-      return props.theme.sizes.header.banner.heightMobile;
-    }
-    return 0;
-  }}px;
+  height:${(props) => props.theme.sizes.header.banner.heightMobile}px;
   @media (min-width: ${(props) => props.theme.breakpoints.medium}) {
-    height:${(props) => {
-    if (props.hasBrand) {
-      return props.theme.sizes.header.banner.height;
-    }
-    return 0;
-  }}px;
+    height:${(props) => props.theme.sizes.header.banner.height}px;
   }
   background-color: ${({ isPrint }) => isPrint ? '#333333' : '#183863'};
   box-shadow: ${(props) => props.hasShadow ? '0px 0px 5px 0px rgba(0,0,0,0.5)' : 'none'};

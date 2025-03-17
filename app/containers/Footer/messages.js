@@ -63,5 +63,13 @@ export default defineMessages({
       id: 'app.containers.Footer.imageCredit.footer_facts',
       defaultMessage: 'Photo by Bernd Dittrich on Unsplash',
     },
+    footer_home: {
+      id: 'app.containers.Footer.imageCredit.footer_home',
+      defaultMessage: 'Photos by Person One, Person Two and Person Three on Unsplash',
+    },
+    footer_home_overview: {
+      id: 'app.containers.Footer.imageCredit.footer_home_overview',
+      defaultMessage: 'Photos by Person One, Person Two and Person Three on Unsplash',
+    },
   },
 });
