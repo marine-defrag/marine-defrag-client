@@ -81,7 +81,7 @@ export class UserPassword extends React.PureComponent { // eslint-disable-line r
                 validators={{
                   '': {
                     passwordsMatch: (vals) => validatePasswordsMatch(
-                      vals.getIn(['attributes', 'password']),
+                      vals.getIn(['attributes', 'passwordNew']),
                       vals.getIn(['attributes', 'passwordConfirmation']),
                     ),
                   },
