@@ -651,6 +651,22 @@ export default defineMessages({
       id: 'app.containers.App.forms.fieldMaxLengthError',
       defaultMessage: 'Content exceeds the maximum allowed length of {maxLength} characters.',
     },
+    passwordNeedsUpperCaseError: {
+      id: 'app.containers.App.forms.passwordNeedsUpperCaseError',
+      defaultMessage: 'At least one uppercase letter is required.',
+    },
+    passwordNeedsLowerCaseError: {
+      id: 'app.containers.App.forms.passwordNeedsLowerCaseError',
+      defaultMessage: 'At least one lowercase letter is required.',
+    },
+    passwordNeedsNumberError: {
+      id: 'app.containers.App.forms.passwordNeedsNumberError',
+      defaultMessage: 'At least one number is required.',
+    },
+    passwordNeedsSpecialCharacterError: {
+      id: 'app.containers.App.forms.passwordNeedsSpecialCharacterError',
+      defaultMessage: 'At least one special character is required.',
+    },
   },
   hints: {
     autoReference: {
@@ -771,7 +787,7 @@ export default defineMessages({
     },
     passwordNew: {
       id: 'app.containers.App.placeholders.passwordNew',
-      defaultMessage: 'New Password',
+      defaultMessage: 'Enter new Password',
     },
     passwordConfirmation: {
       id: 'app.containers.App.placeholders.passwordConfirmation',
@@ -978,6 +994,10 @@ export default defineMessages({
     email: {
       id: 'app.containers.App.attributes.email',
       defaultMessage: 'Email address',
+    },
+    passwordNew: {
+      id: 'app.containers.App.attributes.passwordNew',
+      defaultMessage: 'New password',
     },
     menu_title: {
       id: 'app.containers.App.attributes.menu_title',

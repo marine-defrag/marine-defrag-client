@@ -19,7 +19,8 @@ import {
 import { RESET } from './constants';
 
 export function* reset({ data }) {
-  const { password, passwordConfirmation } = data;
+  const { password, passwordConfirmation } = data.attributes;
+
   try {
     const location = yield select(selectLocation);
     const query = yield location.get('query');

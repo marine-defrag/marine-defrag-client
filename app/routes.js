@@ -724,7 +724,7 @@ export default function createRoutes(store) {
     }, {
       path: ROUTES.CONTACT,
       name: 'feedbackNew',
-      onEnter: redirectIfNotPermitted(USER_ROLES.ANALYST.value),
+      onEnter: redirectIfNotSignedIn(),
       getComponent(nextState, cb) {
         const importModules = Promise.all([
           import('containers/FeedbackNew/reducer'),

@@ -24,6 +24,7 @@ import {
 import {
   getMetaField,
   getRoleField,
+  getInfoField,
 } from 'utils/fields';
 
 import { scrollToTop } from 'utils/scroll-to-component';
@@ -99,7 +100,7 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
         FORM_INITIAL.get('attributes')
       ),
       associatedTaxonomies: taxonomyOptions(taxonomies),
-      associatedRole: getHighestUserRoleId(roles),
+      associatedRole: roles && getHighestUserRoleId(roles),
     });
   }
 
@@ -110,17 +111,21 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
     }]);
   };
 
-  getHeaderAsideFields = (entity, roles) => {
+  getHeaderAsideFields = (entity, roles, isAdminUser) => {
     const { intl } = this.context;
-    let fields = [
-      getUserStatusField(intl.formatMessage),
-    ];
+    let fields = [];
+    if (isAdminUser) {
+      fields = [
+        ...fields,
+        getUserStatusField(intl.formatMessage),
+      ];
+    }
     if (roles && roles.size > 0) {
       fields = [
         ...fields,
         getRoleFormField(intl.formatMessage, roles),
       ];
-    } else {
+    } else if (entity.get('roles')) {
       fields = [
         ...fields,
         getRoleField(entity),
@@ -133,11 +138,21 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
     return ([{ fields }]);
   };
 
-  getBodyMainFields = () => {
+  getBodyMainFields = (entity, isAdminUser) => {
     const { intl } = this.context;
-    return ([{
-      fields: [getEmailField(intl.formatMessage)],
-    }]);
+    let fields = [];
+    if (isAdminUser) {
+      fields = [
+        ...fields,
+        getEmailField(intl.formatMessage),
+      ];
+    } else {
+      fields = [
+        ...fields,
+        getInfoField('email', entity.getIn(['attributes', 'email'])),
+      ];
+    }
+    return ([{ fields }]);
   };
 
   // getBodyAsideFields = (taxonomies, onCreateOption) => {
@@ -172,6 +187,8 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
     const { saveSending, saveError, submitValid } = viewDomain.get('page').toJS();
 
     const editableRoles = this.getEditableUserRoles(roles, sessionUserHighestRoleId);
+
+    const isAdminUser = sessionUserHighestRoleId === USER_ROLES.ADMIN.value;
 
     return (
       <div>
@@ -239,10 +256,10 @@ export class UserEdit extends React.PureComponent { // eslint-disable-line react
               fields={{
                 header: {
                   main: this.getHeaderMainFields(),
-                  aside: this.getHeaderAsideFields(viewEntity, editableRoles),
+                  aside: this.getHeaderAsideFields(viewEntity, editableRoles, isAdminUser),
                 },
                 body: {
-                  main: this.getBodyMainFields(),
+                  main: this.getBodyMainFields(viewEntity, isAdminUser),
                   // aside: (sessionUserHighestRoleId <= USER_ROLES.MANAGER.value) && this.getBodyAsideFields(taxonomies, onCreateOption),
                 },
               }}

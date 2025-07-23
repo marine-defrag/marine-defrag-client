@@ -38,4 +38,8 @@ export default defineMessages({
     id: 'app.containers.UserLogin.submit',
     defaultMessage: 'Sign in',
   },
+  submitUpdate: {
+    id: 'app.containers.UserLogin.submitUpdate',
+    defaultMessage: 'Update password',
+  },
 });

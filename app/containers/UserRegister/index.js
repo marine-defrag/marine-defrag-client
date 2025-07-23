@@ -19,6 +19,8 @@ import {
   getPasswordConfirmationField,
 } from 'utils/forms';
 
+import validatePasswordsMatch from 'components/forms/validators/validate-passwords-match';
+
 import Icon from 'components/Icon';
 import Messages from 'components/Messages';
 import Loading from 'components/Loading';
@@ -51,7 +53,6 @@ export class UserRegister extends React.PureComponent { // eslint-disable-line r
   render() {
     const { intl } = this.context;
     const { registerError, registerSending } = this.props.viewDomain.get('page').toJS();
-
     return (
       <>
         <Helmet
@@ -91,6 +92,7 @@ export class UserRegister extends React.PureComponent { // eslint-disable-line r
             && (
               <AuthForm
                 model="userRegister.form.data"
+                formData={this.props.viewDomain.get('form').forms.data}
                 sending={registerSending}
                 handleSubmit={(formData) => this.props.handleSubmit(formData)}
                 handleCancel={this.props.handleCancel}
@@ -98,9 +100,22 @@ export class UserRegister extends React.PureComponent { // eslint-disable-line r
                 fields={[
                   getNameField(intl.formatMessage),
                   getEmailField(intl.formatMessage),
-                  getPasswordField(intl.formatMessage),
+                  getPasswordField(
+                    intl.formatMessage,
+                    '.attributes.password',
+                    'password',
+                    true, // isNotLogin
+                  ),
                   getPasswordConfirmationField(intl.formatMessage),
                 ]}
+                validators={{
+                  '': {
+                    passwordsMatch: (vals) => validatePasswordsMatch(
+                      vals.getIn(['attributes', 'password']),
+                      vals.getIn(['attributes', 'passwordConfirmation']),
+                    ),
+                  },
+                }}
               />
             )
           }

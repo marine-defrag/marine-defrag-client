@@ -48,8 +48,10 @@ function userResetReducer(state = initialState, action) {
 
 
 const formData = fromJS({
-  password: '',
-  passwordConfirmation: '',
+  attributes: {
+    password: '',
+    passwordConfirmation: '',
+  },
 });
 
 export default combineReducers({

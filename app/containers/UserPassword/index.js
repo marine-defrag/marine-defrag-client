@@ -16,6 +16,8 @@ import {
   getPasswordConfirmationField,
 } from 'utils/forms';
 
+import validatePasswordsMatch from 'components/forms/validators/validate-passwords-match';
+
 import Messages from 'components/Messages';
 import Loading from 'components/Loading';
 import ContentNarrow from 'components/ContentNarrow';
@@ -66,6 +68,7 @@ export class UserPassword extends React.PureComponent { // eslint-disable-line r
             && (
               <AuthForm
                 model="userPassword.form.data"
+                formData={this.props.userPassword.get('form').forms.data}
                 sending={passwordSending}
                 handleSubmit={(formData) => this.props.handleSubmit(formData, reference)}
                 handleCancel={() => this.props.handleCancel(reference)}
@@ -75,6 +78,14 @@ export class UserPassword extends React.PureComponent { // eslint-disable-line r
                   getPasswordNewField(intl.formatMessage),
                   getPasswordConfirmationField(intl.formatMessage),
                 ]}
+                validators={{
+                  '': {
+                    passwordsMatch: (vals) => validatePasswordsMatch(
+                      vals.getIn(['attributes', 'password']),
+                      vals.getIn(['attributes', 'passwordConfirmation']),
+                    ),
+                  },
+                }}
               />
             )
           }
