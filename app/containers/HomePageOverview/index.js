@@ -354,14 +354,14 @@ function HomePageOverview({
           }}
         />
       )}
+      <Section
+        style={{
+          background: theme.global.colors.backgroundX,
+          paddingTop: '10%',
+        }}
+      />
       {authReady && isUserAnalyst && (
         <>
-          <Section
-            style={{
-              background: theme.global.colors.backgroundX,
-              paddingTop: '10%',
-            }}
-          />
           <TeaserSection
             title={intl.formatMessage(appMessages.nav.actions)}
             teaser={intl.formatMessage(messages.teaserActions)}
