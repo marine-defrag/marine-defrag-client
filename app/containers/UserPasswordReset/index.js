@@ -15,6 +15,8 @@ import {
   getPasswordConfirmationField,
 } from 'utils/forms';
 
+import validatePasswordsMatch from 'components/forms/validators/validate-passwords-match';
+
 import Messages from 'components/Messages';
 import Loading from 'components/Loading';
 import ContentNarrow from 'components/ContentNarrow';
@@ -63,14 +65,28 @@ export class UserPasswordReset extends React.PureComponent { // eslint-disable-l
             && (
               <AuthForm
                 model="userPasswordReset.form.data"
+                formData={this.props.viewDomain.get('form').forms.data}
                 sending={resetSending}
                 handleSubmit={(formData) => this.props.handleSubmit(formData)}
                 handleCancel={this.props.handleCancel}
                 labels={{ submit: intl.formatMessage(messages.submit) }}
                 fields={[
-                  getPasswordField(intl.formatMessage, '.password'),
-                  getPasswordConfirmationField(intl.formatMessage, '.passwordConfirmation'),
+                  getPasswordField(
+                    intl.formatMessage,
+                    '.attributes.password',
+                    'password',
+                    true, // isNotLogin
+                  ),
+                  getPasswordConfirmationField(intl.formatMessage),
                 ]}
+                validators={{
+                  '': {
+                    passwordsMatch: (vals) => validatePasswordsMatch(
+                      vals.getIn(['attributes', 'password']),
+                      vals.getIn(['attributes', 'passwordConfirmation']),
+                    ),
+                  },
+                }}
               />
             )
           }

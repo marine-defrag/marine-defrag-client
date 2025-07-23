@@ -33,7 +33,7 @@ import { updatePath, dismissQueryMessages } from 'containers/App/actions';
 import { ROUTES } from 'themes/config';
 import messages from './messages';
 
-import { login } from './actions';
+import { login, recover } from './actions';
 import { selectDomain } from './selectors';
 
 const BottomLinks = styled.div`
@@ -49,6 +49,7 @@ export class UserLogin extends React.PureComponent { // eslint-disable-line reac
     const { intl } = this.context;
     const { authError, authSending } = this.props.viewDomain.get('page').toJS();
 
+    const passwordExpired = authError && authError.codeOrReason && authError.codeOrReason === 'password_expired';
     return (
       <>
         <Helmet
@@ -84,48 +85,60 @@ export class UserLogin extends React.PureComponent { // eslint-disable-line reac
           {authSending
             && <Loading />
           }
-          { this.props.viewDomain.get('form')
-            && (
-              <AuthForm
-                model="userLogin.form.data"
-                sending={authSending}
-                handleSubmit={(formData) => this.props.handleSubmit(formData)}
-                handleCancel={this.props.handleCancel}
-                labels={{ submit: intl.formatMessage(messages.submit) }}
-                fields={[
-                  getEmailField(intl.formatMessage, '.email'),
-                  getPasswordField(intl.formatMessage, '.password'),
-                ]}
-              />
-            )
-          }
-          <BottomLinks>
-            <p>
-              <FormattedMessage {...messages.registerLinkBefore} />
-              <A
-                href={ROUTES.REGISTER}
-                onClick={(evt) => {
-                  if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                  this.props.handleLink(ROUTES.REGISTER, { keepQuery: true });
-                }}
-              >
-                <FormattedMessage {...messages.registerLink} />
-                <Icon name="arrowRight" text size="1.5em" sizes={{ mobile: '1em' }} />
-              </A>
-            </p>
-            <p>
-              <A
-                href={ROUTES.RECOVER_PASSWORD}
-                onClick={(evt) => {
-                  if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-                  this.props.handleLink(ROUTES.RECOVER_PASSWORD, { keepQuery: true });
-                }}
-              >
-                <FormattedMessage {...messages.recoverPasswordLink} />
-                <Icon name="arrowRight" text size="1.5em" sizes={{ mobile: '1em' }} />
-              </A>
-            </p>
-          </BottomLinks>
+          {!passwordExpired && this.props.viewDomain.get('form') && (
+            <AuthForm
+              model="userLogin.form.data"
+              sending={authSending}
+              handleSubmit={(formData) => this.props.handleSubmit(formData)}
+              handleCancel={this.props.handleCancel}
+              labels={{ submit: intl.formatMessage(messages.submit) }}
+              fields={[
+                getEmailField(intl.formatMessage, '.email'),
+                getPasswordField(intl.formatMessage, '.password'),
+              ]}
+            />
+          )}
+          {passwordExpired && this.props.viewDomain.get('form') && (
+            <AuthForm
+              model="userLogin.form.data"
+              sending={authSending}
+              handleSubmit={(formData) => this.props.handleSubmit(formData, passwordExpired)}
+              handleCancel={this.props.handleCancel}
+              labels={{ submit: intl.formatMessage(messages.submitUpdate) }}
+              fields={[
+                getEmailField(intl.formatMessage, '.email'),
+              ]}
+            />
+          )}
+          {!passwordExpired && (
+            <BottomLinks>
+              <p>
+                <FormattedMessage {...messages.registerLinkBefore} />
+                <A
+                  href={ROUTES.REGISTER}
+                  onClick={(evt) => {
+                    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                    this.props.handleLink(ROUTES.REGISTER, { keepQuery: true });
+                  }}
+                >
+                  <FormattedMessage {...messages.registerLink} />
+                  <Icon name="arrowRight" text size="1.5em" sizes={{ mobile: '1em' }} />
+                </A>
+              </p>
+              <p>
+                <A
+                  href={ROUTES.RECOVER_PASSWORD}
+                  onClick={(evt) => {
+                    if (evt !== undefined && evt.preventDefault) evt.preventDefault();
+                    this.props.handleLink(ROUTES.RECOVER_PASSWORD, { keepQuery: true });
+                  }}
+                >
+                  <FormattedMessage {...messages.recoverPasswordLink} />
+                  <Icon name="arrowRight" text size="1.5em" sizes={{ mobile: '1em' }} />
+                </A>
+              </p>
+            </BottomLinks>
+          )}
         </ContentNarrow>
         <Footer backgroundImage="footer_home" />
       </>
@@ -157,7 +170,7 @@ export function mapDispatchToProps(dispatch) {
     initialiseForm: () => {
       dispatch(formActions.reset('userLogin.form.data'));
     },
-    handleSubmit: (formData) => {
+    handleSubmit: (formData, passwordExpired) => {
       const jsData = formData.toJS();
       const sanitisedData = Object.keys(jsData).reduce(
         (memo, key) => {
@@ -171,7 +184,11 @@ export function mapDispatchToProps(dispatch) {
         },
         {},
       );
-      dispatch(login(sanitisedData));
+      if (!passwordExpired) {
+        dispatch(login(sanitisedData));
+      } else {
+        dispatch(recover(jsData));
+      }
       dispatch(dismissQueryMessages());
     },
     handleCancel: () => {
