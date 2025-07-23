@@ -16,6 +16,10 @@ import validateNumber from 'components/forms/validators/validate-number';
 import validateEmailFormat from 'components/forms/validators/validate-email-format';
 import validateMinLength from 'components/forms/validators/validate-min-length';
 import validateMaxLength from 'components/forms/validators/validate-max-length';
+import validateContainsUpperCase from 'components/forms/validators/validate-contains-upper-case';
+import validateContainsLowerCase from 'components/forms/validators/validate-contains-lower-case';
+import validateContainsNumber from 'components/forms/validators/validate-contains-number';
+import validateContainsSpecialCharacter from 'components/forms/validators/validate-contains-special-character';
 
 import {
   PUBLISH_STATUSES,
@@ -26,6 +30,7 @@ import {
   API,
   ACTIONTYPES_CONFIG,
   ACTORTYPES_CONFIG,
+  MIN_PASSWORD_LENGTH,
 } from 'themes/config';
 
 import appMessages from 'containers/App/messages';
@@ -837,17 +842,33 @@ export const getNameField = (formatMessage, model = '.attributes.name') => {
   return field;
 };
 
-export const getPasswordField = (formatMessage, model = '.attributes.password') => {
+export const getPasswordField = (
+  formatMessage,
+  model = '.attributes.password',
+  attribute = 'password',
+  isNotLogin = false,
+) => {
   const field = getFormField({
     formatMessage,
     controlType: 'input',
-    attribute: 'password',
+    attribute,
     type: 'password',
     required: true,
     model,
+    showErrorsAsHints: isNotLogin,
   });
-  field.validators.passwordLength = (val) => validateMinLength(val, 6);
-  field.errorMessages.passwordLength = formatMessage(appMessages.forms.passwordShortError);
+  if (isNotLogin) {
+    field.validators.passwordContainsUpperCase = (val) => validateContainsUpperCase(val);
+    field.validators.passwordContainsLowerCase = (val) => validateContainsLowerCase(val);
+    field.validators.passwordContainsNumber = (val) => validateContainsNumber(val);
+    field.validators.passwordContainsSpecialCharacter = (val) => validateContainsSpecialCharacter(val);
+    field.errorMessages.passwordContainsUpperCase = formatMessage(appMessages.forms.passwordNeedsUpperCaseError);
+    field.errorMessages.passwordContainsLowerCase = formatMessage(appMessages.forms.passwordNeedsLowerCaseError);
+    field.errorMessages.passwordContainsNumber = formatMessage(appMessages.forms.passwordNeedsNumberError);
+    field.errorMessages.passwordContainsSpecialCharacter = formatMessage(appMessages.forms.passwordNeedsSpecialCharacterError);
+    field.validators.passwordLength = (val) => validateMinLength(val, MIN_PASSWORD_LENGTH);
+    field.errorMessages.passwordLength = formatMessage(appMessages.forms.passwordShortError, { minLength: MIN_PASSWORD_LENGTH });
+  }
   return field;
 };
 
@@ -866,17 +887,26 @@ export const getPasswordCurrentField = (formatMessage, model = '.attributes.pass
   return field;
 };
 
-export const getPasswordNewField = (formatMessage, model = '.attributes.passwordNew') => {
+export const getPasswordNewField = (formatMessage, model = '.attributes.passwordNew', attribute = 'passwordNew') => {
   const field = getFormField({
     formatMessage,
     controlType: 'input',
-    attribute: 'passwordNew',
+    attribute,
     type: 'password',
     required: true,
+    showErrorsAsHints: true,
     model,
   });
-  field.validators.passwordLength = (val) => validateMinLength(val, 6);
-  field.errorMessages.passwordLength = formatMessage(appMessages.forms.passwordShortError);
+  field.validators.passwordLength = (val) => validateMinLength(val, MIN_PASSWORD_LENGTH);
+  field.validators.passwordContainsUpperCase = (val) => validateContainsUpperCase(val);
+  field.validators.passwordContainsLowerCase = (val) => validateContainsLowerCase(val);
+  field.validators.passwordContainsNumber = (val) => validateContainsNumber(val);
+  field.validators.passwordContainsSpecialCharacter = (val) => validateContainsSpecialCharacter(val);
+  field.errorMessages.passwordLength = formatMessage(appMessages.forms.passwordShortError, { minLength: MIN_PASSWORD_LENGTH });
+  field.errorMessages.passwordContainsUpperCase = formatMessage(appMessages.forms.passwordNeedsUpperCaseError);
+  field.errorMessages.passwordContainsLowerCase = formatMessage(appMessages.forms.passwordNeedsLowerCaseError);
+  field.errorMessages.passwordContainsNumber = formatMessage(appMessages.forms.passwordNeedsNumberError);
+  field.errorMessages.passwordContainsSpecialCharacter = formatMessage(appMessages.forms.passwordNeedsSpecialCharacterError);
   // field.validators.email = validateEmailFormat;
   // field.errorMessages.email = formatMessage(appMessages.forms.emailFormatError);
   return field;
@@ -891,8 +921,8 @@ export const getPasswordConfirmationField = (formatMessage, model = '.attributes
     required: true,
     model,
   });
-  field.validators.passwordLength = (val) => validateMinLength(val, 6);
-  field.errorMessages.passwordLength = formatMessage(appMessages.forms.passwordShortError);
+  field.validators.passwordLength = (val) => validateMinLength(val, MIN_PASSWORD_LENGTH);
+  field.errorMessages.passwordLength = formatMessage(appMessages.forms.passwordShortError, { minLength: MIN_PASSWORD_LENGTH });
   // field.validators.email = validateEmailFormat;
   // field.errorMessages.email = formatMessage(appMessages.forms.emailFormatError);
   return field;
@@ -910,6 +940,7 @@ export const getFormField = ({
   type,
   model,
   maxLength = 10000,
+  showErrorsAsHints,
 }) => {
   const field = {
     id: attribute,
@@ -921,6 +952,7 @@ export const getFormField = ({
     validators: {},
     errorMessages: {},
     hint,
+    showErrorsAsHints,
   };
   field.validators.maxFieldLength = (val) => validateMaxLength(val, maxLength);
   field.errorMessages.maxFieldLength = formatMessage(appMessages.forms.fieldMaxLengthError, { maxLength });

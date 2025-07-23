@@ -66,6 +66,7 @@ export class UserPassword extends React.PureComponent { // eslint-disable-line r
             && (
               <AuthForm
                 model="userPassword.form.data"
+                formAttributes={this.props.userPassword.get('form').forms.data.attributes}
                 sending={passwordSending}
                 handleSubmit={(formData) => this.props.handleSubmit(formData, reference)}
                 handleCancel={() => this.props.handleCancel(reference)}

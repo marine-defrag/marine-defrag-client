@@ -620,6 +620,8 @@ theme.global = {
     hint: '#777b7e', // on light background (empowerment)
     textSecondary: '#777b7e', // on light background (empowerment)
     warning: 'rgb(211, 90, 76)',
+    error: '#b20e0e',
+    success: '#00632e',
     text: {
       brand: '#183863',
       dark: '#FFFFFF', //  on dark background

@@ -1180,3 +1180,5 @@ export const PRINT = {
     landscape: { W: 1100, H: 680 }, // pt
   },
 };
+
+export const MIN_PASSWORD_LENGTH = 12;
