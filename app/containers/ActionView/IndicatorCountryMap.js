@@ -31,7 +31,8 @@ export function IndicatorCountryMap({
         (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code || feature.properties.ADM0_A3)
       );
       if (country) {
-        const value = country.getIn(['actionValues', indicator.get('id')]);
+        const values = country.getIn(['actionValues', indicator.get('id')]);
+        const value = values && values.first().get('value');
         if (!value && value !== 0) {
           return memo;
         }
@@ -74,7 +75,9 @@ export function IndicatorCountryMap({
         (c) => qe(c.getIn(['attributes', 'code']), feature.properties.ADM0_A3)
       );
       if (country) {
-        const value = country.getIn(['actionValues', indicator.get('id')]);
+        const values = country.getIn(['actionValues', indicator.get('id')]);
+        const value = values && values.first().get('value');
+        // console.log('value/reduceCountryAreas', value && values.toJS())
         if (!value && value !== 0) {
           return memo;
         }

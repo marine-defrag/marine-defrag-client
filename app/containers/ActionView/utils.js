@@ -49,6 +49,16 @@ export const getActortypeColumns = (
     columns = [
       ...columns,
       {
+        id: 'indicator-date',
+        type: 'date',
+        indicatorId: entity.get('id'),
+        formatAsYear: true,
+        title: entity.getIn(['attributes', 'date_start']),
+        att: 'date_start',
+        align: 'end',
+        isIndicator,
+      },
+      {
         id: 'indicator',
         type: 'indicator',
         indicatorId: entity.get('id'),
@@ -56,6 +66,7 @@ export const getActortypeColumns = (
         unit: entity.getIn(['attributes', 'comment']),
         align: 'end',
         primary: true,
+        isIndicator,
       },
     ];
   }
