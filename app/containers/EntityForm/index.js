@@ -125,7 +125,9 @@ const controls = {
 };
 
 // These props will be omitted before being passed to the Control component
-const NON_CONTROL_PROPS = ['hint', 'label', 'component', 'controlType', 'children', 'errorMessages'];
+const NON_CONTROL_PROPS = [
+  'hint', 'label', 'component', 'controlType', 'children', 'errorMessages', 'showErrorsAsHints',
+];
 
 
 class EntityForm extends React.Component { // eslint-disable-line react/prefer-stateless-function
