@@ -1589,17 +1589,19 @@ export const selectCountriesWithIndicators = createSelector(
       (country) => {
         let actorActionValues = actorConnections.get(parseInt(country.get('id'), 10)) || null;
         if (actorActionValues) {
+          // console.log('actorActionValues', actorActionValues.toJS())
           actorActionValues = actorActionValues
             .filter(
               // make sure we have a connection to an ff-indicator
               (connection) => !!actions.get(connection.get('measure_id').toString())
-            ).reduce(
-              (memo, connection) => memo.set(
-                connection.get('measure_id').toString(),
-                connection.get('value'),
-              ),
-              Map()
             );
+          // .reduce(
+          //   (memo, connection) => memo.set(
+          //     connection.get('measure_id').toString(),
+          //     connection.get('value'),
+          //   ),
+          //   Map()
+          // );
         }
         return country.set('actionValues', actorActionValues);
       }
@@ -1621,13 +1623,14 @@ export const selectLocationsWithIndicators = createSelector(
             .filter(
               // make sure we have a connection to an ff-indicator
               (connection) => !!actions.get(connection.get('measure_id').toString())
-            ).reduce(
-              (memo, connection) => memo.set(
-                connection.get('measure_id').toString(),
-                connection.get('value'),
-              ),
-              Map()
             );
+          // .reduce(
+          //   (memo, connection) => memo.set(
+          //     connection.get('measure_id').toString(),
+          //     connection.get('value'),
+          //   ),
+          //   Map()
+          // );
         }
         return actor.set('actionValues', actorActionValues);
       }

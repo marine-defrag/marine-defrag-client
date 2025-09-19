@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Map } from 'immutable';
-
+import { intlShape, injectIntl } from 'react-intl';
 
 // import appMessages from 'containers/App/messages';
 import qe from 'utils/quasi-equals';
@@ -21,7 +21,7 @@ export function IndicatorCountryMap({
   mapSubject,
   onCountryClick,
   indicator,
-  // intl,
+  intl,
 }) {
   if (!countries) return null;
   const [mapView, setMapView] = useState(null);
@@ -77,6 +77,12 @@ export function IndicatorCountryMap({
       if (country) {
         const values = country.getIn(['actionValues', indicator.get('id')]);
         const value = values && values.first().get('value');
+        const date = values && values.first().get('date_start');
+        const year = date
+          && intl.formatDate(
+            new Date(date),
+            { year: 'numeric' },
+          );
         // console.log('value/reduceCountryAreas', value && values.toJS())
         if (!value && value !== 0) {
           return memo;
@@ -88,6 +94,8 @@ export function IndicatorCountryMap({
                 label: indicator.getIn(['attributes', 'title']),
                 unit: indicator.getIn(['attributes', 'comment']),
                 value,
+                date,
+                year,
               },
             ],
           },
@@ -171,10 +179,11 @@ IndicatorCountryMap.propTypes = {
   countries: PropTypes.instanceOf(Map), // actors by actortype for current action
   onCountryClick: PropTypes.func,
   mapSubject: PropTypes.string,
+  intl: intlShape,
 };
 
 // const mapStateToProps = (state) => ({
 //   countries: selectActortypeActors(state, { type: ACTORTYPES.COUNTRY }),
 // });
 
-export default IndicatorCountryMap;
+export default injectIntl(IndicatorCountryMap);

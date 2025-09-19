@@ -87,7 +87,7 @@ export function NumberField({ field, intl, secondary }) {
                 {!isNumber(field.value) && field.value}
               </TextPrint>
               {field.year && (
-                <TextPrint size="medium" secondary>
+                <TextPrint size="xsmall" secondary>
                   {`(year: ${field.year})`}
                 </TextPrint>
               )}
