@@ -88,7 +88,7 @@ export function NumberField({ field, intl, secondary }) {
               </TextPrint>
               {field.year && (
                 <TextPrint size="xsmall" secondary>
-                  {`(year: ${field.year})`}
+                  {`(${field.year})`}
                 </TextPrint>
               )}
             </Box>
