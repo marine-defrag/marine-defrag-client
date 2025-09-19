@@ -36,6 +36,7 @@ const TooltipContent = ({
                 field={{
                   title: value.label,
                   value: value.value,
+                  year: value.year,
                   unit: value.unit,
                   isCount,
                   showEmpty: !isCount && appMessages.labels.noIndicatorValue,

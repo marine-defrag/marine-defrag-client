@@ -38,6 +38,8 @@ const getEntitySortValueMapper = (entity, sortBy, type) => {
     case 'actors':
     case 'sortBy':
       return entity.get(sortBy) || 0;
+    case 'connectionDate':
+      return entity.get('date_start');
 
     default:
       return entity.getIn(['attributes', sortBy]);

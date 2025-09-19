@@ -46,7 +46,7 @@ const getColWidth = ({
   }
   if (isIndicator) {
     if (count === 2) {
-      return col.type === 'main' ? 50 : 50;
+      return 50;
     }
     if (count > 2) {
       if (col.type === 'indicator') {
