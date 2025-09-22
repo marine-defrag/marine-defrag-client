@@ -41,6 +41,7 @@ import {
   setResourceConnections,
 } from 'utils/entities';
 import { qe } from 'utils/quasi-equals';
+import { sortEntities } from 'utils/sort';
 
 import { DEPENDENCIES } from './constants';
 
@@ -200,7 +201,6 @@ export const selectActorsByType = createSelector(
     const hasRelationshipRole = viewEntity
       && ACTIONTYPE_ACTOR_ACTION_ROLES[viewEntity.getIn(['attributes', 'measuretype_id'])]
       && ACTIONTYPE_ACTOR_ACTION_ROLES[viewEntity.getIn(['attributes', 'measuretype_id'])].length > 0;
-    // console.log('hasRelationshipRole', hasRelationshipRole)
     if (isIndicator || hasRelationshipRole) {
       const viewEntityActors = actorActionsByActionFull.get(parseInt(viewEntity.get('id'), 10));
       if (viewEntityActors) {
@@ -208,15 +208,20 @@ export const selectActorsByType = createSelector(
           (actor) => {
             let actorX = actor;
             // console.log(actor && actor.toJS())
-            const actorConnection = viewEntityActors.find(
-              (connection) => qe(actor.get('id'), connection.get('actor_id'))
+            const actorConnectionsForAction = sortEntities(
+              viewEntityActors.filter(
+                (connection) => qe(actor.get('id'), connection.get('actor_id'))
+              ),
+              'desc',
+              'connectionDate',
+              'date',
             );
-            if (actorConnection) {
+            if (actorConnectionsForAction && actorConnectionsForAction.size > 0) {
               if (isIndicator) {
-                actorX = actorX.setIn(['actionValues', viewEntity.get('id')], actorConnection.get('value'));
+                actorX = actorX.setIn(['actionValues', viewEntity.get('id')], actorConnectionsForAction);
               }
               if (hasRelationshipRole) {
-                actorX = actorX.setIn(['relationshipRole', viewEntity.get('id')], actorConnection.get('relationshiptype_id'));
+                actorX = actorX.setIn(['relationshipRole', viewEntity.get('id')], actorConnectionsForAction.first().get('relationshiptype_id'));
               }
             }
             return actorX;

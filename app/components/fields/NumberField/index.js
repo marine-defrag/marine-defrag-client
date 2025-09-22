@@ -77,7 +77,7 @@ export function NumberField({ field, intl, secondary }) {
             </Box>
           )}
           {(typeof field.value !== 'undefined' && field.value !== null) && (
-            <Box margin={{ vertical: 'xsmall' }}>
+            <Box margin={{ vertical: 'xsmall' }} direction="row" gap="xsmall" align="center">
               <TextPrint size="large" secondary={secondary}>
                 {isNumber(field.value) && formatNumber(field.value, {
                   intl,
@@ -86,6 +86,11 @@ export function NumberField({ field, intl, secondary }) {
                 })}
                 {!isNumber(field.value) && field.value}
               </TextPrint>
+              {field.year && (
+                <TextPrint size="xsmall" secondary>
+                  {`(${field.year})`}
+                </TextPrint>
+              )}
             </Box>
           )}
           {!field.value && field.showEmpty && (

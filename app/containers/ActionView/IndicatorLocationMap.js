@@ -77,7 +77,8 @@ export function IndicatorLocationMap({
           (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
         );
         if (location) {
-          const value = location.getIn(['actionValues', indicator.get('id')]);
+          const values = location.getIn(['actionValues', indicator.get('id')]);
+          const value = values && values.first();
           if (!value && value !== 0) {
             return memo;
           }

@@ -55,7 +55,7 @@ export function IndicatorsTab({
         </Text>
         <Box gap="xsmall" margin={{ top: 'xsmall' }}>
           <Title>
-            {activeIndicatorOption.title}
+            {activeIndicatorOption && activeIndicatorOption.title}
           </Title>
         </Box>
       </PrintOnly>

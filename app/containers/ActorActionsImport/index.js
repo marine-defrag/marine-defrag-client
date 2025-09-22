@@ -10,15 +10,20 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { actions as formActions } from 'react-redux-form/immutable';
 import { fromJS, Map } from 'immutable';
+import { format, parse } from 'date-fns';
 
 import { CONTENT_SINGLE } from 'containers/App/constants';
 import {
   ROUTES,
   USER_ROLES,
+  DATE_FORMAT,
+  API_DATE_FORMAT,
 } from 'themes/config';
 import { getColumnAttribute } from 'utils/import';
 import qe from 'utils/quasi-equals';
 import isNumber from 'utils/is-number';
+import validateDateFormat from 'components/forms/validators/validate-date-format';
+
 import {
   redirectIfNotPermitted,
   updatePath,
@@ -143,7 +148,7 @@ const mapStateToProps = (state, { params }) => ({
   dataReady: selectReady(state, { path: DEPENDENCIES }),
   authReady: selectReadyForAuthCheck(state),
 });
-const FIELDS = ['value'];
+const FIELDS = ['value', 'date_start'];
 function mapDispatchToProps(dispatch, { params }) {
   return {
     loadEntitiesIfNeeded: () => {
@@ -171,6 +176,20 @@ function mapDispatchToProps(dispatch, { params }) {
               .map((val, att) => {
                 if (att === 'value' && isNumber(val)) {
                   return parseFloat(val);
+                }
+                if (att === 'date_start') {
+                  if (validateDateFormat(val, 'yyyy')) {
+                    return format(
+                      parse(val, 'yyyy', new Date()),
+                      API_DATE_FORMAT
+                    );
+                  }
+                  if (validateDateFormat(val, DATE_FORMAT)) {
+                    return format(
+                      parse(val, DATE_FORMAT, new Date()),
+                      API_DATE_FORMAT
+                    );
+                  }
                 }
                 return null;
               })

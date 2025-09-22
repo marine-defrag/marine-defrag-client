@@ -266,6 +266,10 @@ export class ActionNew extends React.PureComponent { // eslint-disable-line reac
             attribute: 'value',
             type: 'text',
           },
+          {
+            attribute: 'date_start',
+            type: 'text',
+          },
         ];
       }
       const actorConnections = renderActorsByActortypeControl({
@@ -586,6 +590,7 @@ function mapDispatchToProps(dispatch) {
               connectionAttribute: ['associatedActorsByActortype', actortypeid.toString()],
               createConnectionKey: 'actor_id',
               createKey: 'measure_id',
+              connectionAttributes: ['relationshiptype_id', 'value', 'date_start'],
             }))
             .reduce(
               (memo, deleteCreateLists) => {

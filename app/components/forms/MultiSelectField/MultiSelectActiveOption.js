@@ -52,7 +52,7 @@ const MultiselectActiveOptionRemove = styled(Button)`
 const TitleWrap = styled((p) => <Box pad={{ left: 'small' }} direction="column" {...p} />)``;
 
 const ConnectionAttributes = styled((p) => (
-  <Box pad={{ horizontal: 'small', vertical: 'small' }} {...p} />
+  <Box pad={{ horizontal: 'small', vertical: 'small' }} gap="xsmall" {...p} />
 ))`
   border-top: 1px solid ${palette('background', 1)};
 `;
