@@ -649,8 +649,13 @@ export function EntitiesMap(props) {
         }
         return countriesWithIndicators.some(
           (country) => {
-            const val = country.getIn(['actionValues', action.get('id')]);
-            return val !== null && typeof val !== 'undefined';
+            const hasIndicator = country.get('actionValues')
+              && country.get('actionValues').find(
+                (connection) => qe(connection.get('measure_id'), action.get('id'))
+                  && connection.get('value') !== null
+                  && typeof connection.get('value') !== 'undefined'
+              );
+            return hasIndicator;
           }
         );
       }
@@ -662,8 +667,13 @@ export function EntitiesMap(props) {
         }
         return locationsWithIndicators.some(
           (location) => {
-            const val = location.getIn(['actionValues', action.get('id')]);
-            return val !== null && typeof val !== 'undefined';
+            const hasIndicator = location.get('actionValues')
+              && location.get('actionValues').find(
+                (connection) => qe(connection.get('measure_id'), action.get('id'))
+                  && connection.get('value') !== null
+                  && typeof connection.get('value') !== 'undefined'
+              );
+            return hasIndicator;
           }
         );
       }
@@ -680,10 +690,21 @@ export function EntitiesMap(props) {
           );
           // console.log(country && country.toJS())
           if (country) {
-            const value = country.getIn(['actionValues', ffIndicator.get('id')]);
-            if (!value && value !== 0) {
+            const countryIndicatorValues = country.get('actionValues') && country.get('actionValues').filter(
+              (connection) => qe(connection.get('measure_id'), ffIndicator.get('id'))
+            );
+            const value = countryIndicatorValues
+              && countryIndicatorValues.last()
+              && countryIndicatorValues.last().get('value');
+            if (!value || value === 0) {
               return memo;
             }
+            const date = countryIndicatorValues && countryIndicatorValues.last().get('date_start');
+            const year = date
+              && intl.formatDate(
+                new Date(date),
+                { year: 'numeric' },
+              );
             const stats = [
               {
                 title,
@@ -691,6 +712,7 @@ export function EntitiesMap(props) {
                   {
                     unit: ffUnit,
                     value,
+                    year,
                   },
                 ],
               },
@@ -745,8 +767,13 @@ export function EntitiesMap(props) {
             (c) => qe(c.getIn(['attributes', 'code']), feature.properties.code)
           );
           if (location) {
-            const value = location.getIn(['actionValues', ffIndicator.get('id')]);
-            if (!value && value !== 0) {
+            const locationIndicatorValues = location.get('actionValues') && location.get('actionValues').filter(
+              (connection) => qe(connection.get('measure_id'), ffIndicator.get('id'))
+            );
+            const value = locationIndicatorValues
+              && locationIndicatorValues.last()
+              && locationIndicatorValues.last().get('value');
+            if (!value || value === 0) {
               return memo;
             }
             const stats = [

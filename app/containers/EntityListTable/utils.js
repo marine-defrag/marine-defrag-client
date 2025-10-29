@@ -58,7 +58,7 @@ export const prepareHeader = ({
       case 'date':
         return ({
           ...col,
-          title: 'Date',
+          title: col.formatAsYear ? 'Year' : 'Date',
           sortActive: sortBy === col.id,
           sortOrder: sortOrder || 'asc',
           onSort,
@@ -306,6 +306,7 @@ export const prepareEntities = ({
           case 'indicator':
             temp = entity.get('actionValues')
               && entity.getIn(['actionValues', col.indicatorId]);
+            temp = temp && temp.last().get('value');
             return {
               ...memoEntity,
               [col.id]: {
@@ -332,6 +333,25 @@ export const prepareEntities = ({
               },
             };
           case 'date':
+            if (col.indicatorId) {
+              temp = entity.get('actionValues')
+                && entity.getIn(['actionValues', col.indicatorId]);
+              temp = temp && temp.last().get(col.att);
+              if (col.formatAsYear) {
+                temp = temp && intl.formatDate(temp, { year: 'numeric' });
+              } else {
+                temp = temp && intl.formatDate(temp);
+              }
+              return {
+                ...memoEntity,
+                [col.id]: {
+                  ...col,
+                  value: temp,
+                  draft: entity.getIn(['attributes', 'draft']),
+                  sortValue: temp,
+                },
+              };
+            }
             return {
               ...memoEntity,
               [col.id]: {

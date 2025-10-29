@@ -13,3 +13,17 @@ npm-debug.log
 .idea
 
 nbproject/
+# Never check passwords into source control!
+/.env
+/.envrc
+.rubocop-*
+
+# Ignore IDE specific files
+/.idea
+/nbproject/
+/.vscode/*
+
+#MacOS
+.DS_Store
+
+/config/master.key

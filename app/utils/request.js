@@ -46,6 +46,7 @@ export function checkResponseError(error) {
   return error.response
     ? {
       messages: checkErrorMessagesExist(error.response),
+      codeOrReason: checkErrorReasonExist(error.response),
       statusText: error.response.statusText,
       status: error.response.status,
       error,
@@ -75,6 +76,12 @@ export function checkErrorMessagesExist(response) {
     return response.json === Object(response.json)
       ? mapErrors(response.json)
       : [response.json];
+  }
+  return [];
+}
+export function checkErrorReasonExist(response) {
+  if (response && response.json && response.json.reason) {
+    return response.json.reason;
   }
   return [];
 }

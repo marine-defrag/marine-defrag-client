@@ -165,12 +165,12 @@ class Upload extends React.Component { // eslint-disable-line react/prefer-state
                 signingUrl={ENDPOINTS.S3_SIGN_URL}
                 signingUrlMethod="GET"
                 signingUrlWithCredentials={false}
+                contentDisposition="attachment"
                 onProgress={this.onUploadProgress}
                 onSignedUrl={() => null}
                 onError={this.onUploadError}
                 onFinish={this.onUploadFinish}
                 server={`${ENDPOINTS.API}/`}
-                preprocess={this.modifyFileType}
                 scrubFilename={(filename) => filename
                   .replace(/\.(?=.*\.)/g, '')
                   .replace(/(\.[\w\d_-]+)$/i, `_${getDateSuffix()}$1`)

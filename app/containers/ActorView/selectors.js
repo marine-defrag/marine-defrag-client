@@ -469,7 +469,9 @@ export const selectActorIndicators = createSelector(
       (action) => {
         const aaa = viewActorActions.find((aa) => qe(aa.get('measure_id'), action.get('id')));
         return aaa
-          ? action.set('value', aaa.get('value'))
+          ? action
+            .set('value', aaa.get('value'))
+            .set('date', aaa.get('date_start'))
           : action;
       }
     );

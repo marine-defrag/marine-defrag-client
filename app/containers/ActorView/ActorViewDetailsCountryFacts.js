@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-// import { FormattedMessage, intlShape, injectIntl } from 'react-intl';
+import { intlShape, injectIntl } from 'react-intl';
 import {
   Box,
   Text,
@@ -81,7 +81,7 @@ export function ActorViewDetailsCountryFacts({
   indicators,
   resources,
   onUpdatePath,
-  // intl,
+  intl,
 }) {
   const isPrint = usePrint();
   const indicatorsByResourceId = indicators && indicators.groupBy(
@@ -150,6 +150,11 @@ export function ActorViewDetailsCountryFacts({
                       if (isNumber(value)) {
                         digits = value > 1 ? 1 : 3;
                       }
+                      const year = indicator.get('date')
+                        && intl.formatDate(
+                          new Date(indicator.get('date')),
+                          { year: 'numeric' },
+                        );
                       return (
                         <Indicator key={indicator.get('id')}>
                           <Box direction="row">
@@ -159,6 +164,7 @@ export function ActorViewDetailsCountryFacts({
                                 unit: indicator.getIn(['attributes', 'comment']),
                                 value,
                                 digits,
+                                year,
                                 showEmpty: appMessages.labels.noIndicatorValue,
                                 titleLink: {
                                   href: path,
@@ -189,7 +195,7 @@ ActorViewDetailsCountryFacts.propTypes = {
   indicators: PropTypes.instanceOf(Map),
   resources: PropTypes.instanceOf(Map),
   onUpdatePath: PropTypes.func,
-  // intl: intlShape,
+  intl: intlShape,
 };
 
 const mapStateToProps = (state, { id }) => ({
@@ -204,4 +210,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActorViewDetailsCountryFacts);
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(ActorViewDetailsCountryFacts));
